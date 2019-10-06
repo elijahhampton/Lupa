@@ -19,18 +19,25 @@ router.route("/").get((req, res) => {
 
 //POST request to add a user
 router.route("/add").post((req, res) => {
+    console.log('adding');
     //Retrieve user's username and password in request body
     const username = req.body.username;
     const password = req.body.password;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const email = req.body.email;
+    const packs = ['Lupa Announcements'];
+
+    console.log('couldnt add');
 
     //Create new user through model
-    const newUser = new User({username, password});
+    const newUser = new User({username, password, firstName, lastName, email, packs});
 
     //Save user to database
     newUser.save()
         .then(() => res.json("User added with: " + username + " " + password))
-        .catch(err => res.status(400).json("Error; " + err));
-});
+        .catch(err => res.status(400).json("Error: " + err));
+    });
 
 //GET request - find users by ID
 router.route("/:username").get((req, res) => {

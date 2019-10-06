@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: "transparent",
         elevation: 0,
+        margin: 10,
     },
     calendarButtons: {
         flexDirection: "row",

@@ -19,6 +19,7 @@ import {
     IconButton,
     Title
 } from 'react-native-paper';
+
 import NotificationListContainer from './NotificationListContainer';
 
 export default class NotificationsView extends React.Component {
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: "transparent",
         elevation: 0,
+        margin: 10,
     },
     notificationsContent: {
 

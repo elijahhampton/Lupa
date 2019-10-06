@@ -26,6 +26,16 @@ const userSchema = new Schema({
         trim: true,
         minlength: 8
     },
+    firstName: {
+        type: String,
+        required: true,
+        minlength: 3
+    },
+    lastName: {
+        type: String,
+        required: true,
+        minlength: 3
+    },
     email: {
         type: String,
         required: true,
@@ -34,13 +44,16 @@ const userSchema = new Schema({
     },
     gender: {
         type: String,
-        required: true,
+        required: false,
         trim: true,
     },
-    userType: {
+    avatar: {
         type: String,
-        required: true,
+        required: false,
     },
+    packs: {
+        type: Array, 
+    }
 }, {
     timestamps: true,
 });

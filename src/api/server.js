@@ -23,9 +23,12 @@ app.use(express.json()); //express.json() middleware to allow parsing of json
 
 const uri = process.env.ATLAS_URI; //MongoDB Database URI
 
+
 //Connect to database using uri
 mongoose.connect(uri, {
     useNewUrlParser: true, useCreateIndex: true
+}).catch(err => {
+    console.log(err);
 });
 
 const connection = mongoose.connection;
@@ -33,6 +36,7 @@ const connection = mongoose.connection;
 connection.once('open', () => {
     console.log("MongoDB database connection established successfully");
 });
+
 
 /* Require files for routes */
 const usersRouter = require("./routes/users");

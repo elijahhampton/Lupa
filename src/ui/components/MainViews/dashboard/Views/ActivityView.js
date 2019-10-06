@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: "transparent",
         elevation: 0,
+        margin: 10,
     },
     scrollView: {
         padding: 10

@@ -30,7 +30,9 @@ import {
     SearchBar
 } from 'react-native-elements';
 
-import SearchCategoryCard from './search/SearchCategoryCard';
+
+import SearchCategoryCard from './components/SearchCategoryCard';
+import SearchFilter from './components/SearchFilter';
 
 class SearchView extends React.Component {
     constructor(props) {
@@ -74,6 +76,10 @@ class SearchView extends React.Component {
                         <IconButton size={25} icon="people" color="black" />
                     </Right>
                 </View>
+
+                <SearchFilter />
+
+                
                 <View style={styles.searchContent}>
                     <SearchBar inputContainerStyle={{ backgroundColor: "#e5e5e6", borderRadius: 30 }} containerStyle={styles.searchContainer} inputStyle={styles.searchInput} placeholder="Search Lupa" />
 

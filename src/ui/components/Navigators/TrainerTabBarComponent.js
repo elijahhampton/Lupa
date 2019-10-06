@@ -8,7 +8,7 @@ import TrainerDashboardView from '../MainViews/dashboard/TrainerDashboardView';
 import ActivityView from '../MainViews/dashboard/Views/ActivityView'
 import NotificationsView from '../MainViews/dashboard/Views/Notifications/NotificationsView';
 import UpcomingView from '../MainViews/dashboard/Views/UpcomingView';
-import ProfileView from '../MainViews/dashboard/Views/ProfileView';
+import ProfileView from '../MainViews/dashboard/Views/Profile/ProfileView';
 
 import TrainerAnimatedTabbar from '../MainViews/dashboard/AnimatedTabbar/TrainerAnimatedTabbar';
 

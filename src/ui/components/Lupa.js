@@ -12,8 +12,8 @@ import {
 } from "react-native";
 
 import WorkoutView from './MainViews/WorkoutView';
-import SearchView from './MainViews/SearchView';
-import PackView from './MainViews/PackView';
+import SearchView from './MainViews/search/SearchView';
+import PackView from './MainViews/Packs/PackView';
 
 import Swiper from 'react-native-swiper';
 

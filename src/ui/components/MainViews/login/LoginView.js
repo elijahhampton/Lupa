@@ -14,7 +14,8 @@ import {
   ImageBackground,
   TextInput,
   TouchableOpacity,
-  Image
+  Image,
+  TouchableWithoutFeedback
 } from "react-native";
 
 import {
@@ -28,8 +29,11 @@ import Logo from "../../../images/temp-logo.png";
 
 import axios from 'axios';
 
-import API_ENDPOINT, { AXIOS_HEADERS } from '../../../../api/axios/constants';
+import API_ENDPOINT, { AXIOS_HEADERS } from '../../../../api/controller/axios/constants';
 import { SocialIcon } from "react-native-elements";
+
+import SigupModal from '../../Modals/SignupModal';
+import SignupModal from "../../Modals/SignupModal";
 
 class LoginView extends Component {
   constructor(props) {
@@ -39,6 +43,7 @@ class LoginView extends Component {
       username: '',
       password: '',
       snackBarIsVisible: false,
+      isSignupModalVisible: false,
     }
 
   }
@@ -68,6 +73,12 @@ class LoginView extends Component {
       .catch(err => console.log(err)); */
 
       this.props.navigation.navigate('App');
+  }
+
+  _launchSignupModal = () => {
+    this.setState({
+      isSignupModalVisible: true,
+    })
   }
 
   render() {
@@ -118,8 +129,13 @@ class LoginView extends Component {
 
             </View>
             <Text style={{ flex: 1, color: "white" }}>
-              Don't have an account? Sign up
+              Don't have an account?
               </Text>
+              <TouchableWithoutFeedback onPress={() => {this._launchSignupModal}}>
+              <Text style={{ flex: 1, color: "white", fontWeight: "bold" }}>
+                Sign up
+              </Text>
+              </TouchableWithoutFeedback>
           </View>
 
           <Snackbar
@@ -134,6 +150,7 @@ class LoginView extends Component {
         </Snackbar>
 
         </View>
+        <SignupModal isVisible={this.state.isSignupModalVisible}/>
       </ImageBackground>
     );
   }
