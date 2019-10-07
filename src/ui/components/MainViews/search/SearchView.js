@@ -44,15 +44,10 @@ class SearchView extends React.Component {
         return (
             <View style={styles.root}>
                 <View style={styles.header}>
-                    <Left>
-                        <IconButton icon="tune" size={25} color="black" />
-                    </Left>
 
-                    <Body>
+
+                    <Body style={{alignSelf: "center"}}>
                         <View style={styles.headerLocation}>
-                            <Text style={{ fontSize: 16, color: "#848484", fontWeight: "100" }}>
-                                Location
-                    </Text>
                             <View>
                                 <TouchableOpacity onPress={() => alert('Change location')}>
                                     <View style={styles.location}>
@@ -71,35 +66,36 @@ class SearchView extends React.Component {
                             </View>
                         </View>
                     </Body>
-
-                    <Right>
-                        <IconButton size={25} icon="people" color="black" />
-                    </Right>
                 </View>
-
-                <SearchFilter />
 
                 
                 <View style={styles.searchContent}>
                     <SearchBar inputContainerStyle={{ backgroundColor: "#e5e5e6", borderRadius: 30 }} containerStyle={styles.searchContainer} inputStyle={styles.searchInput} placeholder="Search Lupa" />
 
-                    <View style={{ alignItems: "center", justifyContent: "space-evenly", width: Dimensions.get('window').width, height: "15%", flexDirection: "row", backgroundColor: "transparent" }}>
+                    {
+                        /*
+                            <View style={{ alignItems: "center", justifyContent: "space-evenly", width: Dimensions.get('window').width, height: "15%", flexDirection: "row", backgroundColor: "transparent" }}>
                         <SearchCategoryCard categoryTitle="Users" />
 
                         <SearchCategoryCard categoryTitle="Trainers" />
 
                         <SearchCategoryCard categoryTitle="Gyms" />
                     </View>
+                        */
+                    }
 
 
                     <View style={{ top: "15%", alignSelf: "center" }}>
                         <Text style={{ fontSize: 35, fontWeight: "600", color: "#D6D6D6" }}>
-                            Search for Users, Trainers,{"\n"}and Gyms.
+                            Search the Lupa Database for users.
                         </Text>
                     </View>
 
+                    <SearchFilter />
+
 
                 </View>
+
             </View>
         );
     }
@@ -108,7 +104,7 @@ class SearchView extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#FFFFFF",
     },
     header: {
         width: '100%',
@@ -122,6 +118,7 @@ const styles = StyleSheet.create({
     location: {
         flexDirection: "row",
         alignItems: "center",
+        alignSelf: "center",
     },
     searchContent: {
         backgroundColor: "#F3F3F3",
