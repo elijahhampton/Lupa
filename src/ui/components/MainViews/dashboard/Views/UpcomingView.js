@@ -18,23 +18,13 @@ import {
     Title,
 } from 'react-native-paper';
 
+import LupaAppBar from '../../../AppBar/LupaAppBar';
+
 export default class UpcomingView extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <Appbar style={styles.appbar}>
-                    <Left>
-                        <IconButton icon="menu" size={20} />
-                    </Left>
-                    <Body>
-                    <Title>
-                        Upcoming
-                    </Title>
-                    </Body>
-                    <Right>
-                        <IconButton icon="inbox" size={20} />
-                    </Right>
-                </Appbar>
+            <LupaAppBar title="Upcoming" />
             </View>
         );
     }

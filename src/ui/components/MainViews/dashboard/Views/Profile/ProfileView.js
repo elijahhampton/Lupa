@@ -36,6 +36,8 @@ import {
     Avatar
 } from 'react-native-paper';
 
+import LupaAppBar from '../../../../AppBar/LupaAppBar';
+
 import HeaderImage from '../../../../../images/background-one.jpg'
 import CertificationImage from '../../../../../images/certification.png'
 
@@ -70,19 +72,7 @@ export default class ProfileView extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <Appbar style={styles.appbar}>
-                    <Left>
-                        <IconButton icon="menu" size={20} />
-                    </Left>
-                    <Body>
-                    <Title>
-                        Fitness Profile
-                    </Title>
-                    </Body>
-                    <Right>
-                        <IconButton icon="inbox" size={20} />
-                    </Right>
-                </Appbar>
+                <LupaAppBar title="Profile" />
 
                 <ScrollView scrollEnabled={this.state.shouldScroll}>
 

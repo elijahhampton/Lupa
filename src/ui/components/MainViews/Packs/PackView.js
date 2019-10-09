@@ -61,7 +61,7 @@ export default class PackView extends React.Component {
                     <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} />
                 </View>
 
-                <Text style={{margin: 15, fontSize: 50, fontWeight: "700"}}>
+                <Text style={{marginLeft: 10, fontSize: 30, fontWeight: "700"}}>
                     Packs
                 </Text>
 
@@ -107,9 +107,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignSelf: "center",
         justifyContent: "space-evenly",
+        margin: 15,
     },
     tabsText: {
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: "600",
         color: "rgba(0,0,0,.15)",
     },

@@ -6,12 +6,22 @@ import API_ENDPOINT, { AXIOS_HEADERS } from './axios/constants';
 
 
 let User  = require('../models/user.model');
+let Pack;
+let Workout;
+let HealthData;
 
 enum A {
     Username,
     Email
 }
 class LupaController {
+
+    /* If we decide to make LupaController a single then
+    private controller = this;
+    getInstance() {
+        return this.controller;
+    }
+    */
 
     static registerUser = async (username, password, firstName, lastName, email) => {
         console.log('Trying to add user');

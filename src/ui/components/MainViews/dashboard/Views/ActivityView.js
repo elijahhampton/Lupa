@@ -36,6 +36,17 @@ import {
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+import { DrawerActions } from 'react-navigation-drawer';
+
+import LupaAppBar from '../../../AppBar/LupaAppBar';
+
+import ControlPanel from '../../../Drawer/ControlPanel';
+
+import MainView from '../../../Drawer/MainView';
+
+import ProfileView from './Profile/ProfileView';
+
+
 const chartWidth = Dimensions.get('screen').width - 20;
 const chartHeight = 250;
 
@@ -54,6 +65,12 @@ export default class ActivityView extends React.Component {
     _showGoalsMenu = () => { this.setState({ isGoalsMenuVisible: true }) }
     _closeActivityMenu = () => { this.setState({ isActivityMenuVisible: false }) }
     _closeGoalsMenu = () => { this.setState({ isGoalsMenuVisible: false }) }
+    _closecontrolPanel = () => {
+        this._drawer.close();
+    };
+    _openControlPanel = () => {
+        this._drawer.open();
+    };
 
     goalChartData = { //Each value defines a ring in the chart (labels -> data)
         labels: ['GoalA', 'GoalB', 'GoalC'], // optional
@@ -75,19 +92,7 @@ export default class ActivityView extends React.Component {
         return (
             <View style={styles.root}>
                 <LinearGradient style={{flex: 1}} colors={['#2196F3', '#E3F2FD', '#ffffff']}>
-                <Appbar style={styles.appbar}>
-                    <Left>
-                        <IconButton icon="menu" size={20} />
-                    </Left>
-                    <Body>
-                    <Title>
-                        Activity
-                    </Title>
-                    </Body>
-                    <Right>
-                        <IconButton icon="inbox" size={20} />
-                    </Right>
-                </Appbar>
+                <LupaAppBar title="Activity" />
                 <ScrollView contentContainerStyle={styles.scrollView}>
                     <View style={styles.charts}>
 
@@ -174,6 +179,7 @@ export default class ActivityView extends React.Component {
 
 
                 </ScrollView>
+
                 </LinearGradient>
             </View>
         );

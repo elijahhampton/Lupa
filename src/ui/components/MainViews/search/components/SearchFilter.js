@@ -4,6 +4,8 @@
  * @date August  23, 2019
  * 
  *  SearchViewBottomSheet
+ * 
+ * BottomSheet snapPoints /* 0 - starting position to snap to , 1 - height to snap to upong pulling up, 2 - point to snap to upon pushing down
  */
 
 import React from 'react';
@@ -55,7 +57,7 @@ export default class SearchFilter extends React.Component {
                     </View>
 
                     <View style={styles.filter}>
-                    <Text style={styles.filterHeader}>
+                    <Text style={[styles.filterHeader, { paddingBottom: 8}]}>
                             Gender
                         </Text>
                         <Button mode="contained" color="#2196F3" style={{borderRadius: 20}}>
@@ -118,9 +120,9 @@ export default class SearchFilter extends React.Component {
                             Days Available
                         </Text>
 
-                        <Text>
-                            Figure out component for days here
-                        </Text>
+                        <Button mode="text" compact style={{alignSelf: "flex-start"}} color="#2196F3">
+                            Select Days
+                        </Button>
 
                         <Caption>
                             You have not chosen any days.
@@ -132,9 +134,9 @@ export default class SearchFilter extends React.Component {
                             Times Available
                         </Text>
 
-                        <Text>
-                            Figure out component for times here.
-                        </Text>
+                        <Button mode="text" compact style={{alignSelf: "flex-start"}} color="#2196F3">
+                            Select Days
+                        </Button>
 
                         <Caption>
                             You have not chosen any times.

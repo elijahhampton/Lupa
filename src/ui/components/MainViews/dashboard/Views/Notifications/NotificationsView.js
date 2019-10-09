@@ -20,25 +20,15 @@ import {
     Title
 } from 'react-native-paper';
 
+import LupaAppBar from '../../../../AppBar/LupaAppBar';
+
 import NotificationListContainer from './NotificationListContainer';
 
 export default class NotificationsView extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <Appbar style={styles.appbar}>
-                    <Left>
-                        <IconButton icon="menu" size={20} />
-                    </Left>
-                    <Body>
-                    <Title>
-                        Notifications
-                    </Title>
-                    </Body>
-                    <Right>
-                        <IconButton icon="inbox" size={20} />
-                    </Right>
-                </Appbar>
+                <LupaAppBar title="Notifications" />
                 <ScrollView contentContainerStyle={styles.notificationsContent}>
                     <NotificationListContainer notificationCategory="New" />
                     <Separator style={styles.separator}/>

@@ -22,6 +22,7 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import { MyPacksCard } from '../Packs/Components/PackCards';
 import EventListContainer from './Components/EventListContainer';
+import PackModal from '../../Modals/PackModal/PackModal';
 
 const windowWidth = Dimensions.get('window').width;
 const packCardWidth = 300;
@@ -55,7 +56,7 @@ export default class MyPacks extends React.Component {
 
     render() {
         return (
-            <ScrollView style={styles.root}>
+            <View style={styles.root}>
 
                 <View style={styles.packContent}>
                     <View style={styles.myPacksCardContainer}>
@@ -110,16 +111,11 @@ export default class MyPacks extends React.Component {
 
                 <Divider />
 
-                <View style={styles.eventView}>
-                    <Text style={{fontSize: 20, fontWeight: "500", padding: 10}}>
-                        Events
-                    </Text>
                     <EventListContainer />
                 </View>
-                </View>
 
-
-            </ScrollView>
+                <PackModal />
+            </View>
         );
     }
 }
@@ -152,7 +148,7 @@ const styles = StyleSheet.create({
 
     },
     packInformationText: {
-        fontSize: 20,
+        fontSize: 15,
         color: "#8E8E93",
     },
     packInformation: {

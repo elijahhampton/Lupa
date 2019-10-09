@@ -28,6 +28,10 @@ class Lupa extends React.Component {
     }
   }
 
+  _go = () => {
+    this.props.navigation.openDrawer();
+  }
+
   render() {
     const currIndex = this.state.currIndex;
     return (

@@ -31,6 +31,8 @@ import {
 
 import { Feather as Icon } from '@expo/vector-icons';
 
+import LupaAppBar from '../../AppBar/LupaAppBar';
+
 import ProfilePicture from "../../../images/temp-profile.jpg";
 import LupaCalendar from '../../Calendar/LupaCalendar'
 import { ScrollView } from 'react-native-gesture-handler';
@@ -53,19 +55,7 @@ class TrainerDashboardView extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <Appbar style={styles.appbar}>
-                    <Left>
-                        <IconButton icon="menu" size={20} />
-                    </Left>
-                    <Body>
-                    <Title>
-                        Dashboard
-                    </Title>
-                    </Body>
-                    <Right>
-                        <IconButton icon="inbox" size={20} />
-                    </Right>
-                </Appbar>
+                <LupaAppBar title="Dashboard" />
 
                 <ScrollView contentContainerStyle={styles.dashboardContent}>
 
