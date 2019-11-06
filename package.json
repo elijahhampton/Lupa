@@ -23,7 +23,7 @@
     "express": "^4.17.1",
     "jquery": "^3.4.1",
     "jsdom": "^15.1.1",
-    "mongoose": "^5.6.11",
+    "mongoose": "^5.7.5",
     "native-base": "^2.13.5",
     "react": "16.8.3",
     "react-dom": "^16.8.6",
