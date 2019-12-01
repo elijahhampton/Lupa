@@ -7,7 +7,7 @@ import TrainerDashboardView from '../MainViews/dashboard/TrainerDashboardView';
 
 import ActivityView from '../MainViews/dashboard/Views/ActivityView'
 import NotificationsView from '../MainViews/dashboard/Views/Notifications/NotificationsView';
-import UpcomingView from '../MainViews/dashboard/Views/UpcomingView';
+import MessagesView from '../MainViews/dashboard/Views/MessagesView';
 import ProfileView from '../MainViews/dashboard/Views/Profile/ProfileView';
 
 import TrainerAnimatedTabbar from '../MainViews/dashboard/AnimatedTabbar/TrainerAnimatedTabbar';
@@ -16,7 +16,7 @@ const TrainerTabBarComponent = props => <TrainerAnimatedTabbar {...props} />;
 
 const TrainerBottomTabNavigator = createBottomTabNavigator({
     ActivityView: ActivityView,
-    UpcomingView: UpcomingView,
+    MessagesView: MessagesView,
     DashboardView: TrainerDashboardView,
     NotificationsView: NotificationsView,
     ProfileView: ProfileView,

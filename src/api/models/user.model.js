@@ -3,7 +3,7 @@
  * @date August 19, 2019
  * 
  * Lupa User MongoDB model
- */
+ 
 
 //Import Mongoose
 const mongoose = require('mongoose');
@@ -63,3 +63,4 @@ const User = mongoose.model('User', userSchema);
 
 //Add User to exports
 module.exports = User;
+*/

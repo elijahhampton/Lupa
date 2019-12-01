@@ -63,7 +63,7 @@ class TrainerStaticTabbar extends React.PureComponent<StaticTabbarProps> {
             this.props.navigation.navigate('ActivityView');
             break;
         case 1:
-            this.props.navigation.navigate('UpcomingView');
+            this.props.navigation.navigate('MessagesView');
             break;
         case 2:
             this.props.navigation.navigate('DashboardView');

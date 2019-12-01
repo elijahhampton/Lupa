@@ -5,15 +5,27 @@ import {
     StyleSheet,
     ImageBackground,
     Modal,
-    Text
+    Text,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import {
     TextInput, 
-    Button 
+    Title,
+    Headline,
+    Button
 } from 'react-native-paper';
 
-import LupaController from '../../../api/controller/LupaController';
+import SafeAreaView from 'react-native-safe-area-view';
+
+import Background from '../MainViews/login/images/login_background.jpg';
+
+import { 
+    SocialIcon,
+    Input
+ } from 'react-native-elements';
+
+//import LupaController from '../../../api/controller/LupaController';
 
 class SignupModal extends React.Component {
 
@@ -27,6 +39,7 @@ class SignupModal extends React.Component {
             password: "Hampton",
             email: "ejh0017@gmail.com",
             isRegistered: false,
+            visible: true,
         }
     }
 
@@ -34,98 +47,70 @@ class SignupModal extends React.Component {
         LupaController.registerUser(this.state.username, this.state.password, this.state.firstName, this.state.lastName, this.state.email);
     }
 
+    _closeModal = () => {
+        this.setState({
+            
+        })
+    }
+
     render() {
         return (
-        <View>
             <Modal presentationStyle="fullScreen" visible={false} style={styles.modalContainer}>
-                    <View style={styles.container}>
+                <ImageBackground style={{flex: 1}} source={Background}>
 
-                    <View>
-                        <Text style={{color: "white", fontSize: 20, fontWeight: "500"}}>
-                            Let's get started by registering your account in the Lupa Database.
+                <SafeAreaView style={{flex: 1}}>
+                    
+                    <View style={styles.headerText}>
+                        <Headline style={{fontSize: 25}}>
+                            Sign Up
+                        </Headline>
+                        <Text style={styles.instructionalText}>
+                            Welcome to the Lupa Platform
                         </Text>
                     </View>
 
-                    <View style={styles.textInputContainer}>
-                    <TextInput 
-                        mode="flat"
-                        label="First Name"
-                        placeholder="First Name"
-                        selectionColor="rgba(33, 31, 35, 0.8)"
-                        underlineColor="transparent"
-                        style={styles.textInput}
-                        value={this.state.firstName}
-                        onChangeText={text => this.setState({ firstName: text })}
-                    />
-
-                    <TextInput 
-                        mode="flat"
-                        label="Last Name"
-                        placeholder="Last Name"
-                        selectionColor="rgba(33, 31, 35, 0.8)"
-                        underlineColor="transparent"
-                        style={styles.textInput}
-                        value={this.state.lastName}
-                        onChangeText={text => this.setState({ lastName: text })}
-                    />
-
-                    <TextInput 
-                        mode="flat"
-                        label="Username"
-                        placeholder="Choose a username"
-                        selectionColor="rgba(33, 31, 35, 0.8)"
-                        underlineColor="transparent"
-                        style={styles.textInput}
-                        value={this.state.username}
-                        onChangeText={text => this.setState({ username: text })}
-                    />
-
-                    <TextInput 
-                        mode="flat"
-                        label="Password"
-                        placeholder="Confirm password"
-                        selectionColor="rgba(33, 31, 35, 0.8)"
-                        underlineColor="transparent"
-                        style={styles.textInput}
-                        value={this.state.password}
-                        onChangeText={text => this.setState({ password: text })}
-                    />
-
-                    <TextInput 
-                        mode="flat"
-                        label="Email"
-                        placeholder="Enter your email"
-                        selectionColor="rgba(33, 31, 35, 0.8)"
-                        underlineColor="transparent"
-                        style={styles.textInput}
-                        value={this.state.email}
-                        onChangeText={text => this.setState({ email: text })}
-                    />
-
+                    <View style={{height: "30%", alignItems: "center", justifyContent: "center"}}>
+                        <Text style={styles.instructionalText}>
+                            Sign up using email or mobile
+                        </Text>
+                        
+                            <Input placeholder="Enter an email address or phone number" placeholderTextColor="white" inputStyle={{color: "white"}} label="Email or Mobile" labelStyle={{color: "white"}} containerStyle={{margin: 3}}/>
+                            <Input placeholder="Enter a password"  label="Password" placeholderTextColor="white" inputStyle={{color: "white"}} labelStyle={{color: 'white'}} containerStyle={{margin: 3}}/>
                     </View>
 
+                    <View style={styles.socialNetworks}>
+                        <Text style={styles.instructionalText}>
+                            Or sign up using
+                        </Text>
+                        <View style={styles.socialButtons}>
+                            <SocialIcon type="facebook" title="Sign in using Facebook" light raised={true} button style={styles.socialButton} />
+                            <SocialIcon type="instagram" title="Sign in using Instagram" light raised={true} button style={styles.socialButton} />
+                            <SocialIcon type="twitter" title="Sign in using Twitter" light raised={true} button style={styles.socialButton} />
+                        </View>
+                    </View>
 
-                    <View style={styles.registerButtons}>
-                    <Button 
-                    mode="text" 
-                    color="white" 
-                    style={{alignSelf: "center"}}
-                    >
-                            Already have an account? Login
+                    <View style={{height: "10%", alignItems: "center", justifyContent: "space-around"}}>
+                        <Button mode="contained" color="#2196F3" style={{width: "70%", padding: 4, borderRadius: 15}}>
+                            Sign Up
                         </Button>
-                        <Button 
-                        mode="contained" 
-                        style={{width: "40%", alignSelf: "center"}} 
-                        onPress={this._registerUser}
-                        >
-                            Sign up
-                        </Button>
-                    </View>
+                        <View style={{alignItems: "center", flexDirection: "row"}}>
+                        <Text style={{color: "white"}}>
+                            Already have an account?
+                        </Text>
+                        <Text>
+                            {" "}
+                        </Text>
+                        <TouchableWithoutFeedback onPress={this._closeModal}>
+                        <Text style={{color: "#2196F3"}}>
+                            Login
+                        </Text>
+                        </TouchableWithoutFeedback>
+                        </View>
 
-
                     </View>
+                </SafeAreaView>
+                </ImageBackground>
             </Modal>
-        </View>
         );
     }
 }
@@ -133,27 +118,38 @@ class SignupModal extends React.Component {
 const styles = StyleSheet.create({
     modalContainer: {
         display: "flex",
-        backgroundColor: "#1a1a1a",
+        backgroundColor: "#FAFAFA",
         margin: 0,
-    },
-    container: {
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(33, 31, 35, 0.8)",
-        padding: 20,
-        paddingTop: 40,
-        paddingBottom: 40,
-    },
-    textInputContainer: {
-        margin: 20,
+        alignItems: "center",
         flexDirection: "column",
-        justifyContent: "space-around",
-        height: "80%"
+        justifyContent: "space-between",
+        flex: 1,
     },
-    textInput: {
-        
-    }
+    headerText: {
+        alignItems: "center",
+        justifyContent: "center",
+        height: "20%",
+    },
+    instructionalText: {
+        fontSize: 20,
+        fontWeight: "600",
+        margin: 10,
+        color: "white",
 
+    },
+    socialButton: {
+        width: "80%"
+    },
+    socialButtons: {
+        flexDirection: "column",
+        alignItems: "center",
+        width: "100%",
+    },
+    socialNetworks: {
+        alignItems: "center",
+        justifyContent: "center",
+        height: "40%"
+    }
 });
 
 export default SignupModal;

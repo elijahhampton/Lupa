@@ -7,12 +7,14 @@
 
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
+const MongoClient = require('mongodb').MongoClient;
+//const bodyparser = require('body-parser')
 
-require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = 8080; // Need to set this up automatically from environment var
+const ATLAS_URI = "mongodb+srv://ejh0017:Hamptonej1!@cluster0-mkk9u.gcp.mongodb.net/Lupa?retryWrites=true&w=majority";
+
 
 var corsOptions = {
     optionsSuccessStatus: 200,
@@ -20,23 +22,39 @@ var corsOptions = {
 // Each layer is essentially adding a function that specifically handles something to your flow through the middleware.
 app.use(cors(corsOptions)); //cors middleware
 app.use(express.json()); //express.json() middleware to allow parsing of json
+/*app.use(bodyparser.urlencoded({
+    extended: true
+}));*/
 
-const uri = process.env.ATLAS_URI; //MongoDB Database URI
+const uri = ATLAS_URI; //MongoDB Database URI
+var db = undefined;
 
-
-//Connect to database using uri
-mongoose.connect(uri, {
-    useNewUrlParser: true, useCreateIndex: true
-}).catch(err => {
-    console.log(err);
+const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    
 });
 
-const connection = mongoose.connection;
+client.connect((err, result) => {
+    if (err) {
+        console.log(err);
+    }
+   console.log('Connected successfully server');
+   db = client.db('lupa-app');
 
-connection.once('open', () => {
+   //Starts server listening on port 5000.
+app.listen(port, () => {
+    console.log('Server is running on port: ', port);
+});
+   //client.close();
+})
+
+client.once('open', (data, err) => {
+    if (err) {
+        console.log(err)
+    }
     console.log("MongoDB database connection established successfully");
 });
-
 
 /* Require files for routes */
 const usersRouter = require("./routes/users");
@@ -44,7 +62,4 @@ const usersRouter = require("./routes/users");
 /* Allow app to use routes provided by express */
 app.use("/users", usersRouter);
 
-//Starts server listening on port 5000.
-app.listen(port, () => {
-    console.log('Server is running on port: ', port);
-});
+module.exports = db;

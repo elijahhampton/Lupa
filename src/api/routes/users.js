@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * @author Elijah Hampton
  * @date August 19, 2019
@@ -12,9 +14,7 @@ let User = require("../models/user.model");
 
 //GET request for all users
 router.route("/").get((req, res) => {
-    User.find()
-        .then(users => res.json(users))
-        .catch(err => res.status(400).json("Error: " + err));
+    res.status(200).json(DB);
 });
 
 //POST request to add a user
@@ -39,27 +39,20 @@ router.route("/add").post((req, res) => {
         .catch(err => res.status(400).json("Error: " + err));
     });
 
-//GET request - find users by ID
-router.route("/:username").get((req, res) => {
-    //Find user by username
-    const username = req.params.username;
-
-    //Create user query
-    const userQuery = User.where({username: username})
-
-    //Execute Query
-    userQuery.exec()
-        .then(doc => {
-        res.status(200).json({doc});
-        })
-        .catch(err => res.status(500).json());
-});
 
 //DELETE request - delete user by ID
 router.route("/:id").delete((req, res) => {
     User.findByIdAndDelete(req.params.id)
         .then(() => res.json("User deleted"))
         .catch(err => res.status(400).json("Error: " + err));
+});
+
+//GET request - find users by ID
+router.route("/:username/:password").get((req, res) => {
+    //Find user by username
+    const username = req.params.username;
+    const password = req.params.password;
+
 });
 
 //POST request - Update user by ID
@@ -77,4 +70,5 @@ router.route("/update/:id").post((req, res) => {
 
         
 });
+
 module.exports = router;

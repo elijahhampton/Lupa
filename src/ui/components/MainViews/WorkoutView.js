@@ -48,46 +48,40 @@ import {
 import BackgroundImageOne from '../../images/background-one.jpg';
 import BackgroundImageTwo from '../../images/background-two.jpg';
 
+
+import LupaController from '../../../controller/lupa/LupaController';
+const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
 class WorkoutView extends React.Component {
     constructor(props) {
         super(props);
 
+        this.currUser = LUPA_CONTROLLER_INSTANCE.getCurrUser();
+
         this.state = {
-
+            currUser: this.currUser
         }
+
+
     }
 
-    renderiOSHeader = () => {
-        return (
-            <View>
-
-            </View>
-        );
-    }
-
-    renderAndroidHeader = () => {
-        return (
-            <View>
-                <Text>
-                    No Android Header Set
-                </Text>
-            </View>
-        );
-    }
 
     render() {
+        let firstName = this.state.currUser.personalInformation.firstName;
+        let lastName = this.state.currUser.personalInformation.lastName;
         return (
             <View style={styles.root}>
                 <View style={styles.imageView}>
                     <ImageBackground source={BackgroundImageTwo} style={styles.image} resizeMode='cover'>
                         <View style={styles.overlay}>
-
                             <View style={{ display: "flex" }}>
                                 <Text style={{ color: "white", fontSize: 50, fontWeight: "200" }}>
                                     Welcome,
                                 </Text>
                                 <Text style={{ color: "white", fontSize: 50, fontWeight: "700" }}>
-                                    Mark Hobbs
+                                    { firstName }
+                                    { " " }
+                                    { lastName }
                                 </Text>
                             </View>
 

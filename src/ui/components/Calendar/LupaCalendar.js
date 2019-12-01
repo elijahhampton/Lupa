@@ -145,10 +145,11 @@ export default class LupaCalendar extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: "95%",
     height: "auto",
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: "center",
     elevation: 10,
     borderRadius: 25,
   }

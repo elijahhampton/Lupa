@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import {
     Text,
@@ -6,15 +7,26 @@ import {
     StyleSheet,
     Button,
     TouchableOpacity,
-    ActionSheetIOS
+    ActionSheetIOS,
+    SafeAreaView,
+    ScrollView
 } from 'react-native';
 
-import { Feather as Icon } from '@expo/vector-icons';
+import { 
+    IconButton 
+} from 'react-native-paper';
+
+import { 
+    Feather as Icon 
+} from '@expo/vector-icons';
 
 
 import Explore from './Explore';
 import MyPacks from './MyPacks';
-import { IconButton } from 'react-native-paper';
+import CreatePack from '../../Modals/CreatePack';
+import LupaController from '../../../../controller/lupa/LupaController';
+
+const LUPA_CONTROLLER_ISNTANCE = LupaController.getInstance();
 
 function getExploreTabColorStyle(currState) {
     if (currState == 'explore') {
@@ -36,18 +48,23 @@ export default class PackView extends React.Component {
 
         this.state = {
             activeView: 'explore',
+            acitivePacks: [],
         }
     }
-
+    
     _showActionSheet = () => {
         ActionSheetIOS.showActionSheetWithOptions(
         {
-            options: ['Create New Pack', 'Cancel'],
-            cancelButtonIndex: 1
+            options: ['Create New Pack', 'Manage Packs', 'Cancel'],
+            cancelButtonIndex: 2
         }, (buttonIndex) => {
-            if (buttonIndex == 0) {
-                //Launch Modal to create new pack
-                alert('Create New Pack')
+            switch(buttonIndex) {
+                case 0:
+                    alert('Create New Pack')
+                case 1:
+                    alert('Manage Packs')
+                case 2:
+                default:
             }
         });
     }
@@ -55,17 +72,15 @@ export default class PackView extends React.Component {
     render() {
         const DynamicView = this.state.activeView;
         return (
-            <View style={styles.root}>
-                <View style={styles.header}>
-                    <IconButton icon="search" size={20} onPress={() => alert('Search packs')} />
+            <SafeAreaView style={styles.root}>
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10}}>
                     <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} />
-                </View>
+                    <Text style={{fontSize: 25, fontWeight: "800"}}>
+                        My Packs
+                    </Text>
+                    </View>
 
-                <Text style={{marginLeft: 10, fontSize: 30, fontWeight: "700"}}>
-                    Packs
-                </Text>
-
-                <View style={styles.tabs}>
+                    <View style={styles.tabs}>
                     <TouchableOpacity onPress={() => {this.setState({activeView: 'explore'})}}>
                     <Text style={[ styles.tabsText, getExploreTabColorStyle(this.state.activeView) ]}>
                         Explore
@@ -81,14 +96,28 @@ export default class PackView extends React.Component {
                         My Packs
                     </Text>
                     </TouchableOpacity>
+
+                    <Text style={styles.tabsText}>
+                        .
+                    </Text>
+
+                    <TouchableOpacity onPress={() => {this.setState({activeView: 'mypacks'})}}>
+                    <Text style={[styles.tabsText, getMyPacksTabColorStyle(this.state.activeView) ]}>
+                        Promotions
+                    </Text>
+                    </TouchableOpacity>
                 </View>
 
-                <View style={styles.content}>
+                <ScrollView scrollEnabled={this.state.activeView == 'mypacks' ? true : false}>
                     {
                         DynamicView  == 'explore' ? ( <Explore /> ) : ( <MyPacks /> )
                     }
-                </View>
-            </View>
+                </ScrollView>
+
+               {/*  <PacksSearch ref="packsSearchRef" /> */}
+               <CreatePack />
+            </SafeAreaView>
+
         );
     }
 }
@@ -96,10 +125,7 @@ export default class PackView extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "white",
-    },
-    content: {
-        
+        backgroundColor: "#FAFAFA",
     },
     tabs: {
         width: "100%",
@@ -107,7 +133,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignSelf: "center",
         justifyContent: "space-evenly",
-        margin: 15,
+        backgroundColor: "transparent",
     },
     tabsText: {
         fontSize: 20,
@@ -115,9 +141,10 @@ const styles = StyleSheet.create({
         color: "rgba(0,0,0,.15)",
     },
     header: {
-        paddingTop: 20,
         alignItems: "flex-end",
-        flexDirection: "row",
-        justifyContent: "flex-end"
+        flexDirection: "column",
+        justifyContent: "flex-end",
+        backgroundColor: "#FAFAFA",
+        margin: 5,
     }
 });

@@ -4,27 +4,22 @@ import {
     Modal,
     View,
     Text,
-    StyleSheet
+    StyleSheet,
+    Button,
 } from 'react-native';
 
 import {
-    Button,
-    Title,
-    FAB,
-    IconButton
+    IconButton,
+    Surface,
+    Caption
 } from 'react-native-paper';
 
-import {
-    LinearGradient
-} from 'expo-linear-gradient';
-
-import {
-    BlurView
-} from 'expo-blur';
-
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { Feather as Icon } from '@expo/vector-icons';
 
 import PackMembers from './views/PackMembers.js';
+import SafeAreaView from 'react-native-safe-area-view';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Avatar } from 'react-native-elements';
 
 function getModalPageTitle(currIndex) {
     switch(currIndex) {
@@ -35,8 +30,15 @@ function getModalPageTitle(currIndex) {
                 </Text>
             )
         case 1:
-            
+                <Text style={{fontSize: 40, fontWeight: "400", color: "white", marginTop: 30, marginLeft: 10}}>
+                Chat
+            </Text>
         case 2:
+            return (
+                <Text style={{fontSize: 40, fontWeight: "400", color: "white", marginTop: 30, marginLeft: 10}}>
+                Announcements
+            </Text>
+            )
     }
 }
 
@@ -55,33 +57,153 @@ export default class PackModal extends React.Component{
         super(props);
 
         this.state = {
-            currentIndex: 0,
+            isOpen: true,
         }
     }
+
+    _closeModal = () => {
+        this.setState({
+            isOpen: false,
+        })
+    }
+
+
     render() {
         let pageIndex = this.state.currentIndex;
         return (
-            <Modal presentationStyle="fullScreen" visible={true} style={styles.modalContainer}>
-                <LinearGradient style={styles.contentContainer} colors={['#0D47A1', '#2196F3', '#FFFFFF']}>
-                    <BlurView tint="light" intensity={60} style={styles.blur}>
-                        <View style={{display: "flex", height: "20%", flexDirection: "column", justifyContent: "flex-end"}}>
-                        <IconButton icon="clear" color="white"/>
-
-                            {
-                                getModalPageTitle(pageIndex)
-                            }
+            <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
+                <SafeAreaView>
+                    <View>
+                    <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                        <IconButton icon="clear" color="#2196F3" onPress={this.props._handleClose}/>
+                        <IconButton icon="message" color="#2196F3" />
                         </View>
 
-                        <View style={styles.pageContent}>
-                            {
-                                getModalPage(pageIndex)
-                            }
+                <Text style={styles.header}>
+                    Announcements
+                </Text>
+                    </View>     
+
+                <View style={{height: "80%"}}>
+                <View style={styles.online}>
+                    <Text style={styles.sectionHeader}>
+                        5 people are online
+                    </Text>
+                    <ScrollView>
+                        <View style={styles.flatUserCard}>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <Avatar size="medium" title="EH" rounded  />
+                                <Text style={{padding: 10}}>
+                                    Elijah Hampton
+                                </Text>
+                            </View>
+                                <Icon name="message-square" size={20} style={styles.iconStyle} />
+                        </View>
+                        
+                        <View style={styles.flatUserCard}>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <Avatar size="medium" title="EH" rounded  />
+                                <Text style={{padding: 10}}>
+                                    Elijah Hampton
+                                </Text>
+                            </View>
+                                <Icon name="message-square" size={20} style={styles.iconStyle} />
                         </View>
 
-                    </BlurView>
+                        <View style={styles.flatUserCard}>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <Avatar size="medium" title="EH" rounded  />
+                                <Text style={{padding: 10}}>
+                                    Elijah Hampton
+                                </Text>
+                            </View>
+                                <Icon name="message-square" size={20} style={styles.iconStyle} />
+                        </View>
 
-                    <FAB visible={true} style={styles.fab} icon="menu" color="white" onPress={() => alert('Pack Menu')} />
-                </LinearGradient>
+                        <View style={styles.flatUserCard}>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <Avatar size="medium" title="EH" rounded  />
+                                <Text style={{padding: 10}}>
+                                    Elijah Hampton
+                                </Text>
+                            </View>
+                                <Icon name="message-square" size={20} style={styles.iconStyle} />
+                        </View>
+
+                        <View style={styles.flatUserCard}>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <Avatar size="medium" title="EH" rounded  />
+                                <Text style={{padding: 10}}>
+                                    Elijah Hampton
+                                </Text>
+                            </View>
+                                <Icon name="message-square" size={20} style={styles.iconStyle} />
+                        </View>
+
+                        <View style={styles.flatUserCard}>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                            <Avatar size="medium" title="EH" rounded  />
+                                <Text style={{padding: 10}}>
+                                    Elijah Hampton
+                                </Text>
+                            </View>
+                                <Icon name="message-square" size={20} style={styles.iconStyle} />
+                        </View>
+                    </ScrollView>
+                </View>
+
+                <View style={styles.members}>
+                    <Text style={styles.sectionHeader}>
+                        Members
+                    </Text>
+                    <ScrollView horizontal={true}>
+                    <View style={{margin: 5}}>
+                    <Avatar size="small" title="EH" rounded  />
+                    </View>
+                    <View style={{margin: 5}}>
+                    <Avatar size="small" title="EH" rounded  />
+                    </View>
+                    <View style={{margin: 5}}>
+                    <Avatar size="small" title="EH" rounded  />
+                    </View>
+                    <View style={{margin: 5}}>
+                    <Avatar size="small" title="EH" rounded  />
+                    </View>
+                    <View style={{margin: 5}}>
+                    <Avatar size="small" title="EH" rounded  />
+                    </View>
+                    <View style={{margin: 5}}>
+                    <Avatar size="small" title="EH" rounded  />
+                    </View>
+                    <View style={{margin: 5}}>
+                    <Avatar size="small" title="EH" rounded  />
+                    </View>
+                    <View style={{margin: 5}}>
+                    <Avatar size="small" title="EH" rounded  />
+                    </View>
+                    </ScrollView>
+                </View>
+
+                <View style={styles.events}>
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                    <Text style={styles.sectionHeader}>
+                        Events and Notes
+                    </Text>
+                    <Button title="See all"/>
+                    </View>
+                    <ScrollView horizontal={true}>
+                        <Surface style={styles.event}>
+
+                        </Surface>
+                    </ScrollView>
+                </View>
+                </View>
+
+                <Caption style={{alignSelf: "center"}}>
+                    You have been apart of this pack for 71 days.
+                </Caption>
+
+                </SafeAreaView>
             </Modal>
         );
     }
@@ -91,23 +213,55 @@ const styles = StyleSheet.create({
     modalContainer: {
         display: "flex",
         margin: 0,
-        backgroundColor: "transparent",
+        backgroundColor: "#FAFAFA",
     },
-    contentContainer: {
+    flatUserCard: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
         width: "100%",
-        height: "100%",
-    }, 
-    blur: {
-        ...StyleSheet.absoluteFillObject,
+        padding: 15
     },
-    pageContent: {
-        height: "80%",
+    userInfo: {
+        flex: 2,
+        flexDirection: "row",
+        alignItems: "center",
     },
-    fab: {
-        backgroundColor: "#1976D2",
-        position: "absolute",
-        margin: 16,
-        right: 0,
-        bottom: 0,
+    icon: {
+        flex: 1,
+    },
+    header: {
+        fontSize : 25,
+        fontWeight: "900",
+        padding: 10
+    },
+    event: {
+        width: 100,
+        height: 115,
+        borderRadius: 10,
+        elevation: 6,
+        margin: 5,
+    },
+    sectionHeader: {
+        fontSize: 20,
+        fontWeight: "500",
+        padding: 10,
+    },
+    online: {
+        display: "flex",
+        flex: 3,
+    },
+    members: {
+        flex: 1,
+    },
+    events: {
+        flex: 2,
+    },
+    iconStyle: {
+        borderColor: "#2196F3", 
+        color: "#2196F3", 
+        borderWidth: 1, 
+        borderRadius: 8, 
+        padding: 10
     }
 });
