@@ -48,6 +48,7 @@ class PacksController {
       sessions_completed: undefined,
       timecreated: undefined,
     }
+    
     await Packs.where('membersByName', 'array-contains', username).get().then(res => {
       res.forEach(doc => {
         let data = doc.data();

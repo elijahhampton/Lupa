@@ -35,7 +35,7 @@ export default class BasicInformation extends React.Component {
             <View style={styles.root}>
                 <View style={styles.instructionalTextContainer}>
                     <Text style={styles.instructionalText}>
-                        Before we take you into the app we need a little information.  Don't worry you can save most of it for later.
+                        Welcome to Lupa.  Before we take you into the app we need a little information.  Don't worry you can save most of it for later.
                     </Text>
                 </View>
 
@@ -56,15 +56,15 @@ export default class BasicInformation extends React.Component {
                 <View>
                     <TouchableOpacity style={{flexDirection: "row", alignItems: "center"}}>
                     <Icon name="map-pin" size={15} style={{padding: 2}} />
-                    <Text style={styles.generalText}>
-                        Where area do you generally workout?
+                    <Text style={[styles.generalText, { color: '#2196F3'}]}>
+                        Where are you located?
                     </Text>
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.pickerContainer}>
                     <Text style={styles.generalText}>
-                        Are you a male or female?
+                        Gender
                     </Text>
                     <Picker
                         mode="dropdown"

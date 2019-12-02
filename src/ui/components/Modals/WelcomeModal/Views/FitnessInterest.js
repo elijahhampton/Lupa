@@ -3,7 +3,8 @@ import React from 'react';
 import {
     View,
     StyleSheet,
-    Text
+    Text,
+    TouchableOpacity
 } from 'react-native';
 
 import {
@@ -17,6 +18,12 @@ import {
     Input
 } from 'react-native-elements';
 
+import Autocomplete from 'react-native-autocomplete-input'
+
+import {
+    interestData
+} from '../../../../../controller/lupa/lupa_pre';
+
 export default class FitnessInterest extends React.Component {
     constructor(props) {
         super(props);
@@ -25,22 +32,59 @@ export default class FitnessInterest extends React.Component {
             firstName: '',
             lastName: '',
             interest: [],
+            autoCompleteData: [],
             interestText: '',
         }
     }
 
     addInterest = () => {
+        let numInterest = this.state.interest.length;
+        if (numInterest == 18) { return }
         this.setState(prevState => ({
             interest: [...prevState.interest, this.state.interestText]
         }));
     }
 
-    deleteInterest = (key) => {
+    _randomizeAutoCompleteData = (list) => {
+        const fullList = interestData;
+        for (let i = 0; i < 5; ++i) {
+            list.push(fullList[Math.floor((Math.random() * 8))]); //Random number between 1 and 8.. Need to increase as interest list increases.
+        }
 
+        this.setState({
+            autoCompleteData: list
+        })
     }
 
-    modifyInterest = () => {
+    _manipulateSuggestionList = (input) => {
+        console.log('Input: ' + input)
+        let autoCompleteDataUnfiltered = [];
+        this._randomizeAutoCompleteData(autoCompleteDataUnfiltered);
 
+        let autoCompleteDataFiltered = interestData;
+
+        if (input == '') { this.setState({ autoCompleteData: autoCompleteDataUnfiltered })}
+        const result = autoCompleteDataFiltered.filter(element => element.startsWith(input));
+        this.setState({ autoCompleteData: result})
+    }
+
+    _handleOnChangeText = (text) => {
+        this._manipulateSuggestionList(text);
+        this.setState({ interestText: text })
+    }
+
+    _returnTextInput = () => {
+        return (
+            <Input placeholder="Try something like 'Yoga' " 
+                    inputStyle={{fontSize: 25, fontWeight: "600", color: "black"}} 
+                    label="Interest" 
+                    onChangeText={text => this._handleOnChangeText(text)} 
+                    onSubmitEditing={this.addInterest}
+                    returnKeyType="done"
+                    keyboardType="default"
+                    value={this.state.interestText} 
+        />
+        )
     }
 
     render() {
@@ -53,14 +97,21 @@ export default class FitnessInterest extends React.Component {
                 </View>
 
                 <View style={styles.userInput}>
-                    <Input placeholder="Enter an interest" 
-                    inputStyle={{fontSize: 30, fontWeight: "600", color: "black"}} 
-                    label="Interest" 
-                    onChangeText={text => this.setState({ interestText: text })} 
-                    onSubmitEditing={this.addInterest}
-                    returnKeyType="done"
-                    keyboardType="default"
-                    value={this.state.interestText} />
+
+<Autocomplete
+      data={this.state.autoCompleteData}
+      onChangeText={text => this._handleOnChangeText(text)}
+      renderItem={({ item, i }) => (
+        <TouchableOpacity onPress={() => this.setState({ interest: this.state.interest.concat(item)})}>
+          <Text style={{fontSize: 20, fontWeight: "300"}}>{item}</Text>
+        </TouchableOpacity>
+      )}
+      containerStyle={{width: "100%", borderColor: "transparent"}}
+      inputContainerStyle={{width: "100%", borderColor: "transparent"}}
+      listContainerStyle={{width: "80%", borderColor: "transparent"}}
+      listStyle={{width: "80%", borderColor: "transparent"}}
+      renderTextInput={this._returnTextInput}
+    />
                 </View>
 
                 <View style={styles.interestChips}>
@@ -95,10 +146,10 @@ const styles = StyleSheet.create({
         flexBasis: 90,
     },
     instructionalTextContainer: {
-        height: "30%",
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
+        flex: 1,
     },
     instructionalText: {
         flexShrink: 1,
@@ -106,15 +157,16 @@ const styles = StyleSheet.create({
         fontWeight: "600"
     },
     userInput: {
-        height: "20%",
+        flex: 1,
         width: "100%",
         alignItems: "center",
     },
     interestChips: {
-        height: "50%",
         width: "100%",
         flexDirection: "row",
         justifyContent: "flex-start",
-        display: "flex",
+        flexWrap: 'wrap',
+        alignItems: "center",
+        flex: 1,
     },
 })

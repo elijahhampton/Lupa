@@ -50,6 +50,7 @@ class App extends React.Component {
 
   render() {
     return (
+      
       <StoreProvider store={LupaStore}>
         <PaperProvider>
           <Navigator />

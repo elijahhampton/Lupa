@@ -98,6 +98,8 @@ class LoginView extends Component {
     const passwordValue = this.state.password;
     return (
       <ImageBackground source={Background} style={styles.root}>
+        <SafeAreaView style={{flex: 1, }}>
+
         <View style={styles.loginView}>
           <View style={styles.surface}>
             <Input placeholder="Enter your username"
@@ -134,12 +136,21 @@ class LoginView extends Component {
         </View>
 
         <View style={styles.socialView}>
-          <Text style={{ alignSelf: "center", fontSize: 20, fontWeight: "600", color: "white", padding: 10 }}>
-            Or sign in with
-              </Text>
 
           <SocialIcon type="facebook" raised button light />
           <SocialIcon type="instagram" raised button light />
+
+          <View style={{padding: 20}}>
+          <Text style={{ alignSelf: "center", fontSize: 20, fontWeight: "600", color: "white"}}>
+            Don't have an account?
+          </Text>
+          <Text>
+            { " "}
+          </Text>
+          <Text style={{ alignSelf: "center", fontSize: 20, fontWeight: "bold", color: "white"}}>
+            Sign up
+          </Text>
+        </View>
         </View>
 
 
@@ -153,7 +164,8 @@ class LoginView extends Component {
         >
           The username or password you provided was incorrect.
 </Snackbar>
-        <SignUpModal />
+      
+        </SafeAreaView>
       </ImageBackground>
     );
   }
@@ -162,8 +174,6 @@ class LoginView extends Component {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   surface: {
     //elevation: 10,
@@ -197,7 +207,7 @@ const styles = StyleSheet.create({
   touchableOpacity: {
     position: "absolute",
     borderRadius: 25,
-    top: 242,
+    top: 221,
     width: "85%",
     height: "18%",
   },
