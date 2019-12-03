@@ -51,7 +51,7 @@ class SearchView extends React.Component {
     }
 
     componentDidMount() {
-       this._prepareSearch();
+      // this._prepareSearch();
         this.setState({
             readyToSearch: true,
         })

@@ -27,6 +27,10 @@ import {
   Surface
 } from 'react-native-paper';
 
+import {
+  storeAsyncData
+} from '../../../../controller/lupa/storage/async';
+
 import Background from "./images/login_background3.jpg";
 import Logo from "../../../images/temp-logo.png";
 
@@ -39,6 +43,7 @@ import { Feather } from "@expo/vector-icons";
 
 import LupaController from '../../../../controller/lupa/LupaController.ts';
 
+const { isSignedIn } = require('../../../../controller/lupa/auth');
 
 let LUPA_CONTROLLER_INSTANCE;
 class LoginView extends Component {
@@ -48,14 +53,26 @@ class LoginView extends Component {
     this.state = {
       username: 'elijahhampton',
       password: 'Hamptonej1!',
+      signedIn: false,
+      checkedSignedIn: false,
       snackBarIsVisible: false,
-      isSignupModalVisible: true,
-
     }
   }
 
   componentDidMount = () => {
-    LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+  LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+   this._checkSignedInStatus();
+  }
+
+  _checkSignedInStatus = () => {
+    isSignedIn().then(res => {
+      this.setState({
+        signedIn: res,
+        checkedSignedIn: true
+      })
+    })
+
+    if (this.state.signedIn == true) { this._introduceApp }
   }
 
   onLogin = async (e) => {
@@ -82,15 +99,11 @@ class LoginView extends Component {
   /**
    * Introduce the application
    * Finish any last minute things here before showing the application to the user.
+   * This really isn't the place to be doing this, but any small last minute changes can go here.
    */
-  _introduceApp = () => {
+  _introduceApp = (username, password) => {
+    storeAsyncData('lupaUSER_' + username, 'lupaPASS_' + password)
     this.props.navigation.navigate('App');
-  }
-
-  _launchSignupModal = () => {
-    this.setState({
-      isSignupModalVisible: true,
-    })
   }
 
   render() {
@@ -98,7 +111,11 @@ class LoginView extends Component {
     const passwordValue = this.state.password;
     return (
       <ImageBackground source={Background} style={styles.root}>
-        <SafeAreaView style={{flex: 1, }}>
+        <SafeAreaView style={{flex: 1, display: "flex"}}>
+
+          <View style={styles.iconView}>
+
+          </View>
 
         <View style={styles.loginView}>
           <View style={styles.surface}>
@@ -125,13 +142,9 @@ class LoginView extends Component {
             <Button mode="text" style={{ alignSelf: "flex-start" }} color="#2196F3">
               Forgot Password
           </Button>
-            <TouchableOpacity style={styles.touchableOpacity} onPress={this.onLogin} >
-              <Surface style={styles.loginButton}>
-                <LinearGradient style={styles.gradient} colors={['#1E88E5', '#42A5F5']} start={[0.1, 0]} end={[1, 0]}>
-                  <Feather name="arrow-right" size={20} color="white" />
-                </LinearGradient>
-              </Surface>
-            </TouchableOpacity>
+            <Button onPress={this.onLogin} mode="contained" color="#2196F3" style={{width: "60%", marginTop: 10}}>
+              Login
+            </Button>
           </View>
         </View>
 
@@ -140,16 +153,18 @@ class LoginView extends Component {
           <SocialIcon type="facebook" raised button light />
           <SocialIcon type="instagram" raised button light />
 
-          <View style={{padding: 20}}>
+          <View style={{padding: 20, flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
           <Text style={{ alignSelf: "center", fontSize: 20, fontWeight: "600", color: "white"}}>
             Don't have an account?
           </Text>
           <Text>
             { " "}
           </Text>
-          <Text style={{ alignSelf: "center", fontSize: 20, fontWeight: "bold", color: "white"}}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
+          <Text style={{ alignSelf: "center", fontSize: 20, fontWeight: "900", color: "white"}}>
             Sign up
           </Text>
+          </TouchableOpacity>
         </View>
         </View>
 
@@ -179,9 +194,8 @@ const styles = StyleSheet.create({
     //elevation: 10,
     backgroundColor: "rgba(250,250,250 ,0.8)",
     borderRadius: 15,
-    height: "50%",
+    height: "80%",
     width: "80%",
-    alignSelf: "center",
     //margin: 10,
     padding: 10,
     alignItems: "center",
@@ -189,8 +203,8 @@ const styles = StyleSheet.create({
   },
   loginView: {
     flex: 2,
-    width: "100%",
-    justifyContent: "flex-end"
+    alignItems: "center",
+    justifyContent: "center",
   },
   gradient: {
     borderRadius: 19,
@@ -204,12 +218,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "600"
   },
-  touchableOpacity: {
-    position: "absolute",
-    borderRadius: 25,
-    top: 221,
-    width: "85%",
-    height: "18%",
+  iconView: {
+    flex: 1,
   },
   loginButton: {
     borderRadius: 25,

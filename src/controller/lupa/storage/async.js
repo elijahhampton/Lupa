@@ -2,6 +2,12 @@ import {
     AsyncStorage
 } from 'react-native';
 
+const asyncData = [
+    'isSignedIn',
+    'lupaUSER_', //actually lupaUSER_USERNAME
+    'lupaPASS_', //actually lupaPASS_PASSWORD
+]
+
 async function storeAsyncData(key, value) {
     try {
         await AsyncStorage.setItem(key, value);
@@ -11,16 +17,19 @@ async function storeAsyncData(key, value) {
     }
 };
 
-async function retrieveAsynData(key, value) {
+function retrieveAsyncData(key, value) {
+    let retVal = undefined;
     try {
-        await AsyncStorage.getItem(key, value);
+        retVal = AsyncStorage.getItem(key)
     } catch(err) {
         //Error retrieving data
     }
+
+    return retVal;
 }
 
 //Export functions
 export {
     storeAsyncData,
-    retrieveAsynData,
+    retrieveAsyncData,
 };
