@@ -26,7 +26,13 @@ import {
     Input
  } from 'react-native-elements';
 
-//import LupaController from '../../../api/controller/LupaController';
+ import { Feather } from '@expo/vector-icons';
+
+import LupaController from '../../../../controller/lupa/LupaController';
+
+import {
+    storeAsyncData
+  } from '../../../../controller/lupa/storage/async';
 
 class SignupModal extends React.Component {
 
@@ -34,25 +40,63 @@ class SignupModal extends React.Component {
         super(props);
 
         this.state = {
-            firstName: "Elijah",
-            lastName: "Hampton",
-            username: "ejh0017",
-            password: "Hampton",
-            email: "ejh0017@gmail.com",
+            username: undefined,
+            password: undefined,
+            confirmedPassword: undefined,
             isRegistered: false,
-            visible: true,
+            confirmPasswordWidth: 0,
+            confirmPasswordHeight: 0,
+            passwordSecureTextEntry: true,
+            secureConfirmPasswordSecureTextEntry: true,
         }
+
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
+
+  /**
+   * Introduce the application
+   * Finish any last minute things here before showing the application to the user.
+   * This really isn't the place to be doing this, but any small last minute changes can go here.
+   */
+  _introduceApp = (username, password) => {
+      console.log('sss')
+    storeAsyncData('lupaUSER_' + username, 'lupaPASS_' + password);
+    this.props.navigation.navigate('App');
+  }
 
     _registerUser = () => {
-        LupaController.registerUser(this.state.username, this.state.password, this.state.firstName, this.state.lastName, this.state.email);
+        this.LUPA_CONTROLLER_INSTANCE.registerUser(this.state.username, this.state.password, this.state.confirmedPassword).then(status => {
+            status == true ? this._introduceApp(this.state.username, this.state.password) : console.log('execute snackbar function wtih reason');
+        });
     }
 
-    _closeModal = () => {
-        this.setState({
-            
-        })
+    _handleMobileInputOnChangeText = (text) => {
+        this.setState({ username: text })
     }
+
+    _handlePasswordInputOnChangeText = (text) => {
+        text.length >= 1 ?  this.setState({ confirmPasswordWidth: "100%", confirmPasswordHeight: "auto" }) : 
+        this.setState({confirmPasswordWidth: 0, confirmPasswordHeight: 0 })
+
+        this.setState({ password: text });
+    }
+
+    _handleConfirmedPasswordInputOnChangeText = (text) => {
+
+        this.setState({ confirmedPassword: text })
+    }
+
+    _handleShowPassword = () => {
+        this.setState({
+            passwordSecureTextEntry: !this.state.passwordSecureTextEntry
+        })
+      }
+
+      _handleShowConfirmPassword = () => {
+        this.setState({
+            confirmPasswordSecureTextEntry: !this.state.confirmPasswordSecureTextEntry
+        })
+      }
 
     render() {
         return (
@@ -71,22 +115,42 @@ class SignupModal extends React.Component {
 
                     <View style={{height: "30%", alignItems: "center", justifyContent: "center"}}>
                         <Text style={styles.instructionalText}>
-                            Sign up using email or mobile
+                            Create your username and password
                         </Text>
 
                         <Surface style={styles.surface}>
-                        <Input placeholder="Enter an email address or phone number" 
+                        <Input placeholder="Enter a usernname" 
                         placeholderTextColor="black" 
                         inputStyle={styles.inputStyle} 
-                        label="Email or Mobile" 
+                        label="Username" 
                         labelStyle={styles.labelStyle} 
-                        containerStyle={styles.containerStyle}/>
+                        containerStyle={styles.containerStyle}
+                        value={this.state.username}
+                        onChangeText={text => this._handleMobileInputOnChangeText(text)}/>
+
                         <Input placeholder="Enter a password" 
                         label="Password" 
+                        rightIcon={<Feather name="eye" onPress={this._handleShowPassword} />}
+                        secureTextEntry={this.state.passwordSecureTextEntry}
                         placeholderTextColor="black" 
                         inputStyle={styles.inputStyle} 
                         labelStyle={styles.labelStyle} 
-                        containerStyle={styles.containerStyle}/>
+                        containerStyle={styles.containerStyle}
+                        value={this.state.password}
+                        onChangeText={text => this._handlePasswordInputOnChangeText(text)}/>
+
+                        <View style={{height: this.state.confirmPasswordHeight, width: this.state.confirmPasswordWidth}}>
+                        <Input placeholder="Confirm your password" 
+                        label="Confirm Password" 
+                        rightIcon={<Feather name="eye" onPress={this._handleShowConfirmShowPassword} />}
+                        secureTextEntry={this.state.secureConfirmPasswordSecureTextEntry}
+                        placeholderTextColor="black" 
+                        inputStyle={styles.inputStyle} 
+                        labelStyle={styles.labelStyle} 
+                        containerStyle={styles.containerStyle} 
+                        value={this.state.confirmedPassword}
+                        onChangeText={text => this._handleConfirmedPasswordInputOnChangeText(text)}/> 
+                        </View>
                         </Surface>
                     
                     </View>
@@ -102,7 +166,7 @@ class SignupModal extends React.Component {
                     </View>
 
                     <View style={{height: "10%", alignItems: "center", justifyContent: "space-around"}}>
-                        <Button mode="contained" color="#2196F3" style={{width: "70%", padding: 4, borderRadius: 15}}>
+                        <Button mode="contained" color="#2196F3" style={{width: "70%", padding: 4, borderRadius: 15}} onPress={this._registerUser}>
                             Sign Up
                         </Button>
                         <View style={{alignItems: "center", flexDirection: "row"}}>

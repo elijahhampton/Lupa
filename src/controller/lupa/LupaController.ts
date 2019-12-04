@@ -25,11 +25,18 @@ export default class LupaController {
       return LupaController._instance;
     }
 
+    /* Algolia */
     indexUsers = async () => {
       await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
     /* User Functions */
+    registerUser = async(usernameIn, passwordIn, confirmedPassword) : Promise<Boolean> => {
+      let result = await USER_CONTROLLER_INSTANCE.addUserToDatabase(usernameIn, passwordIn);
+      console.log(result);
+      return Promise.resolve(result);
+    }
+
     loginUser = async (usernameIn, passwordIn) : Promise<Boolean> => 
     {
       if (usernameIn == null || usernameIn == '' || usernameIn == undefined || passwordIn == null 

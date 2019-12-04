@@ -12,33 +12,19 @@ import {
   Text,
   StyleSheet,
   ImageBackground,
-  TextInput,
   TouchableOpacity,
-  Image,
-  TouchableWithoutFeedback,
   SafeAreaView,
-  Dimensions
 } from "react-native";
 
 import {
   Button,
-  Divider,
   Snackbar,
-  Surface
 } from 'react-native-paper';
 
-import {
-  storeAsyncData
-} from '../../../../controller/lupa/storage/async';
 
 import Background from "./images/login_background3.jpg";
-import Logo from "../../../images/temp-logo.png";
-
 import { SocialIcon, Input } from "react-native-elements";
 
-import SignUpModal from "../../Modals/SignupModal";
-
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 
 import LupaController from '../../../../controller/lupa/LupaController.ts';
@@ -56,6 +42,7 @@ class LoginView extends Component {
       signedIn: false,
       checkedSignedIn: false,
       snackBarIsVisible: false,
+      secureTextEntry: true,
     }
   }
 
@@ -72,11 +59,17 @@ class LoginView extends Component {
       })
     })
 
-    if (this.state.signedIn == true) { this._introduceApp }
+    if (this.state.signedIn == true) { this._introduceApp() }
+  }
+
+  _handleShowPassword = () => {
+    this.setState({
+      secureTextEntry: !this.state.secureTextEntry
+    })
   }
 
   onLogin = async (e) => {
-    e.persist();
+    e.preventDefault();
 
     let successfulLogin;
 
@@ -102,7 +95,6 @@ class LoginView extends Component {
    * This really isn't the place to be doing this, but any small last minute changes can go here.
    */
   _introduceApp = (username, password) => {
-    storeAsyncData('lupaUSER_' + username, 'lupaPASS_' + password)
     this.props.navigation.navigate('App');
   }
 
@@ -133,9 +125,10 @@ class LoginView extends Component {
               label="Password"
               labelStyle={styles.labelStyle}
               inputStyle={styles.inputStyle}
+              secureTextEntry={this.state.secureTextEntry}
               inputContainerStyle={styles.inputContainerStyle}
               containerStyle={styles.containerStyle}
-              rightIcon={<Feather name="eye" />}
+              rightIcon={<Feather name="eye" onPress={this._handleShowPassword} />}
               textContentType="password"
               onChangeText={text => this.setState({ password: text})}
               value={this.state.password} />

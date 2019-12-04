@@ -106,6 +106,43 @@ export default class UserController {
 }
 
     /**
+     * Add User to Firebase
+     */
+    addUserToDatabase = (usernameIn, passwordIn="", emailIn="", firstNameIn="", lastNameIn="", statisticsIn=[], 
+    specializationsIn=[], experienceIn=[], packsByNameIn=[], recommendedWorkoutsIn=[], isTrainerIn=false, sessionsIn=[], 
+    timeCreatedIn=new Date().getTime(), genderIn="undefined", locationIn="undefined", ratingIn=0, eventsByNameIn=[]) => {
+        
+            let newUserData = {
+                email: emailIn,
+                eventsByName: eventsByNameIn,
+                experience: experienceIn,
+                firstName: firstNameIn,
+                gender: genderIn,
+                isTrainer: isTrainerIn,
+                lastName: lastNameIn,
+                location: locationIn,
+                packsByName: packsByNameIn, 
+                password: passwordIn,
+                rating: ratingIn,
+                recommendedWorkouts: recommendedWorkoutsIn,
+                timeCreated: timeCreatedIn,
+                username: usernameIn,
+                specializations: specializationsIn,
+                statistics: statisticsIn,
+                sessions: sessionsIn,
+            }
+
+            try {
+            USER_COLLECTION.doc(usernameIn).set(newUserData);
+            this.setCurrentUserInformation(usernameIn);
+            return true;
+            } catch(Exception) {
+                console.log(Exception)
+                return false;
+            }
+    }
+
+    /**
      * 
      */
     login = async (usernameIn, passwordIn)  : Promise<Boolean> => {
