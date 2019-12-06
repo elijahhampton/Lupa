@@ -14,10 +14,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const LUPA_DB = firebase.firestore();
-const algoliasearch = require('algoliasearch/reactnative');
+export const LUPA_AUTH = firebase.auth();
 
-const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "883fd25a4271423ab63d5cb5d5096f72");
-const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
+
 
 
 

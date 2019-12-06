@@ -21,7 +21,6 @@ import {
   Snackbar,
 } from 'react-native-paper';
 
-
 import Background from "./images/login_background3.jpg";
 import { SocialIcon, Input } from "react-native-elements";
 
@@ -29,7 +28,10 @@ import { Feather } from "@expo/vector-icons";
 
 import LupaController from '../../../../controller/lupa/LupaController.ts';
 
-const { isSignedIn } = require('../../../../controller/lupa/auth');
+const { 
+  isSignedIn,
+  loginUser
+} = require('../../../../controller/lupa/auth');
 
 let LUPA_CONTROLLER_INSTANCE;
 class LoginView extends Component {
@@ -44,10 +46,11 @@ class LoginView extends Component {
       snackBarIsVisible: false,
       secureTextEntry: true,
     }
+
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
   }
 
   componentDidMount = () => {
-  LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
    this._checkSignedInStatus();
   }
 
@@ -71,14 +74,10 @@ class LoginView extends Component {
   onLogin = async (e) => {
     e.preventDefault();
 
-    let successfulLogin;
-
     const attemptedUsername = this.state.username;
     const attemptedPassword = this.state.password;
 
-    await LUPA_CONTROLLER_INSTANCE.loginUser(attemptedUsername, attemptedPassword).then((value) => {
-      successfulLogin = value;
-    });
+   // let successfulLogin = loginUser(attemptedUsername, attemptedPassword);
 
     if (successfulLogin) {
       this._introduceApp();
@@ -94,13 +93,12 @@ class LoginView extends Component {
    * Finish any last minute things here before showing the application to the user.
    * This really isn't the place to be doing this, but any small last minute changes can go here.
    */
-  _introduceApp = (username, password) => {
+  _introduceApp = () => {
+   // this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     this.props.navigation.navigate('App');
   }
 
   render() {
-    const usernameValue = this.state.username;
-    const passwordValue = this.state.password;
     return (
       <ImageBackground source={Background} style={styles.root}>
         <SafeAreaView style={{flex: 1, display: "flex"}}>
@@ -143,7 +141,7 @@ class LoginView extends Component {
 
         <View style={styles.socialView}>
 
-          <SocialIcon type="facebook" raised button light />
+          <SocialIcon type="twitter" raised button light />
           <SocialIcon type="instagram" raised button light />
 
           <View style={{padding: 20, flexDirection: "row", alignItems: "center", justifyContent: "center"}}>

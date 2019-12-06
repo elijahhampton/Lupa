@@ -30,9 +30,9 @@ import {
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
-import {
-    storeAsyncData
-  } from '../../../../controller/lupa/storage/async';
+const {
+    signUpUser
+} = require('../../../../controller/firebase/firebase');
 
 class SignupModal extends React.Component {
 
@@ -59,15 +59,26 @@ class SignupModal extends React.Component {
    * This really isn't the place to be doing this, but any small last minute changes can go here.
    */
   _introduceApp = (username, password) => {
-      console.log('sss')
-    storeAsyncData('lupaUSER_' + username, 'lupaPASS_' + password);
+    //this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     this.props.navigation.navigate('App');
   }
 
-    _registerUser = () => {
-        this.LUPA_CONTROLLER_INSTANCE.registerUser(this.state.username, this.state.password, this.state.confirmedPassword).then(status => {
-            status == true ? this._introduceApp(this.state.username, this.state.password) : console.log('execute snackbar function wtih reason');
-        });
+    _registerUser = (username, password, confirmedPassword) => {
+        //Check password against confirmedPassword- lazy check for now
+        if (password != confirmedPassword) {
+            console.log('LUPA: Password did not match confirmed password')
+            return;
+        }
+        
+        //Grab user credentials from state
+        const username = this.state.username;
+        const password = this.state.password;
+
+        //Check registration status
+        let successfulRegistration = signUpUser(username, password);
+
+        //Execute login or failure
+        successfulRegistration == true ? this._introduceApp(username, password) : console.log('LUPA: Firebase failure upon registering user.');
     }
 
     _handleMobileInputOnChangeText = (text) => {

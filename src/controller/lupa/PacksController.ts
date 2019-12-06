@@ -1,15 +1,23 @@
 /* Please do not remove this line as it prevents the Cannot Find Variable: Buffer error */
 //global.Buffer = global.Buffer || require('buffer').Buffer
 
-let UserController = require('../lupa/UserController')
-let USER_CONTROLLER = UserController.getInstance();
-let WORKOUT_CONTROLLER;
+import LUPA_DB from '../firebase/firebase.js';
+
+const PACKS_COLLECTION = LUPA_DB.collection('packs');
+
+//import * as algoliasearch from 'algoliasearch'; // When using TypeScript
+const algoliasearch = require('algoliasearch/reactnative.js');
+const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
+const packsIndex = algoliaIndex.initIndex("dev_PACKS");
+
+import UserController from './UserController';
+let USER_CONTROLLER_INSTANCE;
 
 class PacksController {
   private static instance : PacksController;
 
   private constructor() {
-
+    USER_CONTROLLER_INSTANCE = UserController.getInstance();
   }
 
   static getInstance() {
@@ -21,6 +29,48 @@ class PacksController {
       return PacksController.instance;
   }
 
+  indexPacksIntoAlgolia = async () => {
+    let records = [];
+
+    console.log('Indexing Packs Into Algolia');
+
+    await PACKS_COLLECTION.get().then(docs => {
+      docs.forEach(doc => {
+              //Load pack from document
+      let pack = doc.data();
+
+      //Set object ID (although this may not be necessary)
+      pack.objectID = doc.id;
+
+      //Set necessary data for packs
+      let packData = {
+        packName: pack.name,
+        packMembersByName: pack.membersByName,
+        numPackMembers: pack.num_members,
+        packRating: pack.rating,
+        packSessionsCompleted: pack.sessions_completed,
+        packTimeCreated: pack.timecreated,
+        packEvents: pack.events,
+        packLeaderNotes: pack.packLeaderNotes,
+        isGlobal: pack.isGlobal,
+        isSubscription: pack.isSubscription,
+        isDefault: pack.isDefault
+      }
+
+      records.push(packData);
+
+      });
+
+      packsIndex.addObjects(records, (err, content) => {
+        if (err) {
+          console.log('Error while indexing packs into Algolia: ' + err);
+        }
+
+        console.log('Completed Packs Indexing');
+      });
+    });
+  }
+
   getAllPacks() {
     console.log('Returning all Packs');
     
@@ -30,7 +80,10 @@ class PacksController {
    
   }
 
-  getPremiumPacks() {
+  /**
+   * Subscription Based Offers
+   */
+  getSubscriptionBasedPacks() {
 
   }
 
@@ -38,41 +91,24 @@ class PacksController {
 
   }
 
-  getPacksByUser = async (username) : Promise<Object> => {
-    let packsData = new Array();
-    let pack = {
-      name: undefined,
-      membersByName: [],
-      num_members: undefined,
-      rating: undefined,
-      sessions_completed: undefined,
-      timecreated: undefined,
-    }
-    
-    await Packs.where('membersByName', 'array-contains', username).get().then(res => {
-      res.forEach(doc => {
-        let data = doc.data();
-        pack.name = data.name;
-        data.membersByName.forEach(name => {
-          pack.membersByName.push(name);
-        })
-        pack.num_members = data.num_members;
-        pack.rating = data.rating;
-        pack.sessions_completed = data.sessions_completed;
-        pack.timecreated = data.timecreated;
-        packsData.push(pack);
-      })
-    }).catch(err => {
-      return Promise.reject(err);
+  getPacksByUser = async (userIn) : Promise<Object> => {
+    let result;
+
+    await PACKS_COLLECTION.where('membersByName', 'array-contains', userIn.accountInformation.username).get().then(res => {
+      result = res;
     })
-    return Promise.resolve(packsData);
+
+    //Figure out what is returning here
+    console.log(result)
+
+    return Promise.resolve(result);
   }
 
-  getPackInformationByName(packName) {
+  getPackInformationByPackName(packName) {
 
   }
 
-  getPackEvents(packName) {
+  getPackEventsByPackName(packName) {
 
   }
 

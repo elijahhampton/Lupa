@@ -26,8 +26,6 @@ import MyPacks from './MyPacks';
 import CreatePack from '../../Modals/CreatePack';
 import LupaController from '../../../../controller/lupa/LupaController';
 
-const LUPA_CONTROLLER_ISNTANCE = LupaController.getInstance();
-
 function getExploreTabColorStyle(currState) {
     if (currState == 'explore') {
         return { color: '#2196F3' };
@@ -50,6 +48,8 @@ export default class PackView extends React.Component {
             activeView: 'explore',
             acitivePacks: [],
         }
+
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
     
     _showActionSheet = () => {

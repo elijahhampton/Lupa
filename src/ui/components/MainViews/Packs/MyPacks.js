@@ -12,13 +12,13 @@ import { MyPacksCard } from '../Packs/Components/PackCards';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
-let LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
 export default class MyPacks extends React.Component {
     constructor(props) {
         super(props);
 
-        this.currUserPacks = LUPA_CONTROLLER_INSTANCE.getCurrUser().packInformation.packs;
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+        this.currUserPacks = this.LUPA_CONTROLLER_INSTANCE.getPacksByUser();
 
         this.state = {
             currUserPacks: this.currUserPacks,
@@ -29,23 +29,27 @@ export default class MyPacks extends React.Component {
         this.loadCurrUserPacks = this.loadCurrUserPacks.bind(this);
     }
 
-    loadCurrUserPacks = () => {
-       let packs = this.state.currUserPacks.map(pack => {
-           return (
-            <MyPacksCard title={pack} />
-           );
-       })
+    componentDidMount() {
+        console.log("AAAAAAAAAAAAAAAAAAAAAA" + this.currUserPacks[0])
+    }
 
-       return packs;
+    loadCurrUserPacks = () => {
+      /* let packs = this.state.currUserPacks.map(pack => {
+           return (
+            <MyPacksCard title={pack} packLeader={"Jason Smooth"} sessionsCompleted={"56"} />
+           );
+       })*/
+
+       //return packs;
     }
 
     render() {
-        let numPacks = this.state.currUserPacks.length;
+        //let numPacks = this.state.currUserPacks.length;
         return (
                 <>
                 <View style={{margin: 10}}>
                 <Text style={{color: "#BDBDBD", alignSelf: "center", fontSize: 15, fontWeight: "600"}}>
-                    You are currently in { numPacks } pack.
+                    You are currently in { /* numPacks */ } pack.
                 </Text>
                 </View>
 

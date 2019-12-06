@@ -15,6 +15,8 @@ import { Avatar } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PackModal from '../../../Modals/PackModal/PackModal';
 
+import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
+
 
 const MyPacksCard = (props) => {
     const [showPack, setShowPack] = useState(false);
@@ -28,10 +30,11 @@ const MyPacksCard = (props) => {
         <TouchableOpacity onPress={() => setShowPack(true)}>
         <View style={{ margin: 10 }}>
             <Surface style={{ width: 160, height: 180, elevation: 2, borderRadius: 10}}>
-                    <View style={{flex: 2, flexDirection: "column" , alignItems: "center", justifyContent: "center"}}>
-                    <Avatar title="EH" rounded size="medium"/>
-                    <Caption> 20 Members </Caption>
-                    </View>
+                    <Surface style={{flex: 2, alignSelf: "center",width: "80%", height: "45%", flexDirection: "column" , alignItems: "center", justifyContent: "center", elevation: 5, borderRadius: 15, marginTop: 8}}>
+                    <Image style={{width: "100%", height: "100%", borderRadius: 15}} 
+                                resizeMode={ImageResizeMode.cover} 
+                                source={{ uri: 'https://picsum.photos/700' }} />
+                    </Surface>
                     <View style={{flex: 1, width: 160, height: 80, flexDirection: "row",alignSelf: "flex-end", alignItems: "center", justifyContent: "center"}}>
                     <Avatar title="EH" rounded size="small"/>
                     <Avatar title="EH" rounded size="small"/>
@@ -40,9 +43,21 @@ const MyPacksCard = (props) => {
                     </View>
             </Surface>
             <View style={styles.packInfo}>
-                <Text>
+                <Caption>
                 { props.title }
-                </Text>
+                </Caption>
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <Caption>
+                        Pack Leader: { " "}
+                    </Caption>
+                <Caption style={{color: "#2196F3"}}>
+                    {props.packLeader}
+                </Caption>
+                </View>
+                <Caption>
+                    Sessions Completed { " "}
+                    {props.sessionsCompleted}
+                </Caption>
             </View>
         </View>
         </TouchableOpacity>
@@ -67,7 +82,8 @@ const styles = StyleSheet.create({
         left: 100
     },
     packInfo: {
-        margin: 5
+        margin: 5,
+        flexDirection: "column",
     }
 });
 

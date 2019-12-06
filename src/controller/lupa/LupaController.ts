@@ -4,15 +4,15 @@ import UserController from './UserController';
 import PacksController from './PacksController';
 
 
-var USER_CONTROLLER_INSTANCE = UserController.getInstance();
-//var PACKS_CONTROLLER_INSTANCE = PacksController.getInstance();
-
+let USER_CONTROLLER_INSTANCE;
+let PACKS_CONTROLLER_INSTANCE;
 
 export default class LupaController {
     private static _instance : LupaController;
 
     private constructor() {
-
+      USER_CONTROLLER_INSTANCE = UserController.getInstance();
+      PACKS_CONTROLLER_INSTANCE = PacksController.getInstance();
     }
 
     public static getInstance() {
@@ -26,34 +26,21 @@ export default class LupaController {
     }
 
     /* Algolia */
+    indexApplicationData = () => {
+      console.log('Indexing all application data');
+      USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+      PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+    }
+
     indexUsers = async () => {
       await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
+    indexPacks = async() => {
+      await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+    }
+
     /* User Functions */
-    registerUser = async(usernameIn, passwordIn, confirmedPassword) : Promise<Boolean> => {
-      let result = await USER_CONTROLLER_INSTANCE.addUserToDatabase(usernameIn, passwordIn);
-      console.log(result);
-      return Promise.resolve(result);
-    }
-
-    loginUser = async (usernameIn, passwordIn) : Promise<Boolean> => 
-    {
-      if (usernameIn == null || usernameIn == '' || usernameIn == undefined || passwordIn == null 
-        || passwordIn == '' || passwordIn == undefined)
-      {
-        return Promise.reject('Invalid Input Parameters');
-      }
-
-      let loginResult = await USER_CONTROLLER_INSTANCE.login(usernameIn, passwordIn);
-
-      return Promise.resolve(loginResult);
-    }
-
-    getCurrUser() {
-      return USER_CONTROLLER_INSTANCE.getCurrentUserInformation();
-    }
-
     searchUserByPersonalName = async (searchQuery='') => {
       let arr;
       await USER_CONTROLLER_INSTANCE.searchByRealName(searchQuery).then(objs => {
@@ -68,8 +55,7 @@ export default class LupaController {
       //await Promise.resolve(PACKS_CONTROLLER.getDefaultPacks());
     }
 
-    getPacksByUser = async (usernameIn) => {
-      return Promise.resolve(true);
-      //await Promise.resolve(PACKS_CONTROLLER.getPacksByUser(usernameIn));
+    getPacksByUser = () => {
+      
     }
 }

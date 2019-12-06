@@ -9,8 +9,6 @@ const USER_COLLECTION = LUPA_DB.collection('users');
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
 const algoliasearch = require('algoliasearch/reactnative.js');
-
-
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 
@@ -101,8 +99,12 @@ export default class UserController {
         }
 
         console.log('Completed User Indexing')
-    })
+    });
   });
+}
+
+hello = () => {
+    
 }
 
     /**
@@ -134,7 +136,6 @@ export default class UserController {
 
             try {
             USER_COLLECTION.doc(usernameIn).set(newUserData);
-            this.setCurrentUserInformation(usernameIn);
             return true;
             } catch(Exception) {
                 console.log(Exception)
@@ -142,41 +143,7 @@ export default class UserController {
             }
     }
 
-    /**
-     * 
-     */
-    login = async (usernameIn, passwordIn)  : Promise<Boolean> => {
-        let userData;
-        let loginResult;
-        //Perform Query
-        await USER_COLLECTION.doc(usernameIn).get()
-            .then(doc => 
-            {
-                if (!doc.exists)
-                {
-                    console.log('No Such Document');
-                } 
-                else
-                {
-                    userData = doc.data();
-                    //Set current user properties
-                    this.setCurrentUserInformation(userData);
-                }
-            })
-            
-            //Determine username and password fit
-            if (userData.username == usernameIn &&
-                userData.password == passwordIn)
-            {
-                loginResult = true;
-            }
-            else
-            {
-                loginResult = false;
-            }
-        
-        return Promise.resolve(loginResult);
-    }
+
 
     /**
      * Search users by name
@@ -229,47 +196,4 @@ export default class UserController {
             )
         });
     }
-
-    /**
-     * 
-     */
-    getCurrentUserInformation() {
-        return this.currUser;
-    }
-
-    /**
-     * 
-     */
-    setCurrentUserInformation = (doc) => {
-        this.currUser.accountInformation.username = doc.username;
-        console.log('setting username to + ' + this.currUser.accountInformation.username);
-        this.currUser.accountInformation.password = doc.password;
-        this.currUser.accountInformation.isTrainer = doc.isTrainer;
-
-        this.currUser.packInformation.packs = doc.packsByName;
-
-        this.currUser.packInformation.events = doc.events;
-
-        this.currUser.personalInformation.firstName = doc.firstname;
-        this.currUser.personalInformation.lastName = doc.lastname;
-
-        switch (doc.gender)
-        {
-            case "Male":
-                this.currUser.personalInformation.gender = Gender.Male;
-                    break;
-            case "Female":
-                this.currUser.personalInformation.gender = Gender.Female;
-                    break;
-            default:
-        }
-
-        this.currUser.sessionInformation.sessions = doc.sessions
-
-        this.currUser.timeCreated = doc.timeCreated;
-
-       // UserController.currUser.userName = 
-        console.log('Setting current user as: ' + this.currUser);
-    }
-    
 }
