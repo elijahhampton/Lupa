@@ -28,11 +28,9 @@ import {
 
  import { Feather } from '@expo/vector-icons';
 
-import LupaController from '../../../../controller/lupa/LupaController';
-
 const {
     signUpUser
-} = require('../../../../controller/firebase/firebase');
+} = require('../../../../controller/lupa/auth');
 
 class SignupModal extends React.Component {
 
@@ -40,17 +38,15 @@ class SignupModal extends React.Component {
         super(props);
 
         this.state = {
-            username: undefined,
-            password: undefined,
-            confirmedPassword: undefined,
+            email: "",
+            password: "",
+            confirmedPassword: "",
             isRegistered: false,
             confirmPasswordWidth: 0,
             confirmPasswordHeight: 0,
             passwordSecureTextEntry: true,
             secureConfirmPasswordSecureTextEntry: true,
         }
-
-        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
 
   /**
@@ -58,43 +54,40 @@ class SignupModal extends React.Component {
    * Finish any last minute things here before showing the application to the user.
    * This really isn't the place to be doing this, but any small last minute changes can go here.
    */
-  _introduceApp = (username, password) => {
+  _introduceApp = () => {
     //this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     this.props.navigation.navigate('App');
   }
 
-    _registerUser = (username, password, confirmedPassword) => {
-        //Check password against confirmedPassword- lazy check for now
-        if (password != confirmedPassword) {
-            console.log('LUPA: Password did not match confirmed password')
-            return;
-        }
-        
-        //Grab user credentials from state
-        const username = this.state.username;
+    _registerUser = async () => {
+        const email = this.state.email;
         const password = this.state.password;
+        const confirmedPassword = this.state.confirmedPassword;
 
         //Check registration status
-        let successfulRegistration = signUpUser(username, password);
+        let successfulRegistration = await signUpUser(email, password, confirmedPassword);
 
         //Execute login or failure
-        successfulRegistration == true ? this._introduceApp(username, password) : console.log('LUPA: Firebase failure upon registering user.');
+        successfulRegistration == true ? this._introduceApp(email, password) : console.log('LUPA: Firebase failure upon registering user.');
     }
 
-    _handleMobileInputOnChangeText = (text) => {
-        this.setState({ username: text })
+    _handleMobileInputOnChangeText = async (text) => {
+        this.setState({ email: text })
     }
 
-    _handlePasswordInputOnChangeText = (text) => {
+    _handlePasswordInputOnChangeText = async (text) => {
         text.length >= 1 ?  this.setState({ confirmPasswordWidth: "100%", confirmPasswordHeight: "auto" }) : 
         this.setState({confirmPasswordWidth: 0, confirmPasswordHeight: 0 })
 
-        this.setState({ password: text });
+        await this.setState({ password: text });
+
+        console.log(this.state.password);
     }
 
-    _handleConfirmedPasswordInputOnChangeText = (text) => {
+    _handleConfirmedPasswordInputOnChangeText = async (text) => {
+        await this.setState({ confirmedPassword: text });
 
-        this.setState({ confirmedPassword: text })
+        console.log(this.state.confirmedPassword)
     }
 
     _handleShowPassword = () => {
@@ -126,17 +119,17 @@ class SignupModal extends React.Component {
 
                     <View style={{height: "30%", alignItems: "center", justifyContent: "center"}}>
                         <Text style={styles.instructionalText}>
-                            Create your username and password
+                            Enter your email and create a password
                         </Text>
 
                         <Surface style={styles.surface}>
-                        <Input placeholder="Enter a usernname" 
+                        <Input placeholder="Enter an email" 
                         placeholderTextColor="black" 
                         inputStyle={styles.inputStyle} 
-                        label="Username" 
+                        label="Email" 
                         labelStyle={styles.labelStyle} 
                         containerStyle={styles.containerStyle}
-                        value={this.state.username}
+                        value={this.state.email}
                         onChangeText={text => this._handleMobileInputOnChangeText(text)}/>
 
                         <Input placeholder="Enter a password" 

@@ -47,28 +47,18 @@ import {
 
 import BackgroundImageOne from '../../images/background-one.jpg';
 import BackgroundImageTwo from '../../images/background-two.jpg';
-
-
+import { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import LupaController from '../../../controller/lupa/LupaController';
-const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
 class WorkoutView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.currUser = LUPA_CONTROLLER_INSTANCE.getCurrUser();
-
-        this.state = {
-            currUser: this.currUser
-        }
-
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     }
 
-
     render() {
-        let firstName = this.state.currUser.personalInformation.firstName;
-        let lastName = this.state.currUser.personalInformation.lastName;
         return (
             <View style={styles.root}>
                 <View style={styles.imageView}>
@@ -79,9 +69,9 @@ class WorkoutView extends React.Component {
                                     Welcome,
                                 </Text>
                                 <Text style={{ color: "white", fontSize: 50, fontWeight: "700" }}>
-                                    { firstName }
-                                    { " " }
-                                    { lastName }
+                                    {
+                                        this.LUPA_CONTROLLER_INSTANCE.getUserDisplayName()
+                                    }
                                 </Text>
                             </View>
 

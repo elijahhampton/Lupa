@@ -30,7 +30,7 @@ export default class MyPacks extends React.Component {
     }
 
     componentDidMount() {
-        console.log("AAAAAAAAAAAAAAAAAAAAAA" + this.currUserPacks[0])
+        
     }
 
     loadCurrUserPacks = () => {

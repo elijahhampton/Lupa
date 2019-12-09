@@ -7,6 +7,10 @@ import {
     LupaWorkoutStructure,
     LupaUserStructure } from '../lupa/common/types';
 
+import {
+    Days,
+} from '../lupa/common/types';
+
 var lupa_pack_event : LupaPackEventStructure = {
     event_uuid: "",
     pack_uuid: "",
@@ -19,12 +23,15 @@ var lupa_pack_event : LupaPackEventStructure = {
             long: "",
         }
     },
+    attendees: [],
 }
 
 var lupa_trainer : LupaTrainerStructure = {
     user_uuid: "",
     rating: 0,
     recommended_workouts: [],
+    experience: [],
+    certifications: [],
 }
 
 var lupa_pack : LupaPackStructure = {
@@ -45,6 +52,18 @@ var lupa_session : LupaSessionStructure = {
 
 var lupa_user_health_data : LupaHealthDataStructure = {
     user_uuid: "",
+    health: {
+        statistics: {
+
+        }
+    },
+    goals: {}
+
+}
+
+export const getLupaHealthDataStructure = (user_uuid, health: {}, goals: []) => {
+    lupa_user_health_data.user_uuid = user_uuid;
+    return lupa_user_health_data;
 }
 
 var lupa_workout : LupaWorkoutStructure = {
@@ -53,33 +72,35 @@ var lupa_workout : LupaWorkoutStructure = {
 
 var lupa_user : LupaUserStructure = {
     user_uuid: "",
+    display_name: "",
     username: "",
-    password: "",
     email: "",
     email_verified: false,
     mobile: "",
     gender: "",
     location: "",
     isTrainer: false,
-    first_name: "",
-    last_name: "",
     packs: [],
     photo_url: "",
     time_created: "",
+    preferred_workout_times: {
+        Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: [],
+    },
+    interest: [],
 }
 
-const getLupaUserStructure = (user_uuid, username="", password, email, email_verified=false, mobile="", gender="", location="",
-    isTrainer=false, first_name="", last_name="", packs=[], photo_url="", time_created=new Date().getTime()) => {
+export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", gender="", location="", isTrainer=false, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[]) => {
     
     lupa_user.user_uuid = user_uuid;
-    lupa_user = email;
-    lupa_user.password = password;
-
+    lupa_user.email = email;
+    lupa_user.time_created = time_created;
     return lupa_user;
-}
-
-const getLupaHealthDataStructure = () => {
-    
 }
 
 export {
@@ -90,5 +111,4 @@ export {
     lupa_pack,
     lupa_pack_event,
     lupa_trainer,
-    getLupaUserStructure,
 };

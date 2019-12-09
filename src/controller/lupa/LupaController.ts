@@ -25,6 +25,30 @@ export default class LupaController {
       return LupaController._instance;
     }
 
+    /********************** */
+    getCurrentUser = () => {
+      let currentUser = USER_CONTROLLER_INSTANCE.getCurrentUser();
+      return currentUser;
+    }
+
+    isTrainer = (userUUID) => {
+      let isTrainer = USER_CONTROLLER_INSTANCE.isTrainer(userUUID);
+      return isTrainer;
+    }
+
+    updateCurrentUser = (fieldToUpdate, value, optionalData) => {
+      //validate data
+      
+      //pass to usercontroller
+      USER_CONTROLLER_INSTANCE.updateCurrentUser(fieldToUpdate, value, optionalData);
+    }
+
+    getUserDisplayName = () => {
+      return USER_CONTROLLER_INSTANCE.getUserDisplayName(true);
+    }
+
+    /********************** */
+
     /* Algolia */
     indexApplicationData = () => {
       console.log('Indexing all application data');

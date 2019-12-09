@@ -3,7 +3,15 @@ import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase';
 import {
     getLupaUserStructure,
     getLupaHealthDataStructure,
-} from '../lupa/common/types';
+} from '../firebase/collection_structures';
+
+/**
+ * PROBLEMS:
+ * 
+ * 1. Users and Health data documents created for user even if firebase auth fails.
+ * 
+ * 
+ */
 
 /**
  * On Auth State Change
@@ -12,15 +20,15 @@ import {
  */
 LUPA_AUTH.onAuthStateChanged(user => {
     if (user) {
+        console.log(user)
         console.log('LUPA: User logged in.')
-    } 
-    else
-    {
+    }
+    else {
         console.log('LUPA: User logged out.')
     }
 
     //Update current user on every authentication state change
-    LUPA_AUTH.updateCurrentUser();
+    //LUPA_AUTH.updateCurrentUser();
 })
 
 /**
@@ -31,32 +39,70 @@ LUPA_AUTH.onAuthStateChanged(user => {
  * 
  * This method assigns a user as logged in in firebase.
  */
-export var signUpUser = (email, password) => {
+export var signUpUser = async (email, password, confirmedPassword) => {
     let result;
-    let userData = getLupaUserStructure
-    LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
-        //userCredentials.user
+
+    //Check password against confirmedPassword- lazy check for now
+    if (password != confirmedPassword) {
+        console.log('LUPA: Password did not match confirmed password')
+        return;
+    }
+
+    await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
         console.log('LUPA: Registering user with firebase authentication.')
-        
-        //Add user to users collection with UID.
-        LUPA_DB.collection('users').doc(userCredential.user.uid).
-            set(getLupaUserStructure(userCredential.user.uid, "", userCredential.user.password, userCredential.user.email, 
-            userCredential.user.emailVerified, userCredential.user.phoneNumber, "", "", false, "", "", [], "", new Date()));
-        
-        //Add health data to health data colleciton with uid - UNFINISHED
-        LUPA_DB.collection('health_data').doc(userCredential.user.uid).set(getLupaHealthDataStructure())
-
-        //Add user to all default packs
-        LUPA_DB.collection('packs').where('isDefault', '==', true).get();
-
-        //Add user to all default pack events
-        LUPA_DB.collection('pack_events')
         //Set sign up result to true
         result = true;
         //Catch error on signup
     }).catch(err => {
         console.log('LUPA: Error while trying to signup user.')
         result = false;
+        return result;
+    });
+
+    console.log(LUPA_AUTH.currentUser);
+
+    let userData = getLupaUserStructure(LUPA_AUTH.currentUser.uid, "", "", LUPA_AUTH.currentUser.email,
+        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", false, "", "", [], "", "", {}, []);
+    //Add user to users collection with UID.
+    LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).set(userData).catch(err => {
+        console.log('LUPA: Error while trying to add user to users collection.');
+        result = false;
+        return result;
+    });
+
+    let healthData = getLupaHealthDataStructure(LUPA_AUTH.currentUser.uid);
+    //Add health data to health data colleciton with uid - UNFINISHED
+    LUPA_DB.collection('health_data').doc(LUPA_AUTH.currentUser.uid).set(healthData).catch(err => {
+        console.log('LUPA: Error while trying to add health data to health data collection.');
+        result = false;
+        return result;
+    });
+
+    console.log('LUPA: Adding user to default packs.')
+    //Add user to all default packs
+    LUPA_DB.collection('packs').where('isDefault', '==', true).get().then(snapshot => {
+        snapshot.forEach(doc => {
+            let pack = doc.data();
+            pack.set({
+                members: LUPA_AUTH.currentUser.uid,
+            }, {
+                merge: true
+            });
+        });
+    });
+
+
+    console.log('LUPA: Adding user to default pack events.')
+    //Add user to all default pack events
+    LUPA_DB.collection('pack_events').where('isDefault', '==', true).get().then(snapshot => {
+        snapshot.forEach(doc => {
+            let event = doc.data();
+            event.set({
+                attendees: LUPA_AUTH.currentUser.uid,
+            }, {
+                merge: true,
+            });
+        });
     });
 
     return result;
@@ -67,15 +113,16 @@ export var signUpUser = (email, password) => {
  * @param {*} email 
  * @param {*} password 
  */
-export var loginUser = (email, password) => {
+export var loginUser = async (email, password) => {
     let result;
-    LUPA_AUTH.signInWithEmailAndPassword(email, password).then(userCredential => {
-        //userCredentials.user
+    console.log('loggin')
+    await LUPA_AUTH.signInWithEmailAndPassword(email, password).then(userCredential => {
         result = true;
     }).catch(err => {
         result = false;
         console.log('LUPA: Error on logging in user');
-    }); 
+    });
+
     return result;
 }
 

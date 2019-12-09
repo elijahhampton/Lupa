@@ -26,28 +26,23 @@ import { SocialIcon, Input } from "react-native-elements";
 
 import { Feather } from "@expo/vector-icons";
 
-import LupaController from '../../../../controller/lupa/LupaController.ts';
-
 const { 
   isSignedIn,
   loginUser
 } = require('../../../../controller/lupa/auth');
 
-let LUPA_CONTROLLER_INSTANCE;
 class LoginView extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      username: 'elijahhampton',
-      password: 'Hamptonej1!',
-      signedIn: false,
+      username: 'ejh0017@gmail.com',
+      password: 'password',
       checkedSignedIn: false,
       snackBarIsVisible: false,
       secureTextEntry: true,
     }
 
-    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
   }
 
   componentDidMount = () => {
@@ -55,14 +50,12 @@ class LoginView extends Component {
   }
 
   _checkSignedInStatus = () => {
-    isSignedIn().then(res => {
-      this.setState({
-        signedIn: res,
-        checkedSignedIn: true
-      })
-    })
+    let signedInStatus = isSignedIn();
+    this.setState({
+      checkedSignedIn: true,
+    });
 
-    if (this.state.signedIn == true) { this._introduceApp() }
+    if (signedInStatus == true) { this._introduceApp() }
   }
 
   _handleShowPassword = () => {
@@ -71,13 +64,22 @@ class LoginView extends Component {
     })
   }
 
+  _handleUserIDInput = async (text) => {
+    await this.setState({ setState: text });
+  }
+
+  _handlePasswordInput = async () => {
+    await this.setState({ setState: text });
+  }
+
   onLogin = async (e) => {
     e.preventDefault();
 
     const attemptedUsername = this.state.username;
     const attemptedPassword = this.state.password;
 
-   // let successfulLogin = loginUser(attemptedUsername, attemptedPassword);
+  // let successfulLogin = loginUser(attemptedUsername, attemptedPassword);
+   successfulLogin = true;
 
     if (successfulLogin) {
       this._introduceApp();

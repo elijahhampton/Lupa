@@ -17,7 +17,10 @@ export default class LupaMapView extends React.Component {
     render() {
         return (
             <Modal visible={this.props.isVisible} presentationStyle="fullScreen" style={styles.modalContainer}>
-                    <MapView style={styles.mapView} />
+                    <MapView style={styles.mapView} initialRegion={{
+                        latitude: this.props.initialLat, 
+                        longitude: this.props.initLong,
+                        }} />
             </Modal>
         );
     }

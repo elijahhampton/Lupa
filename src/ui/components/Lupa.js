@@ -22,7 +22,7 @@ import Dashboard from './Navigators/LupaDrawerNavigator';
 
 import WelcomeModal from './Modals/WelcomeModal/WelcomeModal'
 
-import _getPermissionsAsync from '../../controller/lupa/permissions/permissions';
+import _requestPermissionsAsync from '../../controller/lupa/permissions/permissions';
 
 class Lupa extends React.Component {
   constructor(props) {
@@ -38,7 +38,7 @@ class Lupa extends React.Component {
 
   componentDidMount = () => {
     this._showWelcomeModal();
-    _getPermissionsAsync();
+    _requestPermissionsAsync();
   }
 
   _showWelcomeModal = async () => {

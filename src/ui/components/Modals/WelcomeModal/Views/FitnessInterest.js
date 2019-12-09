@@ -4,7 +4,8 @@ import {
     View,
     StyleSheet,
     Text,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 
 import {
@@ -24,9 +25,13 @@ import {
     interestData
 } from '../../../../../controller/lupa/lupa_pre';
 
+import LupaController from '../../../../../controller/lupa/LupaController';
+
 export default class FitnessInterest extends React.Component {
     constructor(props) {
         super(props);
+
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
             firstName: '',
@@ -38,11 +43,11 @@ export default class FitnessInterest extends React.Component {
     }
 
     addInterest = () => {
-        let numInterest = this.state.interest.length;
-        if (numInterest == 18) { return }
         this.setState(prevState => ({
             interest: [...prevState.interest, this.state.interestText]
         }));
+
+        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', this.state.interestText);
     }
 
     _randomizeAutoCompleteData = (list) => {
@@ -71,6 +76,10 @@ export default class FitnessInterest extends React.Component {
     _handleOnChangeText = (text) => {
         this._manipulateSuggestionList(text);
         this.setState({ interestText: text })
+    }
+
+    _handleFinishAddingInterest = interest => {
+      //  this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest);
     }
 
     _returnTextInput = () => {
@@ -114,7 +123,7 @@ export default class FitnessInterest extends React.Component {
     />
                 </View>
 
-                <View style={styles.interestChips}>
+                <ScrollView contentContainerStyle={styles.interestChips}>
                     {
                         this.state.interest.map(interest => {
                             return (
@@ -124,7 +133,7 @@ export default class FitnessInterest extends React.Component {
                             )
                         })
                     }
-                </View>
+                </ScrollView>
             </View>
         );
     }
@@ -143,13 +152,12 @@ const styles = StyleSheet.create({
         height: 30,
         margin: 5,
         flexWrap: 'wrap',
-        flexBasis: 90,
     },
     instructionalTextContainer: {
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
-        flex: 1,
+        height: "20%",
     },
     instructionalText: {
         flexShrink: 1,
@@ -157,16 +165,14 @@ const styles = StyleSheet.create({
         fontWeight: "600"
     },
     userInput: {
-        flex: 1,
         width: "100%",
         alignItems: "center",
+        height: "50%",
     },
     interestChips: {
         width: "100%",
         flexDirection: "row",
-        justifyContent: "flex-start",
+        justifyContent: "center",
         flexWrap: 'wrap',
-        alignItems: "center",
-        flex: 1,
     },
 })

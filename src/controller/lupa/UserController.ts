@@ -2,7 +2,7 @@
  * 
  */
 
-import LUPA_DB from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
 
@@ -14,34 +14,10 @@ const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 
 //algoliaUsersIndex.setExtraHeader('X-Forwarded-For', '127.0.0.1');
 
-enum Gender {
-    Male,
-    Female
-}
+import { UserCollectionFields } from './common/types';
 
 export default class UserController {
     private static _instance : UserController;
-
-    private currUser = {
-        accountInformation: {
-            username: undefined,
-            password: undefined,
-            isTrainer: undefined
-        },
-        personalInformation: {
-            firstName: undefined,
-            lastName: undefined,
-            gender: undefined,
-        },
-        packInformation: {
-            packs: [],
-            events: [],
-        },
-        sessionInformation: {
-            sessions: []
-        },
-        timeCreated: undefined,
-    }
 
     private constructor() {
 
@@ -56,6 +32,159 @@ export default class UserController {
 
         return UserController._instance;
     }
+
+    /************** *********************/
+
+    getCurrentUser = () => {
+        return  LUPA_AUTH.currentUser;
+    }
+
+    isTrainer = (userUUID) => {
+        USER_COLLECTION.doc(userUUID).get().then(snapshot => {
+            let userData = snapshot.data();
+            if (userData.isTrainer) {
+                return true;
+            }
+        })
+
+        return false;
+    }
+
+    updateCurrentUser = async (fieldToUpdate, value, optionalData="") => {
+        let currentUserDocument = USER_COLLECTION.doc(this.getCurrentUser().uid);
+        console.log('LUPA: User Controller updating current user');
+        switch(fieldToUpdate) {
+            case UserCollectionFields.DISPLAY_NAME:
+                LUPA_AUTH.currentUser.updateProfile({
+                    displayName: value,
+                    photoURL: this.getUserPhotoURL(),
+                })
+                currentUserDocument.set({
+                    display_name: value,
+                }, {
+                    merge: true,
+                })
+
+                console.log(LUPA_AUTH.currentUser)
+                break;
+            case UserCollectionFields.USERNAME:
+                    currentUserDocument.set({
+                    username: value,
+                }, {
+                    merge: true
+                })
+                break;
+            case UserCollectionFields.PHOTO_URL:
+                    LUPA_AUTH.currentUser.updateProfile({
+                        displayName: this.getUserDisplayName(),
+                        photoURL: value
+                    })
+                    currentUserDocument.set({
+                        photo_url: value,
+                    }, {
+                        merge: true
+                    })
+                break;
+            case UserCollectionFields.GENDER:
+                currentUserDocument.set({
+                    gender: value,
+                }, {
+                    merge: true,
+                })
+                break;
+            case UserCollectionFields.INTEREST:
+                let interestData = [];
+                currentUserDocument.get().then(snapshot => {
+                    let snapshotData = snapshot.data();
+                    interestData = snapshotData.interest
+                    console.log(interestData)
+                });
+                
+                interestData.push(value);
+
+                currentUserDocument.set({
+                    interest: interestData
+                },{
+                    merge: true,
+                })
+                break;
+            case UserCollectionFields.PREFERRED_WORKOUT_TIMES:
+                switch(optionalData) {
+                    case 'Monday':
+                        currentUserDocument.set({
+                            preferred_workout_times: { Monday: value }
+                        }, {
+                            merge: true
+                        })
+                break;
+            case 'Tuesday':
+                    currentUserDocument.set({
+                        preferred_workout_times: { Tuesday: value }
+                    }, {
+                        merge: true,
+                    })
+                    break;
+            case 'Wednesday':
+                    currentUserDocument.set({
+                        preferred_workout_times: { Wednesday: value }
+                    }, {
+                        merge: true
+                    })
+                    break;
+            case 'Thursday':
+                    currentUserDocument.set({
+                        preferred_workout_times: { Thursday: value }
+                    }, {
+                        merge: true
+                    })
+                    break;
+            case 'Friday':
+
+                    currentUserDocument.set({
+                        preferred_workout_times: { Friday: value }
+                    }, {
+                        merge: true
+                    })
+                    break;
+            case 'Saturday':
+                    currentUserDocument.set({
+                        preferred_workout_times: { Saturday: value }
+                    }, {
+                        merge: true
+                    })
+                    break;
+            case 'Sunday':
+                    currentUserDocument.set({
+                        preferred_workout_times: { Sunday: value }
+                    }, {
+                        merge: true
+                    })
+                    break;
+                }
+                break;
+
+        }
+        console.log('LUPA: User Controller finished updating current user')
+    }
+
+    updateCurrentUserHealthData  = (fieldToUpdate) => {
+
+    }
+
+    getUserPhotoURL = (currUser=true, uid=undefined) => {
+        if (currUser == true) {
+            return this.getCurrentUser().photoURL;
+        }
+    }
+
+    getUserDisplayName = (currUser=true, uid=undefined) => {
+        if (currUser == true) {
+            return this.getCurrentUser().displayName;
+        }
+    }
+
+
+    /**************** *******************/
 
     indexUsersIntoAlgolia = async () => {
         let records = [];
@@ -101,10 +230,6 @@ export default class UserController {
         console.log('Completed User Indexing')
     });
   });
-}
-
-hello = () => {
-    
 }
 
     /**
