@@ -18,6 +18,17 @@ export enum Days {
     Sunday="Sunday",
 }
 
+export enum SESSION_STAGE {
+    INVITED,
+    SCHEDULED,
+}
+
+export enum SESSION_STATUS {
+    NEW,
+    COMPLETED,
+    EXPIRED,
+}
+
 export type LupaUserStructure = {
     user_uuid: "",
     display_name: "",
@@ -54,10 +65,23 @@ export type LupaHealthDataStructure = {
 
         }
     },
-    goals: {}
+    goals: [] //array of objects
 };
 
-export type LupaSessionStructure = {};
+export type LupaSessionStructure = {
+    attendeeOne: "",
+    attendeeTwo: "",
+    stage: any,
+    day: any,
+    time: "",
+    location: {
+        longitude: "",
+        latitude: "",
+    }
+    name: String,
+    description: String,
+    sessionStatus: any,
+};
 
 export type LupaPackEventStructure = {
     event_uuid: "",

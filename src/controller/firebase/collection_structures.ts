@@ -9,6 +9,8 @@ import {
 
 import {
     Days,
+    SESSION_STAGE,
+    SESSION_STATUS
 } from '../lupa/common/types';
 
 var lupa_pack_event : LupaPackEventStructure = {
@@ -45,9 +47,29 @@ var lupa_pack : LupaPackStructure = {
 }
 
 var lupa_session : LupaSessionStructure = {
-    session_uuid: "",
-    inviter: "",
-    invitees: [],
+    attendeeOne: "",
+    attendeeTwo: "",
+    stage: Enumerator,
+    time: "",
+    location: {
+        longitude: "",
+        latitude: "",
+    },
+    name: "",
+    description: "",
+    sessionStatus: "",
+}
+
+export const getLupaSessionStructure = (attendeeOne, attendeeTwo, time, day, location, name, description) => {
+    lupa_session.attendeeOne = attendeeOne;
+    lupa_session.attendeeTwo = attendeeTwo;
+    lupa_session.stage = SESSION_STAGE.INVITED,
+    lupa_session.day = day;
+    lupa_session.time = time;
+    lupa_session.location = location;
+    lupa_session.name = name;
+    lupa_session.description = description;
+    lupa_session.sessionStatus = SESSION_STATUS.NEW;
 }
 
 var lupa_user_health_data : LupaHealthDataStructure = {
