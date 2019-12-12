@@ -37,7 +37,7 @@ import {
     Divider,
     Caption,
     FAB,
-    Chip
+    Chip,
 } from 'react-native-paper';
 
 import Timecards from './components/Timecards';
@@ -51,10 +51,8 @@ import { Avatar } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 
 import { withNavigation } from 'react-navigation';
-
-function getHeaderImageContainerStyle(status) {
-
-};
+import LupaController from '../../../../controller/lupa/LupaController';
+import CreateSessionModal from '../../Modals/Session/CreateSessionModal';
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -64,6 +62,8 @@ let ProfileImage = require('../../../images/background-one.jpg');
 class ProfileView extends React.Component {
     constructor(props) {
         super(props);
+
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
             headerImage: '',
@@ -126,11 +126,16 @@ class ProfileView extends React.Component {
                 <Surface style={{height: "13%", width: "100%", elevation: 3}}>
                     <Image style={{width: "100%", height: "100%"}} source={ProfileImage} resizeMode="cover" resizeMethod="resize" />
                 </Surface>
-                <IconButton style={{margin: 0, padding: 0}} icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()}/>
+                <View style={{margin: 3, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                <IconButton icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()}/>
+                <Button mode="contained" color="#2196F3" style={{borderRadius: 13}}>
+                    Edit Profile
+                </Button>
+                </View>
                 <View style={styles.user}>
                     <View style={styles.userInfo}>
                     <Text>
-                            Elijah Hampton
+                            {this.LUPA_CONTROLLER_INSTANCE.getUserDisplayName()}
                             </Text>
                         <Text style={{ fontWeight: "400", color: "#9E9E9E" }}>
                             Chicago, United States
@@ -139,7 +144,7 @@ class ProfileView extends React.Component {
                             Certified Lupa Trainer
                             </Text>
                     </View>
-                    <Avatar title="EH" size={40} rounded showEditButton={true} containerStyle={{ margin: 15 }} />
+                    <Avatar size={40} source={this.LUPA_CONTROLLER_INSTANCE.getUserPhotoURL()} rounded showEditButton={true} containerStyle={{ margin: 15 }} />
                 </View>
 
                 <ScrollView>
@@ -242,6 +247,8 @@ class ProfileView extends React.Component {
                     icon="add"
                     onPress={() => console.log('Pressed')}
                 />
+
+                <CreateSessionModal isOpen={true}/>
             </SafeAreaView>
         );
     }
