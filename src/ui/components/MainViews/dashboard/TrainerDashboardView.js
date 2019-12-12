@@ -15,7 +15,8 @@ import {
     TouchableOpacity,
     ScrollView,
     Dimensions,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    RefreshControl
 } from 'react-native';
 
 import {
@@ -39,10 +40,7 @@ import { Feather as Icon } from '@expo/vector-icons';
 
 import LupaCalendar from '../../Calendar/LupaCalendar'
 
-import CreateSessionModal from '../../Modals/Session/CreateSessionModal';
-import ModifySessionModal from '../../Modals/Session/ModifySessionModal';
-import CancelSessionModal from '../../Modals/Session/CancelSessionModal';
-import InviteFriendsModal from '../../Modals/InviteFriendsModal';
+import SessionNotificationContainer from './Components/SessionNotificationContainer';
 
 const chartWidth = Dimensions.get('screen').width - 20;
 const chartHeight = 250;
@@ -52,26 +50,11 @@ class TrainerDashboardView extends React.Component {
         super(props);
 
         this.state = {
-            showCreateModal: false,
-            showModifyModal: false,
-            showCancelModal: false,
-            showInviteModal: false,
-            isActivityMenuVisible: false,
-            isGoalsMenuVisible: false,
+            refreshing: false,
         }
 
     }
 
-    _showActivityMenu = () => { this.setState({ isActivityMenuVisible: true }) }
-    _showGoalsMenu = () => { this.setState({ isGoalsMenuVisible: true }) }
-    _closeActivityMenu = () => { this.setState({ isActivityMenuVisible: false }) }
-    _closeGoalsMenu = () => { this.setState({ isGoalsMenuVisible: false }) }
-    _closecontrolPanel = () => {
-        this._drawer.close();
-    };
-    _openControlPanel = () => {
-        this._drawer.open();
-    };
 
     goalChartData = { //Each value defines a ring in the chart (labels -> data)
         labels: ['GoalA', 'GoalB', 'GoalC'], // optional
@@ -87,16 +70,32 @@ class TrainerDashboardView extends React.Component {
         }
     }
 
-    _handleAvatarOnPress = () => {
-        console.log("Clicked")
-        this.setState({ showDrawer: true });
-    }
+    _onRefresh = () => {
+        this.setState({refreshing: true});
+        this.fetchSessions();
+        /*fetchData().then(() => {
+          this.setState({refreshing: false});
+        });*/
+      }
+
+      fetchSessions = () => {
+          
+      }
 
     render() {
         return (
                 <LinearGradient style={{flex: 1, padding: 10, paddingTop: 20}} colors={['#2196F3', '#E3F2FD', '#fafafa']}>
-                <IconButton style={{alignSelf: "flex-start"}} icon="menu" size={20} onPress={() => {this.props.navigation.openDrawer()}}/>
-                <ScrollView contentContainerStyle={styles.dashboardContent} showsVerticalScrollIndicator={false}>
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                    <IconButton style={{alignSelf: "flex-start"}} icon="menu" size={20} onPress={() => {this.props.navigation.openDrawer()}}/>
+                    <Text style={{fontWeight: "900", color: "black", fontSize: 15}}>
+                        Lupa
+                    </Text>
+                    </View>
+                <ScrollView contentContainerStyle={styles.dashboardContent} showsVerticalScrollIndicator={false} refreshControl={
+                <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />}>
                     <LupaCalendar />
                     <View style={styles.charts}>
                         <Surface style={styles.chartSurface}>
@@ -176,54 +175,11 @@ class TrainerDashboardView extends React.Component {
                         </Caption>
                     </View>
 
-                    <View style={styles.calendarButtons}>
-                        <View style={styles.calendarButtonsContainer}>
-                            <TouchableOpacity onPress={() => this.setState({ showCreateModal: true })}>
-                                <Surface style={styles.buttonSurface}>
-                                    <Icon name="zap" size={15} />
-                                </Surface>
-                            </TouchableOpacity>
-
-                            <Text style={styles.calendarButtonText}>
-                                Schedule Session
-                            </Text>
-                        </View>
-
-                        <View style={styles.calendarButtonsContainer}>
-                            <TouchableOpacity onPress={() => this.setState({ showModifyModal: true })}>
-                                <Surface style={styles.buttonSurface}>
-                                    <Icon name="edit-2" size={15} />
-                                </Surface>
-                            </TouchableOpacity>
-
-                            <Text style={styles.calendarButtonText}>
-                                Modify Session
-                            </Text>
-                        </View>
-
-                        <View style={styles.calendarButtonsContainer}>
-                            <TouchableOpacity onPress={() => this.setState({ showCancelModal: true })}>
-                                <Surface style={styles.buttonSurface}>
-                                    <Icon name="x" size={15} />
-                                </Surface>
-                            </TouchableOpacity>
-
-                            <Text style={styles.calendarButtonText}>
-                                Cancel Session
-                            </Text>
-                        </View>
-
-                        <View style={styles.calendarButtonsContainer}>
-                            <TouchableOpacity onPress={() => this.setState({ showInviteModal: true })}>
-                                <Surface style={styles.buttonSurface}>
-                                    <Icon name="globe" size={15} />
-                                </Surface>
-                            </TouchableOpacity>
-
-                            <Text style={styles.calendarButtonText}>
-                                Invite Friends
-                            </Text>
-                        </View>
+                    <View>
+                    <Text style={{fontSize: 20, fontWeight: "700"}}>
+                            Sessions
+                        </Text>
+                        <SessionNotificationContainer />
                     </View>
 
                     <View>
@@ -242,10 +198,6 @@ class TrainerDashboardView extends React.Component {
                     </View>
                 </ScrollView>
 
-                <CreateSessionModal isVisible={this.state.showCreateModal} />
-                <ModifySessionModal isVisible={this.state.showModifyModal} />
-                <CancelSessionModal isVisible={this.state.showCancelModal} />
-                <InviteFriendsModal isVisible={this.state.showInviteModal} />
                 </LinearGradient>
         );                    
     }
@@ -290,24 +242,6 @@ const styles = StyleSheet.create({
     chartStyle: {
         borderRadius: 16,
         alignSelf: "center",
-    },
-    calendarButtons: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        alignSelf: "center",
-        width: "100%",
-        height: "auto",
-        margin: 20,
-    },
-    calendarButtonsContainer: {
-        flexDirection: "column",
-        justifyContent: "space-evenly",
-        alignItems: 'center',
-    },
-    calendarButtonText: {
-        padding: 10,
-        fontSize: 10,
     },
     buttonSurface: {
         borderRadius: 40,

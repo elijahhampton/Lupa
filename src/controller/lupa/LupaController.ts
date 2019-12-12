@@ -47,6 +47,9 @@ export default class LupaController {
       return USER_CONTROLLER_INSTANCE.getUserDisplayName(true);
     }
 
+    getUserPhotoURL = () => {
+      return USER_CONTROLLER_INSTANCE.getUserPhotoURL(true);
+    }
     /********************** */
 
     /* Algolia */

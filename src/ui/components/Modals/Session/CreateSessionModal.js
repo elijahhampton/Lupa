@@ -5,10 +5,10 @@ import {
     Text,
     StyleSheet,
     Modal,
-    TextInput,
     Image,
     Dimensions,
-    ScrollView
+    ScrollView,
+    DatePickerIOS
 } from 'react-native';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
@@ -17,7 +17,8 @@ import {
     IconButton,
     Button,
     Surface,
-    Caption
+    Caption,
+    TextInput
 } from 'react-native-paper';
 
 import { BlurView } from 'expo-blur';
@@ -37,11 +38,12 @@ export default class CreateSessionModal extends React.Component {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-        console.log(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().photoURL)
+
         this.state = {
             isVisible: false,
             triggerStateChange: false,
             currIndex: 0,
+            date: new Date(),
         }
 
         this._closeModal = this._closeModal.bind(this);
@@ -57,59 +59,78 @@ export default class CreateSessionModal extends React.Component {
         })
     }
 
+    _handleNewSessionRequest = () => {
+        
+    }
+
     render() {
         const { currIndex } = this.state;
         return (
             <Modal ref={this.model} style={styles.modalContainer} presentationStyle="fullScreen" visible={this.props.isVisible}>
-                <SafeAreaView style={{ flex: 1, padding: 15 }}>
-                    <View style={{ flex: 1, justifyContent: "center" }}>
-                        <View style={{flex: 2, flexDirection: "row", alignItems: "center" , justifyContent: "space-between"}}>
-                        <Surface style={{width: 100, height: 100, elevation: 1, borderRadius: 80}}>
+                <SafeAreaView style={{ flex: 1, padding: 8 }}>
+                    <View style={{ height: "20%", justifyContent: "center", alignItems: "center", }}>
+                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
+                            <Surface style={{ width: 70, height: 70, elevation: 10, borderRadius: 80, margin: 10 }}>
 
-</Surface>
+                            </Surface>
 
-<Icon name="compare-arrows" size={40} />
+                            <Icon name="compare-arrows" size={40} />
 
-<Surface style={{width: 100, height: 100, elevation: 1, borderRadius: 80}}>
-            <Image source={this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().photoURL} style={{borderRadius: 80}} />
-</Surface>
+                            <Surface style={{ width: 70, height: 70, elevation: 10, borderRadius: 80, margin: 10, }}>
+                                <Image source={this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().photoURL} style={{ borderRadius: 80 }} />
+                            </Surface>
                         </View>
 
-                        <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-                            <Text style={{fontWeight: "500", color: "#E0E0E0", fontSize: 18}}>
-                                Search for Lupa trainers or other users and invite them to a private workout session.
+                        <View style={{padding: 5, flexDirection: "row", justifyContent: "center", flexWrap: 'wrap', alignSelf: "center" }}>
+                            <Text style={{ fontWeight: "500", color: "#9E9E9E", fontSize: 18 }}>
+                                You are about to request a session with {" "}
+                            </Text>
+                            <Text style={{ fontWeight: "bold", color: "#9E9E9E", fontSize: 18 }}>
+                                Elijah Hampton
                             </Text>
                         </View>
-                        
-                    </View>
-                    <View style={{ flex: 2, flexDirection: "row"}}>
-                        <Input placeholder="Enter a username, email, or display name." 
-                            placeholderTextStyle={styles.placeholderTextStyle} 
-                            inputStyle={styles.inputStyle} 
-                            containerStyle={{
-                            height: "12%", alignItems: "center", justifyContent: "center",
-                            borderBottomColor: '#E0E0E0',
-                            borderLeftColor: '#E0E0E0',
-                            borderRightColor: '#E0E0E0',
-                            borderTopColor: '#E0E0E0',
-                            borderWidth: 1
-                        }} 
-                        inputContainerStyle={styles.inputContainerStyle} 
-                        />
-                        <Button mode="text">
-                            Search
-                        </Button>
                     </View>
 
-                    <View style={{alignSelf: "flex-start"}}>
+                    <View style={{height: "60%"}}>
+
+<View style={{height: "100%", flexDirection: "column"}}>
+
+<TextInput mode="outlined" label="Session Title" placeholder="Give your session a name" style={{margin: 10}} 
+theme={{
+    colors: {
+        primary: '#2196F3'
+    }
+}}>
+
+</TextInput>
+
+<TextInput mode="outlined" label="Session Description" placeholder="Write a short description for your session" multiline={true} style={{margin: 10, height: "20%"}} theme={{
+    colors: {
+        primary: '#2196F3'
+    }
+}}>
+
+</TextInput>
+
+<DatePickerIOS date={this.state.date}/>
+</View>
+
+</View>
+
+<View style={{height: "20%", alignSelf: "flex-start"}}>
                         <Caption>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore 
                         et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                         </Caption>
-                        <Button mode="outlined" style={{margin: 5}} color="#2196F3">
+                        <Button mode="outlined" style={{margin: 5}} color="#2196F3" onPress={() => this._handleNewSessionRequest}>
                             Request
                         </Button>
+                        <Button mode="outlined" style={{margin: 5}} color="red" onPress={() => this._closeModal}>
+                            Cancel
+                        </Button>
                     </View>
+
+
                 </SafeAreaView>
             </Modal>
         );
