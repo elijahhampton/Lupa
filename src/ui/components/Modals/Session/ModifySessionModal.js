@@ -18,7 +18,6 @@ export default class ModifySessionModal extends React.Component {
         super(props);
 
         this.state = { 
-            isVisible: false,
             currIndex: 0,
         }
     }
@@ -26,7 +25,7 @@ export default class ModifySessionModal extends React.Component {
     render() {
         return (
             <Portal>
-                <Modal visible={this.props.isVisible} contentContainerStyle={styles.viewContainer}>
+                <Modal visible={this.props.isOpen} contentContainerStyle={styles.viewContainer}>
 
                 </Modal>
             </Portal>
