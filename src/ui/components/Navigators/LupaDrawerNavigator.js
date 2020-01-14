@@ -22,6 +22,7 @@ import DrawerMenu from './Components/DrawerMenu';
 import GoalsStackNavigator from './GoalsStackNavigator';
 
 import NotificationsView from '../DrawerViews/Notifications/NotificationsView';
+import LoginView from '../MainViews/login/LoginView';
 
 const LupaDrawerNavigator = createDrawerNavigator(
     {
@@ -37,12 +38,16 @@ const LupaDrawerNavigator = createDrawerNavigator(
       },
       Notifications: {
         screen: NotificationsView
+      },
+      LoginView: {
+        screen: LoginView
       }
     },
     {
       contentComponent: () => {return (<DrawerMenu />)},
       hideStatusBar: 'true',
-      drawerBackgroundColor: "#FAFAFA"
+      drawerBackgroundColor: "#FAFAFA",
+      initialRouteName: 'Profile'
     }
   );
 

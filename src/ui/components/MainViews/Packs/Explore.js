@@ -27,7 +27,7 @@ const windowWidth = Dimensions.get('window').width;
 export default class Explore extends React.Component {
     render() {
         return (
-            <>
+            <ScrollView contentContainerStyle={styles.rootScrollView}>
 
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
@@ -166,14 +166,14 @@ export default class Explore extends React.Component {
 
                     </View>
                 </View>
-            </>
+            </ScrollView>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    root: {
-
+    rootScrollView: {
+        backgroundColor: "#FAFAFA"
     },
     headerText: {
         fontSize: 22,

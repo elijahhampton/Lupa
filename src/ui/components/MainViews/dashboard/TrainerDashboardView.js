@@ -24,7 +24,8 @@ import {
     IconButton,
     Menu,
     Divider,
-    Caption
+    Caption,
+    FAB
 } from 'react-native-paper';
 
 import {
@@ -45,48 +46,71 @@ import SessionNotificationContainer from './Components/SessionNotificationContai
 const chartWidth = Dimensions.get('screen').width - 20;
 const chartHeight = 250;
 
+import LupaController from '../../../../controller/lupa/LupaController';
+
 class TrainerDashboardView extends React.Component {
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+        this.fetchSessions();
+
         this.state = {
             refreshing: false,
+            sessionData: [],
         }
 
-    }
-
-
-    goalChartData = { //Each value defines a ring in the chart (labels -> data)
-        labels: ['GoalA', 'GoalB', 'GoalC'], // optional
-        data: [0.4, 0.6, 0.8]
-    }
-
-    goalChartConfig = {
-        backgroundGradientFrom: '#2196F3',
-        backgroundGradientTo: '#2196F3',
-        color: (opacity = 0) => `rgba(255,255,255, ${opacity})`,
-        style: {
-            borderRadius: 16
-        }
     }
 
     _onRefresh = () => {
         this.setState({refreshing: true});
-        this.fetchSessions();
-        /*fetchData().then(() => {
-          this.setState({refreshing: false});
-        });*/
+        this.fetchSessions().then(() => {
+            this.setState({ refreshing: false });
+        })
       }
 
-      fetchSessions = () => {
-          
+      /**
+       * Fetch Sessions
+       * 
+       * Fetch user sessions from the LupaController.
+       */
+      fetchSessions = async () => {
+        await this.LUPA_CONTROLLER_INSTANCE.getUserSessions().then(res => {
+            this.setState({
+                sessionData: res
+            });
+        });
+      }
+
+      /**
+       * Populate Sessions
+       * 
+       * Populate the sessions section with any sessions pending that this user might have.
+       */
+      populateSessions = () => {
+          let attendeeTwoDisplayName;
+          let attendeeOneDisplayName;
+          return this.state.sessionData.map(session => {
+        this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(session.sessionData.attendeeOne, 'display_name').then(res => {
+                attendeeOneDisplayName = res;
+            })
+            //Convert each session UUID to its display name for attendeeTwo
+            this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(session.sessionData.attendeeTwo, 'display_name').then(res => {
+                attendeeTwoDisplayName = res;
+            });
+              //Return a session notification container
+              //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
+              return (
+                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
+              )
+          })
       }
 
     render() {
         return (
                 <LinearGradient style={{flex: 1, padding: 10, paddingTop: 20}} colors={['#2196F3', '#E3F2FD', '#fafafa']}>
                     <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                    <IconButton style={{alignSelf: "flex-start"}} icon="menu" size={20} onPress={() => {this.props.navigation.openDrawer()}}/>
+                    <IconButton style={{alignSelf: "flex-start"}} icon="menu" size={20} onPress={() => {this.props.navigation.openDrawer()}} />
                     <Text style={{fontWeight: "900", color: "black", fontSize: 15}}>
                         Lupa
                     </Text>
@@ -95,59 +119,14 @@ class TrainerDashboardView extends React.Component {
                 <RefreshControl
             refreshing={this.state.refreshing}
             onRefresh={this._onRefresh}
-          />}>
-                    <LupaCalendar />
-                    <View style={styles.charts}>
-                        <Surface style={styles.chartSurface}>
-                            <View style={styles.chartOptions}>
-                            <Text style={styles.chartSurfaceText}>
-                                Fitness Activity
-                            </Text>
-                            <Menu 
-                            visible={this.state.isActivityMenuVisible}
-                            onDismiss={this._closeActivityMenu}
-                            anchor={<IconButton icon="more-vert" size={20} onPress={this._showActivityMenu}/>}>
-                                <Menu.Item onPress={() => {}} title="Expand" />
-                                <Divider />
-                                <Menu.Item onPress={() => {}} title="Download Chart Data" />
-                            </Menu>
-                            </View>
-                            <LineChart
-                                data={{
-                                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                                    datasets: [{
-                                        data: [
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100
-                                        ]
-                                    }]
-                                }}
-                                width={chartWidth} // from react-native
-                                height={chartHeight}
-                                chartConfig={{
-                                    backgroundColor: '#e26a00',
-                                    backgroundGradientFrom: '#2196F3',
-                                    backgroundGradientTo: '#2196F3',
-                                    decimalPlaces: 2, // optional, defaults to 2dp
-                                    color: (opacity = 0) => `rgba(255, 255, 255, ${opacity})`,
-                                    strokeWidth: 1,
-                                    style: {
-                                        borderRadius: 16
-                                    }
-                                }}
-                                bezier
-                                style={styles.chartStyle}
-                            />
-                        </Surface>
-                    </View>
+          />}>      
 
-                    <View style={{margin: 10}}>
-                        <Text style={styles.chartSurfaceText}>
+            <View style={{margin: 5, marginBottom: 10}}>
+            <LupaCalendar />
+            </View>
+
+                    <View>
+                        <Text style={{fontSize: 20, fontWeight: "700"}}>
                             Goals
                         </Text>
                         <View style={{flexDirection: "row"}}>
@@ -166,8 +145,8 @@ class TrainerDashboardView extends React.Component {
 
                     </View>
 
-                    <View style={{margin: 10}}>
-                        <Text style={styles.chartSurfaceText}>
+                    <View>
+                        <Text style={{fontSize: 20, fontWeight: "700"}}>
                             Recent Workouts
                         </Text>
                         <Caption>
@@ -179,7 +158,9 @@ class TrainerDashboardView extends React.Component {
                     <Text style={{fontSize: 20, fontWeight: "700"}}>
                             Sessions
                         </Text>
-                        <SessionNotificationContainer />
+                        {
+                            this.populateSessions()
+                        }
                     </View>
 
                     <View>
@@ -197,7 +178,6 @@ class TrainerDashboardView extends React.Component {
 
                     </View>
                 </ScrollView>
-
                 </LinearGradient>
         );                    
     }
@@ -211,37 +191,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         display: "flex",
-    },
-    chartSurfaceControls: {
-        width: "100%",
-        height: "15%",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: 10,
-    },
-    chartSurfaceText: {
-        fontSize: 20,
-        fontWeight: "400",
-        color: "black",
-    },
-    chartSurface: {
-        width: chartWidth,
-        height: 300,
-        elevation: 10,
-        borderRadius: 20,
-        alignSelf: "center",
-        backgroundColor: "transparent",
-        marginBottom: 5,
-    },
-    chartOptions: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between"
-    },
-    chartStyle: {
-        borderRadius: 16,
-        alignSelf: "center",
     },
     buttonSurface: {
         borderRadius: 40,

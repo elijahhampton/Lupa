@@ -18,47 +18,55 @@ export default class MyPacks extends React.Component {
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-        this.currUserPacks = this.LUPA_CONTROLLER_INSTANCE.getPacksByUser();
-
         this.state = {
-            currUserPacks: this.currUserPacks,
+            currUserPacks: [],
             indexToShow: 0,
             showPack: false,
         }
 
         this.loadCurrUserPacks = this.loadCurrUserPacks.bind(this);
+        this.setupMyPacks = this.setupMyPacks.bind(this);
     }
 
     componentDidMount() {
-        
+        this.setupMyPacks();
+    }
+
+    setupMyPacks = async () => {
+        let packsToShow;
+       await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
+            packsToShow = result;
+        });
+
+        await this.setState({
+            currUserPacks: packsToShow,
+        });
     }
 
     loadCurrUserPacks = () => {
-      /* let packs = this.state.currUserPacks.map(pack => {
+      let packs = this.state.currUserPacks.map(pack => {
            return (
-            <MyPacksCard title={pack} packLeader={"Jason Smooth"} sessionsCompleted={"56"} />
+            <MyPacksCard  />
            );
-       })*/
+       });
 
-       //return packs;
+       return packs;
     }
 
     render() {
-        //let numPacks = this.state.currUserPacks.length;
+        let numPacks = this.state.currUserPacks.length;
         return (
-                <>
-                <View style={{margin: 10}}>
-                <Text style={{color: "#BDBDBD", alignSelf: "center", fontSize: 15, fontWeight: "600"}}>
-                    You are currently in { /* numPacks */ } pack.
-                </Text>
-                </View>
-
-                <View horizontal={true} contentContainerStyle={{flexDirection: "row", justifyContent: "space-evenly", alignItems: "flex-start"}}>
+            <>
+                <ScrollView contentContainerStyle={{flexDirection: "row", flexWrap: 'wrap', justifyContent: "center",alignItems: "center" }}>
                     { 
-                       this.loadCurrUserPacks()
+                      this.loadCurrUserPacks()
                     }
-                </View>
-                </>
+
+                </ScrollView>
+                                <Text style={{color: "#BDBDBD", alignSelf: "center", fontSize: 15, fontWeight: "600", position: "absolute", bottom: 2}}>
+                                You are currently in { numPacks } pack.
+                            </Text>
+                            </>
         );
     }
 }

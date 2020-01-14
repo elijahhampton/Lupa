@@ -25,71 +25,82 @@ import {
     withNavigation
 } from 'react-navigation';
 
+import UserProfileModal from '../../../DrawerViews/Profile/UserProfileModal'
+
 const contentUnexpandedHeight = 0;
-const contentExpandedHeight = 100;
+const contentExpandedHeight = "auto";
+
 
 const UserSearchResultCard = (props) => {
-    const [height, setHeight] = useState(contentUnexpandedHeight);
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    _handleViewProfile = () => {
+        console.log('Registering button click')
+        setModalOpen(true);
+    }
+
+    handleModalClose = () => {
+        setModalOpen(false);
+    }
 
     return (
-        <TouchableWithoutFeedback onPress={() => { setHeight(contentExpandedHeight) }}>
+        <>
+            <TouchableWithoutFeedback onPress={() => this._handleViewProfile()} style={styles.touchableOpacity}>
             <Surface style={[styles.cardContainer]}>
-
-                <View style={{ flex: 2, alignItems: "center", flexDirection: "row", justifyContent: "space-around" }}>
+                <View style={styles.cardContent}>
+                    <View style={styles.userInfoContent}>
                     <Avatar label={props.title} rounded size="small" />
-                    <View style={styles.cardContent}>
-                        <Text>
+                        <Text style={styles.titleText}>
                             {props.title}
                         </Text>
-                        <Text style={{ fontWeight: "700" }}>
-                            {props.location}
-                        </Text>
-
-                    </View>
+                        </View>
                     <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
-                    Lupa Trainer
+                    Lupa User
                     </Chip>
                 </View>
-
-
-                <View style={[styles.expandedContent, { height: height }]}>
-                    <Text>
-                        Hi
-                </Text>
-                </View>
-
             </Surface>
-        </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback>
+                <UserProfileModal isOpen={isModalOpen} uuid={props.uuid} closeModalMethod={this.handleModalClose}/>
+            </>
     );
 }
 
 const styles = StyleSheet.create({
+    touchableOpacity: {
+        width: "100%",
+        height: "auto",
+        justifyContent: "center",
+    },
     cardContainer: {
-        flexDirection: "column",
-        justifyContent: "space-around",
         elevation: 3,
         borderRadius: 0,
-        height: 70,
         width: "100%",
         height: "auto",
         margin: 5,
-        padding: 20,
-        backgroundColor: "transparent",
+        padding: 10,
+        backgroundColor: "transparent"
     },
     cardContent: {
-        flexDirection: "column",
-        alignSelf: "center",
-        justifyContent: "space-around",
+        alignItems: "center", 
+        flexDirection: "row", 
+        justifyContent: "space-between", 
+        width: "100%"
     },
-    expandedContent: {
-        padding: 20,
+    userInfoContent: {
+        flexDirection: "row", 
+        alignItems: "center", 
+        justifyContent: 'space-between'
+    },
+    titleText: {
+        fontWeight: "bold",
     },
     chipIndicator: {
         width: 100,
         height: 25,
         alignItems: "center",
         justifyContent: "center",
-        margin: 5
+        margin: 5,
+
     },
     rating: {
         backgroundColor: "transparent",

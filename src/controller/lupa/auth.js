@@ -20,7 +20,6 @@ import {
  */
 LUPA_AUTH.onAuthStateChanged(user => {
     if (user) {
-        console.log(user)
         console.log('LUPA: User logged in.')
     }
     else {
@@ -59,10 +58,9 @@ export var signUpUser = async (email, password, confirmedPassword) => {
         return result;
     });
 
-    console.log(LUPA_AUTH.currentUser);
 
     let userData = getLupaUserStructure(LUPA_AUTH.currentUser.uid, "", "", LUPA_AUTH.currentUser.email,
-        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", false, "", "", [], "", "", {}, []);
+        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", false, "", "", [], "", "", {}, [], 0, {}, [], [], 0);
     //Add user to users collection with UID.
     LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).set(userData).catch(err => {
         console.log('LUPA: Error while trying to add user to users collection.');
@@ -105,6 +103,20 @@ export var signUpUser = async (email, password, confirmedPassword) => {
         });
     });
 
+    console.log('LUPA: Creating user notificatons directory');
+    let date = new Date();
+    let time = date.getTime();
+    LUPA_DB.collection('notifications').doc(LUPA_AUTH.currentUser.uid).set(
+        {
+            notifications: [
+                {date: date, time: time, type: "dummy", data: "dummy"},
+            ]
+        },
+        {
+            merge: true,
+        }
+        );
+
     return result;
 }
 
@@ -120,6 +132,7 @@ export var loginUser = async (email, password) => {
         result = true;
     }).catch(err => {
         result = false;
+        console.log(err)
         console.log('LUPA: Error on logging in user');
     });
 
@@ -144,7 +157,8 @@ export var getCurrentUser = () => {
 /**
  * 
  */
-export var isSignedIn = () => {
+export var isSignedIn = async () => {
     let result = false;
-    return LUPA_AUTH.currentUser == null ? result = false : result = true
+    await LUPA_AUTH.currentUser == null ? result = false : result = true
+    return result;
 }

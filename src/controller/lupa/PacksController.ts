@@ -1,7 +1,7 @@
 /* Please do not remove this line as it prevents the Cannot Find Variable: Buffer error */
 //global.Buffer = global.Buffer || require('buffer').Buffer
 
-import LUPA_DB from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 
 const PACKS_COLLECTION = LUPA_DB.collection('packs');
 
@@ -72,12 +72,19 @@ class PacksController {
   }
 
   getAllPacks() {
-    console.log('Returning all Packs');
     
   }
 
-  getDefaultPacks() {
-   
+  async getDefaultPacks() {
+    let defaultPacks = [];
+    await PACKS_COLLECTION.where('pack_isDefault', '==', true).get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        let snapshot = doc.data();
+        defaultPacks.push(snapshot);
+      })
+    });
+    
+    return Promise.resolve(defaultPacks);
   }
 
   /**
@@ -91,17 +98,16 @@ class PacksController {
 
   }
 
-  getPacksByUser = async (userIn) : Promise<Object> => {
-    let result;
-
-    await PACKS_COLLECTION.where('membersByName', 'array-contains', userIn.accountInformation.username).get().then(res => {
-      result = res;
+  getCurrentUserPacks = async () => {
+    let currUserPacks = [];
+    await  PACKS_COLLECTION.where('pack_members', 'array-contains', USER_CONTROLLER_INSTANCE.getCurrentUser().uid).get().then(async querySnapshot => {
+     querySnapshot.forEach(userPackDoc => {
+        let snapshot = userPackDoc.data();
+        currUserPacks.push(snapshot);
+      });
     })
 
-    //Figure out what is returning here
-    console.log(result)
-
-    return Promise.resolve(result);
+    return Promise.resolve(currUserPacks);
   }
 
   getPackInformationByPackName(packName) {

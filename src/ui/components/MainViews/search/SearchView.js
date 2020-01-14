@@ -12,54 +12,52 @@ import {
     Text,
     View,
     StyleSheet,
-    TouchableOpacity,
+    RefreshControl,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    Modal
 } from 'react-native';
 
 import {
     IconButton,
+    Avatar,
+    Button
 } from 'react-native-paper';
 
 import {
     Input,
-    Rating
+    SearchBar
 } from 'react-native-elements';
 
+import {
+    Feather as FeatherIcon
+} from '@expo/vector-icons';
 
-import SearchFilter from './components/SearchFilter';
-import LupaMapView from '../../Modals/LupaMapView';
-import SafeAreaView from 'react-native-safe-area-view';
-import { ScrollView } from 'react-native-gesture-handler';
 import UserSearchResultCard from './components/UserSearchResultCard';
 import TrainerSearchResultCard from './components/TrainerSearchResultCard';
 
 import LupaController from '../../../../controller/lupa/LupaController';
-const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+import UserProfileModal from '../../DrawerViews/Profile/UserProfileModal';
+
+const buttonColor = "#2196F3";
 
 class SearchView extends React.Component {
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
-            showMap: false,
             searchValue: '',
-            readyToSearch: false,
             searchResults: [],
+            refreshing: false,
         }
-
-       // eventEmitter.on('prepare_search', _prepareSearch);
-
-    }
-
-    componentDidMount() {
-      // this._prepareSearch();
-        this.setState({
-            readyToSearch: true,
-        })
-        console.log('Search prep finished');
     }
 
     async _prepareSearch() {
-        await LUPA_CONTROLLER_INSTANCE.indexUsers();
+        await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     }
 
     _performSearch = async search => {
@@ -70,8 +68,10 @@ class SearchView extends React.Component {
         this.setState({
             searchValue: search
         })
+
+
         let result;
-        await LUPA_CONTROLLER_INSTANCE.searchUserByPersonalName(this.state.searchValue).then(data => {
+        await this.LUPA_CONTROLLER_INSTANCE.searchUserByPersonalName(this.state.searchValue).then(data => {
             result = data;
         })
 
@@ -79,22 +79,20 @@ class SearchView extends React.Component {
             searchResults: this.state.searchResults.concat(result)
         },
         console.log('finished performing search and state is set'));
+
     }
     
     showSearchResults() {
         return this.state.searchResults.map(result => {
-            console.log(result);
             switch(result.resultType)
             {
                 case "trainer":
-                    console.log('traienr')
                     return (
-                        <TrainerSearchResultCard title={result.firstName + " " + result.lastName} location={result.location} rating={result.rating} />
+                        <TrainerSearchResultCard title={result.display_name} location="Chicago, United States" rating={result.rating} uuid={result.objectID}/>
                     )
                 case "user":
-                    console.log('user')
                     return (
-                        <UserSearchResultCard title={result.firstName + " " + result.lastName} location={result.location} />
+                        <UserSearchResultCard title={result.display_name} location="Chicago, United States" uuid={result.objectID} />
                     )
                 case "pack":
                     break;
@@ -103,46 +101,57 @@ class SearchView extends React.Component {
         })
     }
 
+    _handleOnRefresh = () => {
+        //Refreshing
+        this.setState({ refreshing: true });
+
+        //Fetch data (index users)
+        _prepareSearch();
+
+        //End refreshing
+        this.setState({ refreshing: false });
+    }
+
     render() {
         return (
             <View style={styles.root}>
-                <SafeAreaView forceInset={{ top: 'always', left: 'always', right: 'always', horizontal: 'never' }} />
+                <SafeAreaView style={{backgroundColor: "transparent"}}>
 
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => this.setState({ showMap: true })}>
-                        <View style={styles.location}>
-                            <IconButton size={20} icon="room" color="#7E8BFF" style={{ margin: 0, padding: 0 }} />
-                            <Text style={{ fontSize: 20, color: "#848484", fontWeight: "700" }}>
-                                Auburn,
-                                        </Text>
-                            <Text>
-                                {" "}
-                            </Text>
-                            <Text style={{ fontSize: 20, color: "#848484" }}>
-                                Alabama
-                                        </Text>
+                    <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                        <View style={{width: "85%"}}>
+                        <SearchBar placeholder="Search the Lupa Database"
+                        onChangeText={text => this._performSearch(text)} 
+                        platform="ios"
+                        searchIcon={<FeatherIcon name="search" />}
+                        containerStyle={{backgroundColor: "white"}}/>
                         </View>
-                    </TouchableOpacity>
-
-                    <View style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
-                        <Input containerStyle={{width: "100%", alignSelf: "center", }}
-                        placeholder="What are you looking for?" placeholderTextColor="#9E9E9E" 
-                        inputContainerStyle={{borderColor: "#FAFAFA", borderBottomColor: "#FAFAFA", alignSelf: "center"}} 
-                        inputStyle={{color: "#9E9E9E", fontWeight: "600", borderColor: "#FAFAFA", borderBottomColor: "#FAFAFA", alignSelf: "center"}}
-                        onChangeText={text => this._performSearch(text)} value={this.state.searchValue} />
+                        <View style={{width: "15%"}}>
+                        <IconButton icon="tune" color="black" size={20} onPress={() => alert('Filter Results')} />
+                        </View>
+                    </View>
+                    <View style={{flexDirection: "row", justifyContent: "space-evenly"}}>
+                        <Button mode="text" compact color={buttonColor} style={styles.button}>
+                            Users
+                        </Button>
+                        <Button mode="text" compact  color={buttonColor} style={styles.button}>
+                            Trainers
+                        </Button>
+                        <Button mode="text" compact  color={buttonColor} style={styles.button}>
+                            Packs
+                        </Button>
+                        <Button mode="text" compact  color={buttonColor} style={styles.button}>
+                            Workouts
+                        </Button>
                     </View>
                 </View>
 
-                <ScrollView contentContainerStyle={styles.searchContainer}>
+                <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} />}>
                     {
                         this.showSearchResults()
                     }
                 </ScrollView>
-
-
-                <SearchFilter />
-                <LupaMapView isVisible={this.state.showMap} />
-
+                </SafeAreaView>
             </View>
         );
     }
@@ -151,12 +160,14 @@ class SearchView extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "white",
     },
     header: {
         width: '100%',
         alignSelf: "center",
         flexDirection: "column",
+        backgroundColor: "white"
+        
     },
     location: {
         alignSelf: "center",
@@ -167,6 +178,10 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         margin: 5,
+        backgroundColor: "red",
+    },
+    button: {
+        borderWidth: 1, borderRadius: 10, borderColor: "#E0E0E0",
     }
 });
 

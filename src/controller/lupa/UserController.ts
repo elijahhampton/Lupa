@@ -33,10 +33,96 @@ export default class UserController {
         return UserController._instance;
     }
 
+
+    getAttributeFromUUID = async (uuid, attribute) => {
+        let retValue;
+        
+        await USER_COLLECTION.doc(uuid).get().then(res => {
+            let snapshot = res.data();
+            switch(attribute) {
+                case 'display_name':
+                    retValue = snapshot.display_name;
+                    break;
+                case 'email':
+                    retValue = snapshot.email;
+                    break;
+                case 'email_verified':
+                    retValue = snapshot.email_verified;
+                    break;
+                case 'gender':
+                    retValue = snapshot.gender;
+                    break;
+                case 'interest':
+                    retValue = snapshot.interest;
+                    break;
+                case 'isTrainer':
+                    retValue = snapshot.isTrainer;
+                    break;
+                case 'location':
+                    retValue = snapshot.location;
+                    break;
+                case 'mobile':
+                    retValue = snapshot.mobile;
+                    break;
+                case 'packs':
+                    retValue = snapshot.packs;
+                    break;
+                case 'photo_url':
+                    retValue = snapshot.photo_url;
+                    break;
+                case 'preferred_workout_times':
+                    retValue = snapshot.preferred_workout_times;
+                    break;
+                case 'rating':
+                    retValue = snapshot.rating;
+                    break;
+                case 'time_created':
+                    retValue = snapshot.time_created;
+                    break;
+                case 'user_uuid':
+                    retValue = snapshot.user_uuid;
+                    break;
+                case 'username':
+                    retValue = snapshot.username;
+                    break;
+                case 'experience':
+                    retValue = snapshot.experience;
+                    break;
+                case 'followers':
+                    retValue = snapshot.followers;
+                    break;
+                case 'following':
+                    retValue = snapshot.following;
+                    break;
+                case 'sessions_completed':
+                    retValue = snapshot.sessions_completed;
+                    break;
+            }
+        });
+        
+        return retValue;
+    }
+
     /************** *********************/
 
     getCurrentUser = () => {
         return  LUPA_AUTH.currentUser;
+    }
+
+    getUserInformationFromUsername = async (username) => {
+        let result;
+        await USER_COLLECTION.where('username', '==', username).get().then(res => {
+            result = res.data();
+        });
+        return result;
+    }
+
+    getUserInformationFromDisplayName = async (displayName) => {
+        let result;
+        await USER_COLLECTION.where('display_name', '==', displayName).get().then(res => {
+            result = res.data();
+        })
+        return result;
     }
 
     isTrainer = (userUUID) => {
@@ -64,8 +150,6 @@ export default class UserController {
                 }, {
                     merge: true,
                 })
-
-                console.log(LUPA_AUTH.currentUser)
                 break;
             case UserCollectionFields.USERNAME:
                     currentUserDocument.set({
@@ -97,7 +181,6 @@ export default class UserController {
                 currentUserDocument.get().then(snapshot => {
                     let snapshotData = snapshot.data();
                     interestData = snapshotData.interest
-                    console.log(interestData)
                 });
                 
                 interestData.push(value);
@@ -162,9 +245,54 @@ export default class UserController {
                     break;
                 }
                 break;
-
+        case UserCollectionFields.FOLLOWERS:
+            /* For now we don't handle this year */
+        case UserCollectionFields.FOLLOWING:
+            /* For now we don't handle this year */
         }
         console.log('LUPA: User Controller finished updating current user')
+    }
+
+    addFollowerToUUID = async (uuidOfAccountBeingFollowed, uuidOfFollower) => {
+        let result;
+        let  accountToUpdate = USER_COLLECTION.doc(uuidOfAccountBeingFollowed);
+        await accountToUpdate.get().then(snapshot => {
+            result = snapshot.data();
+        })
+
+        //Get the current followers
+        let currentFollowers = result.followers;
+
+        //add the follower to the current followers
+        currentFollowers.push(uuidOfFollower);
+
+        //update followers
+        accountToUpdate.set({
+            followers: currentFollowers
+        }, {
+            merge: true,
+        });
+    }
+
+    followAccountFromUUID = async (uuidOfUserToFollow, uuidOfUserFollowing) => {
+        let result;
+        let  accountToUpdate = USER_COLLECTION.doc(uuidOfUserFollowing);
+        await accountToUpdate.get().then(snapshot => {
+            result = snapshot.data();
+        });
+
+        //get the current following
+        let currentFollowing = result.following;
+
+        //add the following to the current followers
+        currentFollowing.push(uuidOfUserToFollow);
+
+        //update following
+        accountToUpdate.set({
+            following: currentFollowing
+        }, {
+            merge: true,
+        });
     }
 
     updateCurrentUserHealthData  = (fieldToUpdate) => {
@@ -202,21 +330,22 @@ export default class UserController {
             //Set necessary data for users
             let userData = {
                 objectID: user.objectID,
-                username: user.username,
-                firstName: user.firstname,
-                lastName: user.lastname,
-                statistics: user.statistics,
-                specializations: user.specializations,
-                experience: user.experience,
-                packs: user.packsByName,
-                recommendedWorkouts: user.recommended,
+                display_name: user.display_name,
                 email: user.email,
-                isTrainer: user.isTrainer,
-                sessions: user.sessions,
-                timeCreated: user.timeCreated,
+                email_verified: user.email_verified,
                 gender: user.gender,
+                interest: user.interest,
+                isTrainer: user.isTrainer,
                 location: user.location,
-                rating: user.rating,
+                mobile: user.mobile,
+                packs: user.packs,
+                photo_url: user.photo_url,
+                preferred_workout_times: user.preferred_workout_times,
+                time_created: user.time_created,
+                user_uuid: user.user_uuid,
+                username: user.username,
+                rating: user.rating, //For now we give all users a rating whether they are a trainer or nto
+                experience: user.experience
             }
       
             records.push(userData);
@@ -276,20 +405,31 @@ export default class UserController {
     searchByRealName = (startsWith='') =>  {
         let results = new Array();
         let result = {
-            firstName: undefined, 
-            lastName: undefined, 
-            gender: undefined, 
-            isTrainer: undefined, 
-            packs: undefined, 
-            queryMatchLevel: undefined, 
+            objectID: undefined,
+            display_name: undefined,
+            email: undefined,
+            email_verified: undefined,
+            gender: undefined,
+            interest: undefined,
+            isTrainer: undefined,
             location: undefined,
+            mobile: undefined,
+            packs: undefined,
+            photo_url: undefined,
+            preferred_workout_times: undefined,
+            time_created: undefined,
+            user_uuid: undefined,
+            username: undefined,
+            rating: undefined, //For now we give all users a rating whether they are a trainer or nto
+            uid: undefined,
             resultType: undefined,
-            rating: undefined,
         }
 
         return new Promise((resolve, reject) => {
+            const query = startsWith.toLowerCase();
+
             usersIndex.search({
-                query: startsWith,
+                query: query,
             }, (err, {hits}) => {
                 if (err) throw reject(err);
                 let results = [];
@@ -297,16 +437,14 @@ export default class UserController {
 
                 for (let i = 0; i < hits.length; i++){
                     let currHit = hits[i];
-                    result.firstName = currHit.firstName;
-                    result.lastName = currHit.lastName;
+                    result.display_name = currHit._highlightResult.display_name.value;
+                    result.display_name.match_level = currHit._highlightResult.display_name.matchLevel;
+                    result.email = currHit.email;
                     result.gender = currHit.gender;
-                    result.isTrainer = currHit.isTrainer;
-                    result.packs = currHit.packs;
-                    result.queryMatchLevel = currHit._highlightResult.firstName.matchLevel;
-                    result.location = currHit.location;
+                    result.photo_url = currHit.photo_url;
+                    result.objectID = currHit.objectID;
+                    result.preferred_workout_times = currHit.preferred_workout_times;
                     result.rating = currHit.rating;
-                    console.log(result.rating);
-                
                     result.resultType = currHit.isTrainer == true ? "trainer" : "user";
 
                     results.push(result);

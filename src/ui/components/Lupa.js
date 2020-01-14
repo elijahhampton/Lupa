@@ -9,7 +9,8 @@ import React from "react";
 
 import {
   StyleSheet,
-  AsyncStorage
+  AsyncStorage,
+  StatusBar
 } from "react-native";
 
 import WorkoutView from './MainViews/WorkoutView';
@@ -22,11 +23,12 @@ import Dashboard from './Navigators/LupaDrawerNavigator';
 
 import WelcomeModal from './Modals/WelcomeModal/WelcomeModal'
 
-import _requestPermissionsAsync from '../../controller/lupa/permissions/permissions';
-
+import LupaController from '../../controller/lupa/LupaController';
 class Lupa extends React.Component {
   constructor(props) {
     super(props);
+
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     this.state = {
       currIndex: 1,
@@ -38,7 +40,7 @@ class Lupa extends React.Component {
 
   componentDidMount = () => {
     this._showWelcomeModal();
-    _requestPermissionsAsync();
+    //this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
 
   _showWelcomeModal = async () => {
@@ -66,6 +68,7 @@ class Lupa extends React.Component {
     const currIndex = this.state.currIndex;
     return (
       <>
+        <StatusBar backgroundColor="blue" barStyle="dark-content" />
         <Swiper style={styles.appContainer}
           loop={false}
           showButtons={false}

@@ -11,7 +11,7 @@ import {
     Surface,
     Caption
 } from 'react-native-paper';
-import { Avatar } from 'react-native-elements';
+import { Rating } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PackModal from '../../../Modals/PackModal/PackModal';
 
@@ -27,38 +27,21 @@ const MyPacksCard = (props) => {
 
     return (
         <>
-        <TouchableOpacity onPress={() => setShowPack(true)}>
-        <View style={{ margin: 10 }}>
-            <Surface style={{ width: 160, height: 180, elevation: 2, borderRadius: 10}}>
-                    <Surface style={{flex: 2, alignSelf: "center",width: "80%", height: "45%", flexDirection: "column" , alignItems: "center", justifyContent: "center", elevation: 5, borderRadius: 15, marginTop: 8}}>
-                    <Image style={{width: "100%", height: "100%", borderRadius: 15}} 
+        <TouchableOpacity onPress={() => setShowPack(false)}>
+        <View style={styles.cardContainer}>
+            <Surface style={styles.bottomSurface}>
+                    <Surface style={styles.imageSurface}>
+                    <Image style={styles.image} 
                                 resizeMode={ImageResizeMode.cover} 
                                 source={{ uri: 'https://picsum.photos/700' }} />
                     </Surface>
-                    <View style={{flex: 1, width: 160, height: 80, flexDirection: "row",alignSelf: "flex-end", alignItems: "center", justifyContent: "center"}}>
-                    <Avatar title="EH" rounded size="small"/>
-                    <Avatar title="EH" rounded size="small"/>
-                    <Avatar title="EH" rounded size="small"/>
-                    <Avatar title="EH" rounded size="small"/>
+                    <View style={styles.cardContentContainer}>
+                    <Rating imageSize={5} style={styles.rating} ratingCount={3} ratingBackgroundColor="#FAFAFA" />
+                    <Caption>
+                        Announcements
+                    </Caption>
                     </View>
             </Surface>
-            <View style={styles.packInfo}>
-                <Caption>
-                { props.title }
-                </Caption>
-                <View style={{flexDirection: "row", alignItems: "center"}}>
-                    <Caption>
-                        Pack Leader: { " "}
-                    </Caption>
-                <Caption style={{color: "#2196F3"}}>
-                    {props.packLeader}
-                </Caption>
-                </View>
-                <Caption>
-                    Sessions Completed { " "}
-                    {props.sessionsCompleted}
-                </Caption>
-            </View>
         </View>
         </TouchableOpacity>
         <PackModal isOpen={showPack} _handleClose={_closeModal} />
@@ -67,23 +50,23 @@ const MyPacksCard = (props) => {
 }
 
 const styles = StyleSheet.create({
-    myPacksRoot: {
-        elevation: 3,
-        width: 250,
-        height: 200,
-        borderRadius: 25,
+    cardContainer: {
+        margin: 10,
     },
-    topSurface: {
-        elevation: 6,
-        width: 250,
-        height: 200,
-        position: "absolute",
-        top: -20,
-        left: 100
+    bottomSurface: {
+        width: 160, height: 150, elevation: 2, borderRadius: 25
     },
-    packInfo: {
-        margin: 5,
-        flexDirection: "column",
+    imageSurface: {
+        flex: 2, alignSelf: "center",width: "80%", height: "55%", flexDirection: "column" , alignItems: "center", justifyContent: "center", elevation: 5, borderRadius: 20, marginTop: 8
+    },
+    image: {
+        width: "100%", height: "100%", borderRadius: 15
+    },
+    cardContentContainer: {
+        flex: 1, flexDirection: "column",alignSelf: "center", justifyContent: "center", alignItems: "center"
+    },
+    rating: {
+        margin: 2
     }
 });
 
