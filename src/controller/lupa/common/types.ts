@@ -5,7 +5,11 @@ export enum UserCollectionFields {
     PHOTO_URL="photo_url",
     GENDER="gender",
     INTEREST="interest",
-    PREFERRED_WORKOUT_TIMES="preferred_workout_times"
+    PREFERRED_WORKOUT_TIMES="preferred_workout_times",
+    FOLLOWERS="followers",
+    FOLLOWING="following",
+    EXPERIENCE="experience",
+    SESSIONS_COMPLETED="sessions_completed",
 }
 
 export enum Days {
@@ -18,15 +22,21 @@ export enum Days {
     Sunday="Sunday",
 }
 
-export enum SESSION_STAGE {
-    INVITED,
-    SCHEDULED,
+export enum SESSION_STATUS {
+    INVITED="Pending",
+    Confirmed="Confirmed",
 }
 
-export enum SESSION_STATUS {
-    NEW,
-    COMPLETED,
-    EXPIRED,
+export enum NOTIFICATION_TYPES {
+    SESSION_INVITE="SessionInvite",
+}
+
+export type LupaNotificationStructure = {
+    user: "",
+    date: "",
+    time: "",
+    type: any,
+    data: {}
 }
 
 export type LupaUserStructure = {
@@ -52,6 +62,11 @@ export type LupaUserStructure = {
         Sunday: [],
     },
     interest: [],
+    rating: 0,
+    experience: {},
+    followers: [],
+    following: [],
+    sessionsCompleted: 0
 };
 
 export type LupaWorkoutStructure = {};
@@ -71,16 +86,11 @@ export type LupaHealthDataStructure = {
 export type LupaSessionStructure = {
     attendeeOne: "",
     attendeeTwo: "",
-    stage: any,
-    day: any,
-    time: "",
-    location: {
-        longitude: "",
-        latitude: "",
-    }
+    date: any,
     name: String,
     description: String,
     sessionStatus: any,
+    lastSuggestedBy: {}
 };
 
 export type LupaPackEventStructure = {

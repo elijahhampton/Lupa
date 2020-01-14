@@ -83,7 +83,8 @@ class WorkoutView extends React.Component {
 
                             <View style={{ alignSelf: "center", width: "100%" }}>
                                 <Searchbar placeholder="Search workouts"
-                                onChangeText={() => alert('Searching...')} />
+                                onChangeText={() => alert('Searching...')}
+                                style={{borderRadius: 25}} />
                             </View>
 
                             <View style={styles.buttonScroll}>

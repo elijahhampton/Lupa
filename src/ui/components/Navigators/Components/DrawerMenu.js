@@ -2,13 +2,8 @@ import React from 'react';
 
 import {
     View,
-    ScrollView,
     Text,
-    Button,
-    Dimensions,
     StyleSheet,
-    TouchableOpacity,
-    Image,
     Platform,
     TouchableHighlight
 } from 'react-native';
@@ -18,12 +13,13 @@ import { withNavigation } from 'react-navigation';
 import { Feather as DrawerIcon } from '@expo/vector-icons';
 
 import SafeAreaView from 'react-native-safe-area-view';
-import { DrawerItems } from 'react-navigation-drawer';
-import { Surface, IconButton } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Avatar } from 'react-native-elements';
+
+import {
+  logoutUser
+} from '../../../../controller/lupa/auth';
 
 class DrawerMenu extends React.Component {
   constructor(props) {

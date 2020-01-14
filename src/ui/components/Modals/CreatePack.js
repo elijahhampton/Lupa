@@ -10,15 +10,18 @@ import {
 } from 'react-native';
 
 import {
-    Surface, 
-    Caption, 
-    IconButton
+    Surface,
+    Caption,
+    IconButton,
+    Button,
+    Divider,
+    Avatar
 } from 'react-native-paper';
 
 import { ImagePicker } from 'expo-image-picker';
 
 import SafeAreaView from 'react-native-safe-area-view';
-import { Input } from 'react-native-elements';
+import { Input, CheckBox } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 var packImageSource = undefined;
@@ -33,17 +36,10 @@ export default class CreatePack extends React.Component {
 
         this.state = {
             packImageSource: Background,
-            visible: true
+            checked: false,
         }
 
         this._chooseImageFromCameraRoll = this._chooseImageFromCameraRoll.bind(this);
-        this._closeModal = this._closeModal.bind(this);
-    }
-
-    _closeModal = () => {
-        this.setState({
-            visible: false
-        })
     }
 
     _chooseImageFromCameraRoll = async () => {
@@ -60,97 +56,120 @@ export default class CreatePack extends React.Component {
 
     render() {
         return (
-            <Modal presentationStyle="fullScreen" style={styles.modal} visible={false}>
+            <Modal presentationStyle="fullScreen" style={styles.modal} visible={this.props.isOpen}>
                 <SafeAreaView style={styles.safeareaview}>
-                    <ScrollView>
-                        <View style={styles.header}>
-                        <Text style={[styles.sectionText, {fontSize: 25}]}>
-                            Create new pack
+                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                        <IconButton icon="clear" onPress={this.props.closeModalMethod} />
+                        <Text style={{ fontSize: 20, fontWeight: "500" }}>
+                            Create a new pack
                         </Text>
-                        <IconButton icon="clear" onPress={() => this._closeModal} />
+                        <Button mode="text" color="#2196F3">
+                            Next
+                        </Button>
                         </View>
+            {/* content */}
+                        <View style={{display: "flex",
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "space-around", padding: 10}}>
 
-                        <View style={[styles.packImage, styles.spaceAround]}>
-                            <Surface style={{ borderRadius: 15, width: 280, height: 150, elevation: 8 }}>
-                            <TouchableOpacity style={{borderRadius: 15, width: 280, height: 150, elevation: 8}} onPress={this._chooseImageFromCameraRoll}>
-                                <Image source={this.state.packImageSource} style={styles.image} resizeMode={ImageResizeMode.cover} resizeMethod="auto" />
-                                </TouchableOpacity>
-                            </Surface>
+<View style={styles.header}>
+
+<Avatar.Image source={this.state.packImageSource} size={130} label="EH" />
+<Text style={{fontSize: 20, fontWeight: "400", padding: 5}}>
+    Pick an avatar for your pack
+</Text>
+</View>
+
+{ /* */}
+<View style={{ flex: 0.5, flexDirection: "column" }}>
+<Text style={styles.sectionText}>
+Pack Name
+</Text>
+<View>
+<Input inputContainerStyle={{borderColor: "transparent"}} placeholder="Enter a name for your pack" />
+</View>
+</View>
+
+{ /* */}
+<View style={{ flex: 0.5, flexDirection: "column" }}>
+<Text style={styles.sectionText}>
+Pack Objective
+</Text>
+<View>
+<View>
+<Input inputContainerStyle={{borderColor: "transparent"}} placeholder="Enter a purpose for your pack" />
+</View>
+</View>
+</View>
+
+{ /* */}
+<View style={{ flex: 1, flexDirection: "column", marginBottom: 10 }}>
+<Text style={styles.sectionText}>
+Privacy Preference
+</Text>
+<View style={{ flexDirection: "column" }}>
+
+<View style={{flexDirection: "column", padding: 10 }}>
+        <Text style={{fontWeight: "bold"}}>
+            Public
+    </Text>
+
+    <Caption>
+        This pack will be public for all users to see on the explore and search pages
+</Caption>
+</View>
+
+
+<View style={{flexDirection: "column", padding: 10}}>
+        <Text style={{fontWeight: "bold"}}>
+            Private
+    </Text>
+
+    <Caption>
+    Only users inside you invite and users in this pack will be able to see it on the explore and search pages
+</Caption>
+</View>
+</View>
+
+
+
+</View>
+
+{ /* */}
+<View style={{ flex: 1, flexDirection: "column" }}>
+<Text style={styles.sectionText}>
+Pack Type
+</Text>
+
+<View style={{ flexDirection: "column" }}>
+
+<View style={{ flexDirection: "column", padding: 10}}>
+        <Text style={{fontWeight: "bold"}}>
+            Global
+    </Text>
+
+    <Caption>
+        Users can join your pack for free
+</Caption>
+</View>
+
+<View style={{flexDirection: "column", padding: 10}}>
+        <Text style={{fontWeight: "bold"}}>
+            Subscription
+    </Text>
+
+    <Caption>
+        Users will have to pay a subscription fee to join this pack
+</Caption>
+</View>
+
+</View>
+</View>
+
                         </View>
+                    
 
-                        <View style={[styles.spaceAround, styles.packName]}>
-                            <Text style={styles.sectionText}>
-                                Pack Name
-                    </Text>
-                            <View style={styles.packNameInput}>
-                            <Input containerStyle={styles.containerStyle} 
-                                inputStyle={styles.inputStyle} 
-                                inputContainerStyle={styles.inputContainerStyle} 
-                                placeholder="Enter a name for your pack" 
-                                placeholderTextColor="rgba(189,189,189 ,1)" />
-                            </View>
-                        </View>
-
-                        <View style={[styles.spaceAround, styles.packMemberInvites]}>
-                            <Text style={styles.sectionText}>
-                                Invite Members
-                    </Text>
-                            <View style={styles.packNameInput}>
-                                <Input containerStyle={styles.containerStyle} 
-                                inputStyle={styles.inputStyle} 
-                                inputContainerStyle={styles.inputContainerStyle} 
-                                placeholder="Invite members to your pack" 
-                                placeholderTextColor="rgba(189,189,189 ,1)" />
-                            </View>
-                            <View style={styles.membersInvited}>
-
-                            </View>
-                        </View>
-
-                        <View style={styles.packPreferencesContainer}>
-                            <Text style={styles.sectionText}>
-                                Pack Preferences
-                    </Text>
-                            <View style={styles.packPreferences}>
-                                <View style={styles.preference}>
-                                    <Text>
-                                        Private
-                                    </Text>
-                                    <Caption>
-                                        Only people that you will follow will be able to see this pack.
-                                    </Caption>
-                                </View>
-
-                                <View style={styles.preference}>
-                                    <Text>
-                                        Public
-                                    </Text>
-                                    <Caption>
-                                        This pack will be visible in all common areas. (i.e. Explore Page, Lupa Database)
-                                    </Caption>
-                                </View>
-
-                                <View style={styles.preference}>
-                                    <Text>
-                                        Free
-                                    </Text>
-                                    <Caption>
-                                        Your pack will remain free and members will not need to pay a subcription fee to participate.
-                                    </Caption>
-                                </View>
-
-                                <View style={styles.preference}>
-                                    <Text>
-                                        Subscription Based
-                                    </Text>
-                                    <Caption>
-                                        In order to participate in this pack members will need to pay a subscription fee.
-                                    </Caption>
-                                </View>
-                            </View>
-                        </View>
-
-                    </ScrollView>
                 </SafeAreaView>
             </Modal>
         )
@@ -160,85 +179,24 @@ export default class CreatePack extends React.Component {
 const styles = StyleSheet.create({
     modal: {
         display: "flex",
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "white",
         margin: 0,
-    },
-    safeareaview: {
         flex: 1,
-        flexDirection: "column",
-        padding: 10,
-    },
-    packImage: {
-        flex: 2,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 10,
-    },
-    packName: {
-        flex: 1,
-        padding: 10,
-    },
-    packNameInput: {
-        width: "100%",
-        borderRadius: 10,
-        borderWidth: 1,
-    },
-    packPreferencesContainer: {
-        width: "100%",
-        height: "auto",
-        padding: 10,
-    },
-    packPreferences: {
-        flexDirection: "row",
-        flexWrap: 'wrap',
-        justifyContent: "space-evenly"
-    },
-    preference: {
-        width: "45%",
-        height: 105,
-        borderRadius: 20,
-        borderWidth: 1,
-        margin: 5,
-        flexDirection: "column",
-        justifyContent: "space-around",
-        alignItems: "center",
-        padding: 5,
-    },
-    packMemberInvites: {
-        width: "100%",
-        padding: 10,
-        height: "auto",
-    },
-    membersInvited: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        flexWrap: 'wrap',
     },
     sectionText: {
-        fontSize: 20,
-        fontWeight: "700",
-        color: 'rgba(33,33,33 ,1)',
+        fontSize: 15,
+        fontWeight: "600",
+        color: "#BDBDBD",
     },
-    spaceAround: {
-        justifyContent: "space-around",
-        flexDirection: "column"
-    },
-    inputContainerStyle: {
-        borderBottomColor: "#fafafa",
-    },
-    inputStyle: {
-
-    },
-    contaienrStyle: {
-        
+    safeareaview: {
+        display: "flex",
+        flex: 1,
     },
     header: {
-        width: "100%",
-        height: "auto",
-        justifyContent: "space-between",
-        flexDirection: "row",
-        alignItems: "center",
+        flex: 1.5,
+        flexDirection: "column",
+        justifyContent: "center", 
+        alignItems: "center"
     },
     image: {
         width: "100%",

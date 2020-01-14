@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import {
     Text,
@@ -12,6 +11,14 @@ import {
     ScrollView
 } from 'react-native';
 
+import {
+    Header,
+    Container,
+    Left,
+    Right,
+    Body,
+} from 'native-base'; //for conversion into an actual header
+
 import { 
     IconButton 
 } from 'react-native-paper';
@@ -21,23 +28,46 @@ import {
 } from '@expo/vector-icons';
 
 
+
 import Explore from './Explore';
 import MyPacks from './MyPacks';
+import Promotions from './Promotions';
 import CreatePack from '../../Modals/CreatePack';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 function getExploreTabColorStyle(currState) {
-    if (currState == 'explore') {
+    if (currState == 0) {
         return { color: '#2196F3' };
     }
     return { color: 'rgba(0,0,0,.15)' };
 }
 
 function getMyPacksTabColorStyle(currState) {
-    if (currState == 'mypacks') {
+    if (currState == 1) {
         return { color: '#2196F3' };
     }
     return { color: 'rgba(0,0,0,.15)' };
+}
+
+function getPromotionsTabColorStyle(currState) {
+    if (currState == 2) {
+        return { color: '#2196F3' };
+    }
+    return { color: 'rgba(0,0,0,.15)' };
+}
+
+const viewArray = [<Explore />, <MyPacks />, <Promotions />];
+
+function getActiveTab(index) {
+   switch(index) {
+       case 0:
+           return <Explore />
+        case 1:
+            return <MyPacks />
+        case 2:
+            return <Promotions />
+        default:
+   }
 }
 
 export default class PackView extends React.Component {
@@ -45,8 +75,9 @@ export default class PackView extends React.Component {
         super(props);
 
         this.state = {
-            activeView: 'explore',
+            activeView: 0,
             acitivePacks: [],
+            createPackModalIsOpen: false,
         }
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -60,20 +91,25 @@ export default class PackView extends React.Component {
         }, (buttonIndex) => {
             switch(buttonIndex) {
                 case 0:
-                    alert('Create New Pack')
+                    this.setState({ createPackModalIsOpen: true })
                 case 1:
-                    alert('Manage Packs')
+                    this.setState({ createPackModalIsOpen: true })
                 case 2:
                 default:
             }
         });
     }
 
+    closePackModal = () => {
+        this.setState({ createPackModalIsOpen: false });
+    }
+
     render() {
         const DynamicView = this.state.activeView;
         return (
             <SafeAreaView style={styles.root}>
-                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10}}>
+                
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, backgroundColor: "white"}}>
                     <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} />
                     <Text style={{fontSize: 25, fontWeight: "800"}}>
                         My Packs
@@ -81,7 +117,7 @@ export default class PackView extends React.Component {
                     </View>
 
                     <View style={styles.tabs}>
-                    <TouchableOpacity onPress={() => {this.setState({activeView: 'explore'})}}>
+                    <TouchableOpacity onPress={() => {this.setState({activeView: 0})}}>
                     <Text style={[ styles.tabsText, getExploreTabColorStyle(this.state.activeView) ]}>
                         Explore
                     </Text>
@@ -91,7 +127,7 @@ export default class PackView extends React.Component {
                         .
                     </Text>
 
-                    <TouchableOpacity onPress={() => {this.setState({activeView: 'mypacks'})}}>
+                    <TouchableOpacity onPress={() => {this.setState({activeView: 1})}}>
                     <Text style={[styles.tabsText, getMyPacksTabColorStyle(this.state.activeView) ]}>
                         My Packs
                     </Text>
@@ -101,21 +137,21 @@ export default class PackView extends React.Component {
                         .
                     </Text>
 
-                    <TouchableOpacity onPress={() => {this.setState({activeView: 'mypacks'})}}>
-                    <Text style={[styles.tabsText, getMyPacksTabColorStyle(this.state.activeView) ]}>
+                    <TouchableOpacity onPress={() => {this.setState({activeView: 2})}}>
+                    <Text style={[styles.tabsText, getPromotionsTabColorStyle(this.state.activeView) ]}>
                         Promotions
                     </Text>
                     </TouchableOpacity>
                 </View>
 
-                <ScrollView scrollEnabled={this.state.activeView == 'mypacks' ? true : false}>
+                <View style={{flex: 1}} /*scrollEnabled={this.state.activeView == 'mypacks' ? true : false}*/>
                     {
-                        DynamicView  == 'explore' ? ( <Explore /> ) : ( <MyPacks /> )
+                        getActiveTab(this.state.activeView)
                     }
-                </ScrollView>
+                </View>
 
                {/*  <PacksSearch ref="packsSearchRef" /> */}
-               <CreatePack />
+               <CreatePack isOpen={this.state.createPackModalIsOpen} closeModalMethod={this.closePackModal}/>
             </SafeAreaView>
 
         );
@@ -125,7 +161,7 @@ export default class PackView extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "white",
     },
     tabs: {
         width: "100%",
@@ -144,7 +180,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-end",
         flexDirection: "column",
         justifyContent: "flex-end",
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "white",
         margin: 5,
     }
 });

@@ -3,7 +3,7 @@
  * @author Elijah Hampton
  * @date August  20, 2019
  * 
- * Profile View
+ * User Profile Modal
  */
 
 import React from 'react';
@@ -17,6 +17,7 @@ import {
     ScrollView,
     Button as NativeButton,
     Dimensions,
+    Modal,
     RefreshControl
 } from "react-native";
 
@@ -55,7 +56,6 @@ import MyPacksCard from './components/MyPacksCard';
 
 import { MaterialIcons as MaterialIcon } from '@expo/vector-icons';
 import FollowerModal from '../../Modals/User/FollowerModal';
-import SettingsModal from './components/SettingsModal';
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -71,8 +71,9 @@ let ProfileImage = require('../../../images/background-one.jpg');
  * 
  * TODO:
  * ADD EDIT, ADD, and DELETE buttons for content.  (The delete buttons will be mapped beside content in each content area.).
+ * PHOTO_URL not correct
  */
-class ProfileView extends React.Component {
+class UserProfileModal extends React.Component {
     constructor(props) {
         super(props);
 
@@ -93,10 +94,10 @@ class ProfileView extends React.Component {
             sessionsCompleted: undefined,
             isEditingProfile: false,
             createSessionModalIsOpen: false,
-            userUUID: this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid,
+            userUUID: this.props.uuid, //Unlike the ProfileView this state property is unique to the UserProfileModal,
             followerModalIsOpen: false,
             refreshing: false,
-            settingsModalIsOpen: false,
+            tabToOpen: 0
         }
     }
 
@@ -107,55 +108,56 @@ class ProfileView extends React.Component {
      * the speed in which a user may search and click a user profile.  Loading the information and setting the state after the component has mounted
      * guarantees that the information will be loaded so the user can see it.
      */
-    componentDidMount = async () => {
-        let username, displayName, photoUrl, interestData, experienceData, isTrainer, followers, following, sessionsCompleted;
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'display_name').then(result => {
-            displayName = result;
-        })
+   componentDidMount = async () => {
+    let username, displayName, photoUrl, interestData, experienceData, isTrainer, followers, following, sessionsCompleted;
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'username').then(result => {
-            username = result;
-        })
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'display_name').then(result => {
+        displayName = result;
+    })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'photo_url').then(result => {
-            photoUrl = result;
-        })
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'username').then(result => {
+        username = result;
+    })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'sessions_completed').then(result => {
-            sessionsCompleted = result;
-        })
-    
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'following').then(result => {
-            following = result;
-        })
-    
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'followers').then(result => {
-            followers = result;
-        })
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'photo_url').then(result => {
+        photoUrl = result;
+    })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'isTrainer').then(result => {
-            isTrainer = result;
-        });
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'sessions_completed').then(result => {
+        sessionsCompleted = result;
+    })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'interest').then(result => {
-            interestData = result;
-        });
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'following').then(result => {
+        following = result;
+    })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'experience').then(result => {
-            experienceData = result;
-        });
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'followers').then(result => {
+        followers = result;
+    })
 
-        await this.setState({
-            username: username,
-            displayName: displayName,
-            photoUrl: photoUrl,
-            userExperience: experienceData,
-            userInterest: interestData,
-            userIsTrainer: isTrainer,
-            followers: followers,
-            following: following,
-            sessionsCompleted: sessionsCompleted,
-        });
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'isTrainer').then(result => {
+        isTrainer = result;
+    });
+
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'interest').then(result => {
+        interestData = result;
+    });
+
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'experience').then(result => {
+        experienceData = result;
+    });
+
+    await this.setState({
+        username: username,
+        displayName: displayName,
+        photoUrl: photoUrl,
+        userExperience: experienceData,
+        userInterest: interestData,
+        userIsTrainer: isTrainer,
+        followers: followers,
+        following: following,
+        sessionsCompleted: sessionsCompleted,
+    });
     }
 
     _chooseHeaderFromCameraRoll = async () => {
@@ -182,8 +184,8 @@ class ProfileView extends React.Component {
         }
     }
 
-    closeSettingsModal = () => {
-        this.setState({ settingsModalIsOpen: false });
+    closeCreateSessionModal = () => {
+        this.setState({ createSessionModalIsOpen: false });
     }
 
     closeFollowerModal = () => {
@@ -227,22 +229,42 @@ class ProfileView extends React.Component {
         return <MyPacksCard />
     }
 
+    handleFollowUser = () => {
+        console.log('Handling following user');
+        
+        let userToFollow = this.state.userUUID;
+
+        this.LUPA_CONTROLLER_INSTANCE.followUser(userToFollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
+    }
+
+    _renderFollowButton = () => {
+        //NEED TO RENDER BUTTON COLOR BASED ON IF THE USER IS FOLLOWING OR NOT
+        return (
+            <Button mode="outlined" color="#2196F3" theme={{roundness: 20 }} onPress={this.handleFollowUser}>
+            Follow
+        </Button>
+        )
+    }
+
     setupProfileInformation = async () => {
 
     }
 
     handleOnRefresh = () => {
-        //this.setupProfileInformation
+        //this.setupProfileInformation();
     }
 
     render() {
         return (
+            <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
+                <ScrollView showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
                 <Surface style={{ height: "13%", width: "100%", elevation: 3 }}>
                     <Image style={{ width: "100%", height: "100%" }} source={ProfileImage} resizeMode="cover" resizeMethod="resize" />
                 </Surface>
-                <View style={{ margin: 3, flexDirection: "row", justifyContent: "space-between"}}>
-                    <IconButton icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
+                <View style={{ margin: 3, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                    <IconButton icon="arrow-back" size={20} onPress={this.props.closeModalMethod} />
+                    { this._renderFollowButton() }
                 </View>
 
                 <ScrollView showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
@@ -250,7 +272,7 @@ class ProfileView extends React.Component {
                         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
                         <View style={styles.userInfo}>
                             <Text style={{fontWeight: "bold"}}>
-                                {this.LUPA_CONTROLLER_INSTANCE.getUserDisplayName()}
+                                {this.state.displayName}
                             </Text>
                             {
                                 true && this.state.isTrainer ?                             <Text style={{ fontSize: 12 }}>
@@ -261,7 +283,7 @@ class ProfileView extends React.Component {
                             }
                         </View>
                         <View style={{flexDirection: 'column', alignItems: 'center'}}>
-                        <Avatar size={40} source={this.LUPA_CONTROLLER_INSTANCE.getUserPhotoURL()} rounded showEditButton={this.state.isEditingProfile} containerStyle={{ }} />
+                        <Avatar size={40} source={this.state.photoUrl} rounded showEditButton={this.state.isEditingProfile} containerStyle={{ }} />
                         <Text style={{fontWeight: 'bold'}}>
                         {this.state.username}
                     </Text>
@@ -270,7 +292,8 @@ class ProfileView extends React.Component {
                         </View>
 
                         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", margin: 10}}>
-                        <TouchableOpacity>
+
+                            <TouchableOpacity>
                             <View style={{flexDirection: "column", alignItems: "center"}}>
                                 <Text>
                                     { this.state.sessionsCompleted }
@@ -281,7 +304,7 @@ class ProfileView extends React.Component {
                             </View>
 
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true })}>
+                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true, tabToOpen: 0 })}>
                             <View style={{flexDirection: "column", alignItems: "center"}}>
                             <Text>
                                     {this.state.followers.length}
@@ -292,7 +315,7 @@ class ProfileView extends React.Component {
                             </View>
 
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true })}>
+                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true, tabToOpen: 1 })}>
                             <View style={{flexDirection: "column", alignItems: "center"}}>
                             <Text>
                                     {this.state.following.length}
@@ -381,7 +404,12 @@ class ProfileView extends React.Component {
 
                 </ScrollView>
 
-                <Fab
+                <CreateSessionModal isOpen={this.state.createSessionModalIsOpen} closeModalMethod={this.closeCreateSessionModal} />
+                <FollowerModal isOpen={this.state.followerModalIsOpen} userUUID={this.state.userUUID} activeTab={this.state.tabToOpen} following={this.state.following} followers={this.state.followers} closeModalMethod={this.closeFollowerModal}/>
+                </ScrollView>
+            </SafeAreaView>
+            
+            <Fab
             active={this.state.active}
             direction="up"
             containerStyle={{ }}
@@ -389,14 +417,17 @@ class ProfileView extends React.Component {
             position="bottomRight"
             onPress={() => this.setState({ active: !this.state.active })}>
             <MaterialIcon name="menu" />
-            <Button style={{ backgroundColor: '#637DFF' }} onPress={() => this.setState({ settingsModalIsOpen: true })}>
-              <MaterialIcon name="settings" />
+            <Button style={{ backgroundColor: '#637DFF' }}>
+              <MaterialIcon name="message" />
+            </Button>
+            <Button style={{ backgroundColor: '#637DFF' }}>
+              <MaterialIcon name="share" />
+            </Button>
+            <Button style={{ backgroundColor: '#637DFF' }} onPress={() => this.setState({ createSessionModalIsOpen: true })}>
+              <MaterialIcon name="fitness-center" />
             </Button>
           </Fab>
-
-                <FollowerModal isOpen={this.state.followerModalIsOpen} username={this.state.username} followers={this.state.followers} following={this.state.following} closeModalMethod={this.closeFollowerModal}/>
-                <SettingsModal isOpen={this.state.settingsModalIsOpen} closeModalMethod={this.closeSettingsModal}/>
-            </SafeAreaView>
+            </Modal>
         );
     }
 }
@@ -468,7 +499,12 @@ const styles = StyleSheet.create({
         color: "#637DFF",
         backgroundColor: "#2196F3"
     },
+    modalContainer: {
+        display: "flex",
+        margin: 0,
+        backgroundColor: "#FAFAFA",
+    },
 
 });
 
-export default withNavigation(ProfileView);
+export default withNavigation(UserProfileModal);

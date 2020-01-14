@@ -13,6 +13,8 @@ import LupaApp from './src/ui/components/Lupa';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
+import LupaController from './src/controller/lupa/LupaController';
+
 const Navigator = createAppContainer(
   createSwitchNavigator(
     {
@@ -43,9 +45,15 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
     this.state = {
 
     }
+  }
+
+  componentDidMount = () => {
+  //  this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
 
   render() {

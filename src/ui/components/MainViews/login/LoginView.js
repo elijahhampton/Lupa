@@ -28,7 +28,7 @@ import { Feather } from "@expo/vector-icons";
 
 const { 
   isSignedIn,
-  loginUser
+  loginUser,
 } = require('../../../../controller/lupa/auth');
 
 class LoginView extends Component {
@@ -36,8 +36,8 @@ class LoginView extends Component {
     super(props);
 
     this.state = {
-      username: 'ejh0017@gmail.com',
-      password: 'password',
+      username: 'rob0017@gmail.com',
+      password: 'Hamptonej1!',
       checkedSignedIn: false,
       snackBarIsVisible: false,
       secureTextEntry: true,
@@ -45,17 +45,25 @@ class LoginView extends Component {
 
   }
 
-  componentDidMount = () => {
+  componentWillMount = () => {
    this._checkSignedInStatus();
   }
 
-  _checkSignedInStatus = () => {
-    let signedInStatus = isSignedIn();
+  _checkSignedInStatus = async () => {
+    let result;
+    let signedInStatus = isSignedIn().then(res => {
+      result = res;
+    });
+
+    this.setState({
+      isSignedIn: result
+    })
+
     this.setState({
       checkedSignedIn: true,
     });
 
-    if (signedInStatus == true) { this._introduceApp() }
+    if (signedInStatus == true) { await this._introduceApp() }
   }
 
   _handleShowPassword = () => {
@@ -78,8 +86,7 @@ class LoginView extends Component {
     const attemptedUsername = this.state.username;
     const attemptedPassword = this.state.password;
 
-  // let successfulLogin = loginUser(attemptedUsername, attemptedPassword);
-   successfulLogin = true;
+   let successfulLogin = await loginUser(attemptedUsername, attemptedPassword);
 
     if (successfulLogin) {
       this._introduceApp();
@@ -96,7 +103,6 @@ class LoginView extends Component {
    * This really isn't the place to be doing this, but any small last minute changes can go here.
    */
   _introduceApp = () => {
-   // this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     this.props.navigation.navigate('App');
   }
 
