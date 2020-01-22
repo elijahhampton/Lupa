@@ -12,7 +12,8 @@ import {
     TextInput,
     Switch,
     Chip,
-    Surface
+    Surface,
+    Button
 } from 'react-native-paper';
 
 import {
@@ -99,6 +100,9 @@ export default class FitnessInterest extends React.Component {
     render() {
         return (
             <View style={styles.root}>
+                <Button mode="text" color="#E0E0E0">
+                    Take me into the app
+                </Button>
                 <View style={styles.instructionalTextContainer}>
                     <Text style={styles.instructionalText}>
                     What are your fitness interest? (i.e. Yoga, High Intensity Training, or Running?)
@@ -161,7 +165,7 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: "600"
     },
     userInput: {

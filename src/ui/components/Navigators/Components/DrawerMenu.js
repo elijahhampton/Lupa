@@ -8,6 +8,13 @@ import {
     TouchableHighlight
 } from 'react-native';
 
+import {
+  Avatar as PaperAvatar ,
+  List,
+  Caption,
+  Button
+} from 'react-native-paper';
+
 import { withNavigation } from 'react-navigation';
 
 import { Feather as DrawerIcon } from '@expo/vector-icons';
@@ -20,6 +27,7 @@ import { Avatar } from 'react-native-elements';
 import {
   logoutUser
 } from '../../../../controller/lupa/auth';
+import { Divider } from 'react-native-paper';
 
 class DrawerMenu extends React.Component {
   constructor(props) {
@@ -59,57 +67,58 @@ class DrawerMenu extends React.Component {
           style={styles.container}
           forceInset={{top: 'always', horizontal: 'never', padding: 20}}>
 
-            <View style={{margin: 15, alignSelf: "center"}}>
-                <Avatar label="EH" showEditButton={true} rounded size={80} onEditPress={this._chooseAvatar} source={this.state.image} />
+            <View style={{margin: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <View style={{flexDirection: 'column'}}>
+                  <Text style={{fontWeight: '500', fontSize: 15}}>
+                    Elijah Hampton
+                  </Text>
+                  <Text style={{fontWeight: '500', fontSize: 15}}>
+                    ejh0017gmail.com
+                  </Text>
+                </View>
+
+              <PaperAvatar.Text label="EH" size={30} />
             </View>
 
+            <Divider />
 
-            <View style={styles.navigationItems}>
+            <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
+              <DrawerIcon name="activity" size={12} style={{margin: 3}}/>
+            <Button mode="Dashboard" color="grey" compact>
+              Dashboard
+            </Button>
+            </View>
 
-            <View style={styles.links}>
-                <DrawerIcon name="activity" />
-                <TouchableHighlight onPress={() => this.props.navigation.navigate('Dashboard')}>
-                <Text style={styles.sectionHeaderText}>
-                  Dashboard
-                </Text>
-                </TouchableHighlight>
+            <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
+              <DrawerIcon name="user" size={12} style={{margin: 3}}/>
+            <Button mode="Dashboard" color="grey" compact>
+              Profile
+            </Button>
+            </View>
+
+            <Divider />
+
+            <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
+              <DrawerIcon name="heart" size={12} style={{margin: 3}}/>
+            <Button mode="Dashboard" color="grey" compact>
+              Register as a Lupa Trainer
+            </Button>
+            </View>
+
+            <View style={{width: '100%', flexDirection: 'column', position: 'absolute', bottom: 20}}>
+              <Divider />
+              <Caption style={{alignSelf: 'center', padding: 5}}>
+                Preventative Healthcare
+              </Caption>
+              <Divider />
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', }}>
+              <Caption>
+                Terms of Service
+              </Caption>
+              <Caption>
+                Privacy Policy
+              </Caption>
               </View>
-
-
-              <View style={styles.links}>
-                <DrawerIcon name="user" />
-                <TouchableHighlight onPress={() => this.props.navigation.navigate('Profile')}>
-                <Text style={styles.sectionHeaderText}>
-                  Profile
-                </Text>
-                </TouchableHighlight>
-              </View>
-
-              <View style={styles.links}>
-              <DrawerIcon name="heart" />
-                <Text style={styles.sectionHeaderText}>
-                  Register as a Lupa Trainer
-                </Text>
-              </View>
-
-              <TouchableHighlight onPress={() => this.props.navigation.navigate('Notifications')}>
-              <View style={styles.links}>
-              <DrawerIcon name="briefcase" />
-                <Text style={styles.sectionHeaderText}>
-                  Notifications
-                </Text>
-              </View>
-              </TouchableHighlight>
-
-              <TouchableHighlight onPress={() => this.props.navigation.navigate('Goals')}>
-              <View style={styles.links}>
-              <DrawerIcon name="trending-up" />
-              <Text style={styles.sectionHeaderText}>
-                  Goals
-                </Text>
-              </View>
-              </TouchableHighlight>
-
             </View>
         </SafeAreaView>
       </View>

@@ -4,6 +4,7 @@ import {
     View,
     StyleSheet,
     Text,
+    TouchableOpacity
 } from 'react-native';
 
 import {
@@ -12,6 +13,9 @@ import {
 
 import { Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
+import { Feather as Icon } from '@expo/vector-icons';
+
+import LupaMapView from '../../LupaMapView';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
 
@@ -54,8 +58,7 @@ export default class ChooseUsername extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <SafeAreaView style={{flex: 1, padding: 10}}>
-                <View style={{flex: 2, justifyContent: "center"}}>
+                <SafeAreaView style={{flex: 1, padding: 10, justifyContent: 'space-evenly'}}>
 
                 <View style={styles.instructionalTextContainer}>
                     <Text style={styles.instructionalText}>
@@ -63,8 +66,8 @@ export default class ChooseUsername extends React.Component {
                     </Text>
                 </View>
 
-                <View style={{flexDirection: "column", alignItems: "center", justifyContent: 'space-around'}}>
-                    <TextInput 
+                <View style={{flex: 2, flexDirection: "column", alignItems: "center", justifyContent: 'space-around'}}>
+                <TextInput 
                         style={styles.textInput} 
                         mode="outlined" 
                         label="Choose a username" 
@@ -82,26 +85,25 @@ export default class ChooseUsername extends React.Component {
                         onChangeText={text => this._handleDisplayNameOnChangeText(text)}
                         onBlur={this._handleDisplayNameEndEditing}
                         value={this.state.displayName}
-                        />
-                </View>
+                        />  
                 </View>
 
-                <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-                    <Text style={{fontWeight: "600", color: "#BDBDBD"}}>
-                        On Lupa you can find certified trainers all over the world for private or sessions, and/or general fitness needs.  Would you like to sign up to become a Lupa Trainer?
+                
+                <View style={{alignItems: 'center', justifyContent: "space-around", flex: 2}}>
+                    <TouchableOpacity onPress={this._getLocationAsync} style={{flexDirection: "row", alignItems: "center"}}>
+                    <Icon name="map-pin" size={20} style={{padding: 2}} />
+                    <Text style={[styles.generalText, { color: '#2196F3'}]}>
+                        Where are you located?
                     </Text>
-                    <View style={{padding: 10, flexDirection: "row", alignItems: "center"}}>
-                    <Text style={{fontWeight: "600", color: "black"}}>
-                        I am a certified trainer and I would like to make my account a trainer acccount.
-                    </Text>
-                    <Switch
-        value={this.state.makeTrainerAccount}
-        onValueChange={() => this._handleTrainerAccountUpdate}
-        color="#1976D2"
-        style={{margin: 3}}
-      />
-                    </View>
+                    </TouchableOpacity>
+
+                    <Caption>
+                        We use your location to suggest trainers and others in your area as well as packs.  Read our Terms of Service and Privacy Policy for more information.
+                    </Caption>
                 </View>
+
+
+                <LupaMapView isVisible={false} />
 
 
                 </SafeAreaView>
@@ -125,14 +127,13 @@ const styles = StyleSheet.create({
         color: "#9E9E9E"
     },
     instructionalTextContainer: {
-        height: "20%",
-        width: "100%",
         alignItems: "center",
         justifyContent: "center",
+        flex: 1,
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: "600"
     },
     userInput: {

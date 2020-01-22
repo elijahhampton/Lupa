@@ -16,7 +16,8 @@ import {
     ScrollView,
     Dimensions,
     TouchableWithoutFeedback,
-    RefreshControl
+    RefreshControl,
+    Image,
 } from 'react-native';
 
 import {
@@ -25,7 +26,8 @@ import {
     Menu,
     Divider,
     Caption,
-    FAB
+    FAB,
+    Button
 } from 'react-native-paper';
 
 import {
@@ -41,12 +43,16 @@ import { Feather as Icon } from '@expo/vector-icons';
 
 import LupaCalendar from '../../Calendar/LupaCalendar'
 
-import SessionNotificationContainer from './Components/SessionNotificationContainer';
+import SafeAreaView from 'react-native-safe-area-view';
+
+import SessionNotificationContainer, {PackEventNotificationContainer} from './Components/SessionNotificationContainer';
 
 const chartWidth = Dimensions.get('screen').width - 20;
 const chartHeight = 250;
 
 import LupaController from '../../../../controller/lupa/LupaController';
+
+const AppLogo = require('../../../images/applogo.png')
 
 class TrainerDashboardView extends React.Component {
     constructor(props) {
@@ -86,6 +92,8 @@ class TrainerDashboardView extends React.Component {
        * Populate Sessions
        * 
        * Populate the sessions section with any sessions pending that this user might have.
+       * 
+       * TODO: Pash in session UUID and populate inside of container
        */
       populateSessions = () => {
           let attendeeTwoDisplayName;
@@ -101,32 +109,85 @@ class TrainerDashboardView extends React.Component {
               //Return a session notification container
               //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
               return (
+                  <>
                 <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
+                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
+                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
+                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
+              </>
               )
           })
       }
 
+      populatePackEvents = () => {
+          return (
+              <>
+              <PackEventNotificationContainer />
+              <PackEventNotificationContainer />
+              <PackEventNotificationContainer />
+              <PackEventNotificationContainer />
+              <PackEventNotificationContainer />
+              </>
+          )
+      }
+
     render() {
         return (
-                <LinearGradient style={{flex: 1, padding: 10, paddingTop: 20}} colors={['#2196F3', '#E3F2FD', '#fafafa']}>
-                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                    <IconButton style={{alignSelf: "flex-start"}} icon="menu" size={20} onPress={() => {this.props.navigation.openDrawer()}} />
-                    <Text style={{fontWeight: "900", color: "black", fontSize: 15}}>
-                        Lupa
-                    </Text>
-                    </View>
+                <SafeAreaView style={{flex: 1, padding: 5,  backgroundColor: "#64B5F6"}}>
                 <ScrollView contentContainerStyle={styles.dashboardContent} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl
             refreshing={this.state.refreshing}
             onRefresh={this._onRefresh}
-          />}>      
+          />}>  
 
-            <View style={{margin: 5, marginBottom: 10}}>
-            <LupaCalendar />
-            </View>
+          <View style={{flex: 1}}>
+          <View style={{justifyContent: "center", flexDirection: 'row', alignItems: 'center', margin: 10, width: "100%", height: "auto"}}>
+                        <Image source={AppLogo} style={{width: 120, height: 120}} />
+                        <Text style={{fontSize: 50, fontWeight: '600', color: 'white'}}>
+                            Lupa
+                        </Text>
+                        </View>    
+
+            <View style={{margin: 5, marginBottom: 15}}>
+            <View>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
+                            Sessions
+                        </Text>
+                        <Button mode="text" color="white">
+                            View all
+                        </Button>
+                </View>
+
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
+                        {
+                            this.populateSessions()
+                        }
+                        </ScrollView>
+                    </View>
 
                     <View>
-                        <Text style={{fontSize: 20, fontWeight: "700"}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
+                            Pack Events
+                        </Text>
+                        <Button mode="text" color="white">
+                            View all
+                        </Button>
+                </View>
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
+                        {
+                            this.populatePackEvents()
+                        }
+                        </ScrollView>
+                    </View>
+
+            <LupaCalendar />
+            </View>
+          </View>
+
+                    <View>
+                        <Text style={{fontSize: 20, fontWeight: "500", color: "white"}}>
                             Goals
                         </Text>
                         <View style={{flexDirection: "row"}}>
@@ -134,7 +195,7 @@ class TrainerDashboardView extends React.Component {
                             You do not have any goals set. Visit your fitness profile to set your
                         </Caption>
                         <TouchableWithoutFeedback>
-                        <Caption style={{color: "#2196F3"}}>
+                        <Caption style={{color: "white"}}>
                             {" "} goals
                         </Caption>
                         </TouchableWithoutFeedback>
@@ -146,7 +207,7 @@ class TrainerDashboardView extends React.Component {
                     </View>
 
                     <View>
-                        <Text style={{fontSize: 20, fontWeight: "700"}}>
+                        <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
                             Recent Workouts
                         </Text>
                         <Caption>
@@ -155,17 +216,8 @@ class TrainerDashboardView extends React.Component {
                     </View>
 
                     <View>
-                    <Text style={{fontSize: 20, fontWeight: "700"}}>
-                            Sessions
-                        </Text>
-                        {
-                            this.populateSessions()
-                        }
-                    </View>
-
-                    <View>
                         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%",}}>
-                        <Text style={{fontSize: 20, fontWeight: "700"}}>
+                        <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
                             Pack Offers
                         </Text>
                         <Icon name="plus" size={15} />
@@ -178,7 +230,7 @@ class TrainerDashboardView extends React.Component {
 
                     </View>
                 </ScrollView>
-                </LinearGradient>
+                </SafeAreaView>
         );                    
     }
 }

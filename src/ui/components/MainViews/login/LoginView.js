@@ -13,7 +13,6 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-  SafeAreaView,
 } from "react-native";
 
 import {
@@ -21,12 +20,14 @@ import {
   Snackbar,
 } from 'react-native-paper';
 
+import SafeAreaView from 'react-native-safe-area-view';
+
 import Background from "./images/login_background3.jpg";
 import { SocialIcon, Input } from "react-native-elements";
 
-import { Feather } from "@expo/vector-icons";
+import { Feather as FeatherIcon } from '@expo/vector-icons';
 
-const { 
+const {
   isSignedIn,
   loginUser,
 } = require('../../../../controller/lupa/auth');
@@ -46,7 +47,7 @@ class LoginView extends Component {
   }
 
   componentWillMount = () => {
-   this._checkSignedInStatus();
+    this._checkSignedInStatus();
   }
 
   _checkSignedInStatus = async () => {
@@ -72,21 +73,13 @@ class LoginView extends Component {
     })
   }
 
-  _handleUserIDInput = async (text) => {
-    await this.setState({ setState: text });
-  }
-
-  _handlePasswordInput = async () => {
-    await this.setState({ setState: text });
-  }
-
   onLogin = async (e) => {
     e.preventDefault();
 
     const attemptedUsername = this.state.username;
     const attemptedPassword = this.state.password;
 
-   let successfulLogin = await loginUser(attemptedUsername, attemptedPassword);
+    let successfulLogin = await loginUser(attemptedUsername, attemptedPassword);
 
     if (successfulLogin) {
       this._introduceApp();
@@ -108,79 +101,68 @@ class LoginView extends Component {
 
   render() {
     return (
-      <ImageBackground source={Background} style={styles.root}>
-        <SafeAreaView style={{flex: 1, display: "flex"}}>
+      <SafeAreaView style={{ padding: 15, flex: 1, backgroundColor: 'rgb(244, 247, 252)'}}>
+        <View style={{flex: 1, justifyContent: 'space-evenly'}}>
+        <View style={styles.headerText}>
+          <Text style={{ fontSize: 35, fontWeight: '700', color: 'black' }}>
+            Welcome to Lupa,
+                        </Text>
+                        <Text style={{ fontSize: 35, fontWeight: '700', color: '#9bb6e4'}}>
+                          sign in to continue
+                        </Text>
+                        <View style={{flexDirection: 'row', marginTop: 5}}>
+        <Text style={{fontSize: 17, fontWeight: '500', color: "black"}}>
+          Don't have an account?
+        </Text>
+        <Text>
+          {" "}
+        </Text>
+        <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
+          <Text style={{fontSize: 17, fontWeight: '500', color: '#2196F3'}}>
+            Sign Up
+          </Text>
+        </TouchableOpacity>
+</View>
 
-          <View style={styles.iconView}>
+        </View>
 
+        <View style={{ flex: 4, justifyContent: 'space-evenly' }}>
+          <View>
+          <View style={{ width: '100%', margin: 5 }}>
+            <Text style={styles.textLabel}>
+              Email
+                            </Text>
+            <Input placeholder="Enter an email address" inputStyle={{ fontWeight: '500', fontSize: 15 }} inputContainerStyle={{ borderBottomColor: 'transparent', padding: 8 }} containerStyle={{ width: '100%', borderRadius: 5, backgroundColor: 'white' }} value={this.state.username} onChangeText={text => this.setState({username: text})}/>
           </View>
 
-        <View style={styles.loginView}>
-          <View style={styles.surface}>
-            <Input placeholder="Enter your username"
-              placeholderTextColor="black" label="Username"
-              labelStyle={styles.labelStyle}
-              inputStyle={styles.inputStyle}
-              inputContainerStyle={styles.inputContainerStyle}
-              containerStyle={styles.containerStyle}
-              textContentType="username"
-              onChangeText={text => this.setState({ username: text })}
-              value={this.state.username} />
-            <Input placeholder="Enter your password"
-              placeholderTextColor="black"
-              label="Password"
-              labelStyle={styles.labelStyle}
-              inputStyle={styles.inputStyle}
-              secureTextEntry={this.state.secureTextEntry}
-              inputContainerStyle={styles.inputContainerStyle}
-              containerStyle={styles.containerStyle}
-              rightIcon={<Feather name="eye" onPress={this._handleShowPassword} />}
-              textContentType="password"
-              onChangeText={text => this.setState({ password: text})}
-              value={this.state.password} />
-            <Button mode="text" style={{ alignSelf: "flex-start" }} color="#2196F3">
-              Forgot Password
-          </Button>
-            <Button onPress={this.onLogin} mode="contained" color="#2196F3" style={{width: "60%", marginTop: 10}}>
-              Login
-            </Button>
+          <View style={{ width: '100%', margin: 5 }}>
+            <Text style={styles.textLabel}>
+              Password
+                            </Text>
+            <Input rightIcon={<FeatherIcon name="eye" />} placeholder="Enter a password" inputStyle={{ fontWeight: '500', fontSize: 15 }} inputContainerStyle={{ borderBottomColor: 'transparent', padding: 8 }} containerStyle={{ width: '100%', borderRadius: 5, backgroundColor: 'white' }} value={this.state.password} onChangeText={text => this.setState({password: text})} />
           </View>
+          </View>
+
+          <Button mode="contained" color="#2196F3" style={{ elevation: 0,padding: 10}} onPress={this.onLogin}>
+                            Login
+                        </Button>
+
         </View>
 
-        <View style={styles.socialView}>
+        <View style={{ flex: 2 }}>
+          <Text style={{ alignSelf: 'center', fontSize: 20, fontWeight: '400' }}>
+            or sign in with
+      </Text>
 
-          <SocialIcon type="twitter" raised button light />
-          <SocialIcon type="instagram" raised button light />
+          <SocialIcon type="facebook" button light />
 
-          <View style={{padding: 20, flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
-          <Text style={{ alignSelf: "center", fontSize: 20, fontWeight: "600", color: "white"}}>
-            Don't have an account?
-          </Text>
-          <Text>
-            { " "}
-          </Text>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
-          <Text style={{ alignSelf: "center", fontSize: 20, fontWeight: "900", color: "white"}}>
-            Sign up
-          </Text>
-          </TouchableOpacity>
-        </View>
+          <SocialIcon type="google" button light />
         </View>
 
 
-        <Snackbar
-          visible={this.state.snackBarIsVisible}
-          onDismiss={() => this.setState({ snackBarIsVisible: false })}
-          action={{
-            label: 'Okay',
-            onPress: () => { this.setState({ snackBarIsVisible: false }) },
-          }}
-        >
-          The username or password you provided was incorrect.
-</Snackbar>
-      
-        </SafeAreaView>
-      </ImageBackground>
+                
+        </View>
+      </SafeAreaView>
     );
   }
 }
@@ -189,64 +171,16 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  surface: {
-    //elevation: 10,
-    backgroundColor: "rgba(250,250,250 ,0.8)",
-    borderRadius: 15,
-    height: "80%",
-    width: "80%",
-    //margin: 10,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  loginView: {
-    flex: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  gradient: {
-    borderRadius: 19,
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-
-  },
-  loginText: {
-    fontSize: 17,
-    fontWeight: "600"
-  },
-  iconView: {
-    flex: 1,
-  },
-  loginButton: {
-    borderRadius: 25,
-    alignSelf: "center",
-    width: "100%",
-    height: "100%",
-  },
-  socialView: {
-    flex: 1,
-    padding: 10,
-    width: "100%",
-    justifyContent: "center"
-  },
-  labelStyle: {
-    color: "black",
-    fontSize: 12
-  },
-  inputContainerStyle: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: "black",
-  },
-  inputStyle: {
+  textLabel: {
     fontSize: 15,
-    fontWeight: "600"
+    fontWeight: '600',
+    color: '#424242',
+    margin: 5
   },
-  containerStyle: {
-    padding: 10
-  }
+  headerText: {
+    marginTop: 15,
+    padding: 10,
+  },
 });
 
 export default LoginView;

@@ -36,12 +36,6 @@ const LupaDrawerNavigator = createDrawerNavigator(
       Goals: {
         screen: GoalsStackNavigator
       },
-      Notifications: {
-        screen: NotificationsView
-      },
-      LoginView: {
-        screen: LoginView
-      }
     },
     {
       contentComponent: () => {return (<DrawerMenu />)},

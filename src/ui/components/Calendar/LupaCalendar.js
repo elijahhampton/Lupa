@@ -152,5 +152,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     elevation: 10,
     borderRadius: 25,
+    margin: 10,
   }
 })

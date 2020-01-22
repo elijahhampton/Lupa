@@ -26,6 +26,7 @@ import ChooseUsername from './Views/ChooseUsername';
 import BasicInformation from './Views/BasicInformation';
 import FitnessInterest from './Views/FitnessInterest';
 import WorkoutTimes from './Views/WorkoutTimes';
+import TrainerInformation from './Views/TrainerInformation';
 
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
 export default class WelcomeModal extends React.Component {
@@ -34,7 +35,7 @@ export default class WelcomeModal extends React.Component {
         super(props);
 
         this.state = {
-            currIndex: 1,
+            currIndex: 0,
             pageChangedForward: false,
         }
 
@@ -56,6 +57,8 @@ export default class WelcomeModal extends React.Component {
     });
     }
 
+    
+
     presentScreen = (index) => {
         let isTrainer = this.LUPA_CONTROLLER_INSTANCE.isTrainer(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid)
         
@@ -71,20 +74,20 @@ export default class WelcomeModal extends React.Component {
                     return <FitnessInterest />
                 case 4:
                     return <WorkoutTimes />
-                case 5:
             }   
         }
         else {
             switch(index) {
                 case 0:
                     return <ChooseUsername />
-                case 1:
-                    return <BasicInformation isForwardPageChange={this.state.isForwardPageChange} />
+                case 1: 
+                    return <TrainerInformation />
                 case 2:
-                    return <FitnessInterest />
+                    return <BasicInformation isForwardPageChange={this.state.isForwardPageChange} />
                 case 3:
-                    return <WorkoutTimes />
+                    return <FitnessInterest />
                 case 4:
+                    return <WorkoutTimes />
             }
         }
 
@@ -100,12 +103,12 @@ export default class WelcomeModal extends React.Component {
                         }
                         </View>
                         <View style={styles.buttons}>
-                        <Button mode="text" color="#2196F3" onPress={this._handleBackViewClick}>
+                            <Button mode="text" color="#2196F3" onPress={this._handleBackViewClick}>
                                 Back
-                            </Button>
-                            <Button mode="text" color="#2196F3" onPress={this._handleNextViewClick}>
+                            </Button><Button mode="text" color="#2196F3" onPress={this._handleNextViewClick}>
                                 Next
                             </Button>
+                            
                         </View>
                 </SafeAreaView>
             </Modal>

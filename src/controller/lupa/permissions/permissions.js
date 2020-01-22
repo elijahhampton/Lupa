@@ -11,7 +11,7 @@ export default _requestPermissionsAsync = async () => {
             alert('Sorry, we need camera roll permissions to make this work.');
         }
         const { locationPermissionsStatus } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status !== 'granted') {
+        if (locationPermissionsStatus != 'granted') {
           alert('Sorry, we need location access to make this work.');
         }
 }

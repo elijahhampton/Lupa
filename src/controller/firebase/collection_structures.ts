@@ -8,9 +8,9 @@ import {
     LupaUserStructure, 
     LupaNotificationStructure,
     Days,
-    SESSION_STAGE,
     SESSION_STATUS,
-    NOTIFICATION_TYPES
+    NOTIFICATION_TYPES,
+    PACK_EVENT_STAGE,
 } from '../lupa/common/types';
 
 var lupa_notification : LupaNotificationStructure = {
@@ -32,36 +32,57 @@ export var getLupaNotificationStructure = (user, date, time, type, data) => {
 }
 
 var lupa_pack_event : LupaPackEventStructure = {
-    event_uuid: "",
     pack_uuid: "",
-    event_data: {
-        time: "",
-        date: "",
-        description: "",
-        location: {
-            lat: "",
-            long: "",
-        }
-    },
+    pack_event_title: "",
+    pack_event_description: "",
+    pack_event_date: "",
     attendees: [],
+    pack_event_stage: PACK_EVENT_STAGE.UNEXPIRED,
+    pack_event_image: '',
+}
+
+export const getLupaPackEventStructure = (title, description, date, image) => {
+    lupa_pack_event.pack_event_title = title;
+    lupa_pack_event.pack_event_description = description;
+    lupa_pack_event.pack_event_date = date;
+    lupa_pack_event.pack_event_image = image;
+
+    return lupa_pack_event;
 }
 
 var lupa_trainer : LupaTrainerStructure = {
     user_uuid: "",
-    rating: 0,
-    recommended_workouts: [],
-    experience: [],
     certifications: [],
 }
 
 var lupa_pack : LupaPackStructure = {
-    pack_uuid: "",
-    pack_name: "",
-    events: [],
-    isGlobal: false, //Invite only
-    isPremium: false,
-    isDefault: false,
-    members: [],
+    pack_leader: '',
+    pack_title: "",
+    pack_description: "",
+    pack_isSubscription: false,
+    pack_isDefault: false,
+    pack_members: [],
+    pack_invited_members: [],
+    pack_image: '',
+    pack_leader_notes: {},
+    pack_rating: 0,
+    pack_sessions_completed: 0,
+    pack_time_created: '',
+}
+
+export const getLupaPackStructure = (packLeader, title, description, image, members, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
+    lupa_pack.pack_leader = packLeader;
+    lupa_pack.pack_title = title;
+    lupa_pack.pack_description = description;
+    lupa_pack.pack_image = image;
+    lupa_pack.pack_members = members;
+    lupa_pack.pack_rating = rating;
+    lupa_pack.pack_sessions_completed = sessionsCompleted;
+    lupa_pack.pack_time_created = timeCreated;
+    lupa_pack.pack_isSubscription = isSubscription;
+    lupa_pack.pack_isDefault = isDefault;
+
+    return lupa_pack;
 }
 
 var lupa_session : LupaSessionStructure = {

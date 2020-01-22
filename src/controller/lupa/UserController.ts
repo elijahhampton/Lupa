@@ -311,6 +311,20 @@ export default class UserController {
         }
     }
 
+    getTrainers = async () => {
+        let trainers = []
+        await USER_COLLECTION.where('isTrainer', '==', true).get().then(docs => {
+            docs.forEach(querySnapshot => {
+                let snapshot = querySnapshot.data();
+                let snapshotID = querySnapshot.id;
+                snapshot.id = snapshotID;
+                trainers.push(snapshot);
+            })
+        })
+
+        return Promise.resolve(trainers);
+    }
+
 
     /**************** *******************/
 
@@ -439,13 +453,11 @@ export default class UserController {
                     let currHit = hits[i];
                     result.display_name = currHit._highlightResult.display_name.value;
                     result.display_name.match_level = currHit._highlightResult.display_name.matchLevel;
-                    result.email = currHit.email;
-                    result.gender = currHit.gender;
                     result.photo_url = currHit.photo_url;
                     result.objectID = currHit.objectID;
-                    result.preferred_workout_times = currHit.preferred_workout_times;
-                    result.rating = currHit.rating;
                     result.resultType = currHit.isTrainer == true ? "trainer" : "user";
+                    result.location = currHit.location;
+                    result.email = currHit.email;
 
                     results.push(result);
                 }
