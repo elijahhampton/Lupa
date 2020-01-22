@@ -13,7 +13,8 @@ import {
     TextInput,
     Switch,
     Chip,
-    Surface
+    Surface,
+    Button
 } from 'react-native-paper';
 
 import {
@@ -40,11 +41,17 @@ export default class WorkoutTimes extends React.Component {
     render() {
         return (
             <View style={styles.root}>
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-between'}}>
+                <Button mode="text" color="#E0E0E0">
+                    Take me into the app
+                </Button>
+
                 <View style={styles.instructionalTextContainer}>
                     <Text style={styles.instructionalText}>
-                    What time slots do you usually workout each day?
+                    What times do you usually workout each day?
                     </Text>
 
+                </View>
                 </View>
 
                 <View style={styles.userInput}>
@@ -67,19 +74,16 @@ const styles = StyleSheet.create({
         borderRadius: 15
     },
     instructionalTextContainer: {
-        height: "30%",
-        width: "100%",
         alignItems: "center",
         justifyContent: "center",
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: "600"
     },
     userInput: {
-        height: "20%",
-        width: "100%",
+        flex: 2,
         alignItems: "center",
     },
 })

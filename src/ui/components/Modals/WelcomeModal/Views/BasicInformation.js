@@ -12,17 +12,15 @@ import {
 import {
     TextInput,
     Switch,
-    Avatar
 } from 'react-native-paper';
 
-import { Input } from 'react-native-elements';
+import { Input, Avatar } from 'react-native-elements';
 
 import { DatePicker } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import { Feather as Icon } from '@expo/vector-icons';
 
 import * as ImagePicker from 'expo-image-picker';
-import LupaMapView from '../../LupaMapView';
 
 import * as Location from 'expo-location';
 import LupaController from '../../../../../controller/lupa/LupaController';
@@ -49,7 +47,7 @@ export default class BasicInformation extends React.Component {
     _getLocationAsync = async () => {
         console.log('location')
         let result;
-        await Location.getCurrentPositionAsync({}).then(res => {
+        await Location.getCurrentPositionAsync({ enableHighAccuracy: true }).then(res => {
             result = res;
         })
         console.log('BBB' + result)
@@ -59,24 +57,8 @@ export default class BasicInformation extends React.Component {
     }
 
     _getAvatar = () => {
-        console.log('here')
-        let avatarWithText = (
-            <TouchableOpacity onPress={this._chooseProfilePictureFromCameraRoll}>
-            <Avatar.Text size={150} label="EH" />
-        </TouchableOpacity>
-        );
-
-        let avatarWithPhoto = (
-            <TouchableOpacity style={{backgroundColor: "transparent"}} onPress={this._chooseProfilePictureFromCameraRoll}>
-            <Avatar.Image size={150} source={this.state.photoSource} />
-        </TouchableOpacity>
-        );
-
-        if (this.state.photoSource == undefined) {
-            return avatarWithText;
-        }
-
-        return avatarWithPhoto;
+        let avatar = <Avatar showEditButton rounded size={120} />
+        return avatar;
     }
 
     _chooseProfilePictureFromCameraRoll = async () => {
@@ -119,22 +101,11 @@ export default class BasicInformation extends React.Component {
                         this._getAvatar()
                     }
                 </View>
+                
 
-                <View>
-                    <TouchableOpacity style={{flexDirection: "row", alignItems: "center"}}>
-                    <Icon name="map-pin" size={15} style={{padding: 2}} />
-                    <Text style={[styles.generalText, { color: '#2196F3'}]}>
-                        Where are you located?
-                    </Text>
-                    </TouchableOpacity>
-                </View>
-
+                
                 <View style={styles.pickerContainer}>
-                    <Text style={styles.generalText}>
-                        Gender
-                    </Text>
                     <Picker
-                        mode="dropdown"
                         placeholder="Select One"
                         placeholderStyle={{ color: "#2874F0" }}
                         note={false}
@@ -143,12 +114,13 @@ export default class BasicInformation extends React.Component {
                         style={{ width: Dimensions.get('screen').width, height: 10 }}
                     >
                         <Picker.Item label=" " value=" " />
+                        <Picker.Item label="Select a gender" value=" " />
                         <Picker.Item label="Male" value="male" />
                         <Picker.Item label="Female" value="female" />
                     </Picker>
                 </View>
 
-                <LupaMapView isVisible={false} />
+                
 
             </View>
 
@@ -161,34 +133,33 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-evenly",
+        justifyContent: "space-between",
         padding: 10,
     },
     generalText: {
-        fontSize: 20,
+        fontSize: 30,
         fontWeight: "400",
-        color: "#9E9E9E"
+        color: "#9E9E9E",
+        alignSelf: 'center',
     },
     instructionalTextContainer: {
-        height: "20%",
-        width: "100%",
+        flex: 1,
         alignItems: "center",
         justifyContent: "center",
         padding: 10,
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "600"
     },
     userInput: {
-        width: "100%",
+        flex: 1,
         justifyContent: "center",
         alignItems: "center"
     },
     pickerContainer: {
-        height: "30%",
-        width: "100%",
+        flex: 1,
     },
     inputContainerStyle: {
         margin: 5,

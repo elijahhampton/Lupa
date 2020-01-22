@@ -5,9 +5,9 @@
 import UserController from './UserController';
 import PacksController from './PacksController';
 import SessionController from './SessionController';
-import NotificationsController from './NotificationsController';
 
-import { NOTIFICATION_TYPES } from '../lupa/common/types'
+import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
+
 
 import requestPermissionsAsync from './permissions/permissions';
 
@@ -23,7 +23,6 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE = UserController.getInstance();
       PACKS_CONTROLLER_INSTANCE = PacksController.getInstance();
       SESSION_CONTROLLER_INSTANCE = SessionController.getInstance();
-      NOTIFICATIONS_CONTROLLER_INSTANCE = NotificationsController.getInstance();
     }
 
     public static getInstance() {
@@ -51,7 +50,6 @@ export default class LupaController {
       await NOTIFICATIONS_CONTROLLER_INSTANCE.getNotificationsFromUUID(this.getCurrentUser().uid).then(res => {
         result = res;
       });
-      console.log('innnn lupa controller' + result);
       return Promise.resolve(result);
     }
 
@@ -127,18 +125,47 @@ export default class LupaController {
       await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
     }
 
+    createNewPack = (packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
+      //validate data
+
+      //call packs controller to create pack
+      PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
+    }
+
+    createNewPackEvent = (packUUID, title, description, date, eventImage) => {
+      //validate data
+
+      //call pack controller to create new event
+      PACKS_CONTROLLER_INSTANCE.createPackEvent(packUUID, title, description, date, eventImage);
+    }
+
     /* User Functions */
     searchUserByPersonalName = async (searchQuery='') => {
       let arr;
       await USER_CONTROLLER_INSTANCE.searchByRealName(searchQuery).then(objs => {
         arr = objs;
       })
+
+
       return arr;
     }
 
     followUser = (uuidOfUserToFollow, uuidOfUserFollowing) => {
       USER_CONTROLLER_INSTANCE.followAccountFromUUID(uuidOfUserToFollow, uuidOfUserFollowing);
       USER_CONTROLLER_INSTANCE.addFollowerToUUID(uuidOfUserToFollow, uuidOfUserFollowing);
+    }
+
+    unfollowUser = () => {
+
+    }
+
+    getAllTrainers = async () => {
+      let trainers;
+      await USER_CONTROLLER_INSTANCE.getTrainers().then(result => {
+        trainers = result;
+      });
+
+      return Promise.resolve(trainers);
     }
 
     /* Session Functions */
@@ -165,5 +192,55 @@ export default class LupaController {
       });
 
       return userPacks;
+    }
+
+    getSubscriptionPacks = async () => {
+      let result;
+      await PACKS_CONTROLLER_INSTANCE.getSubscriptionBasedPacks().then(packs => {
+        result = packs;
+      });
+
+      return result;
+    }
+
+    getExplorePagePacks = async () => {
+      let result;
+      await PACKS_CONTROLLER_INSTANCE.getExplorePagePacks().then(packs => {
+        result = packs;
+      });
+
+      return result;
+    }
+
+    getDefaultPacks = async () => {
+      let result;
+
+      await PACKS_CONTROLLER_INSTANCE.getDefaultPacks().then(packs => {
+        result = packs;
+      });
+
+      return result;
+    }
+
+    getPackInformationByUUID = async (uuid) => {
+      let result;
+      await PACKS_CONTROLLER_INSTANCE.getPackInformationByUUID(uuid).then(packs => {
+        result = packs;
+      });
+
+      return Promise.resolve(result);
+    }
+
+    getPackEventsByUUID = async (uuid) => {
+      let result;
+      await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(uuid).then(packs => {
+        result = packs;
+      });
+
+      return Promise.resolve(result);
+    }
+
+    removeUserFromPackByUUID = (packUUID, userUUID) => {
+      PACKS_CONTROLLER_INSTANCE.removeUserFromPackByUUID(packUUID, userUUID);
     }
 }

@@ -15,14 +15,17 @@ import {
     IconButton,
     Button,
     Divider,
-    Avatar
+    TextInput,
+    Avatar as MaterialAvatar
 } from 'react-native-paper';
 
 import { ImagePicker } from 'expo-image-picker';
 
 import SafeAreaView from 'react-native-safe-area-view';
-import { Input, CheckBox } from 'react-native-elements';
+import { Input, CheckBox, Avatar } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import { Feather as FeatherIcon } from '@expo/vector-icons';
 
 var packImageSource = undefined;
 
@@ -30,16 +33,34 @@ import Background from '../../images/background-one.jpg';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
+import LupaController from '../../../controller/lupa/LupaController';
+
+import Autocomplete from 'react-native-autocomplete-input'
+
 export default class CreatePack extends React.Component {
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
-            packImageSource: Background,
+            packImageSource: '',
+            subscriptionBasedPack: false,
+            pack_title: '',
+            pack_description: '',
+            invitedMembers: [],
             checked: false,
+            autoCompleteData: [],
+            inviteMembersTextInputVal: '',
         }
 
         this._chooseImageFromCameraRoll = this._chooseImageFromCameraRoll.bind(this);
+    }
+
+    createPack = async () => {
+        const pack_leader = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        
+        this.LUPA_CONTROLLER_INSTANCE.createNewPack(pack_leader, this.state.pack_title, this.state.pack_description, this.state.packImageSource, [pack_leader], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false);
     }
 
     _chooseImageFromCameraRoll = async () => {
@@ -54,122 +75,119 @@ export default class CreatePack extends React.Component {
         }
     }
 
+    _returnTextInput = () => {
+        return (
+            <TextInput onChangeText={text => this.setState({ inviteMembersTextInputVal: text })} value={this.state.inviteMembersTextInputVal} mode="outlined" theme={{ roundness: 8 }} placeholder="Ex. John Smith" theme={{
+                colors: {
+                    primary: "#2196F3"
+                }
+            }} />
+        )
+    }
+
+    handleInviteMembersOnChangeText = async (text) => {
+        await this.setState({ inviteMembersTextInputVal: text })
+
+        console.log('asa' + text)
+
+        let searchQuery = await text;
+        let searchQueryResults;
+
+        await this.LUPA_CONTROLLER_INSTANCE.searchUserByPersonalName(searchQuery).then(results => {
+            searchQueryResults = results;
+        });
+
+        await this.setState({ autoCompleteData: searchQueryResults });
+    }
+
+    mapInvitedMembers = () => {
+        return this.state.invitedMembers.map(member => {
+            return <MaterialAvatar.Image source={member.photo_url} size={20} style={{ margin: 5 }} />
+        })
+    }
+
     render() {
         return (
             <Modal presentationStyle="fullScreen" style={styles.modal} visible={this.props.isOpen}>
                 <SafeAreaView style={styles.safeareaview}>
-                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                        <IconButton icon="clear" onPress={this.props.closeModalMethod} />
-                        <Text style={{ fontSize: 20, fontWeight: "500" }}>
-                            Create a new pack
+                    <FeatherIcon size={30} name="users" style={{ alignSelf: "center" }} />
+
+                    <View style={{ flex: 1.5, flexDirection: 'column', justifyContent: "space-around" }}>
+                        <View style={{ width: '100%', alignItems: "center", justifyContent: "center" }}>
+                            <Avatar size="medium" rounded showEditButton={true} source={this.state.packImageSource} onPress={this._chooseImageFromCameraRoll} />
+                        </View>
+                        <Input placeholder="Choose a name for your pack" inputStyle={{ fontSize: 20 }} value={this.state.pack_title} onChangeText={text => this.setState({ pack_title: text })}/>
+
+                        <TextInput label="Write a short description for your pack" mode="flat" placeholder="Ex. Cool example of a pack description." multiline style={{ height: 100, overflow: 'hidden' }} theme={{
+                            colors: {
+                                primary: "#2196F3"
+                            }
+                        }} returnKeyType="done" returnKeyLabel="done" value={this.state.pack_description} onChangeText={text => this.setState({ pack_description: text})}/>
+                    </View>
+
+                    <Divider />
+
+                    <View style={{ display: "flex", flex: 1.5 }}>
+                        <View style={{ flex: 3, padding: 5 }}>
+                            <Text style={{ fontSize: 20, color: "black", fontWeight: "400" }}>
+                                Invite members to your pack
                         </Text>
-                        <Button mode="text" color="#2196F3">
-                            Next
+                            <Autocomplete
+                                data={this.state.autoCompleteData}
+                                onChangeText={text => this.handleInviteMembersOnChangeText(text)}
+                                renderItem={({ item, i }) => (
+                                    <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => this.setState({ invitedMembers: this.state.invitedMembers.concat(item.uid) })}>
+                                        <MaterialAvatar.Text label="EH" size={20} style={{ margin: 5 }} />
+                                        <Text style={{ fontSize: 20, fontWeight: "300" }}>{item.display_name}</Text>
+                                    </TouchableOpacity>
+                                )}
+                                containerStyle={{ borderColor: 'transparent' }}
+                                inputContainerStyle={{ borderColor: 'transparent' }}
+                                listContainerStyle={{ width: "100%", borderColor: "transparent" }}
+                                listStyle={{ width: "100%", borderColor: "transparent" }}
+                                renderTextInput={this._returnTextInput}
+                                value={this.state.inviteMembersTextInputVal}
+                            />
+                            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} shouldRasterizeIOS={true} contentContainerStyle={{ padding: 10 }}>
+                            {this.state.invitedMembers.length == 0 ? <Text style={{ fontSize: 15 }}>
+                                    Members that you invite to your pack will appear here.
+                            </Text> : this.mapInvitedMembers()}
+                            </ScrollView>
+                        </View>
+
+                        <View style={{ flex: 1, flexDirection: "row" }}>
+                            <CheckBox
+                                center
+                                title='Require users to pay a monthly subscription to join my pack.'
+                                iconRight
+                                iconType='material'
+                                checkedIcon='done'
+                                uncheckedIcon='radio-button-unchecked'
+                                checkedColor='green'
+                                checked={this.state.subscriptionBasedPack}
+                                onPress={() => this.setState({ subscriptionBasedPack: !this.state.subscriptionBasedPack })}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={{ flex: 0.5, alignItems: "center", justifyContent: "space-around", padding: 10 }}>
+                        <Caption>
+                            Please take some time and read our <Caption style={{ color: "#2196F3" }}>
+                                Terms of Service
+                            </Caption> in regards to user packs.
+                        </Caption>
+
+                        <View style={{ flexDirection: "row" }}>
+
+                            <Button mode="text" color="#2196F3" onPress={this.props.closeModalMethod}>
+                                Cancel
+                        </Button>
+
+                            <Button mode="contained" color="#2196F3" theme={{ roundness: 15 }} onPress={this.createPack}>
+                                Create Pack
                         </Button>
                         </View>
-            {/* content */}
-                        <View style={{display: "flex",
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "space-around", padding: 10}}>
-
-<View style={styles.header}>
-
-<Avatar.Image source={this.state.packImageSource} size={130} label="EH" />
-<Text style={{fontSize: 20, fontWeight: "400", padding: 5}}>
-    Pick an avatar for your pack
-</Text>
-</View>
-
-{ /* */}
-<View style={{ flex: 0.5, flexDirection: "column" }}>
-<Text style={styles.sectionText}>
-Pack Name
-</Text>
-<View>
-<Input inputContainerStyle={{borderColor: "transparent"}} placeholder="Enter a name for your pack" />
-</View>
-</View>
-
-{ /* */}
-<View style={{ flex: 0.5, flexDirection: "column" }}>
-<Text style={styles.sectionText}>
-Pack Objective
-</Text>
-<View>
-<View>
-<Input inputContainerStyle={{borderColor: "transparent"}} placeholder="Enter a purpose for your pack" />
-</View>
-</View>
-</View>
-
-{ /* */}
-<View style={{ flex: 1, flexDirection: "column", marginBottom: 10 }}>
-<Text style={styles.sectionText}>
-Privacy Preference
-</Text>
-<View style={{ flexDirection: "column" }}>
-
-<View style={{flexDirection: "column", padding: 10 }}>
-        <Text style={{fontWeight: "bold"}}>
-            Public
-    </Text>
-
-    <Caption>
-        This pack will be public for all users to see on the explore and search pages
-</Caption>
-</View>
-
-
-<View style={{flexDirection: "column", padding: 10}}>
-        <Text style={{fontWeight: "bold"}}>
-            Private
-    </Text>
-
-    <Caption>
-    Only users inside you invite and users in this pack will be able to see it on the explore and search pages
-</Caption>
-</View>
-</View>
-
-
-
-</View>
-
-{ /* */}
-<View style={{ flex: 1, flexDirection: "column" }}>
-<Text style={styles.sectionText}>
-Pack Type
-</Text>
-
-<View style={{ flexDirection: "column" }}>
-
-<View style={{ flexDirection: "column", padding: 10}}>
-        <Text style={{fontWeight: "bold"}}>
-            Global
-    </Text>
-
-    <Caption>
-        Users can join your pack for free
-</Caption>
-</View>
-
-<View style={{flexDirection: "column", padding: 10}}>
-        <Text style={{fontWeight: "bold"}}>
-            Subscription
-    </Text>
-
-    <Caption>
-        Users will have to pay a subscription fee to join this pack
-</Caption>
-</View>
-
-</View>
-</View>
-
-                        </View>
-                    
-
+                    </View>
                 </SafeAreaView>
             </Modal>
         )
@@ -191,11 +209,12 @@ const styles = StyleSheet.create({
     safeareaview: {
         display: "flex",
         flex: 1,
+        padding: 5
     },
     header: {
         flex: 1.5,
         flexDirection: "column",
-        justifyContent: "center", 
+        justifyContent: "center",
         alignItems: "center"
     },
     image: {

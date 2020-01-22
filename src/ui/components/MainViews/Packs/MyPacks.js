@@ -5,12 +5,14 @@ import {
     Text,
     StyleSheet,
     Dimensions,
-    ScrollView
+    ScrollView,
+    RefreshControl
 } from 'react-native';
 
 import { MyPacksCard } from '../Packs/Components/PackCards';
 
 import LupaController from '../../../../controller/lupa/LupaController';
+import PackModal from '../../Modals/PackModal/PackModal';
 
 export default class MyPacks extends React.Component {
     constructor(props) {
@@ -21,18 +23,15 @@ export default class MyPacks extends React.Component {
         this.state = {
             currUserPacks: [],
             indexToShow: 0,
-            showPack: false,
+            packsModalOpen: false,
+            refreshing: false,
+            dummyToggle: false
         }
 
         this.loadCurrUserPacks = this.loadCurrUserPacks.bind(this);
-        this.setupMyPacks = this.setupMyPacks.bind(this);
     }
 
-    componentDidMount() {
-        this.setupMyPacks();
-    }
-
-    setupMyPacks = async () => {
+    componentDidMount  = async () => {
         let packsToShow;
        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
             packsToShow = result;
@@ -43,38 +42,40 @@ export default class MyPacks extends React.Component {
         });
     }
 
+    componentWillUpdate = async () => {
+        let packsToShow;
+        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
+             packsToShow = result;
+         });
+ 
+         await this.setState({
+             currUserPacks: packsToShow,
+         });
+    }
+
     loadCurrUserPacks = () => {
-      let packs = this.state.currUserPacks.map(pack => {
+      return this.state.currUserPacks.map(pack => {
            return (
-            <MyPacksCard  />
+            <MyPacksCard packUUID={pack.id} title={pack.pack_title} numMembers={pack.pack_members.length} image={pack.pack_image} />
            );
        });
-
-       return packs;
     }
 
     render() {
         let numPacks = this.state.currUserPacks.length;
         return (
-            <>
-                <ScrollView contentContainerStyle={{flexDirection: "row", flexWrap: 'wrap', justifyContent: "center",alignItems: "center" }}>
-                    { 
-                      this.loadCurrUserPacks()
-                    }
-
+            <View style={{flex: 1, backgroundColor: '#FAFAFA'}}>
+                <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ backgroundColor: "#FAFAFA", flexDirection: "row", flexWrap: 'wrap', alignItems: "center" }} refreshControl={<RefreshControl onRefresh={() => alert('Refreshing')} refreshing={this.state.refreshing}/>}>
+                    {this.loadCurrUserPacks()}
                 </ScrollView>
-                                <Text style={{color: "#BDBDBD", alignSelf: "center", fontSize: 15, fontWeight: "600", position: "absolute", bottom: 2}}>
-                                You are currently in { numPacks } pack.
-                            </Text>
-                            </>
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     root: {
-        width: "100%",
-        height: "100%",
+        flex: 1,
         display: "flex",
         flexDirection: "column",
         backgroundColor: "#FAFAFA",

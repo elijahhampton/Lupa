@@ -52,6 +52,11 @@ const list = [
         title: 'Privacy',
         subtitle: 'Manage privacy settings for your account',
         icon: undefined,
+    },
+    {
+        key: 'fitness_profile',
+        title: 'Fitness Profile',
+        subtitle: 'Manage goals, experience, interest...'
     }
 ]
 

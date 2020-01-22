@@ -2,7 +2,6 @@ import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase';
 
 import {
     getLupaUserStructure,
-    getLupaHealthDataStructure,
 } from '../firebase/collection_structures';
 
 /**
@@ -19,15 +18,7 @@ import {
  * Note: On logout user = null
  */
 LUPA_AUTH.onAuthStateChanged(user => {
-    if (user) {
-        console.log('LUPA: User logged in.')
-    }
-    else {
-        console.log('LUPA: User logged out.')
-    }
-
-    //Update current user on every authentication state change
-    //LUPA_AUTH.updateCurrentUser();
+    if (user) {} else {}
 })
 
 /**
@@ -35,6 +26,7 @@ LUPA_AUTH.onAuthStateChanged(user => {
  * @param email User email to store
  * @param password User pass to store
  * @promise Returns a promise with a user token filled with user information
+ * @return result true or false based on if any errors occurred in the signUpUser function
  * 
  * This method assigns a user as logged in in firebase.
  */
@@ -51,9 +43,9 @@ export var signUpUser = async (email, password, confirmedPassword) => {
         console.log('LUPA: Registering user with firebase authentication.')
         //Set sign up result to true
         result = true;
+
         //Catch error on signup
     }).catch(err => {
-        console.log('LUPA: Error while trying to signup user.')
         result = false;
         return result;
     });
@@ -61,63 +53,40 @@ export var signUpUser = async (email, password, confirmedPassword) => {
 
     let userData = getLupaUserStructure(LUPA_AUTH.currentUser.uid, "", "", LUPA_AUTH.currentUser.email,
         LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", false, "", "", [], "", "", {}, [], 0, {}, [], [], 0);
-    //Add user to users collection with UID.
+    
+        //Add user to users collection with UID.
     LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).set(userData).catch(err => {
         console.log('LUPA: Error while trying to add user to users collection.');
         result = false;
         return result;
     });
 
-    let healthData = getLupaHealthDataStructure(LUPA_AUTH.currentUser.uid);
-    //Add health data to health data colleciton with uid - UNFINISHED
-    LUPA_DB.collection('health_data').doc(LUPA_AUTH.currentUser.uid).set(healthData).catch(err => {
-        console.log('LUPA: Error while trying to add health data to health data collection.');
-        result = false;
-        return result;
-    });
-
-    console.log('LUPA: Adding user to default packs.')
     //Add user to all default packs
     LUPA_DB.collection('packs').where('isDefault', '==', true).get().then(snapshot => {
         snapshot.forEach(doc => {
             let pack = doc.data();
+            let packMembers = pack.pack_members;
+            packMembers.push(LUPA_AUTH.currentUser.uid);
             pack.set({
-                members: LUPA_AUTH.currentUser.uid,
+                members: packMembers
             }, {
                 merge: true
             });
+
+            //Get the pack UUIDS
+            let pack_uuid = doc.id;
+
+            //Add user to all pack events for that pack
+            LUPA_DB.collection(pack_uuid).get().then(snapshot => {
+                //update attendees list for default pack events
+                let packEventData = snapshot.data();
+                let attendees = packEventData.attendees;
+                attendees.push(LUPA_AUTH.currentUser.uid);
+
+            }); //end snapshot.forEach
+
         });
     });
-
-
-    console.log('LUPA: Adding user to default pack events.')
-    //Add user to all default pack events
-    LUPA_DB.collection('pack_events').where('isDefault', '==', true).get().then(snapshot => {
-        snapshot.forEach(doc => {
-            let event = doc.data();
-            event.set({
-                attendees: LUPA_AUTH.currentUser.uid,
-            }, {
-                merge: true,
-            });
-        });
-    });
-
-    console.log('LUPA: Creating user notificatons directory');
-    let date = new Date();
-    let time = date.getTime();
-    LUPA_DB.collection('notifications').doc(LUPA_AUTH.currentUser.uid).set(
-        {
-            notifications: [
-                {date: date, time: time, type: "dummy", data: "dummy"},
-            ]
-        },
-        {
-            merge: true,
-        }
-        );
-
-    return result;
 }
 
 /**
@@ -127,13 +96,10 @@ export var signUpUser = async (email, password, confirmedPassword) => {
  */
 export var loginUser = async (email, password) => {
     let result;
-    console.log('loggin')
     await LUPA_AUTH.signInWithEmailAndPassword(email, password).then(userCredential => {
         result = true;
     }).catch(err => {
         result = false;
-        console.log(err)
-        console.log('LUPA: Error on logging in user');
     });
 
     return result;
@@ -148,14 +114,16 @@ export var logoutUser = () => {
 }
 
 /**
- * 
+ * Returns the current user logged in using firebase authentication
  */
 export var getCurrentUser = () => {
     return LUPA_AUTH.currentUser;
 }
 
 /**
- * 
+ * Returns a promise holding true or false based on if the user is signed in or not using firebase authentication
+ * @promise holds true or false based on if a user is signed in or not
+ * @return result true or false based on if a user is signed in or not 
  */
 export var isSignedIn = async () => {
     let result = false;
