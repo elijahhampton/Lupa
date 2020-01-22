@@ -11,10 +11,30 @@ import {
     Chip,
     Caption,
     Card,
-    IconButton
+    IconButton,
+    Surface,
+    Avatar
 } from 'react-native-paper';
 
 import ModifySessionModal from '../../../Modals/Session/ModifySessionModal';
+
+export const PackEventNotificationContainer = (props) => {
+    return (
+            <TouchableOpacity style={{flexDirection: 'column', margin: 5}} onPress={() => alert('Pack Container')}>
+                        <Avatar.Image style={{elevation: 5}} size={55} />
+                        <Text style={{fontWeight: '500'}}>
+                                Jogging Day
+                            </Text>
+                            <Text style={{fontWeight: '500'}}>
+                                January 15, 2019 5:30 PM
+                            </Text>
+                            <Text style={{fontWeight: '500'}}>
+                               6 attending
+                            </Text>
+                            {/* <PackModal /> */}
+                    </TouchableOpacity>
+    )
+}
 
 
 export default class SessionNotificationContainer extends React.Component {
@@ -30,11 +50,10 @@ export default class SessionNotificationContainer extends React.Component {
     render() {
         return (
             <TouchableOpacity onPress={() => this.setState({ showModifySessionModal: true })}>
-                    <View style={styles.root}>
-                <Card style={styles.surface}>
+                <Surface style={styles.surface}>
                     <View style={styles.initialView}>
                         <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                        <Text>
+                        <Text style={{fontWeight: '500'}}>
                         {this.props.title}
                     </Text>
                     <Chip mode="outlined" style={{elevation: 3, height: 20, width: 90, backgroundColor: "rgba(244,67,54 ,1)"}}>
@@ -46,18 +65,18 @@ export default class SessionNotificationContainer extends React.Component {
                         </View>
 
                     <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                    <Text>
+                    <Text style={{fontWeight: '500'}}>
                         {this.props.date}
                     </Text>
-                    <Text>
-                        {this.props.userToDisplay}
-                    </Text>
                     </View>
+
+                    <Text style={{alignSelf: "flex-start", fontWeight: 'bold', color: "#2196F3"}}>
+                        Elijah Hampton
+                    </Text>
     
                    
                     </View>
-                </Card>
-            </View>
+                </Surface>
 
             <ModifySessionModal sessionUUID={this.state.sessionUUID} isOpen={this.state.showModifySessionModal} />
             </TouchableOpacity>
@@ -66,12 +85,12 @@ export default class SessionNotificationContainer extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    root: {
-        margin: 5
-    },
     surface: {
-        
-        padding: 5
+        margin: 5,
+        padding: 10,
+        width: 210,
+        borderRadius: 15,
+        elevation: 3,
     },
     initialView: {
         flexDirection: "column",

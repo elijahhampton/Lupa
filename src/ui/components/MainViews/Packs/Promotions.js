@@ -29,26 +29,26 @@ export default class Promotions extends React.Component {
                     />
                     <SocialIcon
 
-                        type='facebook'/>
+                        type='facebook' />
 
                     <SocialIcon
                         type='instagram'
                     />
 
-<SocialIcon
+                    <SocialIcon
                         iconSize={60}
                         type='snapchat'
                     />
 
-<SocialIcon
+                    <SocialIcon
                         type='google'
                     />
 
-<SocialIcon
+                    <SocialIcon
                         type='tumblr'
                     />
 
-<SocialIcon
+                    <SocialIcon
                         type='youtube'
                     />
                 </View>
@@ -60,6 +60,7 @@ export default class Promotions extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
+        backgroundColor: "#FAFAFA",
         alignItems: "center",
         justifyContent: "center",
     }

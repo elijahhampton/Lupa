@@ -31,6 +31,12 @@ import {
 } from 'react-native-elements';
 
 import {
+    Container,
+    Header,
+    Icon,
+} from 'native-base';
+
+import {
     Feather as FeatherIcon
 } from '@expo/vector-icons';
 
@@ -61,11 +67,11 @@ class SearchView extends React.Component {
     }
 
     _performSearch = async search => {
-        this.setState({
+        await this.setState({
             searchResults: []
         })
 
-        this.setState({
+        await this.setState({
             searchValue: search
         })
 
@@ -75,11 +81,17 @@ class SearchView extends React.Component {
             result = data;
         })
 
-        this.setState({
-            searchResults: this.state.searchResults.concat(result)
-        },
-        console.log('finished performing search and state is set'));
+        //Remove any duplicates
+        const newData = result.filter(item => {      
+            const itemData = item.display_name;  
+            console.log(itemData) 
 
+             const textData = search;
+            
+             return itemData.indexOf(textData) > -1;    
+          });
+          
+          this.setState({searchResults: newData });
     }
     
     showSearchResults() {
@@ -88,13 +100,15 @@ class SearchView extends React.Component {
             {
                 case "trainer":
                     return (
-                        <TrainerSearchResultCard title={result.display_name} location="Chicago, United States" rating={result.rating} uuid={result.objectID}/>
+                        <TrainerSearchResultCard title={result.display_name} email={result.email} location="Chicago, United States" rating={result.rating} uuid={result.objectID}/>
                     )
                 case "user":
                     return (
-                        <UserSearchResultCard title={result.display_name} location="Chicago, United States" uuid={result.objectID} />
+                        <UserSearchResultCard title={result.display_name} email={result.email} location="Chicago, United States" uuid={result.objectID} />
                     )
                 case "pack":
+                    break;
+                case "workout":
                     break;
                 default:
             }
@@ -114,23 +128,23 @@ class SearchView extends React.Component {
 
     render() {
         return (
-            <View style={styles.root}>
-                <SafeAreaView style={{backgroundColor: "transparent"}}>
+            <Container style={styles.root}>
 
-                <View style={styles.header}>
+                    <Header span searchBar rounded style={{flexDirection: 'column'}}>
                     <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
                         <View style={{width: "85%"}}>
                         <SearchBar placeholder="Search the Lupa Database"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
-                        containerStyle={{backgroundColor: "white"}}/>
+                        containerStyle={{backgroundColor: "transparent"}}
+                        value={this.state.searchValue}/>
                         </View>
                         <View style={{width: "15%"}}>
                         <IconButton icon="tune" color="black" size={20} onPress={() => alert('Filter Results')} />
-                        </View>
-                    </View>
-                    <View style={{flexDirection: "row", justifyContent: "space-evenly"}}>
+        </View> 
+        </View>
+        <View style={{flexDirection: "row", justifyContent: "space-evenly"}}>
                         <Button mode="text" compact color={buttonColor} style={styles.button}>
                             Users
                         </Button>
@@ -144,15 +158,16 @@ class SearchView extends React.Component {
                             Workouts
                         </Button>
                     </View>
-                </View>
+                    </Header>
 
-                <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} />}>
+                    <View style={{flex: 1}}>
+                    <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} />}>
                     {
                         this.showSearchResults()
                     }
                 </ScrollView>
-                </SafeAreaView>
-            </View>
+                    </View>
+            </Container>
         );
     }
 }
@@ -177,11 +192,11 @@ const styles = StyleSheet.create({
     searchContainer: {
         flexDirection: "column",
         alignItems: "center",
-        margin: 5,
-        backgroundColor: "red",
+
+        backgroundColor: "transparent",
     },
     button: {
-        borderWidth: 1, borderRadius: 10, borderColor: "#E0E0E0",
+        
     }
 });
 

@@ -5,204 +5,183 @@ import {
     View,
     Text,
     StyleSheet,
-    Button,
+    Dimensions,
+    Image
 } from 'react-native';
 
 import {
     IconButton,
     Surface,
-    Caption
+    Caption,
+    Button,
+    Modal as PaperModal,
+    Portal,
+    Provider
 } from 'react-native-paper';
 
-import { Feather as Icon } from '@expo/vector-icons';
-
-import PackMembers from './views/PackMembers.js';
+import { Feather as FeatherIcon } from '@expo/vector-icons';
 import SafeAreaView from 'react-native-safe-area-view';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Avatar } from 'react-native-elements';
 
-function getModalPageTitle(currIndex) {
-    switch(currIndex) {
-        case 0:
-            return (
-                <Text style={{fontSize: 40, fontWeight: "400", color: "white", marginTop: 30, marginLeft: 10}}>
-                    Pack Members
-                </Text>
-            )
-        case 1:
-                <Text style={{fontSize: 40, fontWeight: "400", color: "white", marginTop: 30, marginLeft: 10}}>
-                Chat
-            </Text>
-        case 2:
-            return (
-                <Text style={{fontSize: 40, fontWeight: "400", color: "white", marginTop: 30, marginLeft: 10}}>
-                Announcements
-            </Text>
-            )
-    }
-}
+import Carousel, { Pagination } from 'react-native-snap-carousel';
+import PackInformationSlider from './Components/PackInformationSlider.js';
 
-function getModalPage(currIndex) {
-    switch(currIndex) {
-        case 0:
-            return <PackMembers />
-        case 1:
-            
-        case 2:
-    }
-}
+import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
+
+import LupaController from '../../../../controller/lupa/LupaController';
+import PackChatModal from '../PackChatModal.js';
+import CreateEvent from '../Packs/CreateEvent';
+
+import UserDisplayCard from './Components/UserDisplayCard';
 
 export default class PackModal extends React.Component{
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+        
+
         this.state = {
-            isOpen: true,
+            packUUID: this.props.packUUID,
+            packInformation: {},
+            packEvents: [],
+            currentUserIsPackLeader: false,
+            createEventModalIsOpen: false,
+            packChatModalIsOpen: false,
+            ready: false
         }
     }
 
-    _closeModal = () => {
-        this.setState({
-            isOpen: false,
+    componentDidMount = async () => {
+        let packInformationIn, packEventsIn;
+
+        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(packInformation => {
+            packInformationIn = packInformation;
+        });
+
+        await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEventsInformation => {
+            packEventsIn = packEventsInformation.events;
+        });
+
+
+        await this.setState({ packInformation: packInformationIn, packEvents: packEventsIn});
+
+
+        const currentUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        if (currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true })}
+    
+        await this.setState({ ready: true })
+    }
+
+    mapMembers = () => {
+        /* This is an existing problem where you cannot access the pack_members field from packInformation..
+        not sure why yet */
+
+        if (this.state.ready == false) { return; }
+
+       return this.state.packInformation.pack_members.map(member => {
+            return (
+                <UserDisplayCard userUUID={member}/>
+            )
         })
     }
 
+    _renderItem = ({item, index}) => {
+        return (
+            <View style={{margin: 5}}>
+                <Surface style={{elevation: 5, width: 250, height: 320, borderRadius: 20}}>
+                    <Image style={{width: "100%", height: "100%", borderRadius: 20}} source={this.state.packInformation.pack_image} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
+                    <View style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'transparent'}}>
+                        <Text>
+                            {item.pack_event_title}
+                        </Text>
+                        <Text>
+                            {item.pack_event_description}
+                        </Text>
+                    </View>
+                </Surface>
+            </View>
+        );
+    }
+
+    handleCreateEventModalClose = () => {
+        this.setState({ createEventModalIsOpen: false })
+    }
+
+    handleLeavePack = async () => {
+        const currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+
+        this.LUPA_CONTROLLER_INSTANCE.removeUserFromPackByUUID(this.state.packUUID, currUserUUID);
+
+        this.props.closeModalMethod();
+    }
 
     render() {
-        let pageIndex = this.state.currentIndex;
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
-                <SafeAreaView>
+                <SafeAreaView style={{flex: 1, backgroundColor: "#F5F5F5"}}>
                     <View>
                     <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
-                        <IconButton icon="clear" color="#2196F3" onPress={this.props._handleClose}/>
-                        <IconButton icon="message" color="#2196F3" />
+                        <IconButton icon="clear" color="black" onPress={this.props.closeModalMethod}/>
+                        <Text style={{        fontSize: 22,
+        fontWeight: "500",}}>
+                            {this.state.packInformation.pack_title}
+                        </Text>
+                        <IconButton icon="chat-bubble-outline" color="black" onPress={() => this.setState({ packChatModalIsOpen: true })}/>
                         </View>
+                    </View>    
 
-                <Text style={styles.header}>
-                    Announcements
-                </Text>
-                    </View>     
 
-                <View style={{height: "80%"}}>
-                <View style={styles.online}>
-                    <Text style={styles.sectionHeader}>
-                        5 people are online
-                    </Text>
-                    <ScrollView>
-                        <View style={styles.flatUserCard}>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <Avatar size="medium" title="EH" rounded  />
-                                <Text style={{padding: 10}}>
-                                    Elijah Hampton
-                                </Text>
-                            </View>
-                                <Icon name="message-square" size={20} style={styles.iconStyle} />
-                        </View>
-                        
-                        <View style={styles.flatUserCard}>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <Avatar size="medium" title="EH" rounded  />
-                                <Text style={{padding: 10}}>
-                                    Elijah Hampton
-                                </Text>
-                            </View>
-                                <Icon name="message-square" size={20} style={styles.iconStyle} />
-                        </View>
+                <View style={{flex: 3, alignItems: "center", justifyContent: "center"}}>
+                    <Carousel shouldRasterizeIOS={true}
+                ref={(c) => { this._carousel = c; }}
+              data={this.state.packEvents}
+              renderItem={this._renderItem}
+              sliderWidth={Dimensions.get('screen').width}
+              itemWidth={250}/>
 
-                        <View style={styles.flatUserCard}>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <Avatar size="medium" title="EH" rounded  />
-                                <Text style={{padding: 10}}>
-                                    Elijah Hampton
-                                </Text>
-                            </View>
-                                <Icon name="message-square" size={20} style={styles.iconStyle} />
-                        </View>
+              <View style={{flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "center"}}>
+                  {
+                    this.state.currentUserIsPackLeader == true ? <IconButton icon="event" onPress={() => {this.setState({ createEventModalIsOpen: true })}} /> : null
+                  }
+            </View>    
 
-                        <View style={styles.flatUserCard}>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <Avatar size="medium" title="EH" rounded  />
-                                <Text style={{padding: 10}}>
-                                    Elijah Hampton
-                                </Text>
-                            </View>
-                                <Icon name="message-square" size={20} style={styles.iconStyle} />
-                        </View>
+              <View style={{flex: 1, alignItems: "center", justifyContent: "center", marginTop: 15}}>
+                  <View style={{width: "100%", flexDirection: "row", justifyContent: "space-evenly"}}>
+                  <Button mode="contained" color="#2196F3" theme={{roundness: 20}} onPress={this.handleLeavePack}>
+                      Leave Pack
+                  </Button>
+                 {/* <Button mode="outlined" color="#2196F3" theme={{roundness: 20}} onPress={() => alert('Invite a Friend Pressed')}>
+                      Invite a Friend
+                </Button> */}
+                  </View>
+              </View>
 
-                        <View style={styles.flatUserCard}>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <Avatar size="medium" title="EH" rounded  />
-                                <Text style={{padding: 10}}>
-                                    Elijah Hampton
-                                </Text>
-                            </View>
-                                <Icon name="message-square" size={20} style={styles.iconStyle} />
-                        </View>
 
-                        <View style={styles.flatUserCard}>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <Avatar size="medium" title="EH" rounded  />
-                                <Text style={{padding: 10}}>
-                                    Elijah Hampton
-                                </Text>
-                            </View>
-                                <Icon name="message-square" size={20} style={styles.iconStyle} />
-                        </View>
-                    </ScrollView>
-                </View>
+                </View> 
 
-                <View style={styles.members}>
-                    <Text style={styles.sectionHeader}>
-                        Members
-                    </Text>
-                    <ScrollView horizontal={true}>
-                    <View style={{margin: 5}}>
-                    <Avatar size="small" title="EH" rounded  />
-                    </View>
-                    <View style={{margin: 5}}>
-                    <Avatar size="small" title="EH" rounded  />
-                    </View>
-                    <View style={{margin: 5}}>
-                    <Avatar size="small" title="EH" rounded  />
-                    </View>
-                    <View style={{margin: 5}}>
-                    <Avatar size="small" title="EH" rounded  />
-                    </View>
-                    <View style={{margin: 5}}>
-                    <Avatar size="small" title="EH" rounded  />
-                    </View>
-                    <View style={{margin: 5}}>
-                    <Avatar size="small" title="EH" rounded  />
-                    </View>
-                    <View style={{margin: 5}}>
-                    <Avatar size="small" title="EH" rounded  />
-                    </View>
-                    <View style={{margin: 5}}>
-                    <Avatar size="small" title="EH" rounded  />
-                    </View>
-                    </ScrollView>
-                </View>
-
-                <View style={styles.events}>
+                <View style={{flex: 1.5, flexDirection: "column"}}>
                     <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                    <Text style={styles.sectionHeader}>
-                        Events and Notes
-                    </Text>
-                    <Button title="See all"/>
-                    </View>
-                    <ScrollView horizontal={true}>
-                        <Surface style={styles.event}>
+                    <Text style={styles.header}>
+                    Members
+                </Text>
+                <Button mode="text" color="black">
+                    View all
+                </Button>
+                </View>
 
-                        </Surface>
+                <ScrollView horizontal={true} shouldRasterizeIOS={true} overScrollMode="always" contentContainerStyle={{alignItems: "flex-start", justifyContent: "space-around", flexDirection: "row", flexWrap: 'wrap'}}>
+                       {this.mapMembers()}
                     </ScrollView>
-                </View>
-                </View>
 
-                <Caption style={{alignSelf: "center"}}>
-                    You have been apart of this pack for 71 days.
-                </Caption>
 
+
+                </View>
+                
+               
+               <PackInformationSlider />
+               <CreateEvent packUUID={this.state.packUUID} isOpen={this.state.createEventModalIsOpen} closeModalMethod={this.handleCreateEventModalClose}/>
+               <PackChatModal packUUID={this.state.packUUID} isOpen={this.state.packChatModalIsOpen} />
                 </SafeAreaView>
             </Modal>
         );

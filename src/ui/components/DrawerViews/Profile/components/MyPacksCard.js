@@ -21,7 +21,6 @@ const MyPacksCard = () => {
             <Image resizeMethod="resize" resizeMode="cover" source={{ uri: 'https://picsum.photos/700' }} style={{width: "100%", height: "100%", borderRadius: 20}}/>
         </Surface>
          <View style={{margin: 2, flexDirection: 'column', alignItems: 'center'}}>
-             <Rating ratingCount={5} imageSize={10} ratingBackgroundColor="#FAFAFA" />
              <Caption>
                  Announcements
              </Caption>

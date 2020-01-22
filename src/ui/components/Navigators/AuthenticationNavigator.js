@@ -6,9 +6,18 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import LoginView from '../MainViews/login/LoginView';
 import SignUpView from '../MainViews/login/SignUpView';
+import WelcomeView from '../MainViews/login/WelcomeView';
 
 const AuthenticationNavigator = createStackNavigator(
     {
+    WelcomeView: {
+        screen: WelcomeView,
+        navigationOptions: ({ navigation }) => ({
+            title: 'WelcomeScreen',
+            header: null,
+            gesturesEnabled: false,
+        })
+    },
     Login: {
         screen: LoginView,
         navigationOptions: ({navigation}) => ({
@@ -27,7 +36,7 @@ const AuthenticationNavigator = createStackNavigator(
     }
     },
     {
-    initialRouteName: 'Login'
+    initialRouteName: 'WelcomeView'
     }
 );
 
