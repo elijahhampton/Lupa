@@ -8,7 +8,8 @@ import {
     TouchableOpacity,
     ActionSheetIOS,
     SafeAreaView,
-    ScrollView
+    ScrollView,
+    RefreshControl
 } from 'react-native';
 
 import {
@@ -17,6 +18,8 @@ import {
     Left,
     Right,
     Body,
+    Tabs,
+    Tab
 } from 'native-base'; //for conversion into an actual header
 
 import { 
@@ -86,15 +89,12 @@ export default class PackView extends React.Component {
     _showActionSheet = () => {
         ActionSheetIOS.showActionSheetWithOptions(
         {
-            options: ['Create New Pack', 'Manage Packs', 'Cancel'],
-            cancelButtonIndex: 2
+            options: ['Create New Pack', 'Cancel'],
+            cancelButtonIndex: 1
         }, (buttonIndex) => {
             switch(buttonIndex) {
                 case 0:
                     this.setState({ createPackModalIsOpen: true })
-                case 1:
-                    this.setState({ createPackModalIsOpen: true })
-                case 2:
                 default:
             }
         });
@@ -105,55 +105,33 @@ export default class PackView extends React.Component {
     }
 
     render() {
-        const DynamicView = this.state.activeView;
         return (
-            <SafeAreaView style={styles.root}>
-                
-                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, backgroundColor: "white"}}>
+            <Container style={{backgroundColor: "#FAFAFA"}}>
+                <Header hasTabs style={{backgroundColor: "white"}}>
+                    <Left>
                     <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} />
+                    </Left>
+                    <Right>
                     <Text style={{fontSize: 25, fontWeight: "800"}}>
                         My Packs
                     </Text>
-                    </View>
+                    </Right>
+                </Header>
+                <Tabs style={{backgroundColor: "#FAFAFA"}} locked>
+                    <Tab heading="Explore" tabStyle={{backgroundColor: "white"}} activeTabStyle={{backgroundColor: "white"}} >
+                        <Explore />
+                    </Tab>
+                    <Tab heading="My Packs" tabStyle={{backgroundColor: "white"}} activeTabStyle={{backgroundColor: "white"}}>
+                        <MyPacks />
+                    </Tab>
+                    <Tab heading="Promotions" tabStyle={{backgroundColor: "white"}} activeTabStyle={{backgroundColor: "white"}}>
+                        <Promotions />
+                    </Tab>
+                </Tabs>
 
-                    <View style={styles.tabs}>
-                    <TouchableOpacity onPress={() => {this.setState({activeView: 0})}}>
-                    <Text style={[ styles.tabsText, getExploreTabColorStyle(this.state.activeView) ]}>
-                        Explore
-                    </Text>
-                    </TouchableOpacity>
-
-                    <Text style={styles.tabsText}>
-                        .
-                    </Text>
-
-                    <TouchableOpacity onPress={() => {this.setState({activeView: 1})}}>
-                    <Text style={[styles.tabsText, getMyPacksTabColorStyle(this.state.activeView) ]}>
-                        My Packs
-                    </Text>
-                    </TouchableOpacity>
-
-                    <Text style={styles.tabsText}>
-                        .
-                    </Text>
-
-                    <TouchableOpacity onPress={() => {this.setState({activeView: 2})}}>
-                    <Text style={[styles.tabsText, getPromotionsTabColorStyle(this.state.activeView) ]}>
-                        Promotions
-                    </Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={{flex: 1}} /*scrollEnabled={this.state.activeView == 'mypacks' ? true : false}*/>
-                    {
-                        getActiveTab(this.state.activeView)
-                    }
-                </View>
-
-               {/*  <PacksSearch ref="packsSearchRef" /> */}
+                               {/*  <PacksSearch ref="packsSearchRef" /> */}
                <CreatePack isOpen={this.state.createPackModalIsOpen} closeModalMethod={this.closePackModal}/>
-            </SafeAreaView>
-
+            </Container>
         );
     }
 }
@@ -161,7 +139,7 @@ export default class PackView extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#FAFAFA",
     },
     tabs: {
         width: "100%",

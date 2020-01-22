@@ -18,7 +18,8 @@ import {
     Button as NativeButton,
     Dimensions,
     Modal,
-    RefreshControl
+    RefreshControl,
+    ImageBackground
 } from "react-native";
 
 import {
@@ -45,7 +46,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { ImagePicker } from 'expo-image-picker';
 
-import { Avatar } from 'react-native-elements';
+import { Avatar, Rating } from 'react-native-elements';
 
 import SafeAreaView from 'react-native-safe-area-view';
 
@@ -88,6 +89,8 @@ class UserProfileModal extends React.Component {
             userInterest: [],
             userExperience: [],
             userIsTrainer: [],
+            userRating: 0,
+            userGoals: [],
             myPacks: [],
             followers: [],
             following: [],
@@ -109,7 +112,7 @@ class UserProfileModal extends React.Component {
      * guarantees that the information will be loaded so the user can see it.
      */
    componentDidMount = async () => {
-    let username, displayName, photoUrl, interestData, experienceData, isTrainer, followers, following, sessionsCompleted;
+    let username, displayName, photoUrl, interestData, experienceData, isTrainer, followers, following, sessionsCompleted, userRatingIn;
 
     await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'display_name').then(result => {
         displayName = result;
@@ -147,6 +150,10 @@ class UserProfileModal extends React.Component {
         experienceData = result;
     });
 
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'rating').then(result => {
+        usingRatingIn = result;
+    });
+
     await this.setState({
         username: username,
         displayName: displayName,
@@ -157,6 +164,7 @@ class UserProfileModal extends React.Component {
         followers: followers,
         following: following,
         sessionsCompleted: sessionsCompleted,
+        userRating: userRatingIn,
     });
     }
 
@@ -229,6 +237,35 @@ class UserProfileModal extends React.Component {
         return <MyPacksCard />
     }
 
+    showRating = () => {
+        return <Rating ratingCount={this.state.userRating} imageSize={10} />
+    }
+
+    mapGoals = () => {
+
+    }
+
+    mapRecommendedWorkouts = () => {
+        return <>
+        <Button mode="text" compact color="black">
+                                    Glute Bridge
+                                </Button>
+                                <Button mode="text" compact color="black">
+                                    Dumbbel Clean
+                                </Button>
+                                <Button mode="text" compact color="black">
+                                    Squat
+                                </Button>
+                                <Button mode="text" compact color="black">
+                                    Hammer Curl
+                                </Button>
+                                <Button mode="text" compact color="black">
+                                    Jumping Lunge
+                                </Button>
+        </>
+    }
+
+
     handleFollowUser = () => {
         console.log('Handling following user');
         
@@ -238,6 +275,10 @@ class UserProfileModal extends React.Component {
     }
 
     _renderFollowButton = () => {
+        //No need to render follow button if current user is viewing their own profile modal
+        const currUserUUID  = this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        if (this.state.userUUID == currUserUUID) { return };
+
         //NEED TO RENDER BUTTON COLOR BASED ON IF THE USER IS FOLLOWING OR NOT
         return (
             <Button mode="outlined" color="#2196F3" theme={{roundness: 20 }} onPress={this.handleFollowUser}>
@@ -258,10 +299,13 @@ class UserProfileModal extends React.Component {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
-                <ScrollView showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
-                <Surface style={{ height: "13%", width: "100%", elevation: 3 }}>
-                    <Image style={{ width: "100%", height: "100%" }} source={ProfileImage} resizeMode="cover" resizeMethod="resize" />
+            <Surface style={{ height: "15%", width: "100%", elevation: 1 }}>
+                    <ImageBackground style={{ width: "100%", height: "100%" }} source={ProfileImage}>
+                    <IconButton style={{position: 'absolute', bottom: 0}} icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
+                    </ImageBackground>
                 </Surface>
+                
+                <ScrollView showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
                 <View style={{ margin: 3, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
                     <IconButton icon="arrow-back" size={20} onPress={this.props.closeModalMethod} />
                     { this._renderFollowButton() }
@@ -269,137 +313,156 @@ class UserProfileModal extends React.Component {
 
                 <ScrollView showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
                     <View style={styles.user}>
-                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                        <View style={styles.userInfo}>
-                            <Text style={{fontWeight: "bold"}}>
-                                {this.state.displayName}
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", margin: 10, marginBottom: 15}}>
+                            <View style={styles.userInfo}>
+                                <Headline>
+                                    {this.state.displayName}
+                                </Headline>
+                                {
+                                    true && this.state.isTrainer ? <Text style={{ fontSize: 12 }}>
+                                        Lupa Tier 1 Trainer
+                            </Text> : <Text style={{fontWeight: '600'}}>
+                                            Lupa User
                             </Text>
-                            {
-                                true && this.state.isTrainer ?                             <Text style={{ fontSize: 12 }}>
-                                Lupa Tier 1 Trainer
-                            </Text> : <Text style={{ fontSize: 12 }}>
-                                Lupa User
-                            </Text>
-                            }
-                        </View>
-                        <View style={{flexDirection: 'column', alignItems: 'center'}}>
-                        <Avatar size={40} source={this.state.photoUrl} rounded showEditButton={this.state.isEditingProfile} containerStyle={{ }} />
-                        <Text style={{fontWeight: 'bold'}}>
-                        {this.state.username}
-                    </Text>
+                                }
+                            </View>
+                            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                                <Avatar size={40} source={this.LUPA_CONTROLLER_INSTANCE.getUserPhotoURL()} rounded showEditButton={this.state.isEditingProfile} containerStyle={{}} />
+                                <Text style={{ fontWeight: '600' }}>
+                                    {this.state.username}
+                                </Text>
 
-                        </View>
+                            </View>
                         </View>
 
-                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", margin: 10}}>
+                        
 
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", margin: 3 }}>
+                        <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true })}>
+                                <View style={{ flexDirection: "column", alignItems: "center" }}>
+                                    <Text>
+                                        {this.state.followers.length}
+                                    </Text>
+                                    <Text style={{ fontWeight: "bold" }}>
+                                        Followers
+                                </Text>
+                                </View>
+
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true })}>
+                                <View style={{ flexDirection: "column", alignItems: "center" }}>
+                                    <Text>
+                                        {this.state.following.length}
+                                    </Text>
+                                    <Text style={{ fontWeight: "bold" }}>
+                                        Following
+                                </Text>
+                                </View>
+                            </TouchableOpacity>
+                            
                             <TouchableOpacity>
-                            <View style={{flexDirection: "column", alignItems: "center"}}>
-                                <Text>
-                                    { this.state.sessionsCompleted }
+                                <View style={{ flexDirection: "column", alignItems: "center" }}>
+                                    <Text>
+                                        {this.state.sessionsCompleted}
+                                    </Text>
+                                    <Text style={{ fontWeight: "bold" }}>
+                                        Sessions Completed
                                 </Text>
-                                <Text style={{fontWeight: "bold"}}>
-                                    Sessions Completed
-                                </Text>
-                            </View>
+                                </View>
 
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true, tabToOpen: 0 })}>
-                            <View style={{flexDirection: "column", alignItems: "center"}}>
-                            <Text>
-                                    {this.state.followers.length}
-                                </Text>
-                                <Text style={{fontWeight: "bold"}}>
-                                    Followers
-                                </Text>
-                            </View>
 
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true, tabToOpen: 1 })}>
-                            <View style={{flexDirection: "column", alignItems: "center"}}>
-                            <Text>
-                                    {this.state.following.length}
+                            <View style={{ flexDirection: "column", alignItems: "center" }}>
+                                <View style={{margin: 3}}>
+                                {this.showRating()}
+                                </View>
+                                    <Text style={{ fontWeight: "bold" }}>
+                                        Rating
                                 </Text>
-                                <Text style={{fontWeight: "bold"}}>
-                                   Following
-                                </Text>
+                                </View>
+
                             </View>
-                            </TouchableOpacity>
-                        </View>
                     </View>
 
                     <Timecards isEditing={this.state.isEditingProfile} />
 
-                    <View style={styles.interest}>
-                        <Surface style={[styles.contentSurface, styles.interestContent, {borderColor: "#2196F3", borderWidth: 2}]}>
-                        <Headline>
-                                Interest, Specializations and Strengths
-                        </Headline>
-                        <Divider />
-                        <View style={{justifyContent: "flex-start"}}>
-                        {
-                                this.state.userInterest.length == 0 ?
-                                    <Caption>
-                                        Specializations and strengths that you add to your fitness profile will appear here.
-                                </Caption> : this.mapInterest()
-                            }
-                        </View>
-                        </Surface>
-                    </View>
-
                     {
-                        true && this.state.isTrainer ? 
-                        <View style={styles.experience}>
-                        <Surface style={[styles.contentSurface, {borderColor: "#2196F3", borderWidth: 2}]}>
-                        <Headline>
-                                Experience
-                        </Headline>
-                        <Divider />
-                            {
-                                this.state.userExperience.length == 0 ?
-                                    <Caption>
-                                        Experience that you add to your fitness profile will appear here.
+                        true && this.state.isTrainer ?
+                            <View style={styles.experience}>
+                                <Surface style={[styles.contentSurface, { borderColor: "#2196F3", borderWidth: 1 }]}>
+                                    <Title>
+                                        Experience
+                        </Title>
+                                    <Divider />
+                                    {
+                                        this.state.userExperience.length == 0 ?
+                                            <Caption>
+                                                Experience that you add to your fitness profile will appear here.
                                 </Caption> : this.mapExperience()
-                            }
-                        </Surface>
-                    </View>
-                    :
-                    null
+                                    }
+                                </Surface>
+                            </View>
+                            :
+                            null
                     }
 
 
+                    <View>
+                        <Surface style={styles.contentSurface}>
+                            <Title>
+                                Interest, Specializations and Strengths
+                        </Title>
+                            <Divider />
+                            <View style={{ justifyContent: "flex-start" }}>
+                                {
+                                    this.state.userInterest.length == 0 ?
+                                        <Caption>
+                                            Specializations and strengths that you add to your fitness profile will appear here.
+                                </Caption> : this.mapInterest()
+                                }
+                            </View>
+                        </Surface>
+                    </View>
+
+                    <View style={styles.interest}>
+                        <Surface style={[styles.contentSurface, styles.interestContent, { flexDirection: 'column', borderColor: "#2196F3", borderWidth: 1 }]}>
+                            <Title>
+                                Goals
+                        </Title>
+                            <Divider />
+                            <View style={{ justifyContent: "flex-start" }}>
+                                {
+                                    this.state.userGoals.length == 0 ?
+                                        <Caption>
+                                           You haven't set any goals.  Visit your fitness profile in the settings tab to add one.
+                                </Caption> : this.showGoals()
+                                }
+                            </View>
+                        </Surface>
+                    </View>
+
+
                     <View style={styles.myPacks}>
-                        <Text style={{ fontWeight: "600", fontSize: 15 }}>
+                        <Title>
                             My Packs
-                        </Text>
+                        </Title>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             {this.mapPacks()}
                         </ScrollView>
                     </View>
 
                     <View style={styles.recommendedWorkouts}>
-                        <Text style={{ fontWeight: "600", fontSize: 15 }}>
+                        <View style={{alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
+                        <Title>
                             Recommended Workouts
-                        </Text>
-                        {/*
+                        </Title>
+                        <Button color="#2196F3">
+                            View All
+                        </Button>
+                        </View>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            <Surface style={{margin: 10, width: 100, height: 100, borderRadius: 20, elevation: 3}}>
-
-                            </Surface>
-                            <Surface style={{margin: 10, width: 100, height: 100, borderRadius: 20, elevation: 3}}>
-
-                            </Surface>
-                            <Surface style={{margin: 10, width: 100, height: 100, borderRadius: 20, elevation: 3}}>
-
-                            </Surface>
-                            <Surface style={{margin: 10, width: 100, height: 100, borderRadius: 20, elevation: 3}}>
-
-                            </Surface>
+                                {this.mapRecommendedWorkouts()}
                         </ScrollView>
-                        */}
-                        <Caption>
-                            Visit the Workout Library to recommend workouts that you enjoy.
-                       </Caption>
                     </View>
 
                 </ScrollView>
@@ -408,7 +471,8 @@ class UserProfileModal extends React.Component {
                 <FollowerModal isOpen={this.state.followerModalIsOpen} userUUID={this.state.userUUID} activeTab={this.state.tabToOpen} following={this.state.following} followers={this.state.followers} closeModalMethod={this.closeFollowerModal}/>
                 </ScrollView>
             </SafeAreaView>
-            
+            {
+                true && (this.state.userUUID != this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid) ?
             <Fab
             active={this.state.active}
             direction="up"
@@ -426,7 +490,8 @@ class UserProfileModal extends React.Component {
             <Button style={{ backgroundColor: '#637DFF' }} onPress={() => this.setState({ createSessionModalIsOpen: true })}>
               <MaterialIcon name="fitness-center" />
             </Button>
-          </Fab>
+                </Fab> : null
+    }
             </Modal>
         );
     }
@@ -439,9 +504,15 @@ const styles = StyleSheet.create({
     },
     contentSurface: {
         margin: 5,
-        elevation: 5,
+        elevation: 0,
         padding: 15,
-        borderRadius: 20
+        borderRadius: 20,
+        flexDirection: 'column',
+        backgroundColor: "transparent",
+        justifyContent: "space-between",
+        margin: 10,
+        borderColor: "#2196F3", 
+        borderWidth: 1 
     },
     chipStyle: {
         elevation: 3,
@@ -452,16 +523,6 @@ const styles = StyleSheet.create({
     },
     chipTextStyle: {
         color: "white",
-    },
-    interest: {
-        backgroundColor: "transparent",
-        justifyContent: "space-between",
-        margin: 10,
-    },
-    interestContent: {
-        flexDirection: "column",
-        flexWrap: 'wrap',
-        alignItems: "center",
     },
     experience: {
         backgroundColor: "transparent",

@@ -8,7 +8,8 @@ import {
     ScrollView,
     Dimensions,
     TouchableWithoutFeedback,
-    Image
+    Image,
+    RefreshControl
 } from 'react-native';
 
 import {
@@ -18,16 +19,94 @@ import {
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
-import TrainerFlatCard from './Components/ExploreCards/TrainerFlatCard';
-
 import ProfilePicture from '../../../images/temp-profile.jpg'
+
+import LupaController from '../../../../controller/lupa/LupaController';
+
+import { SmallPackCard, SubscriptionPackCard, TrainerFlatCard } from './Components/ExploreCards/PackExploreCard';
 
 const windowWidth = Dimensions.get('window').width;
 
 export default class Explore extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+        this.state = {
+            refreshing: false,
+            trainers: [],
+            explorePagePacks: [],
+            usersInArea: [],
+            subscriptionPacks: [],
+            showPackModal: false
+        }
+    }
+
+    componentDidMount = async () => {
+        let subscriptionPacksIn, trainersIn, explorePagePacksIn, usersInAreaIn;
+
+        //get trainers
+        await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
+            trainersIn = result;
+        })
+
+        //get global packs
+        await this.LUPA_CONTROLLER_INSTANCE.getExplorePagePacks().then(result => {
+            explorePagePacksIn = result;
+        });
+
+        //get subscription packs
+        await this.LUPA_CONTROLLER_INSTANCE.getSubscriptionPacks().then(result => {
+            subscriptionPacksIn = result;
+        })
+
+        //get users in area
+
+
+        //set component state
+        await this.setState({
+            trainers: trainersIn,
+            explorePagePacks: explorePagePacksIn,
+            subscriptionPacks: subscriptionPacksIn,
+        })
+    } 
+
+    closePackModal = () => {
+        this.setState({ showPackModal: false })
+    }
+
+    mapTrainers = () => {
+        return this.state.trainers.map(trainer => {
+            return (
+                <TrainerFlatCard trainerUUID={trainer.id} displayName={trainer.display_name} rating={trainer.rating} sessionsCompleted={trainer.sessions_completed} image={trainer.photo_url} />
+            )
+        })
+    }
+
+    mapGlobalPacks = () => {
+        return this.state.explorePagePacks.map(globalPacks => {
+            return (
+                <SmallPackCard packUUID={globalPacks.id} image={globalPacks.pack_image} />
+            )
+        })
+    }
+
+    mapSubscriptionPacks = () => {
+        return this.state.subscriptionPacks.map(subscriptionPacks => {
+            return (
+                <SubscriptionPackCard packUUID={subscriptionPacks.id} image={subscriptionPacks.pack_image} />
+            )
+        })
+    }
+
+    mapUsersInArea = () => {
+
+    }
+
     render() {
         return (
-            <ScrollView contentContainerStyle={styles.rootScrollView}>
+            <ScrollView shouldRasterizeIOS showsVerticalScrollIndicator={false} contentContainerStyle={styles.rootScrollView} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => alert('Refreshing')}/>}>
 
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
@@ -38,7 +117,7 @@ export default class Explore extends React.Component {
                     </View>
 
                     <View style={{ width: windowWidth }}>
-                        <ScrollView horizontal={true} contentContainerStyle={{ justifyContent: "space-around" }}>
+                        <ScrollView horizontal={true} contentContainerStyle={{ justifyContent: "space-around" }} showsHorizontalScrollIndicator={false}>
                             <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
                             <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
                             <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
@@ -56,24 +135,8 @@ export default class Explore extends React.Component {
                     </View>
 
                     <View style={{ width: Dimensions.get('window').width }}>
-                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                            <Surface style={styles.packCards}>
-                                <Image style={{width: "100%", height: "100%", borderRadius: 20}} 
-                                resizeMode={ImageResizeMode.cover} 
-                                source={{ uri: 'https://picsum.photos/700' }} />
-                            </Surface>
-
-                            <Surface style={styles.packCards}>
-                            <Image style={{width: "100%", height: "100%", borderRadius: 20}} 
-                                resizeMode={ImageResizeMode.cover} 
-                                source={{ uri: 'https://picsum.photos/700' }} />
-                            </Surface>
-
-                            <Surface style={styles.packCards}>
-                            <Image style={{width: "100%", height: "100%", borderRadius: 20}} 
-                                resizeMode={ImageResizeMode.cover} 
-                                source={{ uri: 'https://picsum.photos/700' }} />
-                            </Surface>
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} shouldRasterizeIOS={true} >
+                           {this.mapGlobalPacks()}
                         </ScrollView>
 
                     </View>
@@ -87,7 +150,7 @@ export default class Explore extends React.Component {
                         <NativeButton title="View all" />
                     </View>
 
-                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                    <ScrollView horizontal={true} shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
                         <TouchableWithoutFeedback>
                             <Surface style={styles.filter}>
                                 <Text style={styles.filterText}>
@@ -120,29 +183,7 @@ export default class Explore extends React.Component {
 
                     <View style={{ width: Dimensions.get('window').width }}>
                         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                            <Surface style={styles.offerCards}>
-                            <Image style={{width: "100%", height: "100%", borderRadius: 15}} 
-                                resizeMode={ImageResizeMode.cover} 
-                                source={{ uri: 'https://picsum.photos/700' }} />
-                            </Surface>
-
-                            <Surface style={styles.offerCards}>
-                            <Image style={{width: "100%", height: "100%", borderRadius: 15}} 
-                                resizeMode={ImageResizeMode.cover} 
-                                source={{ uri: 'https://picsum.photos/700' }} />
-                            </Surface>
-
-                            <Surface style={styles.offerCards}>
-                            <Image style={{width: "100%", height: "100%", borderRadius: 15}} 
-                                resizeMode={ImageResizeMode.cover} 
-                                source={{ uri: 'https://picsum.photos/700' }} />
-                            </Surface>
-
-                            <Surface style={styles.offerCards}>
-                            <Image style={{width: "100%", height: "100%", borderRadius: 15}} 
-                                resizeMode={ImageResizeMode.cover} 
-                                source={{ uri: 'https://picsum.photos/700' }} />
-                            </Surface>
+                            {this.mapSubscriptionPacks()}
                         </ScrollView>
 
                     </View>
@@ -157,11 +198,8 @@ export default class Explore extends React.Component {
                     </View>
 
                     <View style={{ width: windowWidth }}>
-                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ justifyContent: "space-around" }}>
-                            <TrainerFlatCard />
-                            <TrainerFlatCard />
-                            <TrainerFlatCard />
-                            <TrainerFlatCard />
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} shouldRasterizeIOS={true} contentContainerStyle={{ justifyContent: "space-around" }}>
+                            {this.mapTrainers()}
                         </ScrollView>
 
                     </View>
@@ -173,7 +211,7 @@ export default class Explore extends React.Component {
 
 const styles = StyleSheet.create({
     rootScrollView: {
-        backgroundColor: "#FAFAFA"
+        backgroundColor: "#FFFFFF"
     },
     headerText: {
         fontSize: 22,
@@ -192,20 +230,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         justifyContent: "space-between",
-    },
-    packCards: {
-        elevation: 1,
-        width: 250,
-        height: 120,
-        borderRadius: 20,
-        margin: 5,
-    },
-    offerCards: {
-        elevation: 1,
-        width: 120,
-        height: 150,
-        borderRadius: 15,
-        margin: 5,
     },
     packCardsContainer: {
 

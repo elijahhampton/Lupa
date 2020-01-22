@@ -44,10 +44,16 @@ const TrainerSearchResultCard = (props) => {
             <Surface style={[styles.cardContainer]}>
                 <View style={styles.cardContent}>
                     <View style={styles.userInfoContent}>
-                    <Avatar label={props.title} rounded size="small" />
-                        <Text style={styles.titleText}>
+                    <Avatar label={props.title} rounded size="small" containerStyle={{marginRight: 5}}/>
+                    <View style={{flexDirection: 'column'}}>
+                    <Text style={styles.titleText}>
                             {props.title}
                         </Text>
+                        <Text style={styles.subtitleText}>
+                            {props.email}
+                        </Text>
+                    </View>
+
                         </View>
                         <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
 Lupa Trainer
@@ -87,7 +93,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     titleText: {
-        fontWeight: "bold",
+        fontWeight: "600",
+    },
+    subtitleText: {
+        fontWeight: '500',
+        fontSize: 12
     },
     chipIndicator: {
         width: 100,

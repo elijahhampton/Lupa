@@ -1,9 +1,15 @@
 /* Please do not remove this line as it prevents the Cannot Find Variable: Buffer error */
 //global.Buffer = global.Buffer || require('buffer').Buffer
 
+//default
+//global
+//subscription
+//
+
 import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 
 const PACKS_COLLECTION = LUPA_DB.collection('packs');
+const PACKS_EVENT_COLLECTION = LUPA_DB.collection('pack_events');
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
 const algoliasearch = require('algoliasearch/reactnative.js');
@@ -11,6 +17,7 @@ const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7
 const packsIndex = algoliaIndex.initIndex("dev_PACKS");
 
 import UserController from './UserController';
+import { getLupaPackStructure, getLupaPackEventStructure } from '../firebase/collection_structures';
 let USER_CONTROLLER_INSTANCE;
 
 class PacksController {
@@ -44,17 +51,17 @@ class PacksController {
 
       //Set necessary data for packs
       let packData = {
-        packName: pack.name,
-        packMembersByName: pack.membersByName,
-        numPackMembers: pack.num_members,
-        packRating: pack.rating,
-        packSessionsCompleted: pack.sessions_completed,
-        packTimeCreated: pack.timecreated,
-        packEvents: pack.events,
-        packLeaderNotes: pack.packLeaderNotes,
-        isGlobal: pack.isGlobal,
-        isSubscription: pack.isSubscription,
-        isDefault: pack.isDefault
+        pack_title: pack.pack_title,
+        pack_leader: pack.pack_leader,
+        pack_image: pack.pack_image,
+        pack_isDefault: pack.pack_isDefault,
+        pack_isSubscription: pack.pack_isSubscription,
+        pack_leader_notes: pack.pack_leader_notes,
+        pack_members: pack.pack_members,
+        pack_invited_members: pack.pack_invited_members,
+        pack_rating: pack.pack_rating,
+        pack_sessions_completed: pack.pack_sessions_completed,
+        pack_time_created: pack.pack_time_created,
       }
 
       records.push(packData);
@@ -80,6 +87,8 @@ class PacksController {
     await PACKS_COLLECTION.where('pack_isDefault', '==', true).get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         let snapshot = doc.data();
+        let snapshotID = doc.id;
+        snapshot.id = snapshotID;
         defaultPacks.push(snapshot);
       })
     });
@@ -90,19 +99,44 @@ class PacksController {
   /**
    * Subscription Based Offers
    */
-  getSubscriptionBasedPacks() {
+  getSubscriptionBasedPacks = async () => {
+    let subscriptionPacks = [];
+    await PACKS_COLLECTION.where('pack_isSubscription', '==', true).where('pack_isDefault', '==', false).get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        let snapshot = doc.data();
+        let snapshotID = doc.id;
+        snapshot.id = snapshotID;
+        subscriptionPacks.push(snapshot);
+      });
+    });
 
+    return Promise.resolve(subscriptionPacks);
   }
 
-  getGlobalPacks() {
+  getExplorePagePacks = async () => {
+    let explorePagePacks = [];
 
+    await PACKS_COLLECTION.where('pack_isDefault', '==', false).get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        let snapshot = doc.data();
+        let snapshotID = doc.id;
+        snapshot.id = snapshotID;
+        explorePagePacks.push(snapshot);
+      });
+    });
+
+    return Promise.resolve(explorePagePacks);
   }
+
 
   getCurrentUserPacks = async () => {
     let currUserPacks = [];
-    await  PACKS_COLLECTION.where('pack_members', 'array-contains', USER_CONTROLLER_INSTANCE.getCurrentUser().uid).get().then(async querySnapshot => {
+    let currentUserUUID = USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
+    await  PACKS_COLLECTION.where('pack_members', 'array-contains', currentUserUUID).get().then(async querySnapshot => {
      querySnapshot.forEach(userPackDoc => {
+        let snapshotID = userPackDoc.id;
         let snapshot = userPackDoc.data();
+        snapshot.id = snapshotID;
         currUserPacks.push(snapshot);
       });
     })
@@ -110,16 +144,75 @@ class PacksController {
     return Promise.resolve(currUserPacks);
   }
 
-  getPackInformationByPackName(packName) {
+  getPackInformationByUUID = async (uuid) => {
+    let packInformation;
+    await PACKS_COLLECTION.doc(uuid).get().then(result => {
+      packInformation = result.data();
+    });
 
+    return Promise.resolve(packInformation);
   }
 
-  getPackEventsByPackName(packName) {
+  getPackEventsByUUID = async (uuid) => {
+    let packEvents;
+    await PACKS_EVENT_COLLECTION.doc(uuid).get().then(result => {
+      packEvents = result.data();
+    });
 
+    return Promise.resolve(packEvents);
   }
 
-  isUserInPack() {
+  createPack = (packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
+    const lupaPackStructure = getLupaPackStructure(packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
+    PACKS_COLLECTION.doc().set(lupaPackStructure);
+  }
 
+  createPackEvent = async (packUUID, title, description, date, eventImage) => {
+    let updatedPackEvents = [];
+    //create lupa pack event structure
+    const newPackEvent  = getLupaPackEventStructure(title, description, date, eventImage);
+    newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
+
+    //get all pack events for this pack
+    await PACKS_EVENT_COLLECTION.doc(packUUID).get().then(result => {
+      let snapshotID = result.id
+      let snapshot = result.data();
+      snapshot.id = snapshotID;
+
+    snapshot.events.forEach(eventObject => {
+        updatedPackEvents.push(eventObject);
+      })
+    })
+
+    //add new pack event
+    updatedPackEvents.push(newPackEvent)
+
+    //update document
+    PACKS_EVENT_COLLECTION.doc(packUUID).set({
+      events: updatedPackEvents
+    });
+  } 
+
+  removeUserFromPackByUUID  = async (packUUID, userUUID) => {
+    let snapshot;
+    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+      snapshot = result.data();
+    });
+
+    let oldPackMembersList = snapshot.pack_members;
+    let updatedPackMemberList = oldPackMembersList.filter((uuids) => {
+
+      //return any uuids not equal to the userUUID given in params
+      return uuids != userUUID;
+    });
+
+    PACKS_COLLECTION.doc(packUUID).set(
+      {
+        pack_members: updatedPackMemberList
+      }, 
+      { 
+        merge: true
+      });
   }
 }
 

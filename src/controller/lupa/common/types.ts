@@ -27,10 +27,13 @@ export enum SESSION_STATUS {
     Confirmed="Confirmed",
 }
 
-export enum NOTIFICATION_TYPES {
-    SESSION_INVITE="SessionInvite",
+/* LupaPackEventEnumStageEnum */
+export enum PACK_EVENT_STAGE {
+    UNEXPIRED='unexpired',
+    EXPIRED='expired',
 }
 
+/* LupaNotificationDataStructure */
 export type LupaNotificationStructure = {
     user: "",
     date: "",
@@ -39,6 +42,7 @@ export type LupaNotificationStructure = {
     data: {}
 }
 
+/* LupaUserDataStructure */
 export type LupaUserStructure = {
     user_uuid: "",
     display_name: "",
@@ -69,10 +73,27 @@ export type LupaUserStructure = {
     sessionsCompleted: 0
 };
 
+
+/* LupaWorkoutDataStructure */
 export type LupaWorkoutStructure = {};
 
-export type LupaPackStructure = {};
+/* LupaPackDataStructure */
+export type LupaPackStructure = {
+    pack_leader: '',
+    pack_title: "",
+    pack_isSubscription: false,
+    pack_isDefault: false,
+    pack_description: "",
+    pack_members: [],
+    pack_invited_members: [],
+    pack_image: '',
+    pack_leader_notes: {},
+    pack_rating: 0,
+    pack_sessions_completed: 0,
+    pack_time_created: '',
+};
 
+/* LupaHealthDataStructure */
 export type LupaHealthDataStructure = {
     user_uuid: "",
     health: {
@@ -83,6 +104,7 @@ export type LupaHealthDataStructure = {
     goals: [] //array of objects
 };
 
+/* LupaSessionDataStructure */
 export type LupaSessionStructure = {
     attendeeOne: "",
     attendeeTwo: "",
@@ -93,19 +115,19 @@ export type LupaSessionStructure = {
     lastSuggestedBy: {}
 };
 
+/* LupaPackEventDataStructure */
 export type LupaPackEventStructure = {
-    event_uuid: "",
     pack_uuid: "",
-    event_data: {
-        time: "",
-        date: "",
-        description: "",
-        location: {
-            lat: "",
-            long: "",
-        }
-    },
+    pack_event_title: "",
+    pack_event_description: "",
+    pack_event_date: "",
     attendees: [],
+    pack_event_stage: PACK_EVENT_STAGE.UNEXPIRED,
+    pack_event_image: '',
 };
 
-export type LupaTrainerStructure = {};
+/* LupaTrainerDataStructure */
+export type LupaTrainerStructure = {
+    user_uuid: "",
+    certifications: [],
+};

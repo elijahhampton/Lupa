@@ -52,10 +52,7 @@ export default class CreateSessionModal extends React.Component {
             displayName = result;
         });
 
-        console.log('THE WINNER IS : ' + displayName)
-
         await this.setState({ userDisplayName: displayName });
-        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaasdasd')
     }
 
     _handleNewSessionRequest = () => {
