@@ -37,7 +37,6 @@ import { Pagination } from 'react-native-snap-carousel';
 
 
 const AppLogo = require('../../../images/applogo.png')
-const TrainerGraphic = require('../../../images/trainer_graphic.png')
 
 const trainerInfoComponent = () => {
     return (

@@ -105,7 +105,11 @@ class ProfileView extends React.Component {
      * the speed in which a user may search and click a user profile.  Loading the information and setting the state after the component has mounted
      * guarantees that the information will be loaded so the user can see it.
      */
-    componentDidMount = async () => {
+    componentDidMount = () => {
+        this.setupProfileInformation();
+    }
+
+    setupProfileInformation = async () => {
         let username, displayName, photoUrl, interestData, experienceData, isTrainer, followers, following, sessionsCompleted, userRatingIn;
         await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'display_name').then(result => {
             displayName = result;

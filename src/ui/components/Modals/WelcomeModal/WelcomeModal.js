@@ -13,7 +13,8 @@ import {
     TextInput, 
     Title,
     Headline,
-    Button
+    Button,
+    ProgressBar
 } from 'react-native-paper';
 
 import SafeAreaView from 'react-native-safe-area-view';
@@ -29,6 +30,11 @@ import WorkoutTimes from './Views/WorkoutTimes';
 import TrainerInformation from './Views/TrainerInformation';
 
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
+
+import Color from '../../../common/Color';
+
+let progress = 0;
+
 export default class WelcomeModal extends React.Component {
 
     constructor(props) {
@@ -65,28 +71,38 @@ export default class WelcomeModal extends React.Component {
         if (isTrainer) {
             switch(index) {
                 case 0:
+                    progress += 20;
                     return <ChooseUsername />
                 case 1:
+                    progress += 20;
                     return <TrainerInformation />
                 case 2:
+                    progress += 20;
                     return <BasicInformation isForwardPageChange={this.state.isForwardPageChange} />
                 case 3:
+                    progress += 20;
                     return <FitnessInterest />
                 case 4:
+                    progress += 20;
                     return <WorkoutTimes />
             }   
         }
         else {
             switch(index) {
                 case 0:
+                    progress += 20;
                     return <ChooseUsername />
                 case 1: 
+                    progress += 20;
                     return <TrainerInformation />
                 case 2:
+                    progress += 20;
                     return <BasicInformation isForwardPageChange={this.state.isForwardPageChange} />
                 case 3:
+                    progress += 20;
                     return <FitnessInterest />
                 case 4:
+                    progress += 20;
                     return <WorkoutTimes />
             }
         }
@@ -97,15 +113,16 @@ export default class WelcomeModal extends React.Component {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isVisible} style={styles.modalContainer}>
                 <SafeAreaView style={{flex: 1}}>
+                    <ProgressBar color={Color.LUPA_BLUE} progress={progress}/>
                         <View style={{height: "95%"}}>
                         {
                             this.presentScreen(this.state.currIndex)
                         }
                         </View>
                         <View style={styles.buttons}>
-                            <Button mode="text" color="#2196F3" onPress={this._handleBackViewClick}>
+                            <Button mode="text" color={Color.LUPA_BLUE} onPress={this._handleBackViewClick}>
                                 Back
-                            </Button><Button mode="text" color="#2196F3" onPress={this._handleNextViewClick}>
+                            </Button><Button mode="text" color={Color.LUPA_BLUE} onPress={this._handleNextViewClick}>
                                 Next
                             </Button>
                             

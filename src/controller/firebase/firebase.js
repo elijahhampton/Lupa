@@ -14,10 +14,8 @@ const firebaseConfig = {
 const fb_init_config = firebase.initializeApp(firebaseConfig);
 
 const LUPA_DB = firebase.firestore();
-
 const LUPA_DB_FIREBASE = firebase.database();
 LUPA_DB_FIREBASE.goOnline();
-
 const LUPA_AUTH = firebase.auth();
 
 export class Fire {
@@ -82,20 +80,6 @@ off() {
 }
 
 Fire.shared = new Fire();
-
-
-
-
-
-/*module.exports = onCreateSearch = functions.firestore.document('users/{firstName}').onCreate(event => {
-  const user = event.data.data();
-
-  user.firstName = event.params.firstName;
-
-  const index = client.initIndex('dev_GENSEARCH');
-  return index.saveObject(user);
-});*/
-
 
 
 export default LUPA_DB;

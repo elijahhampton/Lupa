@@ -95,7 +95,7 @@ export default class UserController {
                     retValue = snapshot.following;
                     break;
                 case 'sessions_completed':
-                    retValue = snapshot.sessions_completed;
+                    retValue = snapshot.sessionsCompleted;
                     break;
             }
         });
@@ -247,8 +247,21 @@ export default class UserController {
                 break;
         case UserCollectionFields.FOLLOWERS:
             /* For now we don't handle this year */
+            break;
         case UserCollectionFields.FOLLOWING:
             /* For now we don't handle this year */
+            break;
+        case UserCollectionFields.LOCATION:
+            currentUserDocument.set({
+                location: {
+                    city: value.city,
+                    state: value.state,
+                    country: value.country,
+                }
+            },{
+                merge: true,
+            })
+            break;
         }
         console.log('LUPA: User Controller finished updating current user')
     }

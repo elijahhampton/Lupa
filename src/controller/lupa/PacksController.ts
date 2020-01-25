@@ -155,15 +155,19 @@ class PacksController {
 
   getPackEventsByUUID = async (uuid) => {
     let packEvents;
+    console.log('asdasda' + uuid);
     await PACKS_EVENT_COLLECTION.doc(uuid).get().then(result => {
       packEvents = result.data();
+      console.log('boookty' + result.data())
     });
+
+    console.log(packEvents);
 
     return Promise.resolve(packEvents);
   }
 
   createPack = (packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
-    const lupaPackStructure = getLupaPackStructure(packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
+    const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
     PACKS_COLLECTION.doc().set(lupaPackStructure);
   }
 
@@ -174,7 +178,7 @@ class PacksController {
     newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
 
     //get all pack events for this pack
-    await PACKS_EVENT_COLLECTION.doc(packUUID).get().then(result => {
+    await PACKS_EVENT_COLLECTION.doc(packUUID).get().then((result,err) => {
       let snapshotID = result.id
       let snapshot = result.data();
       snapshot.id = snapshotID;

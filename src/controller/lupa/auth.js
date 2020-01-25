@@ -30,13 +30,14 @@ LUPA_AUTH.onAuthStateChanged(user => {
  * 
  * This method assigns a user as logged in in firebase.
  */
-export var signUpUser = async (email, password, confirmedPassword) => {
-    let result;
+export var signUpUser = async (email, password, confirmedPassword, isTrainerAccount, agreedToTerms) => {
+    let result = false;
 
     //Check password against confirmedPassword- lazy check for now
     if (password != confirmedPassword) {
         console.log('LUPA: Password did not match confirmed password')
-        return;
+        console.log('c' + result);
+        return Promise.resolve(result);
     }
 
     await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
@@ -46,47 +47,68 @@ export var signUpUser = async (email, password, confirmedPassword) => {
 
         //Catch error on signup
     }).catch(err => {
+        console.log('umm what is the error' + err);
         result = false;
-        return result;
+        console.log('a' + result);
+        return Promise.resolve(result);
     });
 
 
+
     let userData = getLupaUserStructure(LUPA_AUTH.currentUser.uid, "", "", LUPA_AUTH.currentUser.email,
-        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", false, "", "", [], "", "", {}, [], 0, {}, [], [], 0);
+        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0);
     
         //Add user to users collection with UID.
     LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).set(userData).catch(err => {
         console.log('LUPA: Error while trying to add user to users collection.');
         result = false;
-        return result;
+        console.log('b' + result)
+        return Promise.resolve(result);
     });
 
     //Add user to all default packs
-    LUPA_DB.collection('packs').where('isDefault', '==', true).get().then(snapshot => {
+    let defaultPacks = new Array();
+
+    LUPA_DB.collection('packs').where('pack_isDefault', '==', true).get().then(snapshot => {
+        let packID;
         snapshot.forEach(doc => {
+            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             let pack = doc.data();
+            packID = doc.id;
+
+            let currentDoc = LUPA_DB.collection('packs').doc(packID);
+            console.log(pack);
             let packMembers = pack.pack_members;
+            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+            console.log(LUPA_AUTH.currentUser.uid)
             packMembers.push(LUPA_AUTH.currentUser.uid);
-            pack.set({
-                members: packMembers
-            }, {
-                merge: true
+            console.log(packMembers);
+            currentDoc.update({
+                pack_members: packMembers
             });
 
-            //Get the pack UUIDS
-            let pack_uuid = doc.id;
-
-            //Add user to all pack events for that pack
-            LUPA_DB.collection(pack_uuid).get().then(snapshot => {
+            let packEventCurrentDoc = LUPA_DB.collection('pack_events').doc(packID);
+            LUPA_DB.collection('pack_events').doc(packID).get().then(snapshot => {
+                console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa GOT PACK EVENTS SECTION')
                 //update attendees list for default pack events
                 let packEventData = snapshot.data();
-                let attendees = packEventData.attendees;
-                attendees.push(LUPA_AUTH.currentUser.uid);
-
+                console.log(packEventData)
+                let updatedAttendees = packEventData.attendees;
+                updatedAttendees.push(LUPA_AUTH.currentUser.uid);
+                console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa UPDATED ATTENDEES')
+                packEventCurrentDoc.update({
+                    attendees: updatedAttendees,
+                });
+    
             }); //end snapshot.forEach
 
         });
     });
+
+
+    console.log('default size for packs: ' + defaultPacks.length)
+
+    return Promise.resolve(result);
 }
 
 /**

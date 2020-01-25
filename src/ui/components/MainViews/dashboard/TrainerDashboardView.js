@@ -68,6 +68,10 @@ class TrainerDashboardView extends React.Component {
 
     }
 
+    componentDidMount() {
+        this.fetchSessions();
+    }
+
     _onRefresh = () => {
         this.setState({refreshing: true});
         this.fetchSessions().then(() => {
@@ -161,7 +165,7 @@ class TrainerDashboardView extends React.Component {
 
                         <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
                         {
-                            this.populateSessions()
+                            //this.populateSessions()
                         }
                         </ScrollView>
                     </View>

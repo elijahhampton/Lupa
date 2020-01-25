@@ -18,8 +18,6 @@ import {
     Title,
 } from 'react-native-paper';
 
-import LupaAppBar from '../../../AppBar/LupaAppBar';
-
 export default class MessagesView extends React.Component {
     render() {
         return (
