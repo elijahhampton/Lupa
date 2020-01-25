@@ -9,20 +9,10 @@ import {
     TouchableHighlightBase
 } from 'react-native';
 
-import {
-    TextInput,
-    Switch,
-} from 'react-native-paper';
 
 import { Input, Avatar } from 'react-native-elements';
-
-import { DatePicker } from 'native-base';
-import { TouchableOpacity } from 'react-native';
-import { Feather as Icon } from '@expo/vector-icons';
-
 import * as ImagePicker from 'expo-image-picker';
 
-import * as Location from 'expo-location';
 import LupaController from '../../../../../controller/lupa/LupaController';
 
 export default class BasicInformation extends React.Component {
@@ -36,28 +26,15 @@ export default class BasicInformation extends React.Component {
             lastName: '',
             gender: " ",
             photoSource: undefined,
-            location: undefined,
         }
     }
 
-    componentWillMount() {
-        this._getLocationAsync();
-    }
-
-    _getLocationAsync = async () => {
-        console.log('location')
-        let result;
-        await Location.getCurrentPositionAsync({ enableHighAccuracy: true }).then(res => {
-            result = res;
-        })
-        console.log('BBB' + result)
-        await this.setState({
-            location: JSON.stringify(result)
-        })
+    componentDidMount() {
+       
     }
 
     _getAvatar = () => {
-        let avatar = <Avatar showEditButton rounded size={120} />
+        let avatar = <Avatar quality={0} showEditButton rounded size={120} source={{ uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
         return avatar;
     }
 
@@ -68,6 +45,8 @@ export default class BasicInformation extends React.Component {
             allowsEditing: true,
             quality: 1,
         });
+
+        console.log(result)
 
        //Update field photo_url field
         this._handleUserPhotoUrlUpdate(result);
@@ -98,7 +77,7 @@ export default class BasicInformation extends React.Component {
 
                 <View style={styles.userInput}>
                     {
-                        this._getAvatar()
+                       <Avatar showEditButton rounded size={200} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
                     }
                 </View>
                 

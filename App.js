@@ -53,9 +53,12 @@ class App extends React.Component {
   }
 
   componentDidMount = () => {
-  //  this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+    this.setupApp();
   }
-
+  
+  setupApp = async () => {
+    this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+  }
   render() {
     return (
       

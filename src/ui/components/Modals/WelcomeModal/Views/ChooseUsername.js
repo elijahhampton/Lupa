@@ -1,23 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
     View,
     StyleSheet,
     Text,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from 'react-native';
 
 import {
-    TextInput, Caption, Switch
+    TextInput,
+    Caption,
+    Provider,
+    Portal,
+    Modal
 } from 'react-native-paper';
+
+import * as Location from 'expo-location';
 
 import { Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Feather as Icon } from '@expo/vector-icons';
 
-import LupaMapView from '../../LupaMapView';
+import Color from '../../../../common/Color';
+
+import getLocationFromCoordinates from '../../../../../modules/location/mapquest/mapquest.js';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
+
+//Activity Indicator to show while fetching location data
+const ActivityIndicatorModal = (props) => {
+    const [isLoading, setIsLoading] = useState(true);
+
+    return (
+        <Provider>
+            <Portal>
+                <Modal style={styles.activityIndicatorModal} visible={props.visible}>
+                    <ActivityIndicator animating={isLoading} hidesWhenStopped={false} size='large' color={Color.LUPA_BLUE}/>
+                </Modal>
+            </Portal>
+        </Provider>
+    );
+}
 
 export default class ChooseUsername extends React.Component {
     constructor(props) {
@@ -29,7 +53,11 @@ export default class ChooseUsername extends React.Component {
             chosenUsername: "",
             displayName: "",
             maketrainerAccount: false,
-            isForwardPageChange: this.props.isForwardPageChange
+            isForwardPageChange: this.props.isForwardPageChange,
+            location: '',
+            locationText: 'Where are you located?',
+            locationDataSet: false,
+            showLoadingIndicator: false,
         }
     }
 
@@ -53,6 +81,40 @@ export default class ChooseUsername extends React.Component {
 
     _handleUsernameEndEditing = () => {
         this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('username', this.state.chosenUsername);
+    }
+
+    _getLocationAsync = async () => {
+        let result;
+        //show loading indicator
+        this.setState({
+            showLoadingIndicator: true,
+        })
+
+        //get users location data
+        await Location.getCurrentPositionAsync({ enableHighAccuracy: true }).then(res => {
+            result = res;
+        })
+
+        //set state
+        await this.setState({
+            location: result
+        })
+
+        //convert data into actual location
+        const locationData = await getLocationFromCoordinates(this.state.location.coords.longitude, this.state.location.coords.latitude);
+        const locationDataText = await locationData.city + ", " + locationData.state;
+
+        //Update user location in database
+        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
+
+        //hide loading indicator
+        await this.setState({
+            locationText: locationDataText,
+            locationDataSet: true,
+            showLoadingIndicator: false
+        });
+
+
     }
 
     render() {
@@ -93,7 +155,7 @@ export default class ChooseUsername extends React.Component {
                     <TouchableOpacity onPress={this._getLocationAsync} style={{flexDirection: "row", alignItems: "center"}}>
                     <Icon name="map-pin" size={20} style={{padding: 2}} />
                     <Text style={[styles.generalText, { color: '#2196F3'}]}>
-                        Where are you located?
+                        {this.state.locationText}
                     </Text>
                     </TouchableOpacity>
 
@@ -103,7 +165,8 @@ export default class ChooseUsername extends React.Component {
                 </View>
 
 
-                <LupaMapView isVisible={false} />
+               {/* <LupaMapView isVisible={false} /> */}
+               <ActivityIndicatorModal visible={this.state.showLoadingIndicator}/>
 
 
                 </SafeAreaView>
@@ -148,5 +211,13 @@ const styles = StyleSheet.create({
     inputContainerStyle: {
         margin: 5,
         width: "75%",
+    },
+    activityIndicatorModal: {
+        width: 100,
+        height: 100,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })

@@ -13,11 +13,14 @@ import {
     IconButton,
     Surface,
     Caption,
-    Button
+    Button,
+    TextInput
 } from 'react-native-paper';
 
 import { Feather as FeatherIcon } from '@expo/vector-icons';
 import SafeAreaView from 'react-native-safe-area-view';
+
+import { Input } from 'react-native-elements';
 
 import { GiftedChat } from 'react-native-gifted-chat';
 
@@ -43,7 +46,11 @@ export default class PackChatModal extends React.Component{
     }
 
     
-    componentDidMount = async () => {
+    componentDidMount() {
+        this.setupFire();
+      }
+
+      setupFire = async () => {
         await Fire.shared.init(this.state.packUUID);
 
         await Fire.shared.on(message =>
@@ -57,12 +64,26 @@ export default class PackChatModal extends React.Component{
         Fire.shared.off();
       }
 
+      renderTextInput = () => {
+          return (
+              <Input />
+          )
+      }
+
 
     render() {
         let pageIndex = this.state.currentIndex;
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
-                    <GiftedChat messages={this.state.messages} onSend={Fire.shared.send} user={Fire.shared.getUser()} showAvatarForEveryMessage={true} placeholder="Send a message to your pack!" isTyping={true} renderUsernameOnMessage={true} />
+                    <GiftedChat 
+                    messages={this.state.messages} 
+                    onSend={Fire.shared.send} 
+                    user={Fire.shared.getUser()} 
+                    showAvatarForEveryMessage={true} 
+                    placeholder="Send a message to your pack!" 
+                    isTyping={true} 
+                    renderUsernameOnMessage={true} 
+                    />
             </Modal>
         );
     }
@@ -70,8 +91,6 @@ export default class PackChatModal extends React.Component{
 
 const styles = StyleSheet.create({
     modalContainer: {
-        display: "flex",
-        margin: 0,
         backgroundColor: "#FAFAFA",
         flex: 1,
     },

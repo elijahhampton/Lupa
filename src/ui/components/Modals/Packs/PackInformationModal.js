@@ -3,16 +3,20 @@ import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
-    StyleSheet
+    StyleSheet,
+    Modal,
+    ScrollView
 } from 'react-native';
 
 import {
-    Portal,
-    Modal,
-    Provider,
-    Surface,
-    IconButton
+    Headline,
+    Paragraph,
+    Title,
+    Divider,
+    Avatar
 } from 'react-native-paper';
+
+import { Rating } from 'react-native-elements';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
@@ -28,26 +32,84 @@ export default class PackInformationModal extends React.Component {
         }
     }
 
-    componentDidMount = async () => {
+    componentDidMount = () => {
+        this.setupPackInformation();
+
+    }
+
+    setupPackInformation  = async () => {
         let packInformationIn;
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
             packInformationIn = result;
         });
 
         await this.setState({ packInformation: packInformationIn });
-
     }
 
     render() {
         return (
-            <Portal>
-                <Modal contentContainerStyle={styles.modal} dismissable={true} onDismiss={this.props.closeModalMethod} visible={this.props.isOpen}>
-                    <View style={{width: "100%", height: "auto", flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
-                        <IconButton icon="clear" onPress={this.props.closeModalMethod} />
-                        <Text>
-                            Pack Information
-                        </Text>
+                <Modal style={{height: '80%', width: '80%'}} presentationStyle="pageSheet" onRequestClose={this.props.closeModalMethod} onDismiss={this.props.closeModalMethod} visible={this.props.isOpen}>
+                    {
+                        console.log(this.state.packInformation)
+                    }
+                    <View style={{flex: 1}}>
+                    <Headline style={{padding: 10}}>
+                            Announcements
+                        </Headline>
+                        <Divider />
+                        <View style={{padding: 10, alignItems: 'center', justifyContent: 'space-evenly', flex: 1}}>
+                            <View style={{flexDirection: 'column', alignItems: 'center'}}>
+                                <Title>
+                                    Pack Leader
+                                </Title>
+                                <Avatar.Text label="EH" size={50} style={{margin: 5}} />
+                            </View>
+
+                            <Divider />
+
+                            <View>
+                                <Title>
+                                    Created on
+                                </Title>
+                                <Text>
+                                January 5, 2020
+                                </Text>
+
+                            </View>
+
+                            <Divider />
+
+                            <View>
+                                <Title>
+                                    Location
+                                </Title>
+                                <Text>
+                                Chicago United States
+                                </Text>
+                            </View>
+
+                            <Divider />
+
+                            <View>
+                                <Title>
+                                    Description
+                                </Title>
+                                <Text>
+                                Description
+                                </Text>
+                            </View>
+
+                            <Divider />
+
+                            <View>
+                                <Title>
+                                    Sessions Completed: 
+                                </Title>
+                            </View>
+                        </View>
+                    
                     </View>
+                    {/*
                     <Surface style={styles.surface}>
                         <Text style={styles.text}>
                             {this.state.packInformation.pack_title}
@@ -70,9 +132,8 @@ export default class PackInformationModal extends React.Component {
                         <Text style={styles.text}>
                             This pack is based out of: Chicago, Illinois
                     </Text>
-                    </Surface>
+                    </Surface> */}
                 </Modal>
-            </Portal>
         )
     }
 }
@@ -101,5 +162,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         color: "black",
-    }
+    },
+    align
 })

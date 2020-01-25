@@ -62,7 +62,7 @@ export const SubscriptionPackCard = (props) => {
         <Surface style={styles.offerCards}>
         <Image style={{width: "100%", height: "100%", borderRadius: 15}} 
             resizeMode={ImageResizeMode.cover} 
-            source={props.image} />
+            source={{uri: props.image}} />
         </Surface>
 
 
@@ -89,7 +89,7 @@ export const TrainerFlatCard = (props) => {
         {props.displayName}
     </Text>
     <Text style={[styles.text, {fontWeight: "bold"}]}>
-        Chicago, United States
+        {props.location.city + ", " + props.location.state }
     </Text>
     </View>
 

@@ -37,8 +37,8 @@ class LoginView extends Component {
     super(props);
 
     this.state = {
-      username: 'rob0017@gmail.com',
-      password: 'Hamptonej1!',
+      username: 'ejh0017@gmail.com',
+      password: 'password',
       checkedSignedIn: false,
       snackBarIsVisible: false,
       secureTextEntry: true,
@@ -119,7 +119,7 @@ class LoginView extends Component {
         </Text>
         <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
           <Text style={{fontSize: 17, fontWeight: '500', color: '#2196F3'}}>
-            Sign Up
+            Sign up
           </Text>
         </TouchableOpacity>
 </View>

@@ -10,6 +10,7 @@ export enum UserCollectionFields {
     FOLLOWING="following",
     EXPERIENCE="experience",
     SESSIONS_COMPLETED="sessions_completed",
+    LOCATION="location",
 }
 
 export enum Days {
@@ -51,7 +52,11 @@ export type LupaUserStructure = {
     email_verified: false,
     mobile: "",
     gender: "",
-    location: "",
+    location: {
+        city: '',
+        state: '',
+        country: '',
+    }
     isTrainer: false,
     packs: [],
     photo_url: "",
@@ -91,6 +96,7 @@ export type LupaPackStructure = {
     pack_rating: 0,
     pack_sessions_completed: 0,
     pack_time_created: '',
+    pack_location: '',
 };
 
 /* LupaHealthDataStructure */

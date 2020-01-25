@@ -27,6 +27,7 @@ const MyPacksCard = (props) => {
     }
 
     handleShowPack = () => {
+        console.log('in packCardas' + packUUID);
         setShowPack(true);
     }
 
@@ -38,12 +39,11 @@ const MyPacksCard = (props) => {
     return (
         <>
         <TouchableOpacity onPress={this.handleShowPack}>
-        <View style={styles.cardContainer}>
             <Surface style={styles.bottomSurface}>
                     <Surface style={styles.imageSurface}>
                     <Image style={styles.image} 
                                 resizeMode={ImageResizeMode.cover} 
-                                source={props.image} />
+                                source={{uri: props.image}} />
                     </Surface>
                     <View style={styles.cardContentContainer}>
                     <View style={{flexDirection: 'column', alignItems: "flex-start", justifyContent: "flex-start"}}>
@@ -56,7 +56,6 @@ const MyPacksCard = (props) => {
                     </View>
                     </View>
             </Surface>
-        </View>
         </TouchableOpacity>
         <PackModal isOpen={showPack} packUUID={packUUID} isOpen={showPack} closeModalMethod={_closeModal} />
         </>
@@ -68,7 +67,7 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     bottomSurface: {
-        width: 160, height: 190, elevation: 2, borderRadius: 25
+        margin: 10, width: 160, height: 150, elevation: 2, borderRadius: 25
     },
     imageSurface: {
         flex: 2, alignSelf: "center",width: "80%", height: "55%", flexDirection: "column" , alignItems: "center", justifyContent: "center", elevation: 5, borderRadius: 20, marginTop: 8

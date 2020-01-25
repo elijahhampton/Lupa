@@ -44,9 +44,9 @@ class SignupModal extends React.Component {
             email: "",
             password: "",
             confirmedPassword: "",
+            isTrainerAccount: false,
+            agreedToTerms: false,
             isRegistered: false,
-            confirmPasswordWidth: 0,
-            confirmPasswordHeight: 0,
             passwordSecureTextEntry: true,
             secureConfirmPasswordSecureTextEntry: true,
         }
@@ -66,32 +66,19 @@ class SignupModal extends React.Component {
         const email = this.state.email;
         const password = this.state.password;
         const confirmedPassword = this.state.confirmedPassword;
+        const isTrainerAccount = this.state.isTrainerAccount;
+        const agreedToTerms = this.state.agreedToTerms;
 
         //Check registration status
-        let successfulRegistration = await signUpUser(email, password, confirmedPassword);
+        let successfulRegistration;
+        await signUpUser(email, password, confirmedPassword, isTrainerAccount, agreedToTerms).then(result => {
+            successfulRegistration = result;
+        })
 
         //Execute login or failure
-        successfulRegistration == true ? this._introduceApp(email, password) : console.log('LUPA: Firebase failure upon registering user.');
+        successfulRegistration ? this._introduceApp() : console.log('LUPA: Firebase failure upon registering user.');
     }
 
-    _handleMobileInputOnChangeText = async (text) => {
-        this.setState({ email: text })
-    }
-
-    _handlePasswordInputOnChangeText = async (text) => {
-        text.length >= 1 ?  this.setState({ confirmPasswordWidth: "100%", confirmPasswordHeight: "auto" }) : 
-        this.setState({confirmPasswordWidth: 0, confirmPasswordHeight: 0 })
-
-        await this.setState({ password: text });
-
-        console.log(this.state.password);
-    }
-
-    _handleConfirmedPasswordInputOnChangeText = async (text) => {
-        await this.setState({ confirmedPassword: text });
-
-        console.log(this.state.confirmedPassword)
-    }
 
     _handleShowPassword = () => {
         this.setState({
@@ -134,24 +121,48 @@ class SignupModal extends React.Component {
                             <Text style={styles.textLabel}>
                                 Email
                             </Text>
-                            <Input value={this.state.email} onChangeText={text => this.setState({email: text})} placeholder="Enter an email address" inputStyle={{fontWeight: '500', fontSize: 15}} inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}} containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
+                            <Input 
+                            value={this.state.email} 
+                            onChangeText={text => this.setState({email: text})} 
+                            placeholder="Enter an email address" 
+                            inputStyle={{fontWeight: '500', fontSize: 15}} 
+                            inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}} 
+                            containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
                         </View>
 
                     <View style={{width: '100%'}}>
                             <Text style={styles.textLabel}>
                                 Password
                             </Text>
-                            <Input rightIcon={<FeatherIcon name="eye" />} value={this.state.password} onChangeText={text => this.setState({password: text})} placeholder="Enter a password" inputStyle={{fontWeight: '500', fontSize: 15}} inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}} containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
+                            <Input 
+                            rightIcon={<FeatherIcon name="eye" onPress={this._handleShowPasswords}/>} 
+                            value={this.state.password} 
+                            onChangeText={text => this.setState({password: text})} 
+                            secureTextEntry={this.state.passwordSecureTextEntry} 
+                            placeholder="Enter a password" inputStyle={{fontWeight: '500', fontSize: 15}} 
+                            inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}}
+                            containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
                         </View>
 
                         <View style={{width: '100%'}}>
                             <Text style={styles.textLabel}>
                                 Confirm Password
                             </Text>
-                            <Input rightIcon={<FeatherIcon name="eye" />} value={this.state.confirmedPassword} onChangeText={text => this.setState({confirmedPassword: text})} placeholder="Confirm your password" inputStyle={{fontWeight: '500', fontSize: 15}} inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}} containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
+                            <Input 
+                            rightIcon={<FeatherIcon name="eye" onPress={this._handleShowConfirmPassword}/>} 
+                             value={this.state.confirmedPassword} 
+                             onChangeText={text => this.setState({confirmedPassword: text})} 
+                             secureTextEntry={this.state.secureConfirmPasswordSecureTextEntry} 
+                             placeholder="Confirm your password" 
+                             inputStyle={{fontWeight: '500', fontSize: 15}} 
+                             inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}} 
+                             containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
                         </View>
 
-                        <Button mode="contained" color="#2196F3" style={{ elevation: 0,padding: 10}}>
+                        <Button 
+                        mode="contained" 
+                        color="#2196F3" 
+                        style={{ elevation: 0,padding: 10}} onPress={this._registerUser}>
                             Sign Up
                         </Button>
 
@@ -164,8 +175,21 @@ class SignupModal extends React.Component {
                                 uncheckedIcon='check-box-outline-blank'
                                 checkedColor='check-box'
                                 containerStyle={{backgroundColor: 'transparent', padding: 15, borderColor: 'grey'}}
-                                checked={this.state.subscriptionBasedPack}
-                                onPress={() => alert('check')}
+                                checked={this.state.agreedToTerms }
+                                onPress={() => this.setState({ agreedToTerms: !this.state.agreedToTerms })}
+                            />
+
+<CheckBox
+                                center
+                                title='I am a certified trainer want to register as a trainer on Lupa.'
+                                iconRight
+                                iconType='material'
+                                checkedIcon='done'
+                                uncheckedIcon='check-box-outline-blank'
+                                checkedColor='check-box'
+                                containerStyle={{backgroundColor: 'transparent', padding: 15, borderColor: 'grey'}}
+                                checked={this.state.isTrainerAccount}
+                                onPress={() => this.setState({ isTrainerAccount: !this.state.isTrainerAccount})}
                             />
                     </View>
                     
