@@ -19,7 +19,7 @@ import {
     Avatar as MaterialAvatar
 } from 'react-native-paper';
 
-import { ImagePicker } from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 import SafeAreaView from 'react-native-safe-area-view';
 import { Input, CheckBox, Avatar } from 'react-native-elements';
@@ -58,9 +58,16 @@ export default class CreatePack extends React.Component {
     }
 
     createPack = async () => {
-        const pack_leader = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-        
-        this.LUPA_CONTROLLER_INSTANCE.createNewPack(pack_leader, this.state.pack_title, this.state.pack_description, this.state.packImageSource, [pack_leader], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false);
+        let packLocation;
+        const currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        const pack_leader = currUserUUID;
+
+
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(pack_leader, 'location').then(result => {
+            packLocation = result;
+        });
+
+        this.LUPA_CONTROLLER_INSTANCE.createNewPack(pack_leader, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [pack_leader], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false);
     }
 
     _chooseImageFromCameraRoll = async () => {
@@ -114,7 +121,7 @@ export default class CreatePack extends React.Component {
 
                     <View style={{ flex: 1.5, flexDirection: 'column', justifyContent: "space-around" }}>
                         <View style={{ width: '100%', alignItems: "center", justifyContent: "center" }}>
-                            <Avatar size="medium" rounded showEditButton={true} source={this.state.packImageSource} onPress={this._chooseImageFromCameraRoll} />
+                            <Avatar size="medium" rounded showEditButton={true} source={{uri: this.state.packImageSource}} onPress={this._chooseImageFromCameraRoll} />
                         </View>
                         <Input placeholder="Choose a name for your pack" inputStyle={{ fontSize: 20 }} value={this.state.pack_title} onChangeText={text => this.setState({ pack_title: text })}/>
 

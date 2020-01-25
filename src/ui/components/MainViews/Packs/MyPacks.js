@@ -31,18 +31,22 @@ export default class MyPacks extends React.Component {
         this.loadCurrUserPacks = this.loadCurrUserPacks.bind(this);
     }
 
-    componentDidMount  = async () => {
-        let packsToShow;
-       await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-            packsToShow = result;
-        });
-
-        await this.setState({
-            currUserPacks: packsToShow,
-        });
+    componentDidMount() {
+        this.setupMyPacks()
     }
 
-    componentWillUpdate = async () => {
+    componentWillUpdate() {
+        // let packsToShow;
+        // await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
+        //      packsToShow = result;
+        //  });
+ 
+        //  await this.setState({
+        //      currUserPacks: packsToShow,
+        //  });
+    }
+
+    setupMyPacks = async () => {
         let packsToShow;
         await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
              packsToShow = result;

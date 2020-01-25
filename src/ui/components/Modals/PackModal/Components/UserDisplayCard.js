@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import {
-    Surface
+    Surface, Avatar
 } from 'react-native-paper';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
@@ -56,12 +56,7 @@ export default class UserDisplayCard extends React.Component {
     render() {
         return (
             <TouchableOpacity onPress={() => this.setState({ showUserProfileModal: true })}>
-<Surface style={{elevation: 5, width: 100, height: 100, borderRadius: 20, margin: 5, alignItems: "center", flexDirection: 'column'}}>
-<Image style={{width: "100%", height: "100%", borderRadius: 20}} source={this.state.userImage} resizeMethod="scale" resizeMode={ImageResizeMode.cover} />
-                <Text>
-                    {this.state.userDisplayName}
-                </Text>
-</Surface>
+                <Avatar.Image source={{uri: this.state.userImage}} />
 <UserProfileModal isOpen={this.state.showUserProfileModal} uuid={this.state.userUUID} closeModalMethod={this.handleCloseUserModal}/>
 </TouchableOpacity>
         )

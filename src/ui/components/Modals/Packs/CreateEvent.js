@@ -72,17 +72,22 @@ export default class CreateEvent extends React.Component {
                             <Text style={styles.headerText}>
                                 Give your event a title
                             </Text>
-                        <TextInput mode="outlined" value={this.state.eventTitle} onChangeText={text => this.setState({ eventTitle: text })} placeholder="Event Title" theme={{colors: {
+                        <TextInput underlineColor="#2196F3" selectionColor="black" textContentType="name" mode="outlined" value={this.state.eventTitle} onChangeText={text => this.setState({ eventTitle: text })} placeholder="Event Title" theme={{
+                            roundness: 15,
+                            colors: {
                             primary: "#2196F3"
-                        }}}/>
+                            },
+                        }}/>
                         </View>
 
                         <View>  
                             <Text style={styles.headerText}>
                                 Give your event a description
                             </Text>
-                        <TextInput mode="flat" style={{height: 100}} multiline value={this.state.eventDescription} onChangeText={text => this.setState({ eventDescription: text })} placeholder="Event Description" theme={{color: {
-                            primary: "#2196F3"
+                        <TextInput underlineColor="#2196F3" selectionColor="black" mode="outlined" style={{height: 100}} multiline value={this.state.eventDescription} onChangeText={text => this.setState({ eventDescription: text })} placeholder="Event Description" theme={{
+                            roundness: 15,
+                            colors: {
+                            primary: "#2196F3",
                         }}}/>
 
                         </View>
@@ -94,12 +99,12 @@ export default class CreateEvent extends React.Component {
                         <DatePickerIOS onDateChange={dateValue => this.setState({ eventDate: dateValue })} date={this.state.eventDate}/>
                         </View>
 
-                        <View style={{flexDirection: "column" }}>
+                        <View style={{flexDirection: "row", alignSelf: 'center' }}>
+                        <Button mode="text" color="#2196F3" onPress={this.props.closeModalMethod}>
+                                Cancel
+                            </Button>
                             <Button mode="contained" theme={{roundness: 15}} color="#2196F3" onPress={this.createEvent}>
                                 Create Event
-                            </Button>
-                            <Button mode="text" color="#2196F3" onPress={this.props.closeModalMethod}>
-                                Cancel
                             </Button>
                         </View>
 
@@ -115,6 +120,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         margin: 0,
         flex: 1,
+        padding: 10,
     },
     safeareaview: {
         display: "flex",
@@ -126,6 +132,8 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 20,
         fontWeight: '400',
-        color: "#BDBDBD"
+        color: "#BDBDBD",
+        padding: 10,
+        marginLeft: 5, 
     }
 })

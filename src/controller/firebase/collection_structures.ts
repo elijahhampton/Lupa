@@ -6,30 +6,10 @@ import {
     LupaHealthDataStructure, 
     LupaWorkoutStructure,
     LupaUserStructure, 
-    LupaNotificationStructure,
     Days,
     SESSION_STATUS,
-    NOTIFICATION_TYPES,
     PACK_EVENT_STAGE,
 } from '../lupa/common/types';
-
-var lupa_notification : LupaNotificationStructure = {
-    user: "",
-    date: "",
-    time: "",
-    type: NOTIFICATION_TYPES,
-    data: "",
-}
-
-export var getLupaNotificationStructure = (user, date, time, type, data) => {
-    lupa_notification.user = user;
-    lupa_notification.date = date;
-    lupa_notification.time = time;
-    lupa_notification.type = NOTIFICATION_TYPES.SESSION_INVITE;
-    lupa_notification.data = data;
-
-    return lupa_notification;
-}
 
 var lupa_pack_event : LupaPackEventStructure = {
     pack_uuid: "",
@@ -68,14 +48,17 @@ var lupa_pack : LupaPackStructure = {
     pack_rating: 0,
     pack_sessions_completed: 0,
     pack_time_created: '',
+    pack_location: '',
 }
 
-export const getLupaPackStructure = (packLeader, title, description, image, members, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
+export const getLupaPackStructure = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
     lupa_pack.pack_leader = packLeader;
     lupa_pack.pack_title = title;
     lupa_pack.pack_description = description;
+    lupa_pack.pack_location = location;
     lupa_pack.pack_image = image;
     lupa_pack.pack_members = members;
+    lupa_pack.pack_invited_members = invitedMembers;
     lupa_pack.pack_rating = rating;
     lupa_pack.pack_sessions_completed = sessionsCompleted;
     lupa_pack.pack_time_created = timeCreated;
@@ -137,7 +120,7 @@ var lupa_user : LupaUserStructure = {
     email_verified: false,
     mobile: "",
     gender: "",
-    location: "",
+    location: {city: '', state: '', country: ''},
     isTrainer: false,
     packs: [],
     photo_url: "",
@@ -159,11 +142,12 @@ var lupa_user : LupaUserStructure = {
     sessionsCompleted: 0
 }
 
-export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", gender="", location="", isTrainer=false, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted) => {
+export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", gender="", location="", isTrainer, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted) => {
     
     lupa_user.user_uuid = user_uuid;
     lupa_user.email = email;
     lupa_user.time_created = time_created;
+    lupa_user.isTrainer = isTrainer;
     return lupa_user;
 }
 
@@ -175,5 +159,4 @@ export {
     lupa_pack,
     lupa_pack_event,
     lupa_trainer,
-    lupa_notification,
 };

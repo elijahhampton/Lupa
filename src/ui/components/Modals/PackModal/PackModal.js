@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
     Modal,
@@ -6,7 +6,8 @@ import {
     Text,
     StyleSheet,
     Dimensions,
-    Image
+    Image,
+    ActionSheetIOS
 } from 'react-native';
 
 import {
@@ -16,7 +17,9 @@ import {
     Button,
     Modal as PaperModal,
     Portal,
-    Provider
+    Provider,
+    Paragraph,
+    Headline,
 } from 'react-native-paper';
 
 import { Feather as FeatherIcon } from '@expo/vector-icons';
@@ -34,12 +37,45 @@ import CreateEvent from '../Packs/CreateEvent';
 
 import UserDisplayCard from './Components/UserDisplayCard';
 
-export default class PackModal extends React.Component{
+import PackInformationModal from '../Packs/PackInformationModal';
+
+const PackMembersModal = (props) => {
+    return (
+
+                <Modal presentationStyle="overFullScreen" visible={props.isOpen} dismissable={false}>
+                    <SafeAreaView style={styles.membersModal}>
+                        <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
+                            <IconButton icon="arrow-back" onPress={props.closeModalMethod}/>
+                            <Headline>
+                                Announcements Members
+                            </Headline>
+                        </View>
+                        <View style={{flex: 3}}>
+                            <ScrollView centerContent shouldRasterizeIOS={true} showsVerticalScrollIndicator={false}>
+                            {
+                                props.displayMembersMethod()
+                            }
+                            </ScrollView>
+                        </View>
+                        <View style={{flex: 1}}>
+                            <Paragraph>
+                                This pack currently has 20 active members.
+                            </Paragraph>
+                            <Paragraph>
+                                This pack currently has 5 active invites.
+                            </Paragraph>
+                        </View>
+                        </SafeAreaView>
+                </Modal>
+    )
+}
+
+export default class PackModal extends React.Component {
     constructor(props) {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-        
+
 
         this.state = {
             packUUID: this.props.packUUID,
@@ -48,6 +84,8 @@ export default class PackModal extends React.Component{
             currentUserIsPackLeader: false,
             createEventModalIsOpen: false,
             packChatModalIsOpen: false,
+            packInformationModalIsOpen: false,
+            packMembersModalIsOpen: false,
             ready: false
         }
     }
@@ -55,22 +93,27 @@ export default class PackModal extends React.Component{
     componentDidMount = async () => {
         let packInformationIn, packEventsIn;
 
+        console.log('packmodal: ' + this.state.packUUID)
+
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(packInformation => {
             packInformationIn = packInformation;
         });
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEventsInformation => {
+            console.log('uhhh' + packEventsIn)
             packEventsIn = packEventsInformation.events;
         });
 
 
-        await this.setState({ packInformation: packInformationIn, packEvents: packEventsIn});
+        await this.setState({ packInformation: packInformationIn, packEvents: packEventsIn });
 
 
         const currentUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-        if (currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true })}
-    
+        if (currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
+
         await this.setState({ ready: true })
+
+        console.log(this.state.packEvents)
     }
 
     mapMembers = () => {
@@ -79,28 +122,26 @@ export default class PackModal extends React.Component{
 
         if (this.state.ready == false) { return; }
 
-       return this.state.packInformation.pack_members.map(member => {
+        return this.state.packInformation.pack_members.map(member => {
             return (
-                <UserDisplayCard userUUID={member}/>
+                <UserDisplayCard userUUID={member} />
             )
         })
     }
 
-    _renderItem = ({item, index}) => {
+    _renderItem = ({ item, index }) => {
         return (
-            <View style={{margin: 5}}>
-                <Surface style={{elevation: 5, width: 250, height: 320, borderRadius: 20}}>
-                    <Image style={{width: "100%", height: "100%", borderRadius: 20}} source={this.state.packInformation.pack_image} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
-                    <View style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'transparent'}}>
-                        <Text>
-                            {item.pack_event_title}
-                        </Text>
-                        <Text>
-                            {item.pack_event_description}
-                        </Text>
-                    </View>
-                </Surface>
-            </View>
+            <Surface style={{ margin: 5, elevation: 5, width: 250, height: 320, borderRadius: 20 }}>
+                <Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: item.pack_event_image }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
+                <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 30, fontWeight: '800', color: 'white' }}>
+                        {item.pack_event_title}
+                    </Text>
+                    <Text style={{ fontSize: 25, fontWeight: '600', color: 'white', textAlign: 'center' }}>
+                        {item.pack_event_description}
+                    </Text>
+                </View>
+            </Surface>
         );
     }
 
@@ -116,72 +157,112 @@ export default class PackModal extends React.Component{
         this.props.closeModalMethod();
     }
 
+    handlePackInformationModalClose = () => {
+        this.setState({ packInformationModalIsOpen: false })
+    }
+
+    handlePackMembersModalClose = () => {
+        this.setState({ packMembersModalIsOpen: false })
+    }
+
+    _showActionSheet = () => {
+        ActionSheetIOS.showActionSheetWithOptions(
+            {
+                options: ['Create an Event', 'Delete Pack', 'Cancel'],
+                cancelButtonIndex: 2,
+            }, (buttonIndex) => {
+                switch (buttonIndex) {
+                    case 0:
+                        this.setState({ createEventModalIsOpen: true });
+                        break;
+                    case 1:
+                        //delete pack
+                        break;
+                    case 2:
+                        break;
+                    default:
+                }
+            });
+    }
+
     render() {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
-                <SafeAreaView style={{flex: 1, backgroundColor: "#F5F5F5"}}>
+                <SafeAreaView forceInset={{
+                    bottom: 'never'
+                }} style={{ flex: 1, backgroundColor: "#F5F5F5" }}>
                     <View>
-                    <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
-                        <IconButton icon="clear" color="black" onPress={this.props.closeModalMethod}/>
-                        <Text style={{        fontSize: 22,
-        fontWeight: "500",}}>
-                            {this.state.packInformation.pack_title}
-                        </Text>
-                        <IconButton icon="chat-bubble-outline" color="black" onPress={() => this.setState({ packChatModalIsOpen: true })}/>
+                        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                            <IconButton icon="clear" color="black" onPress={this.props.closeModalMethod} />
+                            <Text style={{
+                                fontSize: 22,
+                                fontWeight: "500",
+                            }}>
+                                {this.state.packInformation.pack_title}
+                            </Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} />
+                                <IconButton icon="chat-bubble-outline" color="black" onPress={() => this.setState({ packChatModalIsOpen: true })} />
+                            </View>
                         </View>
-                    </View>    
+                    </View>
 
 
-                <View style={{flex: 3, alignItems: "center", justifyContent: "center"}}>
-                    <Carousel shouldRasterizeIOS={true}
-                ref={(c) => { this._carousel = c; }}
-              data={this.state.packEvents}
-              renderItem={this._renderItem}
-              sliderWidth={Dimensions.get('screen').width}
-              itemWidth={250}/>
+                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
+                        <Carousel shouldRasterizeIOS={true}
+                            ref={(c) => { this._carousel = c; }}
+                            data={this.state.packEvents}
+                            renderItem={this._renderItem}
+                            sliderWidth={Dimensions.get('screen').width}
+                            itemWidth={250} />
+                    </View>
 
-              <View style={{flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "center"}}>
-                  {
-                    this.state.currentUserIsPackLeader == true ? <IconButton icon="event" onPress={() => {this.setState({ createEventModalIsOpen: true })}} /> : null
-                  }
-            </View>    
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
+                            <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
+                                <FeatherIcon name="x" size={25} color="#2196F3" />
+                            </Surface>
+                            <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
+                                <FeatherIcon name="check-circle" size={25} />
+                            </Surface>
+                            <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
+                                <FeatherIcon name="check" size={25} color="#2196F3" />
+                            </Surface>
+                        </View>
 
-              <View style={{flex: 1, alignItems: "center", justifyContent: "center", marginTop: 15}}>
-                  <View style={{width: "100%", flexDirection: "row", justifyContent: "space-evenly"}}>
-                  <Button mode="contained" color="#2196F3" theme={{roundness: 20}} onPress={this.handleLeavePack}>
-                      Leave Pack
-                  </Button>
-                 {/* <Button mode="outlined" color="#2196F3" theme={{roundness: 20}} onPress={() => alert('Invite a Friend Pressed')}>
-                      Invite a Friend
-                </Button> */}
-                  </View>
-              </View>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
+                            <Button mode="outlined" color="#2196F3" onPress={() => this.setState({ packInformationModalIsOpen: true })}>
+                                View Pack Information
+                    </Button>
 
+                            <Button mode="contained" color="#2196F3" onPress={this.handleLeavePack} disabled={this.state.packInformation.pack_isDefault}>
+                                Leave Pack
+                    </Button>
+                        </View>
+                    </View>
 
-                </View> 
-
-                <View style={{flex: 1.5, flexDirection: "column"}}>
-                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                    <Text style={styles.header}>
-                    Members
+                    <View style={{ flex: 1, flexDirection: "column", padding: 10 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                            <Text style={styles.header}>
+                                Members
                 </Text>
-                <Button mode="text" color="black">
-                    View all
+                            <Button mode="text" color="black" onPress={() => this.setState({ packMembersModalIsOpen: true })} disabled={false /*this.state.packInformation.pack_members.length == 0 ? true : false*/}>
+                                View all
                 </Button>
-                </View>
+                        </View>
 
-                <ScrollView horizontal={true} shouldRasterizeIOS={true} overScrollMode="always" contentContainerStyle={{alignItems: "flex-start", justifyContent: "space-around", flexDirection: "row", flexWrap: 'wrap'}}>
-                       {this.mapMembers()}
-                    </ScrollView>
+                        <ScrollView horizontal={true} shouldRasterizeIOS={true} overScrollMode="always" contentContainerStyle={{ alignItems: "flex-start", justifyContent: "space-around", flexDirection: "row", flexWrap: 'wrap' }}>
+                            {this.mapMembers()}
+                        </ScrollView>
 
 
 
-                </View>
-                
-               
-               <PackInformationSlider />
-               <CreateEvent packUUID={this.state.packUUID} isOpen={this.state.createEventModalIsOpen} closeModalMethod={this.handleCreateEventModalClose}/>
-               <PackChatModal packUUID={this.state.packUUID} isOpen={this.state.packChatModalIsOpen} />
+                    </View>
+
+                    <CreateEvent packUUID={this.state.packUUID} isOpen={this.state.createEventModalIsOpen} closeModalMethod={this.handleCreateEventModalClose} />
+                    <PackChatModal packUUID={this.state.packUUID} isOpen={this.state.packChatModalIsOpen} />
+                    <PackInformationModal packUUID={this.state.packUUID} isOpen={this.state.packInformationModalIsOpen} closeModalMethod={this.handlePackInformationModalClose} />
+                    <PackMembersModal isOpen={this.state.packMembersModalIsOpen} closeModalMethod={this.handlePackMembersModalClose} displayMembersMethod={this.mapMembers}/>
                 </SafeAreaView>
             </Modal>
         );
@@ -193,6 +274,12 @@ const styles = StyleSheet.create({
         display: "flex",
         margin: 0,
         backgroundColor: "#FAFAFA",
+    },
+    membersModal: {
+        flex: 1,
+        margin: 0,
+        padding: 10,
+        alignItems: 'center'
     },
     flatUserCard: {
         flexDirection: "row",
@@ -210,7 +297,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        fontSize : 25,
+        fontSize: 25,
         fontWeight: "900",
         padding: 10
     },
@@ -237,10 +324,10 @@ const styles = StyleSheet.create({
         flex: 2,
     },
     iconStyle: {
-        borderColor: "#2196F3", 
-        color: "#2196F3", 
-        borderWidth: 1, 
-        borderRadius: 8, 
+        borderColor: "#2196F3",
+        color: "#2196F3",
+        borderWidth: 1,
+        borderRadius: 8,
         padding: 10
     }
 });
