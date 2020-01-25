@@ -36,7 +36,9 @@ export default class ModifySessionModal extends React.Component {
             sessionData: {},
             sessionUUID: this.props.sessionUUID
         }
+    }
 
+    componentDidMount() {
         this.setupSessionData();
     }
 

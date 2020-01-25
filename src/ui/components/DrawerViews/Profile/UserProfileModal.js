@@ -111,61 +111,65 @@ class UserProfileModal extends React.Component {
      * the speed in which a user may search and click a user profile.  Loading the information and setting the state after the component has mounted
      * guarantees that the information will be loaded so the user can see it.
      */
-   componentDidMount = async () => {
-    let username, displayName, photoUrl, interestData, experienceData, isTrainer, followers, following, sessionsCompleted, userRatingIn;
+   componentDidMount = () => {
+        this.setupProfileInformation()
+    }
 
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'display_name').then(result => {
-        displayName = result;
-    })
+    setupProfileInformation = async () => {
+        let username, displayName, photoUrl, interestData, experienceData, isTrainer, followers, following, sessionsCompleted, userRatingIn;
 
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'username').then(result => {
-        username = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'photo_url').then(result => {
-        photoUrl = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'sessions_completed').then(result => {
-        sessionsCompleted = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'following').then(result => {
-        following = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'followers').then(result => {
-        followers = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'isTrainer').then(result => {
-        isTrainer = result;
-    });
-
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'interest').then(result => {
-        interestData = result;
-    });
-
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'experience').then(result => {
-        experienceData = result;
-    });
-
-    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'rating').then(result => {
-        usingRatingIn = result;
-    });
-
-    await this.setState({
-        username: username,
-        displayName: displayName,
-        photoUrl: photoUrl,
-        userExperience: experienceData,
-        userInterest: interestData,
-        userIsTrainer: isTrainer,
-        followers: followers,
-        following: following,
-        sessionsCompleted: sessionsCompleted,
-        userRating: userRatingIn,
-    });
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'display_name').then(result => {
+            displayName = result;
+        })
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'username').then(result => {
+            username = result;
+        })
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'photo_url').then(result => {
+            photoUrl = result;
+        })
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'sessions_completed').then(result => {
+            sessionsCompleted = result;
+        })
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'following').then(result => {
+            following = result;
+        })
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'followers').then(result => {
+            followers = result;
+        })
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'isTrainer').then(result => {
+            isTrainer = result;
+        });
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'interest').then(result => {
+            interestData = result;
+        });
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'experience').then(result => {
+            experienceData = result;
+        });
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'rating').then(result => {
+            usingRatingIn = result;
+        });
+    
+        await this.setState({
+            username: username,
+            displayName: displayName,
+            photoUrl: photoUrl,
+            userExperience: experienceData,
+            userInterest: interestData,
+            userIsTrainer: isTrainer,
+            followers: followers,
+            following: following,
+            sessionsCompleted: sessionsCompleted,
+            userRating: userRatingIn,
+        });
     }
 
     _chooseHeaderFromCameraRoll = async () => {

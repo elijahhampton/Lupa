@@ -37,7 +37,9 @@ export default class PackInformationSlider extends React.Component {
     _renderInner = () => {
         return (
             <View style={styles.inner} >
-
+                <Text>
+                    hi
+                </Text>
             </View>
         )
     }
@@ -55,22 +57,27 @@ export default class PackInformationSlider extends React.Component {
 
     render() {
         return (
-            <BottomSheet
+                            <BottomSheet
                 ref={this.bottomSheetRef}
                 initialSnap={0}
-                snapPoints={['1%', '65%', '1%']}
+                snapPoints={['3%', '65%', '3%']}
                 renderHeader={this._renderHeader}
                 renderContent={this._renderInner}
+                
             />
         )
     }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
     inner: {
         backgroundColor: "white",
         padding: 10,
-        height: "100%",
+        height: '100%',
     },
     header: {
         backgroundColor: "white",

@@ -46,7 +46,11 @@ export default class CreateSessionModal extends React.Component {
         }
     }
 
-    componentDidMount = async () => {
+    componentDidMount() {
+       this.setupUserInformation();
+    }
+
+    setupUserInformation = async () => {
         let displayName;
         await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userInvited, 'display_name').then(result => {
             displayName = result;

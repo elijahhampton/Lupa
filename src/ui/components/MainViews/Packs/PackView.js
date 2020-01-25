@@ -38,41 +38,6 @@ import Promotions from './Promotions';
 import CreatePack from '../../Modals/CreatePack';
 import LupaController from '../../../../controller/lupa/LupaController';
 
-function getExploreTabColorStyle(currState) {
-    if (currState == 0) {
-        return { color: '#2196F3' };
-    }
-    return { color: 'rgba(0,0,0,.15)' };
-}
-
-function getMyPacksTabColorStyle(currState) {
-    if (currState == 1) {
-        return { color: '#2196F3' };
-    }
-    return { color: 'rgba(0,0,0,.15)' };
-}
-
-function getPromotionsTabColorStyle(currState) {
-    if (currState == 2) {
-        return { color: '#2196F3' };
-    }
-    return { color: 'rgba(0,0,0,.15)' };
-}
-
-const viewArray = [<Explore />, <MyPacks />, <Promotions />];
-
-function getActiveTab(index) {
-   switch(index) {
-       case 0:
-           return <Explore />
-        case 1:
-            return <MyPacks />
-        case 2:
-            return <Promotions />
-        default:
-   }
-}
-
 export default class PackView extends React.Component {
     constructor(props) {
         super(props);

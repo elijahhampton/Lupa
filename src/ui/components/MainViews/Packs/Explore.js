@@ -19,8 +19,6 @@ import {
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
-import ProfilePicture from '../../../images/temp-profile.jpg'
-
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import { SmallPackCard, SubscriptionPackCard, TrainerFlatCard } from './Components/ExploreCards/PackExploreCard';
@@ -43,7 +41,11 @@ export default class Explore extends React.Component {
         }
     }
 
-    componentDidMount = async () => {
+    componentDidMount() {
+        this.setupExplorePage()
+    } 
+
+    setupExplorePage = async () => {
         let subscriptionPacksIn, trainersIn, explorePagePacksIn, usersInAreaIn;
 
         //get trainers
@@ -70,7 +72,7 @@ export default class Explore extends React.Component {
             explorePagePacks: explorePagePacksIn,
             subscriptionPacks: subscriptionPacksIn,
         })
-    } 
+    }
 
     closePackModal = () => {
         this.setState({ showPackModal: false })
@@ -79,7 +81,7 @@ export default class Explore extends React.Component {
     mapTrainers = () => {
         return this.state.trainers.map(trainer => {
             return (
-                <TrainerFlatCard trainerUUID={trainer.id} displayName={trainer.display_name} rating={trainer.rating} sessionsCompleted={trainer.sessions_completed} image={trainer.photo_url} />
+                <TrainerFlatCard trainerUUID={trainer.id} displayName={trainer.display_name} rating={trainer.rating} sessionsCompleted={trainer.sessions_completed} image={trainer.photo_url} location={trainer.location} />
             )
         })
     }
@@ -118,9 +120,9 @@ export default class Explore extends React.Component {
 
                     <View style={{ width: windowWidth }}>
                         <ScrollView horizontal={true} contentContainerStyle={{ justifyContent: "space-around" }} showsHorizontalScrollIndicator={false}>
+                           {/* <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
                             <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
-                            <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
-                            <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
+        <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} /> */}
                         </ScrollView>
 
                     </View>
@@ -154,28 +156,50 @@ export default class Explore extends React.Component {
                         <TouchableWithoutFeedback>
                             <Surface style={styles.filter}>
                                 <Text style={styles.filterText}>
-                                    Filter
+                                    Near Me
                                 </Text>
                             </Surface>
                         </TouchableWithoutFeedback>
                         <TouchableWithoutFeedback>
                             <Surface style={styles.filter}>
                                 <Text style={styles.filterText}>
-                                    Filter
+                                    > 5 Members
                                 </Text>
                             </Surface>
                         </TouchableWithoutFeedback>
                         <TouchableWithoutFeedback>
                             <Surface style={styles.filter}>
                                 <Text style={styles.filterText}>
-                                    Filter
+                                    > 10 Members
                                 </Text>
                             </Surface>
                         </TouchableWithoutFeedback>
                         <TouchableWithoutFeedback>
                             <Surface style={styles.filter}>
                                 <Text style={styles.filterText}>
-                                    Filter
+                                    Tier 1 Trainer
+                                </Text>
+                            </Surface>
+                        </TouchableWithoutFeedback>
+
+                        <TouchableWithoutFeedback>
+                            <Surface style={styles.filter}>
+                                <Text style={styles.filterText}>
+                                    Tier 2 Trainer
+                                </Text>
+                            </Surface>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback>
+                            <Surface style={styles.filter}>
+                                <Text style={styles.filterText}>
+                                    Tier 3 Trainer
+                                </Text>
+                            </Surface>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback>
+                            <Surface style={styles.filter}>
+                                <Text style={styles.filterText}>
+                                    Tier 4 Trainer
                                 </Text>
                             </Surface>
                         </TouchableWithoutFeedback>
