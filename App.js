@@ -53,7 +53,7 @@ class App extends React.Component {
   }
 
   componentDidMount = () => {
-    this.setupApp();
+   // this.setupApp();
   }
   
   setupApp = async () => {

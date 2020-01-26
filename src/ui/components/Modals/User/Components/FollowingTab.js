@@ -45,7 +45,7 @@ export default class FollowingTab extends React.Component {
     }
 
     componentDidMount = async () => {
-        let searchResultDataArr = [];
+     /*   let searchResultDataArr = [];
 
           await this.state.followingUUIDS.forEach(followee => {
               console.log(followee);
@@ -55,7 +55,7 @@ export default class FollowingTab extends React.Component {
 
         await this.setState({ searchResultData: searchResultDataArr })
 
-        console.log('aaa' + this.state.searchResultData)
+        console.log('aaa' + this.state.searchResultData)*/
     }
 
     getUserInfo = async (uuid) => {
@@ -89,9 +89,9 @@ export default class FollowingTab extends React.Component {
         return (
             <ScrollView shouldRasterizeIOS={true}>
                 <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/>
-                {
+                {/*
                     console.log(this.state.searchResultData)
-                }
+                */}
             </ScrollView>
         )
     }

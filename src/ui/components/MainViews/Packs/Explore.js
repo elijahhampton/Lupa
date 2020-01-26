@@ -37,16 +37,29 @@ export default class Explore extends React.Component {
             explorePagePacks: [],
             usersInArea: [],
             subscriptionPacks: [],
-            showPackModal: false
+            showPackModal: false,
+            currUsersLocation: '',
         }
     }
 
     componentDidMount() {
+        console.log('componetn did munt called VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
         this.setupExplorePage()
     } 
 
     setupExplorePage = async () => {
-        let subscriptionPacksIn, trainersIn, explorePagePacksIn, usersInAreaIn;
+        let subscriptionPacksIn, trainersIn, explorePagePacksIn, usersInAreaIn, currUsersLocationIn, tempUsersLocation;
+
+        const currentUserUUID = this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(currentUserUUID, 'location').then(result => {
+            currUsersLocationIn = result;
+            tempUsersLocation = result;
+        })
+
+        //get nearby users
+        await this.LUPA_CONTROLLER_INSTANCE.getNearbyUsers(tempUsersLocation.city, tempUsersLocation.state).then(results => {
+            usersInAreaIn = results;
+        })
 
         //get trainers
         await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
@@ -71,6 +84,7 @@ export default class Explore extends React.Component {
             trainers: trainersIn,
             explorePagePacks: explorePagePacksIn,
             subscriptionPacks: subscriptionPacksIn,
+            currUsersLocation: currUsersLocationIn,
         })
     }
 
@@ -103,7 +117,12 @@ export default class Explore extends React.Component {
     }
 
     mapUsersInArea = () => {
-
+        return this.state.usersInArea.map(user => {
+            console.log(user);
+            return (
+                <Avatar.Image source={{uri: 'hi'}} size={60} />
+            )
+        })
     }
 
     render() {
@@ -120,9 +139,9 @@ export default class Explore extends React.Component {
 
                     <View style={{ width: windowWidth }}>
                         <ScrollView horizontal={true} contentContainerStyle={{ justifyContent: "space-around" }} showsHorizontalScrollIndicator={false}>
-                           {/* <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
-                            <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} />
-        <Avatar.Image size={60} source={ProfilePicture} style={{ margin: 10 }} /> */}
+                           {
+                               this.mapUsersInArea()
+                           }
                         </ScrollView>
 
                     </View>

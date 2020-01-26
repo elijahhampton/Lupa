@@ -37,37 +37,34 @@ export default class FollowerModal extends React.Component {
     }
     render() {
         return (
-            <Modal presentationStyle="fullScreen" visible={this.props.isOpen}>
-                <Container>
+                <Container style={styles.root}>
                     <Header hasTabs>
                         <Left>
-                            <IconButton icon="arrow-back" onPress={this.props.closeModalMethod} />
+                            <IconButton icon="arrow-back"  />
                         </Left>
                         <Body>
                             <Text>
-                                {this.props.username}
+                                Username here
                             </Text>
                         </Body>
                     </Header>
 
                     <Tabs page={this.state.activeTab}>
                             <Tab heading="Followers">
-                                <FollowersTab userUUID={this.state.userUUID} followers={this.props.followers} />
+                                <FollowersTab  />
                             </Tab>
                             <Tab heading="Following">
-                               <FollowingTab userUUID={this.state.userUUID} following={this.props.following} />
+                               <FollowingTab  />
                             </Tab>
                         </Tabs>
                 </Container>
-            </Modal>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    modal: {
-        margin: 0,
+    root: {
+        flex: 1,
         backgroundColor: "#FAFAFA",
-
     }
 })
