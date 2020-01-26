@@ -29,73 +29,80 @@ export default class PackInformationModal extends React.Component {
         this.state = {
             packUUID: this.props.packUUID,
             packInformation: {},
+            packLeaderPhotoURI: '',
+            ready: false
         }
     }
 
-    componentDidMount = () => {
-        this.setupPackInformation();
+    componentDidMount = async () => {
+        await this.setupPackInformation();
 
     }
 
     setupPackInformation  = async () => {
-        let packInformationIn;
+        let packInformationIn, packLeaderPhotoURIIn;
+
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
             packInformationIn = result;
         });
 
-        await this.setState({ packInformation: packInformationIn });
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.packInformation.pack_leader, 'photo_url').then(result => {
+            packLeaderPhotoURIIn = result;
+        })
+
+        await this.setState({ packInformation: packInformationIn, packLeaderPhotoURI: packLeaderPhotoURIIn});
     }
 
     render() {
         return (
-                <Modal style={{height: '80%', width: '80%'}} presentationStyle="pageSheet" onRequestClose={this.props.closeModalMethod} onDismiss={this.props.closeModalMethod} visible={this.props.isOpen}>
+                <Modal presentationStyle="pageSheet" onRequestClose={this.props.closeModalMethod} onDismiss={this.props.closeModalMethod} visible={this.props.isOpen}>
                     {
                         console.log(this.state.packInformation)
                     }
                     <View style={{flex: 1}}>
                     <Headline style={{padding: 10}}>
-                            Announcements
+                            {this.state.packInformation.pack_title}
                         </Headline>
                         <Divider />
                         <View style={{padding: 10, alignItems: 'center', justifyContent: 'space-evenly', flex: 1}}>
                             <View style={{flexDirection: 'column', alignItems: 'center'}}>
+                            <Avatar.Image source={{uri: this.state.packLeaderPhotoURI}} size={50} style={{margin: 5}} />
                                 <Title>
                                     Pack Leader
                                 </Title>
-                                <Avatar.Text label="EH" size={50} style={{margin: 5}} />
                             </View>
 
                             <Divider />
 
-                            <View>
+                            <View style={styles.alignColumnItemsCenter}>
                                 <Title>
                                     Created on
                                 </Title>
                                 <Text>
-                                January 5, 2020
+                                {this.state.ready == true ? this.state.packInformation.pack_time_created.seconds : null}
                                 </Text>
 
                             </View>
 
                             <Divider />
 
-                            <View>
+                            <View style={styles.alignColumnItemsCenter}>
                                 <Title>
                                     Location
                                 </Title>
                                 <Text>
-                                Chicago United States
+                                {this.state.ready == true ? this.state.packInformation.pack_location.city + ", " + this.state.packInformation.pack_location.state : null}
                                 </Text>
                             </View>
 
                             <Divider />
 
-                            <View>
+                            <View style={styles.alignColumnItemsCenter}>
                                 <Title>
                                     Description
                                 </Title>
                                 <Text>
-                                Description
+                               {this.state.packInformation.pack_description}
                                 </Text>
                             </View>
 
@@ -103,7 +110,7 @@ export default class PackInformationModal extends React.Component {
 
                             <View>
                                 <Title>
-                                    Sessions Completed: 
+                                    Sessions Completed: {this.state.packInformation.pack_sessions_completed}
                                 </Title>
                             </View>
                         </View>
@@ -163,5 +170,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: "black",
     },
-    align
+    alignColumnItemsCenter: {
+        flexDirection: 'column',
+        alignItems: 'center'
+    }
 })

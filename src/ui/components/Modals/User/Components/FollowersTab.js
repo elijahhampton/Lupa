@@ -43,7 +43,7 @@ export default class FollowersTab extends React.Component {
     }
 
     componentDidMount() {
-        console.log('followers: ' + this.state.followers.length);
+        
     }
 
     mapFollowers = async () => {
@@ -84,7 +84,7 @@ export default class FollowersTab extends React.Component {
             <ScrollView shouldRasterizeIOS={true}>
                 <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/>
                 {
-                this.state.followers.length == 0 ? <Caption> You do not have any followers to display </Caption>
+               /* this.state.followers.length == 0 ? <Caption> You do not have any followers to display </Caption>
                 :
                   this.state.followers.map(follower => {
                     this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(follower, 'display_name').then(result => {
@@ -100,7 +100,7 @@ export default class FollowersTab extends React.Component {
                     })
         
                     return <UserSearchResult photoUrl={photoUrl} username={username} displayName={displayName} />
-                })
+                })*/
                 }
             </ScrollView>
         )

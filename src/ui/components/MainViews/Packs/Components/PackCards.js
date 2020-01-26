@@ -27,7 +27,6 @@ const MyPacksCard = (props) => {
     }
 
     handleShowPack = () => {
-        console.log('in packCardas' + packUUID);
         setShowPack(true);
     }
 
