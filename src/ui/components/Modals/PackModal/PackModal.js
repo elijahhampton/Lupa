@@ -7,7 +7,8 @@ import {
     StyleSheet,
     Dimensions,
     Image,
-    ActionSheetIOS
+    ActionSheetIOS,
+    TouchableOpacity
 } from 'react-native';
 
 import {
@@ -20,6 +21,7 @@ import {
     Provider,
     Paragraph,
     Headline,
+    Title
 } from 'react-native-paper';
 
 import { Feather as FeatherIcon } from '@expo/vector-icons';
@@ -38,6 +40,8 @@ import CreateEvent from '../Packs/CreateEvent';
 import UserDisplayCard from './Components/UserDisplayCard';
 
 import PackInformationModal from '../Packs/PackInformationModal';
+
+import PackEventModal from './Components/PackEventModal';
 
 const PackMembersModal = (props) => {
     return (
@@ -70,6 +74,37 @@ const PackMembersModal = (props) => {
     )
 }
 
+const PackEventCard = props => {
+    const [packEventModalIsOpen, setPackEventModalIsOpen] = useState(false);
+    const packEventObject = props.packEventObjectIn;
+
+    handlePackEventModalOpen = () => {
+        setPackEventModalIsOpen(true);
+    }
+
+    handlePackEventModalClose = () => {
+        setPackEventModalIsOpen(false);
+    }
+
+    return (
+        <TouchableOpacity onPress={this.handlePackEventModalOpen}>
+        <Surface style={{ margin: 5, elevation: 5, width: 250, height: 320, borderRadius: 20 }}>
+<Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: packEventObject.pack_event_image }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
+<View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
+<Text style={{ fontSize: 30, fontWeight: '800', color: 'white' }}>
+    {packEventObject.pack_event_title}
+</Text>
+<Text style={{ fontSize: 25, fontWeight: '600', color: 'white', textAlign: 'center' }}>
+    {packEventObject.pack_event_description}
+</Text>
+</View>
+
+</Surface>
+<PackEventModal isOpen={packEventModalIsOpen} closeModalMethod={this.handlePackEventModalClose} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventImage={packEventObject.pack_event_image}/>
+</TouchableOpacity>
+    )
+}
+
 export default class PackModal extends React.Component {
     constructor(props) {
         super(props);
@@ -86,35 +121,61 @@ export default class PackModal extends React.Component {
             packChatModalIsOpen: false,
             packInformationModalIsOpen: false,
             packMembersModalIsOpen: false,
-            ready: false
+            ready: false,
+            currDisplayedPackEvent: 0,
+            isAttendingCurrEvent: false,
         }
     }
 
     componentDidMount = async () => {
-        let packInformationIn, packEventsIn;
+       await this.setupPackModal();
+    }
 
-        console.log('packmodal: ' + this.state.packUUID)
+    setupPackModal = async () => {
+        let packInformationIn, packEventsIn, isAttendingCurrEventIn;
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(packInformation => {
             packInformationIn = packInformation;
         });
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEventsInformation => {
-            console.log('uhhh' + packEventsIn)
             packEventsIn = packEventsInformation.events;
         });
-
 
         await this.setState({ packInformation: packInformationIn, packEvents: packEventsIn });
 
 
-        const currentUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-        if (currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
+        this.currentUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        if (this.currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
+        
 
         await this.setState({ ready: true })
 
-        console.log(this.state.packEvents)
+        console.log('calling this function 2222')
     }
+
+    checkUserEventAttendance = async (packEventUUID, packEventTitle, userUUID) => {
+        console.log('CHECKING ATTENDACNE NOW! GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
+        let isAttendingCurrEventIn;
+
+        await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(isAttendingCurrEvent => {
+                isAttendingCurrEventIn = isAttendingCurrEvent;
+            });
+
+        await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
+
+        console.log('ATTENDANCE RESULTS ' + isAttendingCurrEventIn)
+        }
+
+        handleAttendEventOption = async (packEventUUID, packEventTitle, userUUID) => {
+            await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
+            this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID);
+        }
+
+        handleUnattendEventOption = async (packEventUUID, packEventTitle, userUUID) => {
+            await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
+            this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID)
+        }
 
     mapMembers = () => {
         /* This is an existing problem where you cannot access the pack_members field from packInformation..
@@ -131,18 +192,23 @@ export default class PackModal extends React.Component {
 
     _renderItem = ({ item, index }) => {
         return (
-            <Surface style={{ margin: 5, elevation: 5, width: 250, height: 320, borderRadius: 20 }}>
-                <Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: item.pack_event_image }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
-                <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontSize: 30, fontWeight: '800', color: 'white' }}>
-                        {item.pack_event_title}
-                    </Text>
-                    <Text style={{ fontSize: 25, fontWeight: '600', color: 'white', textAlign: 'center' }}>
-                        {item.pack_event_description}
-                    </Text>
-                </View>
-            </Surface>
+           <PackEventCard packEventObjectIn={item} />
         );
+    }
+
+    handleOnSnapToItem = async (itemIndex) => {
+        if (itemIndex == 0) {
+            console.log('ITEM INDEX IS 0000000000000000000')
+            await this.checkUserEventAttendance(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, 
+                this.state.packEvents[0].pack_event_title, this.currentUserUUID);
+
+                return;
+        }
+
+        await this.setState({ currDisplayedPackEvent: itemIndex });
+
+        await this.checkUserEventAttendance(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, 
+            this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID);
     }
 
     handleCreateEventModalClose = () => {
@@ -186,6 +252,7 @@ export default class PackModal extends React.Component {
     }
 
     render() {
+        console.log(this.state.packEvents)
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
                 <SafeAreaView forceInset={{
@@ -214,20 +281,25 @@ export default class PackModal extends React.Component {
                             data={this.state.packEvents}
                             renderItem={this._renderItem}
                             sliderWidth={Dimensions.get('screen').width}
-                            itemWidth={250} />
+                            itemWidth={250} 
+                            onBeforeSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
+                            />
                     </View>
 
                     <View style={{ flex: 1 }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
-                            <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <FeatherIcon name="x" size={25} color="#2196F3" />
-                            </Surface>
-                            <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <FeatherIcon name="check-circle" size={25} />
-                            </Surface>
+                            <TouchableOpacity disabled={this.state.currDisplayedPackEvent == 0 ? true : false && this.state.isAttendingCurrEvent} onPress={() => this.handleAttendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
                             <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
                                 <FeatherIcon name="check" size={25} color="#2196F3" />
                             </Surface>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity  disabled={this.state.currDisplayedPackEvent == 0 ? true : false && !this.state.isAttendingCurrEvent} onPress={() => this.handleUnattendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
+                            <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
+                                <FeatherIcon name="x" size={25} color="#2196F3"/>
+                            </Surface>
+                            </TouchableOpacity>
+
                         </View>
 
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
@@ -263,6 +335,7 @@ export default class PackModal extends React.Component {
                     <PackChatModal packUUID={this.state.packUUID} isOpen={this.state.packChatModalIsOpen} />
                     <PackInformationModal packUUID={this.state.packUUID} isOpen={this.state.packInformationModalIsOpen} closeModalMethod={this.handlePackInformationModalClose} />
                     <PackMembersModal isOpen={this.state.packMembersModalIsOpen} closeModalMethod={this.handlePackMembersModalClose} displayMembersMethod={this.mapMembers}/>
+                   
                 </SafeAreaView>
             </Modal>
         );

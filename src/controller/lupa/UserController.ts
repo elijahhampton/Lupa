@@ -2,7 +2,7 @@
  * 
  */
 
-import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
 
@@ -11,21 +11,25 @@ const USER_COLLECTION = LUPA_DB.collection('users');
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
+usersIndex.setSettings({
+    highlightPreTag: '',
+    highlightPostTag: ''
+});
 
 //algoliaUsersIndex.setExtraHeader('X-Forwarded-For', '127.0.0.1');
 
 import { UserCollectionFields } from './common/types';
+import { rejects } from 'assert';
 
 export default class UserController {
-    private static _instance : UserController;
+    private static _instance: UserController;
 
     private constructor() {
 
     }
 
     public static getInstance = () => {
-        if (!UserController._instance)
-        {
+        if (!UserController._instance) {
             UserController._instance = new UserController();
             return UserController._instance;
         }
@@ -36,10 +40,10 @@ export default class UserController {
 
     getAttributeFromUUID = async (uuid, attribute) => {
         let retValue;
-        
+
         await USER_COLLECTION.doc(uuid).get().then(res => {
             let snapshot = res.data();
-            switch(attribute) {
+            switch (attribute) {
                 case 'display_name':
                     retValue = snapshot.display_name;
                     break;
@@ -99,14 +103,14 @@ export default class UserController {
                     break;
             }
         });
-        
+
         return retValue;
     }
 
     /************** *********************/
 
     getCurrentUser = () => {
-        return  LUPA_AUTH.currentUser;
+        return LUPA_AUTH.currentUser;
     }
 
     getUserInformationFromUsername = async (username) => {
@@ -136,10 +140,10 @@ export default class UserController {
         return false;
     }
 
-    updateCurrentUser = async (fieldToUpdate, value, optionalData="") => {
+    updateCurrentUser = async (fieldToUpdate, value, optionalData = "") => {
         let currentUserDocument = USER_COLLECTION.doc(this.getCurrentUser().uid);
         console.log('LUPA: User Controller updating current user');
-        switch(fieldToUpdate) {
+        switch (fieldToUpdate) {
             case UserCollectionFields.DISPLAY_NAME:
                 LUPA_AUTH.currentUser.updateProfile({
                     displayName: value,
@@ -152,22 +156,22 @@ export default class UserController {
                 })
                 break;
             case UserCollectionFields.USERNAME:
-                    currentUserDocument.set({
+                currentUserDocument.set({
                     username: value,
                 }, {
                     merge: true
                 })
                 break;
             case UserCollectionFields.PHOTO_URL:
-                    LUPA_AUTH.currentUser.updateProfile({
-                        displayName: this.getUserDisplayName(),
-                        photoURL: value
-                    })
-                    currentUserDocument.set({
-                        photo_url: value,
-                    }, {
-                        merge: true
-                    })
+                LUPA_AUTH.currentUser.updateProfile({
+                    displayName: this.getUserDisplayName(),
+                    photoURL: value
+                })
+                currentUserDocument.set({
+                    photo_url: value,
+                }, {
+                    merge: true
+                })
                 break;
             case UserCollectionFields.GENDER:
                 currentUserDocument.set({
@@ -182,93 +186,93 @@ export default class UserController {
                     let snapshotData = snapshot.data();
                     interestData = snapshotData.interest
                 });
-                
+
                 interestData.push(value);
 
                 currentUserDocument.set({
                     interest: interestData
-                },{
+                }, {
                     merge: true,
                 })
                 break;
             case UserCollectionFields.PREFERRED_WORKOUT_TIMES:
-                switch(optionalData) {
+                switch (optionalData) {
                     case 'Monday':
                         currentUserDocument.set({
                             preferred_workout_times: { Monday: value }
                         }, {
                             merge: true
                         })
-                break;
-            case 'Tuesday':
-                    currentUserDocument.set({
-                        preferred_workout_times: { Tuesday: value }
-                    }, {
-                        merge: true,
-                    })
-                    break;
-            case 'Wednesday':
-                    currentUserDocument.set({
-                        preferred_workout_times: { Wednesday: value }
-                    }, {
-                        merge: true
-                    })
-                    break;
-            case 'Thursday':
-                    currentUserDocument.set({
-                        preferred_workout_times: { Thursday: value }
-                    }, {
-                        merge: true
-                    })
-                    break;
-            case 'Friday':
+                        break;
+                    case 'Tuesday':
+                        currentUserDocument.set({
+                            preferred_workout_times: { Tuesday: value }
+                        }, {
+                            merge: true,
+                        })
+                        break;
+                    case 'Wednesday':
+                        currentUserDocument.set({
+                            preferred_workout_times: { Wednesday: value }
+                        }, {
+                            merge: true
+                        })
+                        break;
+                    case 'Thursday':
+                        currentUserDocument.set({
+                            preferred_workout_times: { Thursday: value }
+                        }, {
+                            merge: true
+                        })
+                        break;
+                    case 'Friday':
 
-                    currentUserDocument.set({
-                        preferred_workout_times: { Friday: value }
-                    }, {
-                        merge: true
-                    })
-                    break;
-            case 'Saturday':
-                    currentUserDocument.set({
-                        preferred_workout_times: { Saturday: value }
-                    }, {
-                        merge: true
-                    })
-                    break;
-            case 'Sunday':
-                    currentUserDocument.set({
-                        preferred_workout_times: { Sunday: value }
-                    }, {
-                        merge: true
-                    })
-                    break;
+                        currentUserDocument.set({
+                            preferred_workout_times: { Friday: value }
+                        }, {
+                            merge: true
+                        })
+                        break;
+                    case 'Saturday':
+                        currentUserDocument.set({
+                            preferred_workout_times: { Saturday: value }
+                        }, {
+                            merge: true
+                        })
+                        break;
+                    case 'Sunday':
+                        currentUserDocument.set({
+                            preferred_workout_times: { Sunday: value }
+                        }, {
+                            merge: true
+                        })
+                        break;
                 }
                 break;
-        case UserCollectionFields.FOLLOWERS:
-            /* For now we don't handle this year */
-            break;
-        case UserCollectionFields.FOLLOWING:
-            /* For now we don't handle this year */
-            break;
-        case UserCollectionFields.LOCATION:
-            currentUserDocument.set({
-                location: {
-                    city: value.city,
-                    state: value.state,
-                    country: value.country,
-                }
-            },{
-                merge: true,
-            })
-            break;
+            case UserCollectionFields.FOLLOWERS:
+                /* For now we don't handle this year */
+                break;
+            case UserCollectionFields.FOLLOWING:
+                /* For now we don't handle this year */
+                break;
+            case UserCollectionFields.LOCATION:
+                currentUserDocument.set({
+                    location: {
+                        city: value.city,
+                        state: value.state,
+                        country: value.country,
+                    }
+                }, {
+                    merge: true,
+                })
+                break;
         }
         console.log('LUPA: User Controller finished updating current user')
     }
 
     addFollowerToUUID = async (uuidOfAccountBeingFollowed, uuidOfFollower) => {
         let result;
-        let  accountToUpdate = USER_COLLECTION.doc(uuidOfAccountBeingFollowed);
+        let accountToUpdate = USER_COLLECTION.doc(uuidOfAccountBeingFollowed);
         await accountToUpdate.get().then(snapshot => {
             result = snapshot.data();
         })
@@ -289,7 +293,7 @@ export default class UserController {
 
     followAccountFromUUID = async (uuidOfUserToFollow, uuidOfUserFollowing) => {
         let result;
-        let  accountToUpdate = USER_COLLECTION.doc(uuidOfUserFollowing);
+        let accountToUpdate = USER_COLLECTION.doc(uuidOfUserFollowing);
         await accountToUpdate.get().then(snapshot => {
             result = snapshot.data();
         });
@@ -308,17 +312,17 @@ export default class UserController {
         });
     }
 
-    updateCurrentUserHealthData  = (fieldToUpdate) => {
+    updateCurrentUserHealthData = (fieldToUpdate) => {
 
     }
 
-    getUserPhotoURL = (currUser=true, uid=undefined) => {
+    getUserPhotoURL = (currUser = true, uid = undefined) => {
         if (currUser == true) {
             return this.getCurrentUser().photoURL;
         }
     }
 
-    getUserDisplayName = (currUser=true, uid=undefined) => {
+    getUserDisplayName = (currUser = true, uid = undefined) => {
         if (currUser == true) {
             return this.getCurrentUser().displayName;
         }
@@ -345,83 +349,83 @@ export default class UserController {
         let records = [];
 
         console.log('starting to index');
-      
+
         await USER_COLLECTION.get().then(docs => {
-          docs.forEach(doc => {
-            //Load user data from document
-            let user = doc.data();
+            docs.forEach(doc => {
+                //Load user data from document
+                let user = doc.data();
 
-            //Set object ID (although this may not be necessary)
-            user.objectID = doc.id;
+                //Set object ID (although this may not be necessary)
+                user.objectID = doc.id;
 
-            //Set necessary data for users
-            let userData = {
-                objectID: user.objectID,
-                display_name: user.display_name,
-                email: user.email,
-                email_verified: user.email_verified,
-                gender: user.gender,
-                interest: user.interest,
-                isTrainer: user.isTrainer,
-                location: user.location,
-                mobile: user.mobile,
-                packs: user.packs,
-                photo_url: user.photo_url,
-                preferred_workout_times: user.preferred_workout_times,
-                time_created: user.time_created,
-                user_uuid: user.user_uuid,
-                username: user.username,
-                rating: user.rating, //For now we give all users a rating whether they are a trainer or nto
-                experience: user.experience
-            }
-      
-            records.push(userData);
-      });
+                //Set necessary data for users
+                let userData = {
+                    objectID: user.objectID,
+                    display_name: user.display_name,
+                    email: user.email,
+                    email_verified: user.email_verified,
+                    gender: user.gender,
+                    interest: user.interest,
+                    isTrainer: user.isTrainer,
+                    location: user.location,
+                    mobile: user.mobile,
+                    packs: user.packs,
+                    photo_url: user.photo_url,
+                    preferred_workout_times: user.preferred_workout_times,
+                    time_created: user.time_created,
+                    user_uuid: user.user_uuid,
+                    username: user.username,
+                    rating: user.rating, //For now we give all users a rating whether they are a trainer or nto
+                    experience: user.experience
+                }
 
-      usersIndex.addObjects(records, (err, content) => {
-        if (err) {
-            console.log('big error: ' + err);
-        }
+                records.push(userData);
+            });
 
-        console.log('Completed User Indexing')
-    });
-  });
-}
+            usersIndex.addObjects(records, (err, content) => {
+                if (err) {
+                    console.log('big error: ' + err);
+                }
+
+                console.log('Completed User Indexing')
+            });
+        });
+    }
 
     /**
      * Add User to Firebase
      */
-    addUserToDatabase = (usernameIn, passwordIn="", emailIn="", firstNameIn="", lastNameIn="", statisticsIn=[], 
-    specializationsIn=[], experienceIn=[], packsByNameIn=[], recommendedWorkoutsIn=[], isTrainerIn=false, sessionsIn=[], 
-    timeCreatedIn=new Date().getTime(), genderIn="undefined", locationIn="undefined", ratingIn=0, eventsByNameIn=[]) => {
-        
-            let newUserData = {
-                email: emailIn,
-                eventsByName: eventsByNameIn,
-                experience: experienceIn,
-                firstName: firstNameIn,
-                gender: genderIn,
-                isTrainer: isTrainerIn,
-                lastName: lastNameIn,
-                location: locationIn,
-                packsByName: packsByNameIn, 
-                password: passwordIn,
-                rating: ratingIn,
-                recommendedWorkouts: recommendedWorkoutsIn,
-                timeCreated: timeCreatedIn,
-                username: usernameIn,
-                specializations: specializationsIn,
-                statistics: statisticsIn,
-                sessions: sessionsIn,
-            }
+    addUserToDatabase = (usernameIn, passwordIn = "", emailIn = "", firstNameIn = "", lastNameIn = "", statisticsIn = [],
+        specializationsIn = [], experienceIn = [], packsByNameIn = [], recommendedWorkoutsIn = [], isTrainerIn = false, sessionsIn = [],
+        timeCreatedIn = new Date().getTime(), genderIn = "undefined", locationIn = "undefined", ratingIn = 0, eventsByNameIn = []) => {
 
-            try {
+        let newUserData = {
+            email: emailIn,
+            eventsByName: eventsByNameIn,
+            experience: experienceIn,
+            firstName: firstNameIn,
+            gender: genderIn,
+            isTrainer: isTrainerIn,
+            lastName: lastNameIn,
+            location: locationIn,
+            packsByName: packsByNameIn,
+            password: passwordIn,
+            rating: ratingIn,
+            recommendedWorkouts: recommendedWorkoutsIn,
+            timeCreated: timeCreatedIn,
+            username: usernameIn,
+            specializations: specializationsIn,
+            statistics: statisticsIn,
+            sessions: sessionsIn,
+        }
+
+        try {
             USER_COLLECTION.doc(usernameIn).set(newUserData);
             return true;
-            } catch(Exception) {
-                console.log(Exception)
-                return false;
-            }
+        } catch (Exception) {
+            console.log(Exception)
+            return false;
+        }
     }
 
 
@@ -429,7 +433,7 @@ export default class UserController {
     /**
      * Search users by name
      */
-    searchByRealName = (startsWith='') =>  {
+    searchByRealName = (startsWith = '') => {
         let results = new Array();
         let result = {
             objectID: undefined,
@@ -457,12 +461,12 @@ export default class UserController {
 
             usersIndex.search({
                 query: query,
-            }, (err, {hits}) => {
+            }, (err, { hits }) => {
                 if (err) throw reject(err);
                 let results = [];
 
 
-                for (let i = 0; i < hits.length; i++){
+                for (let i = 0; i < hits.length; i++) {
                     let currHit = hits[i];
                     result.display_name = currHit._highlightResult.display_name.value;
                     result.display_name.match_level = currHit._highlightResult.display_name.matchLevel;
@@ -483,5 +487,66 @@ export default class UserController {
 
             )
         });
+    }
+
+    getNearbyUsers = async (city, state) => {
+        console.log('Cirt: ' + city + " .........." + "Stae: " + state)
+        let results = new Array();
+        let fallbackQuery;
+
+        await usersIndex.search({
+            query: city,
+            attributesToHighlight: ['location'],
+        }, async (err, { hits }) => {
+            if (err) throw rejects(err);
+
+            //parse all of the hits first for exact city and state
+            await hits.forEach(async hit => {
+                //check the highlightResults of each each
+                let locationHighlightResult = hit._highlightResult;
+                            //parse all of the hits first for exact city and state
+                            console.log('city looking for: ' + locationHighlightResult.location.city.value.replace('<em>', '').replace('</em>', ''))
+                            console.log('state looking for: ' + locationHighlightResult.location.state.value.replace('<em>' || '</em>', ''))
+                if (locationHighlightResult.location.city.value.replace('<em>', '').replace('</em>', '') == city && locationHighlightResult.location.state.value.replace('<em>', '').replace('</em>', '') == state) {
+                    console.log('found one bye');
+                   await  results.push(hit);
+                }
+
+            })
+
+                        //parse all of the hits for same city but different state
+                       await hits.forEach(async hit => {
+                            let locationHighlightResult = hit._highlightResult;
+                            if (locationHighlightResult.location.city.value.replace('<em>', '').replace('</em>', '') == city && locationHighlightResult.location.state.value.replace('<em>', '').replace('</em>', '') != state) {
+                                console.log('found one here');
+                                await results.push(hit);
+                            }
+                        })
+
+        });
+
+        //If we can find at least 6 users then we need to show users in the same state
+        if (results.length == 0 || results.length < 6) {
+         /*   fallbackQuery = getUsersInSameState();
+            results.push(fallbackQuery);
+
+            if (results.length == 0 || <6) {
+                //fallbackQuery = getRandomUsers()
+                results.push(fallbackQuery);
+            }*/
+
+            console.log('LUPA: (UserController - getNearbyUsers: Results is 0 or less than 6')
+            console.log(results.length)
+        }
+
+        return Promise.resolve(results);
+    }
+
+    getUsersInSameState = () => {
+
+    }
+
+    getRandomUsers = () => {
+
     }
 }

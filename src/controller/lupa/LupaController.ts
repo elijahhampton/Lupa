@@ -125,11 +125,21 @@ export default class LupaController {
       await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
     }
 
-    createNewPack = (packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
+    getNearbyUsers = async (city, state) => {
+     /* let queryResults;
+      await USER_CONTROLLER_INSTANCE.getNearbyUsers(city, state).then(results => {
+        queryResults = results;
+      });
+
+     */ return Promise.resolve(queryResults);
+    }
+
+    /** Pack Functions */
+    createNewPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
       //validate data
 
       //call packs controller to create pack
-      PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
+      PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
     }
 
     createNewPackEvent = (packUUID, title, description, date, eventImage) => {
@@ -242,5 +252,22 @@ export default class LupaController {
 
     removeUserFromPackByUUID = (packUUID, userUUID) => {
       PACKS_CONTROLLER_INSTANCE.removeUserFromPackByUUID(packUUID, userUUID);
+    }
+
+    setUserAsAttendeeForEvent = (packEventUUID, packEventTitle, userUUID) => {
+      PACKS_CONTROLLER_INSTANCE.attendPackEvent(packEventUUID, packEventTitle, userUUID);
+    }
+
+    removeUserAsAttendeeForEvent = (packEventUUID, packEventTitle, userUUID) => {
+      PACKS_CONTROLLER_INSTANCE.unattendPackEvent(packEventUUID, packEventTitle, userUUID);
+    }
+
+    userIsAttendingPackEvent = async (packEventUUID, packEventTitle, userUUID) => {
+      let result;
+      await PACKS_CONTROLLER_INSTANCE.isAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(bool => {
+        result = bool;
+      });
+
+      return Promise.resolve(result);
     }
 }
