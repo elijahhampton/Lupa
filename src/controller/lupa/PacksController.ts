@@ -155,18 +155,14 @@ class PacksController {
 
   getPackEventsByUUID = async (uuid) => {
     let packEvents;
-    console.log('asdasda' + uuid);
     await PACKS_EVENT_COLLECTION.doc(uuid).get().then(result => {
       packEvents = result.data();
-      console.log('boookty' + result.data())
+      packEvents.id = result.id;
     });
-
-    console.log(packEvents);
-
     return Promise.resolve(packEvents);
   }
 
-  createPack = (packLeader, title, description, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
+  createPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
     const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
     PACKS_COLLECTION.doc().set(lupaPackStructure);
   }
@@ -217,6 +213,105 @@ class PacksController {
       { 
         merge: true
       });
+  }
+
+  /** Unattend pack events **/
+  attendPackEvent = async (packEventUUID, packEventTitle, userUUID) => {
+    let packEventData;
+    let updatedPackEventAttendees;
+    let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
+
+   await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
+      packEventData = result.data().events;
+      
+      // Should be an faster way to do this
+      packEventData.forEach(event => {
+        //find the event with the right title
+        if (event.pack_event_title = packEventTitle) {
+          //get the list of current attendees
+          updatedPackEventAttendees = event.attendees;
+
+          //add the userUUID into the list
+          updatedPackEventAttendees.push(userUUID);
+        }
+
+      });
+
+    })
+
+    //update events
+    currentDocument.update({
+      events: packEventData,
+    });
+  }
+
+  /** attend pack events **/
+  unattendPackEvent = async  (packEventUUID, packEventTitle, userUUID) => {
+    let packEventData;
+    let updatedPackEventAttendees;
+    let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
+
+    await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
+      packEventData = result.data().events;
+      let a = [];
+      
+      // Should be an faster way to do this
+      packEventData.forEach(event => {
+        //find the event with the right title
+        if (event.pack_event_title = packEventTitle) {
+          //get the list of current attendees
+          updatedPackEventAttendees = event.attendees;
+
+          //find the userUUID in the array of attendees
+          updatedPackEventAttendees.findIndex((currValue, index, arr) => {
+             return currValue == userUUID;
+          });
+
+          //remove from array
+          updatedPackEventAttendees.splice(userUUID, 1);
+
+        }
+
+      });
+
+    })
+
+    //update events
+    currentDocument.update({
+      events: packEventData,
+    });
+  }
+
+  isAttendingPackEvent = async (packEventUUID, packEventTitle, userUUID) => {
+    console.log('calling this func..');
+    let packEventData;
+    let updatedPackEventAttendees;
+    let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
+
+    let isAttending = false;
+
+   await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
+      packEventData = result.data().events;
+      
+      // Should be an faster way to do this
+      packEventData.forEach(event => {
+        //find the event with the right title
+        if (event.pack_event_title = packEventTitle) {
+          //get the list of current attendees
+          updatedPackEventAttendees = event.attendees;
+
+          //return true if user is already ana ttendee and fasle otherwise
+          updatedPackEventAttendees.forEach(attendee => {
+            if (attendee == userUUID) { isAttending = true }
+          })
+        }
+
+      });
+
+    });
+
+    console.log(isAttending.valueOf() + 'BOOOOOOOOOOOOOOOO')
+    return Promise.resolve(isAttending);
   }
 }
 

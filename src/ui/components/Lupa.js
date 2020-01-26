@@ -40,7 +40,7 @@ class Lupa extends React.Component {
 
   componentDidMount = () => {
     this._showWelcomeModal();
-    //this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+   // this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
 
   _showWelcomeModal = async () => {

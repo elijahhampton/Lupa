@@ -74,7 +74,7 @@ class LoginView extends Component {
   }
 
   onLogin = async (e) => {
-    e.preventDefault();
+   /* e.preventDefault();
 
     const attemptedUsername = this.state.username;
     const attemptedPassword = this.state.password;
@@ -87,7 +87,9 @@ class LoginView extends Component {
       this.setState({
         snackBarIsVisible: true,
       })
-    }
+    }*/
+
+    this._introduceApp();
   }
 
   /**

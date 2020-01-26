@@ -15,14 +15,12 @@ import DashboardView from '../MainViews/dashboard/TrainerDashboardView';
 import { createAppContainer, NavigationActions } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
-import ProfileView from '../DrawerViews/Profile/ProfileView';
 
 import DrawerMenu from './Components/DrawerMenu';
 
 import GoalsStackNavigator from './GoalsStackNavigator';
 
-import NotificationsView from '../DrawerViews/Notifications/NotificationsView';
-import LoginView from '../MainViews/login/LoginView';
+import ProfileNavigator from './ProfileNavigator';
 
 const LupaDrawerNavigator = createDrawerNavigator(
     {
@@ -31,7 +29,7 @@ const LupaDrawerNavigator = createDrawerNavigator(
         screen: DashboardView
       },
       Profile: {
-        screen: ProfileView
+        screen: ProfileNavigator
       },
       Goals: {
         screen: GoalsStackNavigator

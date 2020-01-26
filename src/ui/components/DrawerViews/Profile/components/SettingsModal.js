@@ -19,7 +19,9 @@ import {
 import {
     Button,
     IconButton,
-    Divider
+    Divider,
+    List,
+    Title
 } from 'react-native-paper';
 
 import { ListItem } from 'react-native-elements';
@@ -70,32 +72,47 @@ class SettingsModal extends React.Component {
         await logoutUser();
         this.props.navigation.navigate('LoginView');
       }
+
+    _navigateToAccountSettings = () => {
+        console.log('navigate')
+        this.props.navigation.navigate('AccountSettingsView');
+    }
     
       handleListItemOnPress = (key) => {
+          console.log(key);
         switch(key) {
-    
+            case 'account':
+                this._navigateToAccountSettings();
+                break;
+            case 'notifications':
+            case 'payments':
+            case 'privacy':
+            case 'fitness_profile':
         }
     }
 
     render() {
         return (
-            <Modal style={styles.modal} presentationStyle="fullScreen" visible={this.props.isOpen}>
-                <Container>
+                <Container style={styles.root}>
                     <Header>
                         <Left>
                             <IconButton icon="arrow-back" onPress={this.props.closeModalMethod} />
                         </Left>
                         <Right>
-                            <Text>
+                            <Title>
                                 Settings
-                            </Text>
+                            </Title>
                         </Right>
                     </Header>
                     <View style={{flex: 1}}>
                     {
                         list.map(listItem => {
                             return <>
-                            <ListItem title={listItem.title} subtitle={listItem.subtitle} onPress={this.handleListItemOnPress(listItem.key)}/>
+        <ListItem
+          title={listItem.title}
+          subtitle={listItem.subtitle}
+          onPress={() => this.handleListItemOnPress(listItem.key)}
+       />
                             <Divider />
                             </>
                         })
@@ -105,14 +122,13 @@ class SettingsModal extends React.Component {
                     </Button>
                 </View>
                 </Container>
-            </Modal>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    modal: {
-        margin: 0,
+    root: {
+        flex: 1,
         backgroundColor: "#FAFAFA"
     }
 });

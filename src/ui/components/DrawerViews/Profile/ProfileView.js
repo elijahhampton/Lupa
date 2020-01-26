@@ -279,6 +279,14 @@ class ProfileView extends React.Component {
         </>
     }
 
+    _navigateToFollowers = () => {
+        this.props.navigation.navigate('FollowerView');
+    }
+
+    _navigateToSettings = () => {
+        this.props.navigation.navigate('ProfileSettings');
+    }
+
     render() {
         return (
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
@@ -315,7 +323,7 @@ class ProfileView extends React.Component {
 
 
                         <View style={styles.userAttributesContainer}>
-                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true })}>
+                            <TouchableOpacity onPress={this._navigateToFollowers}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
                                         {this.state.followers.length}
@@ -326,7 +334,7 @@ class ProfileView extends React.Component {
                                 </View>
 
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ followerModalIsOpen: true })}>
+                            <TouchableOpacity onPress={this._navigateToFollowers}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
                                         {this.state.following.length}
@@ -441,13 +449,10 @@ class ProfileView extends React.Component {
                     position="bottomRight"
                     onPress={() => this.setState({ active: !this.state.active })}>
                     <MaterialIcon name="menu" />
-                    <Button style={{ backgroundColor: '#637DFF' }} onPress={() => this.setState({ settingsModalIsOpen: true })}>
+                    <Button style={{ backgroundColor: '#637DFF' }} onPress={this._navigateToSettings}>
                         <MaterialIcon name="settings" />
                     </Button>
                 </Fab>
-
-                <FollowerModal isOpen={this.state.followerModalIsOpen} username={this.state.username} followers={this.state.followers} following={this.state.following} closeModalMethod={this.closeFollowerModal} />
-                <SettingsModal isOpen={this.state.settingsModalIsOpen} closeModalMethod={this.closeSettingsModal} />
             </SafeAreaView>
         );
     }
