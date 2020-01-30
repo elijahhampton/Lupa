@@ -38,45 +38,47 @@ export default class FollowingTab extends React.Component {
         this.following = [];
 
         this.state = {
-            userUUID: this.props.userUUID,
-            followingUUIDS: this.props.following,
+            followingUUIDS: [],
+            followingUserObjects: [],
             searchResultData: []
         }
     }
 
     componentDidMount = async () => {
-     /*   let searchResultDataArr = [];
-
-          await this.state.followingUUIDS.forEach(followee => {
-              console.log(followee);
-            let userInfo = this.getUserInfo(followee);
-            searchResultDataArr.push(userInfo);
-        });
-
-        await this.setState({ searchResultData: searchResultDataArr })
-
-        console.log('aaa' + this.state.searchResultData)*/
+        this.setupFollowingTabInformation();
     }
 
-    getUserInfo = async (uuid) => {
-        let displayNameIn = "", usernameIn = "", photoUrlIn = "";
+    setupFollowingTabInformation = async () => {
+        let following;
+        let results = [];
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(uuid, 'display_name').then(result => {
-            displayNameIn = result;
-            console.log('uhh' + displayNameIn)
-        });
+        const currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
 
-         await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(uuid, 'username').then(result => {
-            usernameIn = result;
-            console.log(usernameIn)
-        });
-
-         await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(uuid, 'photo_url').then(result => {
-            photoUrlIn = result;
-            console.log(photoUrlIn)
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(currUserUUID, 'following').then(result => {
+            following = result;
         })
 
-        return { displayName: displayNameIn, username: usernameIn, photoUrl: photoUrlIn }
+        await this.setState({ followingUUIDS: following })
+
+        await this.state.followingUUIDS.forEach(async userUUID => {
+            console.log('the uuid is: ' + userUUID)
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(userUUID).then(userObject => {
+                results.push(userObject);
+            });
+        });
+
+        await this.setState({ followingUserObjects: results });
+    }
+
+    mapFollowing = () => {
+        console.log('the length is: ' + this.state.followingUserObjects.length)
+        return this.state.followingUserObjects.map(user => {
+            return (
+                <Text>
+                    Hi
+                </Text>
+            );
+        })
     }
 
     /**
@@ -89,9 +91,9 @@ export default class FollowingTab extends React.Component {
         return (
             <ScrollView shouldRasterizeIOS={true}>
                 <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/>
-                {/*
-                    console.log(this.state.searchResultData)
-                */}
+                {
+                    this.mapFollowing()
+                }
             </ScrollView>
         )
     }

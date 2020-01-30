@@ -44,12 +44,9 @@ import UserSearchResultCard from './components/UserSearchResultCard';
 import TrainerSearchResultCard from './components/TrainerSearchResultCard';
 
 import LupaController from '../../../../controller/lupa/LupaController';
-
-import UserProfileModal from '../../DrawerViews/Profile/UserProfileModal';
-
 const buttonColor = "#2196F3";
 
-class SearchView extends React.Component {
+export default class SearchView extends React.Component {
     constructor(props) {
         super(props);
 
@@ -199,5 +196,3 @@ const styles = StyleSheet.create({
         
     }
 });
-
-export default SearchView;

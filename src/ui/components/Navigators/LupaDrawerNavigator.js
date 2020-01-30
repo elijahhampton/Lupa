@@ -21,6 +21,7 @@ import DrawerMenu from './Components/DrawerMenu';
 import GoalsStackNavigator from './GoalsStackNavigator';
 
 import ProfileNavigator from './ProfileNavigator';
+import UserProfileModal from '../DrawerViews/Profile/UserProfileModal';
 
 const LupaDrawerNavigator = createDrawerNavigator(
     {
@@ -34,13 +35,10 @@ const LupaDrawerNavigator = createDrawerNavigator(
       Goals: {
         screen: GoalsStackNavigator
       },
+      UserPofileView: {
+        screen: UserProfileModal
+      }
     },
-    {
-      contentComponent: () => {return (<DrawerMenu />)},
-      hideStatusBar: 'true',
-      drawerBackgroundColor: "#FAFAFA",
-      initialRouteName: 'Profile'
-    }
   );
 
 

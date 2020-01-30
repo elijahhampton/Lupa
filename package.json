@@ -46,6 +46,8 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-34.0.0.tar.gz",
     "react-native-autocomplete-input": "^4.1.0",
     "react-native-chart-kit": "^3.9.0",
+    "react-native-credit-card": "^0.1.9",
+    "react-native-credit-card-input-fullpage": "^0.2.0",
     "react-native-crypto": "^2.1.0",
     "react-native-dotenv": "^0.2.0",
     "react-native-drawer": "^2.5.1",

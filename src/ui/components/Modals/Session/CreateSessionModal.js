@@ -9,7 +9,8 @@ import {
     Dimensions,
     ScrollView,
     DatePickerIOS,
-    Button as NativeButton
+    Button as NativeButton,
+    TouchableOpacity
 } from 'react-native';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
@@ -19,15 +20,278 @@ import {
     Button,
     Surface,
     Caption,
-    TextInput
+    TextInput,
+    Title,
+    Headline,
+    Divider,
+    Menu
 } from 'react-native-paper';
 
 import SafeAreaView from 'react-native-safe-area-view';
 
-import { MaterialIcons as Icon } from '@expo/vector-icons';
+import { MaterialIcons as Icon, Feather as FeatherIcon } from '@expo/vector-icons';
 import LupaController from '../../../../controller/lupa/LupaController';
 
+
 const days = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
+
+const SessionInformation = props => {
+    return (
+        <>
+            <View style={{ flex: 1, justifyContent: 'space-evenly', flexDirection: 'column', padding: 5 }}>
+                <TextInput mode="outlined" placeholder="Session Name" style={{ margin: 5 }} />
+                <TextInput mode="outlined" placeholder="Session Description" multiline={true} style={{ margin: 5, height: 120 }} />
+            </View>
+
+            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
+
+
+
+                {/* date selector */}
+                <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                    <Menu
+                        anchor={
+                            <Button mode="contained" color="#1A237E">
+                                27
+                </Button>
+                        }>
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Divider />
+                        <Menu.Item title="Cancel" />
+                    </Menu>
+
+                    <Menu
+                        anchor={
+                            <Button mode="contained" color="#1A237E">
+                                January
+                </Button>
+                        }>
+                        <Menu.Item title="1" />
+                    </Menu>
+
+
+                    <Menu
+                        anchor={
+                            <Button mode="contained" color="#1A237E">
+                                2020
+                </Button>
+                        }>
+                        <Menu.Item title="1" />
+                    </Menu>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Button mode="text" color="#1A237E">
+                        Pick a time
+                                </Button>
+                    <FeatherIcon name="chevron-right" size={12} stlye={{ margin: 5 }} />
+                </View>
+
+
+
+            </View>
+
+
+            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                    <Button mode="text" color="#2196F3">
+                        4:00 PM
+            </Button>
+
+                    <Button>
+                        5:00 PM
+            </Button>
+
+                    <Button mode="text" color="#2196F3">
+                        4:00 PM
+            </Button>
+
+                    <Button>
+                        5:00 PM
+            </Button>
+
+                    <Button mode="text" color="#2196F3">
+                        4:00 PM
+            </Button>
+
+                    <Button>
+                        5:00 PM
+            </Button>
+
+                    <Button mode="text" color="#2196F3">
+                        4:00 PM
+            </Button>
+
+                    <Button>
+                        5:00 PM
+            </Button>
+
+                    <Button mode="text" color="#2196F3">
+                        4:00 PM
+            </Button>
+
+                    <Button>
+                        5:00 PM
+            </Button>
+
+                    <Button mode="text" color="#2196F3">
+                        4:00 PM
+            </Button>
+
+                    <Button>
+                        5:00 PM
+            </Button>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Button mode="text" color="#1A237E">
+                        Back
+                                </Button>
+                    <Button mode="contained" color="#1A237E">
+                        Request
+                                </Button>
+                </View>
+            </View>
+        </>
+    )
+}
+
+const PickADate = (props) => {
+    return (
+        <View style={{ flex: 1 }}>
+
+            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
+
+
+
+                {/* date selector */}
+                <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                    <Menu
+                        visible={this.state.dayMenuVisible}
+                        onDismiss={() => this.setState({ dayMenuVisible: false })}
+                        anchor={
+                            <Button mode="contained" onPress={() => this.setState({ dayMenuVisible: true })} color="#1A237E">
+                                27
+                </Button>
+                        }>
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Menu.Item title="1" />
+                        <Divider />
+                        <Menu.Item title="Cancel" />
+                    </Menu>
+
+                    <Menu
+                        visible={this.state.triggerStateChange}
+                        onDismiss={() => this.setState({ dayMenuVisible: false })}
+                        anchor={
+                            <Button mode="contained" color="#1A237E">
+                                January
+                </Button>
+                        }>
+                        <Menu.Item title="1" />
+                    </Menu>
+
+
+                    <Menu
+                        visible={this.state.triggerStateChange}
+                        onDismiss={() => this.setState({ dayMenuVisible: false })}
+                        anchor={
+                            <Button mode="contained" color="#1A237E">
+                                2020
+                </Button>
+                        }>
+                        <Menu.Item title="1" />
+                    </Menu>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Button mode="text" color="#1A237E">
+                        Pick a time
+                                </Button>
+                    <FeatherIcon name="chevron-right" size={12} stlye={{ margin: 5 }} />
+                </View>
+
+
+
+            </View>
+        </View>
+    )
+}
+
+const PickATime = props => {
+    return (
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                <Button mode="text" color="#2196F3">
+                    4:00 PM
+            </Button>
+
+                <Button>
+                    5:00 PM
+            </Button>
+
+                <Button mode="text" color="#2196F3">
+                    4:00 PM
+            </Button>
+
+                <Button>
+                    5:00 PM
+            </Button>
+
+                <Button mode="text" color="#2196F3">
+                    4:00 PM
+            </Button>
+
+                <Button>
+                    5:00 PM
+            </Button>
+
+                <Button mode="text" color="#2196F3">
+                    4:00 PM
+            </Button>
+
+                <Button>
+                    5:00 PM
+            </Button>
+
+                <Button mode="text" color="#2196F3">
+                    4:00 PM
+            </Button>
+
+                <Button>
+                    5:00 PM
+            </Button>
+
+                <Button mode="text" color="#2196F3">
+                    4:00 PM
+            </Button>
+
+                <Button>
+                    5:00 PM
+            </Button>
+            </View>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Button mode="text" color="#1A237E">
+                    Back
+                                </Button>
+                <Button mode="contained" color="#1A237E">
+                    Request
+                                </Button>
+            </View>
+        </View>
+    )
+}
+
 
 export default class CreateSessionModal extends React.Component {
     constructor(props) {
@@ -43,11 +307,12 @@ export default class CreateSessionModal extends React.Component {
             triggerStateChange: false,
             currIndex: 0,
             date: new Date(),
+            dayMenuVisible: false
         }
     }
 
     componentDidMount() {
-       this.setupUserInformation();
+        this.setupUserInformation();
     }
 
     setupUserInformation = async () => {
@@ -73,74 +338,112 @@ export default class CreateSessionModal extends React.Component {
     render() {
         const { currIndex } = this.state;
         return (
-            <Modal ref={this.model} style={styles.modalContainer} presentationStyle="fullScreen" visible={this.props.isOpen}>
-                <SafeAreaView style={{ flex: 1, padding: 8 }}>
-                    <View style={{ height: "20%", justifyContent: "center", alignItems: "center", }}>
-                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
-                            <Surface style={{ width: 70, height: 70, elevation: 10, borderRadius: 80, margin: 10 }}>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#1A237E', padding: 10, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                        <Headline style={{ alignSelf: 'center', color: 'white', textAlign: 'center', }}>
+                            You are about to request a session with:
+                                </Headline>
+
+                    <View>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+                            <Surface style={{ width: 90, height: 90, elevation: 10, borderRadius: 80, margin: 10 }}>
 
                             </Surface>
 
                             <Icon name="compare-arrows" size={40} />
 
-                            <Surface style={{ width: 70, height: 70, elevation: 10, borderRadius: 80, margin: 10, }}>
-                                <Image source={this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().photoURL} style={{ borderRadius: 80 }} />
+                            <Surface style={{ width: 90, height: 90, elevation: 10, borderRadius: 80, margin: 10, }}>
+                                <Image source={{ uri: this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().photoURL }} style={{ borderRadius: 80 }} />
                             </Surface>
                         </View>
-
-                        <View style={{padding: 5, flexDirection: "row", justifyContent: "center", flexWrap: 'wrap', alignSelf: "center" }}>
-                            <Text style={{ fontWeight: "500", color: "#9E9E9E", fontSize: 18 }}>
-                                You are about to request a session with {" "}
-                            </Text>
-                            <Text style={{ fontWeight: "bold", color: "#9E9E9E", fontSize: 18 }}>
-                                { this.state.userDisplayName }
-                            </Text>
-                        </View>
                     </View>
-
-                    <View style={{height: "60%"}}>
-
-<View style={{height: "100%", flexDirection: "column"}}>
-
-<TextInput value={this.state.sessionTitle} onChangeText={text => this.setState({ sessionTitle: text })} mode="outlined" label="Session Title" placeholder="Give your session a name" style={{margin: 10}} 
-theme={{
-    colors: {
-        primary: '#2196F3'
-    }
-}}>
-
-</TextInput>
-
-<TextInput value={this.state.sessionDescription} onChangeText={text => this.setState({sessionDescription: text })} mode="outlined" label="Session Description" placeholder="Write a short description for your session" multiline={true} style={{margin: 10, height: "15%"}} theme={{
-    colors: {
-        primary: '#2196F3'
-    }
-}}>
-
-</TextInput>
-
-<DatePickerIOS onDateChange={dateValue => this.setState({ date: dateValue })} date={this.state.date}/>
-
-</View>
-
-</View>
-
-<View style={{height: "20%", alignSelf: "flex-start"}}>
-                        <Caption>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore 
-                        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                        </Caption>
-                        <Button mode="outlined" style={{margin: 5}} color="#2196F3" onPress={this._handleNewSessionRequest}>
-                            Request Session
-                        </Button>
-                        <Button mode="outlined" style={{margin: 5}} color="red" onPress={this.props.closeModalMethod}>
-                            Cancel
-                        </Button>
-                    </View>
-
-
                 </SafeAreaView>
-            </Modal>
+                    <ScrollView shouldRasterizeIOS={false} showsVerticalScrollIndicator={true} contentContainerStyle={{ flexGrow: 2, backgroundColor: "#FAFAFA", flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <Headline style={{ padding: 5 }}>
+                            Session Information
+                            </Headline>
+
+                            
+                        <View style={{ flex: 1, justifyContent: 'space-evenly', flexDirection: 'column', padding: 5, margin: 5 }}>
+                            <Title style={{alignSelf: 'center'}}>
+                                Session name and description
+                            </Title>
+                            <TextInput mode="outlined" placeholder="Session Name" style={{ margin: 5 }} />
+                            <TextInput mode="outlined" placeholder="Session Description" multiline={true} style={{ margin: 5, height: 80 }} />
+                        </View>
+
+                        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', margin: 5 }}>
+
+
+
+                            {/* date selector */}
+                            <View style={{flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                            <Title style={{alignSelf: 'center'}}>
+                                    Pick a date
+                                </Title>
+
+                                <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                                <Menu
+                                    anchor={
+                                        <Button mode="contained" color="#1A237E">
+                                            27
+                </Button>
+                                    }>
+                                    <Menu.Item title="1" />
+                                    <Menu.Item title="1" />
+                                    <Menu.Item title="1" />
+                                    <Menu.Item title="1" />
+                                    <Menu.Item title="1" />
+                                    <Menu.Item title="1" />
+                                    <Divider />
+                                    <Menu.Item title="Cancel" />
+                                </Menu>
+
+                                <Menu
+                                    anchor={
+                                        <Button mode="contained" color="#1A237E">
+                                            January
+                </Button>
+                                    }>
+                                    <Menu.Item title="1" />
+                                </Menu>
+
+
+                                <Menu
+                                    anchor={
+                                        <Button mode="contained" color="#1A237E">
+                                            2020
+                </Button>
+                                    }>
+                                    <Menu.Item title="1" />
+                                </Menu>
+                            </View>
+                            </View>
+
+                        </View>
+
+
+                        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                                <Title>
+                                    Pick a time or multiple
+                                </Title>
+                                <Caption>
+                                    Once you pick a date the users available times will appear here.
+                                </Caption>
+                            </View>
+
+                            <View style={{ flexDirection: 'row', alignItems: 'center', margin: 5 }}>
+                                <Button mode="text" color="#1A237E">
+                                    Back
+                                </Button>
+                                <Button mode="contained" color="#1A237E">
+                                    Request
+                                </Button>
+                            </View>
+                        </View>
+                    </ScrollView>
+                </View>
         );
     }
 }
@@ -148,7 +451,7 @@ theme={{
 const styles = StyleSheet.create({
     modalContainer: {
         display: "flex",
-        backgroundColor: "white",
+        backgroundColor: "#FAFAFA",
         margin: 0,
         padding: 15,
     },
