@@ -24,6 +24,7 @@ import Dashboard from './Navigators/LupaDrawerNavigator';
 import WelcomeModal from './Modals/WelcomeModal/WelcomeModal'
 
 import LupaController from '../../controller/lupa/LupaController';
+import SearchNavigator from "./Navigators/SearchNavigator";
 class Lupa extends React.Component {
   constructor(props) {
     super(props);
@@ -40,7 +41,7 @@ class Lupa extends React.Component {
 
   componentDidMount = () => {
     this._showWelcomeModal();
-   // this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+    this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
 
   _showWelcomeModal = async () => {
@@ -77,7 +78,7 @@ class Lupa extends React.Component {
         <Dashboard />
         <WorkoutView />
         <PackView />
-        <SearchView />
+        <SearchNavigator />
       </Swiper>
       <WelcomeModal isVisible={this.state.isNewUser} />
       </>

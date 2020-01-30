@@ -131,7 +131,7 @@ class PacksController {
 
   getCurrentUserPacks = async () => {
     let currUserPacks = [];
-    let currentUserUUID = USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
+    let currentUserUUID = await USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
     await  PACKS_COLLECTION.where('pack_members', 'array-contains', currentUserUUID).get().then(async querySnapshot => {
      querySnapshot.forEach(userPackDoc => {
         let snapshotID = userPackDoc.id;

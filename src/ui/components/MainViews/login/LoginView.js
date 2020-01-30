@@ -7,6 +7,8 @@
  */
 import React, { Component } from "react";
 
+import { connect } from 'react-redux';
+
 import {
   View,
   Text,
@@ -27,14 +29,41 @@ import { SocialIcon, Input } from "react-native-elements";
 
 import { Feather as FeatherIcon } from '@expo/vector-icons';
 
+import LupaController from '../../../../controller/lupa/LupaController';
+
 const {
   isSignedIn,
   loginUser,
 } = require('../../../../controller/lupa/auth');
 
+mapStateToProps = (state) => {
+  return { 
+    lupa_data: state
+  }
+}
+
+mapDispatchToProps = dispatch => {
+  return {
+    updateUser: (userObject) => {
+      dispatch({
+        type: 'UPDATE_CURRENT_USER',
+        payload: userObject
+      })
+    },
+    updatePacks: (packsData) => {
+      dispatch({
+        type: 'UPDATE_CURRENT_USER_PACKS',
+        payload: packsData,
+      })
+    }
+  }
+}
+
 class LoginView extends Component {
   constructor(props) {
     super(props);
+
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     this.state = {
       username: 'ejh0017@gmail.com',
@@ -48,6 +77,14 @@ class LoginView extends Component {
 
   componentWillMount = () => {
     this._checkSignedInStatus();
+  }
+
+  _updateUserInRedux = (userObject) => {
+    this.props.updateUser(userObject);
+  }
+
+  _updatePacksInRedux = (packsData) => {
+    this.props.updatePacks(packsData);
   }
 
   _checkSignedInStatus = async () => {
@@ -74,7 +111,7 @@ class LoginView extends Component {
   }
 
   onLogin = async (e) => {
-   /* e.preventDefault();
+   e.preventDefault();
 
     const attemptedUsername = this.state.username;
     const attemptedPassword = this.state.password;
@@ -87,9 +124,7 @@ class LoginView extends Component {
       this.setState({
         snackBarIsVisible: true,
       })
-    }*/
-
-    this._introduceApp();
+    }
   }
 
   /**
@@ -97,8 +132,23 @@ class LoginView extends Component {
    * Finish any last minute things here before showing the application to the user.
    * This really isn't the place to be doing this, but any small last minute changes can go here.
    */
-  _introduceApp = () => {
+  _introduceApp = async () => {
+    await this._setupRedux();
     this.props.navigation.navigate('App');
+  }
+
+  _setupRedux = async () => {
+    let currentUserData, currentUserPacks;
+    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+      currentUserData = result;
+    })
+
+    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
+      currentUserPacks = result;
+    })
+
+    await this._updatePacksInRedux(currentUserPacks);
+    await this._updateUserInRedux(currentUserData);
   }
 
   render() {
@@ -185,4 +235,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginView;
+export default connect(mapStateToProps, mapDispatchToProps)(LoginView);
