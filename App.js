@@ -1,19 +1,14 @@
 import React from 'react';
 
 import { Provider as PaperProvider } from 'react-native-paper';
-
-import { Provider as StoreProvider } from 'react-redux';
-import { createStore } from 'redux';
-import lupaRootReducer, { searchReducer } from './src/controller/redux/reducers';
-
-import LoginView from './src/ui/components/MainViews/login/LoginView';
+import  {createStore} from 'redux';
+import { Provider as StoreProvider} from 'react-redux';
 import AuthenticationNavigator from './src/ui/components/Navigators/AuthenticationNavigator';
-//import LupaApp from './src/ui/components/Lupa';
 import LupaApp from './src/ui/components/Lupa';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
 
 import LupaController from './src/controller/lupa/LupaController';
+import LupaReducer from './src/controller/redux/reducers';
 
 const Navigator = createAppContainer(
   createSwitchNavigator(
@@ -38,30 +33,27 @@ const Navigator = createAppContainer(
   )
 );
 
+const LupaStore = createStore(LupaReducer);
+LupaStore.subscribe(() => console.log(LupaStore.getState()))
 
-const LupaStore = createStore(lupaRootReducer);
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    this.state = {
-
-    }
   }
 
   componentDidMount = () => {
-   // this.setupApp();
+    this.setupApp();
   }
   
   setupApp = async () => {
-    this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+    await this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
+
   render() {
     return (
-      
       <StoreProvider store={LupaStore}>
         <PaperProvider>
           <Navigator />

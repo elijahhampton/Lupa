@@ -74,7 +74,7 @@ let ProfileImage = require('../../../images/background-one.jpg');
  * ADD EDIT, ADD, and DELETE buttons for content.  (The delete buttons will be mapped beside content in each content area.).
  * PHOTO_URL not correct
  */
-class UserProfileModal extends React.Component {
+export default class UserProfileModal extends React.Component {
     constructor(props) {
         super(props);
 
@@ -97,7 +97,7 @@ class UserProfileModal extends React.Component {
             sessionsCompleted: undefined,
             isEditingProfile: false,
             createSessionModalIsOpen: false,
-            userUUID: this.props.uuid, //Unlike the ProfileView this state property is unique to the UserProfileModal,
+            userUUID: this.props.navigation.state.params.userUUID, //Unlike the ProfileView this state property is unique to the UserProfileModal,
             followerModalIsOpen: false,
             refreshing: false,
             tabToOpen: 0
@@ -299,13 +299,16 @@ class UserProfileModal extends React.Component {
         //this.setupProfileInformation();
     }
 
+    _navigateToSessionsView = () => {
+        this.props.navigation.navigate('SessionsView');
+    }
+
     render() {
         return (
-            <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
             <Surface style={{ height: "15%", width: "100%", elevation: 1 }}>
                     <ImageBackground style={{ width: "100%", height: "100%" }} source={ProfileImage}>
-                    <IconButton style={{position: 'absolute', bottom: 0}} icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
+                    <IconButton style={{position: 'absolute', bottom: 0}} icon="menu" size={20} onPress={() => this.props.navigation.goBack()} />
                     </ImageBackground>
                 </Surface>
                 
@@ -470,12 +473,9 @@ class UserProfileModal extends React.Component {
                     </View>
 
                 </ScrollView>
-
-                <CreateSessionModal isOpen={this.state.createSessionModalIsOpen} closeModalMethod={this.closeCreateSessionModal} />
-                <FollowerModal isOpen={this.state.followerModalIsOpen} userUUID={this.state.userUUID} activeTab={this.state.tabToOpen} following={this.state.following} followers={this.state.followers} closeModalMethod={this.closeFollowerModal}/>
                 </ScrollView>
-            </SafeAreaView>
-            {
+                {
+                /*  Removed for dev
                 true && (this.state.userUUID != this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid) ?
             <Fab
             active={this.state.active}
@@ -495,8 +495,29 @@ class UserProfileModal extends React.Component {
               <MaterialIcon name="fitness-center" />
             </Button>
                 </Fab> : null
+                */
     }
-            </Modal>
+
+<Fab
+               active={this.state.active}
+               direction="up"
+               containerStyle={{ }}
+               style={{ backgroundColor: '#637DFF' }}
+               position="bottomRight"
+               onPress={() => this.setState({ active: !this.state.active })}>
+               <MaterialIcon name="menu" />
+               <Button style={{ backgroundColor: '#637DFF' }}>
+                 <MaterialIcon name="message" />
+               </Button>
+               <Button style={{ backgroundColor: '#637DFF' }}>
+                 <MaterialIcon name="share" />
+               </Button>
+               <Button style={{ backgroundColor: '#637DFF' }} onPress={() => this._navigateToSessionsView()}>
+                 <MaterialIcon name="fitness-center" />
+               </Button>
+                   </Fab>
+            </SafeAreaView>
+            
         );
     }
 }
@@ -571,5 +592,3 @@ const styles = StyleSheet.create({
     },
 
 });
-
-export default withNavigation(UserProfileModal);

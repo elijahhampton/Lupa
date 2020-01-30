@@ -50,6 +50,14 @@ import BackgroundImageTwo from '../../images/background-two.jpg';
 import { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import LupaController from '../../../controller/lupa/LupaController';
 
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
+
 class WorkoutView extends React.Component {
     constructor(props) {
         super(props);
@@ -70,7 +78,7 @@ class WorkoutView extends React.Component {
                                 </Text>
                                 <Text style={{ color: "white", fontSize: 50, fontWeight: "700" }}>
                                     {
-                                        this.LUPA_CONTROLLER_INSTANCE.getUserDisplayName()
+                                        this.props.lupa_data.Users.currUserData.display_name
                                     }
                                 </Text>
                             </View>
@@ -178,4 +186,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default WorkoutView;
+export default connect(mapStateToProps)(WorkoutView);

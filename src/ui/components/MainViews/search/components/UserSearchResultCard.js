@@ -25,27 +25,18 @@ import {
     withNavigation
 } from 'react-navigation';
 
-import UserProfileModal from '../../../DrawerViews/Profile/UserProfileModal'
-
-const contentUnexpandedHeight = 0;
-const contentExpandedHeight = "auto";
-
-
 const UserSearchResultCard = (props) => {
-    const [isModalOpen, setModalOpen] = useState(false);
 
     _handleViewProfile = () => {
-        console.log('Registering button click')
-        setModalOpen(true);
-    }
-
-    handleModalClose = () => {
-        setModalOpen(false);
+        console.log('Calling _handleViewProfile')
+        props.navigation.navigate('UserProfileView', {
+            userUUID: props.uuid
+        });
     }
 
     return (
         <>
-            <TouchableWithoutFeedback onPress={() => this._handleViewProfile()} style={styles.touchableOpacity}>
+            <TouchableWithoutFeedback onPress={this._handleViewProfile} style={styles.touchableOpacity}>
             <Surface style={[styles.cardContainer]}>
                 <View style={styles.cardContent}>
                     <View style={styles.userInfoContent}>
@@ -66,7 +57,6 @@ const UserSearchResultCard = (props) => {
                 </View>
             </Surface>
                 </TouchableWithoutFeedback>
-                <UserProfileModal isOpen={isModalOpen} uuid={props.uuid} closeModalMethod={this.handleModalClose}/>
             </>
     );
 }

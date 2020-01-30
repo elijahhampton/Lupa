@@ -112,6 +112,23 @@ export default class UserController {
     getCurrentUser = () => {
         return LUPA_AUTH.currentUser;
     }
+    
+    getCurrentUserUUID = () => {
+        return LUPA_AUTH.currentUser.uid;
+    }
+
+    getCurrentUserData = async () => {
+        let currentUserInformation;
+        let currentUserUUID = await this.getCurrentUserUUID();
+        await USER_COLLECTION.where('user_uuid', '==', currentUserUUID).get().then(docs => {
+            docs.forEach(doc => {
+                currentUserInformation = doc.data();
+                return;
+            })
+        });
+
+        return Promise.resolve(currentUserInformation);
+    }
 
     getUserInformationFromUsername = async (username) => {
         let result;
@@ -268,6 +285,16 @@ export default class UserController {
                 break;
         }
         console.log('LUPA: User Controller finished updating current user')
+    }
+
+    getUserInformationByUUID = async uuid => {
+        let userResult;
+        await USER_COLLECTION.doc(uuid).get().then(result => {
+            userResult = result.data();
+            userResult.id = result.id;
+        });
+
+        return Promise.resolve(userResult);
     }
 
     addFollowerToUUID = async (uuidOfAccountBeingFollowed, uuidOfFollower) => {
