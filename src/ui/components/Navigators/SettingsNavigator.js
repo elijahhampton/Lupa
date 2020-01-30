@@ -5,6 +5,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import SettingsView from '../DrawerViews/Profile/components/SettingsModal';
 import AccountSettingsView from '../DrawerViews/Profile/components/AccountSettingsView';
+import PaymentSettingsView from '../DrawerViews/Profile/Settings/Payments/PaymentSettings';
 
 const SettingsStackNavigator = createStackNavigator({
     SettingsView: {
@@ -23,6 +24,14 @@ const SettingsStackNavigator = createStackNavigator({
             gesturesEnabled: false,
         })
     },
+    PaymentSettingsView: {
+        screen: PaymentSettingsView,
+        navigationOptions: ({ navigation }) => ({
+            title: "PaymentSettingsView",
+            header: null,
+            gesturesEnabled: false,
+        })
+    }
 },
     {
         initialRouteName: 'SettingsView'

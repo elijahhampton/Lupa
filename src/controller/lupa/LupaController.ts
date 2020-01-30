@@ -62,6 +62,15 @@ export default class LupaController {
       return currentUser;
     }
 
+    getCurrentUserData = async () => {
+      let userData;
+      await USER_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+        userData = result;
+      });
+
+      return Promise.resolve(userData);
+    }
+
     isTrainer = (userUUID) => {
       let isTrainer = USER_CONTROLLER_INSTANCE.isTrainer(userUUID);
       return isTrainer;
@@ -150,6 +159,14 @@ export default class LupaController {
     }
 
     /* User Functions */
+    getUserInformationByUUID = async (uuid) => {
+      let userResult;
+      await USER_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
+        userResult = result;
+      });
+
+      return Promise.resolve(userResult)
+    }
     searchUserByPersonalName = async (searchQuery='') => {
       let arr;
       await USER_CONTROLLER_INSTANCE.searchByRealName(searchQuery).then(objs => {

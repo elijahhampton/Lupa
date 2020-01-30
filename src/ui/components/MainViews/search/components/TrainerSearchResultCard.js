@@ -22,48 +22,54 @@ import {
 } from 'react-native-elements';
 
 import {
-    withNavigation
+    withNavigation,
+    NavigationInjectedProps
 } from 'react-navigation';
 
-import UserProfileModal from '../../../DrawerViews/Profile/UserProfileModal'
+class TrainerSearchResultCard extends React.Component {
+    constructor(props) {
+        super(props);
 
-const TrainerSearchResultCard = (props) => {
-    const [isModalOpen, setModalOpen] = useState(false);
-
-    _handleViewProfile = () => {
-        setModalOpen(true);
+        this.state = {
+            userUUID: this.props.uuid
+        }
     }
 
-    handleModalClose = () => {
-        setModalOpen(false);
+    _handleViewProfile = (uuid) => {
+        console.log('THE UUID IS: ' + uuid)
+        console.log('Calling _handleViewProfile')
+        this.props.navigation.navigate('UserProfileView', {
+            userUUID: uuid
+        });
+        console.log('hmm');
     }
 
-    return (
-        <>
-            <TouchableWithoutFeedback onPress={() => this._handleViewProfile()} style={styles.touchableOpacity}>
-            <Surface style={[styles.cardContainer]}>
-                <View style={styles.cardContent}>
-                    <View style={styles.userInfoContent}>
-                    <Avatar label={props.title} rounded size="small" containerStyle={{marginRight: 5}}/>
-                    <View style={{flexDirection: 'column'}}>
-                    <Text style={styles.titleText}>
-                            {props.title}
-                        </Text>
-                        <Text style={styles.subtitleText}>
-                            {props.email}
-                        </Text>
-                    </View>
-
+    render() {
+        return (
+                <TouchableOpacity onPress={() => this._handleViewProfile(this.state.userUUID)} style={styles.touchableOpacity}>
+                <Surface style={[styles.cardContainer]}>
+                    <View style={styles.cardContent}>
+                        <View style={styles.userInfoContent}>
+                        <Avatar label={this.props.title} rounded size="small" containerStyle={{marginRight: 5}}/>
+                        <View style={{flexDirection: 'column'}}>
+                        <Text style={styles.titleText}>
+                                {this.props.title}
+                            </Text>
+                            <Text style={styles.subtitleText}>
+                                {this.props.email}
+                            </Text>
                         </View>
-                        <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
-Lupa Trainer
-</Chip>
-                </View>
-            </Surface>
-                </TouchableWithoutFeedback>
-                <UserProfileModal isOpen={isModalOpen} uuid={props.uuid} closeModalMethod={this.handleModalClose}/>
-            </>
-    );
+    
+                            </View>
+                            <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
+    Lupa Trainer
+    </Chip>
+                    </View>
+                </Surface>
+                    </TouchableOpacity>
+        );
+    }
+   
 }
 
 const styles = StyleSheet.create({

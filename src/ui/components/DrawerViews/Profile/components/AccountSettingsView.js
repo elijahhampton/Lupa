@@ -27,6 +27,8 @@ import {
     Headline
 } from 'react-native-paper';
 
+import SafeAreaView from 'react-native-safe-area-view';
+
 import Color from '../../../../common/Color';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
@@ -82,18 +84,20 @@ export default class  AccountSettingsView extends React.Component {
                     </Right>
                 </Header>
 
-                <View style={styles.contentContainer}>
-                <ListItem title="Change username" subtitle="Click here to change your username" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <SafeAreaView style={styles.contentContainer}>
+                <List.Item title="Name" description="Elijah Hampton" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
                 <Divider />
-                <ListItem title="Change password" subtitle="Click here to change your password" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <List.Item title="Username" description="elijahhampton" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
                 <Divider />
-                <ListItem title="Change display name" subtitle="Click here to change your display name" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <List.Item title="Email" description="ejh0017@gmail.com" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
                 <Divider />
-                <ListItem title="Change password" subtitle="Click here to change your password" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <List.Item title="Mobile Number" description="You do not have a mobile number set" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
                 <Divider />
-                <ListItem title="Forgot password" subtitle="Click here to recover password" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <List.Item title="Change or recover password" description="Click here to change or recover your password" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
                 <Divider />
-                </View>
+                <List.Item title="Forgot password" description="Click here to recover password" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <Divider />
+                </SafeAreaView>
                 <ChangeUsernameModal isOpen={this.state.showChangeUsernameModal} closeModalMethod={this._handleCloseChangeUsernameModal} />
             </Container>
         )

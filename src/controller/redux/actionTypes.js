@@ -1,1 +1,7 @@
-//const ACTION_NAME = 'ACTION_NAME'
+//User reducer action types
+export const UPDATE_USER_ATTRIBUTE_ACTION = 'UPDATE_USER_ATTRIBUTE';
+
+export const UPDATE_CURRENT_USER_ACTION = 'UPDATE_CURRENT_USER';
+
+//Packs reducer action types
+export const UPDATE_CURRENT_USER_PACKS_ACTION = 'UPDATE_CURRENT_USER_PACKS';

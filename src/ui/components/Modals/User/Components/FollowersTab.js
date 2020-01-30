@@ -37,39 +37,34 @@ export default class FollowersTab extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            userUUID: this.props.userUUID,
-            followers: this.props.followers,
+            /*userUUID: this.props.userUUID,
+            followersUUDS: this.props.followers,
+            followersUserObjects: [],
+            serachResultData: [],*/
         }
     }
 
     componentDidMount() {
-        
+        //this.setupFollowersTabInformation();
     }
 
-    mapFollowers = async () => {
-       if (this.state.followers.length == 0) { 
-           console.log('LENGTH IS 0')
-           return <Caption> You don't have any followers to display </Caption>
-        }
-       
-      /* let displayName, username, photoUrl;
-       let followers =  await this.state.map(follower => {
-            this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(follower, 'display_name').then(result => {
-                displayName = result;
+    setupFollowersTabInformation = async () => {
+        let results = [];
+        await this.followersUUIDS.forEach(async userUUID => {
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(userUUID).then(userObject => {
+                results.push(userObject);
             });
+        });
 
-            this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(follower, 'username').then(result => {
-                username = result;
-            });
+        await this.setState({ followersUserObjects: results });
+    }
 
-            this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(follower, 'photo_url').then(result => {
-                photoUrl = result;
-            })
-
-            return <UserSearchResult photoUrl={photoUrl} username={username} displayName={displayName} />
-        })
-
-        return followers;*/
+    mapFollowers = () => {
+       /* return this.state.followersUserObjects(user => {
+            return (
+                <UserSearchResult />
+            )
+        })*/
     }
 
     /**
@@ -79,28 +74,11 @@ export default class FollowersTab extends React.Component {
      * TODO: At some point this code should be moved into a function.
      */
     render() {
-        let displayName, username, photoUrl;
         return (
             <ScrollView shouldRasterizeIOS={true}>
                 <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/>
                 {
-               /* this.state.followers.length == 0 ? <Caption> You do not have any followers to display </Caption>
-                :
-                  this.state.followers.map(follower => {
-                    this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(follower, 'display_name').then(result => {
-                        displayName = result;
-                    });
-        
-                    this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(follower, 'username').then(result => {
-                        username = result;
-                    });
-        
-                    this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(follower, 'photo_url').then(result => {
-                        photoUrl = result;
-                    })
-        
-                    return <UserSearchResult photoUrl={photoUrl} username={username} displayName={displayName} />
-                })*/
+                    this.mapFollowers()
                 }
             </ScrollView>
         )
