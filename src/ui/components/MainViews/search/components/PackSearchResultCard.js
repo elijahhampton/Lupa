@@ -26,7 +26,7 @@ import {
     NavigationInjectedProps
 } from 'react-navigation';
 
-class TrainerSearchResultCard extends React.Component {
+class PackSearchResultCard extends React.Component {
     constructor(props) {
         super(props);
 
@@ -35,13 +35,8 @@ class TrainerSearchResultCard extends React.Component {
         }
     }
 
-    _handleViewProfile = (uuid) => {
-        console.log('THE UUID IS: ' + uuid)
-        console.log('Calling _handleViewProfile')
-        this.props.navigation.navigate('UserProfileView', {
-            userUUID: uuid
-        });
-        console.log('hmm');
+    _handleViewPack = (uuid) => {
+        
     }
 
     render() {
@@ -56,13 +51,14 @@ class TrainerSearchResultCard extends React.Component {
                                 {this.props.title}
                             </Text>
                             <Text style={styles.subtitleText}>
-                                {this.props.email}
+                                {this.props.isSubscription == true ?                             <Text style={styles.subtitleText}>
+                                    Premium                             </Text> : <Text style={styles.subtitleText}> Free </Text> }
                             </Text>
                         </View>
     
                             </View>
                             <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
-    Lupa Trainer
+    Lupa Pack
     </Chip>
                     </View>
                 </Surface>
@@ -118,4 +114,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default withNavigation(TrainerSearchResultCard);
+export default withNavigation(PackSearchResultCard);

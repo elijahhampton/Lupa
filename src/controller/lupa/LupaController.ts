@@ -10,11 +10,19 @@ import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 
 
 import requestPermissionsAsync from './permissions/permissions';
+import { rejects } from 'assert';
+
+const algoliasearch = require('algoliasearch/reactnative.js');
+const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
+const packsIndex = algoliaIndex.initIndex("dev_PACKS");
+const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
+const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 
 let USER_CONTROLLER_INSTANCE;
 let PACKS_CONTROLLER_INSTANCE;
 let SESSION_CONTROLLER_INSTANCE;
 let NOTIFICATIONS_CONTROLLER_INSTANCE;
+
 
 export default class LupaController {
     private static _instance : LupaController;
@@ -91,9 +99,8 @@ export default class LupaController {
       return USER_CONTROLLER_INSTANCE.getUserPhotoURL(true);
     }
 
-    createNewSession = async (attendeeOne, userInvited, time, day, location, name, description) => {
-      let sessionData = await SESSION_CONTROLLER_INSTANCE.createSession(attendeeOne, userInvited, time, day, location, name, description);
-      this.addNotification(userInvited, new Date(), new Date().getTime(), "", sessionData);
+    createNewSession = async (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp) => {
+      await SESSION_CONTROLLER_INSTANCE.createSession(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp);
     }
 
     getUserSessions = (currUser=true, uid=undefined) => {
@@ -134,15 +141,6 @@ export default class LupaController {
       await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
     }
 
-    getNearbyUsers = async (city, state) => {
-     /* let queryResults;
-      await USER_CONTROLLER_INSTANCE.getNearbyUsers(city, state).then(results => {
-        queryResults = results;
-      });
-
-     */ return Promise.resolve(queryResults);
-    }
-
     /** Pack Functions */
     createNewPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
       //validate data
@@ -158,7 +156,32 @@ export default class LupaController {
       PACKS_CONTROLLER_INSTANCE.createPackEvent(packUUID, title, description, date, eventImage);
     }
 
+    getSubscriptionPacksBasedOnLocation = async location => {
+      let subscriptionBasedPacks;
+      await PACKS_CONTROLLER_INSTANCE.getSubscriptionPacksBasedOnLocation(location).then(result => {
+        subscriptionBasedPacks = result;
+      });
+
+      return Promise.resolve(subscriptionBasedPacks);
+    }
+
     /* User Functions */
+    getTrainersBasedOnLocation = async location => {
+      let trainersNearby;
+      await USER_CONTROLLER_INSTANCE.getNearbyUsers(location).then(result => {
+        trainersNearby = result;
+      });
+
+      return Promise.resolve(trainersNearby);
+    }
+    getUsersBasedOnLocation = async location => {
+      let nearbyUsers
+      await USER_CONTROLLER_INSTANCE.getNearbyUsers(location).then(result => {
+        nearbyUsers = result;
+      });
+
+      return Promise.resolve(nearbyUsers);
+    }
     getUserInformationByUUID = async (uuid) => {
       let userResult;
       await USER_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
@@ -167,14 +190,67 @@ export default class LupaController {
 
       return Promise.resolve(userResult)
     }
-    searchUserByPersonalName = async (searchQuery='') => {
-      let arr;
-      await USER_CONTROLLER_INSTANCE.searchByRealName(searchQuery).then(objs => {
-        arr = objs;
+
+    /**
+     * search
+     * Performs search queries on all indices through algolia
+     * @param searchQuery The query to search for
+     * @return returns a promise with an array of objects that matched the query.
+     * 
+     * TODO: Save only necessary information into an object before pushing into final results array.
+     */
+    search = (searchQuery) => {
+      let finalResults = new Array();
+
+      const queries = [{
+        indexName: 'dev_USERS',
+        query: searchQuery,
+        params: {
+          hitsPerPage: 10
+        }
+      }, {
+        indexName: 'dev_PACKS',
+        query: searchQuery,
+        params: {
+          hitsPerPage: 10,
+        }
+      }];
+
+      return new Promise((resolve, rejects) => {
+                // perform 3 queries in a single API
+                let finalResults = new Array();
+      //  - 1st query targets index `categories`
+      //  - 2nd and 3rd queries target index `products`
+      algoliaIndex.search(queries, (err, { results = {}}) => {
+        if (err) rejects(err);
+      
+        const userResults = results[0];
+        const packResults = results[1];
+
+        //add the results we want from each into our final results array
+        for (let i = 0; i < userResults.hits.length; ++i)
+        {
+          userResults.hits[i].isTrainer == true ?  userResults.hits[i].resultType="trainer" :  userResults.hits[i].resultType="user"
+          if (userResults.hits[i]._highlightResult.display_name.matchLevel == "full" || userResults.hits[i]._highlightResult.username.matchLevel == "full" 
+          || userResults.hits[i]._highlightResult.email.matchLevel == "full")
+          {
+            finalResults.push(userResults.hits[i]);
+          }
+        }
+
+        for (let i = 0; i < packResults.hits.length; ++i)
+        {
+          packResults.hits[i].resultType = "pack"
+          if (packResults.hits[i]._highlightResult.pack_title.matchLevel == "full")
+          {
+            finalResults.push(packResults.hits[i]);
+          }
+        }
+
+        resolve(finalResults);
+      });
       })
-
-
-      return arr;
+    
     }
 
     followUser = (uuidOfUserToFollow, uuidOfUserFollowing) => {
@@ -210,6 +286,20 @@ export default class LupaController {
     }
 
     /* Pack Functions */
+    /***************************Explore Page Pack Function  ****************************/
+
+    getExplorePagePacksBasedOnLocation = async location => {
+      let explorePagePacks;
+      await PACKS_CONTROLLER_INSTANCE.getExplorePagePacksBasedOnLocation(location).then(result => {
+        console.log('beep bop' + result);
+        explorePagePacks = result;
+      });
+
+      console.log('and what do we have here' + explorePagePacks.length)
+      return Promise.resolve(explorePagePacks);
+    }
+
+    /***********************************************************************************/
     getCurrentUserPacks = async () => {
       let userPacks;
       
@@ -258,9 +348,9 @@ export default class LupaController {
       return Promise.resolve(result);
     }
 
-    getPackEventsByUUID = async (uuid) => {
+    getPackEventsByUUID = async (arrOfUUIDS) => {
       let result;
-      await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(uuid).then(packs => {
+      await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(arrOfUUIDS).then(packs => {
         result = packs;
       });
 

@@ -18,7 +18,7 @@ import {
  * Note: On logout user = null
  */
 LUPA_AUTH.onAuthStateChanged(user => {
-    if (user) {} else {}
+    if (user) {console.log('loggin in')} else {console.log('loggin out')}
 })
 
 /**
@@ -132,6 +132,7 @@ export var loginUser = async (email, password) => {
  * Takes the current user and logs them out in firebase.
  */
 export var logoutUser = () => {
+    console.log('supposet to logot now')
     LUPA_AUTH.signOut();
 }
 

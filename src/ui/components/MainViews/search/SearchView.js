@@ -42,6 +42,7 @@ import {
 
 import UserSearchResultCard from './components/UserSearchResultCard';
 import TrainerSearchResultCard from './components/TrainerSearchResultCard';
+import PackSearchResultCard from './components/PackSearchResultCard';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 const buttonColor = "#2196F3";
@@ -63,32 +64,19 @@ export default class SearchView extends React.Component {
         await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     }
 
-    _performSearch = async search => {
+    _performSearch = async searchQuery => {
         await this.setState({
             searchResults: []
         })
 
         await this.setState({
-            searchValue: search
+            searchValue: searchQuery
         })
 
-
-        let result;
-        await this.LUPA_CONTROLLER_INSTANCE.searchUserByPersonalName(this.state.searchValue).then(data => {
-            result = data;
+        this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+            console.log(searchData);
+            this.setState({ searchResults: searchData })
         })
-
-        //Remove any duplicates
-        const newData = result.filter(item => {      
-            const itemData = item.display_name;  
-            console.log(itemData) 
-
-             const textData = search;
-            
-             return itemData.indexOf(textData) > -1;    
-          });
-          
-          this.setState({searchResults: newData });
     }
     
     showSearchResults() {
@@ -97,14 +85,16 @@ export default class SearchView extends React.Component {
             {
                 case "trainer":
                     return (
-                        <TrainerSearchResultCard title={result.display_name} email={result.email} location="Chicago, United States" rating={result.rating} uuid={result.objectID}/>
+                        <TrainerSearchResultCard title={result.display_name} email={result.email}  rating={result.rating} avatarSrc={result.photo_url} uuid={result.objectID}/>
                     )
                 case "user":
                     return (
-                        <UserSearchResultCard title={result.display_name} email={result.email} location="Chicago, United States" uuid={result.objectID} />
+                        <UserSearchResultCard title={result.display_name} email={result.email} avatarSrc={result.photo_url} uuid={result.objectID} />
                     )
                 case "pack":
-                    break;
+                    return (
+                        <PackSearchResultCard  title={result.pack_title} isSubscription={result.pack_isSubscription} avatarSrc={result.pack_image}/>
+                    )
                 case "workout":
                     break;
                 default:

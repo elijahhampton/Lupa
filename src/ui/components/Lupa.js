@@ -13,8 +13,7 @@ import {
   StatusBar
 } from "react-native";
 
-import WorkoutView from './MainViews/WorkoutView';
-import SearchView from './MainViews/search/SearchView';
+import WorkoutView from './MainViews/workout/WorkoutView';
 import PackView from './MainViews/Packs/PackView';
 
 import Swiper from 'react-native-swiper';
@@ -25,6 +24,11 @@ import WelcomeModal from './Modals/WelcomeModal/WelcomeModal'
 
 import LupaController from '../../controller/lupa/LupaController';
 import SearchNavigator from "./Navigators/SearchNavigator";
+
+import {
+  logoutUser
+} from '../../controller/lupa/auth'
+
 class Lupa extends React.Component {
   constructor(props) {
     super(props);
@@ -41,11 +45,11 @@ class Lupa extends React.Component {
 
   componentDidMount = () => {
     this._showWelcomeModal();
-    this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+  //  this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
 
   _showWelcomeModal = async () => {
-  AsyncStorage.setItem('isNewUser', 'false');
+  AsyncStorage.setItem('isNewUser', 'true');
   let _isNewUser = await AsyncStorage.getItem('isNewUser');
   
   switch(_isNewUser)
@@ -64,7 +68,17 @@ class Lupa extends React.Component {
     isNewUser: _isNewUser
   })
 }
+
+_handleWelcomeModalClose = () => {
+  this.setState({ _isNewUser: false })
+  AsyncStorage.setItem('isNewUser', 'false');
+}
   
+_navigateToAuth = async () => {
+  await logoutUser();
+  this.props.navigation.navigate('Auth');
+}
+
   render() {
     const currIndex = this.state.currIndex;
     return (
@@ -76,11 +90,11 @@ class Lupa extends React.Component {
           showsPagination={false}
           index={currIndex}>
         <Dashboard />
-        <WorkoutView />
+        <WorkoutView logoutMethod={this._navigateToAuth}/>
         <PackView />
         <SearchNavigator />
       </Swiper>
-      <WelcomeModal isVisible={this.state.isNewUser} />
+      <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/>
       </>
     );
   }

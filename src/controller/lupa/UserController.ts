@@ -11,10 +11,6 @@ const USER_COLLECTION = LUPA_DB.collection('users');
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
-usersIndex.setSettings({
-    highlightPreTag: '',
-    highlightPostTag: ''
-});
 
 //algoliaUsersIndex.setExtraHeader('X-Forwarded-For', '127.0.0.1');
 
@@ -516,57 +512,102 @@ export default class UserController {
         });
     }
 
-    getNearbyUsers = async (city, state) => {
-        console.log('Cirt: ' + city + " .........." + "Stae: " + state)
-        let results = new Array();
-        let fallbackQuery;
+    getNearbyUsers = async (location) => {
+        
+        return new Promise((resolve, reject) => {
+            let nearbyUsers = new Array();
+            usersIndex.search({
+                query: location.city,
+                attributesToHighlight: ['location'],
+            }, async (err, {hits}) => {
+                if (err) throw reject(err);
 
-        await usersIndex.search({
-            query: city,
-            attributesToHighlight: ['location'],
-        }, async (err, { hits }) => {
-            if (err) throw rejects(err);
-
-            //parse all of the hits first for exact city and state
-            await hits.forEach(async hit => {
-                //check the highlightResults of each each
-                let locationHighlightResult = hit._highlightResult;
-                            //parse all of the hits first for exact city and state
-                            console.log('city looking for: ' + locationHighlightResult.location.city.value.replace('<em>', '').replace('</em>', ''))
-                            console.log('state looking for: ' + locationHighlightResult.location.state.value.replace('<em>' || '</em>', ''))
-                if (locationHighlightResult.location.city.value.replace('<em>', '').replace('</em>', '') == city && locationHighlightResult.location.state.value.replace('<em>', '').replace('</em>', '') == state) {
-                    console.log('found one bye');
-                   await  results.push(hit);
+                //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i)
+                {
+                  let locationHighlightedResult = hits[i]._highlightResult;
+                  let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
+                  if (compare)
+                  {
+                    await nearbyUsers.push(hits[i]);
+                  }
                 }
 
+                               //parse all of ths hits for the city
+                               for (var i = 0; i < hits.length; ++i)
+                               {
+                                 let locationHighlightedResult = hits[i]._highlightResult;
+                                 let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
+                                 if (compare)
+                                 {
+                                   await nearbyUsers.push(hits[i]);
+                                 }
+                               }
+
+                                               //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i)
+                {
+                  let locationHighlightedResult = hits[i]._highlightResult;
+                  let compare = (locationHighlightedResult.location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
+                  if (compare)
+                  {
+                    await nearbyUsers.push(hits[i]);
+                  }
+                }
+
+                resolve(nearbyUsers);
             })
+        })
 
-                        //parse all of the hits for same city but different state
-                       await hits.forEach(async hit => {
-                            let locationHighlightResult = hit._highlightResult;
-                            if (locationHighlightResult.location.city.value.replace('<em>', '').replace('</em>', '') == city && locationHighlightResult.location.state.value.replace('<em>', '').replace('</em>', '') != state) {
-                                console.log('found one here');
-                                await results.push(hit);
-                            }
-                        })
+    }
 
-        });
+    getNearbyTrainers = async (location) => {
+        
+        return new Promise((resolve, reject) => {
+            let nearbyTrainers = new Array();
+            usersIndex.search({
+                query: location.city,
+                attributesToHighlight: ['location'],
+            }, async (err, {hits}) => {
+                if (err) throw reject(err);
 
-        //If we can find at least 6 users then we need to show users in the same state
-        if (results.length == 0 || results.length < 6) {
-         /*   fallbackQuery = getUsersInSameState();
-            results.push(fallbackQuery);
+                //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i)
+                {
+                  let locationHighlightedResult = hits[i]._highlightResult;
+                  let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
+                  if (compare)
+                  {
+                    await nearbyTrainers.push(hits[i]);
+                  }
+                }
 
-            if (results.length == 0 || <6) {
-                //fallbackQuery = getRandomUsers()
-                results.push(fallbackQuery);
-            }*/
+                               //parse all of ths hits for the city
+                               for (var i = 0; i < hits.length; ++i)
+                               {
+                                 let locationHighlightedResult = hits[i]._highlightResult;
+                                 let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
+                                 if (compare)
+                                 {
+                                   await nearbyTrainers.push(hits[i]);
+                                 }
+                               }
 
-            console.log('LUPA: (UserController - getNearbyUsers: Results is 0 or less than 6')
-            console.log(results.length)
-        }
+                                               //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i)
+                {
+                  let locationHighlightedResult = hits[i]._highlightResult;
+                  let compare = (locationHighlightedResult.location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
+                  if (compare)
+                  {
+                    await nearbyTrainers.push(hits[i]);
+                  }
+                }
 
-        return Promise.resolve(results);
+                resolve(nearbyTrainers);
+            })
+        })
+
     }
 
     getUsersInSameState = () => {

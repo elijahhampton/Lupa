@@ -26,11 +26,13 @@ import {
     Switch
 } from 'react-native-paper';
 
+import LogoutButton from '../../../DrawerViews/Profile/components/LogoutButton';
+
 import SafeAreaView from 'react-native-safe-area-view';
 
 import { ListItem } from 'react-native-elements';
 
-import { withNavigation } from 'react-navigation';
+import { withNavigation, NavigationActions, StackActions } from 'react-navigation';
 
 import { logoutUser } from '../../../../../controller/lupa/auth';
 
@@ -186,8 +188,14 @@ class SettingsModal extends React.Component {
     }
     
     _handleUserLogout = async () => {
+        console.log('logout')
         await logoutUser();
-        this.props.navigation.navigate('LoginView');
+        const resetAction = StackActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'Auth' })],
+        });
+
+        this.props.navigation.dispatch(resetAction); 
       }
 
     _navigateToAccountSettings = () => {
@@ -309,10 +317,9 @@ class SettingsModal extends React.Component {
                             })
                         }
                         </List.Section>
-                   
-                    <Button mode="text" compact color="#2196F3" onPress={this._handleUserLogout}>
-                        Log out
-                    </Button>
+        <Button mode="text" compact color="#2196F3" onPress={() => {this._handleUserLogout()}}>
+        Log out
+        </Button>
                 </ScrollView>
                 </SafeAreaView>
                 </Container>

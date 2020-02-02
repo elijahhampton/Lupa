@@ -52,10 +52,18 @@ import { MaterialIcons as MaterialIcon } from '@expo/vector-icons';
 import FollowerModal from '../../Modals/User/FollowerModal';
 import SettingsModal from './components/SettingsModal';
 
+import { connect } from 'react-redux';
+
 let chosenHeaderImage;
 let chosenProfileImage;
 
 let ProfileImage = require('../../../images/background-one.jpg');
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
 
 
 /**
@@ -74,27 +82,7 @@ class ProfileView extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            headerImage: '',
-            profileImage: '',
-            username: '',
-            displayName: '',
-            photoUrl: '',
-            userInterest: [],
-            userExperience: [],
-            userIsTrainer: [],
-            userRating: 0,
-            userGoals: [],
-            myPacks: [],
-            recommendedWorkouts: [],
-            followers: [],
-            following: [],
-            sessionsCompleted: undefined,
-            isEditingProfile: false,
-            createSessionModalIsOpen: false,
-            userUUID: this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid,
-            followerModalIsOpen: false,
-            refreshing: false,
-            settingsModalIsOpen: false,
+            
         }
     }
 
@@ -110,59 +98,7 @@ class ProfileView extends React.Component {
     }
 
     setupProfileInformation = async () => {
-        let username, displayName, photoUrl, interestData, experienceData, isTrainer, followers, following, sessionsCompleted, userRatingIn;
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'display_name').then(result => {
-            displayName = result;
-        })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'username').then(result => {
-            username = result;
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'photo_url').then(result => {
-            photoUrl = result;
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'sessions_completed').then(result => {
-            sessionsCompleted = result;
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'following').then(result => {
-            following = result;
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'followers').then(result => {
-            followers = result;
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'isTrainer').then(result => {
-            isTrainer = result;
-        });
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'interest').then(result => {
-            interestData = result;
-        });
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'experience').then(result => {
-            experienceData = result;
-        });
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'rating').then(result => {
-            usingRatingIn = result;
-        });
-
-        await this.setState({
-            username: username,
-            displayName: displayName,
-            photoUrl: photoUrl,
-            userExperience: experienceData,
-            userInterest: interestData,
-            userIsTrainer: isTrainer,
-            followers: followers,
-            following: following,
-            sessionsCompleted: sessionsCompleted,
-            userRating: userRatingIn,
-        });
     }
 
     _chooseHeaderFromCameraRoll = async () => {
@@ -198,20 +134,20 @@ class ProfileView extends React.Component {
     }
 
     mapInterest = () => {
-        return this.state.userInterest.length == 0 ?
+       /* return this.state.userInterest.length == 0 ?
             <Caption>
                 Specializations and strengths that you add to your fitness profile will appear here.
-                                </Caption> : this.state.userInterest.map(interest => {
+                                </Caption> : this.props.lupa_data.Users.currUserData.interest.map(interest => {
                     return (
                         <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
                             {interest}
                         </Chip>
                     );
-                })
+                })*/
     }
 
     mapExperience = () => {
-        return this.state.userExperience.length == 0 ?
+       /* return this.state.userExperience.length == 0 ?
             <Caption>
                 Experience that you add to your fitness profile will appear here.
     </Caption> : <View>
@@ -233,7 +169,7 @@ class ProfileView extends React.Component {
                 <Text>
                     {this.state.userExperience.years_as_trainer}
                 </Text>
-            </View>
+            </View>*/
     }
 
     mapPacks = () => {
@@ -241,7 +177,7 @@ class ProfileView extends React.Component {
     }
 
     showRating = () => {
-        return <Rating ratingCount={this.state.userRating} imageSize={10} />
+        return <Rating showReadOnlyText={false} readonly ratingTextColor="black" showRating={true} ratingCount={this.props.lupa_data.Users.currUserData.rating} imageSize={80} />
     }
 
     setupProfileInformation = async () => {
@@ -253,10 +189,10 @@ class ProfileView extends React.Component {
     }
 
     mapGoals = () => {
-        this.state.userGoals.length == 0 ?
+       /* this.state.userGoals.length == 0 ?
             <Caption>
                 You haven't set any goals.  Visit your fitness profile in the settings tab to add one.
-        </Caption> : null
+        </Caption> : null*/
     }
 
     mapRecommendedWorkouts = () => {
@@ -296,12 +232,12 @@ class ProfileView extends React.Component {
                     </ImageBackground>
                 </Surface>
 
-                <ScrollView showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
+                <ScrollView contentContainerStyle={{flexGrow: 2, flexDirection: 'column', justifyContent: 'space-between'}} showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
                     <View style={styles.user}>
                         <View style={styles.userInfoContainer}>
                             <View style={styles.userInfo}>
                                 <Headline>
-                                    {this.LUPA_CONTROLLER_INSTANCE.getUserDisplayName()}
+                                    {this.props.lupa_data.Users.currUserData.display_name}
                                 </Headline>
                                 {
                                     true && this.state.isTrainer ? <Text style={{ fontSize: 12 }}>
@@ -312,9 +248,9 @@ class ProfileView extends React.Component {
                                 }
                             </View>
                             <View style={styles.alignCenterColumn}>
-                                <Avatar size={40} source={this.LUPA_CONTROLLER_INSTANCE.getUserPhotoURL()} rounded showEditButton={this.state.isEditingProfile} containerStyle={{}} />
+                                <Avatar size={40} source={{uri: this.props.lupa_data.Users.currUserData.photo_url}} rounded showEditButton={this.state.isEditingProfile} containerStyle={{}} />
                                 <Text style={styles.userInfoText}>
-                                    {this.state.username}
+                                    {this.props.lupa_data.Users.currUserData.username}
                                 </Text>
 
                             </View>
@@ -326,7 +262,7 @@ class ProfileView extends React.Component {
                             <TouchableOpacity onPress={this._navigateToFollowers}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                        {this.state.followers.length}
+                                        {this.props.lupa_data.Users.currUserData.followers.length}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Followers
@@ -337,7 +273,7 @@ class ProfileView extends React.Component {
                             <TouchableOpacity onPress={this._navigateToFollowers}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                        {this.state.following.length}
+                                        {this.props.lupa_data.Users.currUserData.following.length}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Following
@@ -348,7 +284,7 @@ class ProfileView extends React.Component {
                             <TouchableOpacity>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                        {this.state.sessionsCompleted}
+                                        {this.props.lupa_data.Users.currUserData.sessionsCompleted}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Sessions Completed
@@ -357,19 +293,17 @@ class ProfileView extends React.Component {
 
                             </TouchableOpacity>
 
-                            <View style={styles.alignCenterColumn}>
-                                <View style={{ margin: 3 }}>
-                                    {this.showRating()}
-                                </View>
-                                <Text style={styles.userAttributeText}>
-                                    Rating
-                                </Text>
-                            </View>
-
                         </View>
                     </View>
 
                     <Timecards isEditing={this.state.isEditingProfile} />
+
+                    <View style={{width: '100%', justifyContent: "center", alignItems: "center"}}>
+                        <Text style={{fontWeight: 'bold'}}>
+                            Elijah Hampton's Rating
+                        </Text>
+                        {this.showRating()}
+                    </View>
 
                     {
                         true && this.state.isTrainer ?
@@ -550,4 +484,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default withNavigation(ProfileView);
+export default connect(mapStateToProps)(withNavigation(ProfileView));

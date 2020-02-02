@@ -15,9 +15,11 @@ const PACKS_EVENT_COLLECTION = LUPA_DB.collection('pack_events');
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const packsIndex = algoliaIndex.initIndex("dev_PACKS");
+const tmpIndex = algoliaIndex.initIndex("tmpDev_PACKS");
 
 import UserController from './UserController';
 import { getLupaPackStructure, getLupaPackEventStructure } from '../firebase/collection_structures';
+import { rejects } from 'assert';
 let USER_CONTROLLER_INSTANCE;
 
 class PacksController {
@@ -62,19 +64,38 @@ class PacksController {
         pack_rating: pack.pack_rating,
         pack_sessions_completed: pack.pack_sessions_completed,
         pack_time_created: pack.pack_time_created,
+        pack_location: pack.pack_location,
       }
 
       records.push(packData);
 
       });
 
-      packsIndex.addObjects(records, (err, content) => {
+
+      algoliaIndex.copyIndex(packsIndex.indexName, tmpIndex.indexName, [
+        'settings',
+        'synonyms',
+        'rules'
+      ]).then(({ taskID }) =>
+        tmpIndex.waitTask(taskID)
+      ).then(() => {
+        const objects = records;
+        return tmpIndex.addObjects(objects);
+      }).then(() => 
+        algoliaIndex.moveIndex(tmpIndex.indexName, packsIndex.indexName)
+      ).catch(err => {
+        console.error(err);
+      });
+
+
+
+     /* packsIndex.addObjects(records, (err, content) => {
         if (err) {
           console.log('Error while indexing packs into Algolia: ' + err);
         }
 
         console.log('Completed Packs Indexing');
-      });
+      });*/
     });
   }
 
@@ -153,13 +174,19 @@ class PacksController {
     return Promise.resolve(packInformation);
   }
 
-  getPackEventsByUUID = async (uuid) => {
-    let packEvents;
-    await PACKS_EVENT_COLLECTION.doc(uuid).get().then(result => {
-      packEvents = result.data();
-      packEvents.id = result.id;
-    });
-    return Promise.resolve(packEvents);
+  getPackEventsByUUID = async (arrOfUUIDS) => {
+    let packEvents = [];
+    for (let i = 0; i < arrOfUUIDS.length; ++i)
+    {
+      await PACKS_EVENT_COLLECTION.doc(arrOfUUIDS[i]).get().then(result => {
+        let packEvent = result.data();
+        packEvent.id = result.id;
+        packEvents.push(packEvent);
+       
+      });
+    }
+  
+      return Promise.resolve(packEvents);
   }
 
   createPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
@@ -313,6 +340,195 @@ class PacksController {
     console.log(isAttending.valueOf() + 'BOOOOOOOOOOOOOOOO')
     return Promise.resolve(isAttending);
   }
+
+  /************************* Pack Explore Page Functions ************************************/
+//Subscription based packs
+getSubscriptionPacksBasedOnLocation = async location => {
+  console.log('now subscriptions')
+  let fallbackQuery;
+  let resultArray = [];
+  let subscriptionBasedPacks = new Array();
+
+  return new Promise((resolve, reject) => {
+    packsIndex.search({
+      query: location.city,
+      attributesToHighlight: ['pack_isSubscription'],
+    }, async (err, {hits}) => {
+      if (err) throw rejects(err);
+  
+  
+      console.log(hits);
+      //parse all of the hits first for the city
+      for (var i = 0; i < hits.length; ++i)
+      {
+          await subscriptionBasedPacks.push(hits[i]);
+      }
+
+      subscriptionBasedPacks.filter((val, index, arr) => {
+        return val.pack_isDefault != true;
+      })
+      
+    //resolve the promise with all of the packs
+    console.log('the lenth of subscri' + subscriptionBasedPacks.length)
+      resolve(subscriptionBasedPacks);
+    });
+  });
 }
+
+
+//No subscription packs
+getExplorePagePacksBasedOnLocation = async location => {
+  let fallbackQuery;
+  let resultArray = [];
+  let explorePagePacks = new Array();
+
+  return new Promise((resolve, reject) => {
+    packsIndex.search({
+      query: location.city,
+      attributesToHighlight: ['pack_location'],
+    }, async (err, {hits}) => {
+      if (err) throw rejects(err);
+  
+  
+  
+      //parse all of the hits first for the city
+      for (var i = 0; i < hits.length; ++i)
+      {
+        let locationHighlightedResult = hits[i]._highlightResult;
+        let compare = (locationHighlightedResult.pack_location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
+        if (compare)
+        {
+          console.log('here')
+          await explorePagePacks.push(hits[i]);
+          console.log(' ummm' + explorePagePacks.length)
+        }
+      }
+
+
+      //parse all of the hits for the state
+      for (var i = 0; i < hits.length; ++i)
+      {
+        let locationHighlightedResult = hits[i]._highlightResult;
+        let compare = (locationHighlightedResult.pack_location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
+        if (compare)
+        {
+          console.log('here')
+          await explorePagePacks.push(hits[i]);
+          console.log(' ummm' + explorePagePacks.length)
+        }
+      }
+
+      //parse all of the hits for the country
+      for (var i = 0; i < hits.length; ++i)
+      {
+        let locationHighlightedResult = hits[i]._highlightResult;
+        let compare = (locationHighlightedResult.pack_location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
+        if (compare)
+        {
+          console.log('here')
+          await explorePagePacks.push(hits[i]);
+          console.log(' ummm' + explorePagePacks.length)
+        }
+      }
+
+      //next we add a bunch of packs to pad incase no packs are near the user
+      //TODO: we need to randomize these packs so the user doesnt see the same thing everything
+      const browser = await packsIndex.browseAll();
+    await browser.on('result', content => {
+      content.hits.forEach(hit => {
+        if (hit.pack_isDefault == false && hit.pack_isSubscription == false)
+        {
+          explorePagePacks.push(hit);
+        }
+      })
+    });
+  
+    browser.on('error', err => {
+      throw err;
+    });
+  
+    browser.stop();
+
+    //here we 
+      
+    //resolve the promise with all of the packs
+      resolve(explorePagePacks);
+    });
+  });
+}
+
+  //First we search for packs based on city
+
+  /*
+          //parse all of the hits first for exact match to the query
+        hits.forEach(hit => {
+          let locationHighlightedResult = hit._highlightResult;
+          if (locationHighlightedResult.pack_location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
+          {
+            explorePagePacks.push(hit);
+            console.log(explorePagePacks.length)
+          }
+        });  
+
+
+            //parse all of the hits first for exact match to the query
+     hits.forEach(hit => {
+      let locationHighlightedResult = hit._highlightResult;
+      if (locationHighlightedResult.pack_location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
+      {
+        explorePagePacks.push(hit);
+        console.log(explorePagePacks.length)
+      }
+    });  
+
+    const browser = await packsIndex.browseAll();
+    await browser.on('result', content => {
+      content.hits.forEach(hit => {
+        if (hit.pack_isDefault == false && hit.pack_isSubscription == false)
+        {
+          console.log(hit);
+          explorePagePacks.push(hit);
+        }
+      })
+    });
+  
+    browser.on('error', err => {
+      throw err;
+    });
+  
+    browser.stop();
+
+    console.log(explorePagePacks.length + 'sdasds')
+    return Promise.resolve(explorePagePacks);
+    */
+
+
+  /*
+  const browser = await packsIndex.browseAll();
+  await browser.on('result', content => {
+    content.hits.forEach(hit => {
+      if (hit.pack_isDefault == false && hit.pack_isSubscription == false)
+      {
+        console.log(hit);
+        explorePagePacks.push(hit);
+      }
+    })
+  });
+
+  browser.on('error', err => {
+    throw err;
+  });
+
+  browser.stop();
+*/
+  //console.log('before exiting: ' + explorePagePacks.length)
+  //return Promise.resolve(explorePagePacks);
+
+//Subscription packs
+getSubScriptionBasedPacksBasedOnLocation = async location => {
+
+}
+}
+/******************************************************************************************/
 
 export default PacksController;

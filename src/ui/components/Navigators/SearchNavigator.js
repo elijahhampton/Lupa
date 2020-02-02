@@ -37,7 +37,7 @@ const UserViewNavigator =  createStackNavigator(
     },
 },
 {
-    initialRouteName: 'SessionsView'
+    initialRouteName: 'SearchView'
 })
 
 export default createAppContainer(UserViewNavigator);

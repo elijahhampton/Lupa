@@ -82,7 +82,7 @@ export default class PackChatModal extends React.Component{
                     showAvatarForEveryMessage={true} 
                     placeholder="Send a message to your pack!" 
                     isTyping={true} 
-                    renderUsernameOnMessage={true} 
+                    renderUsernameOnMessage={true}
                     />
             </Modal>
         );

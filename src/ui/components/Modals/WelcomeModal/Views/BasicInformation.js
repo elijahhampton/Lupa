@@ -70,14 +70,13 @@ export default class BasicInformation extends React.Component {
             <View style={styles.root}>
                 <View style={styles.instructionalTextContainer}>
                     <Text style={styles.instructionalText}>
-                        Before we take you into the app we need a little information. 
-                         Don't worry you can save most of it for later.
+                         You're almost there!
                     </Text>
                 </View>
 
                 <View style={styles.userInput}>
                     {
-                       <Avatar showEditButton rounded size={200} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
+                       <Avatar showEditButton rounded size={150} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
                     }
                 </View>
                 

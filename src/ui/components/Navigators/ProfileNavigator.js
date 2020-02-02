@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { createAppContainer } from 'react-navigation';
+import { createAppContainer, createSwitchNavigator} from 'react-navigation';
 
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -8,7 +8,7 @@ import SettingsStackNavigator from './SettingsNavigator';
 import FollowerView from '../Modals/User/FollowerModal';
 import ProfileView from '../DrawerViews/Profile/ProfileView';
 
-const ProfileNavigator = createStackNavigator(
+const ProfileNavigator = createSwitchNavigator(
     {
     Profile: {
         screen: ProfileView,

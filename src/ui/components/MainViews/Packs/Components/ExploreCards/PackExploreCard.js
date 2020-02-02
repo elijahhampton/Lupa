@@ -38,7 +38,7 @@ export const SmallPackCard = (props) => {
     return (
         <TouchableOpacity onPress={this._setShowPack}>
         <Surface style={styles.packCards}>
-        <Image style={{width: "100%", height: "100%", borderRadius: 20}} resizeMode={ImageResizeMode.cover} source={props.image} />
+        <Image style={{width: "100%", height: "100%", borderRadius: 20}} resizeMode={ImageResizeMode.cover} source={{ uri: props.image }} />
         </Surface>
         <PackInformationModal isOpen={showPack} packUUID={packUUID} closeModalMethod={this.handleClosePack}/>
         </TouchableOpacity>
@@ -82,7 +82,7 @@ export const TrainerFlatCard = (props) => {
     return (
         <TouchableOpacity onPress={this._setShowUserModal}>
                     <Card style={styles.card}>
-<Card.Cover style={{height: 180}} source={props.image} />
+<Card.Cover style={{height: 180}} source={{ uri: props.image }} />
 <Card.Actions style={{height: "auto", flexDirection: "column", alignItems: "flex-start"}}>
     <View style={{paddingTop: 3, paddingBottom: 3}}>
     <Text style={styles.text}>
@@ -100,8 +100,6 @@ export const TrainerFlatCard = (props) => {
     </Caption>
 </Card.Actions>
 </Card>
-
-<UserProfileModal isOpen={showUserModal} uuid={trainerUUID} closeModalMethod={() => setShowUserModal(false)}/>
         </TouchableOpacity>
     );
 }

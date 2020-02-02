@@ -32,10 +32,6 @@ export default class UserDisplayCard extends React.Component {
         }
     }
 
-    handleCloseUserModal = () => {
-        this.setState({ showUserProfileModal: false })
-    }
-
     componentDidMount = async () => {
       let userImageIn, userDisplayNameIn;
 
@@ -53,11 +49,19 @@ export default class UserDisplayCard extends React.Component {
         })
     }
 
+    
+    handleCloseUserModal = () => {
+        this.setState({ showUserProfileModal: false })
+    }
+
+    _navigateToUserProfile = () => {
+        
+    }
+
     render() {
         return (
             <TouchableOpacity onPress={() => this.setState({ showUserProfileModal: true })}>
                 <Avatar.Image source={{uri: this.state.userImage}} />
-<UserProfileModal isOpen={this.state.showUserProfileModal} uuid={this.state.userUUID} closeModalMethod={this.handleCloseUserModal}/>
 </TouchableOpacity>
         )
     }

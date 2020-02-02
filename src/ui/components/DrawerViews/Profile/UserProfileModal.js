@@ -300,7 +300,9 @@ export default class UserProfileModal extends React.Component {
     }
 
     _navigateToSessionsView = () => {
-        this.props.navigation.navigate('SessionsView');
+        this.props.navigation.navigate('SessionsView', {
+            userUUID: this.state.userUUID
+        });
     }
 
     render() {

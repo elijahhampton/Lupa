@@ -14,18 +14,22 @@ import { MyPacksCard } from '../Packs/Components/PackCards';
 import LupaController from '../../../../controller/lupa/LupaController';
 import PackModal from '../../Modals/PackModal/PackModal';
 
-export default class MyPacks extends React.Component {
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
+
+class MyPacks extends React.Component {
     constructor(props) {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            currUserPacks: [],
-            indexToShow: 0,
-            packsModalOpen: false,
-            refreshing: false,
-            dummyToggle: false
+            
         }
 
         this.loadCurrUserPacks = this.loadCurrUserPacks.bind(this);
@@ -47,26 +51,27 @@ export default class MyPacks extends React.Component {
     }
 
     setupMyPacks = async () => {
-        let packsToShow;
+        /*let packsToShow;
         await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
              packsToShow = result;
          });
  
          await this.setState({
              currUserPacks: packsToShow,
-         });
+         });*/
     }
 
     loadCurrUserPacks = () => {
-      return this.state.currUserPacks.map(pack => {
-           return (
-            <MyPacksCard packUUID={pack.id} title={pack.pack_title} numMembers={pack.pack_members.length} image={pack.pack_image} />
-           );
-       });
+
+        return this.props.lupa_data.Packs.currUserPacksData.map(pack => {
+            return (
+                <MyPacksCard title={pack.pack_title} packUUID={pack.id} numMembers={pack.pack_members.length} image={pack.pack_image} />
+            )
+        })
     }
 
     render() {
-        let numPacks = this.state.currUserPacks.length;
+        let numPacks = this.props.lupa_data.Packs.currUserPacksData.length;
         return (
             <View style={{flex: 1, backgroundColor: '#FAFAFA'}}>
                 <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ backgroundColor: "#FAFAFA", flexDirection: "row", flexWrap: 'wrap', alignItems: "center" }} refreshControl={<RefreshControl onRefresh={() => alert('Refreshing')} refreshing={this.state.refreshing}/>}>
@@ -93,3 +98,5 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
 })
+
+export default connect(mapStateToProps)(MyPacks);

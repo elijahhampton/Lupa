@@ -13,42 +13,22 @@ import {
     View,
     Text,
     ScrollView,
-    TouchableOpacity,
-    TextInput,
-    ViewPagerAndroid,
-    Dimensions,
-    Image,
     ImageBackground,
-    StatusBar
+    RefreshControl,
 } from "react-native";
 
 import {
-    Header,
-    Body,
-    Left,
-    Right,
-    Item,
-    Icon,
-} from 'native-base';
-
-import {
-    FAB,
     Headline,
-    Card,
-    Subheading,
-    Title,
-    Caption,
-    IconButton,
     Surface,
-    Avatar,
     Button,
-    Searchbar
+    Divider,
 } from 'react-native-paper';
 
-import BackgroundImageOne from '../../images/background-one.jpg';
-import BackgroundImageTwo from '../../images/background-two.jpg';
-import { LUPA_AUTH } from '../../../controller/firebase/firebase';
-import LupaController from '../../../controller/lupa/LupaController';
+import BackgroundImageTwo from '../../../images/background-two.jpg';
+import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
+
+import WorkoutComponent from './components/WorkoutComponent';
+import { WORKOUT_MODALITY } from '../../../../controller/lupa/common/types'
 
 import { connect } from 'react-redux';
 
@@ -62,15 +42,22 @@ class WorkoutView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+        this.state = {
+            isRefreshing: false
+        }
+    }
 
+    _handleOnRefresh = () => {
+        this.setState({ isRefreshing: true })
+        alert('Refreshing Workouts');
+        this.setState({ isRefreshing: false })
     }
 
     render() {
         return (
             <View style={styles.root}>
                 <View style={styles.imageView}>
-                    <ImageBackground source={BackgroundImageTwo} style={styles.image} resizeMode='cover'>
+                    <ImageBackground source={BackgroundImageTwo} style={styles.image} resizeMode={ImageResizeMode.contain} resizeMethod="resize">
                         <View style={styles.overlay}>
                             <View style={{ display: "flex" }}>
                                 <Text style={{ color: "white", fontSize: 50, fontWeight: "200" }}>
@@ -89,15 +76,10 @@ class WorkoutView extends React.Component {
                                 </Text>
                             </View>
 
-                            <View style={{ alignSelf: "center", width: "100%" }}>
-                                <Searchbar placeholder="Search workouts"
-                                onChangeText={() => alert('Searching...')}
-                                style={{borderRadius: 25}} />
-                            </View>
 
                             <View style={styles.buttonScroll}>
-                                <ScrollView horizontal={true}>
-                                    <Button mode="text" color="white" compact>
+                                <ScrollView horizontal={true} shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
+                                    <Button onPress={this.props.logoutMethod} mode="text" color="white" compact>
                                         All Workouts
                                     </Button>
                                     <Button mode="text" color="white" compact>
@@ -126,9 +108,30 @@ class WorkoutView extends React.Component {
                 </View>
 
                 <Surface style={styles.workoutSurface}>
-                    <ScrollView>
-
+                    <View style={{width: '100%', height: '100%', flex: 1, borderTopLeftRadius: 25, borderTopRightRadius: 25, backgroundColor: "#FAFAFA"}}>
+                    <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this._handleOnRefresh}/>}>
+                        <View style={{padding: 10, width: '100%', height: '100%', flex: 1, borderTopLeftRadius: 25, borderTopRightRadius: 25,}}>
+                            <Headline style={{fontWeight: "500"}}>
+                                All Workouts
+                            </Headline>
+                        </View>
+                        <Divider />
+                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.CALISTHENICS} />
+                        <Divider />
+                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.CALISTHENICS} />
+                        <Divider />
+                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.METABOLIC} />
+                        <Divider />
+                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.WEIGHTLIFTING} />
+                        <Divider />
+                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.CALISTHENICS} />
+                        <Divider />
+                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.METABOLIC} />
+                        <Divider />
+                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.METABOLIC} />
+                        <Divider />
                     </ScrollView>
+                    </View>
                 </Surface>
             </View>
         );
@@ -142,8 +145,7 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0,111,230,0.2)",
     },
     buttonScroll: {
-        display: "flex",
-        bottom: 20
+       
     },
     contentView: {
         display: "flex",
