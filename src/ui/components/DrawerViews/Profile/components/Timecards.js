@@ -17,7 +17,15 @@ import { Feather as FeatherIcon } from '@expo/vector-icons';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
 
-export default class Timecards extends React.Component {
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
+class Timecards extends React.Component {
     constructor(props) {
         super(props);
 
@@ -80,7 +88,7 @@ export default class Timecards extends React.Component {
                         this.state.mondayTimes.length == 0 ?                     <Caption style={styles.caption}>
                         You have not added any time slots for availability in your fitness profile.
                     </Caption> :
-                      this.state.mondayTimes.map(time => {
+                      this.props.lupa_data.Users.currUserData.preferred_workout_times.Monday.map(time => {
 
                           return <Caption style={{color: "white"}}>{time}</Caption>
                       })
@@ -262,3 +270,5 @@ const styles = StyleSheet.create({
         flexDirection: "column",
     }
 })
+
+export default connect(mapStateToProps)(Timecards);

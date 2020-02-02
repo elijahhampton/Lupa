@@ -6,6 +6,8 @@ import { createStackNavigator } from 'react-navigation-stack';
 import SettingsView from '../DrawerViews/Profile/components/SettingsModal';
 import AccountSettingsView from '../DrawerViews/Profile/components/AccountSettingsView';
 import PaymentSettingsView from '../DrawerViews/Profile/Settings/Payments/PaymentSettings';
+import LoginView from '../MainViews/login/LoginView';
+import AuthenticationView from './AuthenticationNavigator';
 
 const SettingsStackNavigator = createStackNavigator({
     SettingsView: {
@@ -31,7 +33,7 @@ const SettingsStackNavigator = createStackNavigator({
             header: null,
             gesturesEnabled: false,
         })
-    }
+    },
 },
     {
         initialRouteName: 'SettingsView'

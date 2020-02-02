@@ -41,7 +41,7 @@ export default class WorkoutTimes extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-between'}}>
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
                 <Button mode="text" color="#E0E0E0">
                     Take me into the app
                 </Button>
@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 25,
-        fontWeight: "600"
+        fontSize: 20,
+        fontWeight: "500"
     },
     userInput: {
         flex: 2,

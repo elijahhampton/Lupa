@@ -34,6 +34,13 @@ export enum PACK_EVENT_STAGE {
     EXPIRED='expired',
 }
 
+/* Lupa Modalities */
+export enum WORKOUT_MODALITY {
+    CALISTHENICS="Calisthenics",
+    WEIGHTLIFTING="Weightlifting",
+    METABOLIC="Metabolic"
+}
+
 /* LupaNotificationDataStructure */
 export type LupaNotificationStructure = {
     user: "",
@@ -114,11 +121,13 @@ export type LupaHealthDataStructure = {
 export type LupaSessionStructure = {
     attendeeOne: "",
     attendeeTwo: "",
+    requesterUUID: "",
     date: any,
+    time_periods: any,
     name: String,
     description: String,
     sessionStatus: any,
-    lastSuggestedBy: {}
+    time_created: { date: any, time: any }
 };
 
 /* LupaPackEventDataStructure */

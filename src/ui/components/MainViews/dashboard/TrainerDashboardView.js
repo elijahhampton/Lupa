@@ -30,14 +30,7 @@ import {
     Button
 } from 'react-native-paper';
 
-import {
-    LineChart,
-    ProgressChart
-} from 'react-native-chart-kit';
-
-import {
-    LinearGradient
-} from 'expo-linear-gradient';
+import { Pagination } from 'react-native-snap-carousel';
 
 import { Feather as Icon } from '@expo/vector-icons';
 
@@ -54,29 +47,38 @@ import LupaController from '../../../../controller/lupa/LupaController';
 
 const AppLogo = require('../../../images/applogo.png')
 
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
+
 class TrainerDashboardView extends React.Component {
     constructor(props) {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-        this.fetchSessions();
 
         this.state = {
             refreshing: false,
             sessionData: [],
+            packEventsData: [],
         }
 
     }
 
-    componentDidMount() {
-        this.fetchSessions();
+    componentDidMount = async () => {
+        await this.fetchSessions();
+        await this.fetchPackEvents();
     }
 
     _onRefresh = () => {
         this.setState({refreshing: true});
-        this.fetchSessions().then(() => {
-            this.setState({ refreshing: false });
-        })
+        this.fetchSessions().then(() => this.fetchPackEvents().then(() => {
+            this.setState({refreshing: false});
+        }))
       }
 
       /**
@@ -93,6 +95,27 @@ class TrainerDashboardView extends React.Component {
       }
 
       /**
+       * Fetch Pack Events
+       */
+      fetchPackEvents = async () => {
+          console.log('start');
+          let currentUserPacks = [];
+
+          await this.props.lupa_data.Packs.currUserPacksData.forEach(pack => {
+              currentUserPacks.push(pack.id);
+          })
+
+          await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(currentUserPacks).then(result => {
+              this.setState({
+                  packEventsData: result
+              });
+          });
+
+
+          console.log('end')
+      }
+
+      /**
        * Populate Sessions
        * 
        * Populate the sessions section with any sessions pending that this user might have.
@@ -100,59 +123,57 @@ class TrainerDashboardView extends React.Component {
        * TODO: Pash in session UUID and populate inside of container
        */
       populateSessions = () => {
+          console.log('Sessions length is : ' + this.state.sessionData.length)
           let attendeeTwoDisplayName;
           let attendeeOneDisplayName;
           return this.state.sessionData.map(session => {
-        this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(session.sessionData.attendeeOne, 'display_name').then(res => {
-                attendeeOneDisplayName = res;
-            })
-            //Convert each session UUID to its display name for attendeeTwo
-            this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(session.sessionData.attendeeTwo, 'display_name').then(res => {
-                attendeeTwoDisplayName = res;
-            });
+              let sessionDate = session.sessionData.date;
+              let date = sessionDate.split("-")
+              let parsedDate = date[0] + " " + date[1] + "," + date[2];
               //Return a session notification container
               //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
               return (
-                  <>
-                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
-                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
-                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
-                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={session.sessionData.date} />
-              </>
+                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus}/>
               )
           })
       }
 
       populatePackEvents = () => {
-          return (
-              <>
-              <PackEventNotificationContainer />
-              <PackEventNotificationContainer />
-              <PackEventNotificationContainer />
-              <PackEventNotificationContainer />
-              <PackEventNotificationContainer />
-              </>
-          )
+       /*   let totalPackEvents = [];
+          console.log('but the state lenght is: ' + this.state.packEventsData.length)
+          for (let i = 0; i < this.state.packEventsData.length; ++i)
+          {
+              let packsPackEventData = this.state.packEventsData[i];
+              console.log('nigga we made it!')
+              let packsEvents = packsPackEventData.events;
+              totalPackEvents.push(packsEvents);
+          }
+
+          let actualEvents = [];
+
+        totalPackEvents.forEach(packEvent => {
+              actualEvents.push(<PackEventNotificationContainer packImage={packEvent.pack_event_image} packEventTitle={packEvent.pack_event_title} packEventDate={packEvent.pack_event_date} />)
+          })
+
+          return actualEvents;*/
       }
 
     render() {
         return (
-                <SafeAreaView style={{flex: 1, padding: 5,  backgroundColor: "#64B5F6"}}>
-                <ScrollView contentContainerStyle={styles.dashboardContent} showsVerticalScrollIndicator={false} refreshControl={
+                <SafeAreaView style={{flex: 1, padding: 5,  backgroundColor: "#2196F3"}}>
+                <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl
             refreshing={this.state.refreshing}
             onRefresh={this._onRefresh}
           />}>  
 
-          <View style={{flex: 1}}>
-          <View style={{justifyContent: "center", flexDirection: 'row', alignItems: 'center', margin: 10, width: "100%", height: "auto"}}>
-                        <Image source={AppLogo} style={{width: 120, height: 120}} />
-                        <Text style={{fontSize: 50, fontWeight: '600', color: 'white'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', margin: 10, width: "100%", height: "auto"}}>
+                        <IconButton icon="menu" style={{alignSelf: "flex-start"}} onPress={() => this.props.navigation.openDrawer()}/>
+                        <Text style={{fontSize: 50, fontWeight: '600', color: 'white', alignSelf: "center"}}>
                             Lupa
                         </Text>
                         </View>    
 
-            <View style={{margin: 5, marginBottom: 15}}>
             <View>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
@@ -165,9 +186,11 @@ class TrainerDashboardView extends React.Component {
 
                         <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
                         {
-                            //this.populateSessions()
+                            this.populateSessions()
                         }
                         </ScrollView>
+
+                        <Pagination dotColor="#1A237E" dotsLength={5} activeDotIndex={0}/>
                     </View>
 
                     <View>
@@ -178,17 +201,17 @@ class TrainerDashboardView extends React.Component {
                         <Button mode="text" color="white">
                             View all
                         </Button>
+
                 </View>
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                        {/*
                             this.populatePackEvents()
-                        }
+                        */}
                         </ScrollView>
+                        <Pagination dotColor="#1A237E" dotsLength={5} activeDotIndex={0}/>
                     </View>
 
             <LupaCalendar />
-            </View>
-          </View>
 
                     <View>
                         <Text style={{fontSize: 20, fontWeight: "500", color: "white"}}>
@@ -200,7 +223,7 @@ class TrainerDashboardView extends React.Component {
                         </Caption>
                         <TouchableWithoutFeedback>
                         <Caption style={{color: "white"}}>
-                            {" "} goals
+                            goals
                         </Caption>
                         </TouchableWithoutFeedback>
                         <Caption>
@@ -228,7 +251,7 @@ class TrainerDashboardView extends React.Component {
                         </View>
                         <View>
                             <Caption>
-                                You are currently not offering any pack offers.
+                                You are not currently leading any premium packs.  Visit the Packs section to start one.
                             </Caption>
                         </View>
 
@@ -241,6 +264,9 @@ class TrainerDashboardView extends React.Component {
 
 const styles = StyleSheet.create({
     scrollView: {
+        flexGrow: 2,
+        justifyContent: "space-between",
+        flexDirection: 'column',
     },
     charts: {
         flexDirection: "column",
@@ -258,4 +284,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default TrainerDashboardView;
+export default connect(mapStateToProps)(TrainerDashboardView);

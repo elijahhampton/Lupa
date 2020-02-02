@@ -120,11 +120,11 @@ export default class ChooseUsername extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <SafeAreaView style={{flex: 1, padding: 10, justifyContent: 'space-evenly'}}>
+                <SafeAreaView style={{flex: 1, padding: 10, justifyContent: 'space-evenly',}}>
 
                 <View style={styles.instructionalTextContainer}>
                     <Text style={styles.instructionalText}>
-                        Welcome to Lupa.  The fitness app for preventative health care.
+                        Before we take you into the app we need a little information.  Don't worry you can finish most of it at a later time.
                     </Text>
                 </View>
 
@@ -179,6 +179,7 @@ export default class ChooseUsername extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
+        backgroundColor: "white"
     },
     textInput: {
         width: "95%",
@@ -196,8 +197,8 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 25,
-        fontWeight: "600"
+        fontSize: 15,
+        fontWeight: "500"
     },
     userInput: {
         height: "20%",

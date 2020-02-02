@@ -19,13 +19,21 @@ import {
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
+import { connect } from 'react-redux';
+
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import { SmallPackCard, SubscriptionPackCard, TrainerFlatCard } from './Components/ExploreCards/PackExploreCard';
 
 const windowWidth = Dimensions.get('window').width;
 
-export default class Explore extends React.Component {
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
+ class Explore extends React.Component {
     constructor(props) {
         super(props);
 
@@ -42,50 +50,38 @@ export default class Explore extends React.Component {
         }
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
         console.log('componetn did munt called VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
-        this.setupExplorePage()
+       await this.setupExplorePage()
     } 
 
     setupExplorePage = async () => {
         let subscriptionPacksIn, trainersIn, explorePagePacksIn, usersInAreaIn, currUsersLocationIn, tempUsersLocation;
-
-        const currentUserUUID = this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(currentUserUUID, 'location').then(result => {
-            currUsersLocationIn = result;
-            tempUsersLocation = result;
-        })
-
-        //get nearby users
-        await this.LUPA_CONTROLLER_INSTANCE.getNearbyUsers(tempUsersLocation.city, tempUsersLocation.state).then(results => {
-            usersInAreaIn = results;
-        })
-
-        //get trainers
-        await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
-            trainersIn = result;
-        })
-
-        //get global packs
-        await this.LUPA_CONTROLLER_INSTANCE.getExplorePagePacks().then(result => {
+        const currUserLocation = this.props.lupa_data.Users.currUserData.location;
+        await this.LUPA_CONTROLLER_INSTANCE.getExplorePagePacksBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
             explorePagePacksIn = result;
         });
 
-        //get subscription packs
-        await this.LUPA_CONTROLLER_INSTANCE.getSubscriptionPacks().then(result => {
+        await this.LUPA_CONTROLLER_INSTANCE.getUsersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
+            usersInAreaIn = result;
+        });
+        
+        await this.LUPA_CONTROLLER_INSTANCE.getSubscriptionPacksBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
             subscriptionPacksIn = result;
         })
 
-        //get users in area
-
+        await this.LUPA_CONTROLLER_INSTANCE.getTrainersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
+            trainersIn = result;
+        })
 
         //set component state
         await this.setState({
-            trainers: trainersIn,
             explorePagePacks: explorePagePacksIn,
+            usersInArea: usersInAreaIn,
             subscriptionPacks: subscriptionPacksIn,
-            currUsersLocation: currUsersLocationIn,
+            trainers: trainersIn,
         })
+        
     }
 
     closePackModal = () => {
@@ -101,7 +97,7 @@ export default class Explore extends React.Component {
     }
 
     mapGlobalPacks = () => {
-        return this.state.explorePagePacks.map(globalPacks => {
+       return this.state.explorePagePacks.map(globalPacks => {
             return (
                 <SmallPackCard packUUID={globalPacks.id} image={globalPacks.pack_image} />
             )
@@ -117,10 +113,10 @@ export default class Explore extends React.Component {
     }
 
     mapUsersInArea = () => {
+        console.log('yess the number of users is: ' + this.state.usersInArea.length)
         return this.state.usersInArea.map(user => {
-            console.log(user);
             return (
-                <Avatar.Image source={{uri: 'hi'}} size={60} />
+                <Avatar.Image source={{uri: user.photo_url }} size={60} style={{margin: 5}} />
             )
         })
     }
@@ -294,4 +290,6 @@ const styles = StyleSheet.create({
         width: 250,
         height: 250
     }
-})
+});
+
+export default connect(mapStateToProps)(Explore);

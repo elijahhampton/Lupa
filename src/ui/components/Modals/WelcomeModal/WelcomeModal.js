@@ -43,6 +43,7 @@ export default class WelcomeModal extends React.Component {
         this.state = {
             currIndex: 0,
             pageChangedForward: false,
+            progress: 0
         }
 
         _requestPermissionsAsync();
@@ -52,7 +53,8 @@ export default class WelcomeModal extends React.Component {
     _handleNextViewClick = () => {
         this.setState({ 
             pageChangedForward: true,
-            currIndex: this.state.currIndex + 1 
+            currIndex: this.state.currIndex + 1,
+            progress: this.state.progress + .20
         });
     }
 
@@ -81,7 +83,7 @@ export default class WelcomeModal extends React.Component {
                     return <BasicInformation isForwardPageChange={this.state.isForwardPageChange} />
                 case 3:
                     progress += 20;
-                    return <FitnessInterest />
+                    return <FitnessInterest closeModalMethod={this.props.closeModalMethod}/>
                 case 4:
                     progress += 20;
                     return <WorkoutTimes />
@@ -113,7 +115,7 @@ export default class WelcomeModal extends React.Component {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isVisible} style={styles.modalContainer}>
                 <SafeAreaView style={{flex: 1}}>
-                    <ProgressBar color={Color.LUPA_BLUE} progress={progress}/>
+                    <ProgressBar style={{padding: 10}} animating={true} color="#2196F3" progress={this.state.progress}/>
                         <View style={{height: "95%"}}>
                         {
                             this.presentScreen(this.state.currIndex)

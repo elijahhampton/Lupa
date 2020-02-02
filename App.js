@@ -34,7 +34,7 @@ const Navigator = createAppContainer(
 );
 
 const LupaStore = createStore(LupaReducer);
-LupaStore.subscribe(() => console.log(LupaStore.getState()))
+LupaStore.subscribe(() => console.log('Redux state change'))
 
 
 class App extends React.Component {

@@ -24,6 +24,11 @@ import {
     Title
 } from 'react-native-paper';
 
+import {
+    Svg,
+    Ellipse
+} from 'react-native-svg';
+
 import { Feather as FeatherIcon } from '@expo/vector-icons';
 import SafeAreaView from 'react-native-safe-area-view';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -88,18 +93,18 @@ const PackEventCard = props => {
 
     return (
         <TouchableOpacity onPress={this.handlePackEventModalOpen}>
-        <Surface style={{ margin: 5, elevation: 5, width: 250, height: 320, borderRadius: 20 }}>
+        <Surface style={{ margin: 5, elevation: 5, width: Dimensions.get('screen').width - 20, height: 110, borderRadius: 20 }}>
 <Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: packEventObject.pack_event_image }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
-<View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-<Text style={{ fontSize: 30, fontWeight: '800', color: 'white' }}>
-    {packEventObject.pack_event_title}
-</Text>
-<Text style={{ fontSize: 25, fontWeight: '600', color: 'white', textAlign: 'center' }}>
-    {packEventObject.pack_event_description}
-</Text>
-</View>
-
 </Surface>
+
+<View style={{width: "auto", height: "auto", backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
+<Title style={{ color: 'black' }}>
+    {packEventObject.pack_event_title}
+</Title>
+<Paragraph style={{ textAlign: 'center', color: 'black', fontSize: 20}}>
+    {packEventObject.pack_event_description}
+</Paragraph>
+</View>
 <PackEventModal isOpen={packEventModalIsOpen} closeModalMethod={this.handlePackEventModalClose} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventImage={packEventObject.pack_event_image}/>
 </TouchableOpacity>
     )
@@ -138,6 +143,11 @@ export default class PackModal extends React.Component {
             packInformationIn = packInformation;
         });
 
+        console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC')
+        console.log(packInformationIn)
+        console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC')
+
+        
         await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEventsInformation => {
             packEventsIn = packEventsInformation.events;
         });
@@ -257,7 +267,16 @@ export default class PackModal extends React.Component {
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
                 <SafeAreaView forceInset={{
                     bottom: 'never'
-                }} style={{ flex: 1, backgroundColor: "#F5F5F5" }}>
+                }} style={{ flex: 1, backgroundColor: "rgb(244, 247, 252)" }}>
+                    <Svg height={Dimensions.get('screen').height / 2} width={Dimensions.get('screen').width} style={{position: 'absolute', }}>
+  <Ellipse
+    cx={"55"}
+    cy="100"
+    rx={Dimensions.get('screen').width}
+    ry={Dimensions.get('screen').height / 3}
+    fill="#4b87b6"
+  />
+</Svg>
                     <View>
                         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                             <IconButton icon="clear" color="black" onPress={this.props.closeModalMethod} />
@@ -281,7 +300,7 @@ export default class PackModal extends React.Component {
                             data={this.state.packEvents}
                             renderItem={this._renderItem}
                             sliderWidth={Dimensions.get('screen').width}
-                            itemWidth={250} 
+                            itemWidth={Dimensions.get('screen').width- 20} 
                             onBeforeSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
                             />
                     </View>
@@ -323,8 +342,10 @@ export default class PackModal extends React.Component {
                 </Button>
                         </View>
 
-                        <ScrollView horizontal={true} shouldRasterizeIOS={true} overScrollMode="always" contentContainerStyle={{ alignItems: "flex-start", justifyContent: "space-around", flexDirection: "row", flexWrap: 'wrap' }}>
-                            {this.mapMembers()}
+                        <ScrollView horizontal={true} shouldRasterizeIOS={true} overScrollMode="always" contentContainerStyle={{ alignItems: "flex-start", flexGrow: 2, justifyContent: 'space-around', flexDirection: "row" }}>
+                            {
+                            this.mapMembers()
+                        }
                         </ScrollView>
 
 

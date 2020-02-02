@@ -16,7 +16,7 @@ const fb_init_config = firebase.initializeApp(firebaseConfig);
 const LUPA_DB = firebase.firestore();
 const LUPA_DB_FIREBASE = firebase.database();
 LUPA_DB_FIREBASE.goOnline();
-const LUPA_AUTH = firebase.auth();
+let LUPA_AUTH = firebase.auth();
 
 export class Fire {
   constructor() {

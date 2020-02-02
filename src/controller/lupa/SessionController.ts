@@ -29,18 +29,10 @@ export default class SessionController {
       return SessionController._instance;
     }
 
-    createSession = async  (attendeeOne, attendeeTwo, time, day, location={}, name, description) => {
-      let attendeeTwoUID;
-      attendeeOne = USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
-        await USERS_COLLECTION.where('display_name', '==', attendeeTwo).get().then(res => {
-          res.forEach(doc => {
-            let snapshot = doc.data();
-            attendeeTwoUID = snapshot.user_uuid;
-          });
-        });
+    createSession = async  (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp) => {
         
-        let newSession = getLupaSessionStructure(attendeeOne, attendeeTwoUID, time, day, location, name, description);
-      SESSIONS_COLLECTION.doc().set(newSession);
+        let newSession = getLupaSessionStructure(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp);
+        SESSIONS_COLLECTION.doc().set(newSession);
 
 
 
@@ -49,25 +41,49 @@ export default class SessionController {
 
     getUserSessions = async (currUser=true, uid=undefined) => {
       let sessions = [];
-      if (currUser) {
-        await SESSIONS_COLLECTION.where('attendeeOne', '==', USER_CONTROLLER_INSTANCE.getCurrentUser().uid).get().then(docs => {
-          docs.forEach(doc => {
-            let sessionData = doc.data();
-            let sessionID = doc.id;
-            let sessionObject = {sessionID, sessionData}
-            sessions.push(sessionObject);
-          })
-        });
-
-        await SESSIONS_COLLECTION.where('attendeeTwo', '==', USER_CONTROLLER_INSTANCE.getCurrentUser().uid).get().then(docs => {
-          docs.forEach(doc => {
-            let sessionData = doc.data();
-            let sessionID = doc.id;
-            let sessionObject = {sessionID, sessionData}
-            sessions.push(sessionObject);
-          })
+      let currUserUUID = USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
+      await SESSIONS_COLLECTION.where('attendeeOne', '==', currUserUUID).get().then(docs => {
+        docs.forEach(doc => {
+          console.log('find it!!')
+          let sessionData = doc.data();
+          let sessionID = doc.id;
+          let sessionObject = {sessionID, sessionData}
+          sessions.push(sessionObject);
         })
+      });
+
+      await SESSIONS_COLLECTION.where('attendeeTwo', '==', currUserUUID).get().then(docs => {
+        console.log('find df 22')
+        docs.forEach(doc => {
+          let sessionData = doc.data();
+          let sessionID = doc.id;
+          let sessionObject = {sessionID, sessionData}
+          sessions.push(sessionObject);
+        })
+      });
+
+      let count = 0;
+      let currElement;
+      let currIndex;
+      for (let i = 0; i < sessions.length; ++i)
+      {
+        count = 0;
+        currElement = sessions[i];
+        currIndex = i;
+        for (let j = 0; j < sessions.length; ++j)
+        {
+          if (currElement == sessions[j])
+          {
+            count = count + 1;
+          }
+        }
+
+        if (count > 1)
+        {
+          sessions.slice(currIndex);
+        }
       }
+
       return sessions;
     }
 

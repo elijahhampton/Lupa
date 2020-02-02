@@ -29,6 +29,14 @@ import {
 } from '../../../../controller/lupa/auth';
 import { Divider } from 'react-native-paper';
 
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+  return {
+    lupa_data: state,
+  }
+}
+
 class DrawerMenu extends React.Component {
   constructor(props) {
     super(props);
@@ -37,6 +45,11 @@ class DrawerMenu extends React.Component {
       image: '',
     }
 
+  }
+
+  _handleLogout = () => {
+    //this.props.navigation.reset();
+    this.props.navigation.push('Login');
   }
 
   _getPermissionsAsync = async () => {
@@ -70,10 +83,10 @@ class DrawerMenu extends React.Component {
             <View style={{margin: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <View style={{flexDirection: 'column'}}>
                   <Text style={{fontWeight: '500', fontSize: 15}}>
-                    Elijah Hampton
+                    {this.props.lupa_data.Users.currUserData.display_name}
                   </Text>
                   <Text style={{fontWeight: '500', fontSize: 15}}>
-                    ejh0017gmail.com
+                    {this.props.lupa_data.Users.currUserData.email}
                   </Text>
                 </View>
 
@@ -84,14 +97,14 @@ class DrawerMenu extends React.Component {
 
             <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
               <DrawerIcon name="activity" size={12} style={{margin: 3}}/>
-            <Button mode="Dashboard" color="grey" compact>
+            <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.navigate('Dashboard')}>
               Dashboard
             </Button>
             </View>
 
             <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
               <DrawerIcon name="user" size={12} style={{margin: 3}}/>
-            <Button mode="Dashboard" color="grey" compact>
+            <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.navigate('Profile')}>
               Profile
             </Button>
             </View>
@@ -120,13 +133,17 @@ class DrawerMenu extends React.Component {
               </Caption>
               </View>
             </View>
+
+            <Button mode="text" compact color="#2196F3">
+        Log out
+        </Button>
         </SafeAreaView>
       </View>
     );
   }
 }
 
-export default withNavigation(DrawerMenu);
+export default connect(mapStateToProps)(withNavigation(DrawerMenu));
 
   const styles = StyleSheet.create({
     container: {

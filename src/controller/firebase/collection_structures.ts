@@ -71,24 +71,28 @@ export const getLupaPackStructure = (packLeader, title, description, location, i
 var lupa_session : LupaSessionStructure = {
     attendeeOne: "",
     attendeeTwo: "",
+    requesterUUID: "",
     date: "",
+    time_periods: [],
     name: "",
     description: "",
     sessionStatus: "",
-    lastSuggestedBy: {},
+    time_created: {
+        date: "",
+        time: "",
+    },
 }
 
-export const getLupaSessionStructure = (attendeeOne, attendeeTwo, date, name, description) => {
+export const getLupaSessionStructure = (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, time_created) => {
     lupa_session.attendeeOne = attendeeOne;
     lupa_session.attendeeTwo = attendeeTwo;
+    lupa_session.requesterUUID = requesterUUID;
     lupa_session.date = date;
+    lupa_session.time_periods = time_periods;
     lupa_session.name = name;
     lupa_session.description = description;
+    lupa_session.time_created = time_created;
     lupa_session.sessionStatus = SESSION_STATUS.INVITED;
-    lupa_session.lastSuggestedBy = {
-        attendeeOne: date,
-        attendeeTwo: "",
-    }
     return lupa_session;
 }
 

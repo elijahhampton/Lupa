@@ -69,9 +69,9 @@ export default class FitnessInterest extends React.Component {
 
         let autoCompleteDataFiltered = interestData;
 
-        if (input == '') { this.setState({ autoCompleteData: autoCompleteDataUnfiltered })}
+        if (input == '') { this.setState({ autoCompleteData: autoCompleteDataUnfiltered }) }
         const result = autoCompleteDataFiltered.filter(element => element.startsWith(input));
-        this.setState({ autoCompleteData: result})
+        this.setState({ autoCompleteData: result })
     }
 
     _handleOnChangeText = (text) => {
@@ -80,64 +80,80 @@ export default class FitnessInterest extends React.Component {
     }
 
     _handleFinishAddingInterest = interest => {
-      //  this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest);
+        //  this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest);
     }
 
     _returnTextInput = () => {
         return (
-            <Input placeholder="Try something like 'Yoga' " 
-                    inputStyle={{fontSize: 25, fontWeight: "600", color: "black"}} 
-                    label="Interest" 
-                    onChangeText={text => this._handleOnChangeText(text)} 
-                    onSubmitEditing={this.addInterest}
-                    returnKeyType="done"
-                    keyboardType="default"
-                    value={this.state.interestText} 
-        />
+            <Input placeholder="Try something like 'Yoga' "
+                inputStyle={{ fontSize: 25, fontWeight: "600", color: "black" }}
+                label="Interest"
+                onChangeText={text => this._handleOnChangeText(text)}
+                onSubmitEditing={this.addInterest}
+                returnKeyType="done"
+                keyboardType="default"
+                value={this.state.interestText}
+            />
         )
+    }
+
+    closeModalMethod = () => {
+        this.props.closeModalMethod();
     }
 
     render() {
         return (
             <View style={styles.root}>
-                <Button mode="text" color="#E0E0E0">
-                    Take me into the app
+                <View style={{ flex: 1, justifyContent: 'space-around' }}>
+                    <Button mode="text" color="#E0E0E0" onPress={() => this.closeModalMethod()}>
+                        Take me into the app
                 </Button>
-                <View style={styles.instructionalTextContainer}>
-                    <Text style={styles.instructionalText}>
-                    What are your fitness interest? (i.e. Yoga, High Intensity Training, or Running?)
+                    <View style={styles.instructionalTextContainer}>
+                        <Text style={styles.instructionalText}>
+                            What are your fitness interest?
                     </Text>
+                    </View>
                 </View>
 
-                <View style={styles.userInput}>
+                <View style={{ flex: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
+                            <Text>
+                                Strength
+                            </Text>
+                        </Chip>
 
-<Autocomplete
-      data={this.state.autoCompleteData}
-      onChangeText={text => this._handleOnChangeText(text)}
-      renderItem={({ item, i }) => (
-        <TouchableOpacity onPress={() => this.setState({ interest: this.state.interest.concat(item)})}>
-          <Text style={{fontSize: 20, fontWeight: "300"}}>{item}</Text>
-        </TouchableOpacity>
-      )}
-      containerStyle={{width: "100%", borderColor: "transparent"}}
-      inputContainerStyle={{width: "100%", borderColor: "transparent"}}
-      listContainerStyle={{width: "80%", borderColor: "transparent"}}
-      listStyle={{width: "80%", borderColor: "transparent"}}
-      renderTextInput={this._returnTextInput}
-    />
+                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
+                            <Text>
+                                Power
+</Text>
+                        </Chip>
+
+                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
+                            <Text>
+                                Endurance
+</Text>
+                        </Chip>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
+                            <Text>
+                                Flexibility
+</Text>
+                        </Chip>
+                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
+                            <Text>
+                                Speed
+</Text>
+                        </Chip>
+                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
+                            <Text>
+                                Agility
+</Text>
+                        </Chip>
+                    </View>
                 </View>
-
-                <ScrollView contentContainerStyle={styles.interestChips}>
-                    {
-                        this.state.interest.map(interest => {
-                            return (
-                                <Chip style={styles.chipStyle} >
-                                    {interest}
-                                </Chip>
-                            )
-                        })
-                    }
-                </ScrollView>
             </View>
         );
     }
@@ -165,8 +181,8 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 25,
-        fontWeight: "600"
+        fontSize: 20,
+        fontWeight: "500"
     },
     userInput: {
         width: "100%",

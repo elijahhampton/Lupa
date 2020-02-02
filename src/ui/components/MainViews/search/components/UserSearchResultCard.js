@@ -13,11 +13,11 @@ import {
     Surface,
     Chip,
     Button,
-    Caption
+    Caption,
+    Avatar
 } from 'react-native-paper';
 
 import {
-    Avatar,
     Rating
 } from 'react-native-elements';
 
@@ -40,7 +40,7 @@ const UserSearchResultCard = (props) => {
             <Surface style={[styles.cardContainer]}>
                 <View style={styles.cardContent}>
                     <View style={styles.userInfoContent}>
-                    <Avatar label={props.title} rounded size="small" containerStyle={{marginRight: 5}}/>
+                    <Avatar.Image source={{uri: this.props.avatarSrc }} size={30} style={{margin: 3}} />
                     <View style={{flexDirection: 'column'}}>
                     <Text style={styles.titleText}>
                             {props.title}
