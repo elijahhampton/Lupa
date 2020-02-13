@@ -11,6 +11,7 @@ let USER_CONTROLLER_INSTANCE;
 import {
   getLupaSessionStructure
 } from '../firebase/collection_structures';
+import { SESSION_STATUS } from './common/types';
 
 export default class SessionController {
     private static _instance : SessionController;
@@ -103,6 +104,12 @@ export default class SessionController {
         currentSessionDocumentInformation = snapshot.data();
       });
 
+      //If the user has confirmed the session don't allow information to be edited
+      if (currentSessionDocumentInformation.sessionStatus == SESSION_STATUS.Confirmed)
+      {
+        return;
+      }
+
       let attendeeOne = currentSessionDocumentInformation.attendeeOne;
       let attendeeTwo = currentSessionDocumentInformation.attendeeTwo;
 
@@ -114,22 +121,15 @@ export default class SessionController {
             merge: true,
           });
           break;
-        case 'last_suggested_by':
-          if (optionalData == attendeeOne) { 
-            
-          }
+        case 'time_periods':
+          let currentTimes = currentSessionDocumentInformation.time_periods;
+          currentTimes.includes(value) ? currentTimes = currentTimes.slice(currentTimes.indexOf(value)) : currentTimes = currentTimes.concat(value);
 
-          if (optionalData == attendeeTwo) {
-
-          }
           await currentSessionDocument.set({
-            lastSuggestedBy: {
-            optionalData: value,
-            }
-          }, 
-            {
+            time_periods: currentTimes,
+          }, {
             merge: true,
-            });
+          });
           break;
         default:
       }

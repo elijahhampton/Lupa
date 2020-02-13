@@ -48,11 +48,33 @@ import { withNavigation } from 'react-navigation';
 import LupaController from '../../../../controller/lupa/LupaController';
 import MyPacksCard from './components/MyPacksCard';
 
+import { LineChart } from 'react-native-chart-kit';
+
 import { MaterialIcons as MaterialIcon } from '@expo/vector-icons';
 import FollowerModal from '../../Modals/User/FollowerModal';
 import SettingsModal from './components/SettingsModal';
 
 import { connect } from 'react-redux';
+
+
+const data = {
+    labels: ["January", "February", "March", "April", "May", "June"],
+    datasets: [
+      {
+        data: [20, 45, 28, 80, 99, 43],
+        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+        strokeWidth: 2 // optional
+      }
+    ],
+    legend: ["Strength", "Flexibility"] // optional
+  };
+
+  const chartConfig = {
+    backgroundColor: "#FFFFFF",
+    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5
+  };
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -74,6 +96,7 @@ const mapStateToProps = (state, action) => {
  * 
  * TODO:
  * ADD EDIT, ADD, and DELETE buttons for content.  (The delete buttons will be mapped beside content in each content area.).
+ * EVERYTHINGG SHOULD MAP FROM THE STATE NOT REDUX STORE
  */
 class ProfileView extends React.Component {
     constructor(props) {
@@ -82,7 +105,7 @@ class ProfileView extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            
+            userData: this.props.lupa_data.Users.currUserData
         }
     }
 
@@ -188,11 +211,12 @@ class ProfileView extends React.Component {
         //this.setupProfileInformation
     }
 
-    mapGoals = () => {
-       /* this.state.userGoals.length == 0 ?
-            <Caption>
-                You haven't set any goals.  Visit your fitness profile in the settings tab to add one.
-        </Caption> : null*/
+    mapBio = () => {
+        return (
+        <Text style={{fontWeight: 'bold'}}>
+            {this.state.userData.bio}
+        </Text>
+        )
     }
 
     mapRecommendedWorkouts = () => {
@@ -236,22 +260,22 @@ class ProfileView extends React.Component {
                     <View style={styles.user}>
                         <View style={styles.userInfoContainer}>
                             <View style={styles.userInfo}>
-                                <Headline>
-                                    {this.props.lupa_data.Users.currUserData.display_name}
-                                </Headline>
+                                <Text style={{fontSize: 18, fontWeight: 'bold', padding: 1}}>
+                                    {this.state.userData.display_name}
+                                </Text>
+                                <Text style={{fontSize: 15, fontWeight: '600', padding: 1}}>
+                                    {this.state.userData.username}
+                                </Text>
                                 {
-                                    true && this.state.isTrainer ? <Text style={{ fontSize: 12 }}>
+                                    true && this.state.userData.isTrainer ? <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 1 }}>
                                         Lupa Tier 1 Trainer
-                            </Text> : <Text style={styles.userInfoText}>
+                            </Text> : <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
                                             Lupa User
                             </Text>
                                 }
                             </View>
                             <View style={styles.alignCenterColumn}>
-                                <Avatar size={40} source={{uri: this.props.lupa_data.Users.currUserData.photo_url}} rounded showEditButton={this.state.isEditingProfile} containerStyle={{}} />
-                                <Text style={styles.userInfoText}>
-                                    {this.props.lupa_data.Users.currUserData.username}
-                                </Text>
+                                <Avatar size={65} source={{uri: this.state.userData.photo_url}} rounded showEditButton={this.state.isEditingProfile} containerStyle={{}} />
 
                             </View>
                         </View>
@@ -262,7 +286,7 @@ class ProfileView extends React.Component {
                             <TouchableOpacity onPress={this._navigateToFollowers}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                        {this.props.lupa_data.Users.currUserData.followers.length}
+                                        {this.state.userData.followers.length}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Followers
@@ -273,7 +297,7 @@ class ProfileView extends React.Component {
                             <TouchableOpacity onPress={this._navigateToFollowers}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                        {this.props.lupa_data.Users.currUserData.following.length}
+                                        {this.state.userData.following.length}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Following
@@ -284,7 +308,7 @@ class ProfileView extends React.Component {
                             <TouchableOpacity>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                        {this.props.lupa_data.Users.currUserData.sessionsCompleted}
+                                        {this.state.userData.sessionsCompleted}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Sessions Completed
@@ -297,17 +321,23 @@ class ProfileView extends React.Component {
                     </View>
 
                     <Timecards isEditing={this.state.isEditingProfile} />
-
-                    <View style={{width: '100%', justifyContent: "center", alignItems: "center"}}>
-                        <Text style={{fontWeight: 'bold'}}>
-                            Elijah Hampton's Rating
-                        </Text>
-                        {this.showRating()}
-                    </View>
-
+                    <>
+                        <Surface style={styles.contentSurface}>
+                            <Title>
+                                Bio
+                        </Title>
+                            <Divider />
+                            <View style={{ justifyContent: "flex-start", padding: 5 }}>
+                                {
+                                    this.mapBio()
+                                }
+                            </View>
+                        </Surface>
+                    </>
+                    
+                    <>
                     {
-                        true && this.state.isTrainer ?
-                            <View style={styles.experience}>
+                        true && this.state.userData.isTrainer ?
                                 <Surface style={styles.contentSurface}>
                                     <Title>
                                         Experience
@@ -315,39 +345,46 @@ class ProfileView extends React.Component {
                                     <Divider />
                                     {this.mapExperience()}
                                 </Surface>
-                            </View>
                             :
                             null
-                    }
-
-
-                    <>
-                        <Surface style={styles.contentSurface}>
-                            <Title>
-                                Interest, Specializations and Strengths
-                        </Title>
-                            <Divider />
-                            <View style={{ justifyContent: "flex-start" }}>
-                                {
-                                    this.mapInterest()
-                                }
-                            </View>
-                        </Surface>
+                    }   
                     </>
 
-                    <>
-                        <Surface style={styles.contentSurface}>
-                            <Title>
-                                Goals
-                        </Title>
-                            <Divider />
-                            <View style={{ justifyContent: "flex-start" }}>
+                    <View style={[{width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}]}>
+                        {/* Goals chart */}
+                        <Surface style={{elevation: 8, margin: 5, width: 160, height: 160, borderRadius: 20, backgroundColor: "#FAFAFA"}}>
+                        <LineChart
+  data={data}
+  width={155}
+  height={155}
+  verticalLabelRotation={30}
+  chartConfig={chartConfig}
+  bezier
+/>
+                        </Surface>  
+
+                        {/* interest mapping */}
+                        <Surface style={{elevation: 8, margin: 5, width: 160, height: 160, borderRadius: 20, backgroundColor: "#2196F3"}}>
+                                <View style={{width: '100%', justifyContent: 'flex-end'}}>
+                                    <Button mode="text" color="white">
+                                        View all
+                                    </Button>
+                                </View>
+                                <View style={{flexDirection: 'column', flexWrap: 'wrap', justifyContent: 'space-evenly', alignItems: 'center'}}>
                                 {
-                                    this.mapGoals()
+                                    this.props.lupa_data.Users.currUserData.interest.map((val, index, arr) => {
+                                        return (
+                                            <Chip mode="flat" style={{width: '80%', height: 'auto', alignItems: 'center', justifyContent: 'center', margin: 2, backgroundColor: "#FAFAFA", elevation: 3}}> 
+                                            <Text style={{fontWeight: 'bold'}}>
+                                                {val}
+                                            </Text>
+                                        </Chip>
+                                        )
+                                    })
                                 }
-                            </View>
+                                </View>
                         </Surface>
-                    </>
+                    </View>
 
 
                     <View style={styles.myPacks}>

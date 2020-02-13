@@ -157,7 +157,7 @@ export default class TimeslotSelector extends React.Component {
                     await this.setState({
                         sundayTimes: this.state.sundayTimes.concat(times)
                     });
-                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('pref erred_workout_times', this.state.sundayTimes, 'Sunday')
+                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.sundayTimes, 'Sunday')
                     break;
             default:
                 alert('LUPA: No default case');
@@ -186,10 +186,9 @@ export default class TimeslotSelector extends React.Component {
                     <ScrollView>
                         {
                             timesOfDay.map(obj => {
-                                let hell = obj.times;
-                                console.log('HELL' + hell)
+                                let selectedTimes = obj.values;
                                 return (
-                                    <TouchableOpacity onPress={obj => {this._handleUpdatePreferredWorkoutTimes(hell)}}>
+                                    <TouchableOpacity onPress={obj => {this._handleUpdatePreferredWorkoutTimes(selectedTimes)}}>
                                         <List.Item style={{alignItems: "center"}} title={obj.title} description={obj.times} />
                                     </TouchableOpacity>
                                 )

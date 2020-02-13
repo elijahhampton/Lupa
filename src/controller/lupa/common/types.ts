@@ -13,6 +13,10 @@ export enum UserCollectionFields {
     LOCATION="location",
 }
 
+export enum HealthDataCollectionFields {
+    GOALS="goals",
+}
+
 export enum Days {
     Monday="Monday", 
     Tuesday="Tuesday",
@@ -82,7 +86,8 @@ export type LupaUserStructure = {
     experience: {},
     followers: [],
     following: [],
-    sessionsCompleted: 0
+    sessionsCompleted: 0,
+    bio: String,
 };
 
 
@@ -114,7 +119,12 @@ export type LupaHealthDataStructure = {
 
         }
     },
-    goals: [] //array of objects
+    goals: [
+        {
+            goal_uuid: String,
+            pathways: Array<any>
+        }
+    ] //array of objects
 };
 
 /* LupaSessionDataStructure */

@@ -5,17 +5,18 @@
 import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
+const HEALTH_DATA_COLLECTION = LUPA_DB.collection('health_data');
 
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
+const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
 
-//algoliaUsersIndex.setExtraHeader('X-Forwarded-For', '127.0.0.1');
 
-import { UserCollectionFields } from './common/types';
-import { rejects } from 'assert';
+import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
+import { getPathwaysForGoalUUID } from '../../model/data_structures/goal_pathway_structures';
 
 export default class UserController {
     private static _instance: UserController;
@@ -31,6 +32,20 @@ export default class UserController {
         }
 
         return UserController._instance;
+    }
+
+    getArrayOfUserObjectsFromUUIDS = async (arrOfUUIDS) => {
+        let results = new Array();
+        return new Promise(async (resolve, reject) => {
+            for (let i = 0; i < arrOfUUIDS.length; ++i)
+            {
+                await this.getUserInformationByUUID(arrOfUUIDS[i]).then(result => {
+                    results.push(result);
+                });
+            }
+            console.log('the length is: ' + results.length)
+            resolve(results);
+        })
     }
 
 
@@ -126,6 +141,19 @@ export default class UserController {
         return Promise.resolve(currentUserInformation);
     }
 
+    getCurrentUserHealthData = async () => {
+        let currentUserHealthData;
+        let currentUserUUID = await this.getCurrentUserUUID();
+        await HEALTH_DATA_COLLECTION.where('user_uuid', '==', currentUserUUID).get().then(docs => {
+            docs.forEach(doc => {
+                currentUserHealthData = doc.data();
+                return;
+            });
+        });
+
+        return Promise.resolve(currentUserHealthData);
+    }
+
     getUserInformationFromUsername = async (username) => {
         let result;
         await USER_COLLECTION.where('username', '==', username).get().then(res => {
@@ -154,8 +182,14 @@ export default class UserController {
     }
 
     updateCurrentUser = async (fieldToUpdate, value, optionalData = "") => {
-        let currentUserDocument = USER_COLLECTION.doc(this.getCurrentUser().uid);
-        console.log('LUPA: User Controller updating current user');
+        let currentUserHealthDocumentData; 
+
+        let currentUserDocument = await USER_COLLECTION.doc(this.getCurrentUser().uid);
+        let currentUserHealthDocument = await HEALTH_DATA_COLLECTION.doc(this.getCurrentUser().uid);
+        await currentUserHealthDocument.get().then(snapshot => {
+            currentUserHealthDocumentData = snapshot.data();
+        });
+
         switch (fieldToUpdate) {
             case UserCollectionFields.DISPLAY_NAME:
                 LUPA_AUTH.currentUser.updateProfile({
@@ -268,16 +302,40 @@ export default class UserController {
             case UserCollectionFields.FOLLOWING:
                 /* For now we don't handle this year */
                 break;
-            case UserCollectionFields.LOCATION:
-                currentUserDocument.set({
-                    location: {
-                        city: value.city,
-                        state: value.state,
-                        country: value.country,
+            case HealthDataCollectionFields.GOALS:
+                let currentUserGoals = currentUserHealthDocumentData.goals;
+                if (optionalData === 'add')
+                {   
+                    let goalStructures = getPathwaysForGoalUUID(value);
+                    let goalObject = {
+                        goal_uuid: value,
+                        pathways: goalStructures
                     }
-                }, {
-                    merge: true,
-                })
+
+                    currentUserGoals.push(goalObject);
+                    currentUserHealthDocument.set({
+                        goals: currentUserGoals
+                    }, {
+                        merge: true,
+                    })
+                }
+                else if(optionalData === 'remove')
+                {
+
+                    let index;
+
+                    for(let i =0; i < currentUserGoals.length; i++)
+                    {
+                       index = currentUserGoals[i].goal_uuid.indexOf(value);
+                    }
+
+                    currentUserGoals.splice(index);
+                    currentUserHealthDocument.set({
+                        goals: currentUserGoals
+                    }, {
+                        merge: true,
+                    })
+                }
                 break;
         }
         console.log('LUPA: User Controller finished updating current user')
@@ -370,9 +428,6 @@ export default class UserController {
 
     indexUsersIntoAlgolia = async () => {
         let records = [];
-
-        console.log('starting to index');
-
         await USER_COLLECTION.get().then(docs => {
             docs.forEach(doc => {
                 //Load user data from document
@@ -405,13 +460,29 @@ export default class UserController {
                 records.push(userData);
             });
 
-            usersIndex.addObjects(records, (err, content) => {
+            algoliaUsersIndex.copyIndex(usersIndex.indexName, tmpIndex.indexName, [
+                'settings',
+                'synonyms',
+                'rules'
+              ]).then(({ taskID }) =>
+                tmpIndex.waitTask(taskID)
+              ).then(() => {
+                const objects = records;
+                return tmpIndex.addObjects(objects);
+              }).then(() => 
+                algoliaUsersIndex.moveIndex(tmpIndex.indexName, usersIndex.indexName)
+              ).catch(err => {
+                console.error(err);
+              });
+        
+
+            /*usersIndex.addObjects(records, (err, content) => {
                 if (err) {
                     console.log('big error: ' + err);
                 }
 
                 console.log('Completed User Indexing')
-            });
+            });*/
         });
     }
 

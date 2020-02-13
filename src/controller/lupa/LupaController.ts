@@ -79,6 +79,15 @@ export default class LupaController {
       return Promise.resolve(userData);
     }
 
+    getCurrentUserHealthData = async () => {
+      let healthData;
+      await USER_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
+        healthData = result;
+      });
+
+      return Promise.resolve(healthData);
+    }
+
     isTrainer = (userUUID) => {
       let isTrainer = USER_CONTROLLER_INSTANCE.isTrainer(userUUID);
       return isTrainer;
@@ -105,6 +114,15 @@ export default class LupaController {
 
     getUserSessions = (currUser=true, uid=undefined) => {
       return SESSION_CONTROLLER_INSTANCE.getUserSessions(currUser, uid);
+    }
+
+    getUserInformationFromArray = async (arrOfUUIDS) => {
+      let result;
+      await USER_CONTROLLER_INSTANCE.getArrayOfUserObjectsFromUUIDS(arrOfUUIDS).then(objs => {
+        result = objs;
+      });
+
+      return result;
     }
 
     getAttributeFromUUID = async (uuid, attribute) => {
@@ -281,8 +299,8 @@ export default class LupaController {
       return retVal;
     }
 
-    updateSession = (uuid, fieldToUpdate, value, optionalData="") => {
-      SESSION_CONTROLLER_INSTANCE.updateSessionFieldByUUID(uuid, fieldToUpdate, value, optionalData);
+    updateSession = async (uuid, fieldToUpdate, value, optionalData="") => {
+      await SESSION_CONTROLLER_INSTANCE.updateSessionFieldByUUID(uuid, fieldToUpdate, value, optionalData);
     }
 
     /* Pack Functions */
@@ -291,11 +309,9 @@ export default class LupaController {
     getExplorePagePacksBasedOnLocation = async location => {
       let explorePagePacks;
       await PACKS_CONTROLLER_INSTANCE.getExplorePagePacksBasedOnLocation(location).then(result => {
-        console.log('beep bop' + result);
         explorePagePacks = result;
       });
 
-      console.log('and what do we have here' + explorePagePacks.length)
       return Promise.resolve(explorePagePacks);
     }
 
@@ -340,18 +356,18 @@ export default class LupaController {
     }
 
     getPackInformationByUUID = async (uuid) => {
-      let result;
+      let result = new Array();
       await PACKS_CONTROLLER_INSTANCE.getPackInformationByUUID(uuid).then(packs => {
-        result = packs;
+        result = packs.data();
       });
 
       return Promise.resolve(result);
     }
 
-    getPackEventsByUUID = async (arrOfUUIDS) => {
-      let result;
-      await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(arrOfUUIDS).then(packs => {
-        result = packs;
+    getPackEventsByUUID = async (id) => {
+      let result = new Array();
+      await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(id).then(packs => {
+        result = packs.data();
       });
 
       return Promise.resolve(result);
@@ -376,5 +392,23 @@ export default class LupaController {
       });
 
       return Promise.resolve(result);
+    }
+
+    getPacksEventsFromArrayOfUUIDS = async (arr) => {
+      let packEventsData;
+      await PACKS_CONTROLLER_INSTANCE.getPacksEventsFromArrayOfUUIDS(arr).then(result => {
+        packEventsData = result;
+      });
+
+      return Promise.resolve(packEventsData);
+    }
+
+    /** Goals **/
+    addGoalForCurrentUser = (goalUUID) => {
+      USER_CONTROLLER_INSTANCE.updateCurrentUser('goals', goalUUID, 'add');
+    }
+
+    removeGoalForCurrentUser = (goalUUID) => {
+      USER_CONTROLLER_INSTANCE.updateCurrentUser('goals', goalUUID, 'remove');
     }
 }

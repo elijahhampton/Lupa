@@ -118,19 +118,12 @@ export default class SearchView extends React.Component {
             <Container style={styles.root}>
 
                     <Header span searchBar rounded style={{flexDirection: 'column'}}>
-                    <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                        <View style={{width: "85%"}}>
                         <SearchBar placeholder="Search the Lupa Database"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
                         containerStyle={{backgroundColor: "transparent"}}
                         value={this.state.searchValue}/>
-                        </View>
-                        <View style={{width: "15%"}}>
-                        <IconButton icon="tune" color="black" size={20} onPress={() => alert('Filter Results')} />
-        </View> 
-        </View>
         <View style={{flexDirection: "row", justifyContent: "space-evenly"}}>
                         <Button mode="text" compact color={buttonColor} style={styles.button}>
                             Users

@@ -18,47 +18,53 @@ import PackModal from '../../../Modals/PackModal/PackModal';
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 
-const MyPacksCard = (props) => {
-    const [showPack, setShowPack] = useState(false);
-    const [packUUID, setPackUUID] = useState(props.packUUID);
+export default class MyPacksCard extends React.Component {
+    constructor(props) {
+        super(props);
 
-    _closeModal = () => {
-        setShowPack(false);
+        this.state = {
+            packUUID: this.props.packUUID,
+            showPack: false,
+        }
+
+        console.log('pack modal received: ' + this.state.packUUID)
+
     }
 
     handleShowPack = () => {
-        setShowPack(true);
+        this.setState({ showPack: true })
     }
 
-    captureDummyToggle = () => {
-        const toggle = this.props.dummyToggle;
-        toggle();
+    handleClosePack = () => {
+        this.setState({ showPack: false })
     }
 
-    return (
-        <>
-        <TouchableOpacity onPress={this.handleShowPack}>
-            <Surface style={styles.bottomSurface}>
-                    <Surface style={styles.imageSurface}>
-                    <Image style={styles.image} 
-                                resizeMode={ImageResizeMode.cover} 
-                                source={{uri: props.image}} />
-                    </Surface>
-                    <View style={styles.cardContentContainer}>
-                    <View style={{flexDirection: 'column', alignItems: "flex-start", justifyContent: "flex-start"}}>
-                    <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "#9E9E9E"}}>
-                        {props.title}
-                    </Text>
-                    <Caption>
-                        {props.numMembers} members
-                    </Caption>
-                    </View>
-                    </View>
-            </Surface>
-        </TouchableOpacity>
-        <PackModal isOpen={showPack} packUUID={packUUID} isOpen={showPack} closeModalMethod={_closeModal} />
-        </>
-    );
+    render() {
+        return (
+            <>
+            <TouchableOpacity onPress={this.handleShowPack}>
+                <Surface style={styles.bottomSurface}>
+                        <Surface style={styles.imageSurface}>
+                        <Image style={styles.image} 
+                                    resizeMode={ImageResizeMode.cover} 
+                                    source={{uri: this.props.image}} />
+                        </Surface>
+                        <View style={styles.cardContentContainer}>
+                        <View style={{flexDirection: 'column', alignItems: "flex-start", justifyContent: "flex-start"}}>
+                        <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "#9E9E9E"}}>
+                            {this.props.title}
+                        </Text>
+                        <Caption>
+                            {this.props.numMembers} members
+                        </Caption>
+                        </View>
+                        </View>
+                </Surface>
+            </TouchableOpacity>
+            <PackModal isOpen={this.state.showPack} packUUID={this.state.packUUID} closeModalMethod={this.handleClosePack} />
+            </>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
@@ -81,7 +87,3 @@ const styles = StyleSheet.create({
         margin: 2
     }
 });
-
-export {
-    MyPacksCard,
-}

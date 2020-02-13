@@ -87,6 +87,10 @@ class LoginView extends Component {
     this.props.updatePacks(packsData);
   }
 
+  _updateUserHealthDataInRedux = (healthData) => {
+    this.props.updateHealthData(healthData);
+  }
+
   _checkSignedInStatus = async () => {
     let result;
     let signedInStatus = isSignedIn().then(res => {
@@ -138,17 +142,27 @@ class LoginView extends Component {
   }
 
   _setupRedux = async () => {
-    let currentUserData, currentUserPacks;
+    let currUserData, currUserPacks, currUserHealthData;
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
-      currentUserData = result;
+      currUserData = result;
     })
 
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-      currentUserPacks = result;
+      currUserPacks = result;
     })
 
-    await this._updatePacksInRedux(currentUserPacks);
-    await this._updateUserInRedux(currentUserData);
+    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
+      currUserHealthData = result;
+    });
+
+
+    let userPayload = {
+      userData: currUserData,
+      healthData: currUserHealthData,
+    }
+
+    await this._updatePacksInRedux(currUserPacks);
+    await this._updateUserInRedux(userPayload);
   }
 
   render() {

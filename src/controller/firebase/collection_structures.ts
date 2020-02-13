@@ -103,8 +103,14 @@ var lupa_user_health_data : LupaHealthDataStructure = {
 
         }
     },
-    goals: []
-
+    goals: [
+        {
+            goal_uuid: "",
+            pathways: [
+                
+            ]
+        }
+    ]
 }
 
 export const getLupaHealthDataStructure = (user_uuid, health: {}, goals: []) => {
@@ -143,10 +149,11 @@ var lupa_user : LupaUserStructure = {
     experience: {},
     followers: [],
     following: [],
-    sessionsCompleted: 0
+    sessionsCompleted: 0,
+    bio: "",
 }
 
-export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", gender="", location="", isTrainer, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted) => {
+export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", gender="", location="", isTrainer, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted, bio) => {
     
     lupa_user.user_uuid = user_uuid;
     lupa_user.email = email;

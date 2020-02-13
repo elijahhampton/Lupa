@@ -18,7 +18,6 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 
 import DrawerMenu from './Components/DrawerMenu';
 
-import GoalsStackNavigator from './GoalsStackNavigator';
 
 import ProfileNavigator from './ProfileNavigator';
 import UserProfileModal from '../DrawerViews/Profile/UserProfileModal';
@@ -31,9 +30,6 @@ const LupaDrawerNavigator = createDrawerNavigator(
       },
       Profile: {
         screen: ProfileNavigator
-      },
-      Goals: {
-        screen: GoalsStackNavigator
       },
       UserPofileView: {
         screen: UserProfileModal

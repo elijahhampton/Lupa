@@ -17,11 +17,18 @@ import {
 } from 'react-native-paper';
 
 import ModifySessionModal from '../../../Modals/Session/ModifySessionModal';
+import PackModal from '../../../Modals/PackModal/PackModal';
 
 export const PackEventNotificationContainer = (props) => {
+    const [showModal, setShowModal] = useState(false);
+
+    handleCloseModal = () => {
+        setShowModal(false);
+    }
+
     return (
-            <TouchableOpacity style={{flexDirection: 'column', margin: 5}} onPress={() => alert('Pack Container')}>
-                        <Avatar.Image source={{url: props.packImage}} style={{elevation: 5}} size={55} />
+            <TouchableOpacity style={{flexDirection: 'column', margin: 5}} onPress={() => setShowModal(true)}>
+                        <Avatar.Image source={{uri: props.packEventImage}} style={{elevation: 5}} size={55} />
                         <Text style={{fontWeight: '500'}}>
                                 {props.packEventTitle}
                             </Text>
@@ -31,7 +38,7 @@ export const PackEventNotificationContainer = (props) => {
                             <Text style={{fontWeight: '500'}}>
                                {props.numAttending} attending
                             </Text>
-                            {/* <PackModal /> */}
+                            <PackModal packUUID={props.packUUID} closeModalMethod={this.handleCloseModal} isOpen={showModal}/>
                     </TouchableOpacity>
     )
 }
