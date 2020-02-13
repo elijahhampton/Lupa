@@ -1,8 +1,8 @@
 import React from 'react';
-
+import StripeCheckout from 'expo-stripe-checkout';
 
 import { onClose, onPaymentSuccess } from '../stripe';
-import { Currency } from '../stripe-payment-structures';
+//import { Currency } from '..'
 
 const StripeComponent = (props) => {
     return (
@@ -12,7 +12,7 @@ const StripeComponent = (props) => {
     imageUrl={props.imageUrl}
     storeName="Lupa"
     description="Test"
-    currency={Currency.USD}
+    currency="USD"
     allowRememberMe={false}
     prepopulatedEmail={props.prepopulatedEmail}
     onClose={onClose}

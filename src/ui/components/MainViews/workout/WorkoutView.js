@@ -21,6 +21,7 @@ import {
     Headline,
     Surface,
     Button,
+    Menu,
     Divider,
 } from 'react-native-paper';
 
@@ -31,6 +32,8 @@ import WorkoutComponent from './components/WorkoutComponent';
 import { WORKOUT_MODALITY } from '../../../../controller/lupa/common/types'
 
 import { connect } from 'react-redux';
+
+import { getPathwaysForGoalUUID } from '../../../../model/data_structures/goal_pathway_structures';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -43,14 +46,46 @@ class WorkoutView extends React.Component {
         super(props);
 
         this.state = {
-            isRefreshing: false
+            isRefreshing: false,
+            currUserData: this.props.lupa_data.Users.currUserData,
+            currUserHealthData: this.props.lupa_data.Users.currUserHealthData,
+            sortMenuVisible: false,
         }
+    }
+
+    componentDidMount = async () => {
+       
     }
 
     _handleOnRefresh = () => {
         this.setState({ isRefreshing: true })
         alert('Refreshing Workouts');
         this.setState({ isRefreshing: false })
+    }
+
+    _mapUserGoals = () => {
+        let pathways = [];
+        let arr = this.state.currUserHealthData.goals;
+
+        for (let i = 0; i < arr.length; i++)
+        {
+            let currGoal = arr[i];
+            for (let j = 0; j < currGoal.pathways.length; j++)
+            {
+                pathways.push(currGoal.pathways[j])
+            }
+        }
+
+
+        return pathways.map(path => {
+            return (
+                <>
+                <WorkoutComponent navigateMethod={() => this.props.navigation.navigate('WorkoutModal', { goalPathwayUUID: path.uid})} pathwayName={path.name} pathwayDescription={path.description} workoutModality={path.modality} iterationsCompleted={path.iteration}/>
+                <Divider />
+                </>
+            )
+        });
+       
     }
 
     render() {
@@ -76,8 +111,9 @@ class WorkoutView extends React.Component {
                                 </Text>
                             </View>
 
-
-                            <View style={styles.buttonScroll}>
+                            {
+                                /*
+                                                                <View style={styles.buttonScroll}>
                                 <ScrollView horizontal={true} shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
                                     <Button onPress={this.props.logoutMethod} mode="text" color="white" compact>
                                         All Workouts
@@ -102,6 +138,18 @@ class WorkoutView extends React.Component {
                                     </Button>
                                 </ScrollView>
                             </View>
+                                */
+                            }
+
+                            <View>
+                                <Menu anchor={<Button compact mode="text" onPress={() => this.setState({ sortMenuVisible: true })} color="white">Sort by</Button>} visible={this.state.sortMenuVisible}>
+                                    <Menu.Item title="Title" />
+                                    <Menu.Item title="Goal" />
+                                    <Menu.Item title="Modality" />
+                                    <Menu.Item title="Iterations Completed" />
+
+                                </Menu>
+                            </View>
 
                         </View>
                     </ImageBackground>
@@ -116,20 +164,7 @@ class WorkoutView extends React.Component {
                             </Headline>
                         </View>
                         <Divider />
-                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.CALISTHENICS} />
-                        <Divider />
-                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.CALISTHENICS} />
-                        <Divider />
-                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.METABOLIC} />
-                        <Divider />
-                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.WEIGHTLIFTING} />
-                        <Divider />
-                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.CALISTHENICS} />
-                        <Divider />
-                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.METABOLIC} />
-                        <Divider />
-                        <WorkoutComponent workoutModality={WORKOUT_MODALITY.METABOLIC} />
-                        <Divider />
+                        {this._mapUserGoals()}
                     </ScrollView>
                     </View>
                 </Surface>

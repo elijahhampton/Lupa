@@ -100,19 +100,18 @@ class TrainerDashboardView extends React.Component {
       fetchPackEvents = async () => {
           console.log('start');
           let currentUserPacks = [];
+          let currentUserPackEventsData = [];
 
           await this.props.lupa_data.Packs.currUserPacksData.forEach(pack => {
-              currentUserPacks.push(pack.id);
+            currentUserPacks.push(pack.id);
           })
 
-          await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(currentUserPacks).then(result => {
-              this.setState({
-                  packEventsData: result
-              });
-          });
+          await this.LUPA_CONTROLLER_INSTANCE.getPacksEventsFromArrayOfUUIDS(currentUserPacks).then(result => {
+            currentUserPackEventsData = result;
+          })
+          
+          await this.setState({ packEventsData: currentUserPackEventsData });
 
-
-          console.log('end')
       }
 
       /**
@@ -123,7 +122,6 @@ class TrainerDashboardView extends React.Component {
        * TODO: Pash in session UUID and populate inside of container
        */
       populateSessions = () => {
-          console.log('Sessions length is : ' + this.state.sessionData.length)
           let attendeeTwoDisplayName;
           let attendeeOneDisplayName;
           return this.state.sessionData.map(session => {
@@ -139,23 +137,11 @@ class TrainerDashboardView extends React.Component {
       }
 
       populatePackEvents = () => {
-       /*   let totalPackEvents = [];
-          console.log('but the state lenght is: ' + this.state.packEventsData.length)
-          for (let i = 0; i < this.state.packEventsData.length; ++i)
-          {
-              let packsPackEventData = this.state.packEventsData[i];
-              console.log('nigga we made it!')
-              let packsEvents = packsPackEventData.events;
-              totalPackEvents.push(packsEvents);
-          }
-
-          let actualEvents = [];
-
-        totalPackEvents.forEach(packEvent => {
-              actualEvents.push(<PackEventNotificationContainer packImage={packEvent.pack_event_image} packEventTitle={packEvent.pack_event_title} packEventDate={packEvent.pack_event_date} />)
-          })
-
-          return actualEvents;*/
+        return this.state.packEventsData.map(pack => {
+            return (
+            <PackEventNotificationContainer packUUID={pack.pack_uuid} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date.seconds} numAttending={pack.attendees.length}/>
+            )
+        });
       }
 
     render() {
@@ -190,7 +176,7 @@ class TrainerDashboardView extends React.Component {
                         }
                         </ScrollView>
 
-                        <Pagination dotColor="#1A237E" dotsLength={5} activeDotIndex={0}/>
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length} />
                     </View>
 
                     <View>
@@ -204,11 +190,11 @@ class TrainerDashboardView extends React.Component {
 
                 </View>
                         <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                        {/*
+                        {
                             this.populatePackEvents()
-                        */}
+                        }
                         </ScrollView>
-                        <Pagination dotColor="#1A237E" dotsLength={5} activeDotIndex={0}/>
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length}/>
                     </View>
 
             <LupaCalendar />
@@ -241,8 +227,9 @@ class TrainerDashboardView extends React.Component {
                             You have not performed any workouts recently.
                         </Caption>
                     </View>
-
-                    <View>
+                    {
+                        this.props.lupa_data.Users.currUserData.isTrainer && true ? 
+                        <View>
                         <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%",}}>
                         <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
                             Pack Offers
@@ -256,6 +243,9 @@ class TrainerDashboardView extends React.Component {
                         </View>
 
                     </View>
+                    :
+                    null
+                    }
                 </ScrollView>
                 </SafeAreaView>
         );                    

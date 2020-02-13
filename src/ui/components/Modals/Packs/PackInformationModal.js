@@ -28,7 +28,7 @@ export default class PackInformationModal extends React.Component {
 
         this.state = {
             packUUID: this.props.packUUID,
-            packInformation: {},
+            packInformation: [],
             packLeaderPhotoURI: '',
             ready: false
         }
@@ -46,53 +46,35 @@ export default class PackInformationModal extends React.Component {
             packInformationIn = result;
         });
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.packInformation.pack_leader, 'photo_url').then(result => {
-            packLeaderPhotoURIIn = result;
-        })
-
-        await this.setState({ packInformation: packInformationIn, packLeaderPhotoURI: packLeaderPhotoURIIn});
+        await this.setState({ packInformation: packInformationIn, ready: true});
     }
 
     render() {
         return (
-                <Modal presentationStyle="pageSheet" onRequestClose={this.props.closeModalMethod} onDismiss={this.props.closeModalMethod} visible={this.props.isOpen}>
-                    {
-                        console.log(this.state.packInformation)
-                    }
-                    <View style={{flex: 1}}>
+                <Modal animationType="slide" presentationStyle="pageSheet" onDismiss={this.props.closeModalMethod} visible={this.props.isOpen}>
+                    <View style={{flex: 1, padding: 10}}>
                     <Headline style={{padding: 10}}>
-                            {this.state.packInformation.pack_title}
+                            {this.state.ready && this.state.packInformation.pack_title}
                         </Headline>
-                        <Divider />
-                        <View style={{padding: 10, alignItems: 'center', justifyContent: 'space-evenly', flex: 1}}>
-                            <View style={{flexDirection: 'column', alignItems: 'center'}}>
+
+                        <View style={{flexDirection: 'column', alignItems: 'center', padding: 5}}>
                             <Avatar.Image source={{uri: this.state.packLeaderPhotoURI}} size={50} style={{margin: 5}} />
-                                <Title>
-                                    Pack Leader
-                                </Title>
+                            <Text style={{fontWeight: 'bold'}}>
+                                Pack Leader Name
+                            </Text>
+                            <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                                City, State
+                            </Text>
                             </View>
-
-                            <Divider />
-
-                            <View style={styles.alignColumnItemsCenter}>
-                                <Title>
-                                    Created on
-                                </Title>
-                                <Text>
-                                {this.state.ready == true ? this.state.packInformation.pack_time_created.seconds : null}
-                                </Text>
-
-                            </View>
-
-                            <Divider />
-
+                        <Divider />
+                        <View style={{padding: 10, justifyContent: 'space-evenly', flex: 1}}>
                             <View style={styles.alignColumnItemsCenter}>
                                 <Title>
                                     Location
                                 </Title>
                                 <Text>
-                                {this.state.ready == true ? this.state.packInformation.pack_location.city + ", " + this.state.packInformation.pack_location.state : null}
-                                </Text>
+                                    {this.state.ready && this.state.packInformation.pack_location.city + ", " + this.state.packInformation.pack_location.state }
+                               </Text>
                             </View>
 
                             <Divider />
@@ -102,44 +84,21 @@ export default class PackInformationModal extends React.Component {
                                     Description
                                 </Title>
                                 <Text>
-                               {this.state.packInformation.pack_description}
+                                    {this.state.packInformation.pack_description}
                                 </Text>
                             </View>
 
                             <Divider />
 
-                            <View>
+                            <View style={styles.alignColumnItemsCenter}>
                                 <Title>
-                                    Sessions Completed: {this.state.packInformation.pack_sessions_completed}
+                                    Sessions Completed: {this.state.ready && this.state.packInformation.pack_sessions_completed}
                                 </Title>
+
                             </View>
                         </View>
                     
                     </View>
-                    {/*
-                    <Surface style={styles.surface}>
-                        <Text style={styles.text}>
-                            {this.state.packInformation.pack_title}
-                        </Text>
-                    </Surface>
-
-                    <Surface style={styles.surface}>
-                        <Text style={styles.text}>
-                            {this.state.packInformation.pack_description}
-                        </Text>
-                    </Surface>
-
-                    <Surface style={styles.surface}>
-                        <Text style={styles.text}>
-                            This pack has 30 members.
-                    </Text>
-                    </Surface>
-
-                    <Surface style={styles.surface}>
-                        <Text style={styles.text}>
-                            This pack is based out of: Chicago, Illinois
-                    </Text>
-                    </Surface> */}
                 </Modal>
         )
     }
@@ -148,12 +107,11 @@ export default class PackInformationModal extends React.Component {
 const styles = StyleSheet.create({
     modal: {
         alignSelf: "center",
-        width: "80%",
+        width: "60%",
         height: "60%",
         backgroundColor: "white",
         flexDirection: 'column',
         justifyContent: 'space-evenly',
-        alignItems: 'center',
         padding: 10,
         borderRadius: 10,
     },

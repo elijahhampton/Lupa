@@ -6,10 +6,14 @@ import {
     StyleSheet,
     Dimensions,
     ScrollView,
-    RefreshControl
+    RefreshControl,
 } from 'react-native';
 
-import { MyPacksCard } from '../Packs/Components/PackCards';
+import {
+    Caption
+} from 'react-native-paper';
+
+import MyPacksCard from '../Packs/Components/PackCards';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 import PackModal from '../../Modals/PackModal/PackModal';
@@ -29,41 +33,15 @@ class MyPacks extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            
+            currUserPacks: this.props.lupa_data.Packs.currUserPacksData
         }
 
         this.loadCurrUserPacks = this.loadCurrUserPacks.bind(this);
     }
 
-    componentDidMount() {
-        this.setupMyPacks()
-    }
-
-    componentWillUpdate() {
-        // let packsToShow;
-        // await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-        //      packsToShow = result;
-        //  });
- 
-        //  await this.setState({
-        //      currUserPacks: packsToShow,
-        //  });
-    }
-
-    setupMyPacks = async () => {
-        /*let packsToShow;
-        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-             packsToShow = result;
-         });
- 
-         await this.setState({
-             currUserPacks: packsToShow,
-         });*/
-    }
-
     loadCurrUserPacks = () => {
-
-        return this.props.lupa_data.Packs.currUserPacksData.map(pack => {
+      return this.state.currUserPacks.map(pack => {
+          console.log(pack)
             return (
                 <MyPacksCard title={pack.pack_title} packUUID={pack.id} numMembers={pack.pack_members.length} image={pack.pack_image} />
             )
@@ -71,7 +49,6 @@ class MyPacks extends React.Component {
     }
 
     render() {
-        let numPacks = this.props.lupa_data.Packs.currUserPacksData.length;
         return (
             <View style={{flex: 1, backgroundColor: '#FAFAFA'}}>
                 <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ backgroundColor: "#FAFAFA", flexDirection: "row", flexWrap: 'wrap', alignItems: "center" }} refreshControl={<RefreshControl onRefresh={() => alert('Refreshing')} refreshing={this.state.refreshing}/>}>

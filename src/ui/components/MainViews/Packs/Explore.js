@@ -113,7 +113,6 @@ const mapStateToProps = (state, action) => {
     }
 
     mapUsersInArea = () => {
-        console.log('yess the number of users is: ' + this.state.usersInArea.length)
         return this.state.usersInArea.map(user => {
             return (
                 <Avatar.Image source={{uri: user.photo_url }} size={60} style={{margin: 5}} />

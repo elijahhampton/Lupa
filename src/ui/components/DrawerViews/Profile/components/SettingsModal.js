@@ -23,7 +23,7 @@ import {
     Divider,
     List,
     Title,
-    Switch
+    Switch,
 } from 'react-native-paper';
 
 import LogoutButton from '../../../DrawerViews/Profile/components/LogoutButton';
@@ -37,6 +37,7 @@ import { withNavigation, NavigationActions, StackActions } from 'react-navigatio
 import { logoutUser } from '../../../../../controller/lupa/auth';
 
 import Color from '../../../../common/Color'
+import GoalsModal from '../../../Modals/Goals/GoalsModal';
 
 const accountList = [
     {
@@ -153,7 +154,8 @@ class SettingsModal extends React.Component {
             packEventsSwitchIsEnabled: false,
             packChatSwitchIsEnabled: false,
             messagesSwitchIsEnabled: false,
-            newFollowersSwitchIsEnabled: false
+            newFollowersSwitchIsEnabled: false,
+            goalsModalIsOpen: false,
         }
     }
 
@@ -208,6 +210,10 @@ class SettingsModal extends React.Component {
         switch(key) {
             case 'ChangePaymentInformation':
                this._navigateToPaymentSettings();
+            case 'Goals':
+                this._handleGoalsModalOpen();
+                break;
+
         }
     }
 
@@ -217,6 +223,14 @@ class SettingsModal extends React.Component {
 
     _navigateToPaymentSettings = () => {
         this.props.navigation.navigate('PaymentSettingsView');
+    }
+
+    _handleGoalsModalOpen = () => {
+        this.setState({ goalsModalIsOpen: true })
+    }
+
+    _handleGoalsModalOnClose = () => {
+        this.setState({ goalsModalIsOpen: false })
     }
 
     render() {
@@ -290,8 +304,8 @@ class SettingsModal extends React.Component {
                         {
                            fitnessProfileList.map(item => {
                                return (
-                                <List.Item style={styles.listItem} title={item.title} description={item.description} />
-                               )
+                                <List.Item style={styles.listItem} key={item.key} title={item.title} description={item.description} onPress={() => {this.handleListItemOnPress(item.key)}}/>
+                                )
                             })
                         }
                         </List.Section>
@@ -321,6 +335,7 @@ class SettingsModal extends React.Component {
         Log out
         </Button>
                 </ScrollView>
+                <GoalsModal  animated={true} animationType="fade" isOpen={this.state.goalsModalIsOpen} closeModalMethod={this._handleGoalsModalOnClose} />
                 </SafeAreaView>
                 </Container>
         )
@@ -336,7 +351,7 @@ const styles = StyleSheet.create({
         color: '#2196F3'
     },
     listItem: {
-        backgroundColor: 'white'
+        //backgroundColor: 'white'
     },
     listAccordion: {
         color: '#2196F3',

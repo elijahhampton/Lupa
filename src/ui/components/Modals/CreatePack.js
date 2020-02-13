@@ -94,16 +94,12 @@ export default class CreatePack extends React.Component {
 
     handleInviteMembersOnChangeText = async (text) => {
         await this.setState({ inviteMembersTextInputVal: text })
-
-        console.log('asa' + text)
-
         let searchQuery = await text;
         let searchQueryResults;
 
-        await this.LUPA_CONTROLLER_INSTANCE.searchUserByPersonalName(searchQuery).then(results => {
+        await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(results => {
             searchQueryResults = results;
         });
-
         await this.setState({ autoCompleteData: searchQueryResults });
     }
 
@@ -117,8 +113,6 @@ export default class CreatePack extends React.Component {
         return (
             <Modal presentationStyle="fullScreen" style={styles.modal} visible={this.props.isOpen}>
                 <SafeAreaView style={styles.safeareaview}>
-                    <FeatherIcon size={30} name="users" style={{ alignSelf: "center" }} />
-
                     <View style={{ flex: 1.5, flexDirection: 'column', justifyContent: "space-around" }}>
                         <View style={{ width: '100%', alignItems: "center", justifyContent: "center" }}>
                             <Avatar size="medium" rounded showEditButton={true} source={{uri: this.state.packImageSource}} onPress={this._chooseImageFromCameraRoll} />

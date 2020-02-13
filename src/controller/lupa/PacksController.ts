@@ -41,8 +41,6 @@ class PacksController {
   indexPacksIntoAlgolia = async () => {
     let records = [];
 
-    console.log('Indexing Packs Into Algolia');
-
     await PACKS_COLLECTION.get().then(docs => {
       docs.forEach(doc => {
               //Load pack from document
@@ -168,25 +166,39 @@ class PacksController {
   getPackInformationByUUID = async (uuid) => {
     let packInformation;
     await PACKS_COLLECTION.doc(uuid).get().then(result => {
-      packInformation = result.data();
+      packInformation = result;
     });
 
     return Promise.resolve(packInformation);
   }
 
-  getPackEventsByUUID = async (arrOfUUIDS) => {
-    let packEvents = [];
-    for (let i = 0; i < arrOfUUIDS.length; ++i)
+  getPackEventsByUUID = async (packID) => {
+    let events;
+    await PACKS_EVENT_COLLECTION.doc(packID).get().then(result => {
+      events = result;
+    });
+
+    return Promise.resolve(events);
+  }
+
+  getPacksEventsFromArrayOfUUIDS = async (arr) => {
+    let packEventsData = [];
+
+    for (let i = 0; i < arr.length; ++i)
     {
-      await PACKS_EVENT_COLLECTION.doc(arrOfUUIDS[i]).get().then(result => {
-        let packEvent = result.data();
-        packEvent.id = result.id;
-        packEvents.push(packEvent);
-       
-      });
+      await PACKS_EVENT_COLLECTION.doc(arr[i]).get().then(doc => {
+        if (doc.exists) {
+          let snapshot = doc.data();
+          snapshot.events.forEach(event => {
+          packEventsData.push(event);
+          })
+      } else {
+      }
+      })
     }
-  
-      return Promise.resolve(packEvents);
+
+
+    return Promise.resolve(packEventsData);
   }
 
   createPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
@@ -310,7 +322,6 @@ class PacksController {
   }
 
   isAttendingPackEvent = async (packEventUUID, packEventTitle, userUUID) => {
-    console.log('calling this func..');
     let packEventData;
     let updatedPackEventAttendees;
     let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
@@ -336,15 +347,12 @@ class PacksController {
       });
 
     });
-
-    console.log(isAttending.valueOf() + 'BOOOOOOOOOOOOOOOO')
     return Promise.resolve(isAttending);
   }
 
   /************************* Pack Explore Page Functions ************************************/
 //Subscription based packs
 getSubscriptionPacksBasedOnLocation = async location => {
-  console.log('now subscriptions')
   let fallbackQuery;
   let resultArray = [];
   let subscriptionBasedPacks = new Array();
@@ -357,7 +365,6 @@ getSubscriptionPacksBasedOnLocation = async location => {
       if (err) throw rejects(err);
   
   
-      console.log(hits);
       //parse all of the hits first for the city
       for (var i = 0; i < hits.length; ++i)
       {
@@ -369,7 +376,6 @@ getSubscriptionPacksBasedOnLocation = async location => {
       })
       
     //resolve the promise with all of the packs
-    console.log('the lenth of subscri' + subscriptionBasedPacks.length)
       resolve(subscriptionBasedPacks);
     });
   });
@@ -398,9 +404,7 @@ getExplorePagePacksBasedOnLocation = async location => {
         let compare = (locationHighlightedResult.pack_location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
         if (compare)
         {
-          console.log('here')
           await explorePagePacks.push(hits[i]);
-          console.log(' ummm' + explorePagePacks.length)
         }
       }
 
@@ -412,9 +416,7 @@ getExplorePagePacksBasedOnLocation = async location => {
         let compare = (locationHighlightedResult.pack_location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
         if (compare)
         {
-          console.log('here')
           await explorePagePacks.push(hits[i]);
-          console.log(' ummm' + explorePagePacks.length)
         }
       }
 
@@ -425,9 +427,7 @@ getExplorePagePacksBasedOnLocation = async location => {
         let compare = (locationHighlightedResult.pack_location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
         if (compare)
         {
-          console.log('here')
           await explorePagePacks.push(hits[i]);
-          console.log(' ummm' + explorePagePacks.length)
         }
       }
 

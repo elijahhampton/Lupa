@@ -24,7 +24,8 @@ const userReducer = (state = initialUserReducerState, action) => {
   {
     case UPDATE_CURRENT_USER_ACTION:
       return Object.assign({}, state, {
-        currUserData: action.payload
+        currUserData: action.payload.userData,
+        currUserHealthData: action.payload.healthData,
      });
     default:
       return newState;
@@ -58,7 +59,6 @@ const workoutReducer = (state = initialState, action) => {
 }
 
 //sessions reducer
-
 const LupaReducer = combineReducers({
   Packs: packReducer,
   Workouts: workoutReducer,

@@ -34,6 +34,7 @@ import LupaController from '../../../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
 
+
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state
@@ -47,6 +48,7 @@ const monthsAsNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 const century = 21; //This will need to be changed every year until we find a more suitable way to calculate the day of the week
 
+//TODO: SHOW CONTAINED IF SESSIONS IS SELECTED
 class CreateSessionModal extends React.Component {
     constructor(props) {
         super(props);
@@ -55,7 +57,8 @@ class CreateSessionModal extends React.Component {
 
         this.state = {
             requestedUserUUID: this.props.navigation.state.params.userUUID,
-            requestedUserData: {},
+            requestedUserData: [],
+            preferred_workout_times: [],
             sessionName: "",
             sessionDescription: "",
             date: new Date().getDate(),
@@ -66,23 +69,26 @@ class CreateSessionModal extends React.Component {
             dayMenuActive: false,
             monthMenuActive: false,
             yearMenuActive: false,
-            sessionTimePeriods: []
+            sessionTimePeriods: [],
         }
     }
 
     componentDidMount = async () => {
-        console.log('did this work: ' + this.state.requestedUserUUID)
-       await this.setupRequestedUserInformation();
+        await this.setupRequestedUserInformation();
     }
 
     setupRequestedUserInformation = async () => {
-        console.log('the uuid is: ' + this.state.requestedUserUUID)
         let requestedUserDataIn;
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.requestedUserUUID).then(result => {
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.navigation.state.params.userUUID).then(result => {
             requestedUserDataIn = result;
         })
 
-        await this.setState({ requestedUserData: requestedUserDataIn });
+        await this.setState({ requestedUserData: requestedUserDataIn, preferred_workout_times: requestedUserDataIn.preferred_workout_times });
+    }
+
+    _getButtonMode = time => {
+        console.log('checking moe')
+        this.state.sessionTimePeriods.includes(time) ? "contained" : "text";
     }
 
     _handleNewSessionRequest = () => {
@@ -95,104 +101,83 @@ class CreateSessionModal extends React.Component {
         this.props.navigation.goBack();
     }
 
+    handlePickSessionTime = (time) => {
+        if (this.state.sessionTimePeriods.includes(time)) {
+            let currentTimes = this.state.sessionTimePeriods;
+            this.setState({ sessionTimePeriods: currentTimes.slice(currentTimes.indexOf(time)) });
+        }
+        else {
+            this.setState({ sessionTimePeriods: this.state.sessionTimePeriods.concat(time) });
+        }
+    }
+
     _returnRequestedUserAvailableTimes = (month, day, year) => {
-        const dayOfTheWeek = (5 + 6 + 2020 + (2020 / 4) + century) % 7
-        console.log('DAY OF THE WEK: ' + dayOfTheWeek)
-        let dayOfTheWeekString;
-        switch(dayOfTheWeek)
-        {
-            case 1:
-                dayOfTheWeekString = "Sunday";
+        let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        let dayOfTheWeek = days[new Date(month + " " + day + "," + " " + year).getDay()];
+        switch (dayOfTheWeek) {
+            case 'Monday':
+                
+                return this.state.preferred_workout_times.Monday && this.state.preferred_workout_times.Monday.map(time => {
+                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                        {time}
+                    </Button>
+                })
                 break;
-            case 2:
-                console.log('Declaring as Monday')
-                dayOfTheWeekString = "Monday";
+            case 'Tuesday':
+
+                return this.state.preferred_workout_times.Tuesday && this.state.preferred_workout_times.Tuesday.map(time => {
+                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                        {time}
+                    </Button>
+                })
                 break;
-            case 3:
-                dayOfTheWeekString = "Tuesday";
+            case 'Wednesday':
+
+                return this.state.preferred_workout_times.Wednesday && this.state.preferred_workout_times.Wednesday.map(time => {
+                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                        {time}
+                    </Button>
+                })
                 break;
-            case 4:
-                dayOfTheWeekString = "Wednesday";
+            case 'Thursday':
+
+                return this.state.preferred_workout_times.Thursday && this.state.preferred_workout_times.Thursday.map(time => {
+                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                        {time}
+                    </Button>
+                })
                 break;
-            case 5:
-                dayOfTheWeekString = "Thursday";
+            case 'Friday':
+
+                return this.state.preferred_workout_times.Friday && this.state.preferred_workout_times.Friday.map(time => {
+                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                        {time}
+                    </Button>
+                })
                 break;
-            case 6:
-                dayOfTheWeekString = "Friday";
+            case 'Saturday':
+                
+                return this.state.preferred_workout_times.Saturday && this.state.preferred_workout_times.Saturday.map(time => {
+                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                        {time}
+                    </Button>
+                })
                 break;
-            case 7:
-                dayOfTheWeekString = "Saturday";
-                break;
-            default:
-                dayOfTheWeekString = "Sunday";
+            case 'Sunday':
+
+                return this.state.preferred_workout_times.Sunday && this.state.preferred_workout_times.Sunday.map(time => {
+                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                        {time}
+                    </Button>
+                })
                 break;
         }
-
-       // const timeDataFromDay = this.state.requestedUserData.preferred_workout_times.dayOfTheWeekString;
-      // const timeDataFromDay = this.state.requestedUserData.preferred_workout_times;
-        /*const beginningTimePeriod = timeDataFromDay
-
-        //get the length of the timeData
-        let timeDataFromDayLength = timeDataFromDay.length;
-
-        //array to store all times
-        let timesArray = [];
-
-        //for each item in the array extract beginning and ending time period
-        timeDataFromDay.forEach((item, index, arr) => { //Ex Item -> 3:00 PM - 8:00 PM
-            let beginningTimePeriod = item.substr(item.indexOf('A', 2));
-            let endingTimePeriod = tiem.substr(item.indexOf('P', 2));
-
-            let hour = item;
-            let split = item.split('-');
-            let beginningTime = parseInt(split[0].charAt(0));
-            let endingTime = parseInt(split[1].charAt(0));
-            let numbersBetween = abs(beginningTime - endingTime);
-
-            if (beginningTimePeriod == 'AM')
-            {
-                let modifier = 'AM';
-                for (let i = 0; i < numbersBetween; ++i)
-                {
-
-                    timesArray.push(toString(beginningTime) + ':00' + " " + modifier);
-                    beginningTime += 1;
-
-                    if (beginningTime == 12)
-                    {
-                        modifier = "PM"
-                    }
-                }
-            }
-
-            if (beginningTimePeriod == 'PM')
-            {
-                let modifier = 'PM';
-                for (let i = 0; i < numbersBetween; ++i)
-                {
-
-                    timesArray.push(toString(beginningTime) + ':00' + " " + modifier);
-                    beginningTime += 1;
-
-                    if (beginningTime == 12)
-                    {
-                        modifier = "AM"
-                    }
-                }
-            }
-
-        });
-
-        timesArray.sort();
-
-        console.log(timesArray);*/
     }
 
     render() {
-        const { currIndex } = this.state;
         return (
             <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#1A237E', padding: 10, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#0D47A1', padding: 10, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
                     <Headline style={{ alignSelf: 'center', color: 'white', textAlign: 'center', }}>
                         You are about to request a session with: {this.state.requestedUserData.display_name}
                     </Headline>
@@ -200,13 +185,13 @@ class CreateSessionModal extends React.Component {
                     <View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                             <Surface style={{ width: 90, height: 90, elevation: 10, borderRadius: 80, margin: 10 }}>
-                                <Image source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} style={{ flex: 1, borderRadius: 80 }} />
+                                <Image source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} style={{ width: '100%', height: '100%', borderRadius: '80' }} />
                             </Surface>
 
                             <Icon name="compare-arrows" size={40} />
 
                             <Surface style={{ width: 90, height: 90, elevation: 10, borderRadius: 80, margin: 10, }}>
-                                <Image source={{ uri: this.state.requestedUserData.photo_url }} style={{ flex: 1, borderRadius: 80 }} />
+                                <Image source={{ uri: this.state.requestedUserData.photo_url }} style={{ width: '100%', height: '100%', borderRadius: '80' }} />
                             </Surface>
                         </View>
                     </View>
@@ -238,19 +223,19 @@ class CreateSessionModal extends React.Component {
                             <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly' }}>
                                 <Menu
                                     anchor={
-                                        <Button mode="contained" color="#1A237E" onPress={() => this.setState({ dayMenuActive: true })}>
+                                        <Button mode="contained" color="#0D47A1" onPress={() => this.setState({ dayMenuActive: true })} onDismiss={() => this.setState({ dayMenuActive: false })}>
                                             {this.state.sessionDay}
                                         </Button>
-                                    } visible={this.state.dayMenuActive} onDismiss={() => this.setState({ dayMenuActive: false })} style={{height: '65%'}}>
-                                        <ScrollView>
-                                            {
-                                                                                        days.map(day => {
-                                                                                            return (
-                                                                                                <Menu.Item key={day} title={day} onPress={() => this.setState({ sessionDay: day }) } />
-                                                                                            )
-                                                                                        })
-                                            }
-                                        </ScrollView>
+                                    } visible={this.state.dayMenuActive} onDismiss={() => this.setState({ dayMenuActive: false })} style={{ height: '65%' }}>
+                                    <ScrollView>
+                                        {
+                                            days.map(day => {
+                                                return (
+                                                    <Menu.Item key={day} title={day} onPress={() => this.setState({ sessionDay: day })}/>
+                                                )
+                                            })
+                                        }
+                                    </ScrollView>
                                     <Divider />
                                     <Menu.Item title="Cancel" />
                                 </Menu>
@@ -258,27 +243,27 @@ class CreateSessionModal extends React.Component {
                                 <Menu
 
                                     anchor={
-                                        <Button mode="contained" color="#1A237E" onPress={() => this.setState({ monthMenuActive: true })}>
+                                        <Button mode="contained" color="#0D47A1" onPress={() => this.setState({ monthMenuActive: true })} onDismiss={() => this.setState({ monthMenuActive: false  })}>
                                             {this.state.sessionMonth}
                                         </Button>
-                                    } visible={this.state.monthMenuActive} onDismiss={() => this.setState({ monthMenuActive: false })} style={{height: '65%'}}>
+                                    } visible={this.state.monthMenuActive} onDismiss={() => this.setState({ monthMenuActive: false })} style={{ height: '65%' }}>
                                     <ScrollView>
-                                    {
-                                        months.map(month => {
-                                            return (
-                                                <Menu.Item key={month} title={month} onPress={() => this.setState({ sessionMonth: month})}/>
-                                            )
-                                        })
-                                    }
+                                        {
+                                            months.map(month => {
+                                                return (
+                                                    <Menu.Item key={month} title={month} onPress={() => this.setState({ sessionMonth: month })} />
+                                                )
+                                            })
+                                        }
                                     </ScrollView>
-                                     <Divider />
+                                    <Divider />
                                     <Menu.Item title="Cancel" />
                                 </Menu>
 
 
                                 <Menu
                                     anchor={
-                                        <Button mode="contained" color="#1A237E" onPress={() => this.setState({ yearMenuActive: true })}>
+                                        <Button mode="contained" color="#0D47A1" onPress={() => this.setState({ yearMenuActive: true })} onDismiss={() => this.setState({ yearMenuActive: false })}>
                                             {this.state.sessionYear}
                                         </Button>
                                     } visible={this.state.yearMenuActive} onDismiss={() => this.setState({ yearMenuActive: false })}>
@@ -299,24 +284,22 @@ class CreateSessionModal extends React.Component {
 
 
                     <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
-                        <View style={{ flexDirection: 'column', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                        <View style={{ flexDirection: 'column', justifyContent: 'space-evenly' }}>
                             <Title>
                                 Pick a time or multiple
                                 </Title>
+                                <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
                                 {
-                                   // this._returnRequestedUserAvailableTimes(this.state.sessionMonth, this.state.sessionDay, this.state.sessionYear)
-                                }
-                                <Button mode="text" onPress={() => this.setState({ sessionTimePeriods: this.state.sessionTimePeriods.concat("4:00 PM - 5:00 PM")})}>
-                                    4:00 PM
-                                </Button>
-
+                                this._returnRequestedUserAvailableTimes(this.state.sessionMonth, this.state.sessionDay, this.state.sessionYear)
+                            }
+                                </View>
                         </View>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', margin: 5 }}>
-                            <Button mode="text" color="#1A237E">
+                            <Button mode="text" color="#0D47A1">
                                 Back
                                 </Button>
-                            <Button mode="contained" color="#1A237E" onPress={this._handleNewSessionRequest}>
+                            <Button mode="contained" color="#0D47A1" onPress={this._handleNewSessionRequest}>
                                 Request
                                 </Button>
                         </View>

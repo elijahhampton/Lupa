@@ -58,11 +58,21 @@ import MyPacksCard from './components/MyPacksCard';
 import { MaterialIcons as MaterialIcon } from '@expo/vector-icons';
 import FollowerModal from '../../Modals/User/FollowerModal';
 
+import StripePaymentModal from '../../Modals/Payment/StripePaymentModal';
+import StripePaymentComponent from '../../../../modules/payments/stripe/ui/stripe-ui';
+
 let chosenHeaderImage;
 let chosenProfileImage;
 
 let ProfileImage = require('../../../images/background-one.jpg');
 
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
 
 /**
  * Lupa Profile View
@@ -74,7 +84,7 @@ let ProfileImage = require('../../../images/background-one.jpg');
  * ADD EDIT, ADD, and DELETE buttons for content.  (The delete buttons will be mapped beside content in each content area.).
  * PHOTO_URL not correct
  */
-export default class UserProfileModal extends React.Component {
+class UserProfileModal extends React.Component {
     constructor(props) {
         super(props);
 
@@ -300,9 +310,16 @@ export default class UserProfileModal extends React.Component {
     }
 
     _navigateToSessionsView = () => {
-        this.props.navigation.navigate('SessionsView', {
-            userUUID: this.state.userUUID
-        });
+        /*if (this.props.lupa_data.Users.currUserData.isTrainer == true)
+        {
+            return <StripePaymentComponent />
+            /*this.props.navigation.navigate('SessionsView', {
+                userUUID: this.state.userUUID
+            }); 
+        } */
+            this.props.navigation.navigate('SessionsView', {
+                userUUID: this.state.userUUID
+            });
     }
 
     render() {
@@ -594,3 +611,5 @@ const styles = StyleSheet.create({
     },
 
 });
+
+export default connect(mapStateToProps)(UserProfileModal);

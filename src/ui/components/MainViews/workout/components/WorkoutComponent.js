@@ -32,11 +32,11 @@ const mapStateToProps = (state, action) => {
 const getChipBackgroundColor = workoutType => {
     switch(workoutType)
     {
-        case WORKOUT_MODALITY.CALISTHENICS:
+        case "calisthenics":
             return "#29B6F6"
-        case WORKOUT_MODALITY.WEIGHTLIFTING:
+        case "weightlifting":
             return "#ef5350"
-        case WORKOUT_MODALITY.METABOLIC:
+        case "metabolic":
             return "#FFEE58"
     }
 }
@@ -46,7 +46,7 @@ class WorkoutComponent extends React.Component {
         super(props);
         
         this.state = {
-            workoutModalIsOpen: false,
+            workoutModalIsOpen: true,
         }
     }
 
@@ -61,21 +61,20 @@ class WorkoutComponent extends React.Component {
 
     render() {
         return (
-            <>
-            <TouchableOpacity onPress={() => this._handleOpenWorkoutModal()}>
-                            <View style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: 'auto', padding: 5}}>
+            <TouchableOpacity onPress={() => this.props.navigateMethod()}>
+                            <View style={{display: 'flex', flexDirection: 'column', width: '100%', height: 'auto', padding: 5}}>
             <View style={{justifyContent: 'flex-start'}}>
             <Title>
-                Goal Pathway Name
+               {this.props.pathwayName}
             </Title>
             <Text numberOfLines={2} ellipsizeMode="tail">
-                This is a long paragraph about the goal pathway here and what you have to do to accomplish it
+                {this.props.pathwayDescription}
             </Text>
             </View>
             <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', padding: 5}}>
-            <Caption>
-                5 Iterations
-            </Caption>
+            <Text style={{fontSize: 15, fontWeight: 'bold'}}>
+                {this.props.iterationsCompleted} Iterations Completed
+            </Text>
             <Chip mode="flat" style={{width: "auto", height: 25, elevation: 3, backgroundColor: getChipBackgroundColor(this.props.workoutModality)}}>
             <Caption style={{alignSelf: 'flex-end'}}>
                     {this.props.workoutModality}
@@ -84,8 +83,6 @@ class WorkoutComponent extends React.Component {
             </View>
         </View>
             </TouchableOpacity>
-            <WorkoutModal isOpen={this.state.workoutModalIsOpen} closeModalMethod={this._handleCloseWorkoutModal} />
-            </>
         )
     }
 }

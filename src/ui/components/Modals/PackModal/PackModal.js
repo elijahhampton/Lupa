@@ -21,7 +21,8 @@ import {
     Provider,
     Paragraph,
     Headline,
-    Title
+    Title,
+    Avatar
 } from 'react-native-paper';
 
 import {
@@ -34,7 +35,6 @@ import SafeAreaView from 'react-native-safe-area-view';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import PackInformationSlider from './Components/PackInformationSlider.js';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
@@ -47,6 +47,14 @@ import UserDisplayCard from './Components/UserDisplayCard';
 import PackInformationModal from '../Packs/PackInformationModal';
 
 import PackEventModal from './Components/PackEventModal';
+
+import { connect } from 'react-redux';
+
+const mapStateToPacks = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
 
 const PackMembersModal = (props) => {
     return (
@@ -110,7 +118,7 @@ const PackEventCard = props => {
     )
 }
 
-export default class PackModal extends React.Component {
+class PackModal extends React.Component {
     constructor(props) {
         super(props);
 
@@ -129,6 +137,7 @@ export default class PackModal extends React.Component {
             ready: false,
             currDisplayedPackEvent: 0,
             isAttendingCurrEvent: false,
+            currPackData: {},
         }
     }
 
@@ -139,77 +148,72 @@ export default class PackModal extends React.Component {
     setupPackModal = async () => {
         let packInformationIn, packEventsIn, isAttendingCurrEventIn;
 
-        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(packInformation => {
-            packInformationIn = packInformation;
+        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
+            packInformationIn = result;
+        })
+
+        await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEvents => {
+            if (packEvents == undefined || packEvents.events == undefined || packEvents.events.length == 0)
+            {
+                packEventsIn = [];
+            }
+            else
+            {
+                packEventsIn = packEvents.events;
+            }
+
         });
 
-        console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC')
-        console.log(packInformationIn)
-        console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC')
+        await this.setState({ packInformation: packInformationIn, packEvents: packEventsIn})
 
-        
-        await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEventsInformation => {
-            packEventsIn = packEventsInformation.events;
-        });
-
-        await this.setState({ packInformation: packInformationIn, packEvents: packEventsIn });
-
-
-        this.currentUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-        if (this.currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
-        
-
-        await this.setState({ ready: true })
-
-        console.log('calling this function 2222')
+       this.currentUserUUID = this.props.lupa_data.Users.currUserData.user_uuid;
+       if (this.currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
+    
     }
 
     checkUserEventAttendance = async (packEventUUID, packEventTitle, userUUID) => {
-        console.log('CHECKING ATTENDACNE NOW! GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
-        let isAttendingCurrEventIn;
+        // console.log('CHECKING ATTENDACNE NOW! GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
+        // let isAttendingCurrEventIn;
 
-        await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(isAttendingCurrEvent => {
-                isAttendingCurrEventIn = isAttendingCurrEvent;
-            });
+        // await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(isAttendingCurrEvent => {
+        //         isAttendingCurrEventIn = isAttendingCurrEvent;
+        //     });
 
-        await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
+        // await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
 
-        console.log('ATTENDANCE RESULTS ' + isAttendingCurrEventIn)
+        // console.log('ATTENDANCE RESULTS ' + isAttendingCurrEventIn)
         }
 
         handleAttendEventOption = async (packEventUUID, packEventTitle, userUUID) => {
-            await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
-            this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID);
+            // await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
+            // this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID);
         }
 
         handleUnattendEventOption = async (packEventUUID, packEventTitle, userUUID) => {
-            await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
-            this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID)
+            // await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
+            // this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID)
         }
 
     mapMembers = () => {
         /* This is an existing problem where you cannot access the pack_members field from packInformation..
         not sure why yet */
 
-        if (this.state.ready == false) { return; }
-
-        return this.state.packInformation.pack_members.map(member => {
-            return (
-                <UserDisplayCard userUUID={member} />
-            )
+        return this.state.packInformation.pack_members && this.state.packInformation.pack_members.map(member => {
+             return (
+                 <UserDisplayCard userUUID={member} />
+             )
         })
     }
 
     _renderItem = ({ item, index }) => {
         return (
            <PackEventCard packEventObjectIn={item} />
-        );
+         );
     }
 
     handleOnSnapToItem = async (itemIndex) => {
-        if (itemIndex == 0) {
-            console.log('ITEM INDEX IS 0000000000000000000')
-            await this.checkUserEventAttendance(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, 
+         if (itemIndex == 0) {
+             await this.checkUserEventAttendance(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, 
                 this.state.packEvents[0].pack_event_title, this.currentUserUUID);
 
                 return;
@@ -222,7 +226,7 @@ export default class PackModal extends React.Component {
     }
 
     handleCreateEventModalClose = () => {
-        this.setState({ createEventModalIsOpen: false })
+       this.setState({ createEventModalIsOpen: false })
     }
 
     handleLeavePack = async () => {
@@ -234,12 +238,42 @@ export default class PackModal extends React.Component {
     }
 
     handlePackInformationModalClose = () => {
-        this.setState({ packInformationModalIsOpen: false })
+       this.setState({ packInformationModalIsOpen: false })
     }
 
     handlePackMembersModalClose = () => {
-        this.setState({ packMembersModalIsOpen: false })
+      this.setState({ packMembersModalIsOpen: false })
     }
+
+    _renderMoreVert = () => {
+        this.state.currentUserIsPackLeader ? <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} /> : null
+    }
+
+    renderPackEventsContent = () => {
+        return this.state.packEvents.length == 0 ? <Text style={{fontSize: 20, fontWeight: 'bold', padding: 8}}> Your pack leader has not setup any events yet!  When they do events will appear here. </Text> :                         
+                            <View style={{flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                                                            <Carousel shouldRasterizeIOS={true}
+                            ref={(c) => { this._carousel = c; }}
+                            data={this.state.packEvents}
+                            renderItem={this._renderItem}
+                            sliderWidth={Dimensions.get('screen').width}
+                            itemWidth={Dimensions.get('screen').width- 20} 
+                            onBeforeSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
+                            />
+                            </View>
+}
+
+getButtonColor = () => {
+    if (this.state.packEvents.length == 0) { return ['grey', 'grey']}
+
+    return this.state.packEvents[this.state.currDisplayedPackEvent].attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid) ? ["grey", "#2196F3"] : ["#2196F3", 'grey']
+}
+
+getButtonDisabledStatus = () => {
+    if (this.state.packEvents.length == 0) { return [true, true]}
+
+    return this.state.packEvents[this.state.currDisplayedPackEvent].attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid) ? [true, false] : [false, true]
+}
 
     _showActionSheet = () => {
         ActionSheetIOS.showActionSheetWithOptions(
@@ -262,7 +296,7 @@ export default class PackModal extends React.Component {
     }
 
     render() {
-        console.log(this.state.packEvents)
+        const buttonColors = this.getButtonColor();
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
                 <SafeAreaView forceInset={{
@@ -287,7 +321,9 @@ export default class PackModal extends React.Component {
                                 {this.state.packInformation.pack_title}
                             </Text>
                             <View style={{ flexDirection: 'row' }}>
-                                <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} />
+                                {
+                                    this._renderMoreVert()
+                                }
                                 <IconButton icon="chat-bubble-outline" color="black" onPress={() => this.setState({ packChatModalIsOpen: true })} />
                             </View>
                         </View>
@@ -295,27 +331,22 @@ export default class PackModal extends React.Component {
 
 
                     <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
-                        <Carousel shouldRasterizeIOS={true}
-                            ref={(c) => { this._carousel = c; }}
-                            data={this.state.packEvents}
-                            renderItem={this._renderItem}
-                            sliderWidth={Dimensions.get('screen').width}
-                            itemWidth={Dimensions.get('screen').width- 20} 
-                            onBeforeSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
-                            />
+                        {
+                            this.renderPackEventsContent()
+                        }
                     </View>
 
                     <View style={{ flex: 1 }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
-                            <TouchableOpacity disabled={this.state.currDisplayedPackEvent == 0 ? true : false && this.state.isAttendingCurrEvent} onPress={() => this.handleAttendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
+                            <TouchableOpacity disabled={this.getButtonDisabledStatus()} onPress={() => this.handleAttendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
                             <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <FeatherIcon name="check" size={25} color="#2196F3" />
+                                <FeatherIcon name="check" size={25} color={buttonColors[0]} />
                             </Surface>
                             </TouchableOpacity>
 
-                            <TouchableOpacity  disabled={this.state.currDisplayedPackEvent == 0 ? true : false && !this.state.isAttendingCurrEvent} onPress={() => this.handleUnattendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
+                            <TouchableOpacity  disabled={this.getButtonDisabledStatus()} onPress={() => this.handleUnattendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
                             <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <FeatherIcon name="x" size={25} color="#2196F3"/>
+                                <FeatherIcon name="x" size={25} color={buttonColors[1]} />
                             </Surface>
                             </TouchableOpacity>
 
@@ -337,7 +368,7 @@ export default class PackModal extends React.Component {
                             <Text style={styles.header}>
                                 Members
                 </Text>
-                            <Button mode="text" color="black" onPress={() => this.setState({ packMembersModalIsOpen: true })} disabled={false /*this.state.packInformation.pack_members.length == 0 ? true : false*/}>
+                            <Button mode="text" color="black" onPress={() => this.setState({ packMembersModalIsOpen: true })} disabled={false}>
                                 View all
                 </Button>
                         </View>
@@ -425,3 +456,5 @@ const styles = StyleSheet.create({
         padding: 10
     }
 });
+
+export default connect(mapStateToPacks)(PackModal);

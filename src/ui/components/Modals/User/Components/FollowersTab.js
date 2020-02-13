@@ -30,41 +30,46 @@ import UserSearchResult from './UserSearchResult';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
 
-export default class FollowersTab extends React.Component {
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
+class FollowersTab extends React.Component {
     constructor(props) {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            /*userUUID: this.props.userUUID,
-            followersUUDS: this.props.followers,
+            followersUUIDS: this.props.lupa_data.Users.currUserData.followers,
             followersUserObjects: [],
-            serachResultData: [],*/
         }
     }
 
-    componentDidMount() {
-        //this.setupFollowersTabInformation();
+    componentDidMount = async () => {
+        await this.setupFollowersTabInformation();
     }
 
     setupFollowersTabInformation = async () => {
-        let results = [];
-        await this.followersUUIDS.forEach(async userUUID => {
-            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(userUUID).then(userObject => {
-                results.push(userObject);
-            });
+        let results = new Array();
+
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.state.followersUUIDS).then(objs => {
+            results = objs;
         });
 
         await this.setState({ followersUserObjects: results });
     }
 
     mapFollowers = () => {
-       /* return this.state.followersUserObjects(user => {
+        return this.state.followersUserObjects.map(user => {
             return (
-                <UserSearchResult />
-            )
-        })*/
+                <UserSearchResult avatarSrc={user.photo_url} displayName={user.display_name} username={user.username} isTrainer={user.isTrainer}/>
+            );
+        })
     }
 
     /**
@@ -76,7 +81,7 @@ export default class FollowersTab extends React.Component {
     render() {
         return (
             <ScrollView shouldRasterizeIOS={true}>
-                <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/>
+              {/*  <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/> */}
                 {
                     this.mapFollowers()
                 }
@@ -90,3 +95,5 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
     }
 })
+
+export default connect(mapStateToProps)(FollowersTab);

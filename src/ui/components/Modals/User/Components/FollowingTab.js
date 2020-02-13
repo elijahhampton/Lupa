@@ -30,53 +30,43 @@ import UserSearchResult from './UserSearchResult';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
 
-export default class FollowingTab extends React.Component {
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
+class FollowingTab extends React.Component {
     constructor(props) {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-        this.following = [];
 
         this.state = {
-            followingUUIDS: [],
+            followingUUIDS: this.props.lupa_data.Users.currUserData.following,
             followingUserObjects: [],
-            searchResultData: []
         }
     }
 
     componentDidMount = async () => {
-        this.setupFollowingTabInformation();
+        await this.setupFollowingTabInformation();
     }
 
     setupFollowingTabInformation = async () => {
-        let following;
-        let results = [];
-
-        const currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(currUserUUID, 'following').then(result => {
-            following = result;
-        })
-
-        await this.setState({ followingUUIDS: following })
-
-        await this.state.followingUUIDS.forEach(async userUUID => {
-            console.log('the uuid is: ' + userUUID)
-            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(userUUID).then(userObject => {
-                results.push(userObject);
-            });
+        let results = new Array();
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.state.followingUUIDS).then(objs => {
+            results = objs;
         });
 
         await this.setState({ followingUserObjects: results });
     }
 
     mapFollowing = () => {
-        console.log('the length is: ' + this.state.followingUserObjects.length)
         return this.state.followingUserObjects.map(user => {
             return (
-                <Text>
-                    Hi
-                </Text>
+                <UserSearchResult avatarSrc={user.photo_url} displayName={user.display_name} username={user.username} isTrainer={user.isTrainer}/>
             );
         })
     }
@@ -90,7 +80,7 @@ export default class FollowingTab extends React.Component {
     render() {
         return (
             <ScrollView shouldRasterizeIOS={true}>
-                <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/>
+               {/* <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/> */}
                 {
                     this.mapFollowing()
                 }
@@ -104,3 +94,5 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent"
     }
 })
+
+export default connect(mapStateToProps)(FollowingTab);

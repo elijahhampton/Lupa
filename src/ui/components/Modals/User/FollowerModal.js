@@ -26,7 +26,15 @@ import {
 import FollowersTab from './Components/FollowersTab';
 import FollowingTab from './Components/FollowingTab';
 
-export default class FollowerModal extends React.Component {
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
+class FollowerModal extends React.Component {
     constructor(props) {
         super(props);
 
@@ -35,18 +43,23 @@ export default class FollowerModal extends React.Component {
             activeTab: this.props.activeTab,
         }
     }
+
+    _navigateBack = () => {
+        this.props.navigation.goBack();
+    }
+
     render() {
         return (
                 <Container style={styles.root}>
                     <Header hasTabs>
                         <Left>
-                            <IconButton icon="arrow-back"  />
+                            <IconButton icon="arrow-back"  onPress={this._navigateBack}/>
                         </Left>
-                        <Body>
-                            <Text>
-                                Username here
+                        <Right>
+                            <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+                                {this.props.lupa_data.Users.currUserData.display_name}
                             </Text>
-                        </Body>
+                        </Right>
                     </Header>
 
                     <Tabs page={this.state.activeTab}>
@@ -67,4 +80,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#FAFAFA",
     }
-})
+});
+
+export default connect(mapStateToProps)(FollowerModal);

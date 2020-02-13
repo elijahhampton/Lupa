@@ -28,6 +28,7 @@ import SearchNavigator from "./Navigators/SearchNavigator";
 import {
   logoutUser
 } from '../../controller/lupa/auth'
+import WorkoutViewNavigator from "./Navigators/WorkoutViewNavigator";
 
 class Lupa extends React.Component {
   constructor(props) {
@@ -49,7 +50,7 @@ class Lupa extends React.Component {
   }
 
   _showWelcomeModal = async () => {
-  AsyncStorage.setItem('isNewUser', 'true');
+  AsyncStorage.setItem('isNewUser', 'false');
   let _isNewUser = await AsyncStorage.getItem('isNewUser');
   
   switch(_isNewUser)
@@ -90,7 +91,7 @@ _navigateToAuth = async () => {
           showsPagination={false}
           index={currIndex}>
         <Dashboard />
-        <WorkoutView logoutMethod={this._navigateToAuth}/>
+        <WorkoutViewNavigator />
         <PackView />
         <SearchNavigator />
       </Swiper>

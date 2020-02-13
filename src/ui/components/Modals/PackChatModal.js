@@ -83,6 +83,8 @@ export default class PackChatModal extends React.Component{
                     placeholder="Send a message to your pack!" 
                     isTyping={true} 
                     renderUsernameOnMessage={true}
+                    showUserAvatar={true}
+                    alwaysShowSend={true}
                     />
             </Modal>
         );
@@ -93,5 +95,6 @@ const styles = StyleSheet.create({
     modalContainer: {
         backgroundColor: "#FAFAFA",
         flex: 1,
+        margin: 0,
     },
 });
