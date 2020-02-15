@@ -54,6 +54,8 @@ import { MaterialIcons as MaterialIcon } from '@expo/vector-icons';
 import FollowerModal from '../../Modals/User/FollowerModal';
 import SettingsModal from './components/SettingsModal';
 
+import PacksModal from '../../Modals/PackModal/PackModal';
+
 import { connect } from 'react-redux';
 
 
@@ -170,29 +172,26 @@ class ProfileView extends React.Component {
     }
 
     mapExperience = () => {
-       /* return this.state.userExperience.length == 0 ?
-            <Caption>
-                Experience that you add to your fitness profile will appear here.
-    </Caption> : <View>
+        return  <View>
                 <Title>
                     Education
             </Title>
                 <Text>
-                    {this.state.userExperience.school} with {this.state.userExperience.major}
+                     Auburn University 
                 </Text>
                 <Title>
                     Certification
             </Title>
                 <Text>
-                    {this.state.userExperience.certification}
+                     National Association Science and Medicine
                 </Text>
                 <Title>
                     Years as a Trainer
             </Title>
                 <Text>
-                    {this.state.userExperience.years_as_trainer}
+                     5
                 </Text>
-            </View>*/
+            </View>
     }
 
     mapPacks = () => {
@@ -350,8 +349,8 @@ class ProfileView extends React.Component {
                     }   
                     </>
 
-                    <View style={[{width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}]}>
-                        {/* Goals chart */}
+                {/* <View style={[{width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}]}> */}
+                        {/* Goals chart 
                         <Surface style={{elevation: 8, margin: 5, width: 160, height: 160, borderRadius: 20, backgroundColor: "#FAFAFA"}}>
                         <LineChart
   data={data}
@@ -362,19 +361,20 @@ class ProfileView extends React.Component {
   bezier
 />
                         </Surface>  
+                        */}
 
                         {/* interest mapping */}
-                        <Surface style={{elevation: 8, margin: 5, width: 160, height: 160, borderRadius: 20, backgroundColor: "#2196F3"}}>
+                        <Surface style={[styles.contentSurface, {elevation: 8, backgroundColor: "#2196F3"}]}>
                                 <View style={{width: '100%', justifyContent: 'flex-end'}}>
                                     <Button mode="text" color="white">
                                         View all
                                     </Button>
                                 </View>
-                                <View style={{flexDirection: 'column', flexWrap: 'wrap', justifyContent: 'space-evenly', alignItems: 'center'}}>
+                                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', alignItems: 'center'}}>
                                 {
                                     this.props.lupa_data.Users.currUserData.interest.map((val, index, arr) => {
                                         return (
-                                            <Chip mode="flat" style={{width: '80%', height: 'auto', alignItems: 'center', justifyContent: 'center', margin: 2, backgroundColor: "#FAFAFA", elevation: 3}}> 
+                                            <Chip mode="flat" style={{width: 'auto', height: 'auto', alignItems: 'center', justifyContent: 'center', margin: 2, backgroundColor: "#FAFAFA", elevation: 3}}> 
                                             <Text style={{fontWeight: 'bold'}}>
                                                 {val}
                                             </Text>
@@ -384,7 +384,7 @@ class ProfileView extends React.Component {
                                 }
                                 </View>
                         </Surface>
-                    </View>
+                    {/*</View> */}
 
 
                     <View style={styles.myPacks}>
@@ -424,7 +424,7 @@ class ProfileView extends React.Component {
                         <MaterialIcon name="settings" />
                     </Button>
                 </Fab>
-            </SafeAreaView>
+                            </SafeAreaView>
         );
     }
 }

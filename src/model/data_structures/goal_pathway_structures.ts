@@ -2,15 +2,15 @@ import {
     GoalPathway
 } from './workout/types';
 
-export enum MODALITY {
-    METABOLIC="metabolic",
-    CALISTHENICS="calisthenics",
-    WEIGHTLIFTING="weightlifting",
-}
+import {
+    MODALITY,
+    GOAL_PATHWAY_STRUCTURE_UID,
+    GOAL_UID,
+} from './workout/types';
 
 export var improve_strength_metabolic_pathway : GoalPathway = {
     name: "Improve Strength",
-    goal_uid: "sf928hf3928h0ie",
+    goal_uid: GOAL_UID.IMPROVE_STRENGTH,
     description: "description",
     modality: MODALITY.METABOLIC,
     workouts: {
@@ -18,13 +18,13 @@ export var improve_strength_metabolic_pathway : GoalPathway = {
         prime_workouts: [],
         warm_down: [],
     },
-    uid: "dj928933hfoifjf",
+    uid: GOAL_PATHWAY_STRUCTURE_UID.IMPROVE_STRENGTH_METABOLIC,
     iteration: 0
 }
 
 export var improve_strength_calisthenics_pathway : GoalPathway = {
     name: "Improve Strength",
-    goal_uid: "sf928hf3928h0ie",
+    goal_uid: GOAL_UID.IMPROVE_STRENGTH,
     description: "description",
     modality: MODALITY.CALISTHENICS,
     workouts: {
@@ -32,13 +32,13 @@ export var improve_strength_calisthenics_pathway : GoalPathway = {
         prime_workouts: [],
         warm_down: [],
     },
-    uid: "jf892h938n2f3hf39hf",
+    uid: GOAL_PATHWAY_STRUCTURE_UID.IMPROVE_STRENGTH_CALISTHENICS,
     iteration: 0
 }
 
 export var improve_strength_weightlifting_pathway : GoalPathway = {
     name: "Improve Strength",
-    goal_uid: "sf928hf3928h0ie",
+    goal_uid: GOAL_UID.IMPROVE_STRENGTH,
     description: "description",
     modality: MODALITY.WEIGHTLIFTING,
     workouts: {
@@ -46,14 +46,14 @@ export var improve_strength_weightlifting_pathway : GoalPathway = {
         prime_workouts: [],
         warm_down: [],
     },
-    uid: "93ukfof3h4f984hf32d",
+    uid: GOAL_PATHWAY_STRUCTURE_UID.IMPROVE_STRENGTH_WEIGHTLIFTING,
     iteration: 0
 }
 
 export const getPathwaysForGoalUUID = (goalUUID) => {
     switch (goalUUID)
     {
-        case "sf928hf3928h0ie":
+        case GOAL_UID.IMPROVE_STRENGTH:
             return [
                 improve_strength_calisthenics_pathway,
                 improve_strength_metabolic_pathway,

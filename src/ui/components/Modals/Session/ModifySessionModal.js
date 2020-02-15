@@ -28,8 +28,6 @@ import { connect } from 'react-redux';
 
 import { SESSION_STATUS } from '../../../../controller/lupa/common/types';
 
-import getDayOfWeekFromDate from '../../../../controller/algorithm/TomohikoSakamoto';
-
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
