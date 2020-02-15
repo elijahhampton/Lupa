@@ -218,7 +218,7 @@ class SettingsModal extends React.Component {
     }
 
     _navigateBack = () => {
-        this.props.navigation.goBack();
+        this.props.navigation.navigate('PackView');
     }
 
     _navigateToPaymentSettings = () => {
@@ -238,7 +238,7 @@ class SettingsModal extends React.Component {
                 <Container style={styles.root}>
                     <Header>
                         <Left>
-                            <IconButton icon="arrow-back" onPress={this._navigateBack}/>
+                            <IconButton icon="arrow-back" onPress={() => this._navigateBack()}/>
                         </Left>
     
                         <Right>

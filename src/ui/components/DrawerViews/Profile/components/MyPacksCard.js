@@ -14,6 +14,8 @@ import {
 
 import { Rating } from 'react-native-elements';
 
+import PackModal from '../../../Modals/PackModal/PackModal';
+
 const MyPacksCard = () => {
     return (
         <View style={{flexDirection: 'column', alignItems: 'center'}}>
@@ -25,6 +27,7 @@ const MyPacksCard = () => {
                  Announcements
              </Caption>
          </View>
+         <PackModal isOpen={false} />
         </View>
     )
 }

@@ -33,7 +33,7 @@ const ProfileNavigator = createSwitchNavigator(
             header: null,
             gesturesEnabled: false,
         })
-    }
+    },
     },
     {
     initialRouteName: 'Profile',
