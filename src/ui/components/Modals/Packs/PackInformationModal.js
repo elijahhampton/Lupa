@@ -42,11 +42,16 @@ export default class PackInformationModal extends React.Component {
     setupPackInformation  = async () => {
         let packInformationIn, packLeaderPhotoURIIn;
 
+        console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBb')
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
             packInformationIn = result;
         });
 
+        console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC')
         await this.setState({ packInformation: packInformationIn, ready: true});
+
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa')
+        console.log(this.state.packInformation);
     }
 
     render() {

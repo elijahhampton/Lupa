@@ -14,11 +14,11 @@ import {
 import { Rating } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import PackModal from '../../../Modals/PackModal/PackModal';
-
+import { withNavigation } from 'react-navigation';
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 
-export default class MyPacksCard extends React.Component {
+class MyPacksCard extends React.Component {
     constructor(props) {
         super(props);
 
@@ -27,22 +27,25 @@ export default class MyPacksCard extends React.Component {
             showPack: false,
         }
 
-        console.log('pack modal received: ' + this.state.packUUID)
-
     }
 
-    handleShowPack = () => {
-        this.setState({ showPack: true })
+    handleShowPack = (uuid) => {
+            this.props.navigation.navigate('PackModal', {
+                navigation: this.props.navigation,
+                packUUID: uuid
+            })
     }
 
     handleClosePack = () => {
         this.setState({ showPack: false })
     }
 
+
+
     render() {
         return (
             <>
-            <TouchableOpacity onPress={this.handleShowPack}>
+            <TouchableOpacity onPress={() => this.handleShowPack(this.state.packUUID)}>
                 <Surface style={styles.bottomSurface}>
                         <Surface style={styles.imageSurface}>
                         <Image style={styles.image} 
@@ -61,7 +64,6 @@ export default class MyPacksCard extends React.Component {
                         </View>
                 </Surface>
             </TouchableOpacity>
-            <PackModal isOpen={this.state.showPack} packUUID={this.state.packUUID} closeModalMethod={this.handleClosePack} />
             </>
         )
     }
@@ -87,3 +89,5 @@ const styles = StyleSheet.create({
         margin: 2
     }
 });
+
+export default withNavigation(MyPacksCard);

@@ -9,6 +9,7 @@ import {
     Dimensions,
     TouchableWithoutFeedback,
     Image,
+    TouchableOpacity,
     RefreshControl
 } from 'react-native';
 
@@ -16,6 +17,10 @@ import {
     Surface,
     Avatar,
 } from 'react-native-paper';
+
+import {
+    SearchBar
+} from 'react-native-elements';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
@@ -25,6 +30,13 @@ import LupaController from '../../../../controller/lupa/LupaController';
 
 import { SmallPackCard, SubscriptionPackCard, TrainerFlatCard } from './Components/ExploreCards/PackExploreCard';
 
+import {
+    Feather as FeatherIcon
+} from '@expo/vector-icons';
+
+import UserSearchResultCard from '../search/components/UserSearchResultCard';
+import TrainerSearchResultCard from '../search/components/TrainerSearchResultCard';
+import PackSearchResultCard from '../search/components/PackSearchResultCard';
 const windowWidth = Dimensions.get('window').width;
 
 const mapStateToProps = (state, action) => {
@@ -47,14 +59,46 @@ const mapStateToProps = (state, action) => {
             subscriptionPacks: [],
             showPackModal: false,
             currUsersLocation: '',
+            searchValue: "",
+            searchResults: [0],
         }
     }
 
     componentDidMount = async () => {
-        console.log('componetn did munt called VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
        await this.setupExplorePage()
     } 
 
+    async _prepareSearch() {
+        await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+    }
+
+    _performSearch = async searchQuery => {
+        await this.setState({
+            searchResults: []
+        })
+
+        await this.setState({
+            searchValue: searchQuery
+        })
+
+        this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+            this.setState({ searchResults: searchData })
+        })
+    }
+
+    showSearchResults() {
+        return this.state.searchResults.map(result => {
+            switch(result.resultType)
+            {
+                case "pack":
+                    return (
+                        <PackSearchResultCard  title={result.pack_title} isSubscription={result.pack_isSubscription} avatarSrc={result.pack_image} uuid={result.pack_uuid} />
+                    )
+                default:
+            }
+        })
+    }
+    
     setupExplorePage = async () => {
         let subscriptionPacksIn, trainersIn, explorePagePacksIn, usersInAreaIn, currUsersLocationIn, tempUsersLocation;
         const currUserLocation = this.props.lupa_data.Users.currUserData.location;
@@ -115,16 +159,24 @@ const mapStateToProps = (state, action) => {
     mapUsersInArea = () => {
         return this.state.usersInArea.map(user => {
             return (
-                <Avatar.Image source={{uri: user.photo_url }} size={60} style={{margin: 5}} />
+                                    <Avatar.Image source={{uri: user.photo_url }} size={60} style={{margin: 5}} />
             )
         })
     }
 
-    render() {
-        return (
-            <ScrollView shouldRasterizeIOS showsVerticalScrollIndicator={false} contentContainerStyle={styles.rootScrollView} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => alert('Refreshing')}/>}>
+    _renderExploreView = () => {
+        return this.state.searchValue != "" ?
 
-                <View style={styles.section}>
+         <View style={{flex: 1}}>
+            {
+                this.showSearchResults()
+            }
+        </View> 
+
+        :
+        
+        <>
+        <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.headerText}>
                             Looking for Workout Sessions
@@ -166,59 +218,6 @@ const mapStateToProps = (state, action) => {
                         <NativeButton title="View all" />
                     </View>
 
-                    <ScrollView horizontal={true} shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
-                        <TouchableWithoutFeedback>
-                            <Surface style={styles.filter}>
-                                <Text style={styles.filterText}>
-                                    Near Me
-                                </Text>
-                            </Surface>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback>
-                            <Surface style={styles.filter}>
-                                <Text style={styles.filterText}>
-                                    > 5 Members
-                                </Text>
-                            </Surface>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback>
-                            <Surface style={styles.filter}>
-                                <Text style={styles.filterText}>
-                                    > 10 Members
-                                </Text>
-                            </Surface>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback>
-                            <Surface style={styles.filter}>
-                                <Text style={styles.filterText}>
-                                    Tier 1 Trainer
-                                </Text>
-                            </Surface>
-                        </TouchableWithoutFeedback>
-
-                        <TouchableWithoutFeedback>
-                            <Surface style={styles.filter}>
-                                <Text style={styles.filterText}>
-                                    Tier 2 Trainer
-                                </Text>
-                            </Surface>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback>
-                            <Surface style={styles.filter}>
-                                <Text style={styles.filterText}>
-                                    Tier 3 Trainer
-                                </Text>
-                            </Surface>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback>
-                            <Surface style={styles.filter}>
-                                <Text style={styles.filterText}>
-                                    Tier 4 Trainer
-                                </Text>
-                            </Surface>
-                        </TouchableWithoutFeedback>
-                    </ScrollView>
-
                     <View style={{ width: Dimensions.get('window').width }}>
                         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                             {this.mapSubscriptionPacks()}
@@ -242,6 +241,22 @@ const mapStateToProps = (state, action) => {
 
                     </View>
                 </View>
+                </>
+    }
+
+    render() {
+        return (
+            <ScrollView shouldRasterizeIOS showsVerticalScrollIndicator={false} contentContainerStyle={styles.rootScrollView} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => alert('Refreshing')}/>}>
+                                       <SearchBar placeholder="Find a pack by name"
+                        onChangeText={text => this._performSearch(text)} 
+                        platform="ios"
+                        searchIcon={<FeatherIcon name="search" />}
+                        containerStyle={{backgroundColor: "transparent"}}
+                        value={this.state.searchValue}/>
+                
+                {
+                    this._renderExploreView()
+                }
             </ScrollView>
         );
     }

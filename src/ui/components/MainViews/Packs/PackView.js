@@ -89,9 +89,6 @@ export default class PackView extends React.Component {
                     <Tab heading="My Packs" tabStyle={{backgroundColor: "white"}} activeTabStyle={{backgroundColor: "white"}}>
                         <MyPacks />
                     </Tab>
-                    <Tab heading="Promotions" tabStyle={{backgroundColor: "white"}} activeTabStyle={{backgroundColor: "white"}}>
-                        <Promotions />
-                    </Tab>
                 </Tabs>
 
                                {/*  <PacksSearch ref="packsSearchRef" /> */}

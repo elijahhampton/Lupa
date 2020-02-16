@@ -14,13 +14,30 @@ import {
     IconButton
 } from 'react-native-paper';
 
+import {
+    CheckBox
+} from 'react-native-elements';
+
 import { 
     timesOfDay 
 } from '../../../../../controller/lupa/lupa_pre';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
 
+import { connect } from 'react-redux';
+
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+function convertDay(index)
+{
+    return days[index + 1];
+}
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
 
 
 /**
@@ -31,7 +48,7 @@ const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
  * 
  * 
  */
-export default class TimeslotSelector extends React.Component {
+class TimeslotSelector extends React.Component {
     constructor(props) {
         super(props);
 
@@ -46,9 +63,24 @@ export default class TimeslotSelector extends React.Component {
             fridayTimes: [],
             saturdayTimes: [],
             sundayTimes: [],
-            currentDay: 'Monday'
+            currentDay: 'Monday',
+            userData: this.props.lupa_data.Users.currUserData,
+            timeSelected: false,
         }
 
+    }
+
+    componentDidMount = async () => {
+       // await this._refreshUserData();
+    }
+
+    _refreshUserData = async () => {
+        let userDataIn;
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid).then(result => {
+            userDataIn = result;
+        });
+
+        await this.setState({ userData: userDataIn})
     }
 
     _getNextDay = async () => {
@@ -62,7 +94,7 @@ export default class TimeslotSelector extends React.Component {
 
         await this.setState({ 
             dayIndex: this.state.dayIndex + 1, 
-            currentDay: days[this.state.dayIndex]
+            currentDay: days[this.state.dayIndex + 1]
         })
     }
 
@@ -86,12 +118,33 @@ export default class TimeslotSelector extends React.Component {
     }
 
     _handleUpdatePreferredWorkoutTimes = async (times) => {
+        let newTimes;
+        let timesArr;
         switch(this.state.currentDay) {
             case 'Monday':
                     if (this.state.mondayTimes.indexOf(times) > -1) {
                         return;
                     };
 
+                    if (this.state.mondayTimes.includes(times[0]))
+                    {
+                        let monArr = this.state.mondayTimes;
+                        for (let i = 0; i < times.length; i++)
+                        {
+                            let index = monArr.indexOf(times[i]);
+                            newTimes = await monArr.splice(index, 1);
+                            
+                        }
+
+                        await this.setState({
+                            mondayTimes: newTimes,
+                        });
+
+                        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.mondayTimes, 'Monday')
+
+                        return;
+                    }
+                    
                     await this.setState({
                         mondayTimes: this.state.mondayTimes.concat(times)
                     });
@@ -99,72 +152,217 @@ export default class TimeslotSelector extends React.Component {
                     this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.mondayTimes, 'Monday')
                     break;
             case 'Tuesday':
-                    if (this.state.tuesdayTimes.indexOf(times) > -1) {
-                        return;
+                timesArr = this.state.tuesdayTimes;
+                if (timesArr.indexOf(times) > -1) {
+                    return;
+                };
+
+                if (timesArr.includes(times[0]))
+                {
+                    let monArr = timesArr;
+                    for (let i = 0; i < times.length; i++)
+                    {
+                        let index = monArr.indexOf(times[i]);
+                        newTimes = await monArr.splice(index, 1);
+                        
                     }
 
                     await this.setState({
-                        tuesdayTimes: this.state.tuesdayTimes.concat(times)
+                        tuesdayTimes: newTimes,
                     });
 
-                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.tuesdayTimes, 'Tuesday')
-                    break;
+                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.tuesdayTimes, this.state.currentDay)
+
+                    return;
+                }
+                
+                await this.setState({
+                    tuesdayTimes: this.state.tuesdayTimes.concat(times)
+                });
+
+                this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.tuesdayTimes, this.state.currentDay)
+                break;
             case 'Wednesday':
-                    if (this.state.wednesdayTimes.indexOf(times) > -1) {
-                        return;
+                timesArr = this.state.wednesdayTimes;
+                if (timesArr.indexOf(times) > -1) {
+                    return;
+                };
+
+                if (timesArr.includes(times[0]))
+                {
+                    let monArr = timesArr;
+                    for (let i = 0; i < times.length; i++)
+                    {
+                        let index = monArr.indexOf(times[i]);
+                        newTimes = await monArr.splice(index, 1);
+                        
                     }
 
                     await this.setState({
-                        wednesdayTimes: this.state.wednesdayTimes.concat(times)
+                        wednesdayTimes: newTimes,
                     });
-                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.wednesdayTimes, 'Wednesday')
-                    break;
+
+                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.wednesdayTimes, this.state.currentDay)
+
+                    return;
+                }
+                
+                await this.setState({
+                    wednesdayTimes: this.state.wednesdaytimes.concat(times)
+                });
+
+                this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.wednesdayTimes, this.state.currentDay)
+                break;
             case 'Thursday':
-                    if (this.state.thursdayTimes.indexOf(times) > -1) {
-                        return;
+                timesArr = this.state.thursdayTimes;
+                if (timesArr.indexOf(times) > -1) {
+                    return;
+                };
+
+                if (timesArr.includes(times[0]))
+                {
+                    let monArr = timesArr;
+                    for (let i = 0; i < times.length; i++)
+                    {
+                        let index = monArr.indexOf(times[i]);
+                        newTimes = await monArr.splice(index, 1);
+                        
                     }
 
                     await this.setState({
-                        thursdayTimes: this.state.thursdayTimes.concat(times)
+                        thursdayTimes: newTimes,
                     });
-                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.thursdayTimes, 'Thursday')
-                    break;
+
+                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.thursdayTimes, this.state.currentDay)
+
+                    return;
+                }
+                
+                await this.setState({
+                    thursdayTimes: this.state.thursdayTimes.concat(times)
+                });
+
+                this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.thursdayTimes, this.state.currentDay)
+                break;
             case 'Friday':
-                    if (this.state.fridayTimes.indexOf(times) > -1) {
-                        return;
+                timesArr = this.state.fridayTimes;
+                if (timesArr.indexOf(times) > -1) {
+                    return;
+                };
+
+                if (timesArr.includes(times[0]))
+                {
+                    let monArr = timesArr;
+                    for (let i = 0; i < times.length; i++)
+                    {
+                        let index = monArr.indexOf(times[i]);
+                        newTimes = await monArr.splice(index, 1);
+                        
                     }
 
                     await this.setState({
-                        fridayTimes: this.state.fridayTimes.concat(times)
+                        fridayTimes: newTimes,
                     });
-                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.fridayTimes, 'Friday')
-                    break;
+
+                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.fridayTimes, this.state.currentDay)
+
+                    return;
+                }
+                
+                await this.setState({
+                    fridayTimes: this.state.fridayTimes.concat(times)
+                });
+
+                this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.fridayTimes, this.state.currentDay)
+                break;
             case 'Saturday':
-                    if (this.state.saturdayTimes.indexOf(times) > -1) {
-                        return;
+                timesArr = this.state.saturdayTimes;
+                if (timesArr.indexOf(times) > -1) {
+                    return;
+                };
+
+                if (timesArr.includes(times[0]))
+                {
+                    let monArr = timesArr;
+                    for (let i = 0; i < times.length; i++)
+                    {
+                        let index = monArr.indexOf(times[i]);
+                        newTimes = await monArr.splice(index, 1);
+                        
                     }
 
                     await this.setState({
-                        saturdayTimes: this.state.saturdayTimes.concat(times)
+                        saturdayTimes: newTimes,
                     });
-                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.saturdayTimes, 'Saturday')
-                    break;
+
+                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.saturdayTimes, this.state.currentDay)
+
+                    return;
+                }
+                
+                await this.setState({
+                    saturdayTimes: this.state.saturdayTimes.concat(times)
+                });
+
+                this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.saturdayTimes, this.state.currentDay)
+                break;
             case 'Sunday':
-                    if (this.state.sundayTimes.indexOf(times) > -1) {
-                        return;
+                timesArr = this.state.sundayTimes;
+                if (timesArr.indexOf(times) > -1) {
+                    return;
+                };
+
+                if (timesArr.includes(times[0]))
+                {
+                    let monArr = timesArr;
+                    for (let i = 0; i < times.length; i++)
+                    {
+                        let index = monArr.indexOf(times[i]);
+                        newTimes = await monArr.splice(index, 1);
+                        
                     }
 
                     await this.setState({
-                        sundayTimes: this.state.sundayTimes.concat(times)
+                        sundayTimes: newTimes,
                     });
-                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.sundayTimes, 'Sunday')
-                    break;
+
+                    this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.sundayTimes, this.state.currentDay)
+
+                    return;
+                }
+                
+                await this.setState({
+                    sundayTimes: this.state.sundayTimes.concat(times)
+                });
+
+                this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.sundayTimes, this.state.currentDay)
+                break;
             default:
                 alert('LUPA: No default case');
+        }
+
+        this._refreshUserData();
+    }
+
+    _getListItemBackgroundColor = () => {
+
+    }
+    
+    checkIfUserHasSelectedDates(time)
+    {
+        let day = this.state.currentDay;
+        switch(day)
+        {
+            case 'Monday':
+                if (this.state.mondayTimes.includes(time))
+                {
+                    return true;
+                }
         }
     }
 
     render() {
+        let currentDay = this._getDay(this.state.dayIndex);
         return (
             <>
                 <View style={{width: "100%", height: 20, margin: 15, alignItems: "center", flexDirection: "row", justifyContent: "space-between"}}>
@@ -187,11 +385,23 @@ export default class TimeslotSelector extends React.Component {
                         {
                             timesOfDay.map(obj => {
                                 let selectedTimes = obj.values;
-                                return (
-                                    <TouchableOpacity onPress={obj => {this._handleUpdatePreferredWorkoutTimes(selectedTimes)}}>
-                                        <List.Item style={{alignItems: "center"}} title={obj.title} description={obj.times} />
-                                    </TouchableOpacity>
-                                )
+
+                                    return (
+                                        <TouchableOpacity onPress={obj => {this._handleUpdatePreferredWorkoutTimes(selectedTimes)}}>
+                                            <List.Item  style={{alignItems: "center" }} title={obj.title} description={obj.times} right={() =>
+                                                                    <CheckBox
+                                                                    center
+                                                                    iconRight
+                                                                    iconType='material'
+                                                                    checkedIcon='done'
+                                                                    uncheckedIcon='radio-button-unchecked'
+                                                                    checkedColor='green'
+                                                                    checked={this.checkIfUserHasSelectedDates(obj.values[0])}
+                                                                />
+                                            } />
+                                        </TouchableOpacity>
+                                    )
+
                             })
                         }
                     </ScrollView>
@@ -206,7 +416,7 @@ const styles = StyleSheet.create({
     menuSurface: {
         width: "100%",
         height: 350,
-        elevation: 5,
+        elevation: 2,
         borderRadius: 15
     },
     instructionalText: {
@@ -214,3 +424,5 @@ const styles = StyleSheet.create({
         fontSize: 20
     }
 });
+
+export default connect(mapStateToProps)(TimeslotSelector);

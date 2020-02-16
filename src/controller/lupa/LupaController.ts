@@ -355,10 +355,27 @@ export default class LupaController {
       return result;
     }
 
+    acceptPackInviteByPackUUID = (packUUID, userUUID) => {
+      PACKS_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packUUID, userUUID);
+    } 
+
+    declinePackInviteByPackUUID = (packUUID, userUUID) => {
+      PACKS_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packUUID, userUUID);
+    }
+
+    getPackInvitesFromUUID = async (uuid) => {
+      let packInvites = [];
+      await PACKS_CONTROLLER_INSTANCE.getPackInvitesFromUUID(uuid).then(result => {
+        packInvites = result;
+      });
+
+      return Promise.resolve(packInvites);
+    }
+
     getPackInformationByUUID = async (uuid) => {
-      let result = new Array();
+      let result = [];
       await PACKS_CONTROLLER_INSTANCE.getPackInformationByUUID(uuid).then(packs => {
-        result = packs.data();
+        result = packs;
       });
 
       return Promise.resolve(result);

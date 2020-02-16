@@ -24,6 +24,7 @@ import WelcomeModal from './Modals/WelcomeModal/WelcomeModal'
 
 import LupaController from '../../controller/lupa/LupaController';
 import SearchNavigator from "./Navigators/SearchNavigator";
+import PackNavigator from './Navigators/PackNavigator';
 
 import {
   logoutUser
@@ -50,7 +51,7 @@ class Lupa extends React.Component {
   }
 
   _showWelcomeModal = async () => {
-  AsyncStorage.setItem('isNewUser', 'false');
+  AsyncStorage.setItem('isNewUser', 'true');
   let _isNewUser = await AsyncStorage.getItem('isNewUser');
   
   switch(_isNewUser)
@@ -92,7 +93,7 @@ _navigateToAuth = async () => {
           index={currIndex}>
         <Dashboard />
         <WorkoutViewNavigator />
-        <PackView />
+        <PackNavigator />
         <SearchNavigator />
       </Swiper>
       <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/>

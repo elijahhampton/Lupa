@@ -41,7 +41,7 @@ import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 import LupaController from '../../../../controller/lupa/LupaController';
 import PackChatModal from '../PackChatModal.js';
 import CreateEvent from '../Packs/CreateEvent';
-
+import { withNavigation } from 'react-navigation';
 import UserDisplayCard from './Components/UserDisplayCard';
 
 import PackInformationModal from '../Packs/PackInformationModal';
@@ -50,7 +50,7 @@ import PackEventModal from './Components/PackEventModal';
 
 import { connect } from 'react-redux';
 
-const mapStateToPacks = (state, action) => {
+const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
     }
@@ -61,25 +61,22 @@ const PackMembersModal = (props) => {
 
                 <Modal presentationStyle="overFullScreen" visible={props.isOpen} dismissable={false}>
                     <SafeAreaView style={styles.membersModal}>
-                        <View style={{flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
+                        <View style={{width: '100%', flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                             <IconButton icon="arrow-back" onPress={props.closeModalMethod}/>
                             <Headline>
-                                Announcements Members
+                                Members
                             </Headline>
                         </View>
                         <View style={{flex: 3}}>
-                            <ScrollView centerContent shouldRasterizeIOS={true} showsVerticalScrollIndicator={false}>
+                            <ScrollView centerContent contentContainerStyle={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-around' }} shouldRasterizeIOS={true} showsVerticalScrollIndicator={false}>
                             {
                                 props.displayMembersMethod()
                             }
                             </ScrollView>
                         </View>
-                        <View style={{flex: 1}}>
+                        <View style={{flex: 1, alignItems: 'center'}}>
                             <Paragraph>
-                                This pack currently has 20 active members.
-                            </Paragraph>
-                            <Paragraph>
-                                This pack currently has 5 active invites.
+                                This pack currently has 20 active members and 5 active invites.
                             </Paragraph>
                         </View>
                         </SafeAreaView>
@@ -124,9 +121,8 @@ class PackModal extends React.Component {
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-
         this.state = {
-            packUUID: this.props.packUUID,
+            packUUID: "",
             packInformation: {},
             packEvents: [],
             currentUserIsPackLeader: false,
@@ -137,7 +133,7 @@ class PackModal extends React.Component {
             ready: false,
             currDisplayedPackEvent: 0,
             isAttendingCurrEvent: false,
-            currPackData: {},
+            currPackData: {}
         }
     }
 
@@ -145,7 +141,14 @@ class PackModal extends React.Component {
        await this.setupPackModal();
     }
 
+    _navigateToPackChat = (uuid) => {
+        this.props.navigation.navigate('PackChat', {
+            packUUID: uuid
+        })
+    }
+
     setupPackModal = async () => {
+        await this.setState({ packUUID: this.props.navigation.state.params.packUUID}) //PROBLEM
         let packInformationIn, packEventsIn, isAttendingCurrEventIn;
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
@@ -172,26 +175,26 @@ class PackModal extends React.Component {
     }
 
     checkUserEventAttendance = async (packEventUUID, packEventTitle, userUUID) => {
-        // console.log('CHECKING ATTENDACNE NOW! GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
-        // let isAttendingCurrEventIn;
+         console.log('CHECKING ATTENDACNE NOW! GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
+        let isAttendingCurrEventIn;
 
-        // await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(isAttendingCurrEvent => {
-        //         isAttendingCurrEventIn = isAttendingCurrEvent;
-        //     });
+        await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(isAttendingCurrEvent => {
+                 isAttendingCurrEventIn = isAttendingCurrEvent;
+             });
 
-        // await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
+        await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
 
-        // console.log('ATTENDANCE RESULTS ' + isAttendingCurrEventIn)
+        console.log('ATTENDANCE RESULTS ' + isAttendingCurrEventIn)
         }
 
         handleAttendEventOption = async (packEventUUID, packEventTitle, userUUID) => {
-            // await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
-            // this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID);
+             await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
+             this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID);
         }
 
         handleUnattendEventOption = async (packEventUUID, packEventTitle, userUUID) => {
-            // await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
-            // this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID)
+             await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
+             this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID)
         }
 
     mapMembers = () => {
@@ -200,7 +203,9 @@ class PackModal extends React.Component {
 
         return this.state.packInformation.pack_members && this.state.packInformation.pack_members.map(member => {
              return (
-                 <UserDisplayCard userUUID={member} />
+                <View style={{margin: 5}}>
+                                     <UserDisplayCard userUUID={member} />
+                </View>
              )
         })
     }
@@ -270,9 +275,14 @@ getButtonColor = () => {
 }
 
 getButtonDisabledStatus = () => {
-    if (this.state.packEvents.length == 0) { return [true, true]}
+ /*   if (this.state.packEvents.length == 0) { return [true, true]}
 
-    return this.state.packEvents[this.state.currDisplayedPackEvent].attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid) ? [true, false] : [false, true]
+    let attendingStatus = this.state.packEvents[this.state.currDisplayedPackEvent].attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid);
+    console.log('STATUS: ' + attendingStatus)
+
+    this.setState({ isAttendingCurrEvent: attendingStatus });
+
+    return attendingStatus // [true, false] : [false, true]*/
 }
 
     _showActionSheet = () => {
@@ -298,7 +308,6 @@ getButtonDisabledStatus = () => {
     render() {
         const buttonColors = this.getButtonColor();
         return (
-            <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
                 <SafeAreaView forceInset={{
                     bottom: 'never'
                 }} style={{ flex: 1, backgroundColor: "rgb(244, 247, 252)" }}>
@@ -313,7 +322,7 @@ getButtonDisabledStatus = () => {
 </Svg>
                     <View>
                         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                            <IconButton icon="clear" color="black" onPress={this.props.closeModalMethod} />
+                            <IconButton icon="clear" color="black" onPress={() => this.props.navigation.goBack()} />
                             <Text style={{
                                 fontSize: 22,
                                 fontWeight: "500",
@@ -324,7 +333,7 @@ getButtonDisabledStatus = () => {
                                 {
                                     this._renderMoreVert()
                                 }
-                                <IconButton icon="chat-bubble-outline" color="black" onPress={() => this.setState({ packChatModalIsOpen: true })} />
+                                <IconButton icon="chat-bubble-outline" color="black" onPress={() => this._navigateToPackChat()} />
                             </View>
                         </View>
                     </View>
@@ -344,7 +353,7 @@ getButtonDisabledStatus = () => {
                             </Surface>
                             </TouchableOpacity>
 
-                            <TouchableOpacity  disabled={this.getButtonDisabledStatus()} onPress={() => this.handleUnattendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
+                            <TouchableOpacity disabled={this.getButtonDisabledStatus()} onPress={() => this.handleUnattendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
                             <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
                                 <FeatherIcon name="x" size={25} color={buttonColors[1]} />
                             </Surface>
@@ -384,12 +393,10 @@ getButtonDisabledStatus = () => {
                     </View>
 
                     <CreateEvent packUUID={this.state.packUUID} isOpen={this.state.createEventModalIsOpen} closeModalMethod={this.handleCreateEventModalClose} />
-                    <PackChatModal packUUID={this.state.packUUID} isOpen={this.state.packChatModalIsOpen} />
                     <PackInformationModal packUUID={this.state.packUUID} isOpen={this.state.packInformationModalIsOpen} closeModalMethod={this.handlePackInformationModalClose} />
                     <PackMembersModal isOpen={this.state.packMembersModalIsOpen} closeModalMethod={this.handlePackMembersModalClose} displayMembersMethod={this.mapMembers}/>
                    
                 </SafeAreaView>
-            </Modal>
         );
     }
 }
@@ -457,4 +464,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToPacks)(PackModal);
+export default connect(mapStateToProps)(withNavigation(PackModal));

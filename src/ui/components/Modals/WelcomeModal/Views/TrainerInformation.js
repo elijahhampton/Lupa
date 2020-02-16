@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 15,
-        fontWeight: "600"
+        fontSize: 20,
+        fontWeight: "200"
     },
     verificationModal: {
         width: '50%',

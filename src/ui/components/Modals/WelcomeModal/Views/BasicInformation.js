@@ -14,6 +14,7 @@ import { Input, Avatar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
+import { _requestCameraAndCameraRollPermsisionsAsync } from '../../../../../controller/lupa/permissions/permissions';
 
 export default class BasicInformation extends React.Component {
     constructor(props) {
@@ -33,26 +34,31 @@ export default class BasicInformation extends React.Component {
        
     }
 
+
     _getAvatar = () => {
         let avatar = <Avatar quality={0} showEditButton rounded size={120} source={{ uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
         return avatar;
     }
 
     _chooseProfilePictureFromCameraRoll = async () => {
-        console.log('hhere')
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 1,
-        });
+        try {
+            _requestCameraAndCameraRollPermsisionsAsync();
 
-        console.log(result)
-
-       //Update field photo_url field
-        this._handleUserPhotoUrlUpdate(result);
-
-        if (!result.cancelled) {
-            this.setState({ photoSource: result.uri });
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1,
+            });
+    
+           //Update field photo_url field
+            this._handleUserPhotoUrlUpdate(result);
+    
+            if (!result.cancelled) {
+                this.setState({ photoSource: result.uri });
+            }
+        } catch(error)
+        {
+            alert(error);
         }
     }
 
@@ -128,8 +134,8 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 22,
-        fontWeight: "600"
+        fontSize: 25,
+        fontWeight: "200"
     },
     userInput: {
         flex: 1,

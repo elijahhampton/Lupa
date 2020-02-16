@@ -100,6 +100,7 @@ export type LupaPackStructure = {
     pack_title: "",
     pack_isSubscription: false,
     pack_isDefault: false,
+    pack_type: "",
     pack_description: "",
     pack_members: [],
     pack_invited_members: [],
@@ -137,6 +138,7 @@ export type LupaSessionStructure = {
     name: String,
     description: String,
     sessionStatus: any,
+    sessionMode: any,
     time_created: { date: any, time: any }
 };
 

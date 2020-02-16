@@ -198,16 +198,13 @@ class ProfileView extends React.Component {
         return <MyPacksCard />
     }
 
+    //show rating at bottom of profile
     showRating = () => {
-        return <Rating showReadOnlyText={false} readonly ratingTextColor="black" showRating={true} ratingCount={this.props.lupa_data.Users.currUserData.rating} imageSize={80} />
-    }
-
-    setupProfileInformation = async () => {
-
+        return <Rating showReadOnlyText={false} readonly ratingTextColor="black" showRating={true} ratingCount={this.state.userData.rating} imageSize={80} />
     }
 
     handleOnRefresh = () => {
-        //this.setupProfileInformation
+        this.setupProfileInformation()
     }
 
     mapBio = () => {
@@ -274,13 +271,11 @@ class ProfileView extends React.Component {
                                 }
                             </View>
                             <View style={styles.alignCenterColumn}>
-                                <Avatar size={65} source={{uri: this.state.userData.photo_url}} rounded showEditButton={this.state.isEditingProfile} containerStyle={{}} />
+                                <Avatar size={65} source={{uri: this.state.userData.photo_url}} rounded containerStyle={{}} />
 
                             </View>
                         </View>
-
-
-
+                        
                         <View style={styles.userAttributesContainer}>
                             <TouchableOpacity onPress={this._navigateToFollowers}>
                                 <View style={styles.alignCenterColumn}>
@@ -349,23 +344,13 @@ class ProfileView extends React.Component {
                     }   
                     </>
 
-                {/* <View style={[{width: '100%', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}]}> */}
-                        {/* Goals chart 
-                        <Surface style={{elevation: 8, margin: 5, width: 160, height: 160, borderRadius: 20, backgroundColor: "#FAFAFA"}}>
-                        <LineChart
-  data={data}
-  width={155}
-  height={155}
-  verticalLabelRotation={30}
-  chartConfig={chartConfig}
-  bezier
-/>
-                        </Surface>  
-                        */}
-
                         {/* interest mapping */}
                         <Surface style={[styles.contentSurface, {elevation: 8, backgroundColor: "#2196F3"}]}>
-                                <View style={{width: '100%', justifyContent: 'flex-end'}}>
+                                <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <Title style={{color: 'white'}}>
+                                    Interest and Goals
+                                </Title>
+                                    
                                     <Button mode="text" color="white">
                                         View all
                                     </Button>
@@ -409,7 +394,6 @@ class ProfileView extends React.Component {
                             {this.mapRecommendedWorkouts()}
                         </ScrollView>
                     </View>
-
                 </ScrollView>
 
                 <Fab
@@ -420,7 +404,7 @@ class ProfileView extends React.Component {
                     position="bottomRight"
                     onPress={() => this.setState({ active: !this.state.active })}>
                     <MaterialIcon name="menu" />
-                    <Button style={{ backgroundColor: '#637DFF' }} onPress={this._navigateToSettings}>
+                    <Button style={{ backgroundColor: '#637DFF' }} onPress={() => this._navigateToSettings()}>
                         <MaterialIcon name="settings" />
                     </Button>
                 </Fab>

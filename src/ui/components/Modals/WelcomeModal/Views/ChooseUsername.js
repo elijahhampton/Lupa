@@ -18,6 +18,8 @@ import {
 
 import * as Location from 'expo-location';
 
+import { _requestLocationPermissionAsync } from '../../../../../controller/lupa/permissions/permissions';
+
 import { Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Feather as Icon } from '@expo/vector-icons';
@@ -36,7 +38,7 @@ const ActivityIndicatorModal = (props) => {
         <Provider>
             <Portal>
                 <Modal style={styles.activityIndicatorModal} visible={props.visible}>
-                    <ActivityIndicator animating={isLoading} hidesWhenStopped={false} size='large' color={Color.LUPA_BLUE}/>
+                    <ActivityIndicator animating={isLoading} hidesWhenStopped={false} size='large' color={Color.LUPA_BLUE} />
                 </Modal>
             </Portal>
         </Provider>
@@ -62,7 +64,6 @@ export default class ChooseUsername extends React.Component {
     }
 
     _handleTrainerAccountUpdate = () => {
-        console.log('here')
         this.setState({ makeTrainerAccount: !this.state.makeTrainerAccount });
         this.LUPA_CONTROLLER_INSTANCE.updateUser('isTrainer', this.state.maketrainerAccount);
     }
@@ -84,6 +85,18 @@ export default class ChooseUsername extends React.Component {
     }
 
     _getLocationAsync = async () => {
+        let allowedLocationPermission;
+        try {
+            await _requestLocationPermissionAsync().then(result => {
+                allowedLocationPermission = result;
+            });
+        } catch (error) {
+            alert(error);
+            _requestLocationPermissionAsync();
+        }
+
+        //disable 
+
         let result;
         //show loading indicator
         this.setState({
@@ -120,53 +133,53 @@ export default class ChooseUsername extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <SafeAreaView style={{flex: 1, padding: 10, justifyContent: 'space-evenly',}}>
+                <SafeAreaView style={{ flex: 1, padding: 10, justifyContent: 'space-evenly', }}>
 
-                <View style={styles.instructionalTextContainer}>
-                    <Text style={styles.instructionalText}>
-                        Before we take you into the app we need a little information.  Don't worry you can finish most of it at a later time.
+                    <View style={styles.instructionalTextContainer}>
+                        <Text style={styles.instructionalText}>
+                            Before we take you into the app we need a little information.  Don't worry you can finish most of it at a later time.
                     </Text>
-                </View>
+                    </View>
 
-                <View style={{flex: 2, flexDirection: "column", alignItems: "center", justifyContent: 'space-around'}}>
-                <TextInput 
-                        style={styles.textInput} 
-                        mode="outlined" 
-                        label="Choose a username" 
-                        theme={{colors: {primary: '#1976D2'}}} 
-                        onChangeText={text => this._handleUsernameOnChangeText(text)}
-                        onBlur={this._handleUsernameEndEditing}
-                        value={this.state.chosenUsername}
+                    <View style={{ flex: 2, flexDirection: "column", alignItems: "center", justifyContent: 'space-around' }}>
+                        <TextInput
+                            style={styles.textInput}
+                            mode="outlined"
+                            label="Choose a username"
+                            theme={{ colors: { primary: '#1976D2' } }}
+                            onChangeText={text => this._handleUsernameOnChangeText(text)}
+                            onBlur={this._handleUsernameEndEditing}
+                            value={this.state.chosenUsername}
                         />
 
-                    <TextInput 
-                        style={styles.textInput} 
-                        mode="outlined" 
-                        label="Enter a display name" 
-                        theme={{colors: {primary: '#1976D2', backdrop: "red", accent: "red", surface: "red"}}} 
-                        onChangeText={text => this._handleDisplayNameOnChangeText(text)}
-                        onBlur={this._handleDisplayNameEndEditing}
-                        value={this.state.displayName}
-                        />  
-                </View>
+                        <TextInput
+                            style={styles.textInput}
+                            mode="outlined"
+                            label="Enter a display name"
+                            theme={{ colors: { primary: '#1976D2', backdrop: "red", accent: "red", surface: "red" } }}
+                            onChangeText={text => this._handleDisplayNameOnChangeText(text)}
+                            onBlur={this._handleDisplayNameEndEditing}
+                            value={this.state.displayName}
+                        />
+                    </View>
 
-                
-                <View style={{alignItems: 'center', justifyContent: "space-around", flex: 2}}>
-                    <TouchableOpacity onPress={this._getLocationAsync} style={{flexDirection: "row", alignItems: "center"}}>
-                    <Icon name="map-pin" size={20} style={{padding: 2}} />
-                    <Text style={[styles.generalText, { color: '#2196F3'}]}>
-                        {this.state.locationText}
-                    </Text>
-                    </TouchableOpacity>
 
-                    <Caption>
-                        We use your location to suggest trainers and others in your area as well as packs.  Read our Terms of Service and Privacy Policy for more information.
+                    <View style={{ alignItems: 'center', justifyContent: "space-around", flex: 2 }}>
+                        <TouchableOpacity onPress={this._getLocationAsync} style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Icon name="map-pin" size={20} style={{ padding: 2 }} />
+                            <Text style={[styles.generalText, { color: '#2196F3' }]}>
+                                {this.state.locationText}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <Caption>
+                            We use your location to suggest trainers and others in your area as well as packs.  Read our Terms of Service and Privacy Policy for more information.
                     </Caption>
-                </View>
+                    </View>
 
 
-               {/* <LupaMapView isVisible={false} /> */}
-               <ActivityIndicatorModal visible={this.state.showLoadingIndicator}/>
+                    {/* <LupaMapView isVisible={false} /> */}
+                    <ActivityIndicatorModal visible={this.state.showLoadingIndicator} />
 
 
                 </SafeAreaView>
@@ -197,8 +210,8 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 15,
-        fontWeight: "500"
+        fontSize: 20,
+        fontWeight: "200"
     },
     userInput: {
         height: "20%",

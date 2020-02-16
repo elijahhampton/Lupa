@@ -92,6 +92,11 @@ class CreateSessionModal extends React.Component {
     }
 
     _handleNewSessionRequest = () => {
+        if (requestedUserData.isTrainer == true)
+        {
+            return <StripePaymentComponent />
+        }
+        
         let date = this.state.sessionMonth + "-" + this.state.sessionDay + "-" + this.state.sessionYear;
         let timestamp = {
             date: new Date().getDate(),

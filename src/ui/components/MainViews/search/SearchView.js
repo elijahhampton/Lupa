@@ -74,7 +74,6 @@ export default class SearchView extends React.Component {
         })
 
         this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
-            console.log(searchData);
             this.setState({ searchResults: searchData })
         })
     }
@@ -93,7 +92,7 @@ export default class SearchView extends React.Component {
                     )
                 case "pack":
                     return (
-                        <PackSearchResultCard  title={result.pack_title} isSubscription={result.pack_isSubscription} avatarSrc={result.pack_image}/>
+                        <PackSearchResultCard  title={result.pack_title} isSubscription={result.pack_isSubscription} avatarSrc={result.pack_image} uuid={result.pack_uuid} />
                     )
                 case "workout":
                     break;
@@ -124,20 +123,6 @@ export default class SearchView extends React.Component {
                         searchIcon={<FeatherIcon name="search" />}
                         containerStyle={{backgroundColor: "transparent"}}
                         value={this.state.searchValue}/>
-        <View style={{flexDirection: "row", justifyContent: "space-evenly"}}>
-                        <Button mode="text" compact color={buttonColor} style={styles.button}>
-                            Users
-                        </Button>
-                        <Button mode="text" compact  color={buttonColor} style={styles.button}>
-                            Trainers
-                        </Button>
-                        <Button mode="text" compact  color={buttonColor} style={styles.button}>
-                            Packs
-                        </Button>
-                        <Button mode="text" compact  color={buttonColor} style={styles.button}>
-                            Workouts
-                        </Button>
-                    </View>
                     </Header>
 
                     <View style={{flex: 1}}>
