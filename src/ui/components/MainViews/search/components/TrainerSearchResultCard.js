@@ -36,12 +36,9 @@ class TrainerSearchResultCard extends React.Component {
     }
 
     _handleViewProfile = (uuid) => {
-        console.log('THE UUID IS: ' + uuid)
-        console.log('Calling _handleViewProfile')
         this.props.navigation.navigate('UserProfileView', {
             userUUID: uuid
         });
-        console.log('hmm');
     }
 
     render() {

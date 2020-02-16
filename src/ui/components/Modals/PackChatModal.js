@@ -6,14 +6,14 @@ import {
     Text,
     StyleSheet,
     Dimensions,
-    Image
+    Image,
+    Button
 } from 'react-native';
 
 import {
     IconButton,
     Surface,
     Caption,
-    Button,
     TextInput
 } from 'react-native-paper';
 
@@ -74,7 +74,7 @@ export default class PackChatModal extends React.Component{
     render() {
         let pageIndex = this.state.currentIndex;
         return (
-            <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
+            <View style={styles.modalContainer}>
                     <GiftedChat 
                     messages={this.state.messages} 
                     onSend={Fire.shared.send} 
@@ -86,7 +86,10 @@ export default class PackChatModal extends React.Component{
                     showUserAvatar={true}
                     alwaysShowSend={true}
                     />
-            </Modal>
+                    <View style={{marginBottom: 5}}>
+                    <Button title="Close" onPress={() => this.props.navigation.goBack()} />
+                    </View>
+            </View>
         );
     }
 }

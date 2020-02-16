@@ -16,6 +16,8 @@ import {
     Avatar
 } from 'react-native-paper';
 
+import { withNavigation } from 'react-navigation';
+
 import ModifySessionModal from '../../../Modals/Session/ModifySessionModal';
 import PackModal from '../../../Modals/PackModal/PackModal';
 
@@ -38,12 +40,9 @@ export const PackEventNotificationContainer = (props) => {
                             <Text style={{fontWeight: '500'}}>
                                {props.numAttending} attending
                             </Text>
-                            <PackModal packUUID={props.packUUID} closeModalMethod={this.handleCloseModal} isOpen={showModal}/>
                     </TouchableOpacity>
     )
 }
-
-
 
 
 export default class SessionNotificationContainer extends React.Component {

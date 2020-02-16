@@ -26,22 +26,55 @@ import {
     NavigationInjectedProps
 } from 'react-navigation';
 
+import LupaController from '../../../../../controller/lupa/LupaController';
+
+import PackInformationModal from '../../../Modals/Packs/PackInformationModal';
+
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
 class PackSearchResultCard extends React.Component {
+
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
-            userUUID: this.props.uuid
+            packUUID: this.props.uuid,
+            packInformationModalIsOpen: false,
         }
     }
 
-    _handleViewPack = (uuid) => {
-        
+    _handleViewPack = async (uuid) => {
+        let packInformation;
+        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(uuid).then(result => {
+            packInformation = result;
+        });
+
+        console.log(packInformation)
+
+        if (packInformation.pack_members.includes(this.props.lupa_data.Users.currUserData.user_uuid))
+        {
+            this.props.navigation.navigate('PackModal', {
+                packUUID: uuid
+            });
+        }
+        else
+        {
+            this.setState({ packInformationModalIsOpen: true })
+        }
     }
 
     render() {
         return (
-                <TouchableOpacity onPress={() => this._handleViewProfile(this.state.userUUID)} style={styles.touchableOpacity}>
+            <>
+                <TouchableOpacity onPress={() => this._handleViewPack(this.state.packUUID)} style={styles.touchableOpacity}>
                 <Surface style={[styles.cardContainer]}>
                     <View style={styles.cardContent}>
                         <View style={styles.userInfoContent}>
@@ -63,6 +96,8 @@ class PackSearchResultCard extends React.Component {
                     </View>
                 </Surface>
                     </TouchableOpacity>
+                    <PackInformationModal isOpen={this.state.packInformationModalIsOpen} />
+                    </>
         );
     }
    
@@ -114,4 +149,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default withNavigation(PackSearchResultCard);
+export default connect(mapStateToProps)(withNavigation(PackSearchResultCard));

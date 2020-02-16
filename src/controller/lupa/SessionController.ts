@@ -45,11 +45,15 @@ export default class SessionController {
       let currUserUUID = USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
       await SESSIONS_COLLECTION.where('attendeeOne', '==', currUserUUID).get().then(docs => {
         docs.forEach(doc => {
-          console.log('find it!!')
           let sessionData = doc.data();
-          let sessionID = doc.id;
-          let sessionObject = {sessionID, sessionData}
-          sessions.push(sessionObject);
+
+          if (sessionData.sessionStatus != 'Expired' &&  sessionData.sessionMode != "Pending")
+          {
+            let sessionID = doc.id;
+            let sessionObject = {sessionID, sessionData}
+            sessions.push(sessionObject);            
+          }
+
         })
       });
 
@@ -130,6 +134,14 @@ export default class SessionController {
           }, {
             merge: true,
           });
+          break;
+        case 'session_status':
+          await currentSessionDocument.set({
+            sessionStatus: value,
+          },
+          {
+            merge: true,
+          })
           break;
         default:
       }

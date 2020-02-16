@@ -38,19 +38,6 @@ import { Pagination } from 'react-native-snap-carousel';
 
 const AppLogo = require('../../../images/applogo.png')
 
-const trainerInfoComponent = () => {
-    return (
-        <>
-            <Image source={TrainerGraphic} style={{width: "60%", height: "50%"}} />
-            <View style={{alignItems: "center", justifyContent: "space-around", flex: 1}}>
-                <Text style={{ textAlign: "center",fontSize: 25, fontWeight: '700', color: 'black', margin: 5}}>
-                The fitness app for preventative health care
-                </Text>
-                </View>
-                </>
-    )
-}
-
 class WelcomeView extends Component {
   constructor(props) {
     super(props);
@@ -60,7 +47,7 @@ class WelcomeView extends Component {
     }
 
   }
-
+s
   componentDidMount = () => {
     this._checkSignedInStatus();
   }
@@ -108,9 +95,6 @@ class WelcomeView extends Component {
                 </Text>
                 </View>
           </View>
-
-          
-          <Pagination  dotsLength={5} dotColor="black" />
 
           <View style={{flex: 1, justifyContent: "space-evenly"}}>
                 <Button mode="contained" color="#0D47A1" theme={{colors: {

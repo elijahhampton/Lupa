@@ -51,6 +51,7 @@ class PacksController {
 
       //Set necessary data for packs
       let packData = {
+        pack_uuid: doc.id,
         pack_title: pack.pack_title,
         pack_leader: pack.pack_leader,
         pack_image: pack.pack_image,
@@ -95,6 +96,75 @@ class PacksController {
         console.log('Completed Packs Indexing');
       });*/
     });
+  }
+
+  acceptPackInviteByPackUUID = (packUUID, userUUID) => {
+    let packDocumentData;
+    let packDocument = PACKS_COLLECTION.doc(packUUID);
+    PACKS_COLLECTION.doc(packUUID).get().then(result => {
+      packDocumentData = result.data();
+    });
+
+
+    // remove member from invited members
+    let invitedMembers = packDocumentData.pack_invited_members;
+    let updatedInvitedMembers = invitedMembers.splice(userUUID);
+
+    packDocument.set({
+      pack_invited_members: updatedInvitedMembers,
+    },
+    {
+      merge: true,
+    })
+
+    //add member to the pack
+
+    let currentMembers = packDocumentData.pack_members;
+    let updatedMembers = currentMembers.push(userUUID);
+
+    packDocument.set({
+      pack_members: updatedMembers
+    },
+    {
+      merge: true,
+    })
+  }
+
+  declinePackInviteByPackUUID = (packUUID, userUUID) => {
+    let packDocumentData;
+    let packDocument = PACKS_COLLECTION.doc(packUUID);
+    PACKS_COLLECTION.doc(packUUID).get().then(result => {
+      packDocumentData = result.data();
+    });
+
+
+    // remove member from invited members
+    let invitedMembers = packDocumentData.pack_invited_members;
+    let updatedInvitedMembers = invitedMembers.splice(userUUID);
+
+    packDocument.set({
+      pack_invited_members: updatedInvitedMembers,
+    },
+    {
+      merge: true,
+    })
+
+    //no need to do anything else
+  }
+
+  getPackInvitesFromUUID = async (uuid) => {
+    let packs = [];
+    await PACKS_COLLECTION.where('pack_invited_members', 'array-contains', uuid).get().then(docs => {
+      docs.forEach(doc => {
+        let packData = doc.data();
+        packData.id = doc.id;
+        packs.push(packData);
+      });
+    });
+
+    console.log(packs);
+
+    return Promise.resolve(packs);
   }
 
   getAllPacks() {
@@ -166,7 +236,7 @@ class PacksController {
   getPackInformationByUUID = async (uuid) => {
     let packInformation;
     await PACKS_COLLECTION.doc(uuid).get().then(result => {
-      packInformation = result;
+      packInformation = result.data();
     });
 
     return Promise.resolve(packInformation);
@@ -201,8 +271,8 @@ class PacksController {
     return Promise.resolve(packEventsData);
   }
 
-  createPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
-    const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
+  createPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type) => {
+    const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type);
     PACKS_COLLECTION.doc().set(lupaPackStructure);
   }
 

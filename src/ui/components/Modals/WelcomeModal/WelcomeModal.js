@@ -61,7 +61,8 @@ export default class WelcomeModal extends React.Component {
     _handleBackViewClick = () => {
         this.setState({ 
         pageChangedForward: false,
-        currIndex: this.state.currIndex - 1 
+        currIndex: this.state.currIndex - 1,
+        progress: this.state.progress - .20
     });
     }
 

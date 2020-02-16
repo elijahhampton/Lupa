@@ -41,6 +41,7 @@ var lupa_pack : LupaPackStructure = {
     pack_description: "",
     pack_isSubscription: false,
     pack_isDefault: false,
+    pack_type: "",
     pack_members: [],
     pack_invited_members: [],
     pack_image: '',
@@ -51,7 +52,7 @@ var lupa_pack : LupaPackStructure = {
     pack_location: '',
 }
 
-export const getLupaPackStructure = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
+export const getLupaPackStructure = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type) => {
     lupa_pack.pack_leader = packLeader;
     lupa_pack.pack_title = title;
     lupa_pack.pack_description = description;
@@ -64,6 +65,7 @@ export const getLupaPackStructure = (packLeader, title, description, location, i
     lupa_pack.pack_time_created = timeCreated;
     lupa_pack.pack_isSubscription = isSubscription;
     lupa_pack.pack_isDefault = isDefault;
+    lupa_pack.pack_type = type;
 
     return lupa_pack;
 }
@@ -77,6 +79,7 @@ var lupa_session : LupaSessionStructure = {
     name: "",
     description: "",
     sessionStatus: "",
+    sessionMode: "",
     time_created: {
         date: "",
         time: "",
@@ -93,6 +96,7 @@ export const getLupaSessionStructure = (attendeeOne, attendeeTwo, requesterUUID,
     lupa_session.description = description;
     lupa_session.time_created = time_created;
     lupa_session.sessionStatus = SESSION_STATUS.INVITED;
+    lupa_session.sessionMode = "Active";
     return lupa_session;
 }
 

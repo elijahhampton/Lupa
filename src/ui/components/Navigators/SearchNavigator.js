@@ -6,6 +6,8 @@ import { createStackNavigator } from 'react-navigation-stack';
 import UserProfileView from '../DrawerViews/Profile/UserProfileModal';
 import SessionsView from '../Modals/Session/CreateSessionModal';
 import SearchView from '../MainViews/search/SearchView';
+import PackModal from '../Modals/PackModal/PackModal';
+import { PackChatModal as PackChat } from '../Modals/PackChatModal';
 
 const UserViewNavigator =  createStackNavigator(
     {

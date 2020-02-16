@@ -27,7 +27,6 @@ const MyPacksCard = () => {
                  Announcements
              </Caption>
          </View>
-         <PackModal isOpen={false} />
         </View>
     )
 }

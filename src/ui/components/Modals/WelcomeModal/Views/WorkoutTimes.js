@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 20,
-        fontWeight: "500"
+        fontSize: 25,
+        fontWeight: "200"
     },
     userInput: {
         flex: 2,

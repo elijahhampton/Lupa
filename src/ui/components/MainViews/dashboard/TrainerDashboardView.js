@@ -24,9 +24,15 @@ import {
     Surface,
     IconButton,
     Menu,
+    Provider,
+    Portal,
+    Modal,
+    Title,
+    Paragraph,
     Divider,
     Caption,
     FAB,
+    Chip,
     Button
 } from 'react-native-paper';
 
@@ -55,6 +61,44 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+const PackInviteModal = props => {
+
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    handleAccept = (packID, currUserID) => {
+        this.LUPA_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packID, currUserID);
+        props.closeModalMethod()
+    }
+
+    handleDecline = () => {
+        this.LUPA_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packID, currUserID);
+        props.closeModalMethod()
+    }
+    return (
+        <Provider>
+            <Portal>
+                <Modal visible={props.isOpen} contentContainerStyle={{alignSelf: 'center', padding: 15, height: 'auto', backgroundColor: 'white', margin: 0, width: '90%', borderRadius: 3}}>
+                    <Title>
+                        {props.packTitle}
+                    </Title>
+                    <Paragraph>
+                        You have been invited to join the {props.packTitle} pack.
+                    </Paragraph>
+                    <View style={{justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center'}}>
+                        <Button color="#2196F3" style={{marginLeft: 5}} onPress={() => handleAccept(props.packID, props.currUserID)}>
+                            Accept
+                        </Button>
+
+                        <Button color="#2196F3" style={{marginLeft: 3}} onPress={() => this.handleDecline(props.packID, props.currUserID)}>
+                            Decline
+                        </Button>
+                    </View>
+                </Modal>
+            </Portal>
+        </Provider>
+    )
+}
+
 class TrainerDashboardView extends React.Component {
     constructor(props) {
         super(props);
@@ -65,6 +109,10 @@ class TrainerDashboardView extends React.Component {
             refreshing: false,
             sessionData: [],
             packEventsData: [],
+            packInvites: [],
+            openedPackInviteID: "",
+            openedPackTitle: "",
+            packInviteModalOpen: false,
         }
 
     }
@@ -72,6 +120,7 @@ class TrainerDashboardView extends React.Component {
     componentDidMount = async () => {
         await this.fetchSessions();
         await this.fetchPackEvents();
+        await this.fetchPackInvites();
     }
 
     _onRefresh = () => {
@@ -87,10 +136,71 @@ class TrainerDashboardView extends React.Component {
        * Fetch user sessions from the LupaController.
        */
       fetchSessions = async () => {
+          let sessionDataIn;
+
         await this.LUPA_CONTROLLER_INSTANCE.getUserSessions().then(res => {
-            this.setState({
-                sessionData: res
-            });
+            sessionDataIn = res;
+        });
+
+
+        //if session status pending and active.. nothing to do
+        
+        //if session status is set and expired... nothing to do
+
+        //if session status is set and active... nothing to do
+
+        //Check if session status is pending and expired... remove session.. we'll let user remove the others
+        for (let i = 0; i < sessionDataIn.length; ++i)
+        {
+            let sessionDate = sessionDataIn[i].sessionData.date;
+
+            //check to see if session has expired
+            let sessionDateParts = sessionDate.split('-');
+            let month = sessionDateParts[0], day = sessionDateParts[1], year = sessionDateParts[2];
+            let realMonth;
+            switch(month)
+            {
+                case 'January':
+                    realMonth = 1;
+                case 'February':
+                    realMonth = 2;
+                case 'March':
+                    realMonth = 3;
+                case "April":
+                    realMonth = 4;
+                case 'May':
+                    realMonth = 5;
+                case 'June':
+                    realMonth = 6;
+                case 'July':
+                    realMonth = 7;
+                case 'August':
+                    realMonth = 8;
+                case 'September':
+                    realMonth = 9;
+                case 'October':
+                    realMonth = 10;
+                case 'November':
+                    realMonth = 11;
+                case 'December':
+                    realMonth = 12;
+                default:
+            }
+            
+            //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
+            
+            //Check session is past and remove
+            if (new Date().getMonth() > realMonth && new Date().getDay() > day && sessionDataIn[i].sessionData.sessionStatus == 'Pending' || 
+                new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' || 
+                    new Date().getMonth() > realMonth && sessionDataIn[i].sessionData.sessionStatus == 'Pending')
+            {
+                this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_status', 'Expired');
+            }
+        }
+
+
+        await this.setState({
+            sessionData: sessionDataIn
         });
       }
 
@@ -98,7 +208,6 @@ class TrainerDashboardView extends React.Component {
        * Fetch Pack Events
        */
       fetchPackEvents = async () => {
-          console.log('start');
           let currentUserPacks = [];
           let currentUserPackEventsData = [];
 
@@ -112,6 +221,16 @@ class TrainerDashboardView extends React.Component {
           
           await this.setState({ packEventsData: currentUserPackEventsData });
 
+      }
+
+      fetchPackInvites = async () => {
+        let currentUserPackInvites = [];
+
+        await this.LUPA_CONTROLLER_INSTANCE.getPackInvitesFromUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
+            currentUserPackInvites = result;
+        });
+
+        await this.setState({ packInvites: currentUserPackInvites });
       }
 
       /**
@@ -142,6 +261,27 @@ class TrainerDashboardView extends React.Component {
             <PackEventNotificationContainer packUUID={pack.pack_uuid} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date.seconds} numAttending={pack.attendees.length}/>
             )
         });
+      }
+
+      populatePackInvites = () => {
+        return this.state.packInvites.map(invites => {
+            return (
+                <TouchableOpacity onPress={() => {this.handlePackInvite(invites.id, invites.pack_title)}} >
+                <Chip mode="flat" style={{backgroundColor: "#90CAF9", margin: 5, borderRadius: 10, width: 'auto'}}>
+                    {invites.pack_title}
+                </Chip>
+                </TouchableOpacity>
+            )
+        })
+      }
+
+
+      handlePackInvite = (inviteID, title) => {
+        this.setState({ openedPackInviteID: inviteID, openedPackTitle: title, packInviteModalOpen: true });
+      }
+
+      handlePackInviteModalClose = () => {
+          this.setState({ packInviteModalOpen: false })
       }
 
     render() {
@@ -197,27 +337,25 @@ class TrainerDashboardView extends React.Component {
                         <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length}/>
                     </View>
 
-            <LupaCalendar />
-
                     <View>
-                        <Text style={{fontSize: 20, fontWeight: "500", color: "white"}}>
-                            Goals
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
+                            Pack Invites
                         </Text>
-                        <View style={{flexDirection: "row"}}>
-                        <Caption>
-                            You do not have any goals set. Visit your fitness profile to set your
-                        </Caption>
-                        <TouchableWithoutFeedback>
-                        <Caption style={{color: "white"}}>
-                            goals
-                        </Caption>
-                        </TouchableWithoutFeedback>
-                        <Caption>
-                            .
-                        </Caption>
-                        </View>
+                        <Button mode="text" color="white">
+                            View all
+                        </Button>
 
+                </View>
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                        {
+                            this.populatePackInvites()
+                        }
+                        </ScrollView>
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length}/>
                     </View>
+
+            <LupaCalendar />
 
                     <View>
                         <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
@@ -227,26 +365,8 @@ class TrainerDashboardView extends React.Component {
                             You have not performed any workouts recently.
                         </Caption>
                     </View>
-                    {
-                        this.props.lupa_data.Users.currUserData.isTrainer && true ? 
-                        <View>
-                        <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%",}}>
-                        <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
-                            Pack Offers
-                        </Text>
-                        <Icon name="plus" size={15} />
-                        </View>
-                        <View>
-                            <Caption>
-                                You are not currently leading any premium packs.  Visit the Packs section to start one.
-                            </Caption>
-                        </View>
-
-                    </View>
-                    :
-                    null
-                    }
                 </ScrollView>
+                <PackInviteModal closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid}/>
                 </SafeAreaView>
         );                    
     }
