@@ -15,7 +15,7 @@ import {
   Button
 } from 'react-native-paper';
 
-import { withNavigation } from 'react-navigation';
+import { withNavigation, NavigationActions } from 'react-navigation';
 
 import { Feather as DrawerIcon } from '@expo/vector-icons';
 
@@ -42,11 +42,10 @@ class DrawerMenu extends React.Component {
     super(props);
 
     this.state = {
-      image: '',
+      currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid
     }
-
   }
-
+  
   _handleLogout = () => {
     //this.props.navigation.reset();
     this.props.navigation.push('Login');
@@ -104,7 +103,14 @@ class DrawerMenu extends React.Component {
 
             <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
               <DrawerIcon name="user" size={12} style={{margin: 3}}/>
-            <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.navigate('Profile')}>
+            <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.dispatch(
+
+NavigationActions.navigate({
+  routeName: 'Profile',
+  params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'},
+  action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'}})
+})
+            )}>
               Profile
             </Button>
             </View>
@@ -134,7 +140,7 @@ class DrawerMenu extends React.Component {
               </View>
             </View>
 
-            <Button mode="text" compact color="#2196F3">
+            <Button mode="text" compact color="#2196F3" onPress={() => logoutUser()}>
         Log out
         </Button>
         </SafeAreaView>

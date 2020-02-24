@@ -18,11 +18,12 @@ const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
 import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
 import { getPathwaysForGoalUUID } from '../../model/data_structures/goal_pathway_structures';
 
+let PACKS_CONTROLLER_INSTANCE;
+
 export default class UserController {
     private static _instance: UserController;
 
     private constructor() {
-
     }
 
     public static getInstance = () => {
@@ -46,6 +47,25 @@ export default class UserController {
             console.log('the length is: ' + results.length)
             resolve(results);
         })
+    }
+
+    isUsernameTaken = async (val) => {
+        let isTaken;
+
+        USER_COLLECTION.where('username', '==', val).get().then(docs => {
+            if (docs.length == 0)
+            {
+                console.log('false')
+                isTaken = false;
+                return Promise.resolve(isTaken);
+            }
+            else
+            {
+                console.log('true')
+                isTaken = true;
+                return Promise.resolve(isTaken);
+            }
+        });
     }
 
 
@@ -234,7 +254,14 @@ export default class UserController {
                     interestData = snapshotData.interest
                 });
 
-                interestData.push(value);
+                if (interestData.includes(value))
+                {
+                    interestData.splice(interestData.indexOf(value), 1);
+                }
+                else
+                {
+                    interestData.push(value);
+                }
 
                 currentUserDocument.set({
                     interest: interestData
@@ -393,8 +420,53 @@ export default class UserController {
         });
     }
 
-    updateCurrentUserHealthData = (fieldToUpdate) => {
+    unfollowAccountFromUUID = async (uuidOfUserToUnfollow, uuidOfUserUnfollowing) => {
+        let result;
+        let accountToUpdate = USER_COLLECTION.doc(uuidOfUserUnfollowing);
 
+        await accountToUpdate.get().then(snapshot => {
+            result = snapshot.data();
+        });
+
+        let currentFollowing = result.following;
+
+        currentFollowing.splice(currentFollowing.indexOf(uuidOfUserToUnfollow), 1);
+
+        accountToUpdate.set({
+            following: currentFollowing,
+        }, {
+            merge: true,
+        })
+    }
+    
+    removeFollowerFromUUID = async (uuidOfUserToRemove, uuidOfUserUnfollowing) => {
+        let result;
+        let accountToUpdate = USER_COLLECTION.doc(uuidOfUserToRemove);
+        await accountToUpdate.get().then(snapshot => {
+            result = snapshot.data();
+        })
+
+        //Get the current followers
+        let currentFollowers = result.followers;
+
+        //add the follower to the current followers
+        currentFollowers.splice(currentFollowers.indexOf(uuidOfUserUnfollowing), 1);
+
+        //update followers
+        accountToUpdate.set({
+            followers: currentFollowers,
+        }, {
+            merge: true,
+        });
+    }
+
+    updateCurrentUserHealthData = (fieldToUpdate) => {
+        switch(fieldToUpdate)
+        {
+            case 'statistics':
+                break;
+            default:
+        }
     }
 
     getUserPhotoURL = (currUser = true, uid = undefined) => {

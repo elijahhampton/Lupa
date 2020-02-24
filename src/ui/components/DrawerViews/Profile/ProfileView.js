@@ -8,6 +8,8 @@
 
 import React from 'react';
 
+import LUPA_DB from '../../../../controller/firebase/firebase';
+
 import {
     StyleSheet,
     View,
@@ -17,7 +19,9 @@ import {
     ScrollView,
     Button as NativeButton,
     RefreshControl,
-    ImageBackground
+    ImageBackground,
+    TouchableWithoutFeedback,
+    TextInput
 } from "react-native";
 
 import {
@@ -26,6 +30,7 @@ import {
     Surface,
     Button,
     Caption,
+    Avatar,
     Divider,
     Chip,
     Headline,
@@ -34,13 +39,14 @@ import {
 
 import {
     Fab,
+    Header,
+    Left,
+    Right
 } from 'native-base';
 
 import Timecards from './components/Timecards';
 
 import { ImagePicker } from 'expo-image-picker';
-
-import { Avatar, Rating } from 'react-native-elements';
 
 import SafeAreaView from 'react-native-safe-area-view';
 
@@ -107,7 +113,14 @@ class ProfileView extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            userData: this.props.lupa_data.Users.currUserData
+            userUUID: '',
+            userData: {},
+            userPackData: [],
+            userRecommendedWorkouts: [],
+            isEditingBio: false,
+            followers: [],
+            following: [],
+            interest: [],
         }
     }
 
@@ -118,11 +131,50 @@ class ProfileView extends React.Component {
      * the speed in which a user may search and click a user profile.  Loading the information and setting the state after the component has mounted
      * guarantees that the information will be loaded so the user can see it.
      */
-    componentDidMount = () => {
-        this.setupProfileInformation();
+    componentDidMount = async () => {
+        await this.setupProfileInformation();
     }
 
+    _getId() {
+        let id = false;
+        if(this.props.navigation.state.params) {
+          id = this.props.navigation.state.params.userUUID;
+        }
+        return id;
+      }
+
     setupProfileInformation = async () => {
+        let userInfo, userPackData;
+        const uuid = this._getId();
+
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
+            userInfo = result;
+        })
+
+        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUserUUID(uuid).then(result => {
+            userPackData = result;
+        })
+
+        let workouts = userInfo.recommended_workouts;
+        let workoutData = [];
+        for (let i = 0; i < workouts.length; i++)
+        {
+            await this.LUPA_CONTROLLER_INSTANCE.getWorkoutDataFromUUID(workouts[i]).then(result => {
+                workoutData.push(result);
+            })
+        }
+
+        await this.setState({
+            userData: userInfo,
+            userPackData: userPackData,
+            followers: userInfo.followers,
+            following: userInfo.following,
+            interest: userInfo.interest,
+            userRecommendedWorkouts: workoutData,
+        });
+    }
+
+    handleEndEditingBio = () => {
 
     }
 
@@ -159,80 +211,67 @@ class ProfileView extends React.Component {
     }
 
     mapInterest = () => {
-       /* return this.state.userInterest.length == 0 ?
+       return this.state.interest.length == 0 ?
             <Caption>
                 Specializations and strengths that you add to your fitness profile will appear here.
-                                </Caption> : this.props.lupa_data.Users.currUserData.interest.map(interest => {
+                                </Caption> : this.state.userData.interest.map(interest => {
                     return (
                         <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
                             {interest}
                         </Chip>
                     );
-                })*/
-    }
-
-    mapExperience = () => {
-        return  <View>
-                <Title>
-                    Education
-            </Title>
-                <Text>
-                     Auburn University 
-                </Text>
-                <Title>
-                    Certification
-            </Title>
-                <Text>
-                     National Association Science and Medicine
-                </Text>
-                <Title>
-                    Years as a Trainer
-            </Title>
-                <Text>
-                     5
-                </Text>
-            </View>
+                })
     }
 
     mapPacks = () => {
-        return <MyPacksCard />
+        return this.state.userPackData.map(pack => {
+            return (
+                <MyPacksCard packTitle={pack.pack_title} packPhotoSrc={pack.pack_image} />
+            )
+        })
     }
 
-    //show rating at bottom of profile
-    showRating = () => {
-        return <Rating showReadOnlyText={false} readonly ratingTextColor="black" showRating={true} ratingCount={this.state.userData.rating} imageSize={80} />
-    }
 
     handleOnRefresh = () => {
         this.setupProfileInformation()
     }
 
     mapBio = () => {
-        return (
-        <Text style={{fontWeight: 'bold'}}>
+        return this.state.isEditingBio == true ?
+            <Text style={{fontWeight: 'bold'}} allowFontScaling={true} allowsEditing={true}>
+                {this.state.userData.bio}
+            </Text>
+        :
+        <TextInput multiline={true} autoGrow={true}>
             {this.state.userData.bio}
-        </Text>
-        )
+        </TextInput>
     }
 
     mapRecommendedWorkouts = () => {
-        return <>
-            <Button mode="text" compact color="black">
-                Glute Bridge
-                                </Button>
-            <Button mode="text" compact color="black">
-                Dumbbel Clean
-                                </Button>
-            <Button mode="text" compact color="black">
-                Squat
-                                </Button>
-            <Button mode="text" compact color="black">
-                Hammer Curl
-                                </Button>
-            <Button mode="text" compact color="black">
-                Jumping Lunge
-                                </Button>
-        </>
+        if (this.state.userRecommendedWorkouts.length == 0)
+        {
+            return        <View>
+            <Caption>
+    You don't have any recommended workouts saved!  You can recommend workouts from the workout library inside of your goal pathways.
+</Caption>
+</View>
+        }
+        else 
+        {
+            return (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {
+                this.state.userRecommendedWorkouts.map(workout => {
+            return (<Button mode="text" compact color="black">
+            {workout.workout_name}
+                            </Button>
+            )
+            })
+
+            }
+            </ScrollView>
+            )
+        }
     }
 
     _navigateToFollowers = () => {
@@ -243,14 +282,80 @@ class ProfileView extends React.Component {
         this.props.navigation.navigate('ProfileSettings');
     }
 
+    renderFinishEditingBioButton = () => {
+        return this.state.isEditingBio == true ? 
+            <Button mode="text" color="#2196F3" onPress={() => this.handleEndEditingBio()}>
+                Done
+            </Button>
+            :
+            <Button mode="text" color="#2196F3" onPress={() => this.setState({ isEditingBio: true })}>
+                Edit
+            </Button>
+    }
+
+    getFollowerLength = () => {
+       if (this.state.followers.length) {
+            return this.state.followers.length
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
+    getFollowingLength = () => {
+        if (this.state.following.length) {
+            return this.state.following.length;
+    } else {
+        return 0;
+    }
+    }
+
+    getHeaderLeft = () => {
+        console.log(this.props.navigation.state.params)
+        if (this.props.navigation.state.params.navFrom)
+        {
+            switch (this.props.navigation.state.params.navFrom)
+            {
+                case 'Drawer':
+                    return <IconButton icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
+                    break;
+                case 'PackView':
+                    return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
+                    break;
+                case 'SearchView':
+                    //Not using right now because it seems to work without it
+                    break;
+    
+            }
+        }
+
+    }
+
+    getHeaderRight = () => {
+        if (this.props.navigation.state.params.navFrom)
+        {
+            switch (this.props.navigation.state.params.navFrom)
+            {
+                case 'Drawer':
+                    return <IconButton icon="more-horiz" size={20} onPress={() => this._navigateToSettings()} />
+                    break;
+            }
+        }
+    }
+
     render() {
         return (
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
-                <Surface style={styles.surfaceHeader}>
-                    <ImageBackground style={styles.imageBackground} source={ProfileImage}>
-                        <IconButton style={styles.menuIcon} icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
-                    </ImageBackground>
-                </Surface>
+                <Header transparent style={{backgroundColor: 'transparent'}}>
+                    <Left>
+                        {this.getHeaderLeft()}
+                    </Left>
+
+                    <Right>
+                        {this.getHeaderRight()}
+                    </Right>
+                </Header>
 
                 <ScrollView contentContainerStyle={{flexGrow: 2, flexDirection: 'column', justifyContent: 'space-between'}} showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
                     <View style={styles.user}>
@@ -264,23 +369,23 @@ class ProfileView extends React.Component {
                                 </Text>
                                 {
                                     true && this.state.userData.isTrainer ? <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 1 }}>
-                                        Lupa Tier 1 Trainer
+                                        Lupa Trainer
                             </Text> : <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
                                             Lupa User
                             </Text>
                                 }
                             </View>
                             <View style={styles.alignCenterColumn}>
-                                <Avatar size={65} source={{uri: this.state.userData.photo_url}} rounded containerStyle={{}} />
+                                <Avatar.Image style={{elevation: 3}} size={65} source={{uri: this.state.userData.photo_url}} containerStyle={{}} />
 
                             </View>
                         </View>
                         
                         <View style={styles.userAttributesContainer}>
-                            <TouchableOpacity onPress={this._navigateToFollowers}>
+                            <TouchableOpacity onPress={() => this._navigateToFollowers()}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                        {this.state.userData.followers.length}
+                                      {this.getFollowerLength()}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Followers
@@ -288,10 +393,10 @@ class ProfileView extends React.Component {
                                 </View>
 
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={this._navigateToFollowers}>
+                            <TouchableOpacity onPress={() => this._navigateToFollowers()}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                        {this.state.userData.following.length}
+                                       {this.getFollowingLength()}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Following
@@ -299,27 +404,25 @@ class ProfileView extends React.Component {
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity>
-                                <View style={styles.alignCenterColumn}>
-                                    <Text>
-                                        {this.state.userData.sessionsCompleted}
-                                    </Text>
-                                    <Text style={styles.userAttributeText}>
-                                        Sessions Completed
-                                </Text>
-                                </View>
-
-                            </TouchableOpacity>
-
                         </View>
                     </View>
 
+                    <Divider />
+
                     <Timecards isEditing={this.state.isEditingProfile} />
+
+                    <Divider />
                     <>
                         <Surface style={styles.contentSurface}>
+                            <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                             <Title>
                                 Bio
                         </Title>
+                        {
+                            this.renderFinishEditingBioButton()
+                        }
+
+                            </View>
                             <Divider />
                             <View style={{ justifyContent: "flex-start", padding: 5 }}>
                                 {
@@ -328,21 +431,6 @@ class ProfileView extends React.Component {
                             </View>
                         </Surface>
                     </>
-                    
-                    <>
-                    {
-                        true && this.state.userData.isTrainer ?
-                                <Surface style={styles.contentSurface}>
-                                    <Title>
-                                        Experience
-                        </Title>
-                                    <Divider />
-                                    {this.mapExperience()}
-                                </Surface>
-                            :
-                            null
-                    }   
-                    </>
 
                         {/* interest mapping */}
                         <Surface style={[styles.contentSurface, {elevation: 8, backgroundColor: "#2196F3"}]}>
@@ -350,22 +438,10 @@ class ProfileView extends React.Component {
                                 <Title style={{color: 'white'}}>
                                     Interest and Goals
                                 </Title>
-                                    
-                                    <Button mode="text" color="white">
-                                        View all
-                                    </Button>
                                 </View>
-                                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', alignItems: 'center'}}>
+                                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center'}}>
                                 {
-                                    this.props.lupa_data.Users.currUserData.interest.map((val, index, arr) => {
-                                        return (
-                                            <Chip mode="flat" style={{width: 'auto', height: 'auto', alignItems: 'center', justifyContent: 'center', margin: 2, backgroundColor: "#FAFAFA", elevation: 3}}> 
-                                            <Text style={{fontWeight: 'bold'}}>
-                                                {val}
-                                            </Text>
-                                        </Chip>
-                                        )
-                                    })
+                                    this.mapInterest()
                                 }
                                 </View>
                         </Surface>
@@ -386,28 +462,28 @@ class ProfileView extends React.Component {
                             <Title>
                                 Recommended Workouts
                         </Title>
-                            <Button color="#2196F3">
-                                View All
-                        </Button>
                         </View>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {this.mapRecommendedWorkouts()}
-                        </ScrollView>
+                        {
+                            this.mapRecommendedWorkouts()
+                        }
                     </View>
-                </ScrollView>
 
-                <Fab
-                    active={this.state.active}
-                    direction="up"
-                    containerStyle={{}}
-                    style={{ backgroundColor: '#637DFF' }}
-                    position="bottomRight"
-                    onPress={() => this.setState({ active: !this.state.active })}>
-                    <MaterialIcon name="menu" />
-                    <Button style={{ backgroundColor: '#637DFF' }} onPress={() => this._navigateToSettings()}>
-                        <MaterialIcon name="settings" />
-                    </Button>
-                </Fab>
+                    {
+                             this.state.userData.isTrainer == true ?
+                                            <View style={styles.recommendedWorkouts}>
+                                            <View style={styles.recommendedWorkoutsHeader}>
+                                                <Title>
+                                                    Certification
+                                            </Title>
+                                            </View>
+                    <Caption style={{flexWrap: 'wrap'}}>
+                        This user is a certified trainer under the { this.state.userData.certification }
+                    </Caption>
+                                        </View>
+                                        :
+                                        null
+                }
+                </ScrollView>
                             </SafeAreaView>
         );
     }
@@ -437,11 +513,12 @@ const styles = StyleSheet.create({
     chipStyle: {
         elevation: 3,
         width: "auto",
-        backgroundColor: "#637DFF",
-        margin: 3
+        backgroundColor: "white",
+        margin: 5
     },
     chipTextStyle: {
-        color: "white",
+        color: "#2196F3",
+        fontWeight: 'bold',
     },
     surfaceHeader: {
         height: "15%",

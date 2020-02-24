@@ -10,6 +10,7 @@ import {
 
 import {
     Surface,
+    Avatar,
     Card,
     Caption
 } from 'react-native-paper';
@@ -18,10 +19,15 @@ import { Rating } from 'react-native-ratings';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
-import UserProfileModal from '../../../../DrawerViews/Profile/UserProfileModal';
-import PackModal from '../../../../Modals/PackModal/PackModal'
+import { NavigationContext } from 'react-navigation';
+
 
 import PackInformationModal from '../../../../Modals/Packs/PackInformationModal';
+import ProfilePreviewModal from '../../../../DrawerViews/Profile/ProfilePreviewModal';
+
+
+let contextType = NavigationContext;
+
 
 export const SmallPackCard = (props) => {
     const [packUUID, setPackUUID] = useState(props.packUUID);
@@ -66,21 +72,14 @@ export const SubscriptionPackCard = (props) => {
         </Surface>
 
 
-        <PackInformationModal isOpen={showPack} packUUID={packUUID} closeModalMethod={this.handleClosePack}/>
+        <PackInformationModal isOpen={showPack} packUUID={props.packUUID} closeModalMethod={this.handleClosePack}/>
         </TouchableOpacity>
     );   
 }
 
 export const TrainerFlatCard = (props) => {
-    const [trainerUUID, setTrainerUUID] = useState(props.trainerUUID);
-    const [showUserModal, setShowUserModal] = useState(false);
-
-    _setShowUserModal = () => {
-        setShowUserModal(false)
-    }
 
     return (
-        <TouchableOpacity onPress={this._setShowUserModal}>
                     <Card style={styles.card}>
 <Card.Cover style={{height: 180}} source={{ uri: props.image }} />
 <Card.Actions style={{height: "auto", flexDirection: "column", alignItems: "flex-start"}}>
@@ -100,7 +99,13 @@ export const TrainerFlatCard = (props) => {
     </Caption>
 </Card.Actions>
 </Card>
-        </TouchableOpacity>
+    );
+}
+
+export const UserFlatCard = (props) => {
+
+    return (
+            <Avatar.Image source={{uri: props.avatarSrc }} size={60} style={{margin: 5}} />
     );
 }
 

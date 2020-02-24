@@ -35,15 +35,18 @@ class TrainerSearchResultCard extends React.Component {
         }
     }
 
-    _handleViewProfile = (uuid) => {
-        this.props.navigation.navigate('UserProfileView', {
-            userUUID: uuid
+    
+    _handleViewProfile = () => {
+        console.log('Calling _handleViewProfile')
+        props.navigation.navigate('UserProfileView', {
+            userUUID: props.uuid,
+            navFrom: 'SearchView',
         });
     }
 
     render() {
         return (
-                <TouchableOpacity onPress={() => this._handleViewProfile(this.state.userUUID)} style={styles.touchableOpacity}>
+            <TouchableWithoutFeedback onPress={this._handleViewProfile} style={styles.touchableOpacity}>
                 <Surface style={[styles.cardContainer]}>
                     <View style={styles.cardContent}>
                         <View style={styles.userInfoContent}>
@@ -63,7 +66,7 @@ class TrainerSearchResultCard extends React.Component {
     </Chip>
                     </View>
                 </Surface>
-                    </TouchableOpacity>
+                </TouchableWithoutFeedback>
         );
     }
    
@@ -78,6 +81,7 @@ const styles = StyleSheet.create({
     cardContainer: {
         elevation: 3,
         borderRadius: 0,
+        justifyContent: 'center',
         width: "100%",
         height: "auto",
         margin: 5,

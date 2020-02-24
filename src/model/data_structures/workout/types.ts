@@ -13,10 +13,12 @@ export type GoalPathway = {
 }
 
 export type Workout = {
-    name: String,
-    description: String,
-    Steps: Array<String>,
-    uid: String
+    workout_name: String,
+    workout_description: String,
+    workout_steps: Array<String>,
+    workout_uid: String,
+    workout_modalities: Array<String>,
+    workout_tags: Array<String>,
 }
 
 export type Goal = {

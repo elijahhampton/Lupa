@@ -38,37 +38,44 @@ import { logoutUser } from '../../../../../controller/lupa/auth';
 
 import Color from '../../../../common/Color'
 import GoalsModal from '../../../Modals/Goals/GoalsModal';
+import ChangeAccountPropertyModal from '../../../Modals/User/Settings/ChangeAccountPropertyModal';
+import { connect } from 'react-redux';
+import LupaController from '../../../../../controller/lupa/LupaController';
 
-const accountList = [
+import AddPaymentModal from '../components/AddPaymentModal';
+
+import StripeCheckout from 'expo-stripe-checkout';
+
+accountList = [
     {
         key: 'Name',
         title: 'Name',
-        description: 'Elijah Hampton',
+        description: '',
+        property: 'display_name'
     },
     {
         key: 'Username',
         title: 'Username',
-        description: 'elijahhampton',
+        description: '',
+        property: 'username',
     },
     {
         key: 'Email',
         title: 'Email',
-        description: 'ejh0017@gmail.com',
-    },
-    {
-        key: 'MobileNumber',
-        title: 'Mobile Number',
-        description: '334-482-3936',
+        description: '',
+        property: 'email',
     },
     {
         key: 'ChangePassword',
         title: 'Change Password',
-        description: '********',
+        description: 'Change Password',
+        property: 'change_password',
     },
     {
         key: 'RecoverPassword',
         title: 'Recover Password',
         description: 'Lupa will send you an email with a temporary password',
+        property: 'recover_password'
     },
 ]
 
@@ -144,19 +151,63 @@ lupaList = [
     }
 ]
 
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
 class SettingsModal extends React.Component {
 
     constructor(props) {
         super(props);
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
         
         this.state = {
+            userData: {},
             sessionsSwitchIsEnabled: false,
             packEventsSwitchIsEnabled: false,
             packChatSwitchIsEnabled: false,
             messagesSwitchIsEnabled: false,
             newFollowersSwitchIsEnabled: false,
             goalsModalIsOpen: false,
+            showChangeAccountPropertyModal: false,
+            property: '',
+            reload: false,
+            paymentModalIsOpen: true
         }
+    }
+
+    componentDidMount = async () => {
+        await this.setupSettings();
+    }
+
+    setupSettings = async () => {
+        let userDataIn;
+
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid).then(result => {
+            userDataIn = result;
+        });
+
+        await this.setState({ 
+            userData: userDataIn
+        })
+    }
+
+    handleOpenChangePropertyModal = async (key) => {
+        await this.setState({ property: key})
+        await this.setState({ showChangeAccountPropertyModal: true })
+    }
+
+    //need to fix this.. don't want to make two separate reads
+    handleCloseChangePropertyModal = async () => {
+        await this.setupSettings();
+        this.setState({ showChangeAccountPropertyModal: false })
+        await this.setupSettings();
+    }
+
+    handleCloseAddPaymentModal = async () => {
+        this.setState({ paymentModalIsOpen: false })
     }
 
     renderNotificationSectionSwitches = (key) => {
@@ -190,7 +241,6 @@ class SettingsModal extends React.Component {
     }
     
     _handleUserLogout = async () => {
-        console.log('logout')
         await logoutUser();
         const resetAction = StackActions.reset({
             index: 0,
@@ -200,11 +250,6 @@ class SettingsModal extends React.Component {
         this.props.navigation.dispatch(resetAction); 
       }
 
-    _navigateToAccountSettings = () => {
-        console.log('navigate')
-        this.props.navigation.navigate('AccountSettingsView');
-    }
-    
       handleListItemOnPress = (key) => {
           console.log(key);
         switch(key) {
@@ -215,10 +260,6 @@ class SettingsModal extends React.Component {
                 break;
 
         }
-    }
-
-    _navigateBack = () => {
-        this.props.navigation.navigate('PackView');
     }
 
     _navigateToPaymentSettings = () => {
@@ -233,12 +274,26 @@ class SettingsModal extends React.Component {
         this.setState({ goalsModalIsOpen: false })
     }
 
+    getAccountListDescription = (description_property) => {
+        switch(description_property)
+        {
+            case 'display_name':
+                return this.state.userData.display_name;
+            case 'username':
+                return this.state.userData.username;
+            case 'email':
+                return this.state.userData.email;
+            case 'mobile_number':
+                return this.state.userData.mobile_number;
+        }
+    }
+
     render() {
         return (
                 <Container style={styles.root}>
                     <Header>
                         <Left>
-                            <IconButton icon="arrow-back" onPress={() => this._navigateBack()}/>
+                            <IconButton icon="arrow-back" onPress={() => this.props.navigation.goBack('Profile')}/>
                         </Left>
     
                         <Right>
@@ -254,7 +309,7 @@ class SettingsModal extends React.Component {
                         {
                             accountList.map(item => {
                                 return (
-                                    <List.Item style={styles.listItem} title={item.title} description={item.description} descriptionEllipsizeMode="tail"/>
+                                    <List.Item onPress={() => this.handleOpenChangePropertyModal(item.property)} style={styles.listItem} title={item.title} description={this.getAccountListDescription(item.property)} descriptionEllipsizeMode="tail"/>
                                 )
                             })
                         }
@@ -336,6 +391,8 @@ class SettingsModal extends React.Component {
         </Button>
                 </ScrollView>
                 <GoalsModal  animated={true} animationType="fade" isOpen={this.state.goalsModalIsOpen} closeModalMethod={this._handleGoalsModalOnClose} />
+                {/*<ChangeAccountPropertyModal property={this.state.property} closeModalMethod={this.handleCloseChangePropertyModal} isVisible={this.state.showChangeAccountPropertyModal} />*/}
+                {/*<AddPaymentModal isOpen={this.state.paymentModalIsOpen} closeModalMethod={this.handleCloseAddPaymentModal}/>*/}
                 </SafeAreaView>
                 </Container>
         )
@@ -368,4 +425,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default withNavigation(SettingsModal);
+export default connect(mapStateToProps)((SettingsModal));

@@ -11,6 +11,7 @@
     "@expo/vector-icons": "^10.0.6",
     "@react-native-community/datetimepicker": "^2.1.0",
     "@react-native-community/slider": "^2.0.2",
+    "@react-navigation/native": "^5.0.7",
     "@tradle/react-native-http": "^2.0.1",
     "algoliasearch": "^3.35.1",
     "assert": "^2.0.0",
@@ -77,6 +78,7 @@
     "reanimated-bottom-sheet": "^1.0.0-alpha.14",
     "redux": "^4.0.4",
     "stream": "0.0.2",
+    "stripe": "^8.20.0",
     "url": "^0.11.0",
     "zlib": "^1.0.5"
   },

@@ -16,15 +16,15 @@ import { Rating } from 'react-native-elements';
 
 import PackModal from '../../../Modals/PackModal/PackModal';
 
-const MyPacksCard = () => {
+const MyPacksCard = (props) => {
     return (
         <View style={{flexDirection: 'column', alignItems: 'center'}}>
                     <Surface style={styles.surface}>
-            <Image resizeMethod="resize" resizeMode="cover" source={{ uri: 'https://picsum.photos/700' }} style={{width: "100%", height: "100%", borderRadius: 20}}/>
+            <Image resizeMethod="resize" resizeMode="cover" source={{ uri: props.packPhotoSrc }} style={{width: "100%", height: "100%", borderRadius: 20}}/>
         </Surface>
          <View style={{margin: 2, flexDirection: 'column', alignItems: 'center'}}>
              <Caption>
-                 Announcements
+                 {props.packTitle}
              </Caption>
          </View>
         </View>

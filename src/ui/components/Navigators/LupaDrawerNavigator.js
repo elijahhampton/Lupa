@@ -36,7 +36,7 @@ const LupaDrawerNavigator = createDrawerNavigator(
       }
     },
     {
-      initialRouteName: 'Profile',
+      initialRouteName: 'Dashboard',
       contentComponent: () => <DrawerMenu />
     }
   );

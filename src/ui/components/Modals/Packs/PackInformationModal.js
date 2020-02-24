@@ -12,15 +12,22 @@ import {
     Headline,
     Paragraph,
     Title,
+    Button,
     Divider,
     Avatar
 } from 'react-native-paper';
 
-import { Rating } from 'react-native-elements';
+import { connect } from 'react-redux';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
-export default class PackInformationModal extends React.Component {
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
+
+class PackInformationModal extends React.Component {
     constructor(props) {
         super(props);
 
@@ -29,7 +36,8 @@ export default class PackInformationModal extends React.Component {
         this.state = {
             packUUID: this.props.packUUID,
             packInformation: [],
-            packLeaderPhotoURI: '',
+            packLeaderInformation: {},
+            members: [],
             ready: false
         }
     }
@@ -40,35 +48,56 @@ export default class PackInformationModal extends React.Component {
     }
 
     setupPackInformation  = async () => {
-        let packInformationIn, packLeaderPhotoURIIn;
+        let packInformationIn, packLeaderInformationIn;
 
-        console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBb')
-        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
+        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.props.packUUID).then(result => {
             packInformationIn = result;
         });
 
-        console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC')
-        await this.setState({ packInformation: packInformationIn, ready: true});
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(packInformationIn.pack_leader).then(result => {
+            packLeaderInformationIn = result;
+        })
 
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa')
-        console.log(this.state.packInformation);
+        await this.setState({ packInformation: packInformationIn, packLeaderInformation: packLeaderInformationIn, members: packInformationIn.pack_members, ready: true});
+
+    }
+
+    renderRequestToJoinButton = () => {
+        this.state.packInformation.pack_requests.includes(this.props.lupa_data.Users.currUserData.user_uuid) == true ?
+        <View style={{width: '100%', justifyContent: 'center'}}>
+                            <Button disabled={true} mode="contained" color="#BDBDBD" onPress={() => this.LUPA_CONTROLLER_INSTANCE.requestToJoinPack(this.props.lupa_data.Users.currUserData.user_uuid, this.state.packUUID)}>
+                                Request to Join Pack 
+                            </Button>
+                        </View>
+        :
+        <View style={{width: '100%', justifyContent: 'center'}}>
+                            <Button mode="contained" color="#2196F3" onPress={() => this.LUPA_CONTROLLER_INSTANCE.requestToJoinPack(this.props.lupa_data.Users.currUserData.user_uuid, this.state.packUUID)}>
+                                Request to Join Pack 
+                            </Button>
+                        </View>
     }
 
     render() {
         return (
                 <Modal animationType="slide" presentationStyle="pageSheet" onDismiss={this.props.closeModalMethod} visible={this.props.isOpen}>
                     <View style={{flex: 1, padding: 10}}>
-                    <Headline style={{padding: 10}}>
+                        <View style={{padding: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Headline>
                             {this.state.ready && this.state.packInformation.pack_title}
                         </Headline>
 
+                        <Title style={{color: "#2196F3"}}>
+                            {this.state.ready && this.state.packInformation.pack_type}
+                        </Title>
+                        </View>
+
                         <View style={{flexDirection: 'column', alignItems: 'center', padding: 5}}>
-                            <Avatar.Image source={{uri: this.state.packLeaderPhotoURI}} size={50} style={{margin: 5}} />
+                            <Avatar.Image source={{uri: this.state.packLeaderInformation.photo_url}} size={50} style={{margin: 5}} />
                             <Text style={{fontWeight: 'bold'}}>
                                 Pack Leader Name
                             </Text>
-                            <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                                City, State
+                            <Text>
+                                {this.state.packLeaderInformation.display_name}
                             </Text>
                             </View>
                         <Divider />
@@ -97,10 +126,17 @@ export default class PackInformationModal extends React.Component {
 
                             <View style={styles.alignColumnItemsCenter}>
                                 <Title>
-                                    Sessions Completed: {this.state.ready && this.state.packInformation.pack_sessions_completed}
+                                    Members: {this.state.members.length}
                                 </Title>
 
                             </View>
+
+                            {
+                            this.state.packInformation.isDefault == false ?
+                            this.renderRequestToJoinButton()
+                        :
+                        null
+                        }
                         </View>
                     
                     </View>
@@ -138,3 +174,5 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     }
 })
+
+export default connect(mapStateToProps)(PackInformationModal);

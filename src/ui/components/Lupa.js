@@ -51,7 +51,7 @@ class Lupa extends React.Component {
   }
 
   _showWelcomeModal = async () => {
-  AsyncStorage.setItem('isNewUser', 'true');
+  AsyncStorage.setItem('isNewUser', 'false');
   let _isNewUser = await AsyncStorage.getItem('isNewUser');
   
   switch(_isNewUser)
@@ -71,8 +71,8 @@ class Lupa extends React.Component {
   })
 }
 
-_handleWelcomeModalClose = () => {
-  this.setState({ _isNewUser: false })
+_handleWelcomeModalClose = async () => {
+ await this.setState({ _isNewUser: false })
   AsyncStorage.setItem('isNewUser', 'false');
 }
   
@@ -80,6 +80,8 @@ _navigateToAuth = async () => {
   await logoutUser();
   this.props.navigation.navigate('Auth');
 }
+
+
 
   render() {
     const currIndex = this.state.currIndex;
@@ -96,7 +98,7 @@ _navigateToAuth = async () => {
         <PackNavigator />
         <SearchNavigator />
       </Swiper>
-      <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/>
+      <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={() => this._handleWelcomeModalClose()}/>
       </>
     );
   }

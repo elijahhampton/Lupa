@@ -3,10 +3,11 @@ import { WORKOUT_MODALITY } from '../../../controller/lupa/common/types';
 
 import {
     Goal,
+    GOAL_UID,
 } from './types';
 
 export var lupa_improve_strength_goal : Goal = {
-    uid: "sf928hf3928h0ie",
+    uid: GOAL_UID.IMPROVE_STRENGTH,
     name: "Increase Strength",
     description: "Increase strength description ",
     pathways: [],

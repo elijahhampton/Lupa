@@ -37,7 +37,10 @@ import {
 
 import {
     Fab,
-    Icon
+    Icon,
+    Header,
+    Left,
+    Right
 } from 'native-base';
 
 import Timecards from './components/Timecards';
@@ -99,6 +102,9 @@ class UserProfileModal extends React.Component {
             followerModalIsOpen: false,
             refreshing: false,
             active: false,
+            followers: [],
+            following: [],
+            userRecommendedWorkouts: [],
         }
     }
 
@@ -120,8 +126,24 @@ class UserProfileModal extends React.Component {
             userInformationIn = result;
         });
 
+        let workouts = userInformationIn.recommended_workouts;
+        let workoutData = [];
+        for (let i = 0; i < workouts.length; i++)
+        {
+            await this.LUPA_CONTROLLER_INSTANCE.getWorkoutDataFromUUID(workouts[i]).then(result => {
+                workoutData.push(result);
+            })
+        }
 
-        await this.setState({ userData: userInformationIn, interest: userInformationIn.interest, experience: userInformationIn.experience });
+
+        await this.setState({ 
+            userData: userInformationIn, 
+            interest: userInformationIn.interest, 
+            experience: userInformationIn.experience,
+            followers: userInformationIn.followers,
+            following: userInformationIn.following,
+            userRecommendedWorkouts: workoutData });
+  
     }
 
     closeCreateSessionModal = () => {
@@ -147,75 +169,63 @@ class UserProfileModal extends React.Component {
          </Caption>
     }
 
-    mapExperience = () => {
-        return this.state.experience.length == 0 ?
-            <Caption>
-                Experience that you add to your fitness profile will appear here.
-            </Caption> 
-            :
-            <View>
-                <Title>
-                    Education
-            </Title>
-                <Text>
-                    Auburn University
-                </Text>
-                <Title>
-                    Certification
-            </Title>
-                <Text>
-                    National Association Science and Medicine
-                </Text>
-                <Title>
-                    Years as a Trainer
-            </Title>
-                <Text>
-                    5
-                </Text>
-            </View>
-    }
-
     mapPacks = () => {
-        return <MyPacksCard />
-    }
-
-    showRating = () => {
-        return <Rating ratingCount={this.state.userData.rating} imageSize={10} />
+        return this.state.userPackData.map(pack => {
+            return (
+                <MyPacksCard packTitle={pack.pack_title} packPhotoSrc={pack.pack_image} />
+            )
+        })
     }
 
     mapBio = () => {
-        return (
-            <Text style={{ fontWeight: 'bold' }}>
+        return this.state.isEditingBio == true ?
+            <Text style={{fontWeight: 'bold'}} allowFontScaling={true} allowsEditing={true}>
                 {this.state.userData.bio}
             </Text>
-        )
+        :
+        <TextInput multiline={true} autoGrow={true}>
+            {this.state.userData.bio}
+        </TextInput>
     }
 
     mapRecommendedWorkouts = () => {
-        return <>
-            <Button mode="text" compact color="black">
-                Glute Bridge
-                                </Button>
-            <Button mode="text" compact color="black">
-                Dumbbel Clean
-                                </Button>
-            <Button mode="text" compact color="black">
-                Squat
-                                </Button>
-            <Button mode="text" compact color="black">
-                Hammer Curl
-                                </Button>
-            <Button mode="text" compact color="black">
-                Jumping Lunge
-                                </Button>
-        </>
+        if (this.state.userRecommendedWorkouts.length == 0)
+        {
+            return        <View>
+            <Caption>
+    You don't have any recommended workouts saved!  You can recommend workouts from the workout library inside of your goal pathways.
+</Caption>
+</View>
+        }
+        else 
+        {
+            return (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {
+                this.state.userRecommendedWorkouts.map(workout => {
+            return (<Button mode="text" compact color="black">
+            {workout.workout_name}
+                            </Button>
+            )
+            })
+
+            }
+            </ScrollView>
+            )
+        }
     }
 
 
-    handleFollowUser = () => {
+    handleFollowUser = async () => {
         let userToFollow = this.state.userUUID;
-
         this.LUPA_CONTROLLER_INSTANCE.followUser(userToFollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
+        await this.setupProfileInformation();
+    }
+
+    handleUnFollowUser = async () => {
+        let userToUnfollow = this.state.userUUID;
+        this.LUPA_CONTROLLER_INSTANCE.unfollowUser(userToUnfollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
+        await this.setupProfileInformation();
     }
 
     _renderFollowButton = () => {
@@ -223,13 +233,17 @@ class UserProfileModal extends React.Component {
         const currUserUUID = this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
         if (this.state.userUUID == currUserUUID) { return };
 
-        //NEED TO RENDER BUTTON COLOR BASED ON IF THE USER IS FOLLOWING OR NOT
-        return (
-            <Button mode="outlined" color="#2196F3" theme={{ roundness: 20 }} onPress={this.handleFollowUser}>
-                Follow
-        </Button>
-        )
+
+        return this.state.followers.includes(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid) ? 
+        <Button style={{backgroundColor: "#2196F3"}} mode="outlined" color="white" theme={{ roundness: 20 }} onPress={() => this.handleUnFollowUser()}>
+        Follow
+</Button>
+:
+<Button mode="outlined" color="#2196F3" theme={{ roundness: 20 }} onPress={() => this.handleFollowUser()}>
+Follow
+</Button>
     }
+
     handleOnRefresh = () => {
         this.setupProfileInformation();
     }
@@ -243,11 +257,11 @@ class UserProfileModal extends React.Component {
     render() {
         return (
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
-                <Surface style={{ height: "15%", width: "100%", elevation: 1 }}>
-                    <ImageBackground style={{ width: "100%", height: "100%" }} source={ProfileImage}>
-                        <IconButton style={{ position: 'absolute', bottom: 0 }} icon="menu" size={20} onPress={() => this.props.navigation.goBack()} />
-                    </ImageBackground>
-                </Surface>
+                <Header transparent style={{backgroundColor: 'transparent'}}>
+                    <Left>
+                        <IconButton icon="menu" size={20} onPress={() => this.props.navigation.goBack()} />
+                    </Left>
+                </Header>
 
                 <ScrollView showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
                     <View style={{ margin: 3, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -267,7 +281,7 @@ class UserProfileModal extends React.Component {
                                 </Text>
                                 {
                                     true && this.state.userData.isTrainer ? <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 1 }}>
-                                        Lupa Tier 1 Trainer
+                                        Lupa Trainer
                             </Text> : <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
                                             Lupa User
                             </Text>
@@ -318,8 +332,12 @@ class UserProfileModal extends React.Component {
 
                             </View>
                         </View>
+                        
+                        <Divider />
 
                         <Timecards />
+
+                        <Divider />
 
                         {
                             true && this.state.userData.isTrainer ?

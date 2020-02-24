@@ -53,7 +53,7 @@ class FollowerModal extends React.Component {
                 <Container style={styles.root}>
                     <Header hasTabs>
                         <Left>
-                            <IconButton icon="arrow-back"  onPress={this._navigateBack}/>
+                            <IconButton icon="arrow-back"  onPress={() => this.props.navigation.navigate('Profile', { go_back_key: this.props.navigation.state.key })}/>
                         </Left>
                         <Right>
                             <Text style={{fontSize: 18, fontWeight: 'bold'}}>

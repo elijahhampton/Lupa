@@ -70,7 +70,7 @@ const PackInviteModal = props => {
         props.closeModalMethod()
     }
 
-    handleDecline = () => {
+    handleDecline = (packID, currUserID) => {
         this.LUPA_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packID, currUserID);
         props.closeModalMethod()
     }
@@ -113,6 +113,8 @@ class TrainerDashboardView extends React.Component {
             openedPackInviteID: "",
             openedPackTitle: "",
             packInviteModalOpen: false,
+            currUserData: this.props.lupa_data.Users.currUserData,
+            currUserPacksData: this.props.lupa_data.Packs.currUserPacksData,
         }
 
     }
@@ -149,7 +151,7 @@ class TrainerDashboardView extends React.Component {
 
         //if session status is set and active... nothing to do
 
-        //Check if session status is pending and expired... remove session.. we'll let user remove the others
+        //Check if session date is passed mark as expired and pending and remove session.. we'll let user remove the others
         for (let i = 0; i < sessionDataIn.length; ++i)
         {
             let sessionDate = sessionDataIn[i].sessionData.date;
@@ -162,39 +164,61 @@ class TrainerDashboardView extends React.Component {
             {
                 case 'January':
                     realMonth = 1;
+                    break;
                 case 'February':
                     realMonth = 2;
+                    break;
                 case 'March':
                     realMonth = 3;
+                    break;
                 case "April":
                     realMonth = 4;
+                    break;
                 case 'May':
                     realMonth = 5;
+                    break;
                 case 'June':
                     realMonth = 6;
+                    break;
                 case 'July':
                     realMonth = 7;
+                    break;
                 case 'August':
                     realMonth = 8;
+                    break;
                 case 'September':
                     realMonth = 9;
+                    break;
                 case 'October':
                     realMonth = 10;
+                    break;
                 case 'November':
                     realMonth = 11;
+                    break;
                 case 'December':
                     realMonth = 12;
+                    break;
                 default:
             }
+
             
             //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
             
-            //Check session is past and remove
-            if (new Date().getMonth() > realMonth && new Date().getDay() > day && sessionDataIn[i].sessionData.sessionStatus == 'Pending' || 
+            //Check session is past and remove - we remove pending sessions that have expired - 
+            //todo: NEED TO CHECK FOR TIME HERE AS WELL
+            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' || 
                 new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' || 
-                    new Date().getMonth() > realMonth && sessionDataIn[i].sessionData.sessionStatus == 'Pending')
+                    new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending')
             {
-                this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_status', 'Expired');
+                this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
+                sessionDataIn.splice(sessionDataIn.splice(i, 1));
+            }
+
+            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
+                new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
+                    new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set')
+            {
+                this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
             }
         }
 
@@ -208,17 +232,17 @@ class TrainerDashboardView extends React.Component {
        * Fetch Pack Events
        */
       fetchPackEvents = async () => {
-          let currentUserPacks = [];
           let currentUserPackEventsData = [];
 
-          await this.props.lupa_data.Packs.currUserPacksData.forEach(pack => {
-            currentUserPacks.push(pack.id);
-          })
+          for (let i = 0; i < this.state.currUserPacksData.length; i++)
+          {
+              await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.currUserPacksData[i].id).then(result => {
+                currentUserPackEventsData = result;
+              })
+          }
 
-          await this.LUPA_CONTROLLER_INSTANCE.getPacksEventsFromArrayOfUUIDS(currentUserPacks).then(result => {
-            currentUserPackEventsData = result;
-          })
-          
+          console.log(currentUserPackEventsData)
+
           await this.setState({ packEventsData: currentUserPackEventsData });
 
       }
@@ -250,15 +274,15 @@ class TrainerDashboardView extends React.Component {
               //Return a session notification container
               //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
               return (
-                <SessionNotificationContainer sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus}/>
-              )
+                <SessionNotificationContainer sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus}/>
+               )
           })
       }
 
       populatePackEvents = () => {
         return this.state.packEventsData.map(pack => {
             return (
-            <PackEventNotificationContainer packUUID={pack.pack_uuid} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date.seconds} numAttending={pack.attendees.length}/>
+            <PackEventNotificationContainer packUUID={pack.pack_uuid} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date} numAttending={pack.attendees.length}/>
             )
         });
       }

@@ -26,9 +26,11 @@ import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 import { connect } from 'react-redux';
 
+import { withNavigation } from 'react-navigation';
+
 import LupaController from '../../../../controller/lupa/LupaController';
 
-import { SmallPackCard, SubscriptionPackCard, TrainerFlatCard } from './Components/ExploreCards/PackExploreCard';
+import { SmallPackCard, SubscriptionPackCard, TrainerFlatCard, UserFlatCard } from './Components/ExploreCards/PackExploreCard';
 
 import {
     Feather as FeatherIcon
@@ -37,6 +39,7 @@ import {
 import UserSearchResultCard from '../search/components/UserSearchResultCard';
 import TrainerSearchResultCard from '../search/components/TrainerSearchResultCard';
 import PackSearchResultCard from '../search/components/PackSearchResultCard';
+import ProfilePreviewModal from '../../DrawerViews/Profile/ProfilePreviewModal';
 const windowWidth = Dimensions.get('window').width;
 
 const mapStateToProps = (state, action) => {
@@ -61,6 +64,7 @@ const mapStateToProps = (state, action) => {
             currUsersLocation: '',
             searchValue: "",
             searchResults: [0],
+            profilePreviewVisible: false,
         }
     }
 
@@ -135,7 +139,13 @@ const mapStateToProps = (state, action) => {
     mapTrainers = () => {
         return this.state.trainers.map(trainer => {
             return (
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile', {
+                    userUUID: trainer.user_uuid,
+                    navFromDash: false,
+                    navFrom: 'PackView'
+                })}>
                 <TrainerFlatCard trainerUUID={trainer.id} displayName={trainer.display_name} rating={trainer.rating} sessionsCompleted={trainer.sessions_completed} image={trainer.photo_url} location={trainer.location} />
+                </TouchableOpacity>
             )
         })
     }
@@ -143,7 +153,7 @@ const mapStateToProps = (state, action) => {
     mapGlobalPacks = () => {
        return this.state.explorePagePacks.map(globalPacks => {
             return (
-                <SmallPackCard packUUID={globalPacks.id} image={globalPacks.pack_image} />
+                <SmallPackCard packUUID={globalPacks.pack_uuid} image={globalPacks.pack_image} />
             )
         })
     }
@@ -151,7 +161,7 @@ const mapStateToProps = (state, action) => {
     mapSubscriptionPacks = () => {
         return this.state.subscriptionPacks.map(subscriptionPacks => {
             return (
-                <SubscriptionPackCard packUUID={subscriptionPacks.id} image={subscriptionPacks.pack_image} />
+                <SubscriptionPackCard packUUID={subscriptionPacks.pack_uuid} image={subscriptionPacks.pack_image} />
             )
         })
     }
@@ -159,8 +169,14 @@ const mapStateToProps = (state, action) => {
     mapUsersInArea = () => {
         return this.state.usersInArea.map(user => {
             return (
-                                    <Avatar.Image source={{uri: user.photo_url }} size={60} style={{margin: 5}} />
-            )
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile', {
+                    userUUID: user.user_uuid,
+                    navFromDash: false,
+                    navFrom: 'PackView'
+                })}>
+                     <UserFlatCard avatarSrc={user.photo_url} userUUID={user.user_uuid}/>  
+                </TouchableOpacity>
+                                    )
         })
     }
 
@@ -306,4 +322,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps)(Explore);
+export default connect(mapStateToProps)(withNavigation(Explore));

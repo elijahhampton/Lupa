@@ -80,11 +80,11 @@ export default class CreatePack extends React.Component {
     getPackType = (index) => {
         switch(index) {
             case 0:
-                return 'community'
+                return 'Community'
             case 1:
-                return 'activity'
+                return 'Activity'
             default:
-                return 'community'
+                return 'Community'
         }
     }
 

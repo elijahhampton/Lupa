@@ -30,8 +30,18 @@ const UserSearchResultCard = (props) => {
     _handleViewProfile = () => {
         console.log('Calling _handleViewProfile')
         props.navigation.navigate('UserProfileView', {
-            userUUID: props.uuid
+            userUUID: props.uuid,
+            navFrom: 'SearchView',
         });
+    }
+
+    returnUserAvatar = () => {
+        try {
+            return <Avatar.Image source={{uri: this.props.avatarSrc }} size={30} style={{margin: 3}} />
+        } catch(error)
+        {
+            return  <Avatar.Text label="NM" />
+        }
     }
 
     return (
@@ -40,7 +50,10 @@ const UserSearchResultCard = (props) => {
             <Surface style={[styles.cardContainer]}>
                 <View style={styles.cardContent}>
                     <View style={styles.userInfoContent}>
-                    <Avatar.Image source={{uri: this.props.avatarSrc }} size={30} style={{margin: 3}} />
+                        
+                        {
+                           this.returnUserAvatar()
+                        }
                     <View style={{flexDirection: 'column'}}>
                     <Text style={styles.titleText}>
                             {props.title}
