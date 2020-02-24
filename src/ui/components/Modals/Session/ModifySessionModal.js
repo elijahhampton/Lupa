@@ -60,7 +60,6 @@ class ModifySessionModal extends React.Component {
     }
 
     componentDidMount = async () => {
-        console.log('starting now')
         await this.setupSessionData();
     }
 
@@ -90,13 +89,28 @@ class ModifySessionModal extends React.Component {
       await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.otherUserUUID).then(otherUserInformation => {
           otherUserInformationIn = otherUserInformation;
       })
+
+      let arr1 = sessionDataIn.time_periods.filter(val => {
+          return val.includes("PM")
+      })
+
+      arr1.sort();
+
+      let arr2 = sessionDataIn.time_periods.filter(val => {
+          return val.includes("AM")
+      })
+
+      arr2.sort();
+
+      let finalArr = arr1.concat(arr2);
+
       //Set the state for the other user information and the session information
       await this.setState({ 
         sessionData: sessionDataIn, 
         otherUserInformation: otherUserInformationIn, 
         userWhoRequestedData: userWhoRequestedDataIn, 
         userWhoReceivedRequestData: userWhoReceivedRequestDataIn,
-        timePeriods: this.state.sessionData.time_periods,
+        timePeriods: finalArr,
         availableTimes: userWhoReceivedRequestDataIn.preferred_workout_times,
         sessionDate: this.state.sessionData.date,
     });
@@ -120,13 +134,19 @@ class ModifySessionModal extends React.Component {
     }
 
     showTimes = () => {
+        
+        if (this.state.sessionData.sessionStatus == 'Set' && this.state.sessionData.sessionMode == 'Active')
+        {
+            return <Caption style={{padding: 20, color: 'white', fontWeight: 'bold'}}>
+                Your session has been set.  You can no longer change the session times.
+            </Caption>
+        }
+
         let date = this.state.sessionDate;
         let dateParts = date.split('-');
         let month = dateParts[0], day = dateParts[1], year = dateParts[2];
         let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         let dayOfTheWeek = days[new Date(month + " " + day + "," + " " + year).getDay()];
-
-        console.log(dayOfTheWeek)
 
         if (this.state.currUserData.user_uuid == this.state.userWhoRequestedData.user_uuid)
         {
@@ -137,13 +157,13 @@ class ModifySessionModal extends React.Component {
                         let indexOfTime = this.state.availableTimes.Monday.indexOf(time);
                         if (this.state.timePeriods.includes(time))
                         {
-                            return <Button mode="outlined" key={time} color="#2196F3" onPress={() => {this.LUPA_CONTROLLER_INSTANCE.updateSession(this.state.sessionUUID, 'time_periods', time, indexOfTime)}}>
+                            return <Button mode="outlined" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
                         else
                         {
-                            return <Button mode="text" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="text" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
@@ -154,13 +174,13 @@ class ModifySessionModal extends React.Component {
                         let indexOfTime = this.state.availableTimes.Tuesday.indexOf(time);
                         if (this.state.timePeriods.includes(time))
                         {
-                            return <Button mode="outlined" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="outlined" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
                         else
                         {
-                            return <Button mode="text" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="text" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
@@ -171,13 +191,15 @@ class ModifySessionModal extends React.Component {
                         let indexOfTime = this.state.availableTimes.Wednesday.indexOf(time);
                         if (this.state.timePeriods.includes(time))
                         {
-                            return <Button mode="outlined" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button  style={{ borderColor: 'white'}} mode="outlined" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)} theme={{colors: {
+                                primary: 'white',
+                            }}}>
                             {time}
                         </Button>
                         }
                         else
                         {
-                            return <Button mode="text" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="text" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
@@ -188,13 +210,13 @@ class ModifySessionModal extends React.Component {
                         let indexOfTime = this.state.availableTimes.Thursday.indexOf(time);
                         if (this.state.timePeriods.includes(time))
                         {
-                            return <Button mode="outlined" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="outlined" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
                         else
                         {
-                            return <Button mode="text" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="text" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
@@ -205,13 +227,13 @@ class ModifySessionModal extends React.Component {
                         let indexOfTime = this.state.availableTimes.Friday.indexOf(time);
                         if (this.state.timePeriods.includes(time))
                         {
-                            return <Button mode="outlined" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="outlined" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
                         else
                         {
-                            return <Button mode="text" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="text" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
@@ -239,13 +261,13 @@ class ModifySessionModal extends React.Component {
                         let indexOfTime = this.state.availableTimes.Sunday.indexOf(time);
                         if (this.state.timePeriods.includes(time))
                         {
-                            return <Button mode="outlined" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="outlined" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
                         else
                         {
-                            return <Button mode="text" key={time} color="#2196F3" onPress={() => alert(time)}>
+                            return <Button mode="text" key={time} color="white" onPress={() => this.handleSessionTimeUpdate(time, indexOfTime)}>
                             {time}
                         </Button>
                         }
@@ -257,7 +279,7 @@ class ModifySessionModal extends React.Component {
         {
             return this.state.timePeriods.map(time => {
                 return (
-                <Button key={time} color="#2196F3">
+                <Button key={time} color="white" mode="text" compact>
                     {time}
                 </Button>
                 )
@@ -279,9 +301,9 @@ class ModifySessionModal extends React.Component {
 
         :
 
-        <View style={{alignSelf: 'center', flexDirection: "column", justifyContent: "space-between"}}>
+        <View style={{alignSelf: 'center', alignItems: 'center', flexDirection: "column", justifyContent: "space-around"}}>
                         <Avatar.Image source={{uri: this.state.otherUserInformation.photo_url }} size={35}/>
-            <Text style={{fontSize: 15, color: '#E0E0E0', fontWeight: "600"}}>
+            <Text style={{fontSize: 15, color: 'black', fontWeight: "600"}}>
     {this.state.otherUserInformation.display_name} is waiting on you to accept or decline this session.  The times requested are below as well as the confirmation button.
         </Text>
         </View>
@@ -291,16 +313,16 @@ class ModifySessionModal extends React.Component {
         <View style={{alignSelf: 'center', flexDirection: "column", justifyContent: "space-around"}}>
             <View style={{flexDirection: "row", alignItems: "center"}}>
             <Text>
-           Your session has been confirmed with {this.state.otherUserInformation.display_name} on this day at this time.
+           Your session has been confirmed with {this.state.otherUserInformation.display_name} on {this.state.sessionData.date} at {this.state.sessionData.time_periods[0]}
         </Text>
             </View>
         </View>
     )
 
     showConfirmationButton = () => {
-        this.state.currUserData.user_uuid == this.state.userWhoReceivedRequestData.user_uuid ?
+        return this.state.currUserData.user_uuid == this.state.userWhoReceivedRequestData.user_uuid ?
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <Button mode="text" color="#2196F3" onPress={() => alert('Confirm last suggested')}>
+                        <Button mode="text" color="#2196F3" onPress={() => this.handleSessionConfirmation()}>
             Confirm Session
      </Button>
 
@@ -311,11 +333,7 @@ Decline Session
 
         :
 
-        <View>
-            <Caption>
-                Caption for now
-            </Caption>
-        </View>
+        null
     }
     
     handleSessionTimeUpdate = async (value, index) => {
@@ -324,9 +342,26 @@ Decline Session
     }
 
     handleSessionConfirmation = async () => {
-        await this.LUPA_CONTROLLER_INSTANCE.updateSession(this.state.sessionUUID, 'session_status', SESSION_STATUS.Confirmed);
+        await this.LUPA_CONTROLLER_INSTANCE.updateSession(this.state.sessionUUID, 'session_status', 'Set');
+        await this.LUPA_CONTROLLER_INSTANCE.updateSession(this.state.sessionUUID, 'session_mode', 'Active');
     }
 
+    handleSessionDecline = async () => {
+        await this.LUPA_CONTROLLER_INSTANCE.updateSession(this.state.sessionUUID, 'session_mode', 'Expired'); 
+    }
+
+
+    showStatusText = () => {
+        if (this.state.sessionData.sessionStatus == 'Pending')
+        {
+            return this.sessionStatusPendingText();
+        }
+
+        if (this.state.sessionData.sessionStatus == 'Set' && this.state.sessionData.sessionMode == 'Active')
+        {
+            return this.sessionStatusConfirmedText();
+        }
+    }
     render() {
         return (
             <Portal>
@@ -341,7 +376,7 @@ Decline Session
 
           <Right style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text>
-                  Session Status: {this.state.sessionData.sessionStage}
+                  Session Status: {this.state.sessionData.sessionStatus}
               </Text>
           </Right>
         </Header>
@@ -352,7 +387,7 @@ Decline Session
         <View style={{flex: 1, justifyContent: "center", display: "flex"}}>
             <View style={{flex: 1, justifyContent: "center", alignItems: "center" }}>
                 {
-                   this.state.sessionData.sessionStage == SESSION_STATUS.PENDING ? this.sessionStatusPendingText() : this.sessionStatusConfirmedText()
+                   this.showStatusText()
                 }
             </View>
             <Surface style={{flex: 1, justifyContent: "center", flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', elevation: 5, borderRadius: 10, margin: 20, backgroundColor: "#2196F3"}}>

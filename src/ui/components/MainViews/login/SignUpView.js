@@ -35,10 +35,39 @@ const {
     signUpUser
 } = require('../../../../controller/lupa/auth');
 
+import LupaController from '../../../../controller/lupa/LupaController';
+
+mapStateToProps = (state) => {
+    return { 
+      lupa_data: state
+    }
+  }
+  
+  mapDispatchToProps = dispatch => {
+    return {
+      updateUser: (userObject) => {
+        dispatch({
+          type: 'UPDATE_CURRENT_USER',
+          payload: userObject
+        })
+      },
+      updatePacks: (packsData) => {
+        dispatch({
+          type: 'UPDATE_CURRENT_USER_PACKS',
+          payload: packsData,
+        })
+      }
+    }
+  }
+
+  import { connect } from 'react-redux';
+
 class SignupModal extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
             email: "",
@@ -57,10 +86,46 @@ class SignupModal extends React.Component {
    * Finish any last minute things here before showing the application to the user.
    * This really isn't the place to be doing this, but any small last minute changes can go here.
    */
-  _introduceApp = () => {
-    //this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+  _introduceApp = async () => {
+    await this._setupRedux();
+    await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     this.props.navigation.navigate('App');
   }
+
+  _setupRedux = async () => {
+    let currUserData, currUserPacks, currUserHealthData;
+    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+      currUserData = result;
+    })
+
+    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
+      currUserPacks = result;
+    })
+
+    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
+      currUserHealthData = result;
+    });
+
+    console.log(currUserHealthData);
+
+
+    let userPayload = {
+      userData: currUserData,
+      healthData: currUserHealthData,
+    }
+
+    await this._updatePacksInRedux(currUserPacks);
+    await this._updateUserInRedux(userPayload);
+  }
+
+  _updateUserInRedux = (userObject) => {
+    this.props.updateUser(userObject);
+  }
+
+  _updatePacksInRedux = (packsData) => {
+    this.props.updatePacks(packsData);
+  }
+
 
     _registerUser = async () => {
         const email = this.state.email;
@@ -73,7 +138,11 @@ class SignupModal extends React.Component {
         let successfulRegistration;
         await signUpUser(email, password, confirmedPassword, isTrainerAccount, agreedToTerms).then(result => {
             successfulRegistration = result;
-        })
+        });
+
+        setTimeout(() => {
+            console.log('sleep')
+        }, 3000);
 
         //Execute login or failure
         successfulRegistration ? this._introduceApp() : console.log('LUPA: Firebase failure upon registering user.');
@@ -219,4 +288,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SignupModal;
+export default connect(mapStateToProps, mapDispatchToProps)(SignupModal);

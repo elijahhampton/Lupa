@@ -11,6 +11,7 @@ import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 
 import requestPermissionsAsync from './permissions/permissions';
 import { rejects } from 'assert';
+import WorkoutController from './WorkoutController';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -22,6 +23,7 @@ let USER_CONTROLLER_INSTANCE;
 let PACKS_CONTROLLER_INSTANCE;
 let SESSION_CONTROLLER_INSTANCE;
 let NOTIFICATIONS_CONTROLLER_INSTANCE;
+let WORKOUT_CONTROLLER_INSTANCE;
 
 
 export default class LupaController {
@@ -31,6 +33,7 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE = UserController.getInstance();
       PACKS_CONTROLLER_INSTANCE = PacksController.getInstance();
       SESSION_CONTROLLER_INSTANCE = SessionController.getInstance();
+      WORKOUT_CONTROLLER_INSTANCE = WorkoutController.getInstance();
     }
 
     public static getInstance() {
@@ -63,6 +66,15 @@ export default class LupaController {
 
     addNotification = (user, date, time, type, data) => {
       NOTIFICATIONS_CONTROLLER_INSTANCE.createNotification(user, date, time, type, data);
+    }
+
+    isUsernameTaken = async (val) => {
+      let isTaken;
+      USER_CONTROLLER_INSTANCE.isUsernameTaken(val).then(result => {
+        isTaken = result;
+      })
+
+      return Promise.resolve(isTaken);
     }
 
     getCurrentUser = () => {
@@ -209,6 +221,15 @@ export default class LupaController {
       return Promise.resolve(userResult)
     }
 
+    getPackInformationByUserUUID = async (uuid) => {
+      let userResult;
+      await PACKS_CONTROLLER_INSTANCE.getPackInformationByUserUUID(uuid).then(result => {
+        userResult = result;
+      });
+
+      return Promise.resolve(userResult)
+    }
+
     /**
      * search
      * Performs search queries on all indices through algolia
@@ -276,8 +297,9 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE.addFollowerToUUID(uuidOfUserToFollow, uuidOfUserFollowing);
     }
 
-    unfollowUser = () => {
-
+    unfollowUser = (uuidofUserToUnfollow, uuidOfUserUnfollowing) => {
+      USER_CONTROLLER_INSTANCE.unfollowAccountFromUUID(uuidofUserToUnfollow, uuidOfUserUnfollowing);
+      USER_CONTROLLER_INSTANCE.removeFollowerFromUUID(uuidofUserToUnfollow, uuidOfUserUnfollowing)
     }
 
     getAllTrainers = async () => {
@@ -355,6 +377,10 @@ export default class LupaController {
       return result;
     }
 
+    requestToJoinPack = (userUUID, packUUID) => {
+      PACKS_CONTROLLER_INSTANCE.requestToJoinPack(userUUID, packUUID);
+    }
+
     acceptPackInviteByPackUUID = (packUUID, userUUID) => {
       PACKS_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packUUID, userUUID);
     } 
@@ -384,7 +410,7 @@ export default class LupaController {
     getPackEventsByUUID = async (id) => {
       let result = new Array();
       await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(id).then(packs => {
-        result = packs.data();
+        result = packs;
       });
 
       return Promise.resolve(result);
@@ -427,5 +453,15 @@ export default class LupaController {
 
     removeGoalForCurrentUser = (goalUUID) => {
       USER_CONTROLLER_INSTANCE.updateCurrentUser('goals', goalUUID, 'remove');
+    }
+
+    /** Workouts **/
+    getWorkoutDataFromUUID = async (uuid) => {
+      let workoutData;
+      await WORKOUT_CONTROLLER_INSTANCE.getWorkoutDataFromUUID(uuid).then(async result => {
+        workoutData = await result;
+      });
+
+      return Promise.resolve(workoutData);
     }
 }

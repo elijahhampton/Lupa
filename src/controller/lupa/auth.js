@@ -2,6 +2,7 @@ import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase';
 
 import {
     getLupaUserStructure,
+    getLupaHealthDataStructure
 } from '../firebase/collection_structures';
 
 /**
@@ -56,7 +57,7 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
 
 
     let userData = getLupaUserStructure(LUPA_AUTH.currentUser.uid, "", "", LUPA_AUTH.currentUser.email,
-        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0, "");
+        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], certification);
     
         //Add user to users collection with UID.
     LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).set(userData).catch(err => {
@@ -67,6 +68,7 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
     });
 
     //Add user to all default packs
+    //TODO - Add  user to default pack events as as well
     let defaultPacks = new Array();
 
     LUPA_DB.collection('packs').where('pack_isDefault', '==', true).get().then(snapshot => {
@@ -82,24 +84,16 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
                 pack_members: packMembers
             });
 
-            let packEventCurrentDoc = LUPA_DB.collection('pack_events').doc(packID);
-            LUPA_DB.collection('pack_events').doc(packID).get().then(snapshot => {
-                //update attendees list for default pack events
-                let packEventData = snapshot.data();
-
-                let updatedAttendees = packEventData.attendees;
-                updatedAttendees.push(LUPA_AUTH.currentUser.uid);
-                packEventCurrentDoc.update({
-                    attendees: updatedAttendees,
-                });
-    
-            }); //end snapshot.forEach
-
         });
     });
 
-
-    console.log('default size for packs: ' + defaultPacks.length)
+    //Add user in health data collection
+    let userHealthData = getLupaHealthDataStructure(LUPA_AUTH.currentUser.uid);
+    LUPA_DB.collection('health_data').doc(LUPA_AUTH.currentUser.uid).set(userHealthData).catch(err => {
+        result = false;
+        console.log(err);
+        console.log('error trying to get health data')
+    })
 
     return Promise.resolve(result);
 }

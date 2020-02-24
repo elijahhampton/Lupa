@@ -44,10 +44,12 @@ export default class SessionController {
       let sessions = [];
       let currUserUUID = USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
       await SESSIONS_COLLECTION.where('attendeeOne', '==', currUserUUID).get().then(docs => {
+        let found = false;
         docs.forEach(doc => {
           let sessionData = doc.data();
+          console.log(sessionData);
 
-          if (sessionData.sessionStatus != 'Expired' &&  sessionData.sessionMode != "Pending")
+          if (sessionData.sessionMode != 'Expired' &&  sessionData.sessionStatus != "Pending" || sessionData.attendeeOneRemoved != false)
           {
             let sessionID = doc.id;
             let sessionObject = {sessionID, sessionData}
@@ -61,9 +63,13 @@ export default class SessionController {
         console.log('find df 22')
         docs.forEach(doc => {
           let sessionData = doc.data();
-          let sessionID = doc.id;
-          let sessionObject = {sessionID, sessionData}
-          sessions.push(sessionObject);
+          if (sessionData.sessionMode != 'Expired' &&  sessionData.sessionStatus != "Pending" || sessionData.attendeeTwoRemoved != false)
+          {
+            console.log('pushing it')
+            let sessionID = doc.id;
+            let sessionObject = {sessionID, sessionData}
+            sessions.push(sessionObject);            
+          }
         })
       });
 
@@ -127,8 +133,10 @@ export default class SessionController {
           break;
         case 'time_periods':
           let currentTimes = currentSessionDocumentInformation.time_periods;
-          currentTimes.includes(value) ? currentTimes = currentTimes.slice(currentTimes.indexOf(value)) : currentTimes = currentTimes.concat(value);
-
+          let newTimes = [];
+          currentTimes.includes(value) ? currentTimes.splice(currentTimes.indexOf(value), 1) : currentTimes.push(value);
+          console.log(currentTimes);
+          console.log(value)
           await currentSessionDocument.set({
             time_periods: currentTimes,
           }, {
@@ -141,8 +149,23 @@ export default class SessionController {
           },
           {
             merge: true,
-          })
+          });
           break;
+        case 'session_mode':
+          await currentSessionDocument.set({
+            sessionMode: value,
+          },
+          {
+            merge: true,
+          });
+          break;
+        case 'removed':
+          await currentSessionDocument.set({
+            removed: value,
+          },
+          {
+            merge: true
+          });
         default:
       }
     }

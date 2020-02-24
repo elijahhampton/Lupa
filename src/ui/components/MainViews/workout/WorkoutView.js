@@ -21,6 +21,7 @@ import {
     Headline,
     Surface,
     Button,
+    Portal,
     Menu,
     Divider,
 } from 'react-native-paper';
@@ -32,6 +33,8 @@ import WorkoutComponent from './components/WorkoutComponent';
 import { WORKOUT_MODALITY } from '../../../../controller/lupa/common/types'
 
 import { connect } from 'react-redux';
+
+import StripeCheckout from 'expo-stripe-checkout'
 
 import { getPathwaysForGoalUUID } from '../../../../model/data_structures/goal_pathway_structures';
 
@@ -154,8 +157,8 @@ class WorkoutView extends React.Component {
                         </View>
                     </ImageBackground>
                 </View>
-
                 <Surface style={styles.workoutSurface}>
+    
                     <View style={{width: '100%', height: '100%', flex: 1, borderTopLeftRadius: 25, borderTopRightRadius: 25, backgroundColor: "#FAFAFA"}}>
                     <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this._handleOnRefresh}/>}>
                         <View style={{padding: 10, width: '100%', height: '100%', flex: 1, borderTopLeftRadius: 25, borderTopRightRadius: 25,}}>

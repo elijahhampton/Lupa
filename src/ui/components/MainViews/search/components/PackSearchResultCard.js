@@ -62,7 +62,8 @@ class PackSearchResultCard extends React.Component {
         if (packInformation.pack_members.includes(this.props.lupa_data.Users.currUserData.user_uuid))
         {
             this.props.navigation.navigate('PackModal', {
-                packUUID: uuid
+                packUUID: uuid,
+                navFrom: 'SearchView',
             });
         }
         else

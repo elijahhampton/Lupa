@@ -115,9 +115,10 @@ export default class BasicInformation extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
+        flexShrink: 1,
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "space-evenly",
         padding: 10,
     },
     generalText: {

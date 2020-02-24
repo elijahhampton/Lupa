@@ -51,6 +51,11 @@ export default class WelcomeModal extends React.Component {
     }
 
     _handleNextViewClick = () => {
+        if (this.state.currIndex == 5 || this.state.progress == 1)
+        {
+            this.props.closeModalMethod();
+        }
+ 
         this.setState({ 
             pageChangedForward: true,
             currIndex: this.state.currIndex + 1,
@@ -65,7 +70,6 @@ export default class WelcomeModal extends React.Component {
         progress: this.state.progress - .20
     });
     }
-
     
 
     presentScreen = (index) => {
@@ -84,10 +88,11 @@ export default class WelcomeModal extends React.Component {
                     return <BasicInformation isForwardPageChange={this.state.isForwardPageChange} />
                 case 3:
                     progress += 20;
-                    return <FitnessInterest closeModalMethod={this.props.closeModalMethod}/>
+                    return <FitnessInterest />
                 case 4:
                     progress += 20;
                     return <WorkoutTimes />
+                case 5:
             }   
         }
         else {
@@ -107,6 +112,7 @@ export default class WelcomeModal extends React.Component {
                 case 4:
                     progress += 20;
                     return <WorkoutTimes />
+                case 5:
             }
         }
 
@@ -117,15 +123,15 @@ export default class WelcomeModal extends React.Component {
             <Modal presentationStyle="fullScreen" visible={this.props.isVisible} style={styles.modalContainer}>
                 <SafeAreaView style={{flex: 1}}>
                     <ProgressBar style={{padding: 10}} animating={true} color="#2196F3" progress={this.state.progress}/>
-                        <View style={{height: "95%"}}>
+                        <View style={{flex: 4, flexGrow: 5, flexShrink: 2}}>
                         {
                             this.presentScreen(this.state.currIndex)
                         }
                         </View>
                         <View style={styles.buttons}>
-                            <Button mode="text" color={Color.LUPA_BLUE} onPress={this._handleBackViewClick}>
+                            <Button mode="text" color="#2196F3" onPress={() => this._handleBackViewClick()}>
                                 Back
-                            </Button><Button mode="text" color={Color.LUPA_BLUE} onPress={this._handleNextViewClick}>
+                            </Button><Button mode="text" color="#2196F3" onPress={() => this._handleNextViewClick()}>
                                 Next
                             </Button>
                             
@@ -146,9 +152,11 @@ const styles = StyleSheet.create({
         height: "95%",
     },
     buttons: {
+        flex: 1,
+        flexGrow: 1,
+        flexShrink: 2,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        height: "5%",
     }
 });

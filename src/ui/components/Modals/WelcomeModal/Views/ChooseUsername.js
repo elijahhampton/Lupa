@@ -18,7 +18,7 @@ import {
 
 import * as Location from 'expo-location';
 
-import { _requestLocationPermissionAsync } from '../../../../../controller/lupa/permissions/permissions';
+import _requestPermissionsAsync from '../../../../../controller/lupa/permissions/permissions';
 
 import { Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
@@ -63,6 +63,10 @@ export default class ChooseUsername extends React.Component {
         }
     }
 
+    componentDidMount = () => {
+        _requestPermissionsAsync();
+    }
+
     _handleTrainerAccountUpdate = () => {
         this.setState({ makeTrainerAccount: !this.state.makeTrainerAccount });
         this.LUPA_CONTROLLER_INSTANCE.updateUser('isTrainer', this.state.maketrainerAccount);
@@ -85,18 +89,6 @@ export default class ChooseUsername extends React.Component {
     }
 
     _getLocationAsync = async () => {
-        let allowedLocationPermission;
-        try {
-            await _requestLocationPermissionAsync().then(result => {
-                allowedLocationPermission = result;
-            });
-        } catch (error) {
-            alert(error);
-            _requestLocationPermissionAsync();
-        }
-
-        //disable 
-
         let result;
         //show loading indicator
         this.setState({
@@ -133,7 +125,7 @@ export default class ChooseUsername extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <SafeAreaView style={{ flex: 1, padding: 10, justifyContent: 'space-evenly', }}>
+                <SafeAreaView style={{ flex: 1, padding: 10, justifyContent: 'space-between', }}>
 
                     <View style={styles.instructionalTextContainer}>
                         <Text style={styles.instructionalText}>

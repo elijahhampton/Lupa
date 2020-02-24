@@ -11,6 +11,7 @@ import {
     Button,
     Menu,
     Divider,
+    TextInput,
     Provider
 } from 'react-native-paper';
 
@@ -24,12 +25,22 @@ const verificationModal = (props) => {
     )
 }
 
+certifications = [
+    {
+        key: 'NASM',
+        title: 'National Academy of Sports Medicine',
+    }
+]
+
 export default class TrainerInformation extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             menuVisible: false,
+            buttonText: 'Select a certification',
+            certification: '',
+            NASM_CERTIFICATE_NUMBER: '',
         }
     }
 
@@ -45,6 +56,27 @@ export default class TrainerInformation extends React.Component {
         })
     }
 
+    handleOnPressCertification = (key) => {
+        this.setState({ buttonText: key.title });
+        this.setState({ certification: key.key });
+        this.closeMenu();
+    }
+
+    getCertificationDetails = () => {
+        switch (this.state.certification)
+        {
+            case 'NASM':
+                return <View style={{flex: 1, justifyContent: 'space-around'}}>
+                                    <TextInput theme={{
+                                        colors: {
+                                            primary: '#2196F3'
+                                        }
+                                    }} placeholder="Please enter your NASM certification number." value={this.state.NASM_CERTIFICATE_NUMBER} color="#2196F3" mode="outlined" onChangeText={text => this.setState({ NASM_CERTIFICATE_NUMBER: text })}/>
+                <NativeButton title="Submit" onPress={() => this.sendCertificationNotice()} />
+                </View>
+            }
+    }
+
     render() {
         return (
             <View style={styles.root}>
@@ -57,25 +89,31 @@ export default class TrainerInformation extends React.Component {
                     <Provider>
                     <Menu
             visible={this.state.menuVisible}
-            onDismiss={this.closeMenu}
+            onDismiss={() => this.setState({ menuVisible: false })}
             anchor={
-              <NativeButton onPress={this.openMenu} title="Select a certification" />
+              <NativeButton onPress={this.openMenu} title={this.state.buttonText} />
             }
           >
-            <Menu.Item onPress={() => {}} title="National Academy of Sports Medicine (NASM)" />
-            <Menu.Item onPress={() => {}} title="National Academy of Sports Medicine (NASM)" />
-            <Menu.Item onPress={() => {}} title="National Academy of Sports Medicine (NASM)" />
+            {
+                certifications.map(cert => {
+                    return <Menu.Item key={cert.key} title={cert.title} onPress={() => this.handleOnPressCertification(cert)} onDismiss={() => this.setState({ menuVisible: false })}/>
+                })
+            }
             <Divider />
             <Menu.Item onPress={() => {}} title="Cancel" />
           </Menu>
           </Provider>
 
-                    <View style={{flex: 3}}>
+                    <View style={{flex: 3, justifyContent: 'center'}}>
                         {
-                            //based on certification
+                            this.state.buttonText == 'Select a certification' ? 
+                            null
+                            :
+                            this.getCertificationDetails()
                         }
                     </View>
                 </View>
+
         )
     }
 }

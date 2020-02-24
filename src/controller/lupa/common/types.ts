@@ -88,6 +88,8 @@ export type LupaUserStructure = {
     following: [],
     sessionsCompleted: 0,
     bio: String,
+    recommended_workouts: Array<String>,
+    certification: String,
 };
 
 
@@ -110,6 +112,7 @@ export type LupaPackStructure = {
     pack_sessions_completed: 0,
     pack_time_created: '',
     pack_location: '',
+    pack_requests: Array<String>,
 };
 
 /* LupaHealthDataStructure */
@@ -140,6 +143,7 @@ export type LupaSessionStructure = {
     sessionStatus: any,
     sessionMode: any,
     time_created: { date: any, time: any }
+    removed: Boolean,
 };
 
 /* LupaPackEventDataStructure */
@@ -149,8 +153,8 @@ export type LupaPackEventStructure = {
     pack_event_description: "",
     pack_event_date: "",
     attendees: [],
-    pack_event_stage: PACK_EVENT_STAGE.UNEXPIRED,
-    pack_event_image: '',
+    pack_event_stage: String,
+    pack_event_image: String,
 };
 
 /* LupaTrainerDataStructure */

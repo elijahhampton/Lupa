@@ -12,6 +12,8 @@ import MyPacksCard from '../DrawerViews/Profile/components/MyPacksCard';
 
 import UserProfileModal from '../DrawerViews/Profile/UserProfileModal';
 
+import ProfileNavigator from './ProfileNavigator';
+
 const PackNavigator = createStackNavigator(
     {
         PackView: {
@@ -38,8 +40,8 @@ const PackNavigator = createStackNavigator(
                 gesturesEnabled: true,
             })
         },
-        UserProfileModal: {
-            screen: UserProfileModal,
+        Profile: {
+            screen: ProfileNavigator,
             navigationOptions: ({ navigation }) => ({
                 title: 'UserProfileModal',
                 header: null,

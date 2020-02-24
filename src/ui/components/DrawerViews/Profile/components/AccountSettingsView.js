@@ -32,41 +32,25 @@ import SafeAreaView from 'react-native-safe-area-view';
 import Color from '../../../../common/Color';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
-this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-const ChangeUsernameModal = props => {
-    return (
-        <Provider>
-            <Portal>
-                <Modal contentContainerStyle={styles.changeUsernameModal} visible={props.isOpen} dismissable={true} onDismiss={props.closeModalMethod}>
-                    <Headline>
-                        Change Username
-                    </Headline>
-
-                    <TextInput mode="flat" placeholder="Ex. AwesomeJob123" theme={{colors: {
-                        primary: Color.LUPA_BLUE
-                    }}} />
-
-                    <Button mode="contained">
-                        Confirm 
-                    </Button>
-                </Modal>
-            </Portal>
-        </Provider>
-    )
-}
+import ChangeAccountPropertyModal from '../../../Modals/User/Settings/ChangeAccountPropertyModal';
 
 export default class  AccountSettingsView extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            showChangeUsernameModal: false,
+            showChangeAccountPropertyModal: false,
+            property: '',
         }
     }
 
-    _handleCloseChangeUsernameModal = () => {
-        this.setState({ showChangeUsernameModal: false })
+    handleOpenChangePropertyModal = async (key) => {
+        await this.setState({ property: key})
+        await this.setState({ showChangeAccountPropertyModal: true })
+    }
+
+    handleCloseChangePropertyModal = () => {
+        this.setState({ showChangePropertyModal: false })
     }
 
     render() {
@@ -85,20 +69,21 @@ export default class  AccountSettingsView extends React.Component {
                 </Header>
 
                 <SafeAreaView style={styles.contentContainer}>
-                <List.Item title="Name" description="Elijah Hampton" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <List.Item title="Name" description="Elijah Hampton" onPress={() => handleOpenChangePropertyModal('display_name')}/>
                 <Divider />
-                <List.Item title="Username" description="elijahhampton" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <List.Item title="Username" description="elijahhampton" onPress={() => handleOpenChangePropertyModal('username')}/>
                 <Divider />
-                <List.Item title="Email" description="ejh0017@gmail.com" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <List.Item title="Email" description="ejh0017@gmail.com" onPress={() => handleOpenChangePropertyModal('email')} />
                 <Divider />
-                <List.Item title="Mobile Number" description="You do not have a mobile number set" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <List.Item title="Mobile Number" description="You do not have a mobile number set" onPress={() => handleOpenChangePropertyModal('mobile_number')} />
                 <Divider />
-                <List.Item title="Change or recover password" description="Click here to change or recover your password" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
-                <Divider />
-                <List.Item title="Forgot password" description="Click here to recover password" onPress={() => this.setState({ showChangeUsernameModal: true })}/>
+                <TouchableOpacity onPress={() => alert('Recover Password')}>
+                <List.Item title="Change or recover password" description="Click here to change or recover your password" />
+                </TouchableOpacity>
                 <Divider />
                 </SafeAreaView>
-                <ChangeUsernameModal isOpen={this.state.showChangeUsernameModal} closeModalMethod={this._handleCloseChangeUsernameModal} />
+
+                <ChangeAccountPropertyModal property={this.state.property} closeModalMethod={this.handleCloseChangePropertyModal} isVisible={this.state.showChangeAccountPropertyModal} />
             </Container>
         )
     }

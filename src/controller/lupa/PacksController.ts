@@ -98,20 +98,20 @@ class PacksController {
     });
   }
 
-  acceptPackInviteByPackUUID = (packUUID, userUUID) => {
-    let packDocumentData;
+  acceptPackInviteByPackUUID = async (packUUID, userUUID) => {
+    let packDocumentData = [];
     let packDocument = PACKS_COLLECTION.doc(packUUID);
-    PACKS_COLLECTION.doc(packUUID).get().then(result => {
+    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
       packDocumentData = result.data();
     });
 
 
     // remove member from invited members
-    let invitedMembers = packDocumentData.pack_invited_members;
-    let updatedInvitedMembers = invitedMembers.splice(userUUID);
+    let members = packDocumentData.pack_invited_members;
+    members.splice(members.indexOf(userUUID), 1);
 
     packDocument.set({
-      pack_invited_members: updatedInvitedMembers,
+      pack_invited_members: members,
     },
     {
       merge: true,
@@ -120,36 +120,96 @@ class PacksController {
     //add member to the pack
 
     let currentMembers = packDocumentData.pack_members;
-    let updatedMembers = currentMembers.push(userUUID);
+    currentMembers.push(userUUID);
 
     packDocument.set({
-      pack_members: updatedMembers
+      pack_members: currentMembers
     },
     {
       merge: true,
     })
   }
 
-  declinePackInviteByPackUUID = (packUUID, userUUID) => {
+  declinePackInviteByPackUUID = async (packUUID, userUUID) => {
     let packDocumentData;
     let packDocument = PACKS_COLLECTION.doc(packUUID);
-    PACKS_COLLECTION.doc(packUUID).get().then(result => {
+    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
       packDocumentData = result.data();
     });
 
 
     // remove member from invited members
-    let invitedMembers = packDocumentData.pack_invited_members;
-    let updatedInvitedMembers = invitedMembers.splice(userUUID);
+    let members = packDocumentData.pack_invited_members;
+    members.splice(members.indexOf(userUUID, 1));
 
     packDocument.set({
-      pack_invited_members: updatedInvitedMembers,
+      pack_invited_members: members,
     },
     {
       merge: true,
     })
 
     //no need to do anything else
+  }
+
+  requestToJoinPack = async (userUUID, packUUID) => {
+    let packData;
+    let packDocument = PACKS_COLLECTION.doc(packUUID);
+    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+      packData = result.data();
+    });
+
+    let currentRequest = packData.pack_requests;
+
+    currentRequest.push(userUUID);
+
+    packDocument.set({
+      pack_requests: currentRequest,
+    },
+    {
+      merge: true,
+    });    
+  }
+
+  acceptJoinPackRequest = async (userUUID, packUUID) => {
+    let packData;
+    let packDocument = PACKS_COLLECTION.doc(packUUID);
+    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+      packData = result.data();
+    });
+
+    let currentRequest = packData.pack_requests;
+
+    currentRequest.splice(currentRequest.indexOf(userUUID), 1);
+
+    let currentMembers = packData.pack_members;
+    currentMembers.push(userUUID);
+
+    packDocument.set({
+      pack_members: currentMembers,
+      pack_requests: currentRequest,
+    },{
+      merge: true
+    });    
+  }
+
+  declineJoinPackRequest = async (userUUID, packUUID) => {
+    let packData;
+    let packDocument = PACKS_COLLECTION.doc(packUUID);
+    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+      packData = result.data();
+    });
+
+    let currentRequest = packData.pack_requests;
+
+    currentRequest.splice(currentRequest.indexOf(userUUID), 1);
+
+    packDocument.set({
+      pack_requests: currentRequest,
+    },
+    {
+      merge: true,
+    });  
   }
 
   getPackInvitesFromUUID = async (uuid) => {
@@ -161,8 +221,6 @@ class PacksController {
         packs.push(packData);
       });
     });
-
-    console.log(packs);
 
     return Promise.resolve(packs);
   }
@@ -233,6 +291,20 @@ class PacksController {
     return Promise.resolve(currUserPacks);
   }
 
+  getPackInformationByUserUUID = async (uuid) => {
+    let currUserPacks = [];
+    await  PACKS_COLLECTION.where('pack_members', 'array-contains', uuid).get().then(async querySnapshot => {
+     querySnapshot.forEach(userPackDoc => {
+        let snapshotID = userPackDoc.id;
+        let snapshot = userPackDoc.data();
+        snapshot.id = snapshotID;
+        currUserPacks.push(snapshot);
+      });
+    })
+
+    return Promise.resolve(currUserPacks);
+  }
+
   getPackInformationByUUID = async (uuid) => {
     let packInformation;
     await PACKS_COLLECTION.doc(uuid).get().then(result => {
@@ -243,12 +315,136 @@ class PacksController {
   }
 
   getPackEventsByUUID = async (packID) => {
-    let events;
-    await PACKS_EVENT_COLLECTION.doc(packID).get().then(result => {
-      events = result;
-    });
+    let events = [];
+    let result;
+    await PACKS_EVENT_COLLECTION.where('pack_uuid', '==', packID).get().then(docs => {
+      docs.forEach(doc => {
+        result = doc.data();
+
+        let packEventDate = result.pack_event_date;
+
+            //check to see if session has expired
+            let dateParts = packEventDate.split('-');
+            let month = dateParts[0], day = dateParts[1], year = dateParts[2];
+            let realMonth;
+            switch(month)
+            {
+                case 'January':
+                    realMonth = 1;
+                case 'january':
+                    realMonth = 1;
+                    break;
+                case 'February':
+                    realMonth = 2;
+                case 'february':
+                    realMonth = 2;
+                    break;
+                case 'March':
+                    realMonth = 3;
+                case 'march':
+                    realMonth = 3;
+                    break;
+                case "April":
+                    realMonth = 4;
+                case "april":
+                    realMonth = 5;
+                    break;
+                case 'May':
+                    realMonth = 5;
+                case 'may':
+                    realMonth = 5;
+                    break;
+                case 'June':
+                    realMonth = 6;
+                case 'june':
+                   realMonth = 6;
+                    break;
+                case 'July':
+                    realMonth = 7;
+                case 'july':
+                    realMonth = 7;
+                    break;
+                case 'August':
+                    realMonth = 8;
+                case 'august':
+                    realMonth = 8;
+                    break;
+                case 'September':
+                    realMonth = 9;
+                case 'september':
+                    realMonth = 9;
+                    break;
+                case 'October':
+                    realMonth = 10;
+                case 'october':
+                    realMonth = 10;
+                    break;
+                case 'November':
+                    realMonth = 11;
+                case 'november':
+                    realMonth = 11;
+                    break;
+                case 'December':
+                    realMonth = 12;
+                case 'december':
+                    realMonth = 12;
+                    break;
+                default:
+            }
+
+            console.log("Real month: " + realMonth)
+            console.log('Real Year: ' + year)
+            console.log('Real day: ' + day)
+
+            console.log(new Date().getMonth() + 1)
+            console.log(new Date().getDate())
+            console.log(new Date().getFullYear())
+
+            console.log('ABOOOOUT TO DELETE THAT PAC EVENT!!!!!!!!!!!!!!!!!!!!')
+            //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
+            
+            //Check session is past and remove - we remove pending sessions that have expired - 
+            //todo: NEED TO CHECK FOR TIME HERE AS WELL
+            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year || 
+                new Date().getFullYear() > year || new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year)
+            {
+                result.pack_event_stage = 'Expired';
+                this.updatePackEventField(result.id, 'pack_event_stage', 'Expired');
+                console.log('APPARENTL WE DID THIS')
+            }
+
+        if (result.pack_event_stage != 'Expired')
+        {
+          result.pack_event_uuid = doc.id;
+          events.push(result);
+        }
+
+      });
+    })
 
     return Promise.resolve(events);
+  }
+
+  updatePackEventField = async (eventUUID, fieldToUpdate, value, optionalData="") =>
+  {
+    let currentDocumentData;
+    await PACKS_EVENT_COLLECTION.doc(eventUUID).get().then(result => {
+      currentDocumentData = result.data();
+    })
+
+    let currentDocument = await PACKS_EVENT_COLLECTION.doc(eventUUID);
+
+    switch(fieldToUpdate)
+    {
+      case 'pack_event_stage':
+        currentDocument.set({
+          pack_event_stage: value,
+        },
+        {
+          merge: true,
+        })
+        break;
+    }
   }
 
   getPacksEventsFromArrayOfUUIDS = async (arr) => {
@@ -282,23 +478,8 @@ class PacksController {
     const newPackEvent  = getLupaPackEventStructure(title, description, date, eventImage);
     newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
 
-    //get all pack events for this pack
-    await PACKS_EVENT_COLLECTION.doc(packUUID).get().then((result,err) => {
-      let snapshotID = result.id
-      let snapshot = result.data();
-      snapshot.id = snapshotID;
-
-    snapshot.events.forEach(eventObject => {
-        updatedPackEvents.push(eventObject);
-      })
-    })
-
-    //add new pack event
-    updatedPackEvents.push(newPackEvent)
-
-    //update document
-    PACKS_EVENT_COLLECTION.doc(packUUID).set({
-      events: updatedPackEvents
+    await PACKS_EVENT_COLLECTION.doc().set({
+      newPackEvent
     });
   } 
 
@@ -331,26 +512,17 @@ class PacksController {
     let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
 
    await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
-      packEventData = result.data().events;
-      
-      // Should be an faster way to do this
-      packEventData.forEach(event => {
-        //find the event with the right title
-        if (event.pack_event_title = packEventTitle) {
-          //get the list of current attendees
-          updatedPackEventAttendees = event.attendees;
-
-          //add the userUUID into the list
-          updatedPackEventAttendees.push(userUUID);
-        }
-
-      });
-
+      packEventData = result.data();
     })
 
+    let attendees = packEventData.attendees;
+    attendees.push(userUUID);
     //update events
     currentDocument.update({
-      events: packEventData,
+      attendees: attendees
+    },
+    {
+      merge: true,
     });
   }
 
@@ -361,33 +533,19 @@ class PacksController {
     let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
 
     await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
-      packEventData = result.data().events;
-      let a = [];
-      
-      // Should be an faster way to do this
-      packEventData.forEach(event => {
-        //find the event with the right title
-        if (event.pack_event_title = packEventTitle) {
-          //get the list of current attendees
-          updatedPackEventAttendees = event.attendees;
-
-          //find the userUUID in the array of attendees
-          updatedPackEventAttendees.findIndex((currValue, index, arr) => {
-             return currValue == userUUID;
-          });
-
-          //remove from array
-          updatedPackEventAttendees.splice(userUUID, 1);
-
-        }
-
-      });
-
+      packEventData = result.data();
     })
+
+    let attendees = packEventData.attendees;
+
+    attendees.splice(attendees.indexOf(userUUID), 1);
 
     //update events
     currentDocument.update({
-      events: packEventData,
+      attendees: attendees,
+    },
+    {
+      merge: true,
     });
   }
 
@@ -399,24 +557,12 @@ class PacksController {
     let isAttending = false;
 
    await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
-      packEventData = result.data().events;
+      packEventData = result.data();
       
-      // Should be an faster way to do this
-      packEventData.forEach(event => {
-        //find the event with the right title
-        if (event.pack_event_title = packEventTitle) {
-          //get the list of current attendees
-          updatedPackEventAttendees = event.attendees;
-
-          //return true if user is already ana ttendee and fasle otherwise
-          updatedPackEventAttendees.forEach(attendee => {
-            if (attendee == userUUID) { isAttending = true }
-          })
-        }
-
-      });
+      packEventData.attendees.includes(userUUID) ? isAttending = true : isAttending = false
 
     });
+
     return Promise.resolve(isAttending);
   }
 

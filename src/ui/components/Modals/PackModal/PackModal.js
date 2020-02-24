@@ -44,9 +44,13 @@ import CreateEvent from '../Packs/CreateEvent';
 import { withNavigation } from 'react-navigation';
 import UserDisplayCard from './Components/UserDisplayCard';
 
+import { Badge } from 'react-native-elements';
+
 import PackInformationModal from '../Packs/PackInformationModal';
 
 import PackEventModal from './Components/PackEventModal';
+
+import PackRequestsModal from './Components/PackRequestsModal';
 
 import { connect } from 'react-redux';
 
@@ -76,7 +80,7 @@ const PackMembersModal = (props) => {
                         </View>
                         <View style={{flex: 1, alignItems: 'center'}}>
                             <Paragraph>
-                                This pack currently has 20 active members and 5 active invites.
+                                This pack currently has {props.packMembersLength} active members and {props.packRequestsLength} active invites.
                             </Paragraph>
                         </View>
                         </SafeAreaView>
@@ -133,7 +137,11 @@ class PackModal extends React.Component {
             ready: false,
             currDisplayedPackEvent: 0,
             isAttendingCurrEvent: false,
-            currPackData: {}
+            currPackData: {},
+            packRequestsModalIsVisible: false,
+            packRequestsLength: 0,
+            membersLength: 0,
+            packRequests: [],
         }
     }
 
@@ -156,18 +164,22 @@ class PackModal extends React.Component {
         })
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEvents => {
-            if (packEvents == undefined || packEvents.events == undefined || packEvents.events.length == 0)
+            if (packEvents == undefined || packEvents.length == 0)
             {
                 packEventsIn = [];
             }
             else
             {
-                packEventsIn = packEvents.events;
+                packEventsIn = packEvents;
             }
 
         });
-
-        await this.setState({ packInformation: packInformationIn, packEvents: packEventsIn})
+        await this.setState({ packInformation: packInformationIn, 
+            packEvents: packEventsIn, 
+            currDisplayedPackEvent: packEventsIn[0], 
+            packRequestsLength: packInformationIn.pack_requests.length, 
+            membersLength: packInformationIn.pack_members.length,
+            packRequests: packInformationIn.pack_requests})
 
        this.currentUserUUID = this.props.lupa_data.Users.currUserData.user_uuid;
        if (this.currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
@@ -175,8 +187,7 @@ class PackModal extends React.Component {
     }
 
     checkUserEventAttendance = async (packEventUUID, packEventTitle, userUUID) => {
-         console.log('CHECKING ATTENDACNE NOW! GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG')
-        let isAttendingCurrEventIn;
+        let isAttendingCurrEventIn = false;
 
         await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(isAttendingCurrEvent => {
                  isAttendingCurrEventIn = isAttendingCurrEvent;
@@ -184,17 +195,17 @@ class PackModal extends React.Component {
 
         await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
 
-        console.log('ATTENDANCE RESULTS ' + isAttendingCurrEventIn)
         }
 
-        handleAttendEventOption = async (packEventUUID, packEventTitle, userUUID) => {
-             await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
-             this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID);
-        }
+        handleAttendEventOption = async () => {
+            let index = this.state.currDisplayedPackEvent;
+             await this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(this.state.packEvents[0].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid);
+             await this.checkUserEventAttendance(this.state.packEvents[0].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid);
+            }
 
-        handleUnattendEventOption = async (packEventUUID, packEventTitle, userUUID) => {
-             await this.checkUserEventAttendance(packEventUUID, packEventTitle, userUUID)
-             this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(packEventUUID, packEventTitle, userUUID)
+        handleUnattendEventOption = async () => {
+            await this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid)
+            await this.checkUserEventAttendance(this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid); 
         }
 
     mapMembers = () => {
@@ -217,17 +228,10 @@ class PackModal extends React.Component {
     }
 
     handleOnSnapToItem = async (itemIndex) => {
-         if (itemIndex == 0) {
-             await this.checkUserEventAttendance(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, 
-                this.state.packEvents[0].pack_event_title, this.currentUserUUID);
-
-                return;
-        }
-
         await this.setState({ currDisplayedPackEvent: itemIndex });
 
-        await this.checkUserEventAttendance(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, 
-            this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID);
+        await this.checkUserEventAttendance(this.state.packEvents[itemIndex].pack_uuid, 
+            this.state.packEvents[itemIndex].pack_event_title, this.currentUserUUID);
     }
 
     handleCreateEventModalClose = () => {
@@ -250,8 +254,27 @@ class PackModal extends React.Component {
       this.setState({ packMembersModalIsOpen: false })
     }
 
+    handlePackRequestModalClose = () => {
+        this.setState({ packRequestsModalIsVisible: false  })
+    }
+
     _renderMoreVert = () => {
-        this.state.currentUserIsPackLeader ? <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} /> : null
+        return this.state.currentUserIsPackLeader ?
+        <View style={{flexDirection: 'row'}}>
+            <IconButton icon="more-vert" size={20} onPress={() => this._showActionSheet()} />
+            <View>
+                
+            <IconButton icon="notifications" size={20} onPress={() => this.setState({ packRequestsModalIsVisible: true })} />
+            <Badge
+    status="error"
+    containerStyle={{ position: 'absolute', top: -4, right: -4 }}
+    value={this.state.packRequestsLength}
+  />
+            </View>
+        </View>
+
+        : 
+        null
     }
 
     renderPackEventsContent = () => {
@@ -264,25 +287,24 @@ class PackModal extends React.Component {
                             sliderWidth={Dimensions.get('screen').width}
                             itemWidth={Dimensions.get('screen').width- 20} 
                             onBeforeSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
+                            onSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
                             />
                             </View>
 }
 
 getButtonColor = () => {
     if (this.state.packEvents.length == 0) { return ['grey', 'grey']}
-
-    return this.state.packEvents[this.state.currDisplayedPackEvent].attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid) ? ["grey", "#2196F3"] : ["#2196F3", 'grey']
+    return this.state.currDisplayedPackEvent.attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid) ? ["grey", "#2196F3"] : ["#2196F3", 'grey'];
 }
 
 getButtonDisabledStatus = () => {
- /*   if (this.state.packEvents.length == 0) { return [true, true]}
+ let attendingStatus = false;
 
-    let attendingStatus = this.state.packEvents[this.state.currDisplayedPackEvent].attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid);
-    console.log('STATUS: ' + attendingStatus)
+ this.checkUserEventAttendance().then(result => {
+     attendingStatus = result;
+ });
 
-    this.setState({ isAttendingCurrEvent: attendingStatus });
-
-    return attendingStatus // [true, false] : [false, true]*/
+ return [attendingStatus, !attendingStatus]
 }
 
     _showActionSheet = () => {
@@ -347,13 +369,13 @@ getButtonDisabledStatus = () => {
 
                     <View style={{ flex: 1 }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
-                            <TouchableOpacity disabled={this.getButtonDisabledStatus()} onPress={() => this.handleAttendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
+                            <TouchableOpacity disabled={this.getButtonDisabledStatus()[0]} onPress={() => this.handleAttendEventOption()}>
                             <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
                                 <FeatherIcon name="check" size={25} color={buttonColors[0]} />
                             </Surface>
                             </TouchableOpacity>
 
-                            <TouchableOpacity disabled={this.getButtonDisabledStatus()} onPress={() => this.handleUnattendEventOption(this.state.packEvents[this.state.currDisplayedPackEvent].pack_uuid, this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_title, this.currentUserUUID)}>
+                            <TouchableOpacity disabled={this.getButtonDisabledStatus()[1]} onPress={() => this.handleUnattendEventOption()}>
                             <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
                                 <FeatherIcon name="x" size={25} color={buttonColors[1]} />
                             </Surface>
@@ -394,8 +416,8 @@ getButtonDisabledStatus = () => {
 
                     <CreateEvent packUUID={this.state.packUUID} isOpen={this.state.createEventModalIsOpen} closeModalMethod={this.handleCreateEventModalClose} />
                     <PackInformationModal packUUID={this.state.packUUID} isOpen={this.state.packInformationModalIsOpen} closeModalMethod={this.handlePackInformationModalClose} />
-                    <PackMembersModal isOpen={this.state.packMembersModalIsOpen} closeModalMethod={this.handlePackMembersModalClose} displayMembersMethod={this.mapMembers}/>
-                   
+                    <PackMembersModal isOpen={this.state.packMembersModalIsOpen} closeModalMethod={this.handlePackMembersModalClose} displayMembersMethod={this.mapMembers} packRequestsLength={this.state.packRequestsLength} packMembersLength={this.state.membersLength}/>
+                    <PackRequestsModal isOpen={this.state.packRequestsModalIsVisible} closeModalMethod={this.handlePackRequestModalClose} requestsUUIDs={this.state.packRequests} />
                 </SafeAreaView>
         );
     }

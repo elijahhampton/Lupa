@@ -28,6 +28,15 @@ import {
 
 import LupaController from '../../../../../controller/lupa/LupaController';
 
+const interestList = [
+    'Strength',
+    'Power',
+    'Endurance',
+    'Flexibility',
+    'Speed',
+    'Agility'
+]
+
 export default class FitnessInterest extends React.Component {
     constructor(props) {
         super(props);
@@ -35,70 +44,52 @@ export default class FitnessInterest extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            firstName: '',
-            lastName: '',
             interest: [],
-            autoCompleteData: [],
-            interestText: '',
         }
     }
 
-    addInterest = () => {
-        this.setState(prevState => ({
-            interest: [...prevState.interest, this.state.interestText]
-        }));
+    //throws error - this.staet.interest.includes is undefined??
+    addInterest = (interest) => {
+        if (this.state.interest && this.state.interest.includes(interest))
+        {
+            console.log('splice')
+            this.setState({ interest: this.state.interest.splice(this.state.interest.indexOf(interest), 1)})
+            this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest);
 
-        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', this.state.interestText);
-    }
-
-    _randomizeAutoCompleteData = (list) => {
-        const fullList = interestData;
-        for (let i = 0; i < 5; ++i) {
-            list.push(fullList[Math.floor((Math.random() * 8))]); //Random number between 1 and 8.. Need to increase as interest list increases.
+            console.log(this.state.interest.length)
+            return;
         }
 
-        this.setState({
-            autoCompleteData: list
-        })
-    }
-
-    _manipulateSuggestionList = (input) => {
-        console.log('Input: ' + input)
-        let autoCompleteDataUnfiltered = [];
-        this._randomizeAutoCompleteData(autoCompleteDataUnfiltered);
-
-        let autoCompleteDataFiltered = interestData;
-
-        if (input == '') { this.setState({ autoCompleteData: autoCompleteDataUnfiltered }) }
-        const result = autoCompleteDataFiltered.filter(element => element.startsWith(input));
-        this.setState({ autoCompleteData: result })
-    }
-
-    _handleOnChangeText = (text) => {
-        this._manipulateSuggestionList(text);
-        this.setState({ interestText: text })
-    }
-
-    _handleFinishAddingInterest = interest => {
-        //  this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest);
-    }
-
-    _returnTextInput = () => {
-        return (
-            <Input placeholder="Try something like 'Yoga' "
-                inputStyle={{ fontSize: 25, fontWeight: "600", color: "black" }}
-                label="Interest"
-                onChangeText={text => this._handleOnChangeText(text)}
-                onSubmitEditing={this.addInterest}
-                returnKeyType="done"
-                keyboardType="default"
-                value={this.state.interestText}
-            />
-        )
+        console.log('nah dice')
+        this.setState({ interest: this.state.interest.push(interest)})
+        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest);
+        console.log(this.state.interest.length)
     }
 
     closeModalMethod = () => {
         this.props.closeModalMethod();
+    }
+
+    mapInterestList = () => {
+        return interestList.map(interest => {
+            if (this.state.interest.includes(interest))
+            {
+                return (
+                    <Chip key={interest} style={{ backgroundColor: "#2196F3", alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat" onPress={() => this.addInterest(interest)}>
+                    <Text>
+                        {interest}
+                    </Text>
+                </Chip> 
+                )
+            }
+            return (
+                <Chip key={interest} style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat" onPress={() => this.addInterest(interest)}>
+                <Text>
+                    {interest}
+                </Text>
+            </Chip>
+            )
+        })
     }
 
     render() {
@@ -116,42 +107,10 @@ export default class FitnessInterest extends React.Component {
                 </View>
 
                 <View style={{ flex: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
-                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
-                            <Text>
-                                Strength
-                            </Text>
-                        </Chip>
-
-                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
-                            <Text>
-                                Power
-</Text>
-                        </Chip>
-
-                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
-                            <Text>
-                                Endurance
-</Text>
-                        </Chip>
-                    </View>
-
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
-                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
-                            <Text>
-                                Flexibility
-</Text>
-                        </Chip>
-                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
-                            <Text>
-                                Speed
-</Text>
-                        </Chip>
-                        <Chip style={{ alignItems: 'center', justifyContent: 'center', margin: 10, width: 100, height: 35, elevation: 5 }} mode="flat">
-                            <Text>
-                                Agility
-</Text>
-                        </Chip>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', }}>
+                        {
+                            this.mapInterestList()
+                        }
                     </View>
                 </View>
             </View>

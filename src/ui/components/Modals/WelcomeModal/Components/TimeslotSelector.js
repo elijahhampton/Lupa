@@ -208,7 +208,7 @@ class TimeslotSelector extends React.Component {
                 }
                 
                 await this.setState({
-                    wednesdayTimes: this.state.wednesdaytimes.concat(times)
+                    wednesdayTimes: this.state.wednesdayTimes.concat(times)
                 });
 
                 this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.wednesdayTimes, this.state.currentDay)
@@ -355,6 +355,36 @@ class TimeslotSelector extends React.Component {
         {
             case 'Monday':
                 if (this.state.mondayTimes.includes(time))
+                {
+                    return true;
+                }
+            case 'Tuesday':
+                if (this.state.tuesdayTimes.includes(time))
+                {
+                    return true;
+                }
+            case 'Wednesday':
+                if (this.state.wednesdayTimes.includes(time))
+                {
+                    return true;
+                }
+            case 'Thursday':
+                if (this.state.thursdayTimes.includes(time))
+                {
+                    return true;
+                }
+            case 'Friday':
+                if (this.state.fridayTimes.includes(time))
+                {
+                    return true;
+                }
+            case 'Saturday':
+                if (this.state.saturdayTimes.includes(time))
+                {
+                    return true;
+                }
+            case 'Sunday':
+                if (this.state.sundayTimes.includes(time))
                 {
                     return true;
                 }
