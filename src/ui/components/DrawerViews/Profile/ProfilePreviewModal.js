@@ -92,7 +92,6 @@ const ProfilePreviewModal = props => {
     const [active, setIsActive] = useState(false);
     const [refreshing, setIsRefreshing] = useState(false);
     useEffect(() => {
-        console.log('executing on : ' + userUUID)
        // Create an scoped async function in the hook
      doIt = async () => {
         await     LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(userUUID).then(result => {
@@ -102,8 +101,6 @@ const ProfilePreviewModal = props => {
     }
 
     doIt();
-        
-        console.log('uhh' + userData.display_name)
 
     }, [userData.display_name]);
 

@@ -8,8 +8,10 @@ import SettingsStackNavigator from './SettingsNavigator';
 import FollowerView from '../Modals/User/FollowerModal';
 import ProfileView from '../DrawerViews/Profile/ProfileView';
 
-import UserController from '../../../controller/lupa/UserController'
-let instance = UserController.getInstance();
+import PackModal from '../Modals/PackModal/PackModal';
+
+import SessionsView from '../Modals/Session/CreateSessionModal';
+
 const ProfileNavigator = createSwitchNavigator(
     {
     Profile: {
@@ -23,15 +25,6 @@ const ProfileNavigator = createSwitchNavigator(
             gesturesEnabled: false,
         })
     },
-    ProfileSettings: {
-        screen: SettingsStackNavigator,
-        navigationOptions: ({ navigation }) => ({
-            title: 'ProfileSettings',
-            header: null,
-            gesturesEnabled: false,
-
-        })
-    },
     FollowerView: {
         screen: FollowerView,
         navigationOptions: ({ navigation }) => ({
@@ -39,6 +32,22 @@ const ProfileNavigator = createSwitchNavigator(
             header: null,
             gesturesEnabled: false,
         })
+    },
+    PackModal: {
+        screen: PackModal,
+        navigationOptions: ({ navigation }) => ({
+            title: 'PackModal',
+            header: null,
+            gesturesEnabled: false,
+        })
+    },
+    SessionsView: {
+        screen: SessionsView,
+        navigationOptions: ({navigation}) => ({
+            title: "SessionsView",
+            header: null,
+            gesturesEnabled: false,
+        }),
     },
     },
     {

@@ -41,7 +41,6 @@ class MyPacks extends React.Component {
 
     loadCurrUserPacks = () => {
       return this.state.currUserPacks.map(pack => {
-          console.log(pack)
             return (
                 <MyPacksCard title={pack.pack_title} packUUID={pack.id} numMembers={pack.pack_members.length} image={pack.pack_image} />
             )

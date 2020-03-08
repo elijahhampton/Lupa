@@ -6,7 +6,7 @@
 //subscription
 //
 
-import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket} from '../firebase/firebase.js';
 
 const PACKS_COLLECTION = LUPA_DB.collection('packs');
 const PACKS_EVENT_COLLECTION = LUPA_DB.collection('pack_events');
@@ -24,6 +24,7 @@ let USER_CONTROLLER_INSTANCE;
 
 class PacksController {
   private static instance : PacksController;
+  private fbStorage = new FirebaseStorageBucket();
 
   private constructor() {
     USER_CONTROLLER_INSTANCE = UserController.getInstance();
@@ -36,6 +37,78 @@ class PacksController {
       }
 
       return PacksController.instance;
+  }
+
+  inviteUserToPacks = async (arrOfUUIDS, userUUID) => {
+    let packDocumentData;
+    let packDocument;
+    for (let i = 0; i < arrOfUUIDS.length; i++)
+    {
+      console.log('ID: ' + arrOfUUIDS[i])
+      packDocument = await PACKS_COLLECTION.doc(arrOfUUIDS[i]);
+      await PACKS_COLLECTION.doc(arrOfUUIDS[i]).get().then(result => {
+        packDocumentData = result.data();
+      })
+      let updatedInvitedMembers = await packDocumentData.pack_invited_members;
+      console.log('pushing now length ebfore: ' + updatedInvitedMembers.length)
+      updatedInvitedMembers.push(userUUID);
+      console.log('pushing now lengh after: ' + updatedInvitedMembers.length)
+      packDocument.update({
+        pack_invited_members: updatedInvitedMembers,
+      })
+    }
+  }
+
+  savePackImage = async (string, uuid) => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function(e) {
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', string, true);
+      xhr.send(null);
+    });
+
+    this.fbStorage.savePackImage(blob, uuid);
+  }
+
+  savePackEventImage = async (string, uuid) => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function(e) {
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', string, true);
+      xhr.send(null);
+    });
+
+  this.fbStorage.saveUserProfileImage(blob, uuid);
+  }
+
+  getPackEventImageFromUUID = async (uuid) => {
+    let link;
+    await this.fbStorage.getPackEventImageFromUUID(uuid).then(result => {
+      link = result;
+    });
+
+    return Promise.resolve(link);
+  }
+
+  getPackImageFromUUID = async (uuid) => {
+    let link;
+    await this.fbStorage.getPackImageFromUUID(uuid).then(result => {
+      link = result;
+    });
+
+    return Promise.resolve(link);
   }
 
   indexPacksIntoAlgolia = async () => {
@@ -243,6 +316,20 @@ class PacksController {
     return Promise.resolve(defaultPacks);
   }
 
+  async getCurrentUserDefaultPacks() {
+    let defaultPacks = [];
+    await PACKS_COLLECTION.where('pack_isDefault', '==', true).where('pack_members', 'array-contains', LUPA_AUTH.currentUser.uid).get().then(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        let snapshot = doc.data();
+        let snapshotID = doc.id;
+        snapshot.id = snapshotID;
+        defaultPacks.push(snapshot);
+      })
+    });
+    
+    return Promise.resolve(defaultPacks);
+  }
+
   /**
    * Subscription Based Offers
    */
@@ -391,16 +478,6 @@ class PacksController {
                     break;
                 default:
             }
-
-            console.log("Real month: " + realMonth)
-            console.log('Real Year: ' + year)
-            console.log('Real day: ' + day)
-
-            console.log(new Date().getMonth() + 1)
-            console.log(new Date().getDate())
-            console.log(new Date().getFullYear())
-
-            console.log('ABOOOOUT TO DELETE THAT PAC EVENT!!!!!!!!!!!!!!!!!!!!')
             //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
             
             //Check session is past and remove - we remove pending sessions that have expired - 
@@ -410,7 +487,6 @@ class PacksController {
             {
                 result.pack_event_stage = 'Expired';
                 this.updatePackEventField(result.id, 'pack_event_stage', 'Expired');
-                console.log('APPARENTL WE DID THIS')
             }
 
         if (result.pack_event_stage != 'Expired')
@@ -467,20 +543,102 @@ class PacksController {
     return Promise.resolve(packEventsData);
   }
 
-  createPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type) => {
+  createPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packImageSource) => {
     const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type);
     PACKS_COLLECTION.doc().set(lupaPackStructure);
+    PACKS_COLLECTION.add(lupaPackStructure).then(ref => {
+      this.savePackImage(packImageSource, ref.id);
+    })
   }
 
-  createPackEvent = async (packUUID, title, description, date, eventImage) => {
+  createPackEvent = async (packUUID, title, description, datetime, eventImage) => {
     let updatedPackEvents = [];
+
+    
+    const fullDateTime = datetime.toString().split(" ");
+    const fullDate = fullDateTime[0].toString().split("/");
+    const day = fullDate[0];
+    let month = fullDate[1];
+    const year = fullDate[2];
+
+    switch(month)
+    {
+      case "1":
+        month = "january";
+        break;
+      case "2":
+        month = "february";
+        break;
+      case "3":
+        month = "march";
+        break;
+      case "4":
+        month = "april";
+        break;
+      case "5":
+        month = "may";
+        break;
+      case "6":
+        month = "june";
+        break;
+      case "7":
+        month = "july";
+        break;
+      case "8":
+        month = "august";
+        break;
+      case "9":
+        month = "september";
+        break;
+      case "10":
+        month = "october";
+        break;
+      case "11":
+        month = "novemmber";
+        break;
+      case "12":
+        month = "december";
+        break;
+      default:
+    }
+
+    const fullTime = fullDateTime[1].toString().split(":");
+    let hours = fullTime[0].toString();
+    let minutes = fullTime[1].toString();
+
+    let wordTime;
+    if (Number(hours) < 12)
+    {
+      hours = hours.toString();
+      wordTime = "PM";
+    }
+    else if (Number(hours) >= 12)
+    {
+      if (Number(hours) === 12)
+      {
+        hours = 12;
+        hours = hours.toString();
+        wordTime = "AM";
+      }
+      else
+      {
+        hours = Number(hours) - 12;
+        hours = hours.toString();
+        wordTime = "AM";
+      }
+    }
+
+    let parsedDate = month + "-" + day + "-" + year;
+    let parsedTime = hours + ":" + minutes + wordTime;
+
     //create lupa pack event structure
-    const newPackEvent  = getLupaPackEventStructure(title, description, date, eventImage);
+    const newPackEvent  = getLupaPackEventStructure(title, description, parsedDate, parsedTime, eventImage);
     newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
 
-    await PACKS_EVENT_COLLECTION.doc().set({
-      newPackEvent
-    });
+    //await PACKS_EVENT_COLLECTION.doc().set(newPackEvent);
+    await PACKS_EVENT_COLLECTION.add(newPackEvent).then(ref => {
+      this.savePackEventImage(eventImage, ref.id);
+    })
   } 
 
   removeUserFromPackByUUID  = async (packUUID, userUUID) => {
@@ -520,9 +678,6 @@ class PacksController {
     //update events
     currentDocument.update({
       attendees: attendees
-    },
-    {
-      merge: true,
     });
   }
 
@@ -543,26 +698,19 @@ class PacksController {
     //update events
     currentDocument.update({
       attendees: attendees,
-    },
-    {
-      merge: true,
     });
   }
 
   isAttendingPackEvent = async (packEventUUID, packEventTitle, userUUID) => {
     let packEventData;
-    let updatedPackEventAttendees;
-    let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
-
     let isAttending = false;
 
    await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
       packEventData = result.data();
-      
-      packEventData.attendees.includes(userUUID) ? isAttending = true : isAttending = false
-
     });
 
+    packEventData.attendees.includes(userUUID) ? isAttending = true : isAttending = false
+    console.log(isAttending)
     return Promise.resolve(isAttending);
   }
 

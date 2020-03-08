@@ -5,6 +5,7 @@ import {
     Text,
     StyleSheet,
     Image,
+    Dimensions,
 } from 'react-native';
 
 import {
@@ -17,6 +18,10 @@ import PackModal from '../../../Modals/PackModal/PackModal';
 import { withNavigation } from 'react-navigation';
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
+import LupaController from '../../../../../controller/lupa/LupaController';
+
+import { Button } from 'react-native-elements';
+
 
 class MyPacksCard extends React.Component {
     constructor(props) {
@@ -25,7 +30,10 @@ class MyPacksCard extends React.Component {
         this.state = {
             packUUID: this.props.packUUID,
             showPack: false,
+            packProfileImage: '',
         }
+
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     }
 
@@ -40,6 +48,20 @@ class MyPacksCard extends React.Component {
         this.setState({ showPack: false })
     }
 
+    componentDidMount = async () => {
+        await this.setupComponent();
+    }
+
+    setupComponent = async () => {
+        await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.state.packUUID).then(result => {
+            packProfileImageIn = result;
+        })
+
+        await this.setState({
+            packProfileImage: packProfileImageIn
+        })
+    }
+
 
 
     render() {
@@ -50,15 +72,18 @@ class MyPacksCard extends React.Component {
                         <Surface style={styles.imageSurface}>
                         <Image style={styles.image} 
                                     resizeMode={ImageResizeMode.cover} 
-                                    source={{uri: this.props.image}} />
+                                    source={{uri: this.state.packProfileImage}} />
                         </Surface>
                         <View style={styles.cardContentContainer}>
-                        <View style={{flexDirection: 'column', alignItems: "flex-start", justifyContent: "flex-start"}}>
-                        <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "#9E9E9E"}}>
+                        <View style={{flexDirection: 'column', alignItems: "flex-start"}}>
+                        <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "black"}}>
                             {this.props.title}
                         </Text>
+                        <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "black"}}>
+                            Community
+                        </Text>
                         <Caption>
-                            {this.props.numMembers} members
+                            {this.props.numMembers} member
                         </Caption>
                         </View>
                         </View>
@@ -74,13 +99,26 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     bottomSurface: {
-        margin: 10, width: 160, height: 150, elevation: 2, borderRadius: 25
+        margin: 10, 
+        width: Dimensions.get('screen').width / 2, 
+        height: 100, 
+        elevation: 0, 
+        borderRadius: 20, 
+        flexDirection: 'column',
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#F5F5F5",
+        padding: 5,
     },
     imageSurface: {
-        flex: 2, alignSelf: "center",width: "80%", height: "55%", flexDirection: "column" , alignItems: "center", justifyContent: "center", elevation: 5, borderRadius: 20, marginTop: 8
+        position: 'absolute', 
+        top: 12, 
+        right: 12, alignSelf: "center",width: 30, height: 30, alignItems: "center", justifyContent: "center", elevation: 5, borderRadius: 20
     },
     image: {
-        width: "100%", height: "100%", borderRadius: 15
+        width: 30,
+        height: 30,
+        borderRadius: 15
     },
     cardContentContainer: {
         flex: 1, flexDirection: "column", padding: 15

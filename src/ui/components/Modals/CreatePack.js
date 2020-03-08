@@ -40,6 +40,8 @@ import Autocomplete from 'react-native-autocomplete-input'
 
 import Carousel from 'react-native-snap-carousel';
 
+import UserDisplayCard from './PackModal/Components/UserDisplayCard';
+
 const data = [
     {
         key: 'community',
@@ -98,7 +100,7 @@ export default class CreatePack extends React.Component {
             packLocation = result;
         });
 
-        this.LUPA_CONTROLLER_INSTANCE.createNewPack(pack_leader, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [pack_leader], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.getPackType(this.state.currentCarouselIndex));
+        this.LUPA_CONTROLLER_INSTANCE.createNewPack(pack_leader, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [pack_leader], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.getPackType(this.state.currentCarouselIndex), this.state.packImageSource);
     }
 
     _chooseImageFromCameraRoll = async () => {
@@ -109,8 +111,10 @@ export default class CreatePack extends React.Component {
         });
 
         if (!packImageSource.cancelled) {
-            this.setState({ packImageSource: packImageSource.uri });
+            await this.setState({ packImageSource: packImageSource.uri });
         }
+
+        
     }
 
     _returnTextInput = () => {
@@ -134,35 +138,38 @@ export default class CreatePack extends React.Component {
         await this.setState({ searchResults: searchQueryResults });
     }
     
-    mapInvitedMembers =() => {
+    mapSearchResults =() => {
         return this.state.searchResults.map(user => {
-            if (this.state.invitedMembers.includes(user.user_uuid))
-            {
                 return (
                     <TouchableOpacity onPress={() => this.handleInviteMember(user.user_uuid)}>
-                        <MaterialAvatar.Image source={{uri: user.photo_url}} size={45}  style={{borderWidth: 3, borderColor: '#1A237E'}} />
+                                            <UserDisplayCard userUUID={user.user_uuid} size={45}/>
                     </TouchableOpacity>
                 )
-            }
-            else
-            {
-                return (
-                    <TouchableOpacity onPress={() => this.handleInviteMember(user.user_uuid)}>
-                        <MaterialAvatar.Image source={{uri: user.photo_url}} size={45} />
-                    </TouchableOpacity>
-                )
-            }
+        })
+    }
+
+    mapInvitedMembers = () => {
+        return this.state.invitedMembers.map(user => {
+            return (
+                <TouchableOpacity onPress={() => this.handleInviteMember(user.user_uuid)}>
+                      <UserDisplayCard userUUID={user.user_uuid} size={25} optionalStyling={{}} />
+                </TouchableOpacity>
+            )
         })
     }
 
     handleInviteMember = (userID) => {
+        let updatedMembers;
+        updatedMembers = this.state.invitedMembers;
         if (this.state.invitedMembers.includes(userID))
         {
-            this.setState({ invitedMembers: this.state.invitedMembers.splice(userID) })
+            updatedMembers = updatedMembers.splice(this.state.invitedMembers.indexOf(userID, 1));
+            this.setState({ invitedMembers: updatedMembers })
         }
         else
         {
-            this.setState({ invitedMembers: this.state.invitedMembers.concat(userID)});
+            updatedMembers.push(userID);
+            this.setState({ invitedMembers: updatedMembers});
         }
     }
 
@@ -256,7 +263,7 @@ export default class CreatePack extends React.Component {
                     </View>
 
                     <View>
-                    <CheckBox
+                   {/* <CheckBox
                                 center
                                 title='Require users to pay a monthly subscription to join my pack.'
                                 iconRight
@@ -266,7 +273,7 @@ export default class CreatePack extends React.Component {
                                 checkedColor='green'
                                 checked={this.state.subscriptionBasedPack}
                                 onPress={() => this.setState({ subscriptionBasedPack: !this.state.subscriptionBasedPack })}
-                            />
+                   /> */}
                     </View>
                     </ScrollView>
 
@@ -275,16 +282,23 @@ export default class CreatePack extends React.Component {
                     <View style={{flexDirection: 'column', justifyContent: 'space-around', flex: 1}}>
                         <View>
                         <Text style={{fontSize: 30, fontWeight: '100', margin: 5}}>
-                            Start by typing a user's name, username, or email and we will display any results.  Press the user's avatar to send them a pack invitation.
+                            Start by typing a user's name, username, or email.  Press the user's avatar to send a pack invite.
                         </Text>
+
+                        <View>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                {this.mapInvitedMembers()}
+                            </ScrollView>
+                        </View>
                         {
                             this._returnTextInput()
                         }
                         </View>
 
+
                         <ScrollView contentContainerStyle={{padding: 10, flexDirection: 'row', justifyContent: 'space-evenly', flexDirection: 'wrap'}}>
                             {
-                                this.mapInvitedMembers()
+                                this.mapSearchResults()
                             }
                         </ScrollView>
                     </View>

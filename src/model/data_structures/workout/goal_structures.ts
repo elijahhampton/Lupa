@@ -14,21 +14,21 @@ export var lupa_improve_strength_goal : Goal = {
 }
 
 export var lupa_improve_power_goal : Goal = {
-    uid: "hsf98h298fh2h38f",
+    uid: GOAL_UID.IMPROVE_POWER,
     name: "Increase Power",
     description: "Impove power description",
     pathways: [],
 }
 
 export var lupa_improve_flexibility_goal : Goal = {
-    uid: "f0928thnf3028h3ff",
+    uid: GOAL_UID.IMPROVE_FLEXIBILITY,
     name: "Increase Flexibility",
     description: "Improve flexibility description",
     pathways: [],
 }
 
 export var lupa_improve_stamina_goal : Goal = {
-    uid: "d3928thd09320d8f",
+    uid: GOAL_UID.IMPROVE_STAMINA,
     name: "Increase Stamina",
     description: "Increase stamina description",
     pathways: [],

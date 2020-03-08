@@ -9,8 +9,8 @@ import {
     Dimensions,
     ScrollView,
     DatePickerIOS,
+    TouchableOpacity,
     Button as NativeButton,
-    TouchableOpacity
 } from 'react-native';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
@@ -70,6 +70,8 @@ class CreateSessionModal extends React.Component {
             monthMenuActive: false,
             yearMenuActive: false,
             sessionTimePeriods: [],
+            requestedUserProfileImage: '',
+            currUserProfileImage: '',
         }
     }
 
@@ -78,16 +80,32 @@ class CreateSessionModal extends React.Component {
     }
 
     setupRequestedUserInformation = async () => {
-        let requestedUserDataIn;
+        let requestedUserDataIn, requestedUserProfileImageIn, currUserProfileImageIn;
+
+        console.log(this.props.navigation)
+
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.navigation.state.params.userUUID).then(result => {
             requestedUserDataIn = result;
         })
 
-        await this.setState({ requestedUserData: requestedUserDataIn, preferred_workout_times: requestedUserDataIn.preferred_workout_times });
+        await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.props.navigation.state.params.userUUID).then(result => {
+            requestedUserProfileImageIn = result;
+        })
+
+        await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
+            currUserProfileImageIn = result;
+        })
+
+
+        await this.setState({ 
+            requestedUserData: requestedUserDataIn, 
+            preferred_workout_times: requestedUserDataIn.preferred_workout_times,
+            requestedUserProfileImage: requestedUserProfileImageIn, 
+            currUserProfileImage: currUserProfileImageIn,
+         });
     }
 
     _getButtonMode = time => {
-        console.log('checking moe')
         this.state.sessionTimePeriods.includes(time) ? "contained" : "text";
     }
 
@@ -182,6 +200,7 @@ class CreateSessionModal extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: 'white' }}>
+                <ScrollView shouldRasterizeIOS={false} showsVerticalScrollIndicator={true} contentContainerStyle={{ flexGrow: 2, backgroundColor: "#FAFAFA", flexDirection: 'column', justifyContent: 'space-between' }}>
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#0D47A1', padding: 10, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
                     <Headline style={{ alignSelf: 'center', color: 'white', textAlign: 'center', }}>
                         You are about to request a session with: {this.state.requestedUserData.display_name}
@@ -190,18 +209,18 @@ class CreateSessionModal extends React.Component {
                     <View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                             <Surface style={{ width: 90, height: 90, elevation: 10, borderRadius: 80, margin: 10 }}>
-                                <Image source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} style={{ width: '100%', height: '100%', borderRadius: '80' }} />
+                                <Image source={{ uri: this.state.currUserProfileImage }} style={{ width: '100%', height: '100%', borderRadius: '80' }} />
                             </Surface>
 
                             <Icon name="compare-arrows" size={40} />
 
                             <Surface style={{ width: 90, height: 90, elevation: 10, borderRadius: 80, margin: 10, }}>
-                                <Image source={{ uri: this.state.requestedUserData.photo_url }} style={{ width: '100%', height: '100%', borderRadius: '80' }} />
+                                <Image source={{ uri: this.state.requestedUserProfileImage }} style={{ width: '100%', height: '100%', borderRadius: '80' }} />
                             </Surface>
                         </View>
                     </View>
                 </SafeAreaView>
-                <ScrollView shouldRasterizeIOS={false} showsVerticalScrollIndicator={true} contentContainerStyle={{ flexGrow: 2, backgroundColor: "#FAFAFA", flexDirection: 'column', justifyContent: 'space-between' }}>
+                    
                     <Headline style={{ padding: 5 }}>
                         Session Information
                             </Headline>
@@ -211,8 +230,16 @@ class CreateSessionModal extends React.Component {
                         <Title style={{ alignSelf: 'center' }}>
                             Session name and description
                             </Title>
-                        <TextInput value={this.state.sessionName} mode="outlined" placeholder="Session Name" style={{ margin: 5 }} onChangeText={text => this.setState({ sessionName: text })} />
-                        <TextInput value={this.state.sessionDescription} mode="outlined" placeholder="Session Description" multiline={true} style={{ margin: 5, height: 80 }} onChangeText={text => this.setState({ sessionDescription: text })} />
+                        <TextInput value={this.state.sessionName} mode="outlined" placeholder="Session Name" style={{ margin: 5 }} onChangeText={text => this.setState({ sessionName: text })} returnKeyType="done" enablesReturnKeyAutomatically={true} theme={{
+                            colors: {
+                                primary: '#2196F3'
+                            }
+                        }} />
+                        <TextInput value={this.state.sessionDescription} mode="outlined" placeholder="Session Description" multiline={true} style={{ margin: 5, height: 80 }} onChangeText={text => this.setState({ sessionDescription: text })} returnKeyType="done" enablesReturnKeyAutomatically={true} theme={{
+                            colors: {
+                                primary: '#2196F3'
+                            }
+                        }} />
                     </View>
 
                     <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', margin: 5 }}>
@@ -290,7 +317,7 @@ class CreateSessionModal extends React.Component {
 
                     <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
                         <View style={{ flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <Title>
+                            <Title style={{alignSelf: 'center'}}>
                                 Pick a time or multiple
                                 </Title>
                                 <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
@@ -301,12 +328,10 @@ class CreateSessionModal extends React.Component {
                         </View>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', margin: 5 }}>
-                            <Button mode="text" color="#0D47A1">
+                            <Button mode="text" color="#0D47A1" onPress={() => this.props.navigation.goBack(null)}>
                                 Back
                                 </Button>
-                            <Button mode="contained" color="#0D47A1" onPress={this._handleNewSessionRequest}>
-                                Request
-                                </Button>
+                            <NativeButton onPress={this._handleNewSessionRequest} title="Request Session" />
                         </View>
                     </View>
                 </ScrollView>

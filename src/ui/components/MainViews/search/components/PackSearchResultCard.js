@@ -57,7 +57,6 @@ class PackSearchResultCard extends React.Component {
             packInformation = result;
         });
 
-        console.log(packInformation)
 
         if (packInformation.pack_members.includes(this.props.lupa_data.Users.currUserData.user_uuid))
         {

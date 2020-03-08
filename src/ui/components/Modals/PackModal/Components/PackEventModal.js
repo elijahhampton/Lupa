@@ -60,13 +60,27 @@ export default class PackEventModal extends React.Component {
         })
     }
 
+    convertDate = (date) => {
+        const dateParts = date.split("-");
+        let month = dateParts[0];
+        month = month.replace(month.charAt(0), month.charAt(0).toUpperCase());
+
+        let day = dateParts[1];
+
+        let year = dateParts[2];
+
+        return month + " " + day + "," + " " + year;
+    }
+
     render() {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
                 <ImageBackground source={{ uri: this.props.packEventImage }} style={{ flex: 1 }}>
-                    <IconButton style={{margin: 25}} icon="clear" color="white" onPress={this.props.closeModalMethod}/>
+                    <Button mode="text" compact  color="black" onPress={this.props.closeModalMethod} style={{margin: 25}}>
+                        Close
+                    </Button>
                 </ImageBackground>
-                <View style={{ flex: 2}}>
+                <View style={{ flex: 2, justifyContent: 'space-evenly', flexGrow: 2, padding: 10}}>
                     <Headline>
                         {this.props.packEventTitle}
                     </Headline>
@@ -76,7 +90,7 @@ export default class PackEventModal extends React.Component {
                             Time/Day
                         </Title>
                         <Text>  
-                            {this.props.packEventDate.seconds}
+                            {this.convertDate(this.props.packEventDate)} at {this.props.packEventTime}
                         </Text>
                     </View>
 

@@ -12,8 +12,10 @@ import {
     StyleSheet,
     View,
     Text,
+    Image,
     ScrollView,
     ImageBackground,
+    TouchableOpacity,
     RefreshControl,
 } from "react-native";
 
@@ -23,20 +25,39 @@ import {
     Button,
     Portal,
     Menu,
+    Title,
+    Paragraph,
     Divider,
 } from 'react-native-paper';
+
+
+import {
+    Header,
+    Left,
+    Right,
+    Body
+} from 'native-base';
 
 import BackgroundImageTwo from '../../../images/background-two.jpg';
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 import WorkoutComponent from './components/WorkoutComponent';
 import { WORKOUT_MODALITY } from '../../../../controller/lupa/common/types'
+import {GOAL_UID} from '../../../../model/data_structures/workout/types'
 
 import { connect } from 'react-redux';
 
 import StripeCheckout from 'expo-stripe-checkout'
 
 import { getPathwaysForGoalUUID } from '../../../../model/data_structures/goal_pathway_structures';
+
+import { getAllGoalStructures } from '../../../../model/data_structures/workout/goal_structures'
+const STAMINA_IMAGE = require('../../../images/bike.png');
+const POWER_IMAGE = require('../../../images/power.png');
+const FLEXIBILITY_IMAGE = require('../../../images/wellness.png');
+const STRENGTH_IMAGE = require('../../../images/weightlifting.png');
+
+import LupaController from '../../../../controller/lupa/LupaController';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -48,17 +69,47 @@ class WorkoutView extends React.Component {
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
             isRefreshing: false,
             currUserData: this.props.lupa_data.Users.currUserData,
-            currUserHealthData: this.props.lupa_data.Users.currUserHealthData,
+            currUserHealthData: [],
             sortMenuVisible: false,
+            goals: getAllGoalStructures(),
+            userGoalsDataUpdated: [],
         }
     }
 
     componentDidMount = async () => {
-       
+       await this.setupWorkoutView();
     }
+
+    setupWorkoutView = async () => {
+        let healthDataIn;
+
+        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
+            healthDataIn = result.goals;
+        })
+
+
+        await this.setState({ currUserHealthData: healthDataIn })
+    }
+
+    getDefaultImage = (uuid) =>
+{
+    switch(uuid)
+    {
+        case GOAL_UID.IMPROVE_POWER:
+            return POWER_IMAGE;
+        case GOAL_UID.IMPROVE_FLEXIBILITY:
+            return FLEXIBILITY_IMAGE;
+        case GOAL_UID.IMPROVE_STAMINA:
+            return STAMINA_IMAGE;
+        case GOAL_UID.IMPROVE_STRENGTH:
+            return STRENGTH_IMAGE;
+    }
+}
 
     _handleOnRefresh = () => {
         this.setState({ isRefreshing: true })
@@ -66,9 +117,10 @@ class WorkoutView extends React.Component {
         this.setState({ isRefreshing: false })
     }
 
-    _mapUserGoals = () => {
+    _mapUserGoals =  () => {
         let pathways = [];
-        let arr = this.state.currUserHealthData.goals;
+        let arr = [];
+             arr = this.state.currUserHealthData
 
         for (let i = 0; i < arr.length; i++)
         {
@@ -79,98 +131,127 @@ class WorkoutView extends React.Component {
             }
         }
 
-
-        return pathways.map(path => {
-            return (
+        return pathways.length == 0 ?
+        <>
+        <Headline style={{alignSelf: 'center'}}>
+        Modules
+    </Headline>
+    <Divider />
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 10}}>
+                    <Paragraph style={{fontWeight: 500, fontSize: 20}}>
+            You don't have any goals selected! Click one of the modules above to get started.
+        </Paragraph>
+        </View>
+        </>
+        :
+        
+        <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this._handleOnRefresh}/>}>
+        <View style={{padding: 10, width: '100%', height: '100%', flex: 1, borderTopLeftRadius: 25, borderTopRightRadius: 25,}}>
+            <Headline style={{alignSelf: 'center'}}>
+                Modules
+            </Headline>
+        </View>
+        <Divider />
+        {
+            pathways.map(path => {
+               return (
                 <>
-                <WorkoutComponent navigateMethod={() => this.props.navigation.navigate('WorkoutModal', { goalPathwayUUID: path.uid})} pathwayName={path.name} pathwayDescription={path.description} workoutModality={path.modality} iterationsCompleted={path.iteration}/>
-                <Divider />
-                </>
-            )
-        });
-       
+                    <WorkoutComponent navigateMethod={() => this.props.navigation.navigate('WorkoutModal', { goalPathwayUUID: path.uid, goalUUID: path.goal_uid, modality: path.modality})} pathwayName={path.name} pathwayDescription={path.description} workoutModality={path.modality} iterationsCompleted={path.iteration}/>
+                    </>
+               ) 
+            })
+        }
+    </ScrollView>
     }
+
+              /**
+     * 
+     */
+    _getGoalCaptionColor = (uid) => {
+        let goalsArray = [];
+        if (this.state.currUserHealthData && true)
+        {
+             goalsArray = this.state.currUserHealthData;
+        }
+ 
+         for (let i = 0; i < goalsArray.length; i++)
+         {
+             if (goalsArray[i].goal_uuid == uid)
+             {
+                 return "#2196F3"
+             }
+             else
+             {
+
+                 return "#E0E0E0"
+             }
+         }
+     }
+ 
+     mapGoalsWithSurface = () => {
+         return this.state.goals.map((val, index, arr) => {
+             return (
+                 <TouchableOpacity onPress={() => this.handleGoalOnPress(val.uid)}>
+                                             <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 0.5, borderRadius: 10, width: 120, height: 120, margin: 10, borderColor: this._getGoalCaptionColor() }}>
+                            <Image style={{width: '30%', height: '30%'}} defaultSource={this.getDefaultImage(val.uid)}/>
+                            <Text style={{padding: 3}}>
+                                {val.name}
+                            </Text>
+                        </View>
+                 </TouchableOpacity>
+             )
+         })
+     }
+ 
+         /**
+      * handleGoalOnPress
+      * 
+      * Defines what happens when the onPress method for a goal.
+      * param[in] uuid UUID for the goal
+      */
+     handleGoalOnPress = async (uuid) => {
+         if (this.state.currUserHealthData.includes(uuid))
+         {
+             let currArr = this.state.currUserHealthData;
+             let updatedArr = currArr.splice(this.state.currUserHealthData.indexOf(uuid), 1);
+             await this.setState({ currUserHealthData: updatedArr });
+             await  this.LUPA_CONTROLLER_INSTANCE.removeGoalForCurrentUser(uuid);
+         }
+         else if (!this.state.currUserHealthData.includes(uuid))
+         {
+             let currArr = this.state.currUserHealthData;
+             currArr.push(uuid);
+             await this.setState({ currUserHealthData: currArr });
+             await this.LUPA_CONTROLLER_INSTANCE.addGoalForCurrentUser(uuid);
+         }
+         
+     }
 
     render() {
         return (
             <View style={styles.root}>
-                <View style={styles.imageView}>
-                    <ImageBackground source={BackgroundImageTwo} style={styles.image} resizeMode={ImageResizeMode.contain} resizeMethod="resize">
-                        <View style={styles.overlay}>
-                            <View style={{ display: "flex" }}>
-                                <Text style={{ color: "white", fontSize: 50, fontWeight: "200" }}>
-                                    Welcome,
-                                </Text>
-                                <Text style={{ color: "white", fontSize: 50, fontWeight: "700" }}>
-                                    {
-                                        this.props.lupa_data.Users.currUserData.display_name
-                                    }
-                                </Text>
-                            </View>
+                <Header span style={{backgroundColor: 'white', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
 
-                            <View style={{ display: "flex" }}>
-                                <Text style={{ color: "white", fontSize: 20, fontWeight: "200" }}>
-                                    Enjoy our catalog of workouts curated by Lupa and Lupa trainers
-                                </Text>
-                            </View>
-
-                            {
-                                /*
-                                                                <View style={styles.buttonScroll}>
-                                <ScrollView horizontal={true} shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
-                                    <Button onPress={this.props.logoutMethod} mode="text" color="white" compact>
-                                        All Workouts
-                                    </Button>
-                                    <Button mode="text" color="white" compact>
-                                        Routines
-                                    </Button>
-                                    <Button mode="text" color="white" compact>
-                                        Body Part
-                                    </Button>
-                                    <Button mode="text" color="white" compact>
-                                        Trainer Recommendations
-                                    </Button>
-                                    <Button mode="text" color="white" compact>
-                                        Goal Based
-                                    </Button>
-                                    <Button mode="text" color="white" compact>
-                                        Suggestions
-                                    </Button>
-                                    <Button mode="text" color="white" compact>
-                                        Curated by Lupa
-                                    </Button>
-                                </ScrollView>
-                            </View>
-                                */
-                            }
-
-                            <View>
-                                <Menu anchor={<Button compact mode="text" onPress={() => this.setState({ sortMenuVisible: true })} color="white">Sort by</Button>} visible={this.state.sortMenuVisible}>
-                                    <Menu.Item title="Title" />
-                                    <Menu.Item title="Goal" />
-                                    <Menu.Item title="Modality" />
-                                    <Menu.Item title="Iterations Completed" />
-
-                                </Menu>
-                            </View>
-
-                        </View>
-                    </ImageBackground>
-                </View>
-                <Surface style={styles.workoutSurface}>
-    
-                    <View style={{width: '100%', height: '100%', flex: 1, borderTopLeftRadius: 25, borderTopRightRadius: 25, backgroundColor: "#FAFAFA"}}>
-                    <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this._handleOnRefresh}/>}>
-                        <View style={{padding: 10, width: '100%', height: '100%', flex: 1, borderTopLeftRadius: 25, borderTopRightRadius: 25,}}>
-                            <Headline style={{fontWeight: "500"}}>
-                                All Workouts
-                            </Headline>
-                        </View>
-                        <Divider />
-                        {this._mapUserGoals()}
+                        <Image style={{width: '30%', height: '40%'}} defaultSource={require('../../../images/logo.png')} />
+                        <Text style={{margin: 10, alignSelf: 'center', fontSize: 20, fontWeight: 600, color: "black"}}>
+                            Elijah Hampton
+                        </Text>
+                </Header>
+                <View style={{backgroundColor: 'white', flex: 1}}>
+                    <ScrollView contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}} horizontal shouldRasterizeIOS={true}>
+                    {
+                        this.mapGoalsWithSurface()
+                    }
                     </ScrollView>
+                </View>
+                <View style={styles.workoutSurface}>
+    
+                    <View style={{width: '100%', height: '100%', flex: 1, backgroundColor: '#f5f5f5'/*"#2196F3"*/}}>
+                    {
+                        this._mapUserGoals()
+                    }
                     </View>
-                </Surface>
+                </View>
             </View>
         );
     }
@@ -180,7 +261,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         display: "flex",
-        backgroundColor: "rgba(0,111,230,0.2)",
+        backgroundColor: "white",
     },
     buttonScroll: {
        
@@ -194,16 +275,11 @@ const styles = StyleSheet.create({
         right: 0,
     },
     workoutSurface: {
-        position: "absolute",
-        bottom: 0,
-        height: "45%",
-        width: "100%",
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
-        backgroundColor: "#FAFAFA",
+        flex: 3,
+        backgroundColor: "white",
         alignItems: "center",
         flexDirection: "column",
-        elevation: 12,
+        elevation: 0,
     },
     image: {
         ...StyleSheet.absoluteFillObject,

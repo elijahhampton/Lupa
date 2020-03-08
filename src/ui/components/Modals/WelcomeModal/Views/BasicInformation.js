@@ -47,11 +47,11 @@ export default class BasicInformation extends React.Component {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
-                quality: 1,
+                quality: 1
             });
-    
+
            //Update field photo_url field
-            this._handleUserPhotoUrlUpdate(result);
+            this._handleUserPhotoUrlUpdate(result.uri);
     
             if (!result.cancelled) {
                 this.setState({ photoSource: result.uri });
@@ -63,7 +63,8 @@ export default class BasicInformation extends React.Component {
     }
 
     _handleUserPhotoUrlUpdate = photoURI => {
-        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', photoURI.uri);
+        this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(photoURI);
+        //this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', photoURI.uri);
     }
 
     _handleGenderUpdate = genderIn => {

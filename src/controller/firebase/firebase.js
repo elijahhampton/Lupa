@@ -15,8 +15,18 @@ const fb_init_config = firebase.initializeApp(firebaseConfig);
 
 const LUPA_DB = firebase.firestore();
 const LUPA_DB_FIREBASE = firebase.database();
+const LUPA_AUTH = firebase.auth();
+const LUPA_STORAGE_BUCKET = firebase.storage();
+const LUPA_USER_PROFILE_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('profile_images');
+const LUPA_PACK_IMAGE_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('pack_images');
+const LUPA_PACK_EVENT_IMAGE_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('pack_event_images');
+/*LUPA_USER_PROFILE_PICTURE_IMAGES_REF = LUPA_USER_IMAGES.child('users');
+const LUPA_USER_PACK_IMAGES_REF = LUPA_STORAGE_BUCKET.ref();
+LUPA_USER_PACK_IMAGES_REF.child('packs')*/
+
+//save every user image as: useruuid_imgname
+
 LUPA_DB_FIREBASE.goOnline();
-let LUPA_AUTH = firebase.auth();
 
 export class Fire {
   constructor() {
@@ -80,6 +90,77 @@ off() {
 }
 
 Fire.shared = new Fire();
+
+export class FirebaseStorageBucket {
+  constructor() {
+
+  }
+
+  saveUserProfileImage = async (blob) => {
+    const user_uuid = await LUPA_AUTH.currentUser.uid;
+    LUPA_USER_PROFILE_IMAGES_STORAGE_REF.child(user_uuid).put(blob);
+  }
+
+  getUserProfileImageFromUUID = async (uuid) => {
+    let link;
+    await LUPA_USER_PROFILE_IMAGES_STORAGE_REF.child(`${uuid}`).getDownloadURL().then(url => {
+      link = url;
+    });
+
+    return Promise.resolve(link)
+  }
+
+  savePackImage = (blob, uuid) => {
+    LUPA_PACK_IMAGE_STORAGE_REF.child(uuid).put(blob);
+  }
+
+  getPackImageFromUUID = async (uuid) => {
+    let temp;
+    let link;
+    if (uuid == '7Xf7iiUmhGTfSg2k0Ktr')
+    {
+      temp = '7Xf7iiUmhGTfSg2k0Ktr' + '.jpg';
+      await LUPA_PACK_IMAGE_STORAGE_REF.child(`${temp}`).getDownloadURL().then(url => {
+        link = url;
+      });
+    }
+    else 
+    {
+      await LUPA_PACK_IMAGE_STORAGE_REF.child(`${uuid}`).getDownloadURL().then(url => {
+        link = url;
+      });
+    }
+
+
+    console.log('from firebase pack image : '  + link)
+    return Promise.resolve(link);
+  }
+
+  savePackEventImage = (blob, uuid) => {
+    LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(uuid).put(blob);
+  }
+
+  getPackEventImageFromUUID = async (uuid) => {
+    let link;
+    let temp;
+    if (uuid == 'ZRhxugKa9JvRtiOu496S')
+    {
+      temp = 'ZRhxugKa9JvRtiOu496S' + '.jpg';
+      await LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(`${temp}`).getDownloadURL().then(url => {
+        link = url;
+      });
+    }
+    else
+    {
+      await LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(`${uuid}`).getDownloadURL().then(url => {
+        link = url;
+      });
+    }
+
+    return Promise.resolve(link);
+  }
+
+}
 
 
 export default LUPA_DB;

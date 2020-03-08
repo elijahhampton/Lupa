@@ -48,11 +48,57 @@ export default class LupaController {
 
     private static notifications = [];
 
-    /************************/
+    /***************** Firebase Storage *********** */
+    saveUserProfileImage = (imageURI) => {
+      USER_CONTROLLER_INSTANCE.saveUserProfileImage(imageURI);
+    }
+
+    getUserProfileImageFromUUID = async (uuid) => {
+      let imageURI;
+      await USER_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(uuid).then(result => {
+        imageURI = result;
+      });
+
+      return Promise.resolve(imageURI);
+    }
+
+    savePackImage = (string, uuid) => {
+      PACKS_CONTROLLER_INSTANCE.savePackImage(string, uuid);
+    }
+
+    savePackEventImage = (string, uuid) => {
+      PACKS_CONTROLLER_INSTANCE.savePackEventImage(string, uuid);
+    }
+
+    getPackImageFromUUID = async (uuid) => {
+      let link;
+      await PACKS_CONTROLLER_INSTANCE.getPackImageFromUUID(uuid).then(result => {
+        link = result;
+      });
+
+      return Promise.resolve(link);
+    }
+
+    getPackEventImageFromUUID = async (uuid) => {
+      let link;
+      await PACKS_CONTROLLER_INSTANCE.getPackEventImageFromUUID(uuid).then(result => {
+        link = result;
+      });
+
+      return Promise.resolve(link);
+    }
+    /***************************** */
+
+    /***********  App IO *************/
 
     runAppSetup = () => {
       requestPermissionsAsync();
       this.indexApplicationData();
+    }
+
+    addLupaTrainerVerificationRequest = (uuid, certification, cert_number) => {
+      let certInformation = {uuid, certification, cert_number};
+      LUPA_DB.collection('trainer_request').doc(uuid).set(certInformation);
     }
 
     /********************** */
@@ -172,11 +218,11 @@ export default class LupaController {
     }
 
     /** Pack Functions */
-    createNewPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault) => {
+    createNewPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource) => {
       //validate data
 
       //call packs controller to create pack
-      PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault);
+      PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource);
     }
 
     createNewPackEvent = (packUUID, title, description, date, eventImage) => {
@@ -184,6 +230,16 @@ export default class LupaController {
 
       //call pack controller to create new event
       PACKS_CONTROLLER_INSTANCE.createPackEvent(packUUID, title, description, date, eventImage);
+    }
+    
+    inviteUserToPacks = (packs, userUUID) => {
+      //If the user didn't select any packs then there is no work to be done and we can just exit the function
+      if (packs.length == 0)
+      {
+        return;
+      }
+
+      PACKS_CONTROLLER_INSTANCE.inviteUserToPacks(packs, userUUID);
     }
 
     getSubscriptionPacksBasedOnLocation = async location => {
@@ -377,6 +433,16 @@ export default class LupaController {
       return result;
     }
 
+    getCurrentUserDefaultPacks = async () => {
+      let defaultPacks = [];
+      await PACKS_CONTROLLER_INSTANCE.getCurrentUserDefaultPacks().then(result => {
+        defaultPacks = result;
+      });
+
+      return Promise.resolve(defaultPacks)
+
+    }
+
     requestToJoinPack = (userUUID, packUUID) => {
       PACKS_CONTROLLER_INSTANCE.requestToJoinPack(userUUID, packUUID);
     }
@@ -434,6 +500,8 @@ export default class LupaController {
         result = bool;
       });
 
+      console.log(result);
+
       return Promise.resolve(result);
     }
 
@@ -461,6 +529,16 @@ export default class LupaController {
       await WORKOUT_CONTROLLER_INSTANCE.getWorkoutDataFromUUID(uuid).then(async result => {
         workoutData = await result;
       });
+
+      return Promise.resolve(workoutData);
+    }
+
+    getWorkoutsFromModalityByType = async (modality) => {
+      let workoutData;
+      await WORKOUT_CONTROLLER_INSTANCE.getWorkoutsFromModalityByType(modality).then(result => {
+        workoutData = result;
+      });
+
 
       return Promise.resolve(workoutData);
     }

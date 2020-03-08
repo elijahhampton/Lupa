@@ -3,7 +3,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-import UserProfileView from '../DrawerViews/Profile/UserProfileModal';
+import Profile from '../DrawerViews/Profile/ProfileView';
 import SessionsView from '../Modals/Session/CreateSessionModal';
 import SearchView from '../MainViews/search/SearchView';
 import PackModal from '../Modals/PackModal/PackModal';
@@ -21,10 +21,10 @@ const UserViewNavigator =  createStackNavigator(
             gesturesEnabled: false,
         })
     },
-    UserProfileView: {
-        screen: UserProfileView,
+    Profile: {
+        screen: Profile,
         navigationOptions: ({navigation}) => ({
-            title: "UserProfileView",
+            title: "Profile",
             header: null,
             gesturesEnabled: false,
         })

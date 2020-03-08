@@ -11,29 +11,42 @@ import React from 'react';
 import {
     Text,
     View,
+    TouchableOpacity,
     StyleSheet,
     RefreshControl,
     SafeAreaView,
     ScrollView,
     StatusBar,
+    Image,
     Modal
 } from 'react-native';
 
 import {
     IconButton,
     Avatar,
-    Button
+    Headline,
+    Paragraph,
+    Surface,
+    Caption,
+    Card,
+    Title,
 } from 'react-native-paper';
 
 import {
     Input,
-    SearchBar
+    SearchBar,
+    Button,
+    Rating
 } from 'react-native-elements';
+
 
 import {
     Container,
     Header,
     Icon,
+    Left,
+    Body,
+    Right
 } from 'native-base';
 
 import {
@@ -44,10 +57,19 @@ import UserSearchResultCard from './components/UserSearchResultCard';
 import TrainerSearchResultCard from './components/TrainerSearchResultCard';
 import PackSearchResultCard from './components/PackSearchResultCard';
 
-import LupaController from '../../../../controller/lupa/LupaController';
-const buttonColor = "#2196F3";
+import {TrainerCard} from '../Packs/Components/ExploreCards/PackExploreCard';
 
-export default class SearchView extends React.Component {
+import LupaController from '../../../../controller/lupa/LupaController';
+
+import { connect } from 'react-redux';
+
+mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
+class SearchView extends React.Component {
     constructor(props) {
         super(props);
 
@@ -57,7 +79,36 @@ export default class SearchView extends React.Component {
             searchValue: '',
             searchResults: [],
             refreshing: false,
+            currUserData: this.props.lupa_data.Users.currUserData,
+            trainers: [],
         }
+    }
+
+    componentDidMount = async () => {
+        await this.setupExplorePage();
+    }
+
+    setupExplorePage = async () => {
+        let subscriptionPacksIn, trainersIn, explorePagePacksIn, usersInAreaIn, currUsersLocationIn, tempUsersLocation;
+
+        await this.LUPA_CONTROLLER_INSTANCE.getTrainersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
+            trainersIn = result;
+        })
+
+        //set component state
+        await this.setState({
+            trainers: trainersIn,
+        })
+        
+    }
+
+    mapTrainers = () => {
+        return this.state.trainers.map(trainer => {
+            console.log('trainer')
+            return (
+                <TrainerCard userUUID={trainer.user_uuid} displayName={trainer.display_name} sessionsCompleted={trainer.sessions_completed} location={trainer.location} />
+            )
+        })
     }
 
     async _prepareSearch() {
@@ -84,18 +135,12 @@ export default class SearchView extends React.Component {
             {
                 case "trainer":
                     return (
-                        <TrainerSearchResultCard title={result.display_name} email={result.email}  rating={result.rating} avatarSrc={result.photo_url} uuid={result.objectID}/>
+                        <TrainerSearchResultCard title={result.display_name} email={result.email} uuid={result.objectID}/>
                     )
                 case "user":
                     return (
-                        <UserSearchResultCard title={result.display_name} email={result.email} avatarSrc={result.photo_url} uuid={result.objectID} />
+                        <UserSearchResultCard title={result.display_name} email={result.email} uuid={result.objectID} />
                     )
-                case "pack":
-                    return (
-                        <PackSearchResultCard  title={result.pack_title} isSubscription={result.pack_isSubscription} avatarSrc={result.pack_image} uuid={result.pack_uuid} />
-                    )
-                case "workout":
-                    break;
                 default:
             }
         })
@@ -116,21 +161,39 @@ export default class SearchView extends React.Component {
         return (
             <Container style={styles.root}>
 
-                    <Header span searchBar rounded style={{flexDirection: 'column'}}>
-                        <SearchBar placeholder="Search the Lupa Database"
+                    <Header searchBar rounded transparent={true} style={{backgroundColor: 'white', flexDirection: 'column'}}>
+                        <Right style={{alignSelf: 'flex-end'}}>
+                        <Title style={{fontSize: 25, fontWeight: 600, color: "black", alignSelf: 'flex-end'}}>
+                       Sessions
+                    </Title>
+                        </Right>
+
+                    </Header>
+                    <SearchBar placeholder="Search the Lupa Database"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
                         containerStyle={{backgroundColor: "transparent"}}
                         value={this.state.searchValue}/>
-                    </Header>
 
                     <View style={{flex: 1}}>
-                    <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} />}>
-                    {
-                        this.showSearchResults()
-                    }
-                </ScrollView>
+                        {
+                            this.state.searchValue == '' ?
+                            <ScrollView contentContainerStyle={{position: 'absolute', bottom: 15,}} horizontal showsHorizontalScrollIndicator={true}>
+                                {
+                                    this.mapTrainers()
+                                }
+                            </ScrollView>
+                            :
+                            <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} />}>
+
+                            {
+                                                                this.showSearchResults()
+                            }
+                            
+                        </ScrollView>
+
+                        }
                     </View>
             </Container>
         );
@@ -164,3 +227,5 @@ const styles = StyleSheet.create({
         
     }
 });
+
+export default connect(mapStateToProps)(SearchView);

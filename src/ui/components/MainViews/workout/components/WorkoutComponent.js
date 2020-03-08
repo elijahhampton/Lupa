@@ -62,25 +62,22 @@ class WorkoutComponent extends React.Component {
     render() {
         return (
             <TouchableOpacity onPress={() => this.props.navigateMethod()}>
-                            <View style={{display: 'flex', flexDirection: 'column', width: '100%', height: 'auto', padding: 5}}>
-            <View style={{justifyContent: 'flex-start'}}>
-            <Title>
+                            <View style={{alignSelf: 'center', borderRadius: 10, backgroundColor: 'white', margin: 5, justifyContent: 'space-around', display: 'flex', flexDirection: 'column', width: '95%', height: 'auto', padding: 15}}>
+            <View style={{justifyContent: 'space-between', flexDirection: 'row', padding: 5, alignItems: 'center'}}>
+            <Text style={{fontSize: 16, fontWeight: '600', padding: 3, color: "#212121"}}>
                {this.props.pathwayName}
-            </Title>
-            <Text numberOfLines={2} ellipsizeMode="tail">
-                {this.props.pathwayDescription}
-            </Text>
-            </View>
-            <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', padding: 5}}>
-            <Text style={{fontSize: 15, fontWeight: 'bold'}}>
-                {this.props.iterationsCompleted} Iterations Completed
             </Text>
             <Chip mode="flat" style={{width: "auto", height: 25, elevation: 3, backgroundColor: getChipBackgroundColor(this.props.workoutModality)}}>
             <Caption style={{alignSelf: 'flex-end'}}>
                     {this.props.workoutModality}
             </Caption>
             </Chip>
+
             </View>
+            
+            <Caption numberOfLines={3} ellipsizeMode="tail">
+                {this.props.pathwayDescription}
+            </Caption>
         </View>
             </TouchableOpacity>
         )

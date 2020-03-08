@@ -65,13 +65,15 @@ const PackInviteModal = props => {
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    handleAccept = (packID, currUserID) => {
-        this.LUPA_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packID, currUserID);
+    handleAccept = async (packID, currUserID) => {
+        await this.LUPA_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packID, currUserID);
+        await props.refreshData();
         props.closeModalMethod()
     }
 
-    handleDecline = (packID, currUserID) => {
-        this.LUPA_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packID, currUserID);
+    handleDecline = async (packID, currUserID) => {
+        await this.LUPA_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packID, currUserID);
+        await props.refreshData();
         props.closeModalMethod()
     }
     return (
@@ -125,11 +127,12 @@ class TrainerDashboardView extends React.Component {
         await this.fetchPackInvites();
     }
 
-    _onRefresh = () => {
+    _onRefresh = async () => {
         this.setState({refreshing: true});
-        this.fetchSessions().then(() => this.fetchPackEvents().then(() => {
-            this.setState({refreshing: false});
-        }))
+        await this.fetchSessions()
+        await this.fetchPackEvents()
+        await this.fetchPackInvites()
+        this.setState({refreshing: false});
       }
 
       /**
@@ -142,7 +145,14 @@ class TrainerDashboardView extends React.Component {
 
         await this.LUPA_CONTROLLER_INSTANCE.getUserSessions().then(res => {
             sessionDataIn = res;
+            console.log(sessionDataIn);
         });
+
+        //If this user has no sessions then we just return from the function
+        if (sessionDataIn.length == 0 || sessionDataIn.length == undefined)
+        {
+            return; 
+        }
 
 
         //if session status pending and active.. nothing to do
@@ -154,8 +164,9 @@ class TrainerDashboardView extends React.Component {
         //Check if session date is passed mark as expired and pending and remove session.. we'll let user remove the others
         for (let i = 0; i < sessionDataIn.length; ++i)
         {
+            console.log('did we make it here')
             let sessionDate = sessionDataIn[i].sessionData.date;
-
+            console.log('did we make it here 2222')
             //check to see if session has expired
             let sessionDateParts = sessionDate.split('-');
             let month = sessionDateParts[0], day = sessionDateParts[1], year = sessionDateParts[2];
@@ -201,7 +212,18 @@ class TrainerDashboardView extends React.Component {
                 default:
             }
 
-            
+            console.log('33333333333333333333333333')
+
+            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
+            new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
+                new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set')
+        {
+            this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
+        }
+
+        console.log('5555555555555555555555')
+
+        
             //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
             
             //Check session is past and remove - we remove pending sessions that have expired - 
@@ -214,12 +236,7 @@ class TrainerDashboardView extends React.Component {
                 sessionDataIn.splice(sessionDataIn.splice(i, 1));
             }
 
-            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
-                new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
-                    new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set')
-            {
-                this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
-            }
+            console.log('4444444444444444444444444')
         }
 
 
@@ -241,8 +258,6 @@ class TrainerDashboardView extends React.Component {
               })
           }
 
-          console.log(currentUserPackEventsData)
-
           await this.setState({ packEventsData: currentUserPackEventsData });
 
       }
@@ -255,6 +270,7 @@ class TrainerDashboardView extends React.Component {
         });
 
         await this.setState({ packInvites: currentUserPackInvites });
+
       }
 
       /**
@@ -265,22 +281,32 @@ class TrainerDashboardView extends React.Component {
        * TODO: Pash in session UUID and populate inside of container
        */
       populateSessions = () => {
-          let attendeeTwoDisplayName;
-          let attendeeOneDisplayName;
-          return this.state.sessionData.map(session => {
+          return this.state.sessionData.length == 0 ?
+          <Caption>
+              You are not apart of any upcoming sessions.
+          </Caption>
+          :
+          this.state.sessionData.map(session => {
               let sessionDate = session.sessionData.date;
               let date = sessionDate.split("-")
               let parsedDate = date[0] + " " + date[1] + "," + date[2];
               //Return a session notification container
               //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
               return (
-                <SessionNotificationContainer sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} attendeeOne={attendeeOneDisplayName} userToDisplay={attendeeTwoDisplayName} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus}/>
+                <SessionNotificationContainer sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus}/>
                )
           })
       }
 
       populatePackEvents = () => {
-        return this.state.packEventsData.map(pack => {
+        
+        return this.state.packEventsData == 0 ? 
+        <Caption>
+            You are not apart of any upcoming pack events.
+        </Caption>
+        :
+
+        this.state.packEventsData.map(pack => {
             return (
             <PackEventNotificationContainer packUUID={pack.pack_uuid} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date} numAttending={pack.attendees.length}/>
             )
@@ -288,7 +314,12 @@ class TrainerDashboardView extends React.Component {
       }
 
       populatePackInvites = () => {
-        return this.state.packInvites.map(invites => {
+        return this.state.packInvites == 0 ?
+        <Caption>
+            You don't have any outstanding pack invites.
+        </Caption>
+        :
+        this.state.packInvites.map(invites => {
             return (
                 <TouchableOpacity onPress={() => {this.handlePackInvite(invites.id, invites.pack_title)}} >
                 <Chip mode="flat" style={{backgroundColor: "#90CAF9", margin: 5, borderRadius: 10, width: 'auto'}}>
@@ -322,16 +353,17 @@ class TrainerDashboardView extends React.Component {
                         <Text style={{fontSize: 50, fontWeight: '600', color: 'white', alignSelf: "center"}}>
                             Lupa
                         </Text>
-                        </View>    
+                        </View>  
+
+                                    <LupaCalendar />  
+
+                                    <Divider style={styles.divider} />
 
             <View>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 3}}>
                 <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
                             Sessions
                         </Text>
-                        <Button mode="text" color="white">
-                            View all
-                        </Button>
                 </View>
 
                         <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -343,32 +375,13 @@ class TrainerDashboardView extends React.Component {
                         <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length} />
                     </View>
 
-                    <View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
-                            Pack Events
-                        </Text>
-                        <Button mode="text" color="white">
-                            View all
-                        </Button>
+                        <Divider style={styles.divider} />
 
-                </View>
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                        {
-                            this.populatePackEvents()
-                        }
-                        </ScrollView>
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length}/>
-                    </View>
-
-                    <View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <View>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 3}}>
                 <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
                             Pack Invites
                         </Text>
-                        <Button mode="text" color="white">
-                            View all
-                        </Button>
 
                 </View>
                         <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
@@ -379,10 +392,28 @@ class TrainerDashboardView extends React.Component {
                         <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length}/>
                     </View>
 
-            <LupaCalendar />
+                    <Divider style={styles.divider} />
 
                     <View>
-                        <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 3}}>
+                <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
+                            Pack Events
+                        </Text>
+
+                </View>
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                        {
+                            this.populatePackEvents()
+                        }
+                        </ScrollView>
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length}/>
+                    </View>
+
+                        <Divider style={styles.divider} />
+
+
+                    <View>
+                        <Text style={{fontSize: 20, fontWeight: "500", color: 'white', margin: 3}}>
                             Recent Workouts
                         </Text>
                         <Caption>
@@ -390,7 +421,7 @@ class TrainerDashboardView extends React.Component {
                         </Caption>
                     </View>
                 </ScrollView>
-                <PackInviteModal closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid}/>
+                <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid}/>
                 </SafeAreaView>
         );                    
     }
@@ -415,6 +446,9 @@ const styles = StyleSheet.create({
         elevation: 10,
         alignItems: "center",
         justifyContent: "center",
+    },
+    divider: {
+        margin: 8
     }
 });
 

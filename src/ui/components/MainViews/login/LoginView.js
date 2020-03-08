@@ -25,7 +25,7 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 
 import Background from "./images/login_background3.jpg";
-import { SocialIcon, Input } from "react-native-elements";
+import { SocialIcon, Input, ElementsButton } from "react-native-elements";
 
 import { Feather as FeatherIcon } from '@expo/vector-icons';
 
