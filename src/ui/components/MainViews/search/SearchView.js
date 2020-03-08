@@ -104,7 +104,6 @@ class SearchView extends React.Component {
 
     mapTrainers = () => {
         return this.state.trainers.map(trainer => {
-            console.log('trainer')
             return (
                 <TrainerCard userUUID={trainer.user_uuid} displayName={trainer.display_name} sessionsCompleted={trainer.sessions_completed} location={trainer.location} />
             )

@@ -289,20 +289,17 @@ export default class UserController {
 
                 if (optionalData == 'remove')
                 {
-                    console.log('remove')
+
 
                     updatedArr = interestData;
                     updatedArr.splice(interestData.indexOf(value), 1);
-                    console.log(updatedArr)
                 }
 
                 if (optionalData == 'add')
                 {
-                    console.log('add')
-                    console.log(value);
                     updatedArr = interestData;
                     updatedArr.push(value);
-                    console.log(updatedArr)
+
                 }
 
                 currentUserDocument.update({

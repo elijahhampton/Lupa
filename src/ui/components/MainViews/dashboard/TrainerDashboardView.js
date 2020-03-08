@@ -145,7 +145,6 @@ class TrainerDashboardView extends React.Component {
 
         await this.LUPA_CONTROLLER_INSTANCE.getUserSessions().then(res => {
             sessionDataIn = res;
-            console.log(sessionDataIn);
         });
 
         //If this user has no sessions then we just return from the function
@@ -164,9 +163,7 @@ class TrainerDashboardView extends React.Component {
         //Check if session date is passed mark as expired and pending and remove session.. we'll let user remove the others
         for (let i = 0; i < sessionDataIn.length; ++i)
         {
-            console.log('did we make it here')
             let sessionDate = sessionDataIn[i].sessionData.date;
-            console.log('did we make it here 2222')
             //check to see if session has expired
             let sessionDateParts = sessionDate.split('-');
             let month = sessionDateParts[0], day = sessionDateParts[1], year = sessionDateParts[2];
@@ -212,16 +209,12 @@ class TrainerDashboardView extends React.Component {
                 default:
             }
 
-            console.log('33333333333333333333333333')
-
             if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
             new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
                 new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set')
         {
             this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
         }
-
-        console.log('5555555555555555555555')
 
         
             //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
@@ -235,8 +228,6 @@ class TrainerDashboardView extends React.Component {
                 this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
                 sessionDataIn.splice(sessionDataIn.splice(i, 1));
             }
-
-            console.log('4444444444444444444444444')
         }
 
 
