@@ -48,13 +48,10 @@ class UserSearchResultCard extends React.Component {
     setupComponent = async () => {
         let profilePictureIn;
 
-        console.log(this.props.uuid)
-
         await LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.props.uuid).then(result => {
             profilePictureIn = result;
         });
 
-        console.log(profilePictureIn)
 
         await this.setState({ profilePicture: profilePictureIn })
     }

@@ -44,15 +44,12 @@ class PacksController {
     let packDocument;
     for (let i = 0; i < arrOfUUIDS.length; i++)
     {
-      console.log('ID: ' + arrOfUUIDS[i])
       packDocument = await PACKS_COLLECTION.doc(arrOfUUIDS[i]);
       await PACKS_COLLECTION.doc(arrOfUUIDS[i]).get().then(result => {
         packDocumentData = result.data();
       })
       let updatedInvitedMembers = await packDocumentData.pack_invited_members;
-      console.log('pushing now length ebfore: ' + updatedInvitedMembers.length)
       updatedInvitedMembers.push(userUUID);
-      console.log('pushing now lengh after: ' + updatedInvitedMembers.length)
       packDocument.update({
         pack_invited_members: updatedInvitedMembers,
       })
@@ -710,7 +707,6 @@ class PacksController {
     });
 
     packEventData.attendees.includes(userUUID) ? isAttending = true : isAttending = false
-    console.log(isAttending)
     return Promise.resolve(isAttending);
   }
 

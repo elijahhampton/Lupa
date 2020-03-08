@@ -55,13 +55,9 @@ class DefaultPack extends React.Component {
     setupComponent = async () => {
         let packProfileImageIn;
 
-        console.log('her: ' + this.state.packUUID);
-
         await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.state.packUUID).then(result => {
             packProfileImageIn = result;
         })
-
-        console.log('uhh  ' + packProfileImageIn)
 
 
         await this.setState({
@@ -201,7 +197,6 @@ class TrainerFlatCard extends React.Component {
 
     setupComponent = async () => {
         let profileImageIn;
-        console.log(this.state.userUUID)
         await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.state.userUUID).then(result => {
             profileImageIn = result;
         })

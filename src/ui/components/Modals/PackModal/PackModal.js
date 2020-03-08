@@ -163,14 +163,12 @@ class PackModal extends React.Component {
 
     setupPackModal = async () => {
        // await this.setState({ packUUID: this.props.navigation.state.params.packUUID}) //PROBLEM
-       console.log('one')
         let packInformationIn, packEventsIn, isAttendingCurrEventIn
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
             packInformationIn = result;
         })
 
-        console.log('two')
         await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEvents => {
             if (packEvents == undefined || packEvents.length == 0)
             {
@@ -181,7 +179,7 @@ class PackModal extends React.Component {
                 packEventsIn = packEvents;
             }
         });
-        console.log('three')
+
         if (packEventsIn.length > 0)
         {
             for (let i = 0; i < packEventsIn.length; i++)
@@ -192,7 +190,6 @@ class PackModal extends React.Component {
             }
         }  
 
-        console.log('four')
 
         if (packEventsIn.length > 0)
         {
@@ -200,7 +197,7 @@ class PackModal extends React.Component {
                 isAttendingCurrEventIn = result;
             })
         }
-        console.log('five')
+
         await this.setState({ 
             packInformation: packInformationIn, 
             packEvents: packEventsIn, 
@@ -243,7 +240,6 @@ class PackModal extends React.Component {
              });
 
         await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
-             console.log(isAttendingCurrEventIn)
         }
 
         handleAttendEventOption = async () => {

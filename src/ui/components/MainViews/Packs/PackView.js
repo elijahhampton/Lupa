@@ -122,7 +122,6 @@ class PackView extends React.Component {
      
      setupExplorePage = async () => {
          let defaultPacksIn, explorePagePacksIn;
-         console.log('one')
          await this.LUPA_CONTROLLER_INSTANCE.getExplorePagePacksBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
              explorePagePacksIn = result;
          });

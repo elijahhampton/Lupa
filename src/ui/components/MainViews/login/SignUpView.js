@@ -138,7 +138,6 @@ class SignupModal extends React.Component {
         //Check registration status
         let successfulRegistration;
         await signUpUser(email, password, confirmedPassword, isTrainerAccount, agreedToTerms).then(result => {
-          console.log('result: ' + result)  
           successfulRegistration = result;
         });
 

@@ -36,7 +36,6 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         result: true,
         reason: "",
     }
-    console.log('one')
     //Check password against confirmedPassword- lazy check for now
     if (password != confirmedPassword) 
     {
@@ -44,14 +43,12 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         return Promise.resolve(signUpResultStatus);
     }
 
-    console.log('two')
     if (password < 8 || password > 12 || confirmedPassword < 8 || confirmedPassword > 12)
     {
         signUpResultStatus.reason = "Password must be between 8-12 characters";
         return Promise.resolve(signUpResultStatus);
     }
 
-    console.log('three')
     await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
         console.log('LUPA: Registering user with firebase authentication.')
         //Set sign up result to true
@@ -64,8 +61,6 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         return Promise.resolve(signUpResultStatus);
     });
 
-    console.log('four')
-
     // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong
 
     try {
@@ -77,7 +72,6 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         
     });
 
-    console.log('five')
     LUPA_DB.collection('packs').where('pack_isDefault', '==', true).get().then(snapshot => {
         let packID;
         snapshot.forEach(doc => {
@@ -93,8 +87,6 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
 
         });
     });
-
-    console.log('six')
 
     //Add user in health data collection
     let userHealthData = getLupaHealthDataStructure(LUPA_AUTH.currentUser.uid);

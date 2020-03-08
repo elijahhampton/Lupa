@@ -88,13 +88,10 @@ const InviteToPackDialog = props => {
         let updatedPacks = packsToInvite;
         updatedPacks.push(uuid);
         setPacksToInvite(updatedPacks);
-        console.log('added a pack: ' + packsToInvite.length)
         setChecked(true);
     }
 
     handleDialogClose = () => {
-        console.log('the length erhe is: ' + packsToInvite.length)
-        console.log('and the user to ivntie is: ' + userToInvite)
         LUPA_CONTROLLER_INSTANCE.inviteUserToPacks(packsToInvite, userToInvite);
         props.closeModalMethod();
     }

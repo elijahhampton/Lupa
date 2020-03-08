@@ -82,7 +82,6 @@ class CreateSessionModal extends React.Component {
     setupRequestedUserInformation = async () => {
         let requestedUserDataIn, requestedUserProfileImageIn, currUserProfileImageIn;
 
-        console.log(this.props.navigation)
 
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.navigation.state.params.userUUID).then(result => {
             requestedUserDataIn = result;
