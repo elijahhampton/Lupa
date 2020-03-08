@@ -18,6 +18,8 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 
 import DrawerMenu from './Components/DrawerMenu';
 
+import UserSettings from '../Navigators/SettingsNavigator';
+
 
 import ProfileNavigator from './ProfileNavigator';
 import UserProfileModal from '../DrawerViews/Profile/UserProfileModal';
@@ -31,9 +33,15 @@ const LupaDrawerNavigator = createDrawerNavigator(
       Profile: {
         screen: ProfileNavigator
       },
-      UserPofileView: {
-        screen: UserProfileModal
-      }
+      UserSettings: {
+        screen: UserSettings,
+        navigationOptions: ({ navigation }) => ({
+            title: 'UserSettings',
+            header: null,
+            gesturesEnabled: false,
+
+        })
+    },
     },
     {
       initialRouteName: 'Dashboard',

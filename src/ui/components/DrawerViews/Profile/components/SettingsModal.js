@@ -130,14 +130,6 @@ fitnessProfileList = [
     },
 ]
 
-trainerList = [
-    {
-        key: 'Certification',
-        title: 'Certification',
-        description: 'National Association for Sports Medicine'
-    },
-]
-
 lupaList = [
     {
         key: 'PrivacyPolicy',
@@ -251,7 +243,6 @@ class SettingsModal extends React.Component {
       }
 
       handleListItemOnPress = (key) => {
-          console.log(key);
         switch(key) {
             case 'ChangePaymentInformation':
                this._navigateToPaymentSettings();
@@ -293,9 +284,11 @@ class SettingsModal extends React.Component {
                 <Container style={styles.root}>
                     <Header>
                         <Left>
-                            <IconButton icon="arrow-back" onPress={() => this.props.navigation.goBack('Profile')}/>
+                            <IconButton icon="arrow-back" onPress={() => this.props.navigation.goBack(null)}/>
                         </Left>
-    
+
+                        <Body />
+
                         <Right>
                             <Title style={styles.pageTitle}>
                                 Settings
@@ -326,53 +319,10 @@ class SettingsModal extends React.Component {
                         }
                         </List.Section>
 
-                        <List.Section>
-                        <List.Subheader style={styles.listSubheader}>Payments</List.Subheader>
-                        <List.Accordion theme={{
-                            colors: {
-                                primary: '#2196F3'
-                            }
-                        }} expanded={true} style={styles.listAccordion} title="Payment Preferences" right={props => <List.Icon {...props} icon="chevron-up" />}>
-                        {
-                            paymentList.map(item => {
-                                return (
-                                <List.Item style={styles.listItem} title={item.title} description={item.description} onPress={() => this.handleListItemOnPress(item.key)}/>
-                                )
-                            })
-                        }
-                        </List.Accordion>
-                        </List.Section>
-
-                        <List.Section>
-                        <List.Subheader style={styles.listSubheader}>Privacy</List.Subheader>
-                        {
-                            privacyList.map(item => {
-                                return (
-                                <List.Item style={styles.listItem} title={item.title} description={item.description} />
-                                )
-                            })
-                        }
-                        </List.Section>
-
-                        <List.Section>
-                        <List.Subheader style={styles.listSubheader}>Fitness Profile</List.Subheader>
-                        {
-                           fitnessProfileList.map(item => {
-                               return (
-                                <List.Item style={styles.listItem} key={item.key} title={item.title} description={item.description} onPress={() => {this.handleListItemOnPress(item.key)}}/>
-                                )
-                            })
-                        }
-                        </List.Section>
-
                         <List.Section style={styles.listSection}>
                         <List.Subheader style={styles.listSubheader}>Lupa Trainer</List.Subheader>
                         {
-                            trainerList.map(item => {
-                                return (
-                                     <List.Item style={styles.listItem} title={item.title} description={item.description}/>
-                                )
-                            })
+                                     <List.Item style={styles.listItem} title={"Certification"} description={this.state.userData.certification}/>
                         }
                         </List.Section>
 
@@ -390,9 +340,6 @@ class SettingsModal extends React.Component {
         Log out
         </Button>
                 </ScrollView>
-                <GoalsModal  animated={true} animationType="fade" isOpen={this.state.goalsModalIsOpen} closeModalMethod={this._handleGoalsModalOnClose} />
-                {/*<ChangeAccountPropertyModal property={this.state.property} closeModalMethod={this.handleCloseChangePropertyModal} isVisible={this.state.showChangeAccountPropertyModal} />*/}
-                {/*<AddPaymentModal isOpen={this.state.paymentModalIsOpen} closeModalMethod={this.handleCloseAddPaymentModal}/>*/}
                 </SafeAreaView>
                 </Container>
         )

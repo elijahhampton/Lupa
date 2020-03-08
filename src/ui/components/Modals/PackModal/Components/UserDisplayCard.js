@@ -33,19 +33,14 @@ export default class UserDisplayCard extends React.Component {
     }
 
     componentDidMount = async () => {
-      let userImageIn, userDisplayNameIn;
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'display_name').then(result => {
-            userDisplayNameIn = result;
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.state.userUUID, 'photo_url').then(result => {
+      let userImageIn;
+      
+        await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.state.userUUID).then(result => {
             userImageIn = result;
         })
 
         await this.setState({
             userImage: userImageIn,
-            userDisplayName: userDisplayNameIn,
         })
     }
 
@@ -61,7 +56,7 @@ export default class UserDisplayCard extends React.Component {
     render() {
         return (
             <TouchableOpacity onPress={() => this.setState({ showUserProfileModal: true })}>
-                <Avatar.Image source={{uri: this.state.userImage}} />
+                <Avatar.Image source={{uri: this.state.userImage}} style={this.props.optionalStyling}/>
 </TouchableOpacity>
         )
     }

@@ -32,45 +32,52 @@ LUPA_AUTH.onAuthStateChanged(user => {
  * This method assigns a user as logged in in firebase.
  */
 export var signUpUser = async (email, password, confirmedPassword, isTrainerAccount, agreedToTerms) => {
-    let result = false;
-
+    let signUpResultStatus = {
+        result: true,
+        reason: "",
+    }
+    console.log('one')
     //Check password against confirmedPassword- lazy check for now
-    if (password != confirmedPassword) {
-        console.log('LUPA: Password did not match confirmed password')
-        console.log('c' + result);
-        return Promise.resolve(result);
+    if (password != confirmedPassword) 
+    {
+        signUpResultStatus.reason = "Password doesn't match confirmed password.";
+        return Promise.resolve(signUpResultStatus);
     }
 
+    console.log('two')
+    if (password < 8 || password > 12 || confirmedPassword < 8 || confirmedPassword > 12)
+    {
+        signUpResultStatus.reason = "Password must be between 8-12 characters";
+        return Promise.resolve(signUpResultStatus);
+    }
+
+    console.log('three')
     await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
         console.log('LUPA: Registering user with firebase authentication.')
         //Set sign up result to true
-        result = true;
+        signUpResultStatus.result = true;
 
         //Catch error on signup
     }).catch(err => {
-        console.log('umm what is the error' + err);
-        result = false;
-        console.log('a' + result);
-        return Promise.resolve(result);
+        signUpResultStatus.result = false;
+        signUpResultStatus.reason = err;
+        return Promise.resolve(signUpResultStatus);
     });
 
+    console.log('four')
 
+    // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong
 
-    let userData = getLupaUserStructure(LUPA_AUTH.currentUser.uid, "", "", LUPA_AUTH.currentUser.email,
-        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], certification);
+    try {
+        let userData = getLupaUserStructure(LUPA_AUTH.currentUser.uid, "", "", LUPA_AUTH.currentUser.email,
+        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], "");
     
         //Add user to users collection with UID.
     LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).set(userData).catch(err => {
-        console.log('LUPA: Error while trying to add user to users collection.');
-        result = false;
-        console.log('b' + result)
-        return Promise.resolve(result);
+        
     });
 
-    //Add user to all default packs
-    //TODO - Add  user to default pack events as as well
-    let defaultPacks = new Array();
-
+    console.log('five')
     LUPA_DB.collection('packs').where('pack_isDefault', '==', true).get().then(snapshot => {
         let packID;
         snapshot.forEach(doc => {
@@ -87,15 +94,20 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         });
     });
 
+    console.log('six')
+
     //Add user in health data collection
     let userHealthData = getLupaHealthDataStructure(LUPA_AUTH.currentUser.uid);
     LUPA_DB.collection('health_data').doc(LUPA_AUTH.currentUser.uid).set(userHealthData).catch(err => {
-        result = false;
-        console.log(err);
-        console.log('error trying to get health data')
     })
+    } catch(error)
+    {
+        //handle error here
+    }
 
-    return Promise.resolve(result);
+    console.log('seven')
+
+    return Promise.resolve(signUpResultStatus);
 }
 
 /**
@@ -119,7 +131,6 @@ export var loginUser = async (email, password) => {
  * Takes the current user and logs them out in firebase.
  */
 export var logoutUser = () => {
-    console.log('supposet to logot now')
     LUPA_AUTH.signOut();
 }
 

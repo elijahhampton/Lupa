@@ -31,6 +31,8 @@ import { Divider } from 'react-native-paper';
 
 import { connect } from 'react-redux';
 
+import LupaController from '../../../../controller/lupa/LupaController';
+
 const mapStateToProps = (state, action) => {
   return {
     lupa_data: state,
@@ -41,9 +43,26 @@ class DrawerMenu extends React.Component {
   constructor(props) {
     super(props);
 
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
     this.state = {
-      currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid
+      currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+      profilePicture: '',
     }
+
+  }
+
+  componentDidMount = async () => {
+    await this.setupComponent();
+  }
+
+  setupComponent = async () => {
+    let profilePictureIn;
+    await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.state.currUserUUID).then(result => {
+      profilePictureIn = result;
+    });
+
+    await this.setState({ profilePicture: profilePictureIn })
   }
   
   _handleLogout = () => {
@@ -89,7 +108,7 @@ class DrawerMenu extends React.Component {
                   </Text>
                 </View>
 
-              <PaperAvatar.Text label="EH" size={30} />
+              <PaperAvatar.Image source={{uri: this.state.profilePicture}} size={40} />
             </View>
 
             <Divider />
@@ -112,6 +131,16 @@ NavigationActions.navigate({
 })
             )}>
               Profile
+            </Button>
+            </View>
+
+            <Divider />
+
+            
+            <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
+              <DrawerIcon name="activity" size={12} style={{margin: 3}}/>
+            <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.navigate('UserSettings')}>
+              Settings
             </Button>
             </View>
 

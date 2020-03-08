@@ -37,6 +37,7 @@ class PackRequestsModal extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
+            packUUID: {},
             packRequests: this.props.requestsUUIDs,
             packRequestsUserData: [],
         }
@@ -49,13 +50,10 @@ class PackRequestsModal extends React.Component {
     setupPackRequestModal = async () => {
         let packRequestsUserDataIn = [];
 
-        console.log('and the length is::YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY:::::::::::::::   ' + this.state.packRequests.length)
-        for (let i = 0; i < this.state.packRequests.length; i++)
+        for (let i = 0; i < this.props.requestsUUIDs.length; i++)
         {
             await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.packRequests[i]).then(result => {
                 packRequestsUserDataIn.push(result);
-                console.log('PUUUUUUUUUUUUUUUUUUUUUSHHHHHHHHHHHHHHHHING NAME')
-                console.log(packRequestsUserDataIn.display_name)
             });
         }
 

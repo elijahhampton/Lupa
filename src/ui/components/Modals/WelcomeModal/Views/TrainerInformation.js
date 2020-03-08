@@ -5,6 +5,8 @@ import {
     StyleSheet,
     Text,
     Button as NativeButton,
+    Image,
+    Modal,
 } from 'react-native';
 
 import {
@@ -12,16 +14,31 @@ import {
     Menu,
     Divider,
     TextInput,
+    Portal,
+    Dialog,
     Provider
 } from 'react-native-paper';
 
-const verificationModal = (props) => {
-    return (
-        <Portal>
-            <Modal style={styles.verificationModal}>
+import SafeAreaView from 'react-native-safe-area-view';
 
-            </Modal>
-        </Portal>
+import LupaController from '../../../../../controller/lupa/LupaController';
+
+const VerificationModal = (props) => {
+    return (
+        <Modal visible={props.isVisible} presentationStyle="fullScreen" animated={true} animationType="slide" style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', flex: 1, margin: 0}}>
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{fontWeight: '500'}}>
+                Thanks for submitting your information!  We will verify your credentials and update your account if everything checks out.  Please wait up to 24 hours for your account to be updated.
+            </Text>
+            </View>
+
+            <Image defaultSource={require('../../../../images/verification_complete.png')} style={{width: '80%', height: '50%', alignSelf: 'center'}}  />
+
+            <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+            <NativeButton title="Complete" onPress={() => props.closeModalMethod()}/>
+            </View>
+
+        </Modal>
     )
 }
 
@@ -36,11 +53,14 @@ export default class TrainerInformation extends React.Component {
     constructor(props) {
         super(props);
 
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
             menuVisible: false,
             buttonText: 'Select a certification',
             certification: '',
             NASM_CERTIFICATE_NUMBER: '',
+            verificationSent: false,
         }
     }
 
@@ -53,6 +73,12 @@ export default class TrainerInformation extends React.Component {
     openMenu = () => {
         this.setState({
             menuVisible: true,
+        })
+    }
+
+    closeVerificationCompleteModal = () => {
+        this.setState({
+            verificationSent: false,
         })
     }
 
@@ -75,6 +101,12 @@ export default class TrainerInformation extends React.Component {
                 <NativeButton title="Submit" onPress={() => this.sendCertificationNotice()} />
                 </View>
             }
+    }
+
+    sendCertificationNotice = async () => {
+        await this.setState({ verificationSent: true  })
+        let currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        await this.LUPA_CONTROLLER_INSTANCE.addLupaTrainerVerificationRequest(currUserUUID, this.state.certification, this.state.NASM_CERTIFICATE_NUMBER);
     }
 
     render() {
@@ -112,6 +144,7 @@ export default class TrainerInformation extends React.Component {
                             this.getCertificationDetails()
                         }
                     </View>
+                    <VerificationModal isVisible={this.state.verificationSent} closeModalMethod={this.closeVerificationCompleteModal} />
                 </View>
 
         )
@@ -130,6 +163,8 @@ const styles = StyleSheet.create({
     },
     verificationModal: {
         width: '50%',
-        height: '50%',
+        height: '20%',
+        position: 'absolute',
+        alignSelf: 'center',
     },
 })

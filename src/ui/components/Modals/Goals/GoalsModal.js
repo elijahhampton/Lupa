@@ -52,17 +52,33 @@ class GoalsModal extends React.Component {
 
         this.state = {
             goalClicked: false,
-            goals: getAllGoalStructures(),
-            userGoalsData: this.props.lupa_data.Users.currUserHealthData.goals,
+            goals: [],
+            userGoalsDataUpdated:  [],
         }
+
+        this.handleGoalOnPress = this.handleGoalOnPress.bind(this);
     }
 
+    componentDidMount = async () => {
+        await this.setupComponent();
+    }
+
+    setupComponent = async () => {
+        let goalStructures = await getAllGoalStructures();
+
+        let healthDataIn;
+        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
+            healthDataIn = result.goals;
+        })
+
+        await this.setState({ goals: goalStructures, userGoalsDataUpdated: healthDataIn })
+    }
 
     /**
      * 
      */
     _getGoalCaptionColor = (uid) => {
-        let goalsArray = this.state.userGoalsData;
+       let goalsArray = this.state.userGoalsDataUpdated;
 
         for (let i = 0; i < goalsArray.length; i++)
         {
@@ -72,36 +88,10 @@ class GoalsModal extends React.Component {
             }
             else
             {
+
                 return "grey"
             }
         }
-    }
-
-    /**
-     * handleGoalOnPress
-     * 
-     * Defines what happens when the onPress method for a goal.
-     * param[in] uuid UUID for the goal
-     */
-    handleGoalOnPress = (uuid) => {
-        let goalsArray = this.state.userGoalsData;
-        console.log(goalsArray);
-        let found = false;
-
-        for (let i = 0; i < goalsArray.length; i++)
-        {
-            if (goalsArray[i].goal_uuid == uuid)
-            {
-                this.LUPA_CONTROLLER_INSTANCE.removeGoalForCurrentUser(uuid);
-                this.setState({ goalClicked: !this.state.goalClicked });
-                return;
-            }
-        }
-
-        console.log('adding uuid: ' + uuid)
-        this.LUPA_CONTROLLER_INSTANCE.addGoalForCurrentUser(uuid);
-        this.setState({ goalClicked: !this.state.goalClicked });
-
     }
 
     mapGoalsWithSurface = () => {
@@ -127,7 +117,27 @@ class GoalsModal extends React.Component {
         })
     }
 
-    handleGoalsOnPress = (key) => {
+        /**
+     * handleGoalOnPress
+     * 
+     * Defines what happens when the onPress method for a goal.
+     * param[in] uuid UUID for the goal
+     */
+    async handleGoalOnPress(uuid) {
+        if (this.state.userGoalsDataUpdated.includes(uuid))
+        {
+            let currArr = this.state.userGoalsDataUpdated;
+            let updatedArr = currArr.splice(this.state.userGoalsDataUpdated.indexOf(uuid), 1);
+            await this.setState({ userGoalsDataUpdated: updatedArr });
+            await  this.LUPA_CONTROLLER_INSTANCE.removeGoalForCurrentUser(uuid);
+        }
+        else if (!this.state.userGoalsDataUpdated.includes(uuid))
+        {
+            let currArr = this.state.userGoalsDataUpdated;
+            currArr.push(uuid);
+            await this.setState({ userGoalsDataUpdated: currArr });
+            await this.LUPA_CONTROLLER_INSTANCE.addGoalForCurrentUser(uuid);
+        }
         
     }
 

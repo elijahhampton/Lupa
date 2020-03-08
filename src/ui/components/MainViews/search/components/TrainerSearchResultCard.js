@@ -23,70 +23,92 @@ import {
 
 import {
     withNavigation,
-    NavigationInjectedProps
 } from 'react-navigation';
+
+import LupaController from '../../../../../controller/lupa/LupaController';
 
 class TrainerSearchResultCard extends React.Component {
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
-            userUUID: this.props.uuid
+            profilePicture: '',
         }
     }
 
-    
+    componentDidMount = async () => {
+        await this.setupComponent();
+    }
+
+    setupComponent = async () => {
+        let profilePictureIn;
+        await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.props.uuid).then(result => {
+            profilePictureIn = result;
+        })
+
+        await this.setState({ profilePicture: profilePictureIn })
+    }
+
     _handleViewProfile = () => {
-        console.log('Calling _handleViewProfile')
-        props.navigation.navigate('UserProfileView', {
-            userUUID: props.uuid,
+        this.props.navigation.navigate('Profile', {
+            userUUID: this.props.uuid,
             navFrom: 'SearchView',
         });
+    }
+
+    _handleSessionRequest = () => {
+        this.props.navigation.navigate('SessionsView', {
+            userUUID: this.props.uuid,
+            navFrom: 'SearchView',
+        })
     }
 
     render() {
         return (
             <TouchableWithoutFeedback onPress={this._handleViewProfile} style={styles.touchableOpacity}>
-                <Surface style={[styles.cardContainer]}>
-                    <View style={styles.cardContent}>
-                        <View style={styles.userInfoContent}>
-                        <Avatar.Image source={{uri: this.props.avatarSrc }} size={30} style={{margin: 3}} />
-                        <View style={{flexDirection: 'column'}}>
-                        <Text style={styles.titleText}>
-                                {this.props.title}
-                            </Text>
-                            <Text style={styles.subtitleText}>
-                                {this.props.email}
-                            </Text>
-                        </View>
+            <Surface style={[styles.cardContainer]}>
+                <View style={styles.cardContent}>
+                    <View style={styles.userInfoContent}>
+                    <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+                    <View style={{flexDirection: 'column'}}>
+                    <Text style={styles.titleText}>
+                            {this.props.title}
+                        </Text>
+                        <Text style={styles.subtitleText}>
+                            {this.props.email}
+                        </Text>
+                    </View>
     
-                            </View>
-                            <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
+                        </View>
+                        <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
     Lupa Trainer
     </Chip>
-                    </View>
-                </Surface>
-                </TouchableWithoutFeedback>
-        );
+                </View>
+            </Surface>
+            </TouchableWithoutFeedback>
+        )
     }
-   
 }
+
 
 const styles = StyleSheet.create({
     touchableOpacity: {
-        width: "100%",
+        width: "98%",
         height: "auto",
         justifyContent: "center",
     },
     cardContainer: {
-        elevation: 3,
-        borderRadius: 0,
+        elevation: 1,
+        borderRadius: 5,
         justifyContent: 'center',
-        width: "100%",
+        width: "98%",
         height: "auto",
         margin: 5,
         padding: 10,
-        backgroundColor: "transparent"
+        backgroundColor: "transparent",
+        alignSelf: 'center',
     },
     cardContent: {
         alignItems: "center", 

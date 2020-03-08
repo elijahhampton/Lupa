@@ -6,6 +6,7 @@ import {
     ImageBackground,
     Modal,
     Text,
+    Button as NativeButton,
     TouchableOpacity
 } from 'react-native';
 
@@ -15,7 +16,8 @@ import {
     Headline,
     Surface,
     Caption,
-    Button
+    Button,
+    Paragraph
 } from 'react-native-paper';
 
 
@@ -27,6 +29,7 @@ import {
     SocialIcon,
     Input,
     CheckBox,
+    Overlay
  } from 'react-native-elements';
 
  import { Feather as FeatherIcon } from '@expo/vector-icons';
@@ -78,6 +81,7 @@ class SignupModal extends React.Component {
             isRegistered: false,
             passwordSecureTextEntry: true,
             secureConfirmPasswordSecureTextEntry: true,
+            alertOverlayVisible: false,
         }
     }
 
@@ -105,9 +109,6 @@ class SignupModal extends React.Component {
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
       currUserHealthData = result;
     });
-
-    console.log(currUserHealthData);
-
 
     let userPayload = {
       userData: currUserData,
@@ -137,15 +138,22 @@ class SignupModal extends React.Component {
         //Check registration status
         let successfulRegistration;
         await signUpUser(email, password, confirmedPassword, isTrainerAccount, agreedToTerms).then(result => {
-            successfulRegistration = result;
+          console.log('result: ' + result)  
+          successfulRegistration = result;
         });
 
-        setTimeout(() => {
-            console.log('sleep')
-        }, 3000);
+        await this.handleOnRegistration(successfulRegistration);
+    }
 
-        //Execute login or failure
-        successfulRegistration ? this._introduceApp() : console.log('LUPA: Firebase failure upon registering user.');
+    handleOnRegistration = async (registrationStatus) => {
+      if (registrationStatus)
+      {
+        this._introduceApp();
+      }
+      else
+      {
+        await this.setState({ failedSignupReason: registrationStatus.reason, alertOverlayVisible: true });
+      }
     }
 
 
@@ -196,7 +204,12 @@ class SignupModal extends React.Component {
                             placeholder="Enter an email address" 
                             inputStyle={{fontWeight: '500', fontSize: 15}} 
                             inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}} 
-                            containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
+                            containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}
+                            editable={true}
+                            enablesReturnKeyAutomatically={true}
+                            multiline={false}
+  
+                            />
                         </View>
 
                     <View style={{width: '100%'}}>
@@ -210,7 +223,11 @@ class SignupModal extends React.Component {
                             secureTextEntry={this.state.passwordSecureTextEntry} 
                             placeholder="Enter a password" inputStyle={{fontWeight: '500', fontSize: 15}} 
                             inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}}
-                            containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
+                            containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}
+                            editable={true}
+                            enablesReturnKeyAutomatically={true}
+                            multiline={false}
+                            />
                         </View>
 
                         <View style={{width: '100%'}}>
@@ -225,7 +242,10 @@ class SignupModal extends React.Component {
                              placeholder="Confirm your password" 
                              inputStyle={{fontWeight: '500', fontSize: 15}} 
                              inputContainerStyle={{borderBottomColor: 'transparent', padding: 8}} 
-                             containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}/>
+                             containerStyle={{width: '100%', borderRadius: 5, backgroundColor: 'white'}}
+                             editable={true}
+                             enablesReturnKeyAutomatically={true}
+                             multiline={false}/>
                         </View>
 
                         <Button 
@@ -248,18 +268,20 @@ class SignupModal extends React.Component {
                                 onPress={() => this.setState({ agreedToTerms: !this.state.agreedToTerms })}
                             />
 
-<CheckBox
-                                center
-                                title='I am a certified trainer want to register as a trainer on Lupa.'
-                                iconRight
-                                iconType='material'
-                                checkedIcon='done'
-                                uncheckedIcon='check-box-outline-blank'
-                                checkedColor='check-box'
-                                containerStyle={{backgroundColor: 'transparent', padding: 15, borderColor: 'grey'}}
-                                checked={this.state.isTrainerAccount}
-                                onPress={() => this.setState({ isTrainerAccount: !this.state.isTrainerAccount})}
-                            />
+                            <Overlay
+                            overlayStyle={{width: '90%', height: '20%', alignItems: 'center', justifyContent: 'space-evenly'}} 
+                            visible={this.state.alertOverlayVisible}
+                            onRequestClose={() => this.setState({ alertOverlayVisible: false })}
+                            onDismiss={() => this.setState({ alertOverlayVisible: false  })}
+                            animated={true}
+                            animationType="fade">
+                              <>
+                              <Paragraph>
+                                It looks like something went wrong! {this.state.failedSignupReason}
+                              </Paragraph>
+                              <NativeButton title="Try again" onPress={() => this.setState({ alertOverlayVisible: false })}/>
+                            </>
+                            </Overlay>
                     </View>
                     
                 </SafeAreaView>

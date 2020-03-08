@@ -11,6 +11,7 @@ export enum UserCollectionFields {
     EXPERIENCE="experience",
     SESSIONS_COMPLETED="sessions_completed",
     LOCATION="location",
+    BIO="bio",
 }
 
 export enum HealthDataCollectionFields {
@@ -155,6 +156,7 @@ export type LupaPackEventStructure = {
     attendees: [],
     pack_event_stage: String,
     pack_event_image: String,
+    pack_event_time: String,
 };
 
 /* LupaTrainerDataStructure */

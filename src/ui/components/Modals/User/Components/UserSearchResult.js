@@ -12,8 +12,6 @@ import {
 } from 'react-native-paper';
 
 const userSearchResult = (props) => {
-    console.log('displayname: ' + props.displayName)
-    console.log('displayname: ' + props.username)
     return (
         <View style={styles.root}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>

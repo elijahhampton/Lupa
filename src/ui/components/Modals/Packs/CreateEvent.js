@@ -45,7 +45,7 @@ export default class CreateEvent extends React.Component {
 
 
     _chooseImageFromCameraRoll = async () => {
-      packImageSource = await ImagePicker.launchImageLibraryAsync({
+        let packImageSource = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: [4, 3],
@@ -56,16 +56,28 @@ export default class CreateEvent extends React.Component {
         }
     }
 
-    createEvent = () => {
-        this.LUPA_CONTROLLER_INSTANCE.createNewPackEvent(this.state.packUUID, this.state.eventTitle, this.state.eventDescription, this.state.eventDate, this.state.eventImage);
+    _handleDateTimeChange  = (datetime) => {
+        let date = new Date(datetime).toLocaleString();
+        this.setState({
+            eventDate: date
+        })
     }
 
+    createEvent = () => {
+        let datetime = this.state.eventDate.toLocaleString();
+        this.LUPA_CONTROLLER_INSTANCE.createNewPackEvent(this.state.packUUID, this.state.eventTitle, this.state.eventDescription, datetime, this.state.eventImage);
+        this.props.closeModalMethod();
+    }
+
+    getInitialDate = () => {
+        return new Date().getDate();
+    }
     render() {
         return (
             <Modal presentationStyle="fullScreen" style={styles.modal} visible={this.props.isOpen}>
                 <SafeAreaView style={styles.safeareaview}>
                     <View style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
-                    <Avatar rounded showEditButton={true} size="large" />
+                    <Avatar rounded showEditButton={true} source={this.state.eventImages} size="large" onPress={() => this._chooseImageFromCameraRoll()}/>
                     </View> 
 
                         <View>
@@ -96,14 +108,14 @@ export default class CreateEvent extends React.Component {
                         <Text style={styles.headerText}>
                             What time and day will this event take place?
                         </Text>
-                        <DatePickerIOS onDateChange={dateValue => this.setState({ eventDate: dateValue })} date={this.state.eventDate}/>
+                        <DatePickerIOS mode="datetime" locale="en" onDateChange={dateValue => this.setState({ eventDate: dateValue})} date={this.state.eventDate}/>
                         </View>
 
                         <View style={{flexDirection: "row", alignSelf: 'center' }}>
                         <Button mode="text" color="#2196F3" onPress={this.props.closeModalMethod}>
                                 Cancel
                             </Button>
-                            <Button mode="contained" theme={{roundness: 15}} color="#2196F3" onPress={this.createEvent}>
+                            <Button mode="contained" theme={{roundness: 15}} color="#2196F3" onPress={() => this.createEvent()}>
                                 Create Event
                             </Button>
                         </View>

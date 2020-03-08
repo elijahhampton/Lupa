@@ -79,7 +79,7 @@ class PackInformationModal extends React.Component {
 
     render() {
         return (
-                <Modal animationType="slide" presentationStyle="pageSheet" onDismiss={this.props.closeModalMethod} visible={this.props.isOpen}>
+                <Modal animationType="slide" presentationStyle="pageSheet" onDissmiss={this.props.closeModalMethod} onRequestClose={this.props.closeModalMethod} visible={this.props.isOpen}>
                     <View style={{flex: 1, padding: 10}}>
                         <View style={{padding: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
                         <Headline>

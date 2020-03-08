@@ -32,8 +32,8 @@ const interestList = [
     'Strength',
     'Power',
     'Endurance',
-    'Flexibility',
     'Speed',
+    'Flexibility',
     'Agility'
 ]
 
@@ -48,22 +48,35 @@ export default class FitnessInterest extends React.Component {
         }
     }
 
+    componentDidMount = async () => {
+        await this.setupComponent();
+    }
+
+    setupComponent = async () => {
+        let interestIn;
+        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+            interestIn = result.interest;
+        });
+
+        await this.setState({ interest: interestIn })
+    }
+
     //throws error - this.staet.interest.includes is undefined??
-    addInterest = (interest) => {
+    addInterest = async (interest) => {
         if (this.state.interest && this.state.interest.includes(interest))
         {
-            console.log('splice')
-            this.setState({ interest: this.state.interest.splice(this.state.interest.indexOf(interest), 1)})
-            this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest);
-
-            console.log(this.state.interest.length)
-            return;
+            let updatedInterest = this.state.interest;
+            updatedInterest.splice(this.state.interest.indexOf(interest), 1);
+            await this.setState({ interest: updatedInterest})
+            await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest, 'remove');
         }
-
-        console.log('nah dice')
-        this.setState({ interest: this.state.interest.push(interest)})
-        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest);
-        console.log(this.state.interest.length)
+        else
+        {
+            let updatedInterest = this.state.interest;
+            updatedInterest.push(interest);
+           await this.setState({ interest: updatedInterest})
+           await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest', interest, 'add');
+        }
     }
 
     closeModalMethod = () => {

@@ -2,7 +2,7 @@
  * 
  */
 
-import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
 const HEALTH_DATA_COLLECTION = LUPA_DB.collection('health_data');
@@ -18,10 +18,10 @@ const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
 import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
 import { getPathwaysForGoalUUID } from '../../model/data_structures/goal_pathway_structures';
 
-let PACKS_CONTROLLER_INSTANCE;
 
 export default class UserController {
     private static _instance: UserController;
+    private fbStorage = new FirebaseStorageBucket();
 
     private constructor() {
     }
@@ -35,6 +35,32 @@ export default class UserController {
         return UserController._instance;
     }
 
+    saveUserProfileImage = async (string) => {
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+              resolve(xhr.response);
+            };
+            xhr.onerror = function(e) {
+              reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', string, true);
+            xhr.send(null);
+          });
+
+        this.fbStorage.saveUserProfileImage(blob);
+    }
+
+    getUserProfileImageFromUUID = async (uuid) => {
+
+        let url;
+         await this.fbStorage.getUserProfileImageFromUUID(uuid).then(result => {
+             url = result
+         })
+        return url;
+    }
+
     getArrayOfUserObjectsFromUUIDS = async (arrOfUUIDS) => {
         let results = new Array();
         return new Promise(async (resolve, reject) => {
@@ -44,7 +70,6 @@ export default class UserController {
                     results.push(result);
                 });
             }
-            console.log('the length is: ' + results.length)
             resolve(results);
         })
     }
@@ -55,13 +80,11 @@ export default class UserController {
         USER_COLLECTION.where('username', '==', val).get().then(docs => {
             if (docs.length == 0)
             {
-                console.log('false')
                 isTaken = false;
                 return Promise.resolve(isTaken);
             }
             else
             {
-                console.log('true')
                 isTaken = true;
                 return Promise.resolve(isTaken);
             }
@@ -211,6 +234,14 @@ export default class UserController {
         });
 
         switch (fieldToUpdate) {
+            case UserCollectionFields.BIO:
+                currentUserDocument.set({
+                    bio: value,
+                },
+                {
+                    merge: true,
+                })
+                break;
             case UserCollectionFields.DISPLAY_NAME:
                 LUPA_AUTH.currentUser.updateProfile({
                     displayName: value,
@@ -249,24 +280,33 @@ export default class UserController {
                 break;
             case UserCollectionFields.INTEREST:
                 let interestData = [];
-                currentUserDocument.get().then(snapshot => {
+                await currentUserDocument.get().then(snapshot => {
                     let snapshotData = snapshot.data();
                     interestData = snapshotData.interest
                 });
 
-                if (interestData.includes(value))
+                let updatedArr = interestData;
+
+                if (optionalData == 'remove')
                 {
-                    interestData.splice(interestData.indexOf(value), 1);
-                }
-                else
-                {
-                    interestData.push(value);
+                    console.log('remove')
+
+                    updatedArr = interestData;
+                    updatedArr.splice(interestData.indexOf(value), 1);
+                    console.log(updatedArr)
                 }
 
-                currentUserDocument.set({
-                    interest: interestData
-                }, {
-                    merge: true,
+                if (optionalData == 'add')
+                {
+                    console.log('add')
+                    console.log(value);
+                    updatedArr = interestData;
+                    updatedArr.push(value);
+                    console.log(updatedArr)
+                }
+
+                currentUserDocument.update({
+                    interest: updatedArr
                 })
                 break;
             case UserCollectionFields.PREFERRED_WORKOUT_TIMES:
@@ -333,6 +373,7 @@ export default class UserController {
                 let currentUserGoals = currentUserHealthDocumentData.goals;
                 if (optionalData === 'add')
                 {   
+
                     let goalStructures = getPathwaysForGoalUUID(value);
                     let goalObject = {
                         goal_uuid: value,

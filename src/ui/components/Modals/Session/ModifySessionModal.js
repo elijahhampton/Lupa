@@ -56,6 +56,7 @@ class ModifySessionModal extends React.Component {
             sessionDate: "",
             updatedTimePeriods: false,
             refreshing: false,
+            otherUserProfileImage: '',
         }
     }
 
@@ -64,8 +65,7 @@ class ModifySessionModal extends React.Component {
     }
 
     async setupSessionData() {
-        let sessionDataIn, otherUserInformationIn, userWhoRequestedDataIn, userWhoReceivedRequestDataIn;
-        
+        let sessionDataIn, otherUserInformationIn, userWhoRequestedDataIn, userWhoReceivedRequestDataIn, otherUserProfileImageIn;
         await this.LUPA_CONTROLLER_INSTANCE.getSessionInformationByUUID(this.props.sessionUUID).then(sessionData => {
            sessionDataIn = sessionData;
         })
@@ -104,6 +104,10 @@ class ModifySessionModal extends React.Component {
 
       let finalArr = arr1.concat(arr2);
 
+      await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.otherUserUUID).then(result => {
+        otherUserProfileImageIn = result;
+      })
+
       //Set the state for the other user information and the session information
       await this.setState({ 
         sessionData: sessionDataIn, 
@@ -113,6 +117,7 @@ class ModifySessionModal extends React.Component {
         timePeriods: finalArr,
         availableTimes: userWhoReceivedRequestDataIn.preferred_workout_times,
         sessionDate: this.state.sessionData.date,
+        otherUserProfileImage: otherUserProfileImageIn,
     });
     }
 
@@ -292,7 +297,7 @@ class ModifySessionModal extends React.Component {
         this.state.currUserData.user_uuid == this.state.userWhoRequestedData.user_uuid ?
 
         <View style={{alignSelf: 'center', alignItems: 'center', flex: 1, flexDirection: "column", justifyContent: "space-around"}}>
-            <Avatar.Image source={{uri: this.state.otherUserInformation.photo_url }} size={70} style={{margin: 5}}/>
+            <Avatar.Image source={{uri: this.state.otherUserProfileImage }} size={70} style={{margin: 5}}/>
             <Text style={{fontSize: 15, fontWeight: "600", textAlign: 'center'}}>
             Confirmation of your session is still pending.  Until {this.state.userWhoReceivedRequestData.display_name} accepts this session you can 
             select and deselect times from their availability.
@@ -302,7 +307,7 @@ class ModifySessionModal extends React.Component {
         :
 
         <View style={{alignSelf: 'center', alignItems: 'center', flexDirection: "column", justifyContent: "space-around"}}>
-                        <Avatar.Image source={{uri: this.state.otherUserInformation.photo_url }} size={35}/>
+                        <Avatar.Image source={{uri: this.state.otherUserProfileImage }} size={35}/>
             <Text style={{fontSize: 15, color: 'black', fontWeight: "600"}}>
     {this.state.otherUserInformation.display_name} is waiting on you to accept or decline this session.  The times requested are below as well as the confirmation button.
         </Text>
@@ -368,7 +373,7 @@ Decline Session
                 <Modal visible={this.props.isOpen} contentContainerStyle={styles.modal} presentationStyle="fullScreen">
                 <Header>
           <Left>
-              <Text  style={{fontSize: 15, color: "#2196F3"}}>
+              <Text  style={{fontSize: 15, color: "#2196F3"}} onPress={() => this.props.closeModalMethod()}>
                   Cancel
               </Text>
           </Left>

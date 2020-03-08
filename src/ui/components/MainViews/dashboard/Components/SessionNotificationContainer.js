@@ -4,6 +4,7 @@ import {
     View,
     StyleSheet,
     Text,
+    Image,
     TouchableOpacity
 } from 'react-native';
 
@@ -36,7 +37,9 @@ export const PackEventNotificationContainer = (props) => {
 
     return (
             <TouchableOpacity style={{flexDirection: 'column', margin: 5}} onPress={() => setShowModal(true)}>
-                        <Avatar.Image source={{uri: props.packEventImage}} style={{elevation: 5}} size={55} />
+                <Surface style={{elevation: 3, width: 50, height: 50, borderRadius: 50}}>
+                    <Image source={{uri: props.packEventImage}} style={{elevation: 5}} size={55} />
+                </Surface>
                         <Text style={{fontWeight: '500'}}>
                                 {props.packEventTitle}
                             </Text>
@@ -64,23 +67,22 @@ export default class SessionNotificationContainer extends React.Component {
         }
     }
 
+    handleCloseModal = () => {
+        this.setState({ showModifySessionModal: false })
+    }
+
     getSessionModal = (sessionStatus, sessionMode) => {
-        console.log('isndie of getsions modal')
         if (sessionStatus == 'Pending' || sessionStatus == 'Set' && sessionMode == 'Active')
         {
-            return <ModifySessionModal sessionUUID={this.state.sessionUUID} isOpen={this.state.showModifySessionModal} />
+            return <ModifySessionModal sessionUUID={this.state.sessionUUID} closeModalMethod={this.handleCloseModal} isOpen={this.state.showModifySessionModal} />
         }
 
         if (sessionStatus == 'Set' && sessionMode == 'Expired')
         {
-            console.log('Showing complte modal')
-            return <SessionCompleteModal sessionUUID={this.state.sessionUUID} isOpen={this.state.showModifySessionModal}/>
+            return <SessionCompleteModal sessionUUID={this.state.sessionUUID} closeModalMethod={this.handleCloseModal} isOpen={this.state.showModifySessionModal}/>
         }
     }
 
-    handleCloseModal = () => {
-        this.setState({ showRemoveSessionModal: false })
-    }
 
     render() {
         return (
@@ -92,16 +94,16 @@ export default class SessionNotificationContainer extends React.Component {
                         {this.props.date}
                     </Text>
                     
-                        <Text style={{margin: 3}}>
+                        <Text>
                         {this.props.sessionStatus}
                         </Text>
                         </View>
 
-                    <View style={{width: "100%", flexDirection: "column", justifyContent: "flex-start"}}>
+                    <View style={{width: "100%", flexDirection: "column", height: 'auto'}}>
                     <Text style={{fontWeight: 'bold'}}>
                         {this.props.title}
                     </Text>
-                    <Text numberOfLines={2} ellipsizeMode="tail"  style={{ includeFontPadding: true, padding: 3 }}>
+                    <Text numberOfLines={2} ellipsizeMode="tail"  style={{ includeFontPadding: true, paddingTop: 3 }}>
                         {this.props.description}
                     </Text>
                     </View>
@@ -176,12 +178,16 @@ const styles = StyleSheet.create({
         padding: 10,
         width: 310,
         borderRadius: 15,
-        elevation: 3,
-        backgroundColor: "white"
+        height: 'auto',
+        elevation: 0,
+        backgroundColor: "transparent",
+        borderColor: 'black',
+        borderWidth: 0.5,
     },
     initialView: {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
+        padding: 5,
     },
 });

@@ -6,7 +6,7 @@
  * Profile View
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import LUPA_DB from '../../../../controller/firebase/firebase';
 
@@ -21,6 +21,7 @@ import {
     RefreshControl,
     ImageBackground,
     TouchableWithoutFeedback,
+    ActionSheetIOS,
     TextInput
 } from "react-native";
 
@@ -32,6 +33,9 @@ import {
     Caption,
     Avatar,
     Divider,
+    Portal,
+    Provider,
+    Dialog,
     Chip,
     Headline,
     Avatar as PaperAvatar
@@ -50,6 +54,10 @@ import { ImagePicker } from 'expo-image-picker';
 
 import SafeAreaView from 'react-native-safe-area-view';
 
+import {
+    CheckBox
+} from 'react-native-elements';
+
 import { withNavigation } from 'react-navigation';
 import LupaController from '../../../../controller/lupa/LupaController';
 import MyPacksCard from './components/MyPacksCard';
@@ -64,37 +72,72 @@ import PacksModal from '../../Modals/PackModal/PackModal';
 
 import { connect } from 'react-redux';
 
-
-const data = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-        strokeWidth: 2 // optional
-      }
-    ],
-    legend: ["Strength", "Flexibility"] // optional
-  };
-
-  const chartConfig = {
-    backgroundColor: "#FFFFFF",
-    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5
-  };
+import { Feather as FeatherIcon } from '@expo/vector-icons';
 
 let chosenHeaderImage;
 let chosenProfileImage;
 
-let ProfileImage = require('../../../images/background-one.jpg');
+const InviteToPackDialog = props => {
+    const [userToInvite, setUserToInvite] = useState(props.userToInvite);
+    const [checked, setChecked] = useState(false);
+    const [packsToInvite, setPacksToInvite] = useState([]);
+
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    
+    _handlePacksToInvite = (uuid) => {
+        let updatedPacks = packsToInvite;
+        updatedPacks.push(uuid);
+        setPacksToInvite(updatedPacks);
+        console.log('added a pack: ' + packsToInvite.length)
+        setChecked(true);
+    }
+
+    handleDialogClose = () => {
+        console.log('the length erhe is: ' + packsToInvite.length)
+        console.log('and the user to ivntie is: ' + userToInvite)
+        LUPA_CONTROLLER_INSTANCE.inviteUserToPacks(packsToInvite, userToInvite);
+        props.closeModalMethod();
+    }
+
+    return (
+        <Portal>
+            <Dialog
+                visible={props.isOpen}
+                onDismiss={props.closeModalMethod}>
+                <Dialog.Title>Pack Invites</Dialog.Title>
+                <Dialog.Content>
+                    {
+                        props.userPacks.map(pack => {
+                            return (
+                                <View key={pack.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                   <CheckBox
+                                    center
+                                    checkedIcon='dot-circle-o'
+                                    uncheckedIcon='circle-o'
+                                    checked={checked}
+                                    onPress={() => this._handlePacksToInvite(pack.id)} />
+
+                                    <Text>
+                                        {pack.pack_title}
+                                    </Text>
+                                </View>
+                            )
+                        })
+                    }
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button onPress={() => this.handleDialogClose()}>Done</Button>
+                </Dialog.Actions>
+            </Dialog>
+        </Portal>
+    )
+}
 
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state
     }
 }
-
 
 /**
  * Lupa Profile View
@@ -121,6 +164,11 @@ class ProfileView extends React.Component {
             followers: [],
             following: [],
             interest: [],
+            createSessionModalIsOpen: false,
+            profileImage: '',
+            dialogVisible: false,
+            checkbox: false,
+            bio: '',
         }
     }
 
@@ -137,15 +185,16 @@ class ProfileView extends React.Component {
 
     _getId() {
         let id = false;
-        if(this.props.navigation.state.params) {
-          id = this.props.navigation.state.params.userUUID;
+        if (this.props.navigation.state.params) {
+            id = this.props.navigation.state.params.userUUID;
         }
         return id;
-      }
+    }
 
     setupProfileInformation = async () => {
-        let userInfo, userPackData;
-        const uuid = this._getId();
+        let userInfo, userPackData, profileImageIn;
+        const uuid = await this._getId();
+
 
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
             userInfo = result;
@@ -155,10 +204,13 @@ class ProfileView extends React.Component {
             userPackData = result;
         })
 
+        await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(uuid).then(result => {
+            profileImageIn = result;
+        })
+
         let workouts = userInfo.recommended_workouts;
         let workoutData = [];
-        for (let i = 0; i < workouts.length; i++)
-        {
+        for (let i = 0; i < workouts.length; i++) {
             await this.LUPA_CONTROLLER_INSTANCE.getWorkoutDataFromUUID(workouts[i]).then(result => {
                 workoutData.push(result);
             })
@@ -166,16 +218,32 @@ class ProfileView extends React.Component {
 
         await this.setState({
             userData: userInfo,
+            profileImage: profileImageIn,
             userPackData: userPackData,
             followers: userInfo.followers,
             following: userInfo.following,
             interest: userInfo.interest,
             userRecommendedWorkouts: workoutData,
+            bio: userInfo.bio,
         });
     }
 
-    handleEndEditingBio = () => {
+    handleFollowUser = async () => {
+        let userToFollow = this.state.userUUID;
+        this.LUPA_CONTROLLER_INSTANCE.followUser(userToFollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
+        await this.setupProfileInformation();
+    }
 
+    handleUnFollowUser = async () => {
+        let userToUnfollow = this.state.userUUID;
+        this.LUPA_CONTROLLER_INSTANCE.unfollowUser(userToUnfollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
+        await this.setupProfileInformation();
+    }
+
+    _navigateToSessionsView = () => {
+        this.props.navigation.navigate('SessionsView', {
+            userUUID: this.props.navigation.state.params.userUUID
+        });
     }
 
     _chooseHeaderFromCameraRoll = async () => {
@@ -211,7 +279,7 @@ class ProfileView extends React.Component {
     }
 
     mapInterest = () => {
-       return this.state.interest.length == 0 ?
+        return this.state.interest.length == 0 ?
             <Caption>
                 Specializations and strengths that you add to your fitness profile will appear here.
                                 </Caption> : this.state.userData.interest.map(interest => {
@@ -226,7 +294,7 @@ class ProfileView extends React.Component {
     mapPacks = () => {
         return this.state.userPackData.map(pack => {
             return (
-                <MyPacksCard packTitle={pack.pack_title} packPhotoSrc={pack.pack_image} />
+                <MyPacksCard packUUID={pack.id} packTitle={pack.pack_title} />
             )
         })
     }
@@ -235,41 +303,44 @@ class ProfileView extends React.Component {
     handleOnRefresh = () => {
         this.setupProfileInformation()
     }
+    
+    handleChangeBioText = async (text) => {
+        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('bio', text);
+        await this.setState({
+            bio: text,
+        })
+    }
 
     mapBio = () => {
-        return this.state.isEditingBio == true ?
-            <Text style={{fontWeight: 'bold'}} allowFontScaling={true} allowsEditing={true}>
-                {this.state.userData.bio}
+        return this.state.isEditingBio == false ?
+            <Text allowFontScaling={true} allowsEditing={false}>
+                {this.state.bio}
             </Text>
-        :
-        <TextInput multiline={true} autoGrow={true}>
-            {this.state.userData.bio}
-        </TextInput>
+            :
+            <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
     }
 
     mapRecommendedWorkouts = () => {
-        if (this.state.userRecommendedWorkouts.length == 0)
-        {
-            return        <View>
-            <Caption>
-    You don't have any recommended workouts saved!  You can recommend workouts from the workout library inside of your goal pathways.
+        if (this.state.userRecommendedWorkouts.length == 0) {
+            return <View>
+                <Caption>
+                    You don't have any recommended workouts saved!  You can recommend workouts from the workout library inside of your goal pathways.
 </Caption>
-</View>
+            </View>
         }
-        else 
-        {
+        else {
             return (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {
-                this.state.userRecommendedWorkouts.map(workout => {
-            return (<Button mode="text" compact color="black">
-            {workout.workout_name}
+                    {
+                        this.state.userRecommendedWorkouts.map(workout => {
+                            return (<Button mode="text" compact color="black">
+                                {workout.workout_name}
                             </Button>
-            )
-            })
+                            )
+                        })
 
-            }
-            </ScrollView>
+                    }
+                </ScrollView>
             )
         }
     }
@@ -279,12 +350,12 @@ class ProfileView extends React.Component {
     }
 
     _navigateToSettings = () => {
-        this.props.navigation.navigate('ProfileSettings');
+        this.props.navigation.navigate('UserSettings');
     }
 
     renderFinishEditingBioButton = () => {
-        return this.state.isEditingBio == true ? 
-            <Button mode="text" color="#2196F3" onPress={() => this.handleEndEditingBio()}>
+        return this.state.isEditingBio == true ?
+            <Button mode="text" color="#2196F3" onPress={() => this.setState({ isEditingBio: false })}>
                 Done
             </Button>
             :
@@ -294,60 +365,131 @@ class ProfileView extends React.Component {
     }
 
     getFollowerLength = () => {
-       if (this.state.followers.length) {
+        if (this.state.followers.length) {
             return this.state.followers.length
         }
-        else
-        {
+        else {
             return 0;
         }
     }
-    
+
     getFollowingLength = () => {
         if (this.state.following.length) {
             return this.state.following.length;
-    } else {
-        return 0;
-    }
+        } else {
+            return 0;
+        }
     }
 
     getHeaderLeft = () => {
-        console.log(this.props.navigation.state.params)
-        if (this.props.navigation.state.params.navFrom)
-        {
-            switch (this.props.navigation.state.params.navFrom)
-            {
+        if (this.props.navigation.state.params.navFrom) {
+            switch (this.props.navigation.state.params.navFrom) {
                 case 'Drawer':
                     return <IconButton icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
                     break;
-                case 'PackView':
+                default:
                     return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
-                    break;
-                case 'SearchView':
-                    //Not using right now because it seems to work without it
-                    break;
-    
+
+
             }
         }
 
+        return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
     }
 
     getHeaderRight = () => {
-        if (this.props.navigation.state.params.navFrom)
-        {
-            switch (this.props.navigation.state.params.navFrom)
-            {
+        if (this.props.navigation.state.params.navFrom) {
+            switch (this.props.navigation.state.params.navFrom) {
                 case 'Drawer':
                     return <IconButton icon="more-horiz" size={20} onPress={() => this._navigateToSettings()} />
                     break;
+                default:
+                    return <FeatherIcon name="plus-circle" size={20} onPress={() => this._showActionSheet()} />
             }
         }
+    }
+
+    renderInteractions = () => {
+        return this.props.lupa_data.Users.currUserData.user_uuid == this.state.userUUID ?
+            <View style={{ width: '100%', margin: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Button onPress={() => this._navigateToSessionsView()} mode="contained" style={{ padding: 3, alignSelf: 'center', margin: 10, width: '65%', elevation: 8 }} theme={{
+                    roundness: 20,
+                    colors: {
+                        primary: "#2196F3"
+                    }
+                }}>
+                    Request Session
+        </Button>
+            </View>
+            :
+            <View style={{ width: '100%', margin: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <Button onPress={() => this._navigateToSessionsView()} mode="contained" style={{ padding: 3, margin: 10, flex: 3, elevation: 8 }} theme={{
+                    roundness: 20,
+                    colors: {
+                        primary: "#2196F3"
+                    }
+                }}>
+                    <Text>
+                        Request Session
+        </Text>
+                </Button>
+
+                {
+                    this.state.followers.includes(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid) ?
+                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
+                            roundness: 20,
+                            colors: {
+                                primary: "#2196F3",
+                                text: "white",
+                            }
+                        }}>
+                            <Text>
+                                Follow
+            </Text>
+                        </Button>
+                        :
+                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
+                            roundness: 20,
+                            colors: {
+                                primary: 'white',
+                                text: "#2196F3",
+                            }
+                        }}>
+                            <Text>
+                                Follow
+            </Text>
+                        </Button>
+
+                }
+            </View>
+
+    }
+
+    _showDialog = () => this.setState({ dialogVisible: true });
+
+    _hideDialog = () => this.setState({ dialogVisible: false });
+
+    _showActionSheet = () => {
+        ActionSheetIOS.showActionSheetWithOptions(
+            {
+                options: ['Invite To Pack', 'Cancel'],
+                cancelButtonIndex: 1,
+            }, (buttonIndex) => {
+                switch (buttonIndex) {
+                    case 0:
+                        this._showDialog();
+                        break;
+                    case 1:
+                        break;
+                    default:
+                }
+            });
     }
 
     render() {
         return (
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
-                <Header transparent style={{backgroundColor: 'transparent'}}>
+                <Header transparent style={{ backgroundColor: 'transparent' }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>
@@ -357,14 +499,14 @@ class ProfileView extends React.Component {
                     </Right>
                 </Header>
 
-                <ScrollView contentContainerStyle={{flexGrow: 2, flexDirection: 'column', justifyContent: 'space-between'}} showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
+                <ScrollView contentContainerStyle={{ flexGrow: 2, flexDirection: 'column', justifyContent: 'space-between' }} showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
                     <View style={styles.user}>
                         <View style={styles.userInfoContainer}>
                             <View style={styles.userInfo}>
-                                <Text style={{fontSize: 18, fontWeight: 'bold', padding: 1}}>
+                                <Text style={{ fontSize: 18, fontWeight: 'bold', padding: 1 }}>
                                     {this.state.userData.display_name}
                                 </Text>
-                                <Text style={{fontSize: 15, fontWeight: '600', padding: 1}}>
+                                <Text style={{ fontSize: 15, fontWeight: '600', padding: 1 }}>
                                     {this.state.userData.username}
                                 </Text>
                                 {
@@ -376,16 +518,16 @@ class ProfileView extends React.Component {
                                 }
                             </View>
                             <View style={styles.alignCenterColumn}>
-                                <Avatar.Image style={{elevation: 3}} size={65} source={{uri: this.state.userData.photo_url}} containerStyle={{}} />
+                                <Avatar.Image style={{ elevation: 3 }} size={65} source={{ uri: this.state.profileImage }} containerStyle={{}} />
 
                             </View>
                         </View>
-                        
+
                         <View style={styles.userAttributesContainer}>
                             <TouchableOpacity onPress={() => this._navigateToFollowers()}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                      {this.getFollowerLength()}
+                                        {this.getFollowerLength()}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Followers
@@ -396,7 +538,7 @@ class ProfileView extends React.Component {
                             <TouchableOpacity onPress={() => this._navigateToFollowers()}>
                                 <View style={styles.alignCenterColumn}>
                                     <Text>
-                                       {this.getFollowingLength()}
+                                        {this.getFollowingLength()}
                                     </Text>
                                     <Text style={styles.userAttributeText}>
                                         Following
@@ -405,22 +547,26 @@ class ProfileView extends React.Component {
                             </TouchableOpacity>
 
                         </View>
+
+                        {
+                            this.renderInteractions()
+                        }
                     </View>
 
                     <Divider />
 
-                    <Timecards isEditing={this.state.isEditingProfile} />
+                    <Timecards  />
 
                     <Divider />
                     <>
                         <Surface style={styles.contentSurface}>
-                            <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                            <Title>
-                                Bio
+                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Title>
+                                    Bio
                         </Title>
-                        {
-                            this.renderFinishEditingBioButton()
-                        }
+                                {
+                                    this.renderFinishEditingBioButton()
+                                }
 
                             </View>
                             <Divider />
@@ -432,26 +578,32 @@ class ProfileView extends React.Component {
                         </Surface>
                     </>
 
-                        {/* interest mapping */}
-                        <Surface style={[styles.contentSurface, {elevation: 8, backgroundColor: "#2196F3"}]}>
-                                <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <Title style={{color: 'white'}}>
-                                    Interest and Goals
+                    {/* interest mapping */}
+                    <Surface style={[styles.contentSurface, { elevation: 8, backgroundColor: "#2196F3" }]}>
+                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Title style={{ color: 'white' }}>
+                                Interests and Goals
                                 </Title>
-                                </View>
-                                <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center'}}>
-                                {
-                                    this.mapInterest()
-                                }
-                                </View>
-                        </Surface>
+                        </View>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center' }}>
+                            {
+                                this.mapInterest()
+                            }
+                        </View>
+                    </Surface>
                     {/*</View> */}
 
 
                     <View style={styles.myPacks}>
-                        <Title>
-                            My Packs
+                        {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
+                            <Title>
+                                My Packs
+                            </Title>
+                            :
+                            <Title>
+                                {this.state.userData.display_name}'s Packs
                         </Title>
+                        }
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             {this.mapPacks()}
                         </ScrollView>
@@ -469,22 +621,23 @@ class ProfileView extends React.Component {
                     </View>
 
                     {
-                             this.state.userData.isTrainer == true ?
-                                            <View style={styles.recommendedWorkouts}>
-                                            <View style={styles.recommendedWorkoutsHeader}>
-                                                <Title>
-                                                    Certification
+                        this.state.userData.isTrainer == true ?
+                            <View style={styles.recommendedWorkouts}>
+                                <View style={styles.recommendedWorkoutsHeader}>
+                                    <Title>
+                                        Certification
                                             </Title>
-                                            </View>
-                    <Caption style={{flexWrap: 'wrap'}}>
-                        This user is a certified trainer under the { this.state.userData.certification }
-                    </Caption>
-                                        </View>
-                                        :
-                                        null
-                }
+                                </View>
+                                <Caption style={{ flexWrap: 'wrap' }}>
+                                    This user is a certified trainer under the {this.state.userData.certification}
+                                </Caption>
+                            </View>
+                            :
+                            null
+                    }
                 </ScrollView>
-                            </SafeAreaView>
+                <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
+            </SafeAreaView>
         );
     }
 }
@@ -495,7 +648,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#FAFAFA",
     },
     menuIcon: {
-        position: 'absolute', 
+        position: 'absolute',
         bottom: 0
     },
     contentSurface: {
@@ -522,7 +675,7 @@ const styles = StyleSheet.create({
     },
     surfaceHeader: {
         height: "15%",
-        width: "100%", 
+        width: "100%",
         elevation: 1
     },
     experience: {
@@ -559,7 +712,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     imageBackground: {
-        width: "100%", 
+        width: "100%",
         height: "100%"
     },
     userInfoContainer: {

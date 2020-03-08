@@ -34,6 +34,10 @@ import { Feather as FeatherIcon } from '@expo/vector-icons';
 import SafeAreaView from 'react-native-safe-area-view';
 import { ScrollView } from 'react-native-gesture-handler';
 
+import {
+    Button as ElementsButton
+} from 'react-native-elements';
+
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
@@ -76,6 +80,7 @@ const PackMembersModal = (props) => {
                             {
                                 props.displayMembersMethod()
                             }
+
                             </ScrollView>
                         </View>
                         <View style={{flex: 1, alignItems: 'center'}}>
@@ -93,6 +98,7 @@ const PackEventCard = props => {
     const packEventObject = props.packEventObjectIn;
 
     handlePackEventModalOpen = () => {
+
         setPackEventModalIsOpen(true);
     }
 
@@ -102,8 +108,8 @@ const PackEventCard = props => {
 
     return (
         <TouchableOpacity onPress={this.handlePackEventModalOpen}>
-        <Surface style={{ margin: 5, elevation: 5, width: Dimensions.get('screen').width - 20, height: 110, borderRadius: 20 }}>
-<Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: packEventObject.pack_event_image }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
+        <Surface style={{ margin: 5, elevation: 5, width: Dimensions.get('screen').width - 20, height: 160, borderRadius: 20 }}>
+<Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: packEventObject.pack_event_photo_url }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
 </Surface>
 
 <View style={{width: "auto", height: "auto", backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
@@ -114,7 +120,7 @@ const PackEventCard = props => {
     {packEventObject.pack_event_description}
 </Paragraph>
 </View>
-<PackEventModal isOpen={packEventModalIsOpen} closeModalMethod={this.handlePackEventModalClose} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventImage={packEventObject.pack_event_image}/>
+<PackEventModal isOpen={packEventModalIsOpen} closeModalMethod={this.handlePackEventModalClose} packEventTime={packEventObject.pack_event_time} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventImage={packEventObject.pack_event_image}/>
 </TouchableOpacity>
     )
 }
@@ -126,22 +132,22 @@ class PackModal extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            packUUID: "",
+            packUUID: this.props.navigation.state.params.packUUID,
             packInformation: {},
             packEvents: [],
             currentUserIsPackLeader: false,
             createEventModalIsOpen: false,
-            packChatModalIsOpen: false,
             packInformationModalIsOpen: false,
             packMembersModalIsOpen: false,
-            ready: false,
             currDisplayedPackEvent: 0,
+            currCarouselIndex: 0,
             isAttendingCurrEvent: false,
             currPackData: {},
             packRequestsModalIsVisible: false,
             packRequestsLength: 0,
             membersLength: 0,
             packRequests: [],
+            packProfileImage: '',
         }
     }
 
@@ -156,13 +162,62 @@ class PackModal extends React.Component {
     }
 
     setupPackModal = async () => {
-        await this.setState({ packUUID: this.props.navigation.state.params.packUUID}) //PROBLEM
-        let packInformationIn, packEventsIn, isAttendingCurrEventIn;
+       // await this.setState({ packUUID: this.props.navigation.state.params.packUUID}) //PROBLEM
+       console.log('one')
+        let packInformationIn, packEventsIn, isAttendingCurrEventIn
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
             packInformationIn = result;
         })
 
+        console.log('two')
+        await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEvents => {
+            if (packEvents == undefined || packEvents.length == 0)
+            {
+                packEventsIn = [];
+            }
+            else
+            {
+                packEventsIn = packEvents;
+            }
+        });
+        console.log('three')
+        if (packEventsIn.length > 0)
+        {
+            for (let i = 0; i < packEventsIn.length; i++)
+            {
+                await this.LUPA_CONTROLLER_INSTANCE.getPackEventImageFromUUID(packEventsIn[i].pack_event_uuid).then(result => {
+                    packEventsIn[i].pack_event_photo_url = result;
+                });
+            }
+        }  
+
+        console.log('four')
+
+        if (packEventsIn.length > 0)
+        {
+            await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventsIn[0].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
+                isAttendingCurrEventIn = result;
+            })
+        }
+        console.log('five')
+        await this.setState({ 
+            packInformation: packInformationIn, 
+            packEvents: packEventsIn, 
+            currDisplayedPackEvent: packEventsIn[0], 
+            packRequestsLength: packInformationIn.pack_requests.length, 
+            membersLength: packInformationIn.pack_members.length,
+            packRequests: packInformationIn.pack_requests,
+            isAttendingCurrEvent: isAttendingCurrEventIn,
+            packProfileImage: packProfileImageIn,
+        })
+
+       this.currentUserUUID = this.props.lupa_data.Users.currUserData.user_uuid;
+       if (this.currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
+    }
+
+    refreshPackEvent = async () => {
+        let packEventsIn;
         await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEvents => {
             if (packEvents == undefined || packEvents.length == 0)
             {
@@ -174,38 +229,33 @@ class PackModal extends React.Component {
             }
 
         });
-        await this.setState({ packInformation: packInformationIn, 
-            packEvents: packEventsIn, 
-            currDisplayedPackEvent: packEventsIn[0], 
-            packRequestsLength: packInformationIn.pack_requests.length, 
-            membersLength: packInformationIn.pack_members.length,
-            packRequests: packInformationIn.pack_requests})
 
-       this.currentUserUUID = this.props.lupa_data.Users.currUserData.user_uuid;
-       if (this.currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
-    
+        await this.setState({
+            packEvents: packEventsIn
+        })
     }
 
     checkUserEventAttendance = async (packEventUUID, packEventTitle, userUUID) => {
-        let isAttendingCurrEventIn = false;
+        let isAttendingCurrEventIn;
 
         await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(isAttendingCurrEvent => {
                  isAttendingCurrEventIn = isAttendingCurrEvent;
              });
 
         await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
-
+             console.log(isAttendingCurrEventIn)
         }
 
         handleAttendEventOption = async () => {
-            let index = this.state.currDisplayedPackEvent;
-             await this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(this.state.packEvents[0].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid);
-             await this.checkUserEventAttendance(this.state.packEvents[0].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid);
+            let index = this.state.currCarouselIndex;
+             await this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(this.state.packEvents[index].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid);
+             await this.checkUserEventAttendance(this.state.packEvents[index].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid);
             }
 
         handleUnattendEventOption = async () => {
-            await this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid)
-            await this.checkUserEventAttendance(this.state.packEvents[this.state.currDisplayedPackEvent].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid); 
+            let index = this.state.currCarouselIndex;
+            await this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(this.state.packEvents[index].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid)
+            await this.checkUserEventAttendance(this.state.packEvents[index].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid); 
         }
 
     mapMembers = () => {
@@ -228,10 +278,10 @@ class PackModal extends React.Component {
     }
 
     handleOnSnapToItem = async (itemIndex) => {
-        await this.setState({ currDisplayedPackEvent: itemIndex });
+        await this.setState({ currCarouselIndex: itemIndex });
 
-        await this.checkUserEventAttendance(this.state.packEvents[itemIndex].pack_uuid, 
-            this.state.packEvents[itemIndex].pack_event_title, this.currentUserUUID);
+       /* await this.checkUserEventAttendance(this.state.packEvents[itemIndex].pack_uuid, 
+            this.state.packEvents[itemIndex].pack_event_title, this.currentUserUUID);*/
     }
 
     handleCreateEventModalClose = () => {
@@ -284,27 +334,18 @@ class PackModal extends React.Component {
                             ref={(c) => { this._carousel = c; }}
                             data={this.state.packEvents}
                             renderItem={this._renderItem}
-                            sliderWidth={Dimensions.get('screen').width}
-                            itemWidth={Dimensions.get('screen').width- 20} 
-                            onBeforeSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
-                            onSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
+                            sliderHeight={Dimensions.get('window').height / 4}
+                            itemHeight={Dimensions.get('window').height / 2} 
+                          onBeforeSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
+                          onSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
+                            vertical={true}
                             />
                             </View>
 }
 
 getButtonColor = () => {
-    if (this.state.packEvents.length == 0) { return ['grey', 'grey']}
-    return this.state.currDisplayedPackEvent.attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid) ? ["grey", "#2196F3"] : ["#2196F3", 'grey'];
-}
-
-getButtonDisabledStatus = () => {
- let attendingStatus = false;
-
- this.checkUserEventAttendance().then(result => {
-     attendingStatus = result;
- });
-
- return [attendingStatus, !attendingStatus]
+    if (this.state.packEvents.length == 0) { return 'grey' }
+    return this.state.packEvents[this.state.currCarouselIndex].attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid) ? "grey" : "#2196F3";
 }
 
     _showActionSheet = () => {
@@ -369,17 +410,11 @@ getButtonDisabledStatus = () => {
 
                     <View style={{ flex: 1 }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
-                            <TouchableOpacity disabled={this.getButtonDisabledStatus()[0]} onPress={() => this.handleAttendEventOption()}>
+                            <TouchableOpacity disabled={this.state.isAttendingCurrEvent} onPress={() => this.handleAttendEventOption()}>
                             <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <FeatherIcon name="check" size={25} color={buttonColors[0]} />
+                                <FeatherIcon name="map-pin" size={25} color={buttonColors} />
                             </Surface>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity disabled={this.getButtonDisabledStatus()[1]} onPress={() => this.handleUnattendEventOption()}>
-                            <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <FeatherIcon name="x" size={25} color={buttonColors[1]} />
-                            </Surface>
-                            </TouchableOpacity>
+                    </TouchableOpacity>
 
                         </View>
 

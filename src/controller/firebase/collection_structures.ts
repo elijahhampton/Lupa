@@ -21,12 +21,13 @@ var lupa_pack_event : LupaPackEventStructure = {
     pack_event_image: '',
 }
 
-export const getLupaPackEventStructure = (title, description, date, image) => {
+export const getLupaPackEventStructure = (title, description, date, time, image) => {
     lupa_pack_event.pack_event_title = title;
     lupa_pack_event.pack_event_description = description;
     lupa_pack_event.pack_event_date = date;
     lupa_pack_event.pack_event_image = image;
     lupa_pack_event.pack_event_stage = 'Active';
+    lupa_pack_event.pack_event_time = time;
 
     return lupa_pack_event;
 }

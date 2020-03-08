@@ -5,16 +5,22 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-    RefreshControl
+    RefreshControl,
+    View,
+    SafeAreaView,
+    Image
 } from 'react-native';
 
 import {
-    Button,
     Caption,
     Surface,
     Avatar,
     Headline
 } from 'react-native-paper';
+
+import { Button } from 'react-native-elements';
+
+import {NavigationContext, NavigationActions } from 'react-navigation';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -25,9 +31,12 @@ const mapStateToProps = (state, action) => {
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
+import { withNavigation } from 'react-navigation';
+
 import { connect } from 'react-redux';
 
 class SessionCompleteModal extends React.Component {
+    static contextType = NavigationContext;
     constructor(props) {
         super(props);
 
@@ -106,17 +115,63 @@ class SessionCompleteModal extends React.Component {
         })
     }
 
+    handleRequestAnotherSession = async () => {
+       
+
+
+        await this.props.navigation.dispatch(
+
+            await NavigationActions.navigate({
+              routeName: 'Profile',
+              params: {userUUID: this.state.currUserUUID, navFrom: 'Dashboard'},
+              action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.otherUserUUID, navFrom: 'Dashboard'}})
+            })
+        )
+
+        await this.props.closeModalMethod();
+    }
+
     render() {
+        const navigation = this.context;
         return (
-            <Modal visible={this.props.isOpen} style={{flex: 1, alignItems: "center", justifyContent: 'center'}} presentationStyle="fullScreen">
-            <Text style={{alignSelf: 'center', fontWeight: '20', fontWeight: 'bold'}}>
+            <Modal 
+            visible={this.props.isOpen} 
+            style={{margin: 0, display: 'flex', flex: 1}} 
+            presentationStyle="fullScreen">
+                <SafeAreaView style={{flex: 1, padding: 10, justifyContent: 'space-evenly', marginBottom: 10, marginTop: 10}}>
+                <Text style={{alignSelf: 'center', fontSize: 30, fontWeight: '600', color: "black"}}>
                 You have completed your session with {this.state.otherUserInformation.display_name}.  Visit their profile to setup another.
             </Text>
 
-            <Button title="Exit" onPress={() => this.props.closeModalMethod()}/>
+            <Image style={{alignSelf: 'center', width: '80%', height: '45%'}} defaultSource={require('../../../images/profile_picture1.jpeg')} />
+
+            <View>
+            <Button
+  title="Request Another Session"
+  type="solid"
+  style={{padding: 10, margin: 5}}
+  onPress={() => this.props.navigation.dispatch(
+
+    NavigationActions.navigate({
+      routeName: 'Profile',
+      params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'},
+      action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'}})
+    })
+                )}
+/>
+
+<Button
+  title="Finish Session"
+  type="outline"
+  style={{padding: 10, margin: 5}}
+  onPress={() => this.handleRequestAnotherSession()}
+/>
+            </View>
+                </SafeAreaView>
         </Modal>
         )
     }
 }
 
-export default connect(mapStateToProps)(SessionCompleteModal);
+
+export default connect(mapStateToProps)(withNavigation(SessionCompleteModal));

@@ -47,7 +47,6 @@ export default class SessionController {
         let found = false;
         docs.forEach(doc => {
           let sessionData = doc.data();
-          console.log(sessionData);
 
           if (sessionData.sessionMode != 'Expired' &&  sessionData.sessionStatus != "Pending" || sessionData.attendeeOneRemoved != false)
           {
@@ -60,12 +59,12 @@ export default class SessionController {
       });
 
       await SESSIONS_COLLECTION.where('attendeeTwo', '==', currUserUUID).get().then(docs => {
-        console.log('find df 22')
+
         docs.forEach(doc => {
           let sessionData = doc.data();
           if (sessionData.sessionMode != 'Expired' &&  sessionData.sessionStatus != "Pending" || sessionData.attendeeTwoRemoved != false)
           {
-            console.log('pushing it')
+
             let sessionID = doc.id;
             let sessionObject = {sessionID, sessionData}
             sessions.push(sessionObject);            
@@ -135,8 +134,6 @@ export default class SessionController {
           let currentTimes = currentSessionDocumentInformation.time_periods;
           let newTimes = [];
           currentTimes.includes(value) ? currentTimes.splice(currentTimes.indexOf(value), 1) : currentTimes.push(value);
-          console.log(currentTimes);
-          console.log(value)
           await currentSessionDocument.set({
             time_periods: currentTimes,
           }, {

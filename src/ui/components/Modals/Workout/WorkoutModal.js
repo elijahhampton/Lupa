@@ -17,11 +17,14 @@ import Swiper from 'react-native-swiper';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
+import LupaController from '../../../../controller/lupa/LupaController';
+
 import {
     IconButton,
     Surface,
     Divider,
-    Chip
+    Chip,
+    Title
 } from 'react-native-paper';
 
 import {
@@ -32,7 +35,14 @@ import {
     Left
 } from 'native-base';
 
+import {
+    GOAL_UID,
+    GOAL_PATHWAY_STRUCTURE_UID
+} from '../../../../model/data_structures/workout/types';
+
 import SingleWorkoutComponent from '../../MainViews/workout/components/SingleWorkoutComponent';
+
+import { BlurView } from 'expo-blur';
 
 const chipSelectedColor = "#3F51B5"
 
@@ -46,16 +56,55 @@ const mapDispatchToProps = action => {
 
 }
 
-const GoalPathwayWelcome = props => {
+const getGoalPathwayComponent = (goalUUID, goalPathwayUUID, workouts) => {
+    if (goalUUID == GOAL_UID.IMPROVE_STRENGTH)
+    {
+        switch(goalPathwayUUID)
+        {
+            case GOAL_PATHWAY_STRUCTURE_UID.IMPROVE_STRENGTH_WEIGHTLIFTING: 
+                return (
+                <Swiper loop={false} horizontal={false} showsPagination={false}>
+                    <ImproveStrengthWeightliftingGoalPathwayWelcome />
+                    <ImproveStrengthWeightliftingGoalPathwayWarmUp />
+                    <ImproveStrengthWeightliftingGoalPathwayPrimeWorkouts workoutData={workouts} />
+                    <ImproveStrengthWeightliftingGoalPathwayPostWorkout />
+                </Swiper>
+                );
+            case GOAL_PATHWAY_STRUCTURE_UID.IMPROVE_STRENGTH_CALISTHENICS:
+            case GOAL_PATHWAY_STRUCTURE_UID.IMPROVE_STRENGTH_METABOLIC:
+        }
+    }
+
+    if (goalUUID == GOAL_UID.IMPROVE_POWER)
+    {
+
+    }
+
+    if (goalUUID == GOAL_UID.IMPROVE_STAMINA)
+    {
+        
+    }
+
+    if (goalUUID = GOAL_UID.IMPROVE_FLEXIBILITY)
+    {
+
+    }
+}
+
+const ImproveStrengthWeightliftingGoalPathwayWelcome = props => {
     return (
         <View style={styles.container}>
+            <BlurView tint="dark" intensity={100} style={styles.blurred}>
             <LinearGradient
-                colors={['#64B5F6', '#1E88E5', '#0D47A1']}
+                colors={['#ef5350', '#e53935', '#c62828', '#b71c1c']}
                 style={{ padding: 15, flex: 1 }}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                     <Headline>
                         Strength Improvement
                 </Headline>
+                <Title>
+                    Weightlifting
+                </Title>
                 </View>
 
                 <View style={{ flex: 2, alignItems: 'center', justifyContent: 'space-evenly', flexDirection: 'column' }}>
@@ -81,11 +130,12 @@ const GoalPathwayWelcome = props => {
                 </Caption>
                 </View>
             </LinearGradient>
+            </BlurView>
         </View>
     );
 }
 
-const GoalPathwayWarmUp = props => {
+const ImproveStrengthWeightliftingGoalPathwayWarmUp = props => {
     const [ chipSelected, setChipSelected ] = useState(false);
 
     handleChipSelected = () => {
@@ -177,7 +227,8 @@ const GoalPathwayWarmUp = props => {
     );
 }
 
-const GoalPathwayPrimeWorkouts = props => {
+const ImproveStrengthWeightliftingGoalPathwayPrimeWorkouts = props => {
+    const [workoutData, setWorkoutData] = useState(props.workoutData);
     return (
         <View style={[styles.container, { backgroundColor: 'rgb(244, 247, 252)' }]}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -193,6 +244,8 @@ const GoalPathwayPrimeWorkouts = props => {
                             </Text>
                     </View>
                     <ScrollView showsVerticalScrollIndicator={false}>
+                    {
+                        /*
                         <SingleWorkoutComponent />
                         <SingleWorkoutComponent />
                         <SingleWorkoutComponent />
@@ -213,6 +266,16 @@ const GoalPathwayPrimeWorkouts = props => {
                         <SingleWorkoutComponent />
                         <SingleWorkoutComponent />
                         <SingleWorkoutComponent />
+                        */
+                    }
+
+                    {
+                       /* workoutData.primeWorkouts.map(workout => {
+                            return (
+                            <SingleWorkoutComponent />
+                            )
+                        })*/
+                    }
                     </ScrollView>
                 </Surface>
             </View>
@@ -225,7 +288,7 @@ const GoalPathwayPrimeWorkouts = props => {
     );
 }
 
-const GoalPathwayPostWorkout = props => {
+const ImproveStrengthWeightliftingGoalPathwayPostWorkout = props => {
     return (
         <View style={[styles.container, { backgroundColor: 'rgb(244, 247, 252)' }]}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -278,22 +341,51 @@ class WorkoutModal extends React.Component {
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
             userHealthData: "",
+            goalUUID: this.props.navigation.state.params.goalUUID,
             goalPathwayUUID: this.props.navigation.state.params.goalPathwayUUID,
             chipSelected: false,
+            modality: this.props.modality,
+            workouts: [],
         }
     }
+
+    componentDidMount = async () => {
+        await this.setupComponent();
+    }
+
+    setupComponent = async () => {
+        let healthDataIn, workoutsIn;
+
+        //load users health data
+        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
+            healthDataIn = result;
+        })
+
+        //load workouts
+        await this.LUPA_CONTROLLER_INSTANCE.getWorkoutsFromModalityByType('calisthenics').then(result => {
+            workoutsIn = result;
+        })
+
+
+
+        await this.setState({
+            healthData: healthDataIn,
+            workouts: workoutsIn,
+        });
+    }
+
+
 
     render() {
         return (
             <Container style={styles.root} index={false}>
-                <Swiper loop={false} horizontal={false} showsPagination={false}>
-                    <GoalPathwayWelcome />
-                    <GoalPathwayWarmUp />
-                    <GoalPathwayPrimeWorkouts />
-                    <GoalPathwayPostWorkout />
-                </Swiper>
+                {
+                    getGoalPathwayComponent(this.state.goalUUID, this.state.goalPathwayUUID, this.state.workouts)
+                }
             </Container>
         )
     }
@@ -319,6 +411,9 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '500',
         elevation: 3
+    },
+    blurred: {
+        ...StyleSheet.absoluteFill
     }
 });
 
