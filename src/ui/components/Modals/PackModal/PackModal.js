@@ -155,9 +155,10 @@ class PackModal extends React.Component {
        await this.setupPackModal();
     }
 
-    _navigateToPackChat = (uuid) => {
+    _navigateToPackChat = () => {
+       const UUID = this.props.navigation.state.params.packUUID;
         this.props.navigation.navigate('PackChat', {
-            packUUID: uuid
+            packUUID: UUID
         })
     }
 
@@ -392,7 +393,7 @@ getButtonColor = () => {
                                 {
                                     this._renderMoreVert()
                                 }
-                                <IconButton icon="chat-bubble-outline" color="black" onPress={() => this._navigateToPackChat()} />
+                                <IconButton icon="chat-bubble-outline" color="black" onPress={() => this._navigateToPackChat(this.state.packUUID)} />
                             </View>
                         </View>
                     </View>

@@ -68,7 +68,7 @@ class AddPaymentModal extends React.Component {
                             },
                             function(err, token) {
                               // asynchronously called
-                              console.log(err);
+                          
                             }
                           )
                         
