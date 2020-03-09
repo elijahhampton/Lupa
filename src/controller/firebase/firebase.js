@@ -96,6 +96,28 @@ export class FirebaseStorageBucket {
 
   }
 
+  urlToBlob = string => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        // return the blob
+        console.log('xhr respones: ' )
+        console.log(xhr.response);
+        resolve(xhr.response);
+      };
+        console.log('here')
+      xhr.onerror = function() {
+        // something went wrong
+        reject(new Error('uriToBlob failed'));
+      };
+      // this helps us get a blob
+      xhr.responseType = 'blob';
+      xhr.open('GET', string, true);
+      
+      xhr.send(null);
+    });
+  }
+
   saveUserProfileImage = async (blob) => {
     const user_uuid = await LUPA_AUTH.currentUser.uid;
     LUPA_USER_PROFILE_IMAGES_STORAGE_REF.child(user_uuid).put(blob);
@@ -110,8 +132,10 @@ export class FirebaseStorageBucket {
     return Promise.resolve(link)
   }
 
-  savePackImage = (blob, uuid) => {
-    LUPA_PACK_IMAGE_STORAGE_REF.child(uuid).put(blob);
+  savePackImage = async (blob, uuid) => {
+    await LUPA_PACK_IMAGE_STORAGE_REF.child(uuid).put(blob).then(res => {
+      console.log(res);
+    })
   }
 
   getPackImageFromUUID = async (uuid) => {
@@ -130,14 +154,15 @@ export class FirebaseStorageBucket {
         link = url;
       });
     }
-
-
-    console.log('from firebase pack image : '  + link)
     return Promise.resolve(link);
   }
 
-  savePackEventImage = (blob, uuid) => {
-    LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(uuid).put(blob);
+  savePackEventImage = async (string, uuid) => {
+  /*  await this.urlToBlob(blob).then(blob => {
+      console.log('are we here?')
+      LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(uuid).put(blob);
+    })
+*/
   }
 
   getPackEventImageFromUUID = async (uuid) => {

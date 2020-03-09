@@ -71,11 +71,22 @@ class UserSearchResultCard extends React.Component {
     }
 
     returnUserAvatar = () => {
-        try {
-            return <Avatar.Image source={{uri: this.state.profilePicture}} size={30} style={{margin: 3}} />
-        } catch(error)
+        if (this.state.profilePicture == "" || this.state.profilePicture == "undefined" 
+         || this.state.profilePicture == '')
         {
-            return  <Avatar.Text label="" size={30} style={{margin: 3}} />
+            try {
+                let userDisplayName = this.props.title.split(" ");
+                let firstName = userDisplayName[0].charAt(0);
+                let lastName = userDisplayName[1].charAt(0);
+                return <Avatar.Text label={firstName+lastName} size={30} style={{margin: 3}}/>
+            } catch(err)
+            {
+                return <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+            }
+        }
+        else
+        {
+            return <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
         }
     }
 

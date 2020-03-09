@@ -103,11 +103,11 @@ class SearchView extends React.Component {
     }
 
     mapTrainers = () => {
-        return this.state.trainers.map(trainer => {
+       {/* return this.state.trainers.map(trainer => {
             return (
                 <TrainerCard userUUID={trainer.user_uuid} displayName={trainer.display_name} sessionsCompleted={trainer.sessions_completed} location={trainer.location} />
             )
-        })
+        })*/}
     }
 
     async _prepareSearch() {
@@ -115,6 +115,19 @@ class SearchView extends React.Component {
     }
 
     _performSearch = async searchQuery => {
+        let searchResultsIn;
+        
+        //If no search query then set state and return 
+        if (searchQuery == "" || searchQuery == '')
+        {
+            await this.setState({
+                searchValue: "",
+                searchResults: []
+            });
+
+            return;
+        }
+
         await this.setState({
             searchResults: []
         })
@@ -123,12 +136,20 @@ class SearchView extends React.Component {
             searchValue: searchQuery
         })
 
-        this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
-            this.setState({ searchResults: searchData })
+        await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+            searchResultsIn = searchData;
         })
+
+        await this.setState({ searchResults: searchResultsIn })
     }
     
     showSearchResults() {
+        //if the searchResults are 0 or undefined then we don't want to display anything
+        if (this.state.searchResults.length == 0 || this.state.searchResults == undefined 
+            || typeof(this.state.searchResults[0]) != "object")
+            {
+                return;
+            }
         return this.state.searchResults.map(result => {
             switch(result.resultType)
             {
