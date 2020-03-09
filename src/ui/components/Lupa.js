@@ -45,14 +45,15 @@ class Lupa extends React.Component {
     this._showWelcomeModal = this._showWelcomeModal.bind(this);
   }
 
-  componentDidMount = () => {
-    this._showWelcomeModal();
-   this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+  componentDidMount = async () => {
+    await this._showWelcomeModal();
+    await this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
 
   _showWelcomeModal = async () => {
+  const user_uuid = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
   let _isNewUser;
-  await AsyncStorage.getItem('isNewUser').then(result => {
+  await AsyncStorage.getItem(`${user_uuid}_` + 'isNewUser').then(result => {
     _isNewUser = result;
   })
   
@@ -75,7 +76,7 @@ class Lupa extends React.Component {
 
 _handleWelcomeModalClose = async () => {
   await this.setState({ isNewUser: false })
-  await AsyncStorage.setItem('isNewUser', 'false');
+  await AsyncStorage.setItem(`${user_uuid}_` + 'isNewUser', 'false');
 }
   
 _navigateToAuth = async () => {
