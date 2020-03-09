@@ -75,6 +75,7 @@ class Lupa extends React.Component {
 }
 
 _handleWelcomeModalClose = async () => {
+  const user_uuid = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
   await this.setState({ isNewUser: false })
   await AsyncStorage.setItem(`${user_uuid}_` + 'isNewUser', 'false');
 }

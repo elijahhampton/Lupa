@@ -363,7 +363,7 @@ class TrainerDashboardView extends React.Component {
                         }
                         </ScrollView>
 
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length} />
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length && true ? this.state.sessionData.length : 0 } />
                     </View>
 
                         <Divider style={styles.divider} />
@@ -380,7 +380,7 @@ class TrainerDashboardView extends React.Component {
                             this.populatePackInvites()
                         }
                         </ScrollView>
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length}/>
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.packInvites.length && true ? this.state.packInvites.length : 0}/>
                     </View>
 
                     <Divider style={styles.divider} />
@@ -397,7 +397,7 @@ class TrainerDashboardView extends React.Component {
                             this.populatePackEvents()
                         }
                         </ScrollView>
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length}/>
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.packEventsData.length && true ? this.state.packEventsData.length : 0}/>
                     </View>
 
                         <Divider style={styles.divider} />
