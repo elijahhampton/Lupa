@@ -14,16 +14,11 @@ import {
     StyleSheet,
     TouchableOpacity,
     ScrollView,
-    Dimensions,
-    TouchableWithoutFeedback,
     RefreshControl,
-    Image,
 } from 'react-native';
 
 import {
-    Surface,
     IconButton,
-    Menu,
     Provider,
     Portal,
     Modal,
@@ -31,27 +26,19 @@ import {
     Paragraph,
     Divider,
     Caption,
-    FAB,
     Chip,
     Button
 } from 'react-native-paper';
 
 import { Pagination } from 'react-native-snap-carousel';
 
-import { Feather as Icon } from '@expo/vector-icons';
-
 import LupaCalendar from '../../Calendar/LupaCalendar'
 
 import SafeAreaView from 'react-native-safe-area-view';
 
-import SessionNotificationContainer, {PackEventNotificationContainer} from './Components/SessionNotificationContainer';
-
-const chartWidth = Dimensions.get('screen').width - 20;
-const chartHeight = 250;
+import SessionNotificationContainer, { PackEventNotificationContainer } from './Components/SessionNotificationContainer';
 
 import LupaController from '../../../../controller/lupa/LupaController';
-
-const AppLogo = require('../../../images/applogo.png')
 
 import { connect } from 'react-redux';
 
@@ -79,19 +66,19 @@ const PackInviteModal = props => {
     return (
         <Provider>
             <Portal>
-                <Modal visible={props.isOpen} contentContainerStyle={{alignSelf: 'center', padding: 15, height: 'auto', backgroundColor: 'white', margin: 0, width: '90%', borderRadius: 3}}>
+                <Modal visible={props.isOpen} contentContainerStyle={{ alignSelf: 'center', padding: 15, height: 'auto', backgroundColor: 'white', margin: 0, width: '90%', borderRadius: 3 }}>
                     <Title>
                         {props.packTitle}
                     </Title>
                     <Paragraph>
                         You have been invited to join the {props.packTitle} pack.
                     </Paragraph>
-                    <View style={{justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center'}}>
-                        <Button color="#2196F3" style={{marginLeft: 5}} onPress={() => handleAccept(props.packID, props.currUserID)}>
+                    <View style={{ justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center' }}>
+                        <Button color="#2196F3" style={{ marginLeft: 5 }} onPress={() => handleAccept(props.packID, props.currUserID)}>
                             Accept
                         </Button>
 
-                        <Button color="#2196F3" style={{marginLeft: 3}} onPress={() => this.handleDecline(props.packID, props.currUserID)}>
+                        <Button color="#2196F3" style={{ marginLeft: 3 }} onPress={() => this.handleDecline(props.packID, props.currUserID)}>
                             Decline
                         </Button>
                     </View>
@@ -128,48 +115,45 @@ class TrainerDashboardView extends React.Component {
     }
 
     _onRefresh = async () => {
-        this.setState({refreshing: true});
+        this.setState({ refreshing: true });
         await this.fetchSessions()
         await this.fetchPackEvents()
         await this.fetchPackInvites()
-        this.setState({refreshing: false});
-      }
+        this.setState({ refreshing: false });
+    }
 
-      /**
-       * Fetch Sessions
-       * 
-       * Fetch user sessions from the LupaController.
-       */
-      fetchSessions = async () => {
-          let sessionDataIn;
+    /**
+     * Fetch Sessions
+     * 
+     * Fetch user sessions from the LupaController.
+     */
+    fetchSessions = async () => {
+        let sessionDataIn;
 
         await this.LUPA_CONTROLLER_INSTANCE.getUserSessions().then(res => {
             sessionDataIn = res;
         });
 
         //If this user has no sessions then we just return from the function
-        if (sessionDataIn.length == 0 || sessionDataIn.length == undefined)
-        {
-            return; 
+        if (sessionDataIn.length == 0 || sessionDataIn.length == undefined) {
+            return;
         }
 
 
         //if session status pending and active.. nothing to do
-        
+
         //if session status is set and expired... nothing to do
 
         //if session status is set and active... nothing to do
 
         //Check if session date is passed mark as expired and pending and remove session.. we'll let user remove the others
-        for (let i = 0; i < sessionDataIn.length; ++i)
-        {
+        for (let i = 0; i < sessionDataIn.length; ++i) {
             let sessionDate = sessionDataIn[i].sessionData.date;
             //check to see if session has expired
             let sessionDateParts = sessionDate.split('-');
             let month = sessionDateParts[0], day = sessionDateParts[1], year = sessionDateParts[2];
             let realMonth;
-            switch(month)
-            {
+            switch (month) {
                 case 'January':
                     realMonth = 1;
                     break;
@@ -209,22 +193,20 @@ class TrainerDashboardView extends React.Component {
                 default:
             }
 
-            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
-            new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Set' || 
-                new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set')
-        {
-            this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
-        }
+            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set' ||
+                new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Set' ||
+                new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set') {
+                this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
+            }
 
-        
+
             //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
-            
+
             //Check session is past and remove - we remove pending sessions that have expired - 
             //todo: NEED TO CHECK FOR TIME HERE AS WELL
-            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' || 
-                new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' || 
-                    new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending')
-            {
+            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' ||
+                new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' ||
+                new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending') {
                 this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
                 sessionDataIn.splice(sessionDataIn.splice(i, 1));
             }
@@ -234,26 +216,25 @@ class TrainerDashboardView extends React.Component {
         await this.setState({
             sessionData: sessionDataIn
         });
-      }
+    }
 
-      /**
-       * Fetch Pack Events
-       */
-      fetchPackEvents = async () => {
-          let currentUserPackEventsData = [];
+    /**
+     * Fetch Pack Events
+     */
+    fetchPackEvents = async () => {
+        let currentUserPackEventsData = [];
 
-          for (let i = 0; i < this.state.currUserPacksData.length; i++)
-          {
-              await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.currUserPacksData[i].id).then(result => {
+        for (let i = 0; i < this.state.currUserPacksData.length; i++) {
+            await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.currUserPacksData[i].id).then(result => {
                 currentUserPackEventsData = result;
-              })
-          }
+            })
+        }
 
-          await this.setState({ packEventsData: currentUserPackEventsData });
+        await this.setState({ packEventsData: currentUserPackEventsData });
 
-      }
+    }
 
-      fetchPackInvites = async () => {
+    fetchPackInvites = async () => {
         let currentUserPackInvites = [];
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackInvitesFromUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
@@ -262,149 +243,149 @@ class TrainerDashboardView extends React.Component {
 
         await this.setState({ packInvites: currentUserPackInvites });
 
-      }
+    }
 
-      /**
-       * Populate Sessions
-       * 
-       * Populate the sessions section with any sessions pending that this user might have.
-       * 
-       * TODO: Pash in session UUID and populate inside of container
-       */
-      populateSessions = () => {
-          return this.state.sessionData.length == 0 ?
-          <Caption>
-              You are not apart of any upcoming sessions.
+    /**
+     * Populate Sessions
+     * 
+     * Populate the sessions section with any sessions pending that this user might have.
+     * 
+     * TODO: Pash in session UUID and populate inside of container
+     */
+    populateSessions = () => {
+        return this.state.sessionData.length == 0 ?
+            <Caption>
+                You are not apart of any upcoming sessions.
           </Caption>
-          :
-          this.state.sessionData.map(session => {
-              let sessionDate = session.sessionData.date;
-              let date = sessionDate.split("-")
-              let parsedDate = date[0] + " " + date[1] + "," + date[2];
-              //Return a session notification container
-              //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
-              return (
-                <SessionNotificationContainer sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus}/>
-               )
-          })
-      }
+            :
+            this.state.sessionData.map(session => {
+                let sessionDate = session.sessionData.date;
+                let date = sessionDate.split("-")
+                let parsedDate = date[0] + " " + date[1] + "," + date[2];
+                //Return a session notification container
+                //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
+                return (
+                    <SessionNotificationContainer sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus} />
+                )
+            })
+    }
 
-      populatePackEvents = () => {
-        
-        return this.state.packEventsData == 0 ? 
-        <Caption>
-            You are not apart of any upcoming pack events.
+    populatePackEvents = () => {
+
+        return this.state.packEventsData == 0 ?
+            <Caption>
+                You are not apart of any upcoming pack events.
         </Caption>
-        :
+            :
 
-        this.state.packEventsData.map(pack => {
-            return (
-            <PackEventNotificationContainer packUUID={pack.pack_uuid} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date} numAttending={pack.attendees.length}/>
-            )
-        });
-      }
+            this.state.packEventsData.map(pack => {
+                return (
+                    <PackEventNotificationContainer packUUID={pack.pack_uuid} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date} numAttending={pack.attendees.length} />
+                )
+            });
+    }
 
-      populatePackInvites = () => {
+    populatePackInvites = () => {
         return this.state.packInvites == 0 ?
-        <Caption>
-            You don't have any outstanding pack invites.
+            <Caption>
+                You don't have any outstanding pack invites.
         </Caption>
-        :
-        this.state.packInvites.map(invites => {
-            return (
-                <TouchableOpacity onPress={() => {this.handlePackInvite(invites.id, invites.pack_title)}} >
-                <Chip mode="flat" style={{backgroundColor: "#90CAF9", margin: 5, borderRadius: 10, width: 'auto'}}>
-                    {invites.pack_title}
-                </Chip>
-                </TouchableOpacity>
-            )
-        })
-      }
+            :
+            this.state.packInvites.map(invites => {
+                return (
+                    <TouchableOpacity onPress={() => { this.handlePackInvite(invites.id, invites.pack_title) }} >
+                        <Chip mode="flat" style={{ backgroundColor: "#90CAF9", margin: 5, borderRadius: 10, width: 'auto' }}>
+                            {invites.pack_title}
+                        </Chip>
+                    </TouchableOpacity>
+                )
+            })
+    }
 
 
-      handlePackInvite = (inviteID, title) => {
+    handlePackInvite = (inviteID, title) => {
         this.setState({ openedPackInviteID: inviteID, openedPackTitle: title, packInviteModalOpen: true });
-      }
+    }
 
-      handlePackInviteModalClose = () => {
-          this.setState({ packInviteModalOpen: false })
-      }
+    handlePackInviteModalClose = () => {
+        this.setState({ packInviteModalOpen: false })
+    }
 
     render() {
         return (
-                <SafeAreaView style={{flex: 1, padding: 5,  backgroundColor: "#2196F3"}}>
+            <SafeAreaView style={styles.safeareaview}>
                 <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
-                <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-          />}>  
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this._onRefresh}
+                    />}>
 
-          <View style={{flexDirection: 'row', alignItems: 'center', margin: 10, width: "100%", height: "auto"}}>
-                        <IconButton icon="menu" style={{alignSelf: "flex-start"}} onPress={() => this.props.navigation.openDrawer()}/>
-                        <Text style={{fontSize: 50, fontWeight: '600', color: 'white', alignSelf: "center"}}>
+                    <View style={styles.header}>
+                        <IconButton icon="menu" style={styles.iconButton} onPress={() => this.props.navigation.openDrawer()} />
+                        <Text style={styles.headerText}>
                             Lupa
                         </Text>
-                        </View>  
-
-                                    <LupaCalendar />  
-
-                                    <Divider style={styles.divider} />
-
-            <View>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 3}}>
-                <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
-                            Sessions
-                        </Text>
-                </View>
-
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {
-                            this.populateSessions()
-                        }
-                        </ScrollView>
-
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length && true ? this.state.sessionData.length : 0 } />
                     </View>
 
-                        <Divider style={styles.divider} />
+                    <LupaCalendar />
 
-                        <View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 3}}>
-                <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
-                            Pack Invites
+                    <Divider style={styles.divider} />
+
+                    <View>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionHeaderText}>
+                                Sessions
                         </Text>
+                        </View>
 
-                </View>
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                        {
-                            this.populatePackInvites()
-                        }
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
+                            {
+                                this.populateSessions()
+                            }
                         </ScrollView>
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.packInvites.length && true ? this.state.packInvites.length : 0}/>
+
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length && true ? this.state.sessionData.length : 0} />
                     </View>
 
                     <Divider style={styles.divider} />
 
                     <View>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 3}}>
-                <Text style={{fontSize: 20, fontWeight: "500", color: 'white'}}>
-                            Pack Events
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionHeaderText}>
+                                Pack Invites
                         </Text>
 
-                </View>
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                        {
-                            this.populatePackEvents()
-                        }
+                        </View>
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+                            {
+                                this.populatePackInvites()
+                            }
                         </ScrollView>
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.packEventsData.length && true ? this.state.packEventsData.length : 0}/>
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.packInvites.length && true ? this.state.packInvites.length : 0} />
                     </View>
 
-                        <Divider style={styles.divider} />
+                    <Divider style={styles.divider} />
+
+                    <View>
+                        <View style={styles.sectionHeader}>
+                            <Text style={styles.sectionHeaderText}>
+                                Pack Events
+                        </Text>
+
+                        </View>
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+                            {
+                                this.populatePackEvents()
+                            }
+                        </ScrollView>
+                        <Pagination dotColor="#1A237E" dotsLength={this.state.packEventsData.length && true ? this.state.packEventsData.length : 0} />
+                    </View>
+
+                    <Divider style={styles.divider} />
 
 
                     <View>
-                        <Text style={{fontSize: 20, fontWeight: "500", color: 'white', margin: 3}}>
+                        <Text style={styles.sectionHeaderText}>
                             Recent Workouts
                         </Text>
                         <Caption>
@@ -412,9 +393,9 @@ class TrainerDashboardView extends React.Component {
                         </Caption>
                     </View>
                 </ScrollView>
-                <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid}/>
-                </SafeAreaView>
-        );                    
+                <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid} />
+            </SafeAreaView>
+        );
     }
 }
 
@@ -424,22 +405,40 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         flexDirection: 'column',
     },
-    charts: {
-        flexDirection: "column",
-        justifyContent: "space-between",
-        alignItems: "center",
-        display: "flex",
+    safeareaview: {
+        flex: 1, 
+        padding: 5, 
+        backgroundColor: "#2196F3"
     },
-    buttonSurface: {
-        borderRadius: 40,
-        width: 50,
-        height: 50,
-        elevation: 10,
-        alignItems: "center",
-        justifyContent: "center",
+    header: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        margin: 10, 
+        width: "100%", 
+        height: "auto"
+    },
+    headerText: {
+        fontSize: 50, 
+        fontWeight: '600', 
+        color: 'white', 
+        alignSelf: "center"
+    },
+    sectionHeader: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        margin: 3
+    },
+    sectionHeaderText: {
+        fontSize: 20, 
+        fontWeight: "500", 
+        color: 'white'
     },
     divider: {
         margin: 8
+    },
+    iconButton: {
+        alignSelf: "flex-start"
     }
 });
 

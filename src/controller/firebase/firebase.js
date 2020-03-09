@@ -34,6 +34,7 @@ export class Fire {
   }
 
   init(uuid) {
+    console.log('uhh:       ' + uuid)
     this.dbRefString = `messages/${uuid}`;
     this.ref = LUPA_DB_FIREBASE.ref(this.dbRefString);
   }
@@ -94,28 +95,6 @@ Fire.shared = new Fire();
 export class FirebaseStorageBucket {
   constructor() {
 
-  }
-
-  urlToBlob = string => {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        // return the blob
-        console.log('xhr respones: ' )
-        console.log(xhr.response);
-        resolve(xhr.response);
-      };
-        console.log('here')
-      xhr.onerror = function() {
-        // something went wrong
-        reject(new Error('uriToBlob failed'));
-      };
-      // this helps us get a blob
-      xhr.responseType = 'blob';
-      xhr.open('GET', string, true);
-      
-      xhr.send(null);
-    });
   }
 
   saveUserProfileImage = async (blob) => {
