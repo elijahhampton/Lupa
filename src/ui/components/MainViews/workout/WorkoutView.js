@@ -234,7 +234,7 @@ class WorkoutView extends React.Component {
 
                         <Image style={{width: '30%', height: '40%'}} defaultSource={require('../../../images/logo.png')} />
                         <Text style={{margin: 10, alignSelf: 'center', fontSize: 20, fontWeight: 600, color: "black"}}>
-                            Elijah Hampton
+                            {this.state.currUserData.display_name}
                         </Text>
                 </Header>
                 <View style={{backgroundColor: 'white', flex: 1}}>

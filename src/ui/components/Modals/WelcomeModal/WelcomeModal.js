@@ -45,9 +45,12 @@ export default class WelcomeModal extends React.Component {
             pageChangedForward: false,
             progress: 0
         }
-
-        _requestPermissionsAsync();
+        
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    }
+
+    componentDidMount = async () => {
+        await this._requestPermissionsAsync();
     }
 
     _handleNextViewClick = () => {
