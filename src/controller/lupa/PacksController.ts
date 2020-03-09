@@ -6,7 +6,7 @@
 //subscription
 //
 
-import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket} from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket, LUPA_PACK_IMAGE_STORAGE_REF} from '../firebase/firebase.js';
 
 const PACKS_COLLECTION = LUPA_DB.collection('packs');
 const PACKS_EVENT_COLLECTION = LUPA_DB.collection('pack_events');
@@ -56,6 +56,9 @@ class PacksController {
     }
   }
 
+  urlToBlob = async (string) => {
+  }
+
   savePackImage = async (string, uuid) => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -70,7 +73,8 @@ class PacksController {
       xhr.send(null);
     });
 
-    this.fbStorage.savePackImage(blob, uuid);
+    console.log('DIIIIIIIIIIIIIIIIIID WE REACH THIS POINT???')
+  this.fbStorage.savePackImage(blob, uuid);
   }
 
   savePackEventImage = async (string, uuid) => {
@@ -87,7 +91,8 @@ class PacksController {
       xhr.send(null);
     });
 
-  this.fbStorage.saveUserProfileImage(blob, uuid);
+    console.log('DIIIIIIIIIIIIIIIIIID WE REACH THIS POINT???')
+  this.fbStorage.savePackEventImage(blob, uuid);
   }
 
   getPackEventImageFromUUID = async (uuid) => {
@@ -540,12 +545,15 @@ class PacksController {
     return Promise.resolve(packEventsData);
   }
 
-  createPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packImageSource) => {
+  createPack = async (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packImageSource) => {
     const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type);
-    PACKS_COLLECTION.doc().set(lupaPackStructure);
-    PACKS_COLLECTION.add(lupaPackStructure).then(ref => {
-      this.savePackImage(packImageSource, ref.id);
-    })
+    let packRef;
+    await PACKS_COLLECTION.add(lupaPackStructure).then(ref => {
+      alert('creating pack as iD' + ref.id)
+      packRef = ref.id;
+    });
+
+    this.savePackImage(packImageSource, packRef);
   }
 
   createPackEvent = async (packUUID, title, description, datetime, eventImage) => {

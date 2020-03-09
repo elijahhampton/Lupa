@@ -65,13 +65,34 @@ class TrainerSearchResultCard extends React.Component {
         })
     }
 
+    
+    renderUserAvatar = () => {
+        if (this.state.profilePicture == "" || this.state.profilePicture == "undefined" 
+         || this.state.profilePicture == '')
+        {
+            try {
+                let userDisplayName = this.props.title.split(" ");
+                let firstName = userDisplayName[0].charAt(0);
+                let lastName = userDisplayName[1].charAt(0);
+                return <Avatar.Text label={firstName+lastName} size={30} style={{margin: 3}}/>
+            } catch(err)
+            {
+                return <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+            }
+        }
+        else
+        {
+            return <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+        }
+    }
+
     render() {
         return (
             <TouchableWithoutFeedback onPress={this._handleViewProfile} style={styles.touchableOpacity}>
             <Surface style={[styles.cardContainer]}>
                 <View style={styles.cardContent}>
                     <View style={styles.userInfoContent}>
-                    <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+                    {this.renderUserAvatar()}
                     <View style={{flexDirection: 'column'}}>
                     <Text style={styles.titleText}>
                             {this.props.title}

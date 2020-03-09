@@ -4,14 +4,9 @@ import {
     Text,
     View,
     StyleSheet,
-    Button,
-    TouchableOpacity,
-    ImageBackground,
     ActionSheetIOS,
-    SafeAreaView,
     Dimensions,
     ScrollView,
-    RefreshControl
 } from 'react-native';
 
 import {
@@ -19,9 +14,6 @@ import {
     Container,
     Left,
     Right,
-    Body,
-    Tabs,
-    Tab
 } from 'native-base'; //for conversion into an actual header
 
 
@@ -31,8 +23,6 @@ import {
 
 import { 
     IconButton,
-    Surface,
-    Headline,
     Title,
 } from 'react-native-paper';
 import { withNavigation } from 'react-navigation';
@@ -42,11 +32,7 @@ import {
 } from '@expo/vector-icons';
 
 import PackSearchResultCard from '../search/components/PackSearchResultCard';
-import DefaultPack, { SmallPackCard, SubscriptionPackCard, TrainerFlatCard, UserFlatCard} from './Components/ExploreCards/PackExploreCard';
-
-import Explore from './Explore';
-import MyPacks from './MyPacks';
-import Promotions from './Promotions';
+import DefaultPack, { SmallPackCard } from './Components/ExploreCards/PackExploreCard';
 import CreatePack from '../../Modals/CreatePack';
 
 
@@ -69,16 +55,11 @@ class PackView extends React.Component {
         super(props);
 
         this.state = {
-            activeView: 0,
-            acitivePacks: [],
             explorePagePacks: [],
             defaultPacks: [],
-            showPackModal: false,
             searchValue: "",
-            currUsersLocation: "",
             searchResults: [],
             createPackModalIsOpen: false,
-            currUserData: this.props.lupa_data.Users.currUserData,
             currUserPacks: this.props.lupa_data.Packs.currUserPacksData
         }
 
@@ -122,13 +103,33 @@ class PackView extends React.Component {
      
      setupExplorePage = async () => {
          let defaultPacksIn, explorePagePacksIn;
-         await this.LUPA_CONTROLLER_INSTANCE.getExplorePagePacksBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
-             explorePagePacksIn = result;
-         });
+         try {
+            await this.LUPA_CONTROLLER_INSTANCE.getExplorePagePacksBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
+                explorePagePacksIn = result;
 
-         await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserDefaultPacks().then(result => {
-            defaultPacksIn = result;
-        });
+                if (explorePagePacksIn == undefined || typeof(explorePagePacksIn) != "object")
+                {
+                    explorePagePacksIn = [];
+                }
+            });   
+         } catch(err)
+         {
+             alert('Error on trying to get explore page packs')
+         }
+
+         try {
+            await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserDefaultPacks().then(result => {
+                defaultPacksIn = result;
+
+                if (defaultPacksIn == undefined || typeof(defaultPacksIn) != "object")
+                {
+                    defaultPacksIn == [];
+                }
+            });
+         } catch(err)
+         {
+             alert('Error on trying to get user default packs')
+         }
  
          //set component state
         await this.setState({
@@ -146,7 +147,8 @@ class PackView extends React.Component {
         }, (buttonIndex) => {
             switch(buttonIndex) {
                 case 0:
-                    this.setState({ createPackModalIsOpen: true })
+                    this.openCreatePackModal()
+                    break;
                 default:
             }
         });
@@ -184,12 +186,12 @@ class PackView extends React.Component {
 
      }
 
-    closePackModal = () => {
-        this.setState({ createPackModalIsOpen: false });
+    openCreatePackModal = () => {
+        this.setState({ createPackModalIsOpen: true })
     }
 
-    closePackModal = () => {
-        this.setState({ showPackModal: false })
+    closeCreatePackModal = () => {
+        this.setState({ createPackModalIsOpen: false });
     }
 
     render() {
@@ -307,7 +309,7 @@ class PackView extends React.Component {
 
                 
 
-               <CreatePack isOpen={this.state.createPackModalIsOpen} closeModalMethod={this.closePackModal}/>
+               <CreatePack isOpen={this.state.createPackModalIsOpen} closeModalMethod={this.closeCreatePackModal}/>
             </Container>
         );
     }

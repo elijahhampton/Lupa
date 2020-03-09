@@ -42,6 +42,8 @@ import Carousel from 'react-native-snap-carousel';
 
 import UserDisplayCard from './PackModal/Components/UserDisplayCard';
 
+import { connect } from 'react-redux';
+
 const data = [
     {
         key: 'community',
@@ -55,7 +57,13 @@ const data = [
     },
 ]
 
-export default class CreatePack extends React.Component {
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
+
+class CreatePack extends React.Component {
     constructor(props) {
         super(props);
 
@@ -75,8 +83,6 @@ export default class CreatePack extends React.Component {
             currentCarouselIndex: 0,
 
         }
-
-        this._chooseImageFromCameraRoll = this._chooseImageFromCameraRoll.bind(this);
     }
 
     getPackType = (index) => {
@@ -92,15 +98,23 @@ export default class CreatePack extends React.Component {
 
     createPack = async () => {
         let packLocation;
-        const currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-        const pack_leader = currUserUUID;
+        const currUserUUID = this.props.lupa_data.Users.currUserData.user_uuid;
 
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(pack_leader, 'location').then(result => {
+        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(currUserUUID, 'location').then(result => {
             packLocation = result;
         });
 
-        this.LUPA_CONTROLLER_INSTANCE.createNewPack(pack_leader, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [pack_leader], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.getPackType(this.state.currentCarouselIndex), this.state.packImageSource);
+        alert(this.state.packImageSource)
+        //Wait for the pack to be create before we return back to the main page
+        await this.LUPA_CONTROLLER_INSTANCE.createNewPack(currUserUUID, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [currUserUUID], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.getPackType(this.state.currentCarouselIndex), this.state.packImageSource);
+    
+        //Close modal
+        await this.closeModal()
+    }
+
+    closeModal = () => {
+        this.props.closeModalMethod();
     }
 
     _chooseImageFromCameraRoll = async () => {
@@ -134,7 +148,7 @@ export default class CreatePack extends React.Component {
 
         await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(results => {
             searchQueryResults = results;
-        });
+        }).catch(err => console.log('Error while trying to invite members to pack'));
         await this.setState({ searchResults: searchQueryResults });
     }
     
@@ -222,7 +236,7 @@ export default class CreatePack extends React.Component {
 
                         <View style={{ flexDirection: "row" }}>
 
-                            <Button mode="text" color="#2196F3" onPress={() => this.setState({ currIndex: 0})}>
+                            <Button mode="text" color="#2196F3" onPress={() => this.setState({ currIndex: 0 })}>
                                 Back
                         </Button>
 
@@ -306,7 +320,7 @@ export default class CreatePack extends React.Component {
 
     render() {
         return (
-            <Modal presentationStyle="fullScreen" style={styles.modal} visible={this.props.isOpen}>
+            <Modal presentationStyle="fullScreen" style={styles.modal} visible={this.props.isOpen} onDismiss={() => this.props.closeModalMethod()}>
                 <SafeAreaView style={styles.safeareaview}>
                     {
                    
@@ -350,3 +364,5 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     }
 })
+
+export default connect(mapStateToProps)(CreatePack);

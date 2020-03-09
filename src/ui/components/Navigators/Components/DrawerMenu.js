@@ -5,7 +5,8 @@ import {
     Text,
     StyleSheet,
     Platform,
-    TouchableHighlight
+    TouchableHighlight,
+    TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -98,7 +99,15 @@ class DrawerMenu extends React.Component {
           style={styles.container}
           forceInset={{top: 'always', horizontal: 'never', padding: 20}}>
 
-            <View style={{margin: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+          <TouchableOpacity onPress={() => this.props.navigation.dispatch(
+
+NavigationActions.navigate({
+  routeName: 'Profile',
+  params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'},
+  action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'}})
+})
+            )}>
+          <View style={{margin: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <View style={{flexDirection: 'column'}}>
                   <Text style={{fontWeight: '500', fontSize: 15}}>
                     {this.props.lupa_data.Users.currUserData.display_name}
@@ -110,6 +119,7 @@ class DrawerMenu extends React.Component {
 
               <PaperAvatar.Image source={{uri: this.state.profilePicture}} size={40} />
             </View>
+          </TouchableOpacity>
 
             <Divider />
 
@@ -117,30 +127,6 @@ class DrawerMenu extends React.Component {
               <DrawerIcon name="activity" size={12} style={{margin: 3}}/>
             <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.navigate('Dashboard')}>
               Dashboard
-            </Button>
-            </View>
-
-            <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
-              <DrawerIcon name="user" size={12} style={{margin: 3}}/>
-            <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.dispatch(
-
-NavigationActions.navigate({
-  routeName: 'Profile',
-  params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'},
-  action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'}})
-})
-            )}>
-              Profile
-            </Button>
-            </View>
-
-            <Divider />
-
-            
-            <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
-              <DrawerIcon name="activity" size={12} style={{margin: 3}}/>
-            <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.navigate('UserSettings')}>
-              Settings
             </Button>
             </View>
 
