@@ -103,13 +103,39 @@ const PackEventCard = props => {
     }
 
     handlePackEventModalClose = () => {
+        props.refreshData();
         setPackEventModalIsOpen(false);
+    }
+
+    getPackEventCardImage = () => {
+        if (props.packEventImage == "" || props.packEventImage == undefined)
+        {
+            return (
+                <View style={{width: "100%", height: "100%", borderRadius:20, backgroundColor: "white" }}>
+
+                </View>
+            )
+        }
+
+        try {
+            return (
+                <Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: props.packEventImage }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
+            )
+        }
+        catch(err)
+        {
+            return (
+                <View style={{width: "100%", height: "100%", borderRadius:20, backgroundColor: "white" }}>
+
+                </View>
+            )
+        }
     }
 
     return (
         <TouchableOpacity onPress={this.handlePackEventModalOpen}>
         <Surface style={{ margin: 5, elevation: 5, width: Dimensions.get('screen').width - 20, height: 160, borderRadius: 20 }}>
-<Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: packEventObject.pack_event_photo_url }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
+        {this.getPackEventCardImage()}
 </Surface>
 
 <View style={{width: "auto", height: "auto", backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
@@ -120,7 +146,7 @@ const PackEventCard = props => {
     {packEventObject.pack_event_description}
 </Paragraph>
 </View>
-<PackEventModal isOpen={packEventModalIsOpen} closeModalMethod={this.handlePackEventModalClose} packEventTime={packEventObject.pack_event_time} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventImage={packEventObject.pack_event_image}/>
+<PackEventModal isOpen={packEventModalIsOpen} closeModalMethod={this.handlePackEventModalClose} packEventTime={packEventObject.pack_event_time} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventUUID={packEventObject.pack_event_uuid} packEventAttendees={packEventObject.attendees}/>
 </TouchableOpacity>
     )
 }
@@ -135,6 +161,8 @@ class PackModal extends React.Component {
             packUUID: this.props.navigation.state.params.packUUID,
             packInformation: {},
             packEvents: [],
+            currPackEventImage: "",
+            currPackEventAttendees: [],
             currentUserIsPackLeader: false,
             createEventModalIsOpen: false,
             packInformationModalIsOpen: false,
@@ -214,6 +242,10 @@ class PackModal extends React.Component {
        if (this.currentUserUUID == this.state.packInformation.pack_leader) { await this.setState({ currentUserIsPackLeader: true }) }
     }
 
+    refreshPackModal = async () => {
+        await this.setupPackModal();
+    }
+
     refreshPackEvent = async () => {
         let packEventsIn;
         await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.packUUID).then(packEvents => {
@@ -270,12 +302,30 @@ class PackModal extends React.Component {
 
     _renderItem = ({ item, index }) => {
         return (
-           <PackEventCard packEventObjectIn={item} />
+           <PackEventCard packEventObjectIn={item} packEventImage={this.state.currPackEventImage} refreshData={this.refreshPackModal}/>
          );
     }
 
     handleOnSnapToItem = async (itemIndex) => {
+        let packEventImageIn;
+        
         await this.setState({ currCarouselIndex: itemIndex });
+
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getPackEventImageFromUUID(this.state.packEvents[itemIndex]).then(result => {
+                packEventImageIn = result;
+            })
+
+            if (packEventImageIn == "" || packEventImage == undefined)
+            {
+                packEventImageIn = "";
+            }
+        } catch (err)
+        {
+            packEventImageIn = "";
+        }
+
+        await this.setState({ currPackEventAttendees: this.state.packEvents[itemIndex].attendees, currPackEventImage: packEventImageIn})
 
        /* await this.checkUserEventAttendance(this.state.packEvents[itemIndex].pack_uuid, 
             this.state.packEvents[itemIndex].pack_event_title, this.currentUserUUID);*/
@@ -446,10 +496,10 @@ getButtonColor = () => {
 
                     </View>
 
-                    <CreateEvent packUUID={this.state.packUUID} isOpen={this.state.createEventModalIsOpen} closeModalMethod={this.handleCreateEventModalClose} />
+                    <CreateEvent refreshData={this.refreshPackModal} packUUID={this.state.packUUID} isOpen={this.state.createEventModalIsOpen} closeModalMethod={this.handleCreateEventModalClose} />
                     <PackInformationModal packUUID={this.state.packUUID} isOpen={this.state.packInformationModalIsOpen} closeModalMethod={this.handlePackInformationModalClose} />
                     <PackMembersModal isOpen={this.state.packMembersModalIsOpen} closeModalMethod={this.handlePackMembersModalClose} displayMembersMethod={this.mapMembers} packRequestsLength={this.state.packRequestsLength} packMembersLength={this.state.membersLength}/>
-                    <PackRequestsModal isOpen={this.state.packRequestsModalIsVisible} closeModalMethod={this.handlePackRequestModalClose} requestsUUIDs={this.state.packRequests} />
+                    <PackRequestsModal refreshData={this.refreshPackModal} isOpen={this.state.packRequestsModalIsVisible} closeModalMethod={this.handlePackRequestModalClose} requestsUUIDs={this.state.packRequests} />
                 </SafeAreaView>
         );
     }

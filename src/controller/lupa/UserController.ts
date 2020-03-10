@@ -403,7 +403,6 @@ export default class UserController {
                 }
                 break;
         }
-        console.log('LUPA: User Controller finished updating current user')
     }
 
     getUserInformationByUUID = async uuid => {

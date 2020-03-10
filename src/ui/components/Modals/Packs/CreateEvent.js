@@ -22,7 +22,7 @@ import {
 
 import { FormLabel, FormInput, FormValidationMessage, Avatar } from 'react-native-elements';
 
-import { ImagePicker } from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 import SafeAreaView from 'react-native-safe-area-view';
 
@@ -52,7 +52,7 @@ export default class CreateEvent extends React.Component {
         });
 
         if (!packImageSource.cancelled) {
-            this.setState({ eventImage: packImageSource.uri });
+            await this.setState({ eventImage: packImageSource.uri });
         }
     }
 
@@ -65,6 +65,7 @@ export default class CreateEvent extends React.Component {
 
     createEvent = () => {
         let datetime = this.state.eventDate.toLocaleString();
+        console.log('the image string is: ' + this.state.eventImage)
         this.LUPA_CONTROLLER_INSTANCE.createNewPackEvent(this.state.packUUID, this.state.eventTitle, this.state.eventDescription, datetime, this.state.eventImage);
         this.props.closeModalMethod();
     }
@@ -72,12 +73,17 @@ export default class CreateEvent extends React.Component {
     getInitialDate = () => {
         return new Date().getDate();
     }
+
+    handleCloseCreateEventModal = () => {
+         this.props.refreshData();
+         this.props.closeModalMethod();
+    }
     render() {
         return (
             <Modal presentationStyle="fullScreen" style={styles.modal} visible={this.props.isOpen}>
                 <SafeAreaView style={styles.safeareaview}>
                     <View style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
-                    <Avatar rounded showEditButton={true} source={this.state.eventImages} size="large" onPress={() => this._chooseImageFromCameraRoll()}/>
+                    <Avatar rounded showEditButton={true} source={{ uri: this.state.eventImage }} size="large" onPress={this._chooseImageFromCameraRoll}/>
                     </View> 
 
                         <View>
@@ -112,7 +118,7 @@ export default class CreateEvent extends React.Component {
                         </View>
 
                         <View style={{flexDirection: "row", alignSelf: 'center' }}>
-                        <Button mode="text" color="#2196F3" onPress={this.props.closeModalMethod}>
+                        <Button mode="text" color="#2196F3" onPress={this.handleCloseCreateEventModal}>
                                 Cancel
                             </Button>
                             <Button mode="contained" theme={{roundness: 15}} color="#2196F3" onPress={() => this.createEvent()}>

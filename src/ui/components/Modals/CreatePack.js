@@ -98,14 +98,12 @@ class CreatePack extends React.Component {
 
     createPack = async () => {
         let packLocation;
-        const currUserUUID = this.props.lupa_data.Users.currUserData.user_uuid;
-
+        const currUserUUID = await this.props.lupa_data.Users.currUserData.user_uuid;
 
         await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(currUserUUID, 'location').then(result => {
             packLocation = result;
         });
 
-        alert(this.state.packImageSource)
         //Wait for the pack to be create before we return back to the main page
         await this.LUPA_CONTROLLER_INSTANCE.createNewPack(currUserUUID, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [currUserUUID], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.getPackType(this.state.currentCarouselIndex), this.state.packImageSource);
     

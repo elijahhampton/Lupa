@@ -35,7 +35,7 @@ class UserSearchResultCard extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            uuid: props.uuid,
+            uuid: this.props.uuid,
             profilePicture: '',
 
         }
@@ -58,14 +58,14 @@ class UserSearchResultCard extends React.Component {
 
     _handleViewProfile = () => {
         this.props.navigation.navigate('Profile', {
-            userUUID: props.uuid,
+            userUUID: this.props.uuid,
             navFrom: 'SearchView',
         });
     }
 
     _handleSessionRequest = () => {
         this.props.navigation.navigate('SessionsView', {
-            userUUID: props.uuid,
+            userUUID: this.props.uuid,
             navFrom: 'SearchView',
         })
     }

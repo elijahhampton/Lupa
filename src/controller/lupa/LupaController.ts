@@ -220,7 +220,6 @@ export default class LupaController {
     /** Pack Functions */
     createNewPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource) => {
       //validate data
-
       //call packs controller to create pack
       PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource);
     }
@@ -499,8 +498,6 @@ export default class LupaController {
       await PACKS_CONTROLLER_INSTANCE.isAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(bool => {
         result = bool;
       });
-
-      console.log(result);
 
       return Promise.resolve(result);
     }

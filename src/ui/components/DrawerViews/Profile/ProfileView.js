@@ -34,11 +34,8 @@ import {
     Avatar,
     Divider,
     Portal,
-    Provider,
     Dialog,
     Chip,
-    Headline,
-    Avatar as PaperAvatar
 } from 'react-native-paper';
 
 import {
@@ -47,6 +44,10 @@ import {
     Left,
     Right
 } from 'native-base';
+
+import {
+    Avatar as ReactNativeElementsAvatar,
+} from 'react-native-elements';
 
 import Timecards from './components/Timecards';
 
@@ -61,14 +62,6 @@ import {
 import { withNavigation } from 'react-navigation';
 import LupaController from '../../../../controller/lupa/LupaController';
 import MyPacksCard from './components/MyPacksCard';
-
-import { LineChart } from 'react-native-chart-kit';
-
-import { MaterialIcons as MaterialIcon } from '@expo/vector-icons';
-import FollowerModal from '../../Modals/User/FollowerModal';
-import SettingsModal from './components/SettingsModal';
-
-import PacksModal from '../../Modals/PackModal/PackModal';
 
 import { connect } from 'react-redux';
 
@@ -162,7 +155,7 @@ class ProfileView extends React.Component {
             following: [],
             interest: [],
             createSessionModalIsOpen: false,
-            profileImage: '',
+            profileImage: "",
             dialogVisible: false,
             checkbox: false,
             bio: '',
@@ -192,18 +185,51 @@ class ProfileView extends React.Component {
         let userInfo, userPackData, profileImageIn;
         const uuid = await this._getId();
 
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
+                userInfo = result;
+            })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
-            userInfo = result;
-        })
+            if (userInfo == "" || userInfo == undefined || typeof userInfo != "object")
+            {
+                userInfo = this.props.lupa_data.Users.currUserData;
+            }
+        }
+        catch(err)
+        {
+            userInfo = this.props.lupa_data.Users.currUserData;
+        }
 
-        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUserUUID(uuid).then(result => {
-            userPackData = result;
-        })
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUserUUID(uuid).then(result => {
+                userPackData = result;
+            })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(uuid).then(result => {
-            profileImageIn = result;
-        })
+            if (userPackData == "" || userPackData == undefined || typeof userPackData != "object")
+            {
+                userPackData = result;
+            }
+        }
+        catch (err)
+        {
+            userPackData = this.props.lupa_data.Packs.currrUserPackData;
+        }
+
+        try {
+
+            await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(uuid).then(result => {
+                profileImageIn = result;
+            })
+
+            if (profileImageIn == "" || typeof profileImageIn != "object" || profileImageIn == undefined)
+            {
+                profileImageIn = "";
+            }
+
+        } catch (err)
+        {
+            profileImageIn = "";
+        }
 
         let workouts = userInfo.recommended_workouts;
         let workoutData = [];
@@ -215,6 +241,7 @@ class ProfileView extends React.Component {
 
         await this.setState({
             userData: userInfo,
+            userUUID: uuid,
             profileImage: profileImageIn,
             userPackData: userPackData,
             followers: userInfo.followers,
@@ -297,24 +324,53 @@ class ProfileView extends React.Component {
     }
 
 
-    handleOnRefresh = () => {
-        this.setupProfileInformation()
+    handleOnRefresh = async () => {
+        this.setState({ refreshing: true })
+        await this.setupProfileInformation()
+        this.setState({ refreshing: false })
     }
     
     handleChangeBioText = async (text) => {
-        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('bio', text);
-        await this.setState({
+        this.setState({
             bio: text,
         })
+        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('bio', text);
     }
 
     mapBio = () => {
-        return this.state.isEditingBio == false ?
+        //if current user viewing profile
+        console.log(this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid)
+        if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid)
+        {
+            return this.state.isEditingBio == false ?
+                this.state.bio.length == 0 ? 
+                <Caption>
+                    Looks like you have nothing to say.
+                </Caption>
+                :
+                <Text allowFontScaling={true} allowsEditing={false}>
+                this.state.bio
+                </Text>
+            :
+            <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
+        }
+        //if another user viewing profile
+        else
+        {
+            return this.state.isEditingBio == false ?
             <Text allowFontScaling={true} allowsEditing={false}>
-                {this.state.bio}
+                {
+                this.state.bio.length == 0 ? 
+                <Caption>
+                    This user hasn't setup a bio yet.
+                </Caption>
+                :
+                this.state.bio
+                }
             </Text>
             :
             <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
+        }
     }
 
     mapRecommendedWorkouts = () => {
@@ -351,7 +407,9 @@ class ProfileView extends React.Component {
     }
 
     renderFinishEditingBioButton = () => {
-        return this.state.isEditingBio == true ?
+        if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid)
+        {
+            return this.state.isEditingBio == true ?
             <Button mode="text" color="#2196F3" onPress={() => this.setState({ isEditingBio: false })}>
                 Done
             </Button>
@@ -359,6 +417,7 @@ class ProfileView extends React.Component {
             <Button mode="text" color="#2196F3" onPress={() => this.setState({ isEditingBio: true })}>
                 Edit
             </Button>
+        }
     }
 
     getFollowerLength = () => {
@@ -383,7 +442,6 @@ class ProfileView extends React.Component {
             switch (this.props.navigation.state.params.navFrom) {
                 case 'Drawer':
                     return <IconButton icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
-                    break;
                 default:
                     return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
 
@@ -399,7 +457,6 @@ class ProfileView extends React.Component {
             switch (this.props.navigation.state.params.navFrom) {
                 case 'Drawer':
                     return <IconButton icon="more-horiz" size={20} onPress={() => this._navigateToSettings()} />
-                    break;
                 default:
                     return <FeatherIcon name="plus-circle" size={20} onPress={() => this._showActionSheet()} />
             }
@@ -408,57 +465,49 @@ class ProfileView extends React.Component {
 
     renderInteractions = () => {
         return this.props.lupa_data.Users.currUserData.user_uuid == this.state.userUUID ?
-            <View style={{ width: '100%', margin: 10, justifyContent: 'center', alignItems: 'center' }}>
-                <Button onPress={() => this._navigateToSessionsView()} mode="contained" style={{ padding: 3, alignSelf: 'center', margin: 10, width: '65%', elevation: 8 }} theme={{
-                    roundness: 20,
-                    colors: {
-                        primary: "#2196F3"
-                    }
-                }}>
-                    Request Session
-        </Button>
-            </View>
+            null
             :
             <View style={{ width: '100%', margin: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                <Button onPress={() => this._navigateToSessionsView()} mode="contained" style={{ padding: 3, margin: 10, flex: 3, elevation: 8 }} theme={{
+        <Button onPress={() => this._navigateToSessionsView()} mode="contained" style={{ padding: 3, margin: 10, flex: 3, elevation: 8 }} theme={{
+            roundness: 20,
+            colors: {
+                primary: "#2196F3"
+            }
+        }}>
+            <Text>
+                Request Session
+</Text>
+        </Button>
+
+        {
+            this.state.followers.includes(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid) ?
+                <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
                     roundness: 20,
                     colors: {
-                        primary: "#2196F3"
+                        primary: "#2196F3",
+                        text: "white",
                     }
                 }}>
                     <Text>
-                        Request Session
-        </Text>
+                        Follow
+    </Text>
+                </Button>
+                :
+                <Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
+                    roundness: 20,
+                    colors: {
+                        primary: 'white',
+                        text: "#2196F3",
+                    }
+                }}>
+                    <Text>
+                        Follow
+    </Text>
                 </Button>
 
-                {
-                    this.state.followers.includes(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid) ?
-                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: "#2196F3",
-                                text: "white",
-                            }
-                        }}>
-                            <Text>
-                                Follow
-            </Text>
-                        </Button>
-                        :
-                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: 'white',
-                                text: "#2196F3",
-                            }
-                        }}>
-                            <Text>
-                                Follow
-            </Text>
-                        </Button>
-
-                }
-            </View>
+        }
+    </View>
+            
 
     }
 
@@ -481,6 +530,35 @@ class ProfileView extends React.Component {
                     default:
                 }
             });
+    }
+
+    getUserAvatar = () => {
+        let display_name = "User Not Found";
+        let firstInitial = "";
+        let secondInitial = "";
+        if (true && this.state.userData.display_name)
+        {
+            display_name = this.state.userData.display_name.split(" ");
+            firstInitial = display_name[0].charAt(0);
+            secondInitial = display_name[1].charAt(0);
+        }
+
+        if (this.state.profileImage == undefined || this.state.profileImage == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
+        {
+            return <Avatar.Text style={{ elevation: 3 }} size={65} label={firstInitial+secondInitial} />
+        }
+
+        try {
+            if (this.props.lupa_data.Users.currUserData.user_uuid == currUserUUID)
+            {
+                return <ReactNativeElementsAvatar size={65} source={{ uri: this.state.profileImage }} showEditButton={true}/>
+            }
+            return <ReactNativeElementsAvatar size={65} source={{ uri: this.state.profileImage }} />
+        }
+        catch (err)
+        {
+            return <Avatar.Text style={{ elevation: 3 }} size={65} label={firstInitial+secondInitial} />
+        }
     }
 
     render() {
@@ -507,7 +585,7 @@ class ProfileView extends React.Component {
                                     {this.state.userData.username}
                                 </Text>
                                 {
-                                    true && this.state.userData.isTrainer ? <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 1 }}>
+                                    true && this.state.userData.isTrainer ? <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
                                         Lupa Trainer
                             </Text> : <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
                                             Lupa User
@@ -515,8 +593,7 @@ class ProfileView extends React.Component {
                                 }
                             </View>
                             <View style={styles.alignCenterColumn}>
-                                <Avatar.Image style={{ elevation: 3 }} size={65} source={{ uri: this.state.profileImage }} containerStyle={{}} />
-
+                                {this.getUserAvatar()}
                             </View>
                         </View>
 

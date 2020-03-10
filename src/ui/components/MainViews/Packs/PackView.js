@@ -5,6 +5,7 @@ import {
     View,
     StyleSheet,
     ActionSheetIOS,
+    RefreshControl,
     Dimensions,
     ScrollView,
 } from 'react-native';
@@ -60,6 +61,7 @@ class PackView extends React.Component {
             searchValue: "",
             searchResults: [],
             createPackModalIsOpen: false,
+            refreshing: false,
             currUserPacks: this.props.lupa_data.Packs.currUserPacksData
         }
 
@@ -75,30 +77,62 @@ class PackView extends React.Component {
      }
  
      _performSearch = async searchQuery => {
+         let searchResultsIn;
+
+         //If no search query then set state and return
+         if (searchQuery == "" || searchQuery == "")
+         {
+            await this.setState({
+                searchValue: "",
+                searchResults: []
+            })
+
+            return;
+         }
+
          await this.setState({
-             searchResults: []
+             searchResults: [],
+         })
+
+         await this.setState({
+             searchValue: searchQuery,
          })
  
-         await this.setState({
-             searchValue: searchQuery
+         await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+             searchResultsIn = searchData;
          })
- 
-         this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
-             this.setState({ searchResults: searchData })
-         })
+
+         await this.setState({ searchResults: searchResultsIn });
      }
  
      showSearchResults() {
+        //if the searchResults are 0 or undefined then we don't want to display anything
+        if (this.state.searchResults.length == 0 || this.state.searchResults == undefined)
+        {
+            return;
+        }
+
+        if (typeof(this.state.searchResults[0]) != "object")
+        {
+            return;
+        }
+
          return this.state.searchResults.map(result => {
              switch(result.resultType)
              {
                  case "pack":
                      return (
-                         <PackSearchResultCard  title={result.pack_title} isSubscription={result.pack_isSubscription} avatarSrc={result.pack_image} uuid={result.pack_uuid} />
+                         <PackSearchResultCard  title={result.pack_title} isSubscription={result.pack_isSubscription} uuid={result.pack_uuid} />
                      )
                  default:
              }
          })
+     }
+
+     _handleOnRefresh = async () => {
+         this.setState({ refreshing: true })
+         await this._prepareSearch();
+         this.setState({ refreshing: false })
      }
      
      setupExplorePage = async () => {
@@ -155,27 +189,42 @@ class PackView extends React.Component {
     }
 
     loadCurrUserPacks = () => {
+        try {
             return this.state.currUserPacks.map(pack => {
-              return (
-                  <MyPacksCard title={pack.pack_title} packUUID={pack.id} numMembers={pack.pack_members.length} image={pack.pack_image} />
-              )
-          })
+                return (
+                    <MyPacksCard title={pack.pack_title} packUUID={pack.id} numMembers={pack.pack_members.length} image={pack.pack_image} />
+                )
+            })
+        } catch(err)
+        {
+            return null;
+        }
       }
 
       mapGlobalPacks = () => {
-        return this.state.explorePagePacks.map(globalPacks => {
-             return (
-                 <SmallPackCard packUUID={globalPacks.id} image={globalPacks.pack_image} />
-             )
-         })
+          try {
+            return this.state.explorePagePacks.map(globalPacks => {
+                return (
+                    <SmallPackCard packUUID={globalPacks.id} image={globalPacks.pack_image} />
+                )
+            })
+          } catch(err)
+          {
+              return null;
+          }
      }
 
      mapDefaultPacks = () => {
-        return this.state.defaultPacks.map(pack => {
-            return (
-                <DefaultPack packUUID={pack.id} pack_title={pack.pack_title}/>
-            )
-        })
+         try {
+            return this.state.defaultPacks.map(pack => {
+                return (
+                    <DefaultPack packUUID={pack.id} pack_title={pack.pack_title}/>
+                )
+            })
+         } catch(err)
+         {
+             return null;
+         }
      }
 
      mapActivePacks = () => {
@@ -212,7 +261,7 @@ class PackView extends React.Component {
                 {
                     this.state.searchValue != "" ?
                     
-         <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false}>
+         <ScrollView shouldRasterizeIOS={true} shouldRasterizeIOS={true} showsVerticalScrollIndicator={false}refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handleOnRefresh}/>} >
                         <SearchBar placeholder="Find a pack by name"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
@@ -227,7 +276,7 @@ class PackView extends React.Component {
 
      :
 
-     <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between', flexDirection: 'column'}}>
+     <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between', flexDirection: 'column'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handleOnRefresh}/>}>
                                 <SearchBar placeholder="Find a pack by name"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"

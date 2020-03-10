@@ -1,29 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
     View,
     StyleSheet,
     Text,
-    Image,
     TouchableOpacity,
-    TouchableWithoutFeedback
 } from 'react-native';
 
 import {
     Surface,
     Chip,
-    Button,
-    Caption,
     Avatar
 } from 'react-native-paper';
 
 import {
-    Rating
-} from 'react-native-elements';
-
-import {
     withNavigation,
-    NavigationInjectedProps
 } from 'react-navigation';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
@@ -48,11 +39,29 @@ class PackSearchResultCard extends React.Component {
         this.state = {
             packUUID: this.props.uuid,
             packInformationModalIsOpen: false,
+            packImage: "",
         }
+    }
+
+    componentDidMount = async () => {
+        await this.setupComponent();
+    }
+
+    setupComponent = async () => {
+        let packImageIn;
+        
+        await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.props.uuid).then(result => {
+            packImageIn = result;
+        });
+
+        await this.setState({
+            packImage: packImageIn,
+        })
     }
 
     _handleViewPack = async (uuid) => {
         let packInformation;
+
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(uuid).then(result => {
             packInformation = result;
         });
@@ -71,6 +80,20 @@ class PackSearchResultCard extends React.Component {
         }
     }
 
+    getPackAvatar = () => {
+        if (this.state.packImage == "" || this.state.packImage == "undefined" || this.state.packImage == '')
+        {
+            return <Avatar.Icon icon="group" size={30} style={{margin: 3}}/>
+        }
+
+        try {
+            return <Avatar.Image source={{uri: this.state.packImage}} />
+        } catch(err)
+        {
+            return <Avatar.Icon icon="group" size={30} style={{margin: 3}}/>
+        }
+    }
+
     render() {
         return (
             <>
@@ -78,14 +101,10 @@ class PackSearchResultCard extends React.Component {
                 <Surface style={[styles.cardContainer]}>
                     <View style={styles.cardContent}>
                         <View style={styles.userInfoContent}>
-                        <Avatar.Image source={{uri: this.props.avatarSrc }} size={30} style={{margin: 3}} />
+                        {this.getPackAvatar()}
                         <View style={{flexDirection: 'column'}}>
                         <Text style={styles.titleText}>
                                 {this.props.title}
-                            </Text>
-                            <Text style={styles.subtitleText}>
-                                {this.props.isSubscription == true ?                             <Text style={styles.subtitleText}>
-                                    Premium                             </Text> : <Text style={styles.subtitleText}> Free </Text> }
                             </Text>
                         </View>
     
