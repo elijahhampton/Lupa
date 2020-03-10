@@ -97,8 +97,6 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         //handle error here
     }
 
-    console.log('seven')
-
     return Promise.resolve(signUpResultStatus);
 }
 

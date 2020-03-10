@@ -84,6 +84,11 @@ class PackRequestsModal extends React.Component {
         })
     }
 
+    handleClosePackRequestModal =  () => {
+         this.props.refreshData();
+         this.props.closeModalMethod();
+    }
+
 
 
     render() {
@@ -94,7 +99,7 @@ class PackRequestsModal extends React.Component {
                 }} style={{ flex: 1, backgroundColor: "white" }}>
 
 <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20}}>
-                            <IconButton icon="clear" size={20} onPress={() => this.props.closeModalMethod()} />
+                            <IconButton icon="clear" size={20} onPress={this.handleClosePackRequestModal} />
                             <Headline>
                                 Requests
                             </Headline>

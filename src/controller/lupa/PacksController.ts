@@ -73,7 +73,6 @@ class PacksController {
       xhr.send(null);
     });
 
-    console.log('DIIIIIIIIIIIIIIIIIID WE REACH THIS POINT???')
   this.fbStorage.savePackImage(blob, uuid);
   }
 
@@ -91,7 +90,6 @@ class PacksController {
       xhr.send(null);
     });
 
-    console.log('DIIIIIIIIIIIIIIIIIID WE REACH THIS POINT???')
   this.fbStorage.savePackEventImage(blob, uuid);
   }
 
@@ -549,11 +547,10 @@ class PacksController {
     const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type);
     let packRef;
     await PACKS_COLLECTION.add(lupaPackStructure).then(ref => {
-      alert('creating pack as iD' + ref.id)
       packRef = ref.id;
     });
 
-    this.savePackImage(packImageSource, packRef);
+    await this.savePackImage(image, packRef);
   }
 
   createPackEvent = async (packUUID, title, description, datetime, eventImage) => {
@@ -641,9 +638,13 @@ class PacksController {
     newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
 
     //await PACKS_EVENT_COLLECTION.doc().set(newPackEvent);
+    console.log('now the string is: ' + eventImage)
+    let eventUUID;
     await PACKS_EVENT_COLLECTION.add(newPackEvent).then(ref => {
-      this.savePackEventImage(eventImage, ref.id);
+      eventUUID = ref.id;
     })
+
+    await this.savePackEventImage(eventImage, eventUUID);
   } 
 
   removeUserFromPackByUUID  = async (packUUID, userUUID) => {

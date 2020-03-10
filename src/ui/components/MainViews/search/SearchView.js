@@ -145,11 +145,16 @@ class SearchView extends React.Component {
     
     showSearchResults() {
         //if the searchResults are 0 or undefined then we don't want to display anything
-        if (this.state.searchResults.length == 0 || this.state.searchResults == undefined 
-            || typeof(this.state.searchResults[0]) != "object")
+        if (this.state.searchResults.length == 0 || this.state.searchResults == undefined)
             {
                 return;
             }
+
+        if (typeof(this.state.searchResults[0]) != "object")
+        {
+            return;
+        }
+
         return this.state.searchResults.map(result => {
             switch(result.resultType)
             {
@@ -166,12 +171,12 @@ class SearchView extends React.Component {
         })
     }
 
-    _handleOnRefresh = () => {
+    _handleOnRefresh = async () => {
         //Refreshing
         this.setState({ refreshing: true });
 
         //Fetch data (index users)
-        _prepareSearch();
+        await this._prepareSearch();
 
         //End refreshing
         this.setState({ refreshing: false });
@@ -205,7 +210,7 @@ class SearchView extends React.Component {
                                 }
                             </ScrollView>
                             :
-                            <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} />}>
+                            <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} shouldRasterizeIOS={true} />}>
 
                             {
                                                                 this.showSearchResults()

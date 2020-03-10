@@ -1,27 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
     Modal,
     View,
     Text,
     StyleSheet,
-    Dimensions,
-    Image,
-    ActionSheetIOS,
+    Button,
     ImageBackground
 } from 'react-native';
 
 import {
-    IconButton,
-    Surface,
-    Caption,
-    Button,
-    Modal as PaperModal,
-    Portal,
-    Provider,
-    Paragraph,
     Headline,
-    Title
+    Title,
+    Avatar
 } from 'react-native-paper';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
@@ -33,31 +24,114 @@ export default class PackEventModal extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            eventAttendees: []
+            eventAttendees: [],
+            packEventUUID: this.props.packEventUUID,
+            packEventImage: "",
         }
 
     }
 
-    componentDidMount() {
-        this.setupPackEventModal();
+    componentDidMount = async () => {
+        await this.setupPackEventModal();
     }
 
     setupPackEventModal = async () => {
-        const packAttendees = this.props.packAttendees;
-        //We only care about each attendees picture so we only bring back a list of photo_urls for now.
-        await packAttendees.map(async attendee => {
-            await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(attendee, 'photo_url').then(result => {
-                attendee = result;
-            });
-        });
+        let packEventImageIn;
+        await this.LUPA_CONTROLLER_INSTANCE.getPackEventImageFromUUID(this.state.packEventUUID).then(result => {
+            packEventImageIn = result;
+        })
 
-        await this.setState({ eventAttendees: packAttendees });
+        const packAttendees = this.props.packEventAttendees;
+        let attendeeInformationArr = [];
+        if (true && packAttendees.length) 
+        {
+            if (packAttendees.length == 0) {
+                return;
+            }
+            else 
+            {
+                for (let i = 0; i < packAttendees.length; ++i) {
+                    let attendeeInformation;
+                    await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(packAttendees[i]).then(result => {
+                        attendeeInformation = result;
+                    });
+
+                    await attendeeInformationArr.push(attendeeInformation);
+                }
+            }
+        }
+        await this.setState({ eventAttendees: attendeeInformationArr, packEventImage: packEventImageIn });
     }
 
     mapAttendees = () => {
-        return this.state.eventAttendees.length == 0 ? null : this.state.eventAttendees.map(attendee => {
-            return <Avatar.Text label="EH" />
+        if (true && this.state.eventAttendees.length) 
+        {
+            if (this.state.eventAttendees.length == 0)
+            {
+                return (
+                    <Caption>
+                        There is no one signed up to attend this event.
+                    </Caption>
+                )
+            }
+            else
+            {  
+                return this.state.eventAttendees.map(attendee => {
+                    let profilePictureURL;
+                    this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(attendee.user_uuid).then(result => {
+                        profilePictureURL = result;
+                    });
+
+                    if (profilePictureURL == '' || profilePictureURL == undefined)
+                    {
+                        let displayName = attendee.display_name.split(" ");
+                        let firstInitial = displayName[0].charAt(0);
+                        let lastInitial = displayName[0].charAt(0);
+                        return (
+                            <Avatar.Text size={30} label={firstInitial+lastInitial} style={{margin: 3}} />
+                        )
+                    }
+    
+                    return (
+                        <Avatar.Image size={30} source={{ uri: profilePictureURL }} style={{margin: 3}} />
+                    )
+                })
+            }
+        }
+    }
+
+    getPackEventImage = () => {
+        if (this.state.packEventImage = "" || this.state.packEventImage == undefined)
+        {
+            return (
+            <View style={{flex: 1, backgroundColor: 'black'}}>
+
+            </View>
+            )
+        }
+
+        try {
+            return (<ImageBackground source={{ uri: this.state.packEventImage }} style={{ flex: 1 }}>
+                </ImageBackground>)
+        } catch(err)
+        {
+            return (
+                <View style={{flex: 1, backgroundColor: 'black'}}>
+    
+                </View>
+                )
+        }
+
+    }
+
+    handleMapAttendees = () => {
+        return this.mapAttendees().then(result => {
+            return result;
         })
+    }
+
+    handleClosePackEventModal = () => {
+        this.props.closeModalMethod();
     }
 
     convertDate = (date) => {
@@ -76,11 +150,8 @@ export default class PackEventModal extends React.Component {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
                 <ImageBackground source={{ uri: this.props.packEventImage }} style={{ flex: 1 }}>
-                    <Button mode="text" compact  color="black" onPress={this.props.closeModalMethod} style={{margin: 25}}>
-                        Close
-                    </Button>
                 </ImageBackground>
-                <View style={{ flex: 2, justifyContent: 'space-evenly', flexGrow: 2, padding: 10}}>
+                <View style={{ flex: 2, justifyContent: 'space-evenly', flexGrow: 2, padding: 10 }}>
                     <Headline>
                         {this.props.packEventTitle}
                     </Headline>
@@ -89,17 +160,17 @@ export default class PackEventModal extends React.Component {
                         <Title>
                             Time/Day
                         </Title>
-                        <Text>  
+                        <Text>
                             {this.convertDate(this.props.packEventDate)} at {this.props.packEventTime}
                         </Text>
                     </View>
 
-                    
+
                     <View>
                         <Title>
                             Event Description
                         </Title>
-                        <Text>  
+                        <Text>
                             {this.props.packEventDescription}
                         </Text>
                     </View>
@@ -108,14 +179,15 @@ export default class PackEventModal extends React.Component {
                         <Title>
                             Attendees
                         </Title>
-                        <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
                             {this.mapAttendees()}
                         </View>
                     </View>
-                    </View>                                
+                    <Button title="Close" onPress={this.handleClosePackEventModal} style={{ alignSelf: 'center' }} />
+                </View>
             </Modal>
         );
-        }
+    }
 }
 
 const styles = StyleSheet.create({

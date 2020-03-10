@@ -112,9 +112,7 @@ export class FirebaseStorageBucket {
   }
 
   savePackImage = async (blob, uuid) => {
-    await LUPA_PACK_IMAGE_STORAGE_REF.child(uuid).put(blob).then(res => {
-      console.log(res);
-    })
+    await LUPA_PACK_IMAGE_STORAGE_REF.child(uuid).put(blob);
   }
 
   getPackImageFromUUID = async (uuid) => {
@@ -136,30 +134,17 @@ export class FirebaseStorageBucket {
     return Promise.resolve(link);
   }
 
-  savePackEventImage = async (string, uuid) => {
-  /*  await this.urlToBlob(blob).then(blob => {
-      console.log('are we here?')
-      LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(uuid).put(blob);
-    })
-*/
+  savePackEventImage = async (blob, uuid) => {
+    await LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(uuid).put(blob);
   }
 
   getPackEventImageFromUUID = async (uuid) => {
     let link;
     let temp;
-    if (uuid == 'ZRhxugKa9JvRtiOu496S')
-    {
-      temp = 'ZRhxugKa9JvRtiOu496S' + '.jpg';
-      await LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(`${temp}`).getDownloadURL().then(url => {
-        link = url;
-      });
-    }
-    else
-    {
+
       await LUPA_PACK_EVENT_IMAGE_STORAGE_REF.child(`${uuid}`).getDownloadURL().then(url => {
         link = url;
       });
-    }
 
     return Promise.resolve(link);
   }
