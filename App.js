@@ -3,8 +3,8 @@ import React from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
 import  {createStore} from 'redux';
 import { Provider as StoreProvider} from 'react-redux';
-import AuthenticationNavigator from './src/ui/components/Navigators/AuthenticationNavigator';
-import LupaApp from './src/ui/components/Lupa';
+import AuthenticationNavigator from './src/ui/navigators/AuthenticationNavigator';
+import Lupa from './src/Lupa';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
 import LupaController from './src/controller/lupa/LupaController';
@@ -22,7 +22,7 @@ const Navigator = createAppContainer(
         })
       },
       App: {
-        screen: LupaApp,
+        screen: Lupa,
         navigationOptions: ({ navigation }) => ({
           title: "App",
           header: null,

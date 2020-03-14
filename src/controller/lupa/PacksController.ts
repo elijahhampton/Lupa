@@ -137,6 +137,8 @@ class PacksController {
         pack_sessions_completed: pack.pack_sessions_completed,
         pack_time_created: pack.pack_time_created,
         pack_location: pack.pack_location,
+        pack_type: pack.pack_type,
+        pack_description: pack.pack_description,
       }
 
       records.push(packData);
@@ -720,6 +722,7 @@ class PacksController {
   }
 
   /************************* Pack Explore Page Functions ************************************/
+
 //Subscription based packs
 getSubscriptionPacksBasedOnLocation = async location => {
   let fallbackQuery;
@@ -752,7 +755,7 @@ getSubscriptionPacksBasedOnLocation = async location => {
 
 
 //No subscription packs
-getExplorePagePacksBasedOnLocation = async location => {
+getActivePacksBasedOnLocation = async (location) => {
   let fallbackQuery;
   let resultArray = [];
   let explorePagePacks = new Array();
@@ -773,7 +776,12 @@ getExplorePagePacksBasedOnLocation = async location => {
         let compare = (locationHighlightedResult.pack_location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
         if (compare)
         {
-          await explorePagePacks.push(hits[i]);
+          let packObject = JSON.parse(JSON.stringify(hits[i]));
+          if (packObject.pack_type == "Activity" && packObject.pack_isDefault == false)
+          {
+            delete packObject['_highlightResult'];
+            await explorePagePacks.push(packObject);
+          }
         }
       }
 
@@ -785,7 +793,13 @@ getExplorePagePacksBasedOnLocation = async location => {
         let compare = (locationHighlightedResult.pack_location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
         if (compare)
         {
-          await explorePagePacks.push(hits[i]);
+         // delete hits[i]._highlightResult;
+         let packObject = JSON.parse(JSON.stringify(hits[i]));
+         if (packObject.pack_type == "Activity" && packObject.pack_isDefault == false)
+         {
+           delete packObject['_highlightResult'];
+           await explorePagePacks.push(packObject);
+         }
         }
       }
 
@@ -796,7 +810,13 @@ getExplorePagePacksBasedOnLocation = async location => {
         let compare = (locationHighlightedResult.pack_location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
         if (compare)
         {
-          await explorePagePacks.push(hits[i]);
+         // delete hits[i]._highlightResult;
+         let packObject = JSON.parse(JSON.stringify(hits[i]));
+         if (packObject.pack_type == "Activity" && packObject.pack_isDefault == false)
+         {
+           delete packObject['_highlightResult'];
+           await explorePagePacks.push(packObject);
+         }
         }
       }
 
@@ -805,7 +825,7 @@ getExplorePagePacksBasedOnLocation = async location => {
       const browser = await packsIndex.browseAll();
     await browser.on('result', content => {
       content.hits.forEach(hit => {
-        if (hit.pack_isDefault == false && hit.pack_isSubscription == false)
+        if (hit.pack_isDefault == false && hit.pack_type == "Activity")
         {
           explorePagePacks.push(hit);
         }
@@ -826,36 +846,79 @@ getExplorePagePacksBasedOnLocation = async location => {
   });
 }
 
-  //First we search for packs based on city
+//No subscription packs
+getCommunityPacksBasedOnLocation = async (location) => {
+  let fallbackQuery;
+  let resultArray = [];
+  let explorePagePacks = new Array();
 
-  /*
-          //parse all of the hits first for exact match to the query
-        hits.forEach(hit => {
-          let locationHighlightedResult = hit._highlightResult;
-          if (locationHighlightedResult.pack_location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
-          {
-            explorePagePacks.push(hit);
-            console.log(explorePagePacks.length)
-          }
-        });  
-
-
-            //parse all of the hits first for exact match to the query
-     hits.forEach(hit => {
-      let locationHighlightedResult = hit._highlightResult;
-      if (locationHighlightedResult.pack_location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
+  return new Promise((resolve, reject) => {
+    packsIndex.search({
+      query: location.city,
+      attributesToHighlight: ['pack_location'],
+    }, async (err, {hits}) => {
+      if (err) throw rejects(err);
+  
+  
+  
+      //parse all of the hits first for the city
+      for (var i = 0; i < hits.length; ++i)
       {
-        explorePagePacks.push(hit);
-        console.log(explorePagePacks.length)
+        let locationHighlightedResult = hits[i]._highlightResult;
+        let compare = (locationHighlightedResult.pack_location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
+        if (compare)
+        {
+          let packObject = JSON.parse(JSON.stringify(hits[i]));
+          if (packObject.pack_type == "Community" && packObject.pack_isDefault == false)
+          {
+            delete packObject['_highlightResult'];
+            await explorePagePacks.push(packObject);
+          }
+        }
       }
-    });  
 
-    const browser = await packsIndex.browseAll();
+
+      //parse all of the hits for the state
+      for (var i = 0; i < hits.length; ++i)
+      {
+        let locationHighlightedResult = hits[i]._highlightResult;
+        let compare = (locationHighlightedResult.pack_location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
+        if (compare)
+        {
+         // delete hits[i]._highlightResult;
+         let packObject = JSON.parse(JSON.stringify(hits[i]));
+         if (packObject.pack_type == "Community" && packObject.pack_isDefault == false)
+         {
+           delete packObject['_highlightResult'];
+           await explorePagePacks.push(packObject);
+         }
+        }
+      }
+
+      //parse all of the hits for the country
+      for (var i = 0; i < hits.length; ++i)
+      {
+        let locationHighlightedResult = hits[i]._highlightResult;
+        let compare = (locationHighlightedResult.pack_location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
+        if (compare)
+        {
+         // delete hits[i]._highlightResult;
+         let packObject = JSON.parse(JSON.stringify(hits[i]));
+         if (packObject.pack_type == "Community" && packObject.pack_isDefault == false)
+         {
+           delete packObject['_highlightResult'];
+           await explorePagePacks.push(packObject);
+         }
+        }
+      }
+
+      //next we add a bunch of packs to pad incase no packs are near the user
+      //TODO: we need to randomize these packs so the user doesnt see the same thing everything
+      const browser = await packsIndex.browseAll();
     await browser.on('result', content => {
       content.hits.forEach(hit => {
-        if (hit.pack_isDefault == false && hit.pack_isSubscription == false)
+        if (hit.pack_isDefault == false && hit.pack_type == "Community")
         {
-          console.log(hit);
           explorePagePacks.push(hit);
         }
       })
@@ -867,32 +930,13 @@ getExplorePagePacksBasedOnLocation = async location => {
   
     browser.stop();
 
-    console.log(explorePagePacks.length + 'sdasds')
-    return Promise.resolve(explorePagePacks);
-    */
-
-
-  /*
-  const browser = await packsIndex.browseAll();
-  await browser.on('result', content => {
-    content.hits.forEach(hit => {
-      if (hit.pack_isDefault == false && hit.pack_isSubscription == false)
-      {
-        console.log(hit);
-        explorePagePacks.push(hit);
-      }
-    })
+    //here we 
+      
+    //resolve the promise with all of the packs
+      resolve(explorePagePacks);
+    });
   });
-
-  browser.on('error', err => {
-    throw err;
-  });
-
-  browser.stop();
-*/
-  //console.log('before exiting: ' + explorePagePacks.length)
-  //return Promise.resolve(explorePagePacks);
-
+}
 //Subscription packs
 getSubScriptionBasedPacksBasedOnLocation = async location => {
 

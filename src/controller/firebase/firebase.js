@@ -15,7 +15,10 @@ const fb_init_config = firebase.initializeApp(firebaseConfig);
 
 const LUPA_DB = firebase.firestore();
 const LUPA_DB_FIREBASE = firebase.database();
+
 const LUPA_AUTH = firebase.auth();
+LUPA_AUTH.useDeviceLanguage();
+
 const LUPA_STORAGE_BUCKET = firebase.storage();
 const LUPA_USER_PROFILE_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('profile_images');
 const LUPA_PACK_IMAGE_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('pack_images');
