@@ -383,9 +383,18 @@ export default class LupaController {
     /* Pack Functions */
     /***************************Explore Page Pack Function  ****************************/
 
-    getExplorePagePacksBasedOnLocation = async location => {
+    getActivePacksBasedOnLocation = async (location) => {
       let explorePagePacks;
-      await PACKS_CONTROLLER_INSTANCE.getExplorePagePacksBasedOnLocation(location).then(result => {
+      await PACKS_CONTROLLER_INSTANCE.getActivePacksBasedOnLocation(location).then(result => {
+        explorePagePacks = result;
+      });
+
+      return Promise.resolve(explorePagePacks);
+    }
+
+    getCommunityPacksBasedOnLocation = async (location) => {
+      let explorePagePacks;
+      await PACKS_CONTROLLER_INSTANCE.getCommunityPacksBasedOnLocation(location).then(result => {
         explorePagePacks = result;
       });
 

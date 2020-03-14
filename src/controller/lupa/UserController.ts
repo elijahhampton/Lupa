@@ -16,7 +16,7 @@ const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
 
 
 import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
-import { getPathwaysForGoalUUID } from '../../model/data_structures/goal_pathway_structures';
+import { getPathwaysForGoalUUID } from '../../model/data_structures/workout/goal_pathway_structures';
 
 
 export default class UserController {

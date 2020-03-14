@@ -1,10 +1,7 @@
-import { WORKOUT_MODALITY } from '../../../controller/lupa/common/types';
-
-
 import {
     Goal,
     GOAL_UID,
-} from './types';
+} from './common/types';
 
 export var lupa_improve_strength_goal : Goal = {
     uid: GOAL_UID.IMPROVE_STRENGTH,
