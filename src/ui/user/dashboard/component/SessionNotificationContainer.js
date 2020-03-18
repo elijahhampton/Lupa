@@ -23,14 +23,13 @@ import {
 import ModifySessionModal from '../../../sessions/modal/ModifySessionModal';
 import SessionCompleteModal from '../../../sessions/modal/SessionCompleteModal';
 
+import PackEventModal from '../../../packs/modal/PackEventModal';
+
 import LupaController from '../../../../controller/lupa/LupaController';
 
 export const PackEventNotificationContainer = (props) => {
     const [showModal, setShowModal] = useState(false);
-
-    handleCloseModal = () => {
-        setShowModal(false);
-    }
+    const [packEventObject, setPackEventObject] = useState(props.packEventObject);
 
     return (
             <TouchableOpacity style={{flexDirection: 'column', margin: 5}} onPress={() => setShowModal(true)}>
@@ -46,6 +45,7 @@ export const PackEventNotificationContainer = (props) => {
                             <Text style={{fontWeight: '500'}}>
                                {props.numAttending} attending
                             </Text>
+                            <PackEventModal isOpen={showModal} closeModalMethod={() => setShowModal(false)} packEventTime={packEventObject.pack_event_time} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventUUID={packEventObject.pack_event_uuid} packEventAttendees={packEventObject.attendees}/>
                     </TouchableOpacity>
     )
 }

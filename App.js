@@ -7,8 +7,11 @@ import AuthenticationNavigator from './src/ui/navigators/AuthenticationNavigator
 import Lupa from './src/Lupa';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
+import ReduxThunk from 'redux-thunk';
+
 import LupaController from './src/controller/lupa/LupaController';
 import LupaReducer from './src/controller/redux/reducers';
+import { applyMiddleware } from 'redux';
 
 const Navigator = createAppContainer(
   createSwitchNavigator(
@@ -33,8 +36,8 @@ const Navigator = createAppContainer(
   )
 );
 
-const LupaStore = createStore(LupaReducer);
-LupaStore.subscribe(() => console.log('Redux state change'))
+const LupaStore = createStore(LupaReducer, applyMiddleware(ReduxThunk));
+LupaStore.subscribe(() => {});
 
 
 class App extends React.Component {
@@ -49,7 +52,7 @@ class App extends React.Component {
   }
   
   setupApp = async () => {
-    await this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+    //await this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
 
   render() {

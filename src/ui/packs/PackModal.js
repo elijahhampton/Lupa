@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
     Modal,
@@ -59,6 +59,17 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+const mapDispatchToProps = dispatchEvent => {
+    return {
+        leavePack: (pack_uuid) => {
+            dispatchEvent({
+                type: "REMOVE_CURRENT_USER_PACK",
+                payload: pack_uuid
+            })
+        }
+    }
+}
+
 const PackMembersModal = (props) => {
     return (
 
@@ -89,6 +100,8 @@ const PackMembersModal = (props) => {
 }
 
 const PackEventCard = props => {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
     const [packEventModalIsOpen, setPackEventModalIsOpen] = useState(false);
     const packEventObject = props.packEventObjectIn;
 
@@ -103,7 +116,7 @@ const PackEventCard = props => {
     }
 
     getPackEventCardImage = () => {
-        if (props.packEventImage == "" || props.packEventImage == undefined)
+        if (packEventObject.pack_event_image == "" || packEventObject.pack_event_image == undefined)
         {
             return (
                 <View style={{width: "100%", height: "100%", borderRadius:20, backgroundColor: "white" }}>
@@ -114,7 +127,7 @@ const PackEventCard = props => {
 
         try {
             return (
-                <Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: props.packEventImage }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
+                <Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: packEventObject.pack_event_photo_url }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
             )
         }
         catch(err)
@@ -297,7 +310,7 @@ class PackModal extends React.Component {
 
     _renderItem = ({ item, index }) => {
         return (
-           <PackEventCard packEventObjectIn={item} packEventImage={this.state.currPackEventImage} refreshData={this.refreshPackModal}/>
+           <PackEventCard packEventObjectIn={item} refreshData={this.refreshPackModal}/>
          );
     }
 
@@ -326,16 +339,16 @@ class PackModal extends React.Component {
             this.state.packEvents[itemIndex].pack_event_title, this.currentUserUUID);*/
     }
 
-    handleCreateEventModalClose = () => {
+    handleCreateEventModalClose = async () => {
+        //this.refreshData()
        this.setState({ createEventModalIsOpen: false })
     }
 
     handleLeavePack = async () => {
-        const currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-
-        this.LUPA_CONTROLLER_INSTANCE.removeUserFromPackByUUID(this.state.packUUID, currUserUUID);
-
-        this.props.closeModalMethod();
+        await this.props.leavePack(this.state.packUUID);
+        await this.LUPA_CONTROLLER_INSTANCE.removeUserFromPackByUUID(this.state.packUUID, this.props.lupa_data.Users.currUserData.user_uuid);
+        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser("packs", [this.state.packUUID], "remove");
+        this.props.navigation.goBack(null);
     }
 
     handlePackInformationModalClose = () => {
@@ -563,4 +576,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps)(withNavigation(PackModal));
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(PackModal));

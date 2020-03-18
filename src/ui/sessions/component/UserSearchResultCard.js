@@ -114,7 +114,6 @@ class UserSearchResultCard extends React.Component {
     }
 }
 
-
 const styles = StyleSheet.create({
     touchableOpacity: {
         width: "98%",

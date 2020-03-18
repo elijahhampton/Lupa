@@ -30,6 +30,27 @@ import getLocationFromCoordinates from '../../../../modules/location/mapquest/ma
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility'
+
+import { connect } from 'react-redux';
+
+mapStateToProps = (state) => {
+    return { 
+      lupa_data: state
+    }
+  }
+  
+  mapDispatchToProps = dispatch => {
+    return {
+      updateCurrentUserAttribute: (payload) => {
+          dispatch({
+              type: "UPDATE_CURRENT_USER_ATTRIBUTE",
+              payload: payload
+          })
+      }
+    }
+  }
+
 //Activity Indicator to show while fetching location data
 const ActivityIndicatorModal = (props) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -45,7 +66,7 @@ const ActivityIndicatorModal = (props) => {
     );
 }
 
-export default class ChooseUsername extends React.Component {
+class ChooseUsername extends React.Component {
     constructor(props) {
         super(props);
 
@@ -60,11 +81,12 @@ export default class ChooseUsername extends React.Component {
             locationText: 'Where are you located?',
             locationDataSet: false,
             showLoadingIndicator: false,
+            displayNameIsInvalid: false,
         }
     }
 
     componentDidMount = () => {
-        _requestPermissionsAsync();
+    
     }
 
     _handleTrainerAccountUpdate = () => {
@@ -80,12 +102,39 @@ export default class ChooseUsername extends React.Component {
         this.setState({ chosenUsername: text })
     }
 
-    _handleDisplayNameEndEditing = () => {
+    _handleDisplayNameEndEditing = async (text) => {
+        const display_name = await this.state.displayName;
+        console.log(display_name);
+        const payload = await getUpdateCurrentUserAttributeActionPayload('display_name', display_name, []);
+        console.log('.....' + payload.value)
+        this.props.updateCurrentUserAttribute(payload);
+
         this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('display_name', this.state.displayName);
     }
 
     _handleUsernameEndEditing = () => {
         this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('username', this.state.chosenUsername);
+    }
+
+    checkDisplayNameInputText = () => {
+        const currDisplayName = this.state.displayName;
+
+        try {
+            let displayNameParts = currDisplayName.split(" ");
+            let length = displayNameParts.length;
+
+            if (length != 2)
+            {
+                this.setState({ displayNameIsInvalid: false })
+                return;
+            }
+        } catch (err)
+        {
+            this.setState({ displayNameIsInvalid: false })
+            return;
+        }
+
+        this.setState({ displayNameIsInvalid: true })
     }
 
     _getLocationAsync = async () => {
@@ -148,10 +197,12 @@ export default class ChooseUsername extends React.Component {
                             style={styles.textInput}
                             mode="outlined"
                             label="Enter a display name"
-                            theme={{ colors: { primary: '#1976D2', backdrop: "red", accent: "red", surface: "red" } }}
+                            theme={{ colors: { primary: '#1976D2' } }}
                             onChangeText={text => this._handleDisplayNameOnChangeText(text)}
-                            onBlur={this._handleDisplayNameEndEditing}
+                            onSubmitEditing={text => this._handleDisplayNameEndEditing(text)}
                             value={this.state.displayName}
+                            editable={true}
+                            returnKeyType="done"
                         />
                     </View>
 
@@ -227,3 +278,5 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     }
 })
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChooseUsername);

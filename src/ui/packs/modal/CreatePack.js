@@ -14,8 +14,13 @@ import {
     Surface,
     Caption,
     Button,
+    Provider,
+    Colors,
+    Portal,
+    Modal as PaperModal,
     TextInput,
-    Avatar as MaterialAvatar
+    Avatar as MaterialAvatar,
+    ActivityIndicator
 } from 'react-native-paper';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -26,6 +31,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 var packImageSource = undefined;
 
+import Color from '../../common/Color'
+
 import LupaController from '../../../controller/lupa/LupaController';
 
 import Carousel from 'react-native-snap-carousel';
@@ -33,15 +40,16 @@ import Carousel from 'react-native-snap-carousel';
 import UserDisplayCard from '../component/UserDisplayCard';
 
 import { connect } from 'react-redux';
+import { StyleProvider } from 'native-base';
 
 const data = [
     {
-        key: 'community',
+        key: 'Community',
         pack_type: 'Community',
         description: 'Community packs allow any users to join as long as they receive an invitation.  There are no limitations to the amount of users that can join a community pack.',
     },
     {
-        key: 'active',
+        key: 'Active',
         pack_type: 'Active',
         description: 'Active packs are focused on group engagement and therefore only four members can join an active pack.',
     },
@@ -51,6 +59,28 @@ const mapStateToProps = (state, action) => {
     return {
         lupa_data: state
     }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        addCurrentUserIntoPack: (packData)  => {
+            dispatch({
+                type: "ADD_CURRENT_USER_PACK",
+                payload: packData,
+            })
+        }
+}
+}
+
+function CreatingPackActivityIndicator(props) {
+    return (
+            <Modal visible={props.isVisible} presentationStyle="overFullScreen" transparent={true} style={{backgroundColor: "rgba(133, 133, 133, 0.6)"}} >
+                <View style={{flex: 1, backgroundColor: "rgba(133, 133, 133, 0.5)", alignItems: "center", justifyContent: 'center'}}>
+                <ActivityIndicator animating={true} color="#2196F3" size="large" />
+                </View>
+            </Modal>
+
+    )
 }
 
 class CreatePack extends React.Component {
@@ -70,24 +100,40 @@ class CreatePack extends React.Component {
             inviteMembersTextInputVal: '',
             currIndex: 0,
             searchResults: [],
-            currentCarouselIndex: 0,
-
+            packType: "Community",
+            searchQuery: "",
+            creatingPackDialogIsVisible: false,
         }
     }
 
-    getPackType = (index) => {
-        switch(index) {
-            case 0:
-                return 'Community'
-            case 1:
-                return 'Activity'
-            default:
-                return 'Community'
+    isSelectedStyle = (key, item) => {
+
+        if(key == "Community" && item == key)
+        {
+            return {
+                 elevation: 6, shadowColor: '#2196F3', shadowRadius: 10, backgroundColor: "white"
+
+            }
         }
+        else if (key == "Active" && item == key)
+        {
+            return {
+                elevation: 6, shadowColor: '#2196F3', shadowRadius: 10, backgroundColor: "white"
+           }
+        }
+        else
+        {
+            return {}
+        }
+    }
+
+    handleOnPressPackType = (key) => {
+        this.setState({ packType: key })
     }
 
     createPack = async () => {
-        let packLocation;
+        await this.setState({ creatingPackDialogIsVisible: true });
+        let packLocation, packUUID, pack_image;
         const currUserUUID = await this.props.lupa_data.Users.currUserData.user_uuid;
 
         await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(currUserUUID, 'location').then(result => {
@@ -95,10 +141,22 @@ class CreatePack extends React.Component {
         });
 
         //Wait for the pack to be create before we return back to the main page
-        await this.LUPA_CONTROLLER_INSTANCE.createNewPack(currUserUUID, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [currUserUUID], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.getPackType(this.state.currentCarouselIndex), this.state.packImageSource);
-    
+       await this.LUPA_CONTROLLER_INSTANCE.createNewPack(currUserUUID, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [currUserUUID], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.state.packType, this.state.packImageSource).then(packData => {
+        this.props.addCurrentUserIntoPack(packData.data);
+        packUUID = packData.data.pack_uuid;
+        pack_image = packData.photo_url;
+       })
+
+       await this.LUPA_CONTROLLER_INSTANCE.updatePack(packUUID, "pack_image", pack_image);
+       await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('packs', [packUUID], 'add');
+
+       await this.setState({ creatingPackDialogIsVisible: false })
         //Close modal
-        await this.closeModal()
+       this.closeModal()
+    }
+
+    resetState = () => {
+
     }
 
     closeModal = () => {
@@ -121,7 +179,7 @@ class CreatePack extends React.Component {
 
     _returnTextInput = () => {
         return (
-            <TextInput onChangeText={text => this.handleInviteMembersOnChangeText(text)} value={this.state.inviteMembersTextInputVal} mode="outlined" theme={{ roundness: 8 }} placeholder="Ex. John Smith" theme={{
+            <TextInput onChangeText={text => this.handleInviteMembersOnChangeText(text)} value={this.state.searchValue} mode="outlined" theme={{ roundness: 8 }} placeholder="Ex. John Smith" theme={{
                 colors: {
                     primary: "#2196F3"
                 }
@@ -129,15 +187,33 @@ class CreatePack extends React.Component {
         )
     }
 
-    handleInviteMembersOnChangeText = async (text) => {
-        await this.setState({ inviteMembersTextInputVal: text })
-        let searchQuery = await text;
-        let searchQueryResults;
+    handleInviteMembersOnChangeText = async (searchQuery) => {
+        let searchResultsIn;
+        
+        //If no search query then set state and return 
+        if (searchQuery == "" || searchQuery == '')
+        {
+            await this.setState({
+                searchValue: "",
+                searchResults: []
+            });
 
-        await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(results => {
-            searchQueryResults = results;
-        }).catch(err => console.log('Error while trying to invite members to pack'));
-        await this.setState({ searchResults: searchQueryResults });
+            return;
+        }
+
+        await this.setState({
+            searchResults: []
+        })
+
+        await this.setState({
+            searchValue: searchQuery
+        })
+
+        await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+            searchResultsIn = searchData;
+        })
+
+        await this.setState({ searchResults: searchResultsIn })
     }
     
     mapSearchResults =() => {
@@ -160,18 +236,21 @@ class CreatePack extends React.Component {
         })
     }
 
-    handleInviteMember = (userID) => {
-        let updatedMembers;
-        updatedMembers = this.state.invitedMembers;
+    handleInviteMember = async (userID) => {
+        let updatedMembers = this.state.invitedMembers;
         if (this.state.invitedMembers.includes(userID))
         {
-            updatedMembers = updatedMembers.splice(this.state.invitedMembers.indexOf(userID, 1));
-            this.setState({ invitedMembers: updatedMembers })
+            console.log('removing member')
+            await updatedMembers.splice(this.state.invitedMembers.indexOf(userID), 1);
+            await this.setState({ invitedMembers: updatedMembers })
+            console.log(this.state.invitedMembers.length)
         }
         else
         {
-            updatedMembers.push(userID);
-            this.setState({ invitedMembers: updatedMembers});
+            console.log('adding member')
+            await updatedMembers.push(userID);
+            await this.setState({ invitedMembers: updatedMembers});
+            console.log(this.state.invitedMembers.length)
         }
     }
 
@@ -253,29 +332,24 @@ class CreatePack extends React.Component {
                         }} returnKeyType="done" returnKeyLabel="done" value={this.state.pack_description} onChangeText={text => this.setState({ pack_description: text})}/>
                     </View>
                     
-                    <View>
-                    <Carousel 
-                    ref={(c) => {this._carousel = c; }}
-                    data={data}
-                    renderItem={this._renderItem}
-                    sliderWidth={Dimensions.get('screen').width}
-                    itemWidth={190}
-                    onSnapToItem={index => this.setState({ currentCarouselIndex: index})}
-                    />
-                    </View>
-
-                    <View>
-                   {/* <CheckBox
-                                center
-                                title='Require users to pay a monthly subscription to join my pack.'
-                                iconRight
-                                iconType='material'
-                                checkedIcon='done'
-                                uncheckedIcon='radio-button-unchecked'
-                                checkedColor='green'
-                                checked={this.state.subscriptionBasedPack}
-                                onPress={() => this.setState({ subscriptionBasedPack: !this.state.subscriptionBasedPack })}
-                   /> */}
+                    <View style={{alignItems: "center", flexDirection: 'height', width: Dimensions.get('screen').width}}>
+                        {
+                            data.map(item => {
+                                return (
+                                    <TouchableOpacity onPress={() => this.handleOnPressPackType(item.key)}>
+                                                                            <Surface key={item.key} style={[{padding: 15, backgroundColor: "#F5F5F5", alignItems: 'center', justifyContent: 'center', height: "auto", width: Dimensions.get('screen').width / 1.1, borderRadius: 15, elevation: 0, margin: 12}, this.isSelectedStyle(this.state.packType, item.key)]}>
+                                    <Text style={{alignSelf: "flex-start", fontWeight: '600', fontSize: 15, margin: 5}}>
+                                        {item.pack_type}
+                                    </Text>
+                    
+                                    <Text style={{alignSelf: "flex-start", fontSize: 15, fontWeight: '200'}}>
+                                        {item.description}
+                                    </Text>
+                                </Surface>
+                                    </TouchableOpacity>
+                                )
+                            })
+                        }
                     </View>
                     </ScrollView>
 
@@ -284,7 +358,7 @@ class CreatePack extends React.Component {
                     <View style={{flexDirection: 'column', justifyContent: 'space-around', flex: 1}}>
                         <View>
                         <Text style={{fontSize: 30, fontWeight: '100', margin: 5}}>
-                            Start by typing a user's name, username, or email.  Press the user's avatar to send a pack invite.
+                            Establish your pack members
                         </Text>
 
                         <View>
@@ -317,7 +391,9 @@ class CreatePack extends React.Component {
                     {
                         this._renderButtons(this.state.currIndex)
                     }
+
                 </SafeAreaView>
+                <CreatingPackActivityIndicator isVisible={this.state.creatingPackDialogIsVisible}/>
             </Modal>
         )
     }
@@ -353,4 +429,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(CreatePack);
+export default connect(mapStateToProps, mapDispatchToProps)(CreatePack);

@@ -12,6 +12,7 @@ import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 import requestPermissionsAsync from './permissions/permissions';
 import { rejects } from 'assert';
 import WorkoutController from './WorkoutController';
+import { promises } from 'dns';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -62,8 +63,13 @@ export default class LupaController {
       return Promise.resolve(imageURI);
     }
 
-    savePackImage = (string, uuid) => {
-      PACKS_CONTROLLER_INSTANCE.savePackImage(string, uuid);
+    savePackImage = async (string, uuid) => {
+      let url;
+      await PACKS_CONTROLLER_INSTANCE.savePackImage(string, uuid).then(data => {
+        url = data;
+      });
+
+      return Promise.resolve(url);
     }
 
     savePackEventImage = (string, uuid) => {
@@ -151,6 +157,14 @@ export default class LupaController {
       return isTrainer;
     }
 
+    updatePack = (packID, attribute, value, optionalData=[]) => {
+      PACKS_CONTROLLER_INSTANCE.updatePack(packID, attribute, value, optionalData);
+    }
+
+    updatePackEvent = (eventUUID, attribute, value, optionalData=[]) => {
+      PACKS_CONTROLLER_INSTANCE.updatePackEvent(eventUUID, attribute, value, optionalData);
+    }
+
     updateCurrentUser = (fieldToUpdate, value, optionalData) => {
       //validate data
       
@@ -218,10 +232,12 @@ export default class LupaController {
     }
 
     /** Pack Functions */
-    createNewPack = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource) => {
+    createNewPack = async (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource) => {
       //validate data
       //call packs controller to create pack
-      PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource);
+      const packData = await PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource);
+      
+      return Promise.resolve(packData);
     }
 
     createNewPackEvent = (packUUID, title, description, date, eventImage) => {

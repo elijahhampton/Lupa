@@ -32,71 +32,72 @@ LUPA_AUTH.onAuthStateChanged(user => {
  * This method assigns a user as logged in in firebase.
  */
 export var signUpUser = async (email, password, confirmedPassword, isTrainerAccount, agreedToTerms) => {
+    var USER_UUID, ANNOUNCEMENTS_PACK_UID;
     let signUpResultStatus = {
         result: true,
         reason: "",
     }
-    //Check password against confirmedPassword- lazy check for now
-    if (password != confirmedPassword) 
-    {
-        signUpResultStatus.reason = "Password doesn't match confirmed password.";
-        return Promise.resolve(signUpResultStatus);
-    }
 
-    if (password < 8 || password > 12 || confirmedPassword < 8 || confirmedPassword > 12)
-    {
-        signUpResultStatus.reason = "Password must be between 8-12 characters";
-        return Promise.resolve(signUpResultStatus);
-    }
 
+    console.log('one')
     await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
+        USER_UUID = userCredential.user.uid
         console.log('LUPA: Registering user with firebase authentication.')
         //Set sign up result to true
         signUpResultStatus.result = true;
 
         //Catch error on signup
     }).catch(err => {
+        alert(err);
         signUpResultStatus.result = false;
         signUpResultStatus.reason = err;
         return Promise.resolve(signUpResultStatus);
     });
 
+    console.log('two')
     // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong
 
     try {
-        let userData = getLupaUserStructure(LUPA_AUTH.currentUser.uid, "", "", LUPA_AUTH.currentUser.email,
+        let userData = getLupaUserStructure(USER_UUID, "", "", LUPA_AUTH.currentUser.email,
         LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], "");
     
         //Add user to users collection with UID.
-    LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).set(userData).catch(err => {
-        
-    });
-
-    LUPA_DB.collection('packs').where('pack_isDefault', '==', true).get().then(snapshot => {
+    await LUPA_DB.collection('users').doc(USER_UUID).set(userData);
+    let userDoc = await LUPA_DB.collection('users').doc(USER_UUID);
+    console.log("interrr")
+    await LUPA_DB.collection('packs').where('pack_title', '==', "Announcements").limit(1).get().then(snapshot => {
         let packID;
+        console.log('ppp ' + snapshot.size)
         snapshot.forEach(doc => {
+            
             let pack = doc.data();
             packID = doc.id;
-
+            let packs = [packID];
+            userDoc.update({
+                packs: packs
+            })
+            console.log(packID);
             let currentDoc = LUPA_DB.collection('packs').doc(packID);
             let packMembers = pack.pack_members;
-            packMembers.push(LUPA_AUTH.currentUser.uid);
+            packMembers.push(USER_UUID);
+            console.log('length: ' + packMembers.length)
             currentDoc.update({
                 pack_members: packMembers
             });
-
+            console.log('bushh')
         });
     });
 
+    console.log('four')
     //Add user in health data collection
-    let userHealthData = getLupaHealthDataStructure(LUPA_AUTH.currentUser.uid);
-    LUPA_DB.collection('health_data').doc(LUPA_AUTH.currentUser.uid).set(userHealthData).catch(err => {
+    let userHealthData = getLupaHealthDataStructure(USER_UUID);
+    await LUPA_DB.collection('health_data').doc(USER_UUID).set(userHealthData).catch(err => {
     })
     } catch(error)
-    {
+    {   
+        alert(err)
         //handle error here
     }
-
     return Promise.resolve(signUpResultStatus);
 }
 

@@ -93,6 +93,7 @@ class SmPackCard extends React.Component {
 
         this.state = {
             packUUID: this.props.packUUID,
+            packImage: this.props.packImage,
             showPack: false,
             packImage: "",
         }
@@ -130,9 +131,21 @@ class SmPackCard extends React.Component {
             {
                 packImageIn = "";
             }
-        } catch(errr)
+            
+            if (this.state.packImage != "" && this.state.packImage != undefined)
+            {
+                packImageIn = this.state.packImage;
+            }
+        } catch(err)
         {
-            packImageIn = "";
+            if (this.state.packImage != "" && this.state.packImage != undefined)
+            {
+                packImageIn = this.state.packImage;
+            }
+            else
+            {
+                packImageIn = "";
+            }
         }
 
         await this.setState({ packImage: packImageIn });

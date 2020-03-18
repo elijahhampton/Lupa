@@ -133,8 +133,12 @@ class PackView extends React.Component {
 
      _handleOnRefresh = async () => {
          this.setState({ refreshing: true })
-         await this._prepareSearch();
+         await this._handleOnRefreshPackData();
          this.setState({ refreshing: false })
+     }
+
+     _handleOnRefreshPackData = async () => {
+         await this.setupExplorePage();
      }
      
      setupExplorePage = async () => {
@@ -199,10 +203,8 @@ class PackView extends React.Component {
 
     loadCurrUserPacks = () => {
         try {
-            return this.state.currUserPacks.map(pack => {
-                return (
-                    <MyPacksCard title={pack.pack_title} packUUID={pack.id} numMembers={pack.pack_members.length} image={pack.pack_image} />
-                )
+            return this.props.lupa_data.Packs.currUserPacksData.map(pack => {
+                return <MyPacksCard title={pack.pack_title} packImage={pack.pack_image} packUUID={pack.pack_uuid} numMembers={pack.pack_members.length} image={pack.pack_image} />
             })
         } catch(err)
         {
@@ -263,7 +265,8 @@ class PackView extends React.Component {
         this.setState({ createPackModalIsOpen: true })
     }
 
-    closeCreatePackModal = () => {
+    closeCreatePackModal = async () => {
+        await this._handleOnRefreshPackData();
         this.setState({ createPackModalIsOpen: false });
     }
 

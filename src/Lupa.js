@@ -85,39 +85,8 @@ _navigateToAuth = async () => {
   this.props.navigation.navigate('Auth');
 }
 
-
-_onStartAsync = async () => {
-  const { params } = this.props.navigation.state;
-  await params._setupRedux();
-  await this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
-}
-
-_onFinishLoading = () => {
-  this.setState({
-    ready: true,
-  })
-}
-
-_onErrorLoading = () => {
-
-}
-
-
-
   render() {
     const currIndex = this.state.currIndex;
-
-    if (!this.state.ready)
-    {
-      return (
-        <AppLoading 
-        startAsync={this._onStartAsync}
-        onFinish={this._onFinishLoading}
-        onError={this._onErrorLoading}
-        />
-      );
-    }
-
     return (
       <>
         <StatusBar backgroundColor="blue" barStyle="dark-content" />

@@ -6,6 +6,7 @@ import {
     StyleSheet,
     View,
     Image,
+    Button as NativeButton,
     Modal,
     DatePickerIOS,
 } from 'react-native';
@@ -15,10 +16,13 @@ import {
     Caption,
     IconButton,
     Button,
+    ActivityIndicator,
     Divider,
     TextInput,
     Portal,
 } from 'react-native-paper';
+
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Avatar } from 'react-native-elements';
 
@@ -27,6 +31,19 @@ import * as ImagePicker from 'expo-image-picker';
 import SafeAreaView from 'react-native-safe-area-view';
 
 import LupaController from '../../../controller/lupa/LupaController';
+
+let globalEventImageURL;
+
+function CreatingPackEventActivityIndicator(props) {
+    return (
+            <Modal visible={props.isVisible} presentationStyle="overFullScreen" transparent={true} style={{backgroundColor: "rgba(133, 133, 133, 0.6)"}} >
+                <View style={{flex: 1, backgroundColor: "rgba(133, 133, 133, 0.5)", alignItems: "center", justifyContent: 'center'}}>
+                <ActivityIndicator animating={true} color="#2196F3" size="large" />
+                </View>
+            </Modal>
+
+    )
+}
 
 export default class CreateEvent extends React.Component {
     constructor(props) {
@@ -40,6 +57,9 @@ export default class CreateEvent extends React.Component {
             eventDate: new Date(),
             packUUID: this.props.packUUID,
             eventImage: '',
+            creatingPackEventDialogIsVisible: false,
+            datetime: "When will your event take place?",
+            isDateTimePickerVisible: false,
         }
     }
 
@@ -52,6 +72,7 @@ export default class CreateEvent extends React.Component {
         });
 
         if (!packImageSource.cancelled) {
+            globalEventImageURL = packImageSource.uri;
             await this.setState({ eventImage: packImageSource.uri });
         }
     }
@@ -63,10 +84,22 @@ export default class CreateEvent extends React.Component {
         })
     }
 
-    createEvent = () => {
-        let datetime = this.state.eventDate.toLocaleString();
-        console.log('the image string is: ' + this.state.eventImage)
-        this.LUPA_CONTROLLER_INSTANCE.createNewPackEvent(this.state.packUUID, this.state.eventTitle, this.state.eventDescription, datetime, this.state.eventImage);
+    createEvent = async () => {
+        await this.setState({ creatingPackEventDialogIsVisible: false })
+        let eventUUID, eventImageURL;
+        //convert date to locale string
+        let datetime = await this.state.eventDate.toLocaleString();
+        
+        //create event
+        await this.LUPA_CONTROLLER_INSTANCE.createNewPackEvent(this.state.packUUID, this.state.eventTitle, this.state.eventDescription, datetime, this.state.eventImage).then(dataResults => {
+            eventUUID = dataResults.data.pack_event_uuid;
+            eventImageURL = dataResults.photo_url;
+        })
+
+        await this.LUPA_CONTROLLER_INSTANCE.updatePackEvent(eventImageURL, "pack_event_image", this.state.eventImage, []);
+
+        await this.setState({ creatingPackEventDialogIsVisible: false })
+        //close modal
         this.props.closeModalMethod();
     }
 
@@ -74,9 +107,21 @@ export default class CreateEvent extends React.Component {
         return new Date().getDate();
     }
 
-    handleCloseCreateEventModal = () => {
-         this.props.refreshData();
+    handleCloseCreateEventModal = async () => {
+         await this.props.refreshData();
          this.props.closeModalMethod();
+    }
+
+    showDatePicker = () => {
+        this.setState({ isDateTimePickerVisible: true })
+    }   
+
+    handleConfirm = (date) => {
+        this.setState({ datetime: date })
+    }
+
+    hideDatePicker = () => {
+        this.setState({ isDateTimePickerVisible: false })
     }
     render() {
         return (
@@ -86,7 +131,7 @@ export default class CreateEvent extends React.Component {
                     <Avatar rounded showEditButton={true} source={{ uri: this.state.eventImage }} size="large" onPress={this._chooseImageFromCameraRoll}/>
                     </View> 
 
-                        <View>
+                        <>
                             <Text style={styles.headerText}>
                                 Give your event a title
                             </Text>
@@ -96,9 +141,9 @@ export default class CreateEvent extends React.Component {
                             primary: "#2196F3"
                             },
                         }}/>
-                        </View>
+                        </>
 
-                        <View>  
+                        <>  
                             <Text style={styles.headerText}>
                                 Give your event a description
                             </Text>
@@ -108,14 +153,22 @@ export default class CreateEvent extends React.Component {
                             primary: "#2196F3",
                         }}}/>
 
-                        </View>
+                        </>
                 
-                        <View>
-                        <Text style={styles.headerText}>
-                            What time and day will this event take place?
-                        </Text>
-                        <DatePickerIOS mode="datetime" locale="en" onDateChange={dateValue => this.setState({ eventDate: dateValue})} date={this.state.eventDate}/>
-                        </View>
+                        <>
+                        <NativeButton title={this.state.datetime} onPress={this.showDatePicker} />
+                        {
+                            this.state.isDateTimePickerVisible && (
+                                <DateTimePicker
+        mode="datetime"
+                                value={new Date()}
+                                is24Hour={true}
+        onChange={date => this.handleConfirm(date)}
+
+      />
+                            )
+                        }
+                        </>
 
                         <View style={{flexDirection: "row", alignSelf: 'center' }}>
                         <Button mode="text" color="#2196F3" onPress={this.handleCloseCreateEventModal}>
@@ -127,6 +180,7 @@ export default class CreateEvent extends React.Component {
                         </View>
 
                 </SafeAreaView>
+                <CreatingPackEventActivityIndicator isVisible={this.state.creatingPackEventDialogIsVisible}/>
             </Modal>
         )
     }

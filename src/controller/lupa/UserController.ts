@@ -174,6 +174,7 @@ export default class UserController {
     getCurrentUserData = async () => {
         let currentUserInformation;
         let currentUserUUID = await this.getCurrentUserUUID();
+        console.log('is this set by now: ' + currentUserUUID);
         await USER_COLLECTION.where('user_uuid', '==', currentUserUUID).get().then(docs => {
             docs.forEach(doc => {
                 currentUserInformation = doc.data();
@@ -234,6 +235,47 @@ export default class UserController {
         });
 
         switch (fieldToUpdate) {
+            case UserCollectionFields.PACKS:
+                let updatedPacksData;
+
+                await currentUserDocument.get().then(result => {
+                    updatedPacksData = result.data().packs;
+                })
+
+                if (optionalData == 'add')
+                {
+                    for (let i = 0; i < value.length; i++)
+                    {   
+                        let pack = value[i];
+                        updatedPacksData.push(pack);
+                    }
+
+                    currentUserDocument.update({
+                        packs: updatedPacksData
+                    })
+                }
+                else if (optionalData == "remove")
+                {
+                    for (let i = 0; i < value.length; i++)
+                    {
+                        let packID = value[i];
+                        updatedPacksData.splice(updatedPacksData.indexOf(packID), 1);
+                    }
+
+                    currentUserDocument.update({
+                        packs: updatedPacksData,
+                    });
+                }
+                break;
+            case UserCollectionFields.LOCATION:
+                currentUserDocument.update({
+                    location: {
+                        city: value.city,
+                        state: value.state,
+                        country: value.country,
+                    }
+                });
+                break;
             case UserCollectionFields.BIO:
                 currentUserDocument.set({
                     bio: value,
