@@ -12,6 +12,7 @@ export enum UserCollectionFields {
     SESSIONS_COMPLETED="sessions_completed",
     LOCATION="location",
     BIO="bio",
+    PACKS="packs",
 }
 
 export enum HealthDataCollectionFields {

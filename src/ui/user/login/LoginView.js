@@ -28,7 +28,7 @@ const {
 /**
  * 
  */
-mapStateToProps = (state) => {
+mapStateToProps = (state, action) => {
   return {
     lupa_data: state
   }
@@ -126,15 +126,19 @@ class LoginView extends Component {
    * Introduce the application
    */
   _introduceApp = async () => {
-    this.props.navigation.navigate('App', {
+    /*await this.props.navigation.navigate('App', {
       _setupRedux: this._setupRedux.bind(this)
-    });
+    });*/
+    await this._setupRedux();
+    await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+    this.props.navigation.navigate('App');
   }
 
   /**
    * 
    */
   _setupRedux = async () => {
+  console.log('calling this!')
     let currUserData, currUserPacks, currUserHealthData;
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
@@ -153,6 +157,8 @@ class LoginView extends Component {
       userData: currUserData,
       healthData: currUserHealthData,
     }
+
+    console.log('anddd...' + currUserPacks.length)
 
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);

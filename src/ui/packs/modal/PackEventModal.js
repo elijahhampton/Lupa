@@ -148,7 +148,7 @@ export default class PackEventModal extends React.Component {
 
     render() {
         return (
-            <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer}>
+            <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer} animated={true} animationType="slide">
                 <ImageBackground source={{ uri: this.props.packEventImage }} style={{ flex: 1 }}>
                 </ImageBackground>
                 <View style={{ flex: 2, justifyContent: 'space-evenly', flexGrow: 2, padding: 10 }}>

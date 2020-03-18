@@ -106,6 +106,8 @@ class TrainerDashboardView extends React.Component {
             currUserPacksData: this.props.lupa_data.Packs.currUserPacksData,
         }
 
+        console.log(this.props.lupa_data.Packs.currUserPacksData)
+
     }
 
     componentDidMount = async () => {
@@ -128,7 +130,8 @@ class TrainerDashboardView extends React.Component {
      * Fetch user sessions from the LupaController.
      */
     fetchSessions = async () => {
-        let sessionDataIn;
+        try {
+            let sessionDataIn;
 
         await this.LUPA_CONTROLLER_INSTANCE.getUserSessions().then(res => {
             sessionDataIn = res;
@@ -216,6 +219,13 @@ class TrainerDashboardView extends React.Component {
         await this.setState({
             sessionData: sessionDataIn
         });
+        } catch(err)
+        {
+            await this.setState({
+                sessionData: []
+            });
+            alert("Problem with fetching session invites")
+        }
     }
 
     /**
@@ -224,24 +234,38 @@ class TrainerDashboardView extends React.Component {
     fetchPackEvents = async () => {
         let currentUserPackEventsData = [];
 
-        for (let i = 0; i < this.state.currUserPacksData.length; i++) {
-            await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.currUserPacksData[i].id).then(result => {
-                currentUserPackEventsData = result;
-            })
+        try {
+            for (let i = 0; i < this.state.currUserPacksData.length; i++) {
+                await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.currUserPacksData[i].id).then(result => {
+                    currentUserPackEventsData = result;
+                })
+            }
+    
+            await this.setState({ packEventsData: currentUserPackEventsData });
         }
+        catch(err)
+        {
+            await this.setState({ packEventsData: [] });
+            alert("Problem with fetching pack events")
 
-        await this.setState({ packEventsData: currentUserPackEventsData });
+        }
 
     }
 
     fetchPackInvites = async () => {
         let currentUserPackInvites = [];
 
-        await this.LUPA_CONTROLLER_INSTANCE.getPackInvitesFromUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
-            currentUserPackInvites = result;
-        });
-
-        await this.setState({ packInvites: currentUserPackInvites });
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getPackInvitesFromUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
+                currentUserPackInvites = result;
+            });
+    
+            await this.setState({ packInvites: currentUserPackInvites });
+        } catch(err)
+        {
+            await this.setState({ packInvites: [] });
+            alert("Problem with fetching pack invites")
+        }
 
     }
 
@@ -280,7 +304,7 @@ class TrainerDashboardView extends React.Component {
 
             this.state.packEventsData.map(pack => {
                 return (
-                    <PackEventNotificationContainer packUUID={pack.pack_uuid} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date} numAttending={pack.attendees.length} />
+                    <PackEventNotificationContainer packUUID={pack.pack_uuid}  packEventObject={pack} packImageEvent={pack.pack_event_image} packEventTitle={pack.pack_event_title} packEventDate={pack.pack_event_date} numAttending={pack.attendees.length} />
                 )
             });
     }

@@ -64,7 +64,6 @@ mapStateToProps = (state) => {
   }
 
   import { connect } from 'react-redux';
-import { sendVerificationEmail } from '../../../controller/lupa/auth/auth';
 
 class SignupModal extends React.Component {
 
@@ -149,7 +148,6 @@ class SignupModal extends React.Component {
       if (registrationStatus)
       {
         this._introduceApp();
-        sendVerificationEmail();
       }
       else
       {

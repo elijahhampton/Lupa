@@ -77,12 +77,14 @@ class CreateSessionModal extends React.Component {
     }
 
     componentDidMount = async () => {
+        console.log('SESSSIONS DID MOUNT!!!!!!!!!!!!!!!')
+
         await this.setupRequestedUserInformation();
     }
 
     setupRequestedUserInformation = async () => {
         let requestedUserDataIn, requestedUserProfileImageIn, currUserProfileImageIn;
-
+console.log('dsds')
         //TODO: If it is the current user's UUID then pull user data from Redux Store
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.navigation.state.params.userUUID).then(result => {
             requestedUserDataIn = result;
@@ -102,6 +104,8 @@ class CreateSessionModal extends React.Component {
             requestedUserProfileImageIn = "";
         }
 
+        console.log('sdfsd')
+
         try {
             await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
                 currUserProfileImageIn = result;
@@ -116,7 +120,7 @@ class CreateSessionModal extends React.Component {
         {
             currUserProfileImage = "";
         }
-
+        console.log('dsfsd')
 
         await this.setState({ 
             requestedUserData: requestedUserDataIn, 
@@ -127,7 +131,7 @@ class CreateSessionModal extends React.Component {
     }
 
     _getButtonMode = time => {
-        this.state.sessionTimePeriods.includes(time) ? "contained" : "text";
+        return this.state.sessionTimePeriods.includes(time) ? "contained" : "text";
     }
 
     _handleNewSessionRequest = () => {
@@ -148,10 +152,13 @@ class CreateSessionModal extends React.Component {
     handlePickSessionTime = (time) => {
         if (this.state.sessionTimePeriods.includes(time)) {
             let currentTimes = this.state.sessionTimePeriods;
-            this.setState({ sessionTimePeriods: currentTimes.slice(currentTimes.indexOf(time)) });
+            let updatedTimes  = currentTimes.slice(currentTimes.indexOf(time));
+            this.setState({ sessionTimePeriods: updatedTimes });
         }
         else {
-            this.setState({ sessionTimePeriods: this.state.sessionTimePeriods.concat(time) });
+            let currentTimes = this.state.sessionTimePeriods;
+            let updatedTimes = currentTimes.concat(time);
+            this.setState({ sessionTimePeriods: updatedTimes });
         }
     }
 
@@ -160,7 +167,6 @@ class CreateSessionModal extends React.Component {
         let dayOfTheWeek = days[new Date(month + " " + day + "," + " " + year).getDay()];
         switch (dayOfTheWeek) {
             case 'Monday':
-                
                 return this.state.preferred_workout_times.Monday && this.state.preferred_workout_times.Monday.map(time => {
                     return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
                         {time}
@@ -219,30 +225,40 @@ class CreateSessionModal extends React.Component {
     }
 
     getCurrentUserAvatar = () => {
-        let displayName = this.props.lupa_data.User.currUserData.display_name.split(" ");
+        let displayName = this.props.lupa_data.Users.currUserData.display_name.split(" ");
         let firstInitial = displayName[0].charAt(0);
-        let secondInitial = displayName[1].charAt(1);
+        let secondInitial = displayName[1].charAt(0);
         if (this.state.currUserProfileImage == "" || this.state.currUserProfileImage == undefined)
         {
             return <Avatar.Text style={{backgroundColor: "#212121", flex: 1}} label={firstInitial+secondInitial}/>
         }
         else
         {
-           return <Image source={{ uri: this.state.currUserProfileImage }} style={{ width: '100%', height: '100%', borderRadius: '80' }} />
+           return <Image source={{ uri: this.state.currUserProfileImage }} style={{ width: '100%', height: '100%'}} />
         }
     }
 
     getRequestedUserAvatar = () => {
-        let displayName = this.state.requestedUserData.display_name.split(" ");
-        let firstInitial = displayName[0].charAt(0);
-        let secondInitial = displayName[1].charAt(1);
+        let displayName, firstInitial, secondInitial;
+        if (this.state.requestedUserData.display_name)
+        {
+            displayName = this.state.requestedUserData.display_name.split(" ");
+            firstInitial = displayName[0].charAt(0);
+            secondInitial = displayName[0].charAt(1);
+        }
+        else
+        {
+            firstInitial="U"
+            secondInitial="K"
+        }
+
         if (this.state.requestedUserProfileImage == "" || this.state.requestedUserProfileImage == undefined)
         {
             return <Avatar.Text style={{backgroundColor: "#212121", flex: 1}} label={firstInitial+secondInitial}/>
         }
         else
         {
-            return  <Image source={{ uri: this.state.requestedUserProfileImage }} style={{ width: '100%', height: '100%', borderRadius: '80' }} />
+            return  <Image source={{ uri: this.state.requestedUserProfileImage }} style={{ width: '100%', height: '100%' }} />
         }
     }
 

@@ -49,10 +49,27 @@ export default class UserDisplayCard extends React.Component {
         
     }
 
+    getUserAvatar = () => {
+        if (this.state.userImage == "" || this.state.userImage == undefined)
+        {
+            return <Avatar.Text label="UU"  style={this.props.optionalStyling}/>
+        }
+
+        try {
+
+            return <Avatar.Image source={{uri: this.state.userImage}} style={this.props.optionalStyling}/>
+        }
+        catch (err)
+        {
+           return <Avatar.Text label="UU"  style={this.props.optionalStyling}/>
+        }
+    }
     render() {
         return (
             <TouchableOpacity onPress={() => this.setState({ showUserProfileModal: true })}>
-                <Avatar.Image source={{uri: this.state.userImage}} style={this.props.optionalStyling}/>
+                {
+                    this.getUserAvatar()
+                }
 </TouchableOpacity>
         )
     }

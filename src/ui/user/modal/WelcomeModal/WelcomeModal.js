@@ -29,9 +29,34 @@ import TrainerInformation from './TrainerInformation';
 
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
 
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updateUser: (userObject) => {
+          dispatch({
+            type: 'UPDATE_CURRENT_USER',
+            payload: userObject
+          })
+        },
+        updatePacks: (packsData) => {
+          dispatch({
+            type: 'UPDATE_CURRENT_USER_PACKS',
+            payload: packsData,
+          })
+        }
+      }
+}
+
 let progress = 0;
 
-export default class WelcomeModal extends React.Component {
+class WelcomeModal extends React.Component {
 
     constructor(props) {
         super(props);
@@ -46,12 +71,46 @@ export default class WelcomeModal extends React.Component {
     }
 
     componentDidMount = async () => {
-        await this._requestPermissionsAsync();
+        await _requestPermissionsAsync();
     }
 
-    _handleNextViewClick = () => {
+    _setupRedux = async () => {
+        let currUserData, currUserPacks, currUserHealthData;
+        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+          currUserData = result;
+        })
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
+          currUserPacks = result;
+        })
+    
+        await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
+          currUserHealthData = result;
+        });
+    
+        let userPayload = {
+          userData: currUserData,
+          healthData: currUserHealthData,
+        }
+
+        console.log(currUserData)
+    
+        await this._updatePacksInRedux(currUserPacks);
+        await this._updateUserInRedux(userPayload);
+      }
+    
+       _updateUserInRedux = async (userObject) => {
+        await this.props.updateUser(userObject);
+      }
+    
+      _updatePacksInRedux = async (packsData) => {
+        await this.props.updatePacks(packsData);
+      }
+
+    _handleNextViewClick = async () => {
         if (this.state.currIndex == 4)
-        {
+        {   
+            await this._setupRedux();
             this.props.closeModalMethod();
             return;
         }
@@ -69,8 +128,7 @@ export default class WelcomeModal extends React.Component {
         currIndex: this.state.currIndex - 1,
         progress: this.state.progress - .20
     });
-    }
-    
+    }    
 
     presentScreen = (index) => {
             switch(index) {
@@ -153,3 +211,5 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     }
 });
+
+export default connect(mapStateToProps, mapDispatchToProps)(WelcomeModal);

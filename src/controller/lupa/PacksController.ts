@@ -63,7 +63,7 @@ class PacksController {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function() {
-        resolve(xhr.response);
+       resolve(xhr.response);
       };
       xhr.onerror = function(e) {
         reject(new TypeError('Network request failed'));
@@ -73,7 +73,12 @@ class PacksController {
       xhr.send(null);
     });
 
-  this.fbStorage.savePackImage(blob, uuid);
+    let imageURL;
+    return new Promise((resolve, reject) => {
+      this.fbStorage.savePackImage(blob, uuid).then(url => {
+        resolve(url);
+      });
+    })
   }
 
   savePackEventImage = async (string, uuid) => {
@@ -90,7 +95,12 @@ class PacksController {
       xhr.send(null);
     });
 
-  this.fbStorage.savePackEventImage(blob, uuid);
+    let imageURL;
+    return new Promise((resolve, reject) => {
+      this.fbStorage.savePackEventImage(blob, uuid).then(url => {
+        resolve(url);
+      })
+    });
   }
 
   getPackEventImageFromUUID = async (uuid) => {
@@ -225,6 +235,47 @@ class PacksController {
     })
 
     //no need to do anything else
+  }
+
+
+  updatePack = async (packID, attribute, value, optionalData=[]) =>
+  {
+    let currentPackDocData; 
+
+        let currentPackDoc = await PACKS_COLLECTION.doc(packID);
+        await PACKS_COLLECTION.doc(packID).get().then(snapshot => {
+            currentPackDocData = snapshot.data();
+        });
+
+        switch(attribute)
+        {
+          case "pack_image":
+            let packImage = value;
+            currentPackDoc.update({
+              pack_image: packImage
+            });
+            break;
+          default:
+        }
+  }
+
+  updatePackEvent = async (eventUUID, attribute, value, optionalData=[]) =>
+  {
+    let currentPackEventDocData; 
+
+        let currentPackEventDoc = await PACKS_COLLECTION.doc(eventUUID);
+        await PACKS_COLLECTION.doc(eventUUID).get().then(snapshot => {
+            currentPackEventDocData = snapshot.data();
+        });
+
+    switch(attribute)
+    {
+      case "pack_event_image":
+        let packEventImage = value;
+        currentPackEventDoc.update({
+          pack_event_image: packEventImage
+        })
+    }
   }
 
   requestToJoinPack = async (userUUID, packUUID) => {
@@ -366,18 +417,28 @@ class PacksController {
 
 
   getCurrentUserPacks = async () => {
-    let currUserPacks = [];
-    let currentUserUUID = await USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
-    await  PACKS_COLLECTION.where('pack_members', 'array-contains', currentUserUUID).get().then(async querySnapshot => {
-     querySnapshot.forEach(userPackDoc => {
-        let snapshotID = userPackDoc.id;
-        let snapshot = userPackDoc.data();
-        snapshot.id = snapshotID;
-        currUserPacks.push(snapshot);
-      });
-    })
+    let currentUserPacks = [];
+    let currentUserInformation;
+        let currentUserUUID = await LUPA_AUTH.currentUser.uid;
+        await LUPA_DB.collection('users').doc(currentUserUUID).get().then(doc => {
+            currentUserInformation = doc.data();
+        });
 
-    return Promise.resolve(currUserPacks);
+        let packsData = currentUserInformation.packs;
+
+        for (let i = 0; i < packsData.length; i++)
+        {
+          let pack = packsData[i];
+            await PACKS_COLLECTION.doc(pack).get().then(snapshot => {
+              let data = snapshot.data();
+              data.pack_uuid = snapshot.id;
+              currentUserPacks.push(data);
+            })
+        }
+
+        console.log('UMMMMM '  + currentUserPacks.length)
+
+    return Promise.resolve(currentUserPacks);
   }
 
   getPackInformationByUserUUID = async (uuid) => {
@@ -398,6 +459,7 @@ class PacksController {
     let packInformation;
     await PACKS_COLLECTION.doc(uuid).get().then(result => {
       packInformation = result.data();
+      packInformation.pack_uuid = result.id;
     });
 
     return Promise.resolve(packInformation);
@@ -548,11 +610,27 @@ class PacksController {
   createPack = async (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packImageSource) => {
     const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type);
     let packRef;
+    let packSnapshot, packData, packPhotoUrl;
     await PACKS_COLLECTION.add(lupaPackStructure).then(ref => {
       packRef = ref.id;
     });
 
-    await this.savePackImage(image, packRef);
+    await this.getPackInformationByUUID(packRef).then(snapshot => {
+      packData = snapshot;
+    })
+
+    await this.savePackImage(image, packRef).then(url => {
+      packPhotoUrl = url;
+    });
+
+    packData.pack_uuid = packRef;
+    packData.pack_image = packPhotoUrl;
+    let packPayload = {
+      data: packData,
+      photo_url: packPhotoUrl
+    }
+
+    return Promise.resolve(packPayload);
   }
 
   createPackEvent = async (packUUID, title, description, datetime, eventImage) => {
@@ -639,15 +717,39 @@ class PacksController {
     const newPackEvent  = getLupaPackEventStructure(title, description, parsedDate, parsedTime, eventImage);
     newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
 
-    //await PACKS_EVENT_COLLECTION.doc().set(newPackEvent);
-    console.log('now the string is: ' + eventImage)
-    let eventUUID;
+    let eventUUID, eventData, imageURL;
     await PACKS_EVENT_COLLECTION.add(newPackEvent).then(ref => {
       eventUUID = ref.id;
     })
 
-    await this.savePackEventImage(eventImage, eventUUID);
+    await this.getPackEventInformationByUUID(eventUUID).then(snapshot => {
+      eventData = snapshot;
+    })
+
+    await this.savePackEventImage(eventImage, eventUUID).then(url => {
+      imageURL = url;
+    })
+
+    eventData.pack_event_uuid = eventUUID;
+
+    let eventPayload = {
+      data: eventData,
+      photo_url: imageURL
+    }
+
+    return Promise.resolve(eventPayload);
+    
   } 
+
+  getPackEventInformationByUUID = async (uuid) => {
+    let eventData;
+    await PACKS_EVENT_COLLECTION.doc(uuid).get().then(snapshot => {
+      eventData = snapshot.data();
+      eventData.pack_event_uuid = snapshot.id;
+    });
+
+    return Promise.resolve(eventData);
+  }
 
   removeUserFromPackByUUID  = async (packUUID, userUUID) => {
     let snapshot;

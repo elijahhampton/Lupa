@@ -259,6 +259,7 @@ class ProfileView extends React.Component {
     }
 
     _navigateToSessionsView = () => {
+        console.log(this.props.navigation.state.params.userUUID)
         this.props.navigation.navigate('SessionsView', {
             userUUID: this.props.navigation.state.params.userUUID
         });
@@ -464,7 +465,7 @@ class ProfileView extends React.Component {
         </Button>
 
         {
-            this.state.followers.includes(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid) ?
+            this.state.followers.includes(this.currUserUUID) ?
                 <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
                     roundness: 20,
                     colors: {
@@ -530,7 +531,9 @@ class ProfileView extends React.Component {
         if (this.state.profileImage == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid 
             || this.state.profileImage == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
         {
-            return <Avatar.Text style={{ elevation: 3 }} size={65} label={firstInitial+secondInitial} style={{backgroundColor: "#212121"}} />
+            return <Avatar.Text size={65} label={firstInitial+secondInitial} style={{backgroundColor: "#212121"}} theme={{
+                elevation: 3,
+            }} />
         }
 
         try {
@@ -542,7 +545,9 @@ class ProfileView extends React.Component {
         }
         catch (err)
         {
-            return <Avatar.Text style={{ elevation: 3 }} size={65} label={firstInitial+secondInitial} style={{backgroundColor: "#212121"}} />
+            return <Avatar.Text size={65} label={firstInitial+secondInitial} style={{backgroundColor: "#212121"}} theme={{
+                elevation: 3
+            }} />
         }
     }
 
