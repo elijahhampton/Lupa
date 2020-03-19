@@ -20,7 +20,7 @@ const userSearchResult = (props) => {
                         <Text style={{fontSize: 17, fontWeight: 'bold'}}>
                            {props.displayName}
                         </Text>
-                        <Text style={{fontWeight: 15, fontWeight: '600'}}>
+                        <Text style={{fontWeight: 15, fontWeight: "600"}}>
                             {props.username}
                         </Text>
                     </View>

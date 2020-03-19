@@ -42,6 +42,7 @@ import MyPacksCard from './component/PackCards';
 import LupaController from '../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
+import { getCurrentStoreState } from '../../controller/redux/index';
 
 
 const mapStateToProps = (state, action) => {
@@ -73,6 +74,12 @@ class PackView extends React.Component {
     componentDidMount = async () => {
         await this.setupExplorePage()
      } 
+
+     refreshCurrentUserPacks = async () => {
+         let data;
+         data = await getCurrentStoreState().Packs.currUserPacksData;
+         await this.setState({ currUserPacks: data })
+     }
  
      async _prepareSearch() {
          await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
@@ -133,6 +140,7 @@ class PackView extends React.Component {
 
      _handleOnRefresh = async () => {
          this.setState({ refreshing: true })
+         //await this.refreshCurrentUserPacks();
          await this._handleOnRefreshPackData();
          this.setState({ refreshing: false })
      }
@@ -203,8 +211,8 @@ class PackView extends React.Component {
 
     loadCurrUserPacks = () => {
         try {
-            return this.props.lupa_data.Packs.currUserPacksData.map(pack => {
-                return <MyPacksCard title={pack.pack_title} packImage={pack.pack_image} packUUID={pack.pack_uuid} numMembers={pack.pack_members.length} image={pack.pack_image} />
+            return this.state.currUserPacks.map(pack => {
+                return <MyPacksCard title={pack.pack_title} packImage={pack.pack_image} packUUID={pack.pack_uuid} numMembers={pack.pack_members.length} image={pack.pack_image} packType={pack.pack_type}/>
             })
         } catch(err)
         {
@@ -279,7 +287,7 @@ class PackView extends React.Component {
                     </Left>
 
                     <Right>
-                <Title style={[styles.headerItems, {fontSize: 25, fontWeight: 600, color: "black"}]}>
+                <Title style={[styles.headerItems, {fontSize: 25, fontWeight: "600", color: "black"}]}>
                         Packs
                     </Title>
                     </Right>

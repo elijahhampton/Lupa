@@ -147,7 +147,7 @@ const ImproveStrengthWeightliftingGoalPathwayWarmUp = props => {
     return (
         <View style={[styles.container, { backgroundColor: 'rgb(244, 247, 252)' }]}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
-                <Text style={{ padding: 10, fontSize: 20, fontWeight: '600' }}>
+                <Text style={{ padding: 10, fontSize: 20, fontWeight: "600" }}>
                     Warm Up Workouts
                     </Text>
                 <Button mode="text" compact color="#1A237E">
@@ -234,7 +234,7 @@ const ImproveStrengthWeightliftingGoalPathwayPrimeWorkouts = props => {
     return (
         <View style={[styles.container, { backgroundColor: 'rgb(244, 247, 252)' }]}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ padding: 10, alignSelf: 'flex-start', fontSize: 20, fontWeight: '600' }}>
+                <Text style={{ padding: 10, alignSelf: 'flex-start', fontSize: 20, fontWeight: "600" }}>
                     Prime Workouts
                     </Text>
             </View>
@@ -294,7 +294,7 @@ const ImproveStrengthWeightliftingGoalPathwayPostWorkout = props => {
     return (
         <View style={[styles.container, { backgroundColor: 'rgb(244, 247, 252)' }]}>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ padding: 10, alignSelf: 'flex-start', fontSize: 20, fontWeight: '600' }}>
+                <Text style={{ padding: 10, alignSelf: 'flex-start', fontSize: 20, fontWeight: "600" }}>
                     Post Workouts
                     </Text>
             </View>

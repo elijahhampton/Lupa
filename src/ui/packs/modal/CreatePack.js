@@ -257,7 +257,7 @@ class CreatePack extends React.Component {
     _renderItem = ({item, index}) => {
         return (
                             <Surface style={{padding: 15, backgroundColor: "white", alignItems: 'center', justifyContent: 'center', height: 260, width: 190, borderRadius: 15, elevation: 6, margin: 20, shadowColor: '#2196F3', shadowRadius: 10}}>
-                <Text style={{fontWeight: '600', fontSize: 25, margin: 5}}>
+                <Text style={{fontWeight: "600", fontSize: 25, margin: 5}}>
                     {item.pack_type}
                 </Text>
 
@@ -338,7 +338,7 @@ class CreatePack extends React.Component {
                                 return (
                                     <TouchableOpacity onPress={() => this.handleOnPressPackType(item.key)}>
                                                                             <Surface key={item.key} style={[{padding: 15, backgroundColor: "#F5F5F5", alignItems: 'center', justifyContent: 'center', height: "auto", width: Dimensions.get('screen').width / 1.1, borderRadius: 15, elevation: 0, margin: 12}, this.isSelectedStyle(this.state.packType, item.key)]}>
-                                    <Text style={{alignSelf: "flex-start", fontWeight: '600', fontSize: 15, margin: 5}}>
+                                    <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, margin: 5}}>
                                         {item.pack_type}
                                     </Text>
                     

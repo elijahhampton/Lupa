@@ -134,7 +134,7 @@ class WorkoutView extends React.Component {
     </Headline>
     <Divider />
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 10}}>
-                    <Paragraph style={{fontWeight: 500, fontSize: 20}}>
+                    <Paragraph style={{fontWeight: "500", fontSize: 20}}>
             You don't have any goals selected! Click one of the modules above to get started.
         </Paragraph>
         </View>
@@ -229,7 +229,7 @@ class WorkoutView extends React.Component {
                 <Header span style={{backgroundColor: 'white', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
 
                         <Image style={{width: '30%', height: '40%'}} defaultSource={require('../images/logo.png')} />
-                        <Text style={{margin: 10, alignSelf: 'center', fontSize: 20, fontWeight: 600, color: "black"}}>
+                        <Text style={{margin: 10, alignSelf: 'center', fontSize: 20, fontWeight: "600", color: "black"}}>
                             {this.state.currUserData.display_name}
                         </Text>
                 </Header>

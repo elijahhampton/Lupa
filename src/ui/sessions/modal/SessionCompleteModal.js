@@ -128,7 +128,7 @@ class SessionCompleteModal extends React.Component {
             style={{margin: 0, display: 'flex', flex: 1}} 
             presentationStyle="fullScreen">
                 <SafeAreaView style={{flex: 1, padding: 10, justifyContent: 'space-evenly', marginBottom: 10, marginTop: 10}}>
-                <Text style={{alignSelf: 'center', fontSize: 30, fontWeight: '600', color: "black"}}>
+                <Text style={{alignSelf: 'center', fontSize: 30, fontWeight: "600", color: "black"}}>
                 You have completed your session with {this.state.otherUserInformation.display_name}.  Visit their profile to setup another.
             </Text>
 

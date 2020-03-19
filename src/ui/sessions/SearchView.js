@@ -166,7 +166,7 @@ class SearchView extends React.Component {
 
                     <Header searchBar rounded transparent={true} style={{backgroundColor: 'white', flexDirection: 'column'}}>
                         <Right style={{alignSelf: 'flex-end'}}>
-                        <Title style={{fontSize: 25, fontWeight: 600, color: "black", alignSelf: 'flex-end'}}>
+                        <Title style={{fontSize: 25, fontWeight: "600", color: "black", alignSelf: 'flex-end'}}>
                        Sessions
                     </Title>
                         </Right>

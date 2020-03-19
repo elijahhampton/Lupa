@@ -17,6 +17,7 @@ import { withNavigation } from 'react-navigation';
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 import LupaController from '../../../controller/lupa/LupaController';
+import { getCurrentStoreState } from '../../../controller/redux';
 
 class MyPacksCard extends React.Component {
     constructor(props) {
@@ -35,12 +36,8 @@ class MyPacksCard extends React.Component {
     handleShowPack = (uuid) => {
             this.props.navigation.navigate('PackModal', {
                 navigation: this.props.navigation,
-                packUUID: uuid
+                packUUID: uuid,
             })
-    }
-
-    handleClosePack = () => {
-        this.setState({ showPack: false })
     }
 
     componentDidMount = async () => {
@@ -75,7 +72,7 @@ class MyPacksCard extends React.Component {
                             {this.props.title}
                         </Text>
                         <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "black"}}>
-                            Community
+                            {this.props.packType}
                         </Text>
                         <Caption>
                             {this.props.numMembers} member
@@ -113,7 +110,8 @@ const styles = StyleSheet.create({
     image: {
         width: 30,
         height: 30,
-        borderRadius: 15
+        borderRadius: 15,
+        alignSelf: "flex-end"
     },
     cardContentContainer: {
         flex: 1, flexDirection: "column", padding: 15
