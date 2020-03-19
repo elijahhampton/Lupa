@@ -50,16 +50,16 @@ const mapStateToProps = (state, action) => {
 
 const PackInviteModal = props => {
 
-    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     handleAccept = async (packID, currUserID) => {
-        await this.LUPA_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packID, currUserID);
+        await LUPA_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packID, currUserID);
         await props.refreshData();
         props.closeModalMethod()
     }
 
     handleDecline = async (packID, currUserID) => {
-        await this.LUPA_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packID, currUserID);
+        await LUPA_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packID, currUserID);
         await props.refreshData();
         props.closeModalMethod()
     }
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 50, 
-        fontWeight: '600', 
+        fontWeight: "600", 
         color: 'white', 
         alignSelf: "center"
     },

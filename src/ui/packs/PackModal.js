@@ -34,7 +34,7 @@ import { Feather as FeatherIcon } from '@expo/vector-icons';
 import SafeAreaView from 'react-native-safe-area-view';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import Carousel from 'react-native-snap-carousel';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
@@ -52,6 +52,7 @@ import PackEventModal from './modal/PackEventModal';
 import PackRequestsModal from './modal/PackRequestsModal';
 
 import { connect } from 'react-redux';
+import { refreshStoreState } from '../../controller/redux';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -141,9 +142,9 @@ const PackEventCard = props => {
     }
 
     return (
-        <TouchableOpacity onPress={this.handlePackEventModalOpen}>
+        <TouchableOpacity onPress={() => this.handlePackEventModalOpen()}>
         <Surface style={{ margin: 5, elevation: 5, width: Dimensions.get('screen').width - 20, height: 160, borderRadius: 20 }}>
-        {this.getPackEventCardImage()}
+        {() => this.getPackEventCardImage()}
 </Surface>
 
 <View style={{width: "auto", height: "auto", backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' }}>
@@ -154,7 +155,7 @@ const PackEventCard = props => {
     {packEventObject.pack_event_description}
 </Paragraph>
 </View>
-<PackEventModal isOpen={packEventModalIsOpen} closeModalMethod={this.handlePackEventModalClose} packEventTime={packEventObject.pack_event_time} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventUUID={packEventObject.pack_event_uuid} packEventAttendees={packEventObject.attendees}/>
+<PackEventModal isOpen={packEventModalIsOpen} closeModalMethod={handlePackEventModalClose} packEventTime={packEventObject.pack_event_time} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventUUID={packEventObject.pack_event_uuid} packEventAttendees={packEventObject.attendees}/>
 </TouchableOpacity>
     )
 }
@@ -348,6 +349,7 @@ class PackModal extends React.Component {
         await this.props.leavePack(this.state.packUUID);
         await this.LUPA_CONTROLLER_INSTANCE.removeUserFromPackByUUID(this.state.packUUID, this.props.lupa_data.Users.currUserData.user_uuid);
         await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser("packs", [this.state.packUUID], "remove");
+        await this.LUPA_CONTROLLER_INSTANCE.updatePack(this.state.packUUID, "pack_members", this.props.lupa_data.Users.currUserData.user_uuid, ["remove"]);
         this.props.navigation.goBack(null);
     }
 
@@ -395,6 +397,7 @@ class PackModal extends React.Component {
                           onSnapToItem={itemIndex => this.handleOnSnapToItem(itemIndex)}
                             vertical={true}
                             />
+                            <Pagination vertical={true} dotsLength={this.state.packEvents.length} dotColor="#2196F3" activeDotIndex={this.state.currCarouselIndex} inactiveDotColor="black" />
                             </View>
 }
 

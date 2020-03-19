@@ -334,7 +334,7 @@ class ProfileView extends React.Component {
                 </Caption>
                 :
                 <Text allowFontScaling={true} allowsEditing={false}>
-                this.state.bio
+                {this.state.bio}
                 </Text>
             :
             <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
@@ -571,7 +571,7 @@ class ProfileView extends React.Component {
                                 <Text style={{ fontSize: 18, fontWeight: 'bold', padding: 1 }}>
                                     {this.state.userData.display_name}
                                 </Text>
-                                <Text style={{ fontSize: 15, fontWeight: '600', padding: 1 }}>
+                                <Text style={{ fontSize: 15, fontWeight: "600", padding: 1 }}>
                                     {this.state.userData.username}
                                 </Text>
                                 {
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     uesrInfoText: {
-        fontWeight: '600',
+        fontWeight: "600",
     },
     userAttributesContainer: {
         flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", margin: 3

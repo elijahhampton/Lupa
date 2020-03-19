@@ -93,7 +93,7 @@ class SingleWorkoutComponent extends React.Component {
             <TouchableOpacity onPress={() => this.handleModalOpen()}>
             <View style={{width: '100%', height: 'auto', padding: 15, flexDirection: 'column', justifyContent: 'space-around'}}>
                 <View style={{flex: 1}}>
-                    <Text style={{alignSelf: 'flex-start', fontWeight: '600'}}>
+                    <Text style={{alignSelf: 'flex-start', fontWeight: "600"}}>
                         Workout Name
                     </Text>
                 </View>

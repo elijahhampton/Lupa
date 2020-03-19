@@ -255,6 +255,36 @@ class PacksController {
               pack_image: packImage
             });
             break;
+          case "pack_members":
+            if (optionalData[0] == "add")
+            {
+              let userToAdd = value;
+              let updatedArr = currentPackDoc.pack_members;
+              updatedArr.push(userToAdd)
+              currentPackDoc.update({
+                pack_members: updatedArr
+              });
+              break;
+            }
+            else if (optionalData[0] == "remove")
+            {
+              let userToRemove = value;
+
+              //If the user leaving the pack is the pack leader then we delete the pack
+              if (userToRemove == currentPackDocData.pack_leader)
+              {
+                //delete pack
+                currentPackDoc.delete();
+                break;
+              }
+              let updatedArr = currentPackDocData.pack_members;
+              updatedArr.splice(currentPackDocData.indexOf(userToRemove), 1);
+              currentPackDoc.update({
+                pack_members: updatedArr
+              })
+              break;
+            }
+            break;
           default:
         }
   }
@@ -263,8 +293,8 @@ class PacksController {
   {
     let currentPackEventDocData; 
 
-        let currentPackEventDoc = await PACKS_COLLECTION.doc(eventUUID);
-        await PACKS_COLLECTION.doc(eventUUID).get().then(snapshot => {
+        let currentPackEventDoc = await PACKS_EVENT_COLLECTION.doc(eventUUID);
+        await PACKS_EVENT_COLLECTION.doc(eventUUID).get().then(snapshot => {
             currentPackEventDocData = snapshot.data();
         });
 

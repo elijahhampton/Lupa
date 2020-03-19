@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   textLabel: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     color: '#424242',
     margin: 5
   },

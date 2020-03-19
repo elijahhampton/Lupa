@@ -18,14 +18,6 @@ handleUserAttributeUpdate = (state, payload) => {
   return updatedState;
 }
 
-removePack =  (state, packUUID) => {
-  const newPackData = state.currUserPacksData.filter(pack => {
-    return pack.pack_uuid != undefined && typeof(pack.pack_uuid) == "string" && pack.pack_uuid != pack_to_remove;
-  })
-
-  return newPackData;
-}
-
 const initialUserReducerState = {
   currUserData: {},
 }
@@ -69,12 +61,17 @@ const packReducer = (state = initialPacksReducerState, action) => {
       });
     case REMOVE_CURRENT_USER_PACK:
       console.log('pre')
-      let updatedPacksData = removePack(state.currUserPacksData, action.payload);
-      console.log('THE LENGTH IS: ' + updatedPacksData)
-      console.log(updatedPacksData);
-      return Object.assign({}, state, {
-        currUserPacksData: updatedPacksData
-      });
+      let data = state.currUserPacksData;
+      let packsToKeep = [];
+  for (let i = 0; i < data.length; i++)
+  {
+    let pack = data[i];
+    if (pack.pack_uuid != action.payload)
+    {
+     packsToKeep.push(pack);
+    }
+  }
+      return Object.assign({}, packsToKeep);
     case ADD_CURRENT_USER_PACK:
       updatedPacksData = state.currUserPacksData;
       updatedPacksData.push(action.payload);

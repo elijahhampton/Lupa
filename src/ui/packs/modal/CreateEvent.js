@@ -32,7 +32,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
-let globalEventImageURL;
+let packImageSource;
 
 function CreatingPackEventActivityIndicator(props) {
     return (
@@ -54,41 +54,32 @@ export default class CreateEvent extends React.Component {
         this.state = {
             eventTitle: '',
             eventDescription: '',
-            eventDate: new Date(),
             packUUID: this.props.packUUID,
             eventImage: '',
             creatingPackEventDialogIsVisible: false,
-            datetime: "When will your event take place?",
+            datetime: new Date(),
             isDateTimePickerVisible: false,
         }
     }
 
-
     _chooseImageFromCameraRoll = async () => {
-        let packImageSource = await ImagePicker.launchImageLibraryAsync({
+        packImageSource = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: [4, 3],
         });
 
         if (!packImageSource.cancelled) {
-            globalEventImageURL = packImageSource.uri;
+            console.log('and now: ' +  packImageSource.uri)
             await this.setState({ eventImage: packImageSource.uri });
         }
     }
 
-    _handleDateTimeChange  = (datetime) => {
-        let date = new Date(datetime).toLocaleString();
-        this.setState({
-            eventDate: date
-        })
-    }
-
     createEvent = async () => {
-        await this.setState({ creatingPackEventDialogIsVisible: false })
+        await this.setState({ creatingPackEventDialogIsVisible: true })
         let eventUUID, eventImageURL;
         //convert date to locale string
-        let datetime = await this.state.eventDate.toLocaleString();
+        let datetime = await this.state.datetime.toLocaleString();
         
         //create event
         await this.LUPA_CONTROLLER_INSTANCE.createNewPackEvent(this.state.packUUID, this.state.eventTitle, this.state.eventDescription, datetime, this.state.eventImage).then(dataResults => {
@@ -96,11 +87,13 @@ export default class CreateEvent extends React.Component {
             eventImageURL = dataResults.photo_url;
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE.updatePackEvent(eventImageURL, "pack_event_image", this.state.eventImage, []);
+        await this.LUPA_CONTROLLER_INSTANCE.updatePackEvent(eventUUID, "pack_event_image", eventImageURL, []);
+
+        await this.props.refreshData();
 
         await this.setState({ creatingPackEventDialogIsVisible: false })
         //close modal
-        this.props.closeModalMethod();
+        await this.props.closeModalMethod();
     }
 
     getInitialDate = () => {
@@ -116,8 +109,9 @@ export default class CreateEvent extends React.Component {
         this.setState({ isDateTimePickerVisible: true })
     }   
 
-    handleConfirm = (date) => {
-        this.setState({ datetime: date })
+    handleConfirm = async (event, date) => {
+        let updatedDate = new Date(date);
+       await  this.setState({ datetime: updatedDate })
     }
 
     hideDatePicker = () => {
@@ -156,18 +150,14 @@ export default class CreateEvent extends React.Component {
                         </>
                 
                         <>
-                        <NativeButton title={this.state.datetime} onPress={this.showDatePicker} />
-                        {
-                            this.state.isDateTimePickerVisible && (
                                 <DateTimePicker
         mode="datetime"
-                                value={new Date()}
+                                value={this.state.datetime}
                                 is24Hour={true}
-        onChange={date => this.handleConfirm(date)}
-
+                                display="default"
+        onChange={(event, date) => this.handleConfirm(event, date)}
+                        
       />
-                            )
-                        }
                         </>
 
                         <View style={{flexDirection: "row", alignSelf: 'center' }}>

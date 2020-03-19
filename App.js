@@ -1,17 +1,19 @@
 import React from 'react';
 
 import { Provider as PaperProvider } from 'react-native-paper';
-import  {createStore} from 'redux';
+//import  {createStore} from 'redux';
 import { Provider as StoreProvider} from 'react-redux';
 import AuthenticationNavigator from './src/ui/navigators/AuthenticationNavigator';
 import Lupa from './src/Lupa';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
-import ReduxThunk from 'redux-thunk';
+//import ReduxThunk from 'redux-thunk';
 
 import LupaController from './src/controller/lupa/LupaController';
-import LupaReducer from './src/controller/redux/reducers';
-import { applyMiddleware } from 'redux';
+//import LupaReducer from './src/controller/redux/reducers';
+//import { applyMiddleware } from 'redux';
+
+import LupaStore from './src/controller/redux/index';
 
 const Navigator = createAppContainer(
   createSwitchNavigator(
@@ -35,10 +37,6 @@ const Navigator = createAppContainer(
     },
   )
 );
-
-const LupaStore = createStore(LupaReducer, applyMiddleware(ReduxThunk));
-LupaStore.subscribe(() => {});
-
 
 class App extends React.Component {
   constructor(props) {

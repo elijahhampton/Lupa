@@ -240,11 +240,15 @@ export default class LupaController {
       return Promise.resolve(packData);
     }
 
-    createNewPackEvent = (packUUID, title, description, date, eventImage) => {
+    createNewPackEvent = async (packUUID, title, description, date, eventImage) => {
       //validate data
-
+      let payload;
       //call pack controller to create new event
-      PACKS_CONTROLLER_INSTANCE.createPackEvent(packUUID, title, description, date, eventImage);
+      await PACKS_CONTROLLER_INSTANCE.createPackEvent(packUUID, title, description, date, eventImage).then(data => {
+        payload = data;
+      });
+
+      return Promise.resolve(payload);
     }
     
     inviteUserToPacks = (packs, userUUID) => {

@@ -56,7 +56,7 @@ class WorkoutComponent extends React.Component {
             <TouchableOpacity onPress={() => this.props.navigateMethod()}>
                             <View style={{alignSelf: 'center', borderRadius: 10, backgroundColor: 'white', margin: 5, justifyContent: 'space-around', display: 'flex', flexDirection: 'column', width: '95%', height: 'auto', padding: 15}}>
             <View style={{justifyContent: 'space-between', flexDirection: 'row', padding: 5, alignItems: 'center'}}>
-            <Text style={{fontSize: 16, fontWeight: '600', padding: 3, color: "#212121"}}>
+            <Text style={{fontSize: 16, fontWeight: "600", padding: 3, color: "#212121"}}>
                {this.props.pathwayName}
             </Text>
             <Chip mode="flat" style={{width: "auto", height: 25, elevation: 3, backgroundColor: getChipBackgroundColor(this.props.workoutModality)}}>
