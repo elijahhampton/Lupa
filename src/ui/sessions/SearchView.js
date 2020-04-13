@@ -13,10 +13,18 @@ import {
     StyleSheet,
     RefreshControl,
     ScrollView,
+    Image,
+    Text,
+    Button as NativeButton,
+    Dimensions,
+    SafeAreaView,
 } from 'react-native';
 
 import {
-    Title,
+    Headline,
+    Surface,
+    Avatar,
+    Button,
 } from 'react-native-paper';
 
 import {
@@ -26,8 +34,6 @@ import {
 
 import {
     Container,
-    Header,
-    Right
 } from 'native-base';
 
 import {
@@ -37,9 +43,15 @@ import {
 import UserSearchResultCard from './component/UserSearchResultCard';
 import TrainerSearchResultCard from './component/TrainerSearchResultCard';
 
+import { TrainerCard } from '../packs/component/ExploreCards/PackExploreCard'
+
 import LupaController from '../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
+import UpcomingSessionCard from './component/UpcomingSessionCard';
+import { Video } from 'expo-av';
+
+import SessionsVideo from '../video/video.mp4'
 
 mapStateToProps = (state, action) => {
     return {
@@ -58,7 +70,8 @@ class SearchView extends React.Component {
             searchResults: [],
             refreshing: false,
             currUserData: this.props.lupa_data.Users.currUserData,
-            trainers: [],
+            suggestedTrainers: [],
+            upcomingSessions: [],
         }
     }
 
@@ -67,25 +80,72 @@ class SearchView extends React.Component {
     }
 
     setupExplorePage = async () => {
-        let subscriptionPacksIn, trainersIn, explorePagePacksIn, usersInAreaIn, currUsersLocationIn, tempUsersLocation;
+        let suggestedTrainersIn, upcomingSessionsIn;
 
         await this.LUPA_CONTROLLER_INSTANCE.getTrainersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
-            trainersIn = result;
-        })
+            suggestedTrainersIn = result;
+        });
+
+
+        await this.LUPA_CONTROLLER_INSTANCE.getUpcomingSessions(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
+            upcomingSessionsIn = result;
+        });
 
         //set component state
         await this.setState({
-            trainers: trainersIn,
-        })
-        
+            upcomingSessions: upcomingSessionsIn,
+            suggestedTrainers: suggestedTrainersIn,
+        });
     }
 
     mapTrainers = () => {
-       {/* return this.state.trainers.map(trainer => {
+        return this.state.suggestedTrainers.map(trainer => {
             return (
                 <TrainerCard userUUID={trainer.user_uuid} displayName={trainer.display_name} sessionsCompleted={trainer.sessions_completed} location={trainer.location} />
             )
-        })*/}
+        })
+    }
+
+    mapUpcomingSessions = () => {
+        return this.state.upcomingSessions.length == 0 ?
+        <Text style={{fontSize: 20, marginLeft: 20, alignSelf: "flex-start"}}>
+            You have no upcoming sessions.
+        </Text>
+        :
+        this.state.upcomingSessions.map(session => {
+            return (
+                <UpcomingSessionCard userDataObject={session.otherUserData} sessionDataObject={session} />
+            )
+        })
+    }
+
+    mapSuggestedTrainers = () => {
+        return this.state.suggestedTrainers.map(user => {
+            return (
+                <Surface style={{ elevation: 8, margin: 5, borderRadius: 15, width: 300, height: 110, backgroundColor: "#212121", padding: 10 }}>
+                    <View style={{ flex: 1, flexDirection: "row", alignItems: "center", }}>
+                        <Avatar.Image source={{ uri: user.photo_url }} size={50} />
+
+                        <View style={{ padding: 10 }}>
+                            <Text style={{ fontFamily: 'avenir-next-bold', color: "white" }}>
+                                {user.display_name}
+                            </Text>
+                            <Text style={{ fontSize: 15, color: "grey" }}>
+                                National Association for Medicine
+                        </Text>
+                        </View>
+                    </View>
+
+                    <View style={{ width: '100%', flexDirection: "row", alignItems: "center", justifyContent: "flex-end" }}>
+
+                        <Button mode="outlined" color="white" compact style={{ margin: 5, width: '35%' }} uppercase={false} contentStyle={{ width: '100%' }}>
+                            View Profile
+                    </Button>
+                    </View>
+
+                </Surface>
+            )
+        })
     }
 
     async _prepareSearch() {
@@ -94,10 +154,9 @@ class SearchView extends React.Component {
 
     _performSearch = async searchQuery => {
         let searchResultsIn;
-        
+
         //If no search query then set state and return 
-        if (searchQuery == "" || searchQuery == '')
-        {
+        if (searchQuery == "" || searchQuery == '') {
             await this.setState({
                 searchValue: "",
                 searchResults: []
@@ -120,29 +179,26 @@ class SearchView extends React.Component {
 
         await this.setState({ searchResults: searchResultsIn })
     }
-    
+
     showSearchResults() {
         //if the searchResults are 0 or undefined then we don't want to display anything
-        if (this.state.searchResults.length == 0 || this.state.searchResults == undefined)
-            {
-                return;
-            }
+        if (this.state.searchResults.length == 0 || this.state.searchResults == undefined) {
+            return;
+        }
 
-        if (typeof(this.state.searchResults[0]) != "object")
-        {
+        if (typeof (this.state.searchResults[0]) != "object") {
             return;
         }
 
         return this.state.searchResults.map(result => {
-            switch(result.resultType)
-            {
+            switch (result.resultType) {
                 case "trainer":
                     return (
-                        <TrainerSearchResultCard title={result.display_name} email={result.email} uuid={result.objectID}/>
+                        <TrainerSearchResultCard title={result.display_name} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
                     )
                 case "user":
                     return (
-                        <UserSearchResultCard title={result.display_name} email={result.email} uuid={result.objectID} />
+                        <UserSearchResultCard title={result.display_name} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
                     )
                 default:
             }
@@ -163,41 +219,69 @@ class SearchView extends React.Component {
     render() {
         return (
             <Container style={styles.root}>
+                <View style={{ flex: 1, backgroundColor: "white" }}>
+                    <Surface style={{ elevation: 10, borderBottomLeftRadius: 30, position: "absolute", width: Dimensions.get('window').width, top: 0, height: '40%', backgroundColor: "#2196F3" }}>
+                        <SafeAreaView />
+                        <Video
+                            source={SessionsVideo}
+                            rate={1.0}
+                            volume={1.0}
+                            isMuted={false}
+                            resizeMode="cover"
+                            shouldPlay
+                            isLooping
+                            style={{ position: "absolute", borderBottomLeftRadius: 30, width: "100%", height: "100%" }} />
+                        <Text style={{ fontFamily: "avenir-next-bold", fontSize: 30, color: "white", padding: 10, alignSelf: "flex-end" }}>
+                            Sessions
+                    </Text>
 
-                    <Header searchBar rounded transparent={true} style={{backgroundColor: 'white', flexDirection: 'column'}}>
-                        <Right style={{alignSelf: 'flex-end'}}>
-                        <Title style={{fontSize: 25, fontWeight: "600", color: "black", alignSelf: 'flex-end'}}>
-                       Sessions
-                    </Title>
-                        </Right>
+                        <View style={{ flex: 1 }}>
+                            <Headline style={{ padding: 10, fontFamily: "avenir-next-bold", color: "white" }}>
+                                Suggested Trainers
+                        </Headline>
+                            <View style={{ flex: 1, }}>
+                                <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
+                                    {
+                                        this.mapSuggestedTrainers()
+                                    }
 
-                    </Header>
-                    <SearchBar placeholder="Search the Lupa Database"
-                        onChangeText={text => this._performSearch(text)} 
-                        platform="ios"
-                        searchIcon={<FeatherIcon name="search" />}
-                        containerStyle={{backgroundColor: "transparent"}}
-                        value={this.state.searchValue}/>
+                                </ScrollView>
+                            </View>
 
-                    <View style={{flex: 1}}>
+                        </View>
+
+                        <SearchBar placeholder="Search the Lupa Database"
+                            onChangeText={text => this._performSearch(text)}
+                            platform="ios"
+                            searchIcon={<FeatherIcon name="search" />}
+                            inputStyle={{ backgroundColor: "white" }}
+                            inputContainerStyle={{ backgroundColor: "white", borderRadius: 30 }}
+                            containerStyle={{ borderRadius: 30, position: "absolute", bottom: 0, backgroundColor: "transparent" }}
+                            value={this.state.searchValue}
+
+                        />
+                    </Surface>
+
+                    <View style={{ position: "absolute", bottom: 0, height: "60%" }}>
                         {
-                            this.state.searchValue == '' ?
-                            <ScrollView contentContainerStyle={{position: 'absolute', bottom: 15,}} horizontal showsHorizontalScrollIndicator={true}>
-                                {
-                                    this.mapTrainers()
-                                }
-                            </ScrollView>
-                            :
-                            <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} shouldRasterizeIOS={true} />}>
-
-                            {
-                                                                this.showSearchResults()
-                            }
-                            
-                        </ScrollView>
-
+                            this.state.searchResults == '' ?
+                                <ScrollView contentContainerStyle={[styles.searchContainer]} shouldRasterizeIOS={true}>
+                                    <Text style={{ fontFamily: "avenir-next-bold", fontSize: 30, color: "#212121", padding: 10, alignSelf: "flex-start" }}>
+                                        Upcoming Sessions
+                                     </Text>
+                                    {
+                                        this.mapUpcomingSessions()
+                                    }
+                                </ScrollView>
+                                :
+                                <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} />} shouldRasterizeIOS={true}>
+                                    {
+                                        this.showSearchResults()
+                                    }
+                                </ScrollView>
                         }
                     </View>
+                </View>
             </Container>
         );
     }
@@ -213,7 +297,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         flexDirection: "column",
         backgroundColor: "white"
-        
+
     },
     location: {
         alignSelf: "center",
@@ -227,7 +311,7 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
     },
     button: {
-        
+
     }
 });
 

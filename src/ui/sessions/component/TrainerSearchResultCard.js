@@ -26,7 +26,7 @@ class TrainerSearchResultCard extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            profilePicture: '',
+            profilePicture: this.props.avatar,
         }
     }
 
@@ -69,12 +69,12 @@ class TrainerSearchResultCard extends React.Component {
                 return <Avatar.Text label={firstName+lastName} size={30} style={{margin: 3}}/>
             } catch(err)
             {
-                return <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+                return <Avatar.Image source={{uri: this.props.avatar }} size={30} style={{margin: 3}} />
             }
         }
         else
         {
-            return <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+            return <Avatar.Image source={{uri: this.props.avatar }} size={30} style={{margin: 3}} />
         }
     }
 

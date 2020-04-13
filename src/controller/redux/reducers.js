@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK } from './actionTypes';
+import { ADD_WORKOUT_TO_PROGRAM_ACTION, UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PROGRAMS_ACTION, UPDATE_LUPA_WORKOUTS_ACTION } from './actionTypes';
 
 
 handleUserAttributeUpdate = (state, payload) => {
@@ -8,9 +8,14 @@ handleUserAttributeUpdate = (state, payload) => {
 
   switch(payload.attribute)
   {
+    case 'photo_url':
+      updatedState.display_name = payload.value;
+      break;
     case 'display_name':
       updatedState.display_name = payload.value;
       break;
+    case 'homegym':
+      updatedState.homegym = payload.value;
     default:
 
   }
@@ -24,6 +29,14 @@ const initialUserReducerState = {
 
 const initialPacksReducerState = {
   currUserPacksData: {},
+}
+
+const initialProgramsReducerState = {
+  currUserProgramsState: {},
+}
+
+const initialAppWorkoutsReducerState = {
+  applicationWorkouts: {},
 }
 
 const initialState = {}
@@ -81,22 +94,105 @@ const packReducer = (state = initialPacksReducerState, action) => {
   }
 }
 
-//workout reducer
-const workoutReducer = (state = initialState, action) => {
+const programsReducer = (state = initialProgramsReducerState, action) => {
   const newState = {...state};
 
   switch(action.type)
   {
+    case "ADD_CURRENT_USER_PROGRAM":
+      let updatedProgramsData = state.currUserProgramsState;
+      if (!updatedProgramsData.length)
+      {
+        updatedProgramsData = [action.payload];
+      }
+      else
+      {
+        updatedProgramsData.push(action.payload);
+      }
+      return Object.assign({}, state, { currUserProgramsState: updatedProgramsData });
+    case "DELETE_CURRENT_USER_PROGRAM":
+      let programs = state.currUserProgramsState;
+      let programsToKeep = [];
+      for (let i = 0; i < programs.length; i++)
+  {
+    let program = programs[i];
+    if (program.program_uuid != action.payload)
+    {
+     programsToKeep.push(program);
+    }
+  }
+      return Object.assign({},  {currUserProgramsState: programsToKeep} );
+    case UPDATE_CURRENT_USER_PROGRAMS_ACTION:
+      return Object.assign({}, state, {currUserProgramsState: action.payload});
+    case ADD_WORKOUT_TO_PROGRAM_ACTION:
+      console.log('entering')
+        let programID = action.payload.programUUID;
+        console.log('program id: ' + programID)
+        let workout = action.payload.workoutData;
+        console.log('workout: ' + workout);
+        let sectionName = action.payload.sectionName;
+        console.log('section name: ' + sectionName)
+
+        let programsArr =  state.currUserProgramsState;
+        let currProgram;
+        for (let i = 0; i < programsArr.length; i++)
+        {
+          console.log('IIIIIIIIIIIIIIIIIIIIIIIIIIIIINSIDE FOR LOOP')
+          if (programsArr[i].program_uuid == programID)
+          {
+            console.log('TTTTTTTTTTTTTTTTTTTTHE IF STATEMENT')
+            switch(sectionName)
+            {
+              case 'warm up':
+                console.log('WARM UP!!!!!!!!!!!!!!!')
+                programsArr[i].program_structure.warmup.push(workout);
+                break;
+              case 'primary':
+                programsArr[i].program_structure.primary.push(workout);
+                break;
+              case 'break':
+                console.log('BRRRRRRRRRREEEEEEEEAAAAAAAAAAKKKKKKKKK')
+                programsArr[i].program_structure.break.push(workout);
+                break;
+              case 'secondary':
+                programsArr[i].program_structure.secondary.push(workout);
+                break;
+              case 'cooldown':
+                programsArr[i].program_structure.cooldown.push(workout);
+                break;
+              case 'homework':
+                programsArr[i].program_structure.homework.push(workout);
+                break;
+            }
+          }
+        }
+
+      return Object.assign(state, {currUserProgramsState: programsArr });
     default:
       return newState;
   }
 }
 
-//sessions reducer
+//workout reducer
+const workoutsReducer = (state = initialAppWorkoutsReducerState, action) => {
+  const newState = {...state};
+
+  switch(action.type)
+  {
+    case UPDATE_LUPA_WORKOUTS_ACTION:
+      return Object.assign({}, state, {
+        applicationWorkouts: action.payload
+      });
+    default:
+      return newState;
+  }
+}
+
 const LupaReducer = combineReducers({
   Packs: packReducer,
-  Workouts: workoutReducer,
-  Users: userReducer
+  Programs: programsReducer,
+  Users: userReducer,
+  Application_Workouts: workoutsReducer,
 });
 
 export default LupaReducer;

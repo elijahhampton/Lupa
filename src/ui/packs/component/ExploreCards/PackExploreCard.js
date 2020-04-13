@@ -96,6 +96,7 @@ class SmPackCard extends React.Component {
             packImage: this.props.packImage,
             showPack: false,
             packImage: "",
+            packInformationModalVisible: false,
         }
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -155,7 +156,7 @@ class SmPackCard extends React.Component {
         if (this.state.packImage == "" || this.state.packImage == undefined)
         {
             return (
-                <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}}>
+                                    <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}}>
                 <ImageBackground 
                 imageStyle={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}} 
                 style={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}} 
@@ -192,7 +193,6 @@ class SmPackCard extends React.Component {
             </Surface>
     
             <FAB onPress={() => this._setShowPack()} icon="menu" color="#FFFFFF" small style={{backgroundColor: "#2196F3",position: 'absolute', top: 10, right: 10, }} />
-            <PackInformationModal isOpen={this.state.showPack} packUUID={this.state.packUUID} closeModalMethod={this.handleClosePack}/>
             </>
         );
     }
@@ -211,7 +211,7 @@ export const SubscriptionPackCard = (props) => {
     }
     
     return (
-        <TouchableOpacity onPress={this._setShowPack}>
+        <TouchableOpacity onPress={() => this._setShowPack()}>
         <Surface style={styles.offerCards}>
         <Image style={{width: "100%", height: "100%", borderRadius: 15}} 
             resizeMode={ImageResizeMode.cover} 

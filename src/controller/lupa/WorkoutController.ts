@@ -70,4 +70,16 @@ export default class WorkoutController {
 
         return Promise.resolve(workoutData);
     }
+
+    loadWorkouts = async () => {
+        let workouts = [];
+        await WORKOUT_COLLECTION.get().then(docs => {
+            docs.forEach(doc => {
+                let snapshot = doc.data();
+                workouts.push(snapshot);
+            })
+        })
+
+        return Promise.resolve(workouts);
+    }
 }

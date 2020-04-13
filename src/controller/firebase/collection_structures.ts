@@ -89,9 +89,12 @@ var lupa_session : LupaSessionStructure = {
         date: "",
         time: "",
     },
+    locationData: {
+        
+    },
 }
 
-export const getLupaSessionStructure = (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, time_created) => {
+export const getLupaSessionStructure = (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, time_created, locationData) => {
     lupa_session.attendeeOne = attendeeOne;
     lupa_session.attendeeTwo = attendeeTwo;
     lupa_session.requesterUUID = requesterUUID;
@@ -103,6 +106,7 @@ export const getLupaSessionStructure = (attendeeOne, attendeeTwo, requesterUUID,
     lupa_session.sessionStatus = SESSION_STATUS.INVITED;
     lupa_session.sessionMode = "Active";
     lupa_session.removed = false;
+    lupa_session.locationData = locationData;
     return lupa_session;
 }
 
@@ -162,6 +166,9 @@ var lupa_user : LupaUserStructure = {
     sessionsCompleted: 0,
     bio: "",
     recommended_workouts: [],
+    certification: "",
+    homegym: {},
+    chats: [],
 }
 
 export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", gender="", location="", isTrainer=false, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted, bio, recommended_workouts, certification) => {

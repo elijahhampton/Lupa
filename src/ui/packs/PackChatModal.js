@@ -32,8 +32,8 @@ export default class PackChatModal extends React.Component{
     }
 
     
-    componentDidMount() {
-        this.setupFire();
+    componentDidMount = async () => {
+        await this.setupFire();
       }
 
       setupFire = async () => {

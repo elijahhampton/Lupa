@@ -13,6 +13,8 @@ export enum UserCollectionFields {
     LOCATION="location",
     BIO="bio",
     PACKS="packs",
+    HOME_GYM="homegym",
+    CHATS="chats",
 }
 
 export enum HealthDataCollectionFields {
@@ -92,6 +94,8 @@ export type LupaUserStructure = {
     bio: String,
     recommended_workouts: Array<String>,
     certification: String,
+    homegym: Object,
+    chats: any,
 };
 
 
@@ -146,6 +150,7 @@ export type LupaSessionStructure = {
     sessionMode: any,
     time_created: { date: any, time: any }
     removed: Boolean,
+    locationData: Object,
 };
 
 /* LupaPackEventDataStructure */

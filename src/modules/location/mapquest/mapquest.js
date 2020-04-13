@@ -4,6 +4,7 @@ const MAP_QUEST_URL = "http://www.mapquestapi.com/geocoding/v1/reverse";
 
 getDataFromLocationObjectByKey = (locObject, desiredKey) => {
     let retValue;
+    let currValue, prevValue;
     Object.keys(locObject).forEach(key => {
         currValue = key;
 
@@ -23,6 +24,8 @@ export default getLocationFromCoordinates = async (long, lat) => {
         city: '',
         state: '',
         country: '',
+        longitude: long,
+        latitude: lat
     }
 
     let locationDataResults;
@@ -30,6 +33,8 @@ export default getLocationFromCoordinates = async (long, lat) => {
     //fetch location data from mapquest api
     await fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + API_KEY + '&location=' + lat + ',' + long).then(result => result.json()).then(locationData => {
         locationDataResults = locationData;
+    }, err => {
+        console.log(err);
     });
 
 

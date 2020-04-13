@@ -50,7 +50,7 @@ class App extends React.Component {
   }
   
   setupApp = async () => {
-    //await this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+    await this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
   }
 
   render() {

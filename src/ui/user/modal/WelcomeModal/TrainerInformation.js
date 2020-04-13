@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     instructionalText: {
         flexShrink: 1,
         fontSize: 20,
-        fontWeight: "200"
+        fontFamily: "avenir-roman",
     },
     verificationModal: {
         width: '50%',

@@ -456,6 +456,11 @@ class PacksController {
 
         let packsData = currentUserInformation.packs;
 
+        if (packsData == undefined)
+        {
+          return Promise.resolve([]);
+        }
+
         for (let i = 0; i < packsData.length; i++)
         {
           let pack = packsData[i];
@@ -788,13 +793,13 @@ class PacksController {
     });
 
     let oldPackMembersList = snapshot.pack_members;
-    let updatedPackMemberList = oldPackMembersList.filter((uuids) => {
+    let updatedPackMemberList = await oldPackMembersList.filter((uuids) => {
 
       //return any uuids not equal to the userUUID given in params
       return uuids != userUUID;
     });
 
-    PACKS_COLLECTION.doc(packUUID).set(
+    await PACKS_COLLECTION.doc(packUUID).set(
       {
         pack_members: updatedPackMemberList
       }, 

@@ -22,6 +22,7 @@ import {
     Provider,
     Portal,
     Modal,
+    Appbar,
     Title,
     Paragraph,
     Divider,
@@ -105,8 +106,6 @@ class TrainerDashboardView extends React.Component {
             currUserData: this.props.lupa_data.Users.currUserData,
             currUserPacksData: this.props.lupa_data.Packs.currUserPacksData,
         }
-
-        console.log(this.props.lupa_data.Packs.currUserPacksData)
 
     }
 
@@ -224,7 +223,6 @@ class TrainerDashboardView extends React.Component {
             await this.setState({
                 sessionData: []
             });
-            alert("Problem with fetching session invites")
         }
     }
 
@@ -246,8 +244,6 @@ class TrainerDashboardView extends React.Component {
         catch(err)
         {
             await this.setState({ packEventsData: [] });
-            alert("Problem with fetching pack events")
-
         }
 
     }
@@ -264,7 +260,6 @@ class TrainerDashboardView extends React.Component {
         } catch(err)
         {
             await this.setState({ packInvites: [] });
-            alert("Problem with fetching pack invites")
         }
 
     }
@@ -337,21 +332,31 @@ class TrainerDashboardView extends React.Component {
 
     render() {
         return (
-            <SafeAreaView style={styles.safeareaview}>
+            <View style={styles.safeareaview}>
+                                        <Appbar.Header
+                                        statusBarHeight
+                                        style={{elevation: 0}}
+                                        theme={{
+                                            elevation: 0,
+                                            colors: {
+                                                primary: "#2196F3"
+                                            }
+                                        }}> 
+                                        <View style={styles.header}>
+                        <IconButton icon="menu" style={styles.iconButton} onPress={() => this.props.navigation.openDrawer()} />
+                        <Text style={styles.headerText}>
+                            Lupa
+                        </Text>
+                    </View>
+</Appbar.Header>
+
                 <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
                     <RefreshControl
                         refreshing={this.state.refreshing}
                         onRefresh={this._onRefresh}
                     />}>
 
-                    <View style={styles.header}>
-                        <IconButton icon="menu" style={styles.iconButton} onPress={() => this.props.navigation.openDrawer()} />
-                        <Text style={styles.headerText}>
-                            Lupa
-                        </Text>
-                    </View>
-
-                    <LupaCalendar />
+                    <LupaCalendar elevation={10} />
 
                     <Divider style={styles.divider} />
 
@@ -362,13 +367,11 @@ class TrainerDashboardView extends React.Component {
                         </Text>
                         </View>
 
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false}>
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{}}>
                             {
                                 this.populateSessions()
                             }
                         </ScrollView>
-
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.sessionData.length && true ? this.state.sessionData.length : 0} />
                     </View>
 
                     <Divider style={styles.divider} />
@@ -385,7 +388,6 @@ class TrainerDashboardView extends React.Component {
                                 this.populatePackInvites()
                             }
                         </ScrollView>
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.packInvites.length && true ? this.state.packInvites.length : 0} />
                     </View>
 
                     <Divider style={styles.divider} />
@@ -402,7 +404,6 @@ class TrainerDashboardView extends React.Component {
                                 this.populatePackEvents()
                             }
                         </ScrollView>
-                        <Pagination dotColor="#1A237E" dotsLength={this.state.packEventsData.length && true ? this.state.packEventsData.length : 0} />
                     </View>
 
                     <Divider style={styles.divider} />
@@ -418,7 +419,8 @@ class TrainerDashboardView extends React.Component {
                     </View>
                 </ScrollView>
                 <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid} />
-            </SafeAreaView>
+                            <SafeAreaView />
+            </View>
         );
     }
 }
@@ -428,22 +430,22 @@ const styles = StyleSheet.create({
         flexGrow: 2,
         justifyContent: "space-between",
         flexDirection: 'column',
+        padding: 10,
     },
     safeareaview: {
-        flex: 1, 
-        padding: 5, 
+        flex: 1,
         backgroundColor: "#2196F3"
     },
     header: {
         flexDirection: 'row', 
         alignItems: 'center', 
-        margin: 10, 
         width: "100%", 
-        height: "auto"
+        height: "auto",
+        justifyContent: "space-between"
     },
     headerText: {
-        fontSize: 50, 
-        fontWeight: "600", 
+        fontSize: 40, 
+        fontFamily: 'avenir-next-bold',
         color: 'white', 
         alignSelf: "center"
     },
@@ -451,7 +453,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row', 
         alignItems: 'center', 
         justifyContent: 'space-between', 
-        margin: 3
+        margin: 3,
+        fontFamily: "avenir-book"
     },
     sectionHeaderText: {
         fontSize: 20, 

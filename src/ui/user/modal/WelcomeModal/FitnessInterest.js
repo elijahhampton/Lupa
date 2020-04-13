@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     instructionalText: {
         flexShrink: 1,
         fontSize: 25,
-        fontWeight: "200"
+        fontFamily: "avenir-roman",
     },
     userInput: {
         width: "100%",

@@ -17,11 +17,50 @@ import LupaController from '../../../controller/lupa/LupaController';
 import { withNavigation } from 'react-navigation';
 
 import { connect } from 'react-redux';
+import { Dialog, Button as MaterialButton, TextInput } from 'react-native-paper';
 
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
     }
+}
+
+function ReviewDialog(props) {
+
+    function handleSubmitReview() {
+        //handle review submission
+
+        //close dialog and main modal
+        props.closeDialogMethod();
+    }
+
+    return (
+        <Dialog visible={props.isVisible}>
+        <Dialog.Title>
+            Let us know how your session went with {props.otherUserDisplayName}.
+        </Dialog.Title>
+        <Dialog.Content>
+            <TextInput mode="outlined" multiline theme={{
+                colors: {
+                    primary: "#2196F3"
+                }
+            }}>
+
+            </TextInput>
+        </Dialog.Content>
+        <Dialog.Actions>
+            <MaterialButton mode="text" onPress={() => handleSubmitReview()} theme={{
+                colors: {
+                    primary: "#2196F3"
+                }
+            }}>
+                <Text style={{fontSize: 20}}>
+                    Finish Review
+                </Text>
+            </MaterialButton>
+        </Dialog.Actions>
+    </Dialog>
+    )
 }
 
 class SessionCompleteModal extends React.Component {
@@ -42,6 +81,7 @@ class SessionCompleteModal extends React.Component {
                 availableTimes: [],
                 sessionDate: "",
                 refreshing: false,
+                showReviewDialog: false,
         }
     }
 
@@ -112,13 +152,45 @@ class SessionCompleteModal extends React.Component {
 
             await NavigationActions.navigate({
               routeName: 'Profile',
-              params: {userUUID: this.state.currUserUUID, navFrom: 'Dashboard'},
+              params: {userUUID: this.otherUserUUID, navFrom: 'Dashboard'},
               action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.otherUserUUID, navFrom: 'Dashboard'}})
             })
         )
 
         await this.props.closeModalMethod();
     }
+
+    handleShowReviewDialogMethod = () => {
+        this.setState({
+            showReviewDialog: true
+        })
+    }
+
+    handleCloseReviewDialogMethod = () => {
+        this.setState({
+            showReviewDialog: false
+        })
+    }
+
+    handleReview = () => {
+        this.handleShowReviewDialogMethod();
+    }
+
+    /**
+     * Finishes the session by launching the review dialog and deleting
+     * the session from the UI and firestore.
+     */
+    handleFinishSession = async () => {
+        //remove session from state and delete from database
+        //this.LUPA_CONTROLLER_INSTANCE.deleteSessionForUser(this.state.sessionUUID);
+
+        //close dialog
+        this.handleCloseReviewDialogMethod();
+        
+        //close the main modal
+         this.props.closeModalMethod();
+    }
+
 
     render() {
         const navigation = this.context;
@@ -128,11 +200,11 @@ class SessionCompleteModal extends React.Component {
             style={{margin: 0, display: 'flex', flex: 1}} 
             presentationStyle="fullScreen">
                 <SafeAreaView style={{flex: 1, padding: 10, justifyContent: 'space-evenly', marginBottom: 10, marginTop: 10}}>
-                <Text style={{alignSelf: 'center', fontSize: 30, fontWeight: "600", color: "black"}}>
+                <Text style={{alignSelf: 'center', fontFamily: "avenir-book", fontSize: 20, color: "#212121"}}>
                 You have completed your session with {this.state.otherUserInformation.display_name}.  Visit their profile to setup another.
             </Text>
 
-            <Image style={{alignSelf: 'center', width: '80%', height: '45%'}} />
+            <Image style={{alignSelf: 'center', width: '80%', height: '45%'}} source={{ uri: this.state.otherUserInformation.photo_url }}  />
 
             <View>
             <Button
@@ -153,10 +225,11 @@ class SessionCompleteModal extends React.Component {
   title="Finish Session"
   type="outline"
   style={{padding: 10, margin: 5}}
-  onPress={() => this.handleRequestAnotherSession()}
+  onPress={this.handleReview}
 />
             </View>
                 </SafeAreaView>
+                <ReviewDialog isVisible={this.state.showReviewDialog} closeDialogMethod={this.handleFinishSession} otherUserDisplayName={this.state.otherUserInformation.display_name}/>
         </Modal>
         )
     }

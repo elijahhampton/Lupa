@@ -25,7 +25,8 @@ import {
     Headline,
     Divider,
     Menu,
-    Avatar
+    Avatar,
+    Chip
 } from 'react-native-paper';
 
 import SafeAreaView from 'react-native-safe-area-view';
@@ -34,6 +35,9 @@ import { MaterialIcons as Icon, Feather as FeatherIcon } from '@expo/vector-icon
 import LupaController from '../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
+
+import LupaMapView from '../user/modal/LupaMapView';
+import LupaCalendar from '../user/dashboard/calendar/LupaCalendar';
 
 
 const mapStateToProps = (state, action) => {
@@ -67,24 +71,22 @@ class CreateSessionModal extends React.Component {
             sessionMonth: months[new Date().getMonth()],
             sessionYear: new Date().getFullYear().toString(),
             sessionDayOfTheWeek: "",
-            dayMenuActive: false,
-            monthMenuActive: false,
-            yearMenuActive: false,
             sessionTimePeriods: [],
             requestedUserProfileImage: '',
             currUserProfileImage: '',
+            activeDate: new Date(),
+            sessionLocation: "Launch Map",
+            mapViewVisible:  false,
+            sessionLocationData: "",
         }
     }
 
     componentDidMount = async () => {
-        console.log('SESSSIONS DID MOUNT!!!!!!!!!!!!!!!')
-
         await this.setupRequestedUserInformation();
     }
 
     setupRequestedUserInformation = async () => {
         let requestedUserDataIn, requestedUserProfileImageIn, currUserProfileImageIn;
-console.log('dsds')
         //TODO: If it is the current user's UUID then pull user data from Redux Store
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.navigation.state.params.userUUID).then(result => {
             requestedUserDataIn = result;
@@ -130,8 +132,21 @@ console.log('dsds')
          });
     }
 
+    setActiveDate = (date) => {
+        this.setState({ 
+            activeDate: date, 
+            sessionMonth: months[new Date(date).getMonth()], 
+            sessionDay: new Date(date).getDate().toString(),
+            sessionYear: new Date(date).getFullYear().toString()
+        })
+        console.log(this.state.sessionYear)
+        console.log(this.state.sessionMonth);
+        console.log(this.state.sessionDay);
+        console.log(this.state.sessionDayOfTheWeek)
+    }
+
     _getButtonMode = time => {
-        return this.state.sessionTimePeriods.includes(time) ? "contained" : "text";
+        return this.state.sessionTimePeriods.includes(time) ? "flat" : "outlined";
     }
 
     _handleNewSessionRequest = () => {
@@ -145,7 +160,7 @@ console.log('dsds')
             date: new Date().getDate(),
             time: new Date().getTime(),
         }
-        this.LUPA_CONTROLLER_INSTANCE.createNewSession(this.props.lupa_data.Users.currUserData.user_uuid, this.state.requestedUserUUID, this.state.requestedUserUUID, date, this.state.sessionTimePeriods, this.state.sessionName, this.state.sessionDescription, timestamp);
+        this.LUPA_CONTROLLER_INSTANCE.createNewSession(this.props.lupa_data.Users.currUserData.user_uuid, this.state.requestedUserUUID, this.state.requestedUserUUID, date, this.state.sessionTimePeriods, this.state.sessionName, this.state.sessionDescription, timestamp, this.state.sessionLocationData);
         this.props.navigation.goBack();
     }
 
@@ -162,65 +177,66 @@ console.log('dsds')
         }
     }
 
+    /**
+     * Returns the available times a user has given a month, day, and year.
+     * 
+     * @param[in] month is an integer representing a month out of the year
+     * @param[in] day is an integer representing a day out of the month
+     * @param[in] year is an integer representing a year
+     * @returns Collection of chips based on the day of the week calculated from the month, day, and year.
+     * 
+     * TODO: Reset time periods if you change the date 
+     */
     _returnRequestedUserAvailableTimes = (month, day, year) => {
         let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         let dayOfTheWeek = days[new Date(month + " " + day + "," + " " + year).getDay()];
-        switch (dayOfTheWeek) {
+
+        switch (dayOfTheWeek.toString()) {
             case 'Monday':
                 return this.state.preferred_workout_times.Monday && this.state.preferred_workout_times.Monday.map(time => {
-                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                    return <Chip style={{elevation: 2, margin: 5}} mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
                         {time}
-                    </Button>
+                    </Chip>
                 })
-                break;
             case 'Tuesday':
-
                 return this.state.preferred_workout_times.Tuesday && this.state.preferred_workout_times.Tuesday.map(time => {
-                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                    return <Chip  style={{elevation: 2, margin: 5}} mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
                         {time}
-                    </Button>
+                    </Chip>
                 })
-                break;
             case 'Wednesday':
-
                 return this.state.preferred_workout_times.Wednesday && this.state.preferred_workout_times.Wednesday.map(time => {
-                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                    return <Chip style={{elevation: 2, margin: 5}} mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
                         {time}
-                    </Button>
+                    </Chip>
                 })
-                break;
             case 'Thursday':
 
                 return this.state.preferred_workout_times.Thursday && this.state.preferred_workout_times.Thursday.map(time => {
-                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                    return <Chip style={{elevation: 2, margin: 5}} mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
                         {time}
-                    </Button>
+                    </Chip>
                 })
-                break;
             case 'Friday':
 
                 return this.state.preferred_workout_times.Friday && this.state.preferred_workout_times.Friday.map(time => {
-                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                    return <Chip style={{elevation: 2, margin: 5}} mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
                         {time}
-                    </Button>
+                    </Chip>
                 })
-                break;
             case 'Saturday':
-                
                 return this.state.preferred_workout_times.Saturday && this.state.preferred_workout_times.Saturday.map(time => {
-                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                    return <Chip style={{elevation: 2, margin: 5}} mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
                         {time}
-                    </Button>
+                    </Chip>
                 })
-                break;
             case 'Sunday':
 
                 return this.state.preferred_workout_times.Sunday && this.state.preferred_workout_times.Sunday.map(time => {
-                    return <Button mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
+                    return <Chip style={{elevation: 2, margin: 5}} mode={this._getButtonMode(time)} color="#2196F3" key={time} onPress={() => this.handlePickSessionTime(time)}>
                         {time}
-                    </Button>
+                    </Chip>
                 })
-                break;
         }
     }
 
@@ -234,7 +250,7 @@ console.log('dsds')
         }
         else
         {
-           return <Image source={{ uri: this.state.currUserProfileImage }} style={{ width: '100%', height: '100%'}} />
+           return <Image source={{ uri: this.state.currUserProfileImage }} style={{ width: '100%', height: '100%', borderRadius: 80}} />
         }
     }
 
@@ -258,22 +274,42 @@ console.log('dsds')
         }
         else
         {
-            return  <Image source={{ uri: this.state.requestedUserProfileImage }} style={{ width: '100%', height: '100%' }} />
+            return  <Image source={{ uri: this.state.requestedUserProfileImage }} style={{ width: '100%', height: '100%', borderRadius: 80 }} />
         }
+    }
+
+    closeMapView = () => {
+        this.setState({
+            mapViewVisible: false,
+        })
+    }
+
+    openMapView = () => {
+        this.setState({
+            mapViewVisible: true,
+        })
+    }
+
+    onMapViewClose = async (gymInformationIn) => {
+        if (gymInformationIn == undefined) {
+            return;
+        }
+
+        await this.setState({
+            sessionLocation: gymInformationIn.name,
+            sessionLocationData: gymInformationIn,
+        })
+
+        this.closeMapView();
     }
 
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <ScrollView shouldRasterizeIOS={false} showsVerticalScrollIndicator={true} contentContainerStyle={{ flexGrow: 2, backgroundColor: "#FAFAFA", flexDirection: 'column', justifyContent: 'space-between' }}>
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#0D47A1', padding: 10, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
-                    <Headline style={{ alignSelf: 'center', color: 'white', textAlign: 'center', }}>
-                        You are about to request a session with: {this.state.requestedUserData.display_name}
-                    </Headline>
-
+                <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: "white", flexDirection: 'column', justifyContent: 'space-between'}}>
+                    <SafeAreaView />
                     <View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                            <Surface style={{ width: 90, height: 90, elevation: 10, borderRadius: 80, margin: 10 }}>
+                            <Surface style={{ width: 90, height: 90, elevation: 3, borderRadius: 80, margin: 10 }}>
                                 {
                                     this.getCurrentUserAvatar()
                                 }
@@ -281,24 +317,15 @@ console.log('dsds')
 
                             <Icon name="compare-arrows" size={40} />
 
-                            <Surface style={{ width: 90, height: 90, elevation: 10, borderRadius: 80, margin: 10, }}>
+                            <Surface style={{ width: 90, height: 90, elevation: 3, borderRadius: 80, margin: 10, }}>
                                 {
                                     this.getRequestedUserAvatar()
                                 }
                             </Surface>
                         </View>
                     </View>
-                </SafeAreaView>
-                    
-                    <Headline style={{ padding: 5 }}>
-                        Session Information
-                            </Headline>
 
-
-                    <View style={{ flex: 1, justifyContent: 'space-evenly', flexDirection: 'column', padding: 5, margin: 5 }}>
-                        <Title style={{ alignSelf: 'center' }}>
-                            Session name and description
-                            </Title>
+                    <View style={{ justifyContent: 'space-evenly', flexDirection: 'column', padding: 5, margin: 15 }}>
                         <TextInput value={this.state.sessionName} mode="outlined" placeholder="Session Name" style={{ margin: 5 }} onChangeText={text => this.setState({ sessionName: text })} returnKeyType="done" enablesReturnKeyAutomatically={true} theme={{
                             colors: {
                                 primary: '#2196F3'
@@ -311,100 +338,94 @@ console.log('dsds')
                         }} />
                     </View>
 
-                    <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', margin: 5 }}>
+                    <LupaCalendar elevation={0} onPress={(item) => this.setActiveDate(item)} />
 
+                    <Divider/>
 
-
-                        {/* date selector */}
-                        <View style={{ flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <Title style={{ alignSelf: 'center' }}>
-                                Pick a date
-                                </Title>
-
-                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                                <Menu
-                                    anchor={
-                                        <Button mode="contained" color="#0D47A1" onPress={() => this.setState({ dayMenuActive: true })} onDismiss={() => this.setState({ dayMenuActive: false })}>
-                                            {this.state.sessionDay}
-                                        </Button>
-                                    } visible={this.state.dayMenuActive} onDismiss={() => this.setState({ dayMenuActive: false })} style={{ height: '65%' }}>
-                                    <ScrollView>
-                                        {
-                                            days.map(day => {
-                                                return (
-                                                    <Menu.Item key={day} title={day} onPress={() => this.setState({ sessionDay: day })}/>
-                                                )
-                                            })
-                                        }
-                                    </ScrollView>
-                                    <Divider />
-                                    <Menu.Item title="Cancel" />
-                                </Menu>
-
-                                <Menu
-
-                                    anchor={
-                                        <Button mode="contained" color="#0D47A1" onPress={() => this.setState({ monthMenuActive: true })} onDismiss={() => this.setState({ monthMenuActive: false  })}>
-                                            {this.state.sessionMonth}
-                                        </Button>
-                                    } visible={this.state.monthMenuActive} onDismiss={() => this.setState({ monthMenuActive: false })} style={{ height: '65%' }}>
-                                    <ScrollView>
-                                        {
-                                            months.map(month => {
-                                                return (
-                                                    <Menu.Item key={month} title={month} onPress={() => this.setState({ sessionMonth: month })} />
-                                                )
-                                            })
-                                        }
-                                    </ScrollView>
-                                    <Divider />
-                                    <Menu.Item title="Cancel" />
-                                </Menu>
-
-
-                                <Menu
-                                    anchor={
-                                        <Button mode="contained" color="#0D47A1" onPress={() => this.setState({ yearMenuActive: true })} onDismiss={() => this.setState({ yearMenuActive: false })}>
-                                            {this.state.sessionYear}
-                                        </Button>
-                                    } visible={this.state.yearMenuActive} onDismiss={() => this.setState({ yearMenuActive: false })}>
-                                    {
-                                        years.map(year => {
-                                            return (
-                                                <Menu.Item key={year} title={year} onPress={() => this.setState({ sessionYear: year })} />
-                                            )
-                                        })
-                                    }
-                                    <Divider />
-                                    <Menu.Item title="Cancel" />
-                                </Menu>
+                        <View style={{margin: 15, flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                            <View style={{ padding: 10}}>
+                                <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Icon name="schedule" size={25} color="#2196F3" style={{margin: 5}} />
+                                <Text style={{fontFamily: "avenir-roman", fontSize: 20,}}>
+                                Choose a time
+                                </Text>
+                                </View>
+                                <Caption>
+                                    Choose times for your session(s) based on this user's available times.  If you want your session to last from 4:00 AM to 6:00 AM then choose 4:00 AM, 5:00 AM, and 6:00 AM.
+                                </Caption>
                             </View>
-                        </View>
-
-                    </View>
-
-
-                    <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly', alignItems: 'center' }}>
-                        <View style={{ flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <Title style={{alignSelf: 'center'}}>
-                                Pick a time or multiple
-                                </Title>
-                                <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
+                                <View style={{width: "100%", flexDirection: 'row', alignItems: "center",justifyContent: "center", flexWrap: 'wrap'}}>
                                 {
                                 this._returnRequestedUserAvailableTimes(this.state.sessionMonth, this.state.sessionDay, this.state.sessionYear)
                             }
                                 </View>
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center', margin: 5 }}>
-                            <Button mode="text" color="#0D47A1" onPress={() => this.props.navigation.goBack(null)}>
-                                Back
-                                </Button>
-                            <NativeButton onPress={this._handleNewSessionRequest} title="Request Session" />
+                        <Divider/>
+
+                        <View style={{margin: 15}}>
+                        <View style={{ padding: 10}}>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Icon name="location-on" size={25} color="#2196F3" style={{margin: 5}}/>
+                            <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>
+                                Choose a location
+                                </Text>
+                            </View>
+                                <Caption>
+                                    Press the button below to pick a location for your session.  Pick from a variety of gyms and parks in your area.
+                                </Caption>
+                            </View>
+                            <TouchableOpacity onPress={this.openMapView}>
+                            <Surface style={{alignSelf: "center", margin: 10, elevation: 8, width: "85%", height: "auto", padding: 15, borderRadius: 15, alignItems: "center", justifyContent: "center", flexDirection: "row"}}>
+                                <View>
+                                <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>
+                                    {this.state.sessionLocation}
+                                </Text>
+                                {
+                                    this.state.sessionLocationData == "" ?
+                                    null
+                                    :
+                                                                    <Text style={{fontFamily: "avenir-roman", fontSize: 15}}>
+                                                                    {this.state.sessionLocationData.address}
+                                                                </Text>
+                                }
+                                </View>
+                            </Surface>
+                            </TouchableOpacity>
                         </View>
-                    </View>
+
+                        <Divider style={{margin: 5}}/>
+
+                        <View style={{width: "100%", justifyContent: "center", alignItems: "center"}}>
+                            <TouchableOpacity onPress={this._handleNewSessionRequest} style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
+                            <View style={{marginLeft: 30, width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "flex-start"}}>
+                                <FeatherIcon  style={{margin: 15}} name="calendar" color="rgba(33,150,243 ,1)" />
+                                <Text style={{fontWeight: "400", fontFamily: "avenir-roman", fontSize: 18}}>
+                                    Request Session
+                                </Text>
+                            </View>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => this.props.navigation.goBack(null)} style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
+                            <View style={{marginLeft: 30, width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "flex-start"}}>
+                                <FeatherIcon  style={{margin: 15}} name="x" color="rgba(33,150,243 ,1)" />
+                                <Text style={{fontFamily: "avenir-book", fontSize: 18}}>
+                                    Cancel
+                                </Text>
+                            </View>
+                            </TouchableOpacity>
+                        </View>
+
+                        <Divider style={{margin: 5}} />
+                        <SafeAreaView />
+
+                        <LupaMapView 
+                            initialRegionLatitude={this.props.lupa_data.Users.currUserData.location.latitude}
+                            initialRegionLongitude={this.props.lupa_data.Users.currUserData.location.longitude}
+                            closeMapViewMethod={gymData => this.onMapViewClose(gymData)}
+                            isVisible={this.state.mapViewVisible}
+                        />
                 </ScrollView>
-            </View>
         );
     }
 }
@@ -412,7 +433,7 @@ console.log('dsds')
 const styles = StyleSheet.create({
     modalContainer: {
         display: "flex",
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "white",
         margin: 0,
         padding: 15,
     },
