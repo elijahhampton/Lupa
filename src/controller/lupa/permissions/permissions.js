@@ -14,7 +14,7 @@ export default _requestPermissionsAsync = async () => {
     Permissions.NOTIFICATIONS,
   );
   if (status !== 'granted') {
-    alert('Hey! You heve not enabled selected permissions');
+
   }
 }
 

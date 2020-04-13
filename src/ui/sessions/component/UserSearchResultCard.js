@@ -29,7 +29,7 @@ class UserSearchResultCard extends React.Component {
 
         this.state = {
             uuid: this.props.uuid,
-            profilePicture: '',
+            profilePicture: this.props.avatar
 
         }
     }
@@ -39,14 +39,7 @@ class UserSearchResultCard extends React.Component {
     }
 
     setupComponent = async () => {
-        let profilePictureIn;
 
-        await LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.props.uuid).then(result => {
-            profilePictureIn = result;
-        });
-
-
-        await this.setState({ profilePicture: profilePictureIn })
     }
 
     _handleViewProfile = () => {
@@ -74,12 +67,12 @@ class UserSearchResultCard extends React.Component {
                 return <Avatar.Text label={firstName+lastName} size={30} style={{margin: 3}}/>
             } catch(err)
             {
-                return <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+                return <Avatar.Image source={{uri: this.props.avatar }} size={30} style={{margin: 3}} />
             }
         }
         else
         {
-            return <Avatar.Image source={{uri: this.state.profilePicture }} size={30} style={{margin: 3}} />
+            return <Avatar.Image source={{uri: this.props.avatar }} size={30} style={{margin: 3}} />
         }
     }
 

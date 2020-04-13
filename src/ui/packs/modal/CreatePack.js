@@ -19,8 +19,10 @@ import {
     Portal,
     Modal as PaperModal,
     TextInput,
+    Chip,
     Avatar as MaterialAvatar,
-    ActivityIndicator
+    ActivityIndicator,
+    Searchbar
 } from 'react-native-paper';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -103,6 +105,8 @@ class CreatePack extends React.Component {
             packType: "Community",
             searchQuery: "",
             creatingPackDialogIsVisible: false,
+            checked: false,
+            selected: false,
         }
     }
 
@@ -156,10 +160,25 @@ class CreatePack extends React.Component {
     }
 
     resetState = () => {
-
+        this.setState({
+            packImageSource: '',
+            subscriptionBasedPack: false,
+            pack_title: '',
+            pack_description: '',
+            invitedMembers: [],
+            checked: false,
+            autoCompleteData: [],
+            inviteMembersTextInputVal: '',
+            currIndex: 0,
+            searchResults: [],
+            packType: "Community",
+            searchQuery: "",
+            creatingPackDialogIsVisible: false,
+        })
     }
 
     closeModal = () => {
+        this.resetState();
         this.props.closeModalMethod();
     }
 
@@ -179,11 +198,7 @@ class CreatePack extends React.Component {
 
     _returnTextInput = () => {
         return (
-            <TextInput onChangeText={text => this.handleInviteMembersOnChangeText(text)} value={this.state.searchValue} mode="outlined" theme={{ roundness: 8 }} placeholder="Ex. John Smith" theme={{
-                colors: {
-                    primary: "#2196F3"
-                }
-            }} />
+            <Searchbar style={{borderRadius: 20, margin: 5}} onChangeText={text => this.handleInviteMembersOnChangeText(text)} placeholder="Ex. John Smith" />
         )
     }
 
@@ -219,8 +234,22 @@ class CreatePack extends React.Component {
     mapSearchResults =() => {
         return this.state.searchResults.map(user => {
                 return (
-                    <TouchableOpacity onPress={() => this.handleInviteMember(user.user_uuid)}>
-                                            <UserDisplayCard userUUID={user.user_uuid} size={45}/>
+                    <TouchableOpacity onPress={() => this.handleInviteMember(user)}>
+                                                                     <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%", height: "auto",}}> 
+                                            <View style={{flex: 1, justifyContent: "flex-start", flexDirection: "row", alignItems: "center"}}>
+                                            <MaterialAvatar.Image source={{uri: user.photo_url}} size={45} style={{margin: 5}} />
+                                            <Text style={{fontSize: 20}}>
+                       {user.display_name}
+                    </Text>
+                                            </View>
+
+                    <CheckBox
+ right
+  checkedIcon='dot-circle-o'
+  uncheckedIcon='circle-o'
+  checked={this.state.checked}
+/>
+                </View>
                     </TouchableOpacity>
                 )
         })
@@ -229,28 +258,31 @@ class CreatePack extends React.Component {
     mapInvitedMembers = () => {
         return this.state.invitedMembers.map(user => {
             return (
-                <TouchableOpacity onPress={() => this.handleInviteMember(user.user_uuid)}>
-                      <UserDisplayCard userUUID={user.user_uuid} size={25} optionalStyling={{}} />
+                
+                <TouchableOpacity onPress={() => this.handleInviteMember(user)}>
+                         <Chip key={user.user_uuid} style={{margin: 2, backgroundColor: "#2196F3"}} textStyle={{color: "white"}} icon="clear" selected={this.state.selected}>
+                           {user.display_name}
+                        </Chip>
                 </TouchableOpacity>
+                
             )
         })
     }
 
-    handleInviteMember = async (userID) => {
+    handleInviteMember = async (user) => {
+        this.setState({ 
+            selected: !this.state.selected
+        })
         let updatedMembers = this.state.invitedMembers;
-        if (this.state.invitedMembers.includes(userID))
+        if (this.state.invitedMembers.includes(user))
         {
-            console.log('removing member')
-            await updatedMembers.splice(this.state.invitedMembers.indexOf(userID), 1);
+            await updatedMembers.splice(this.state.invitedMembers.indexOf(user), 1);
             await this.setState({ invitedMembers: updatedMembers })
-            console.log(this.state.invitedMembers.length)
         }
         else
         {
-            console.log('adding member')
-            await updatedMembers.push(userID);
+            await updatedMembers.push(user);
             await this.setState({ invitedMembers: updatedMembers});
-            console.log(this.state.invitedMembers.length)
         }
     }
 
@@ -319,11 +351,12 @@ class CreatePack extends React.Component {
         return this.state.currIndex == 0 ? 
 
                         <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{flexDirection: 'column', flexGrow: 2, justifyContent: 'space-around'}}>
-                    <View style={{ flexDirection: 'column', justifyContent: "space-around", flexGrow: 2,  }}>
+                    <View style={{ flexDirection: 'column',  }}>
                         <View style={{ width: '100%', alignItems: "center", justifyContent: "center" }}>
                             <Avatar size="large" rounded showEditButton={true} source={{uri: this.state.packImageSource}} onPress={this._chooseImageFromCameraRoll} />
                         </View>
-                        <Input placeholder="Choose a name for your pack" style={{alignSelf: 'center'}} inputContainerStyle={{borderBottomWidth: 0, alignSelf: 'center'}} inputStyle={{ fontSize: 25 }} value={this.state.pack_title} onChangeText={text => this.setState({ pack_title: text })}/>
+                        
+                        <Input placeholder="Choose a name for your pack" style={{alignSelf: 'center'}} containerStyle={{margin: 10, alignSelf: "center", padding: 5}} inputContainerStyle={{borderBottomWidth: 0, alignSelf: 'center'}} inputStyle={{ fontSize: 25 }} value={this.state.pack_title} onChangeText={text => this.setState({ pack_title: text })}/>
 
                         <TextInput label="Write a short description for your pack" mode="outlined" placeholder="Ex. Cool example of a pack description." multiline style={{ height: 100, overflow: 'hidden' }} theme={{
                             colors: {
@@ -360,19 +393,18 @@ class CreatePack extends React.Component {
                         <Text style={{fontSize: 30, fontWeight: '100', margin: 5}}>
                             Establish your pack members
                         </Text>
-
-                        <View>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                {this.mapInvitedMembers()}
-                            </ScrollView>
-                        </View>
                         {
                             this._returnTextInput()
                         }
+                        <View>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{margin: 5}}>
+                            {this.mapInvitedMembers()}
+                            </ScrollView>
+                        </View>
                         </View>
 
 
-                        <ScrollView contentContainerStyle={{padding: 10, flexDirection: 'row', justifyContent: 'space-evenly', flexDirection: 'wrap'}}>
+                        <ScrollView contentContainerStyle={{flexDirection: 'row', justifyContent: 'space-evenly', flexDirection: 'wrap'}}>
                             {
                                 this.mapSearchResults()
                             }

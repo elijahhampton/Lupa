@@ -154,7 +154,7 @@ NavigationActions.navigate({
               </View>
             </View>
 
-            <Button mode="text" compact color="#2196F3" onPress={() => logoutUser()}>
+            <Button mode="text" compact color="#2196F3" onPress={() => this.props.logoutMethod()}>
         Log out
         </Button>
         </SafeAreaView>

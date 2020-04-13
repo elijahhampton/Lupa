@@ -12,6 +12,7 @@ import {
 import {
     Headline,
     Title,
+    Caption,
     Avatar
 } from 'react-native-paper';
 
@@ -32,6 +33,7 @@ export default class PackEventModal extends React.Component {
     }
 
     componentDidMount = async () => {
+
         await this.setupPackEventModal();
     }
 
@@ -39,7 +41,7 @@ export default class PackEventModal extends React.Component {
         let packEventImageIn;
         await this.LUPA_CONTROLLER_INSTANCE.getPackEventImageFromUUID(this.state.packEventUUID).then(result => {
             packEventImageIn = result;
-        })
+        });
 
         const packAttendees = this.props.packEventAttendees;
         let attendeeInformationArr = [];
@@ -64,7 +66,7 @@ export default class PackEventModal extends React.Component {
     }
 
     mapAttendees = () => {
-        if (true && this.state.eventAttendees.length) 
+        if (true && this.state.eventAttendees) 
         {
             if (this.state.eventAttendees.length == 0)
             {
@@ -76,24 +78,9 @@ export default class PackEventModal extends React.Component {
             }
             else
             {  
-                return this.state.eventAttendees.map(attendee => {
-                    let profilePictureURL;
-                    this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(attendee.user_uuid).then(result => {
-                        profilePictureURL = result;
-                    });
-
-                    if (profilePictureURL == '' || profilePictureURL == undefined)
-                    {
-                        let displayName = attendee.display_name.split(" ");
-                        let firstInitial = displayName[0].charAt(0);
-                        let lastInitial = displayName[0].charAt(0);
-                        return (
-                            <Avatar.Text size={30} label={firstInitial+lastInitial} style={{margin: 3}} />
-                        )
-                    }
-    
+                return this.state.eventAttendees.map(attendee => {    
                     return (
-                        <Avatar.Image size={30} source={{ uri: profilePictureURL }} style={{margin: 3}} />
+                        <Avatar.Image size={30} source={{ uri: attendee.photo_url }} style={{margin: 3}} />
                     )
                 })
             }
@@ -101,7 +88,7 @@ export default class PackEventModal extends React.Component {
     }
 
     getPackEventImage = () => {
-        if (this.state.packEventImage = "" || this.state.packEventImage == undefined)
+        if (this.state.packEventImage == "" || this.state.packEventImage == undefined)
         {
             return (
             <View style={{flex: 1, backgroundColor: 'black'}}>
@@ -149,8 +136,9 @@ export default class PackEventModal extends React.Component {
     render() {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isOpen} style={styles.modalContainer} animated={true} animationType="slide">
-                <ImageBackground source={{ uri: this.props.packEventImage }} style={{ flex: 1 }}>
-                </ImageBackground>
+                {
+                    this.getPackEventImage()
+                }
                 <View style={{ flex: 2, justifyContent: 'space-evenly', flexGrow: 2, padding: 10 }}>
                     <Headline>
                         {this.props.packEventTitle}

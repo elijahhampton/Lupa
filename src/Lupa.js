@@ -30,6 +30,8 @@ import {
 import WorkoutViewNavigator from "./ui/navigators/WorkoutViewNavigator";
 import { AppLoading } from "expo";
 
+const LupaFunctionalContext = React.createContext("Functions");
+
 class Lupa extends React.Component {
   constructor(props) {
     super(props);
@@ -40,6 +42,7 @@ class Lupa extends React.Component {
       currIndex: 1,
       isNewUser: false,
       ready: false,
+      swipeable: true,
     }
 
     this._showWelcomeModal = this._showWelcomeModal.bind(this);
@@ -85,20 +88,47 @@ _navigateToAuth = async () => {
   this.props.navigation.navigate('Auth');
 }
 
+disableSwipe = () => {
+  this.setState({ swipeable: false })
+}
+
+enableSwipe = () => {
+  this.setState({ swipeable: true })
+}
+
+dashboardNavigatorProps = {
+  disableSwipe: this.disableSwipe,
+  logoutMethod: this._navigateToAuth
+}
+
+workoutNavigatorProps = {
+  disableSwipe: this.disableSwipe
+}
+
+packNavigatorProps = {
+  disableSwipe: this.disableSwipe
+}
+
+searchNavigatorProps = {
+  disableSwipe: this.disableSwipe
+}
+
+
   render() {
     const currIndex = this.state.currIndex;
     return (
       <>
-        <StatusBar backgroundColor="blue" barStyle="dark-content" />
+      <StatusBar backgroundColor="blue" barStyle="dark-content" />
         <Swiper style={styles.appContainer}
           loop={false}
           showButtons={false}
           showsPagination={false}
-          index={currIndex}>
-        <Dashboard />
-        <WorkoutViewNavigator />
-        <PackNavigator />
-        <SearchNavigator />
+          index={currIndex}
+          scrollEnabled={this.state.swipeable}>
+        <Dashboard screenProps={this.dashboardNavigatorProps} />
+        <WorkoutViewNavigator screenProps={this.workoutNavigatorProps} />
+        <PackNavigator screenProps={this.packNavigatorProps}/>
+        <SearchNavigator screenProps={this.searchNavigatorProps}/>
       </Swiper>
       <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/>
       </>

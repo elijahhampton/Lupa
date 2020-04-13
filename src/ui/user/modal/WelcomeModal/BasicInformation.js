@@ -15,7 +15,28 @@ import * as ImagePicker from 'expo-image-picker';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
-export default class BasicInformation extends React.Component {
+import { connect } from 'react-redux';
+
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
+
+const mapStateToProps = (state) => {
+    return {
+        lupa_data: state,
+    }
+} 
+
+const mapDispatchToProps = dispatch => {
+    return {
+      updateCurrentUserAttribute: (payload) => {
+        dispatch({
+          type: 'UPDATE_CURRENT_USER_ATTRIBUTE',
+          payload: payload
+        })
+      },
+    }
+  }
+
+class BasicInformation extends React.Component {
     constructor(props) {
         super(props);
 
@@ -60,9 +81,17 @@ export default class BasicInformation extends React.Component {
         }
     }
 
-    _handleUserPhotoUrlUpdate = photoURI => {
-        this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(photoURI);
-        //this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', photoURI.uri);
+    _handleUserPhotoUrlUpdate = async (photoURI) => {
+        let firebasePhotoURL;
+
+        await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(photoURI).then(result => {
+            firebasePhotoURL = result;
+        });
+
+        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', firebasePhotoURL);
+
+        const reduxPayload = await getUpdateCurrentUserAttributeActionPayload('photo_url', firebasePhotoURL);
+        await this.props.updateCurrentUserAttribute(reduxPayload);
     }
 
     _handleGenderUpdate = genderIn => {
@@ -135,7 +164,7 @@ const styles = StyleSheet.create({
     instructionalText: {
         flexShrink: 1,
         fontSize: 25,
-        fontWeight: "200"
+        fontFamily: "avenir-roman",
     },
     userInput: {
         flex: 1,
@@ -149,3 +178,5 @@ const styles = StyleSheet.create({
         margin: 5,
     }
 })
+
+export default connect(mapStateToProps, mapDispatchToProps)(BasicInformation);

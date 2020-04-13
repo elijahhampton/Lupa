@@ -21,6 +21,8 @@ import SafeAreaView from 'react-native-safe-area-view';
 import {Input, Button as ElementsButton } from "react-native-elements";
 import LupaController from '../../../controller/lupa/LupaController';
 
+import loadFonts from '../../common/Font/index'
+
 const {
   loginUser,
 } = require('../../../controller/lupa/auth/auth');
@@ -50,6 +52,18 @@ mapDispatchToProps = dispatch => {
         type: 'UPDATE_CURRENT_USER_PACKS',
         payload: currUserPacksData,
       })
+    },
+    updateUserPrograms: (currUserProgramsData) => {
+      dispatch({
+        type: 'UPDATE_CURRENT_USER_PROGRAMS',
+        payload: currUserProgramsData,
+      })
+    },
+    updateLupaWorkouts: (lupaWorkoutsData) => {
+      dispatch({
+        type: 'UPDATE_LUPA_WORKOUTS',
+        payload: lupaWorkoutsData,
+      })
     }
   }
 }
@@ -64,8 +78,8 @@ class LoginView extends Component {
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     this.state = {
-      username: '',
-      password: '',
+      username: 'ejh0017@gmail.com',
+      password: 'password',
       snackBarIsVisible: false,
       secureTextEntry: true,
     }
@@ -93,6 +107,19 @@ class LoginView extends Component {
     this.props.updateHealthData(healthData);
   }
 
+  /**
+   * 
+   */
+  _updateUserProgramsDataInRedux = (programsData) => {
+    this.props.updateUserPrograms(programsData);
+  }
+
+  /**
+   * 
+   */
+  _updateLupaWorkoutsDataInRedux = (lupaWorkoutsData) => {
+    this.props.updateLupaWorkouts(lupaWorkoutsData);
+  }
   /**
    * 
    */
@@ -131,6 +158,7 @@ class LoginView extends Component {
     });*/
     await this._setupRedux();
     await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+    await loadFonts();
     this.props.navigation.navigate('App');
   }
 
@@ -138,8 +166,7 @@ class LoginView extends Component {
    * 
    */
   _setupRedux = async () => {
-  console.log('calling this!')
-    let currUserData, currUserPacks, currUserHealthData;
+    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, lupaWorkouts;
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -152,16 +179,25 @@ class LoginView extends Component {
       currUserHealthData = result;
     });
 
+    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+      currUserPrograms = result;
+    })
+
+    await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
+      lupaWorkouts = result;
+    });
+
 
     let userPayload = {
       userData: currUserData,
       healthData: currUserHealthData,
     }
 
-    console.log('anddd...' + currUserPacks.length)
 
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
+    await this._updateUserProgramsDataInRedux(currUserPrograms);
+    await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
 
   render() {

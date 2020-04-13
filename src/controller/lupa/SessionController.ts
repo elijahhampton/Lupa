@@ -30,9 +30,9 @@ export default class SessionController {
       return SessionController._instance;
     }
 
-    createSession = async  (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp) => {
+    createSession = async  (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp,locationData) => {
         
-        let newSession = getLupaSessionStructure(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp);
+        let newSession = getLupaSessionStructure(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp, locationData);
         SESSIONS_COLLECTION.doc().set(newSession);
 
 
@@ -42,7 +42,7 @@ export default class SessionController {
 
     getUserSessions = async (currUser=true, uid=undefined) => {
       let sessions = [];
-      let currUserUUID = USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
+      let currUserUUID = await USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
       await SESSIONS_COLLECTION.where('attendeeOne', '==', currUserUUID).get().then(docs => {
         let found = false;
         docs.forEach(doc => {
@@ -165,5 +165,66 @@ export default class SessionController {
           });
         default:
       }
+    }
+
+    /**
+     * 
+     * TODO: Account for day being 30/31
+     */
+    getUpcomingSessions = async (isCurrUser, user_uuid) => {
+      let userSessions;
+
+      await this.getUserSessions(true).then(sessions => {
+        userSessions = sessions;
+      });
+
+      if (userSessions.length == 0)
+      {
+        return Promise.resolve([]);
+      }
+
+      let currentDate = new Date()
+      let currentDay = currentDate.getDate();
+      let filteredSessionsArr = new Array();
+
+      //filter sessions within 3 days
+      for (let i = 0; i < userSessions.length; ++i)
+      {
+        let session = await userSessions[i].sessionData;
+        let sessionDate = session.date;
+
+        //parse date
+        let dateParts = sessionDate.split("-");
+        const month = dateParts[0];
+        const day = dateParts[1];
+        const year = dateParts[2];
+
+
+        //get the other users data to attach to the session object
+        let otherUserUUID;
+        let otherUserData;
+
+        session.attendeeOne == await LUPA_AUTH.currentUser.uid ? otherUserUUID = session.attendeeOne : otherUserUUID = session.attendeeTwo;
+ 
+        await USERS_COLLECTION.doc(otherUserUUID).get().then(snapshot => {
+          otherUserData = snapshot.data();
+        });
+
+        session.otherUserData = otherUserData;
+
+        //We show date if it is within 3 days
+        if ((currentDay - day) <= 3)
+        {
+          filteredSessionsArr.push(session);
+        }
+
+      }
+
+
+      return Promise.resolve(filteredSessionsArr);
+    }
+
+    getSuggestedTrainers = async () => {
+      return Promise.resolve([]);
     }
 }

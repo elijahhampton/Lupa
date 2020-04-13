@@ -28,6 +28,7 @@ import {
     Avatar,
     Divider,
     Portal,
+    FAB,
     Dialog,
     Chip,
 } from 'react-native-paper';
@@ -49,11 +50,13 @@ import { ImagePicker } from 'expo-image-picker';
 
 import SafeAreaView from 'react-native-safe-area-view';
 
+import LupaMapView from '../modal/LupaMapView'
+
 import {
     CheckBox
 } from 'react-native-elements';
 
-import { withNavigation } from 'react-navigation';
+import { withNavigation, NavigationActions } from 'react-navigation';
 import LupaController from '../../../controller/lupa/LupaController';
 import MyPacksCard from './component/MyPacksCard';
 
@@ -70,7 +73,7 @@ const InviteToPackDialog = props => {
     const [packsToInvite, setPacksToInvite] = useState([]);
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    
+
     _handlePacksToInvite = (uuid) => {
         let updatedPacks = packsToInvite;
         updatedPacks.push(uuid);
@@ -94,12 +97,12 @@ const InviteToPackDialog = props => {
                         props.userPacks.map(pack => {
                             return (
                                 <View key={pack.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                   <CheckBox
-                                    center
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checked={checked}
-                                    onPress={() => this._handlePacksToInvite(pack.id)} />
+                                    <CheckBox
+                                        center
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={checked}
+                                        onPress={() => this._handlePacksToInvite(pack.id)} />
 
                                     <Text>
                                         {pack.pack_title}
@@ -184,13 +187,11 @@ class ProfileView extends React.Component {
                 userInfo = result;
             })
 
-            if (userInfo == "" || userInfo == undefined || typeof userInfo != "object")
-            {
+            if (userInfo == "" || userInfo == undefined || typeof userInfo != "object") {
                 userInfo = this.props.lupa_data.Users.currUserData;
             }
         }
-        catch(err)
-        {
+        catch (err) {
             userInfo = this.props.lupa_data.Users.currUserData;
         }
 
@@ -199,30 +200,12 @@ class ProfileView extends React.Component {
                 userPackData = result;
             })
 
-            if (userPackData == "" || userPackData == undefined || typeof userPackData != "object")
-            {
+            if (userPackData == "" || userPackData == undefined || typeof userPackData != "object") {
                 userPackData = result;
             }
         }
-        catch (err)
-        {
+        catch (err) {
             userPackData = this.props.lupa_data.Packs.currrUserPackData;
-        }
-
-        try {
-
-            await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(uuid).then(result => {
-                profileImageIn = result;
-            })
-
-            if (profileImageIn == "" || typeof profileImageIn != "object" || profileImageIn == undefined)
-            {
-                profileImageIn = "";
-            }
-
-        } catch (err)
-        {
-            profileImageIn = "";
         }
 
         let workouts = userInfo.recommended_workouts;
@@ -233,10 +216,11 @@ class ProfileView extends React.Component {
             })
         }
 
+        this.currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+
         await this.setState({
             userData: userInfo,
             userUUID: uuid,
-            profileImage: profileImageIn,
             userPackData: userPackData,
             followers: userInfo.followers,
             following: userInfo.following,
@@ -259,7 +243,6 @@ class ProfileView extends React.Component {
     }
 
     _navigateToSessionsView = () => {
-        console.log(this.props.navigation.state.params.userUUID)
         this.props.navigation.navigate('SessionsView', {
             userUUID: this.props.navigation.state.params.userUUID
         });
@@ -273,10 +256,20 @@ class ProfileView extends React.Component {
         });
 
         if (!chosenImage.cancelled) {
-           await this.setState({ profileImage: chosenProfileImage.uri });
+            await this.setState({ profileImage: chosenProfileImage.uri });
         }
 
-        await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(this.state.profileImage);
+        let imageURL;
+        //update in FB storage
+        await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(this.state.profileImage).then(result => {
+            imageURL = result;
+        });
+
+        //update in Firestore
+        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL);
+
+        //update in redux
+        //await this.props.updateCurrentUsers()
     }
 
     closeSettingsModal = () => {
@@ -292,12 +285,12 @@ class ProfileView extends React.Component {
             <Caption>
                 Specializations and strengths that you add to your fitness profile will appear here.
                                 </Caption> : this.state.userData.interest.map(interest => {
-                    return (
-                        <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
-                            {interest}
-                        </Chip>
-                    );
-                })
+                return (
+                    <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
+                        {interest}
+                    </Chip>
+                );
+            })
     }
 
     mapPacks = () => {
@@ -314,7 +307,7 @@ class ProfileView extends React.Component {
         await this.setupProfileInformation()
         this.setState({ refreshing: false })
     }
-    
+
     handleChangeBioText = async (text) => {
         this.setState({
             bio: text,
@@ -325,36 +318,34 @@ class ProfileView extends React.Component {
     mapBio = () => {
         //if current user viewing profile
         console.log(this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid)
-        if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid)
-        {
+        if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid) {
             return this.state.isEditingBio == false ?
-                this.state.bio.length == 0 ? 
-                <Caption>
-                    Looks like you have nothing to say.
+                this.state.bio.length == 0 ?
+                    <Caption>
+                        Looks like you have nothing to say.
                 </Caption>
+                    :
+                    <Text allowFontScaling={true} allowsEditing={false}>
+                        {this.state.bio}
+                    </Text>
                 :
-                <Text allowFontScaling={true} allowsEditing={false}>
-                {this.state.bio}
-                </Text>
-            :
-            <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
+                <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
         }
         //if another user viewing profile
-        else
-        {
+        else {
             return this.state.isEditingBio == false ?
-            <Text allowFontScaling={true} allowsEditing={false}>
-                {
-                this.state.bio.length == 0 ? 
-                <Caption>
-                    This user hasn't setup a bio yet.
+                <Text allowFontScaling={true} allowsEditing={false}>
+                    {
+                        this.state.bio.length == 0 ?
+                            <Caption>
+                                This user hasn't setup a bio yet.
                 </Caption>
+                            :
+                            this.state.bio
+                    }
+                </Text>
                 :
-                this.state.bio
-                }
-            </Text>
-            :
-            <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
+                <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
         }
     }
 
@@ -392,15 +383,14 @@ class ProfileView extends React.Component {
     }
 
     renderFinishEditingBioButton = () => {
-        if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid)
-        {
+        if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid) {
             return this.state.isEditingBio == true ?
-            <Button mode="text" color="#2196F3" onPress={() => this.setState({ isEditingBio: false })}>
-                Done
+                <Button mode="text" color="#2196F3" onPress={() => this.setState({ isEditingBio: false })}>
+                    Done
             </Button>
-            :
-            <Button mode="text" color="#2196F3" onPress={() => this.setState({ isEditingBio: true })}>
-                Edit
+                :
+                <Button mode="text" color="#2196F3" onPress={() => this.setState({ isEditingBio: true })}>
+                    Edit
             </Button>
         }
     }
@@ -450,49 +440,91 @@ class ProfileView extends React.Component {
 
     renderInteractions = () => {
         return this.props.lupa_data.Users.currUserData.user_uuid == this.state.userUUID ?
-            null
+            <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <Button mode="contained"
+                    style={{ padding: 3, margin: 10, flex: 3, elevation: 8, alignSelf: "center" }}
+                    onPress={() =>
+                        this.props.navigation.dispatch(
+
+                            NavigationActions.navigate({
+                                routeName: 'MessagesView',
+                                action: NavigationActions.navigate({ routeName: 'MessagesView' })
+                            })
+                        )
+                    }
+                    theme={{
+                        roundness: 20,
+                        colors: {
+                            primary: "#2196F3"
+                        }
+                    }}>
+                    <Text>
+                        View Messages
+</Text>
+                </Button>
+            </View>
             :
             <View style={{ width: '100%', margin: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-        <Button onPress={() => this._navigateToSessionsView()} mode="contained" style={{ padding: 3, margin: 10, flex: 3, elevation: 8 }} theme={{
-            roundness: 20,
-            colors: {
-                primary: "#2196F3"
-            }
-        }}>
-            <Text>
-                Request Session
+                <Button onPress={() =>
+                    this.props.navigation.dispatch(
+
+                        NavigationActions.navigate({
+                            routeName: 'PrivateChat',
+                            params: {
+                                currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+                                otherUserUUID: this.props.navigation.state.params.userUUID
+                            },
+                            action: NavigationActions.navigate({
+                                routeName: 'PrivateChat', params: {
+                                    currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+                                    otherUserUUID: this.props.navigation.state.params.userUUID
+                                }
+                            })
+                        })
+                    )
+                }
+                    mode="contained"
+                    style={{ padding: 3, margin: 10, flex: 3, elevation: 8 }}
+                    theme={{
+                        roundness: 20,
+                        colors: {
+                            primary: "#2196F3"
+                        }
+                    }}>
+                    <Text>
+                        Send a Message
 </Text>
-        </Button>
-
-        {
-            this.state.followers.includes(this.currUserUUID) ?
-                <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
-                    roundness: 20,
-                    colors: {
-                        primary: "#2196F3",
-                        text: "white",
-                    }
-                }}>
-                    <Text>
-                        Follow
-    </Text>
-                </Button>
-                :
-                <Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
-                    roundness: 20,
-                    colors: {
-                        primary: 'white',
-                        text: "#2196F3",
-                    }
-                }}>
-                    <Text>
-                        Follow
-    </Text>
                 </Button>
 
-        }
-    </View>
-            
+                {
+                    this.state.followers.includes(this.currUserUUID) ?
+                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
+                            roundness: 20,
+                            colors: {
+                                primary: "#2196F3",
+                                text: "white",
+                            }
+                        }}>
+                            <Text>
+                                Follow
+    </Text>
+                        </Button>
+                        :
+                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
+                            roundness: 20,
+                            colors: {
+                                primary: 'white',
+                                text: "#2196F3",
+                            }
+                        }}>
+                            <Text>
+                                Follow
+    </Text>
+                        </Button>
+
+                }
+            </View>
+
 
     }
 
@@ -521,31 +553,28 @@ class ProfileView extends React.Component {
         let display_name = "User Not Found";
         let firstInitial = "";
         let secondInitial = "";
-        if (true && this.state.userData.display_name)
-        {
+        if (true && this.state.userData.display_name) {
             display_name = this.state.userData.display_name.split(" ");
             firstInitial = display_name[0].charAt(0);
             secondInitial = display_name[1].charAt(0);
         }
 
-        if (this.state.profileImage == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid 
-            || this.state.profileImage == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
-        {
-            return <Avatar.Text size={65} label={firstInitial+secondInitial} style={{backgroundColor: "#212121"}} theme={{
+        if (this.state.profileImage == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid
+            || this.state.profileImage == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
+            return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
                 elevation: 3,
             }} />
         }
 
         try {
-            if (this.props.lupa_data.Users.currUserData.user_uuid == currUserUUID)
-            {
-                return <ReactNativeElementsAvatar size={65} source={{ uri: this.state.profileImage }} showEditButton={true} onPress={this._chooseProfilePictureFromCameraRoll}/>
+            if (this.props.lupa_data.Users.currUserData.user_uuid == this.currUserUUID) {
+                return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} showEditButton={true} onPress={this._chooseProfilePictureFromCameraRoll} />
             }
-            return <ReactNativeElementsAvatar size={65} source={{ uri: this.state.profileImage }} />
+
+            return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.state.profileImage }} />
         }
-        catch (err)
-        {
-            return <Avatar.Text size={65} label={firstInitial+secondInitial} style={{backgroundColor: "#212121"}} theme={{
+        catch (err) {
+            return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
                 elevation: 3
             }} />
         }
@@ -619,7 +648,7 @@ class ProfileView extends React.Component {
 
                     <Divider />
 
-                    <Timecards  />
+                    <Timecards />
 
                     <Divider />
                     <>
@@ -700,6 +729,14 @@ class ProfileView extends React.Component {
                             null
                     }
                 </ScrollView>
+                <FAB
+                    style={styles.fab}
+                    small={false}
+                    icon="today"
+                    label="Book Trainer"
+                    onPress={this._navigateToSessionsView}
+
+                />
                 <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
             </SafeAreaView>
         );
@@ -795,6 +832,12 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 5,
         color: "#637DFF",
+        backgroundColor: "#2196F3"
+    },
+    fab: {
+        alignSelf: "center",
+        position: 'absolute',
+        bottom: 40,
         backgroundColor: "#2196F3"
     },
 });

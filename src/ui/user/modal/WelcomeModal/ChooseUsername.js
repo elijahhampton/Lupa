@@ -4,8 +4,8 @@ import {
     View,
     StyleSheet,
     Text,
+    Modal,
     TouchableOpacity,
-    ActivityIndicator
 } from 'react-native';
 
 import {
@@ -13,8 +13,10 @@ import {
     Caption,
     Provider,
     Portal,
-    Modal
+    ActivityIndicator,
 } from 'react-native-paper';
+
+import { Button } from 'react-native-elements';
 
 import * as Location from 'expo-location';
 
@@ -23,6 +25,8 @@ import _requestPermissionsAsync from '../../../../controller/lupa/permissions/pe
 import { Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Feather as Icon } from '@expo/vector-icons';
+
+import LupaMapView from '../LupaMapView';
 
 import Color from '../../../common/Color';
 
@@ -56,13 +60,9 @@ const ActivityIndicatorModal = (props) => {
     const [isLoading, setIsLoading] = useState(true);
 
     return (
-        <Provider>
-            <Portal>
-                <Modal style={styles.activityIndicatorModal} visible={props.visible}>
-                    <ActivityIndicator animating={isLoading} hidesWhenStopped={false} size='large' color={Color.LUPA_BLUE} />
+                <Modal presentationStyle="overFullScreen" style={styles.activityIndicatorModal} visible={props.visible}>
+                    <ActivityIndicator style={{alignSelf: "center"}} animating={isLoading} hidesWhenStopped={false} size='large' color="#2196F3" />
                 </Modal>
-            </Portal>
-        </Provider>
     );
 }
 
@@ -79,9 +79,12 @@ class ChooseUsername extends React.Component {
             isForwardPageChange: this.props.isForwardPageChange,
             location: '',
             locationText: 'Where are you located?',
+         //   setHomeGymText: "Set a Home Gym",
             locationDataSet: false,
             showLoadingIndicator: false,
             displayNameIsInvalid: false,
+            showMapView: false,
+            surroundingGymLocations: [],
         }
     }
 
@@ -140,7 +143,7 @@ class ChooseUsername extends React.Component {
     _getLocationAsync = async () => {
         let result;
         //show loading indicator
-        this.setState({
+        await this.setState({
             showLoadingIndicator: true,
         })
 
@@ -165,12 +168,23 @@ class ChooseUsername extends React.Component {
         await this.setState({
             locationText: locationDataText,
             locationDataSet: true,
-            showLoadingIndicator: false
         });
 
-
+        await this.setState({
+            showLoadingIndicator: false,
+        })
+    }
+/*
+    launchMapView = () => {
+        this.setState({ showMapView: true  })
     }
 
+    closeMapView = async (homeGym) => {
+        const payload = await getUpdateCurrentUserAttributeActionPayload('homegym', homeGym, []);
+        this.props.updateCurrentUserAttribute(payload);
+        await this.setState({ setHomeGymText: homeGym.name, showMapView : false })
+    }
+*/
     render() {
         return (
             <View style={styles.root}>
@@ -182,8 +196,9 @@ class ChooseUsername extends React.Component {
                     </Text>
                     </View>
 
-                    <View style={{ flex: 2, flexDirection: "column", alignItems: "center", justifyContent: 'space-around' }}>
-                        <TextInput
+
+<View style={{flex: 2, justifyContent: "center"}}>
+<TextInput
                             style={styles.textInput}
                             mode="outlined"
                             label="Choose a username"
@@ -192,8 +207,8 @@ class ChooseUsername extends React.Component {
                             onBlur={this._handleUsernameEndEditing}
                             value={this.state.chosenUsername}
                         />
-
-                        <TextInput
+                        
+<TextInput
                             style={styles.textInput}
                             mode="outlined"
                             label="Enter a display name"
@@ -204,27 +219,25 @@ class ChooseUsername extends React.Component {
                             editable={true}
                             returnKeyType="done"
                         />
-                    </View>
+</View>
 
 
-                    <View style={{ alignItems: 'center', justifyContent: "space-around", flex: 2 }}>
-                        <TouchableOpacity onPress={this._getLocationAsync} style={{ flexDirection: "row", alignItems: "center" }}>
-                            <Icon name="map-pin" size={20} style={{ padding: 2 }} />
-                            <Text style={[styles.generalText, { color: '#2196F3' }]}>
-                                {this.state.locationText}
-                            </Text>
-                        </TouchableOpacity>
+                    <View style={{ justifyContent: "space-evenly", flex: 3 }}>
+    
 
-                        <Caption>
+                    <Button onPress={this._getLocationAsync} title={this.state.locationText} raised disabled={false} type="solid" buttonStyle={{borderRadius: 30, padding:10, backgroundColor: "#2196F3"}} titleStyle={{color: 'white', fontFamily: "avenir-book"}} style={{color: "black"}} iconRight={true} icon={<Icon name="map-pin" size={15} style={{ margin: 3 }} />} /> 
+
+                   {/* <Button onPress={this.launchMapView} title={this.state.setHomeGymText} raised disabled={!this.state.locationDataSet} type="solid" buttonStyle={this.state.locationDataSet ? {backgroundColor: "#2196F3", borderRadius: 30, padding:10,}: {backgroundColor: "white", borderRadius: 30, padding:10,}} titleStyle={this.state.locationDataSet ? {color: 'white', fontFamily: "avenir-book"} : {color: 'black', fontFamily: "avenir-book"}} style={{color: "black"}} iconRight={true} icon={<Icon name="map-pin" size={15} style={{ margin: 3 }} />} /> */}
+
+                        <Caption style={{alignSelf: "center"}}>
                             We use your location to suggest trainers and others in your area as well as packs.  Read our Terms of Service and Privacy Policy for more information.
                     </Caption>
                     </View>
 
 
-                    {/* <LupaMapView isVisible={false} /> */}
+                   {/*  <LupaMapView isVisible={this.state.showMapView} closeMapViewMethod={this.closeMapView} gymData={this.state.surroundingGymLocations} initialRegionLatitude={this.state.locationDataSet ? this.state.location.coords.latitude : 0} initialRegionLongitude={this.state.locationDataSet ? this.state.location.coords.longitude : 0}
+                     /> */}
                     <ActivityIndicatorModal visible={this.state.showLoadingIndicator} />
-
-
                 </SafeAreaView>
             </View>
 
@@ -254,7 +267,7 @@ const styles = StyleSheet.create({
     instructionalText: {
         flexShrink: 1,
         fontSize: 20,
-        fontWeight: "200"
+        fontFamily: "avenir-roman"
     },
     userInput: {
         height: "20%",
@@ -270,12 +283,14 @@ const styles = StyleSheet.create({
         width: "75%",
     },
     activityIndicatorModal: {
-        width: 100,
-        height: 100,
-        backgroundColor: 'white',
-        borderRadius: 20,
+        flex: 1,
+        margin: 0,
+        backgroundColor: 'transparent',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    locationButtonStyles: {
+
     }
 })
 

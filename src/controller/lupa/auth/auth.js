@@ -4,6 +4,8 @@ import {
     getLupaUserStructure,
     getLupaHealthDataStructure
 } from '../../firebase/collection_structures';
+import { getLupaProgramStructure } from '../../../model/data_structures/programs/program_structures';
+import { UserCollectionFields } from '../common/types';
 
 /**
  * PROBLEMS:
@@ -31,7 +33,7 @@ LUPA_AUTH.onAuthStateChanged(user => {
  * 
  * This method assigns a user as logged in in firebase.
  */
-export var signUpUser = async (email, password, confirmedPassword, isTrainerAccount, agreedToTerms) => {
+export var signUpUser = async (username, email, password, confirmedPassword,isTrainerAccount, agreedToTerms) => {
     var USER_UUID, ANNOUNCEMENTS_PACK_UID;
     let signUpResultStatus = {
         result: true,
@@ -39,7 +41,7 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
     }
 
 
-    console.log('one')
+
     await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
         USER_UUID = userCredential.user.uid
         console.log('LUPA: Registering user with firebase authentication.')
@@ -54,7 +56,13 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         return Promise.resolve(signUpResultStatus);
     });
 
-    console.log('two')
+    let userDoc = await LUPA_DB.collection('users').doc(USER_UUID);
+    
+    await userDoc.update({
+        username: username,
+    })
+
+
     // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong
 
     try {
@@ -63,11 +71,9 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
     
         //Add user to users collection with UID.
     await LUPA_DB.collection('users').doc(USER_UUID).set(userData);
-    let userDoc = await LUPA_DB.collection('users').doc(USER_UUID);
-    console.log("interrr")
+
     await LUPA_DB.collection('packs').where('pack_title', '==', "Announcements").limit(1).get().then(snapshot => {
         let packID;
-        console.log('ppp ' + snapshot.size)
         snapshot.forEach(doc => {
             
             let pack = doc.data();
@@ -88,7 +94,7 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         });
     });
 
-    console.log('four')
+
     //Add user in health data collection
     let userHealthData = getLupaHealthDataStructure(USER_UUID);
     await LUPA_DB.collection('health_data').doc(USER_UUID).set(userHealthData).catch(err => {
@@ -98,6 +104,16 @@ export var signUpUser = async (email, password, confirmedPassword, isTrainerAcco
         alert(err)
         //handle error here
     }
+
+    try {
+        
+        let program = getLupaProgramStructure();
+        await LUPA_DB.collection('users').doc(USER_UUID).collection('programs').add(program);
+    } catch(err)
+    {
+        console.log("trying to add user program.. err")
+    }
+
     return Promise.resolve(signUpResultStatus);
 }
 

@@ -91,16 +91,19 @@ export default class SessionNotificationContainer extends React.Component {
                         {this.props.date}
                     </Text>
                     
-                        <Text>
+                        <Chip mode="flat" style={{backgroundColor: this.props.sessionStatus === "Set" ? '#2196F3': '#f44336', elevation: 5}}>
                         {this.props.sessionStatus}
-                        </Text>
+                        </Chip>
                         </View>
 
-                    <View style={{width: "100%", flexDirection: "column", height: 'auto'}}>
+                    <View style={{width: "100%", flexDirection: "column", }}>
                     <Text style={{fontWeight: 'bold'}}>
                         {this.props.title}
                     </Text>
-                    <Text numberOfLines={2} ellipsizeMode="tail"  style={{ includeFontPadding: true, paddingTop: 3 }}>
+                    </View>
+
+                    <View style={{}}>
+                    <Text numberOfLines={1} ellipsizeMode="tail"  style={{ includeFontPadding: true, paddingTop: 3 }}>
                         {this.props.description}
                     </Text>
                     </View>
@@ -171,19 +174,16 @@ class RemoveSessionModal extends React.Component {
     }
 
 const styles = StyleSheet.create({
-    surface: {
-        padding: 10,
+    surface: { 
+        padding: 3,
         width: 310,
         borderRadius: 15,
-        height: 'auto',
-        elevation: 0,
-        backgroundColor: "transparent",
-        borderColor: 'black',
-        borderWidth: 0.5,
+        height: 80,
+        elevation: 3,
+        backgroundColor: "#f2f2f2",
     },
     initialView: {
         flexDirection: "column",
-        alignItems: "center",
         justifyContent: "space-between",
         padding: 5,
     },

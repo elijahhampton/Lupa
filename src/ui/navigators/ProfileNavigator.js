@@ -6,6 +6,9 @@ import ProfileView from '../user/profile/ProfileView';
 import PackModal from '../packs/PackModal';
 
 import SessionsView from '../sessions/CreateSessionModal';
+import PrivateChat from '../user/chat/PrivateChat';
+
+import MessagesView from '../user/chat/MessagesView'
 
 const ProfileNavigator = createSwitchNavigator(
     {
@@ -28,6 +31,14 @@ const ProfileNavigator = createSwitchNavigator(
             gesturesEnabled: false,
         })
     },
+    PrivateChat: {
+        screen: PrivateChat,
+        navigationOptions: ({navigation}) => ({
+            title: "PrivateChat",
+            header: null,
+            gesturesEnabled: false,
+        }),
+    },
     PackModal: {
         screen: PackModal,
         navigationOptions: ({ navigation }) => ({
@@ -44,6 +55,14 @@ const ProfileNavigator = createSwitchNavigator(
             gesturesEnabled: false,
         }),
     },
+    MessagesView: {
+        screen: MessagesView,
+        navigationOptions:   ({navigation}) => ({
+            title: "MessagesView",
+            header: null,
+            gesturesEnabled: false,
+        })
+      },
     },
     {
     initialRouteName: 'Profile',

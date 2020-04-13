@@ -8,6 +8,8 @@
 
 import React from 'react';
 
+import { Video } from 'expo-av';
+
 import {
     StyleSheet,
     View,
@@ -39,7 +41,6 @@ import {
 } from 'native-base';
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
-import WorkoutComponent from './component/WorkoutComponent';
 import { WORKOUT_MODALITY } from '../../controller/lupa/common/types'
 import {GOAL_UID} from '../../model/data_structures/workout/common/types'
 
@@ -109,7 +110,6 @@ class WorkoutView extends React.Component {
 
     _handleOnRefresh = () => {
         this.setState({ isRefreshing: true })
-        alert('Refreshing Workouts');
         this.setState({ isRefreshing: false })
     }
 
@@ -148,15 +148,6 @@ class WorkoutView extends React.Component {
             </Headline>
         </View>
         <Divider />
-        {
-            pathways.map(path => {
-               return (
-                <>
-                    <WorkoutComponent navigateMethod={() => this.props.navigation.navigate('WorkoutModal', { goalPathwayUUID: path.uid, goalUUID: path.goal_uid, modality: path.modality})} pathwayName={path.name} pathwayDescription={path.description} workoutModality={path.modality} iterationsCompleted={path.iteration}/>
-                    </>
-               ) 
-            })
-        }
     </ScrollView>
     }
 

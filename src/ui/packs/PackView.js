@@ -158,7 +158,6 @@ class PackView extends React.Component {
          } catch(err)
          {
              explorePagePacksIn = [];
-             alert('Error on trying to get explore page packs')
          }
 
          try {
@@ -168,7 +167,6 @@ class PackView extends React.Component {
          } catch(err)
          {
             communityPagePacksIn = [];
-             alert('Error on trying to get explore page packs')
          }
 
          try {
@@ -182,7 +180,7 @@ class PackView extends React.Component {
             });
          } catch(err)
          {
-             alert('Error on trying to get user default packs')
+
          }
  
          //set component state
@@ -287,7 +285,7 @@ class PackView extends React.Component {
                     </Left>
 
                     <Right>
-                <Title style={[styles.headerItems, {fontSize: 25, fontWeight: "600", color: "black"}]}>
+                <Title style={[styles.headerItems, {fontFamily: 'avenir-next-bold',fontSize: 25, fontWeight: "600", color: "black"}]}>
                         Packs
                     </Title>
                     </Right>
@@ -381,7 +379,7 @@ class PackView extends React.Component {
                 <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerDescriptionText}>
-                        Community Packs
+                        Communities
                     </Text>
                     </View>
                     <View style={styles.sectionContent}>
@@ -428,11 +426,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         padding: 3,
+        fontFamily: 'avenir-book',
     },
     headerDescriptionText: {
         fontSize: 20,
         fontWeight: '400',
         padding: 3,
+        fontFamily: 'avenir-roman',
     },
     sectionContent: {
 

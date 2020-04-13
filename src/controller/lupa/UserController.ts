@@ -5,6 +5,7 @@
 import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
+//const USER_PROGRAMS = LUPA_DB.collection('users/USER-UUID/programs'); For reference
 const HEALTH_DATA_COLLECTION = LUPA_DB.collection('health_data');
 
 
@@ -14,10 +15,11 @@ const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa4810
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
 
+import { v4 as uuidv4 } from 'uuid';
 
 import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
 import { getPathwaysForGoalUUID } from '../../model/data_structures/workout/goal_pathway_structures';
-
+import { getLupaProgramStructure } from '../../model/data_structures/programs/program_structures';
 
 export default class UserController {
     private static _instance: UserController;
@@ -38,34 +40,38 @@ export default class UserController {
     saveUserProfileImage = async (string) => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-            xhr.onload = function() {
-              resolve(xhr.response);
+            xhr.onload = function () {
+                resolve(xhr.response);
             };
-            xhr.onerror = function(e) {
-              reject(new TypeError('Network request failed'));
+            xhr.onerror = function (e) {
+                reject(new TypeError('Network request failed'));
             };
             xhr.responseType = 'blob';
             xhr.open('GET', string, true);
             xhr.send(null);
-          });
+        });
 
-        this.fbStorage.saveUserProfileImage(blob);
+        let imageURL;
+        return new Promise((resolve, reject) => {
+            this.fbStorage.saveUserProfileImage(blob).then(url => {
+                resolve(url);
+            })
+        })
     }
 
     getUserProfileImageFromUUID = async (uuid) => {
 
         let url;
-         await this.fbStorage.getUserProfileImageFromUUID(uuid).then(result => {
-             url = result
-         })
+        await this.fbStorage.getUserProfileImageFromUUID(uuid).then(result => {
+            url = result
+        })
         return url;
     }
 
     getArrayOfUserObjectsFromUUIDS = async (arrOfUUIDS) => {
         let results = new Array();
         return new Promise(async (resolve, reject) => {
-            for (let i = 0; i < arrOfUUIDS.length; ++i)
-            {
+            for (let i = 0; i < arrOfUUIDS.length; ++i) {
                 await this.getUserInformationByUUID(arrOfUUIDS[i]).then(result => {
                     results.push(result);
                 });
@@ -77,14 +83,12 @@ export default class UserController {
     isUsernameTaken = async (val) => {
         let isTaken;
 
-        USER_COLLECTION.where('username', '==', val).get().then(docs => {
-            if (docs.length == 0)
-            {
+        await USER_COLLECTION.where('username', '==', val).get().then(docs => {
+            if (docs.length == 0) {
                 isTaken = false;
                 return Promise.resolve(isTaken);
             }
-            else
-            {
+            else {
                 isTaken = true;
                 return Promise.resolve(isTaken);
             }
@@ -166,7 +170,7 @@ export default class UserController {
     getCurrentUser = () => {
         return LUPA_AUTH.currentUser;
     }
-    
+
     getCurrentUserUUID = () => {
         return LUPA_AUTH.currentUser.uid;
     }
@@ -225,8 +229,8 @@ export default class UserController {
         return false;
     }
 
-    updateCurrentUser = async (fieldToUpdate, value, optionalData = "") => {
-        let currentUserHealthDocumentData; 
+    updateCurrentUser = async (fieldToUpdate, value, optionalData = "", optionalDataTwo = "") => {
+        let currentUserHealthDocumentData;
 
         let currentUserDocument = await USER_COLLECTION.doc(this.getCurrentUser().uid);
         let currentUserHealthDocument = await HEALTH_DATA_COLLECTION.doc(this.getCurrentUser().uid);
@@ -235,6 +239,30 @@ export default class UserController {
         });
 
         switch (fieldToUpdate) {
+            case UserCollectionFields.CHATS:
+                let chats;
+                if (optionalData == 'add') {
+                    await currentUserDocument.get().then(result => {
+                        chats = result.data().chats;
+                    });
+
+                    let chatField = {
+                        user: optionalDataTwo,
+                        chatID: value,
+                    }
+
+                    chats.push(chatField);
+
+                    currentUserDocument.update({
+                        chats: chats,
+                    })
+                }
+                break;
+            case UserCollectionFields.HOME_GYM:
+                await currentUserDocument.update({
+                    homegym: value,
+                })
+                break;
             case UserCollectionFields.PACKS:
                 let updatedPacksData;
 
@@ -242,10 +270,8 @@ export default class UserController {
                     updatedPacksData = result.data().packs;
                 })
 
-                if (optionalData == 'add')
-                {
-                    for (let i = 0; i < value.length; i++)
-                    {   
+                if (optionalData == 'add') {
+                    for (let i = 0; i < value.length; i++) {
                         let pack = value[i];
                         updatedPacksData.push(pack);
                     }
@@ -254,10 +280,8 @@ export default class UserController {
                         packs: updatedPacksData
                     })
                 }
-                else if (optionalData == "remove")
-                {
-                    for (let i = 0; i < value.length; i++)
-                    {
+                else if (optionalData == "remove") {
+                    for (let i = 0; i < value.length; i++) {
                         let packID = value[i];
                         updatedPacksData.splice(updatedPacksData.indexOf(packID), 1);
                     }
@@ -280,14 +304,13 @@ export default class UserController {
                 currentUserDocument.set({
                     bio: value,
                 },
-                {
-                    merge: true,
-                })
+                    {
+                        merge: true,
+                    })
                 break;
             case UserCollectionFields.DISPLAY_NAME:
                 LUPA_AUTH.currentUser.updateProfile({
                     displayName: value,
-                    photoURL: this.getUserPhotoURL(),
                 })
                 currentUserDocument.set({
                     display_name: value,
@@ -304,7 +327,6 @@ export default class UserController {
                 break;
             case UserCollectionFields.PHOTO_URL:
                 LUPA_AUTH.currentUser.updateProfile({
-                    displayName: this.getUserDisplayName(),
                     photoURL: value
                 })
                 currentUserDocument.set({
@@ -329,16 +351,14 @@ export default class UserController {
 
                 let updatedArr = interestData;
 
-                if (optionalData == 'remove')
-                {
+                if (optionalData == 'remove') {
 
 
                     updatedArr = interestData;
                     updatedArr.splice(interestData.indexOf(value), 1);
                 }
 
-                if (optionalData == 'add')
-                {
+                if (optionalData == 'add') {
                     updatedArr = interestData;
                     updatedArr.push(value);
 
@@ -410,8 +430,7 @@ export default class UserController {
                 break;
             case HealthDataCollectionFields.GOALS:
                 let currentUserGoals = currentUserHealthDocumentData.goals;
-                if (optionalData === 'add')
-                {   
+                if (optionalData === 'add') {
 
                     let goalStructures = getPathwaysForGoalUUID(value);
                     let goalObject = {
@@ -426,14 +445,12 @@ export default class UserController {
                         merge: true,
                     })
                 }
-                else if(optionalData === 'remove')
-                {
+                else if (optionalData === 'remove') {
 
                     let index;
 
-                    for(let i =0; i < currentUserGoals.length; i++)
-                    {
-                       index = currentUserGoals[i].goal_uuid.indexOf(value);
+                    for (let i = 0; i < currentUserGoals.length; i++) {
+                        index = currentUserGoals[i].goal_uuid.indexOf(value);
                     }
 
                     currentUserGoals.splice(index);
@@ -517,7 +534,7 @@ export default class UserController {
             merge: true,
         })
     }
-    
+
     removeFollowerFromUUID = async (uuidOfUserToRemove, uuidOfUserUnfollowing) => {
         let result;
         let accountToUpdate = USER_COLLECTION.doc(uuidOfUserToRemove);
@@ -540,8 +557,7 @@ export default class UserController {
     }
 
     updateCurrentUserHealthData = (fieldToUpdate) => {
-        switch(fieldToUpdate)
-        {
+        switch (fieldToUpdate) {
             case 'statistics':
                 break;
             default:
@@ -615,17 +631,17 @@ export default class UserController {
                 'settings',
                 'synonyms',
                 'rules'
-              ]).then(({ taskID }) =>
+            ]).then(({ taskID }) =>
                 tmpIndex.waitTask(taskID)
-              ).then(() => {
+            ).then(() => {
                 const objects = records;
                 return tmpIndex.addObjects(objects);
-              }).then(() => 
+            }).then(() =>
                 algoliaUsersIndex.moveIndex(tmpIndex.indexName, usersIndex.indexName)
-              ).catch(err => {
+            ).catch(err => {
                 console.error(err);
-              });
-        
+            });
+
 
             /*usersIndex.addObjects(records, (err, content) => {
                 if (err) {
@@ -735,46 +751,40 @@ export default class UserController {
     }
 
     getNearbyUsers = async (location) => {
-        
+
         return new Promise((resolve, reject) => {
             let nearbyUsers = new Array();
             usersIndex.search({
                 query: location.city,
                 attributesToHighlight: ['location'],
-            }, async (err, {hits}) => {
+            }, async (err, { hits }) => {
                 if (err) throw reject(err);
 
                 //parse all of ths hits for the city
-                for (var i = 0; i < hits.length; ++i)
-                {
-                  let locationHighlightedResult = hits[i]._highlightResult;
-                  let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
-                  if (compare)
-                  {
-                    await nearbyUsers.push(hits[i]);
-                  }
+                for (var i = 0; i < hits.length; ++i) {
+                    let locationHighlightedResult = hits[i]._highlightResult;
+                    let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
+                    if (compare) {
+                        await nearbyUsers.push(hits[i]);
+                    }
                 }
 
-                               //parse all of ths hits for the city
-                               for (var i = 0; i < hits.length; ++i)
-                               {
-                                 let locationHighlightedResult = hits[i]._highlightResult;
-                                 let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
-                                 if (compare)
-                                 {
-                                   await nearbyUsers.push(hits[i]);
-                                 }
-                               }
+                //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i) {
+                    let locationHighlightedResult = hits[i]._highlightResult;
+                    let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
+                    if (compare) {
+                        await nearbyUsers.push(hits[i]);
+                    }
+                }
 
-                                               //parse all of ths hits for the city
-                for (var i = 0; i < hits.length; ++i)
-                {
-                  let locationHighlightedResult = hits[i]._highlightResult;
-                  let compare = (locationHighlightedResult.location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
-                  if (compare)
-                  {
-                    await nearbyUsers.push(hits[i]);
-                  }
+                //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i) {
+                    let locationHighlightedResult = hits[i]._highlightResult;
+                    let compare = (locationHighlightedResult.location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
+                    if (compare) {
+                        await nearbyUsers.push(hits[i]);
+                    }
                 }
 
                 resolve(nearbyUsers);
@@ -784,46 +794,52 @@ export default class UserController {
     }
 
     getNearbyTrainers = async (location) => {
-        
         return new Promise((resolve, reject) => {
             let nearbyTrainers = new Array();
             usersIndex.search({
                 query: location.city,
                 attributesToHighlight: ['location'],
-            }, async (err, {hits}) => {
+            }, async (err, { hits }) => {
                 if (err) throw reject(err);
 
-                //parse all of ths hits for the city
-                for (var i = 0; i < hits.length; ++i)
-                {
-                  let locationHighlightedResult = hits[i]._highlightResult;
-                  let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
-                  if (compare)
-                  {
-                    await nearbyTrainers.push(hits[i]);
-                  }
+                if (hits.length == 0) {
+                    await USER_COLLECTION.where('isTrainer', '==', true).limit(3).get().then(result => {
+                        let docs = result;
+                        let data;
+                        docs.forEach(doc => {
+                            data = doc.data();
+                            nearbyTrainers.push(data);
+                        });
+                    });
+
+                    resolve(nearbyTrainers);
                 }
 
-                               //parse all of ths hits for the city
-                               for (var i = 0; i < hits.length; ++i)
-                               {
-                                 let locationHighlightedResult = hits[i]._highlightResult;
-                                 let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
-                                 if (compare)
-                                 {
-                                   await nearbyTrainers.push(hits[i]);
-                                 }
-                               }
+                //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i) {
+                    let locationHighlightedResult = hits[i]._highlightResult;
+                    let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
+                    if (compare) {
+                        await nearbyTrainers.push(hits[i]);
+                    }
+                }
 
-                                               //parse all of ths hits for the city
-                for (var i = 0; i < hits.length; ++i)
-                {
-                  let locationHighlightedResult = hits[i]._highlightResult;
-                  let compare = (locationHighlightedResult.location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
-                  if (compare)
-                  {
-                    await nearbyTrainers.push(hits[i]);
-                  }
+                //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i) {
+                    let locationHighlightedResult = hits[i]._highlightResult;
+                    let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
+                    if (compare) {
+                        await nearbyTrainers.push(hits[i]);
+                    }
+                }
+
+                //parse all of ths hits for the city
+                for (var i = 0; i < hits.length; ++i) {
+                    let locationHighlightedResult = hits[i]._highlightResult;
+                    let compare = (locationHighlightedResult.location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
+                    if (compare) {
+                        await nearbyTrainers.push(hits[i]);
+                    }
                 }
 
                 resolve(nearbyTrainers);
@@ -839,4 +855,145 @@ export default class UserController {
     getRandomUsers = () => {
 
     }
+
+    /******* Programs Collection Operations ******************/
+
+    getUserProgramCollectionReference = (user_uuid) => {
+        return USER_COLLECTION.doc(user_uuid).collection("programs");
+    }
+
+    createProgram = async (user_uuid) => {
+        let programUUID;
+        //const USER_PROGRAMS_COLLECTION = this.getUserProgramCollectionReference(user_uuid);
+
+        //
+        let program_structure_payload = await getLupaProgramStructure();
+        console.log(program_structure_payload)
+
+        //
+        await USER_COLLECTION.doc(user_uuid).collection("programs").add(program_structure_payload).then(ref => {
+            programUUID = ref.id;
+        });
+
+        //update fb doc with uuid
+
+        //
+        program_structure_payload.program_uuid = programUUID;
+
+        return Promise.resolve(program_structure_payload);
+    }
+
+    deleteProgram = async (user_uuid, programUUID) => {
+        console.log('in user controller: ' + programUUID);
+        await USER_COLLECTION.doc(user_uuid).collection("programs").doc(programUUID).delete();
+    }
+
+    loadCurrentUserPrograms = async () => {
+        let programs = [];
+        let uuid = await this.getCurrentUser().uid;
+        await USER_COLLECTION.doc(uuid).collection("programs").get().then(docs => {
+            docs.forEach(doc => {
+                let snapshot = doc.data();
+                snapshot.program_uuid = doc.id;
+                programs.push(snapshot);
+            });
+        });
+
+        return Promise.resolve(programs);
+    }
+
+    saveProgram = async (user_uuid, workoutData) => {
+        await USER_COLLECTION.doc(user_uuid).collection("programs").doc(workoutData.program_uuid).set(workoutData);
+    }
+
+    //user one is the sender
+    getPrivateChatUUID = async (currUserUUID, userTwo) => {
+        let chats;
+        let GENERATED_CHAT_UUID;
+        if (currUserUUID.charAt(0) < userTwo.charAt(0)) {
+            GENERATED_CHAT_UUID = currUserUUID + userTwo;
+        }
+        else {
+            GENERATED_CHAT_UUID = userTwo + currUserUUID;
+        }
+
+        await USER_COLLECTION.doc(currUserUUID).get().then(result => {
+            chats = result.data().chats;
+        });
+
+        let otherUserDocData;
+        let otherUserDoc = USER_COLLECTION.doc(userTwo);
+
+        let chatID, chatExistUserOne = false;
+        await chats.forEach(element => {
+            if (element.user == userTwo) {
+                chatExistUserOne = true;
+                chatID = element.chatID;
+            }
+        });
+
+        if (!chatExistUserOne) {
+
+            //if already got it then return it
+            //if not then add it and return it
+            await this.updateCurrentUser('chats', GENERATED_CHAT_UUID, 'add', userTwo);
+
+            //Update other users chats
+            await USER_COLLECTION.doc(userTwo).get().then(snapshot => {
+                otherUserDocData = snapshot.data();
+            });
+
+            let otherUserChats = otherUserDocData.chats;
+
+            let chatExistUserTwo;
+            chatExistUserOne = false;
+
+            await otherUserChats.forEach(element => {
+                if (element.user == currUserUUID) {
+                    chatExistUserTwo = true;
+                    chatID = element.chatID;
+                }
+            });
+
+            //add to other user if they don't already have it
+            if (!chatExistUserTwo) {
+                let chatField = {
+                    user: currUserUUID,
+                    chatID: GENERATED_CHAT_UUID,
+                }
+                otherUserChats.push(chatField);
+
+                await otherUserDoc.update({
+                    chats: otherUserChats
+                })
+            }
+
+            return Promise.resolve(GENERATED_CHAT_UUID);
+        }
+        else //chat does exist
+        {
+            return Promise.resolve(chatID);
+        }
+    }
+
+
+    getAllCurrentUserChats = async () => {
+        let result;
+
+        await USER_COLLECTION.doc(this.getCurrentUser().uid).get().then(snapshot => {
+            result = snapshot.data().chats;
+        });
+
+        return Promise.resolve(result);
+    }
 }
+
+//me
+/*
+chats = [
+    me+you = sdjf89fh3984hf9wfiwehfoifioeww
+
+
+]
+
+*/

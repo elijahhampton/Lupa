@@ -50,8 +50,14 @@ export default class LupaController {
     private static notifications = [];
 
     /***************** Firebase Storage *********** */
-    saveUserProfileImage = (imageURI) => {
-      USER_CONTROLLER_INSTANCE.saveUserProfileImage(imageURI);
+    saveUserProfileImage = async (imageURI) => {
+      let url;
+
+      await USER_CONTROLLER_INSTANCE.saveUserProfileImage(imageURI).then(result => {
+        url = result;
+      });
+
+      return Promise.resolve(url);
     }
 
     getUserProfileImageFromUUID = async (uuid) => {
@@ -180,8 +186,8 @@ export default class LupaController {
       return USER_CONTROLLER_INSTANCE.getUserPhotoURL(true);
     }
 
-    createNewSession = async (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp) => {
-      await SESSION_CONTROLLER_INSTANCE.createSession(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp);
+    createNewSession = async (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp, locationData) => {
+      await SESSION_CONTROLLER_INSTANCE.createSession(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp, locationData);
     }
 
     getUserSessions = (currUser=true, uid=undefined) => {
@@ -273,10 +279,9 @@ export default class LupaController {
     /* User Functions */
     getTrainersBasedOnLocation = async location => {
       let trainersNearby;
-      await USER_CONTROLLER_INSTANCE.getNearbyUsers(location).then(result => {
+      await USER_CONTROLLER_INSTANCE.getNearbyTrainers(location).then(result => {
         trainersNearby = result;
       });
-
       return Promise.resolve(trainersNearby);
     }
     getUsersBasedOnLocation = async location => {
@@ -567,5 +572,78 @@ export default class LupaController {
 
 
       return Promise.resolve(workoutData);
+    }
+
+    createNewProgram = async (uuid) => {
+      let programStructurePayload;
+      await USER_CONTROLLER_INSTANCE.createProgram(uuid).then(result => {
+        programStructurePayload = result;
+      });
+
+      return Promise.resolve(programStructurePayload);
+    }
+
+    saveProgram = async (user_uuid, programUUID) => {
+      await USER_CONTROLLER_INSTANCE.saveProgram(user_uuid, programUUID);
+    }
+
+    deleteProgram = async (user_uuid, programUUID) => {
+      await USER_CONTROLLER_INSTANCE.deleteProgram(user_uuid, programUUID);
+    }
+    
+    loadCurrentUserPrograms = async () => {
+      let programsData;
+
+      await USER_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+        programsData = result;
+      })
+
+      return Promise.resolve(programsData);
+    }
+
+    loadWorkouts = async () => {
+      let workoutData;
+      await WORKOUT_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
+        workoutData = result;
+      });
+
+      return Promise.resolve(workoutData);
+    }
+
+    getPrivateChatUUID = async (currUserUUID, userTwo) => {
+      let result;
+      await USER_CONTROLLER_INSTANCE.getPrivateChatUUID(currUserUUID, userTwo).then(chatUUID => {
+        result = chatUUID;
+      });
+
+      return Promise.resolve(result);
+    }
+
+    getAllCurrentUserChats = async () => {
+      let result;
+      await USER_CONTROLLER_INSTANCE.getAllCurrentUserChats().then(chats => {
+        result = chats;
+      });
+
+      return Promise.resolve(result);
+    }
+
+    getSuggestedTrainers = async () => {
+      let suggestedTrainers;
+
+      await SESSION_CONTROLLER_INSTANCE.getSuggestedTrainers().then(trainers => {
+        suggestedTrainers = trainers;
+      });
+
+      return Promise.resolve(suggestedTrainers);
+    }
+
+    getUpcomingSessions = async (isCurrentUser, user_uuid) => {
+      let upcomingSessions;
+      await SESSION_CONTROLLER_INSTANCE.getUpcomingSessions(true, user_uuid).then(sessions => {
+        upcomingSessions = sessions;
+      });
+
+      return Promise.resolve(upcomingSessions);
     }
 }

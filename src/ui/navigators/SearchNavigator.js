@@ -9,6 +9,10 @@ import SearchView from '../sessions/SearchView';
 import PackModal from '../packs/PackModal';
 import { PackChatModal as PackChat } from '../packs/PackChatModal';
 
+import PrivateChat from '../user/chat/PrivateChat'
+
+import MessagesView from '../user/chat/MessagesView';
+
 const UserViewNavigator =  createStackNavigator(
     {
         /* Added the search view here because navigation didn't work to 
@@ -37,6 +41,14 @@ const UserViewNavigator =  createStackNavigator(
             gesturesEnabled: false,
         })
     },
+    MessagesView: {
+        screen: MessagesView,
+        navigationOptions:   ({navigation}) => ({
+            title: "MessagesView",
+            header: null,
+            gesturesEnabled: false,
+        })
+      },
 },
 {
     initialRouteName: 'SearchView'

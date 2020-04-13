@@ -40,6 +40,8 @@ const {
 
 import LupaController from '../../../controller/lupa/LupaController';
 
+import loadFonts from '../../common/Font/index'
+
 mapStateToProps = (state) => {
     return { 
       lupa_data: state
@@ -59,6 +61,18 @@ mapStateToProps = (state) => {
           type: 'UPDATE_CURRENT_USER_PACKS',
           payload: packsData,
         })
+      },
+      updateUserPrograms: (currUserProgramsData) => {
+        dispatch({
+          type: 'UPDATE_CURRENT_USER_PROGRAMS',
+          payload: currUserProgramsData,
+        })
+      },
+      updateLupaWorkouts: (lupaWorkoutsData) => {
+        dispatch({
+          type: 'UPDATE_LUPA_WORKOUTS',
+          payload: lupaWorkoutsData,
+        })
       }
     }
   }
@@ -73,6 +87,7 @@ class SignupModal extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
+          username: "",
             email: "",
             password: "",
             confirmedPassword: "",
@@ -93,11 +108,12 @@ class SignupModal extends React.Component {
   _introduceApp = async () => {
     await this._setupRedux();
     await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+    await this.loadFonts();
     this.props.navigation.navigate('App');
   }
 
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData;
+    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, lupaWorkouts;
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -110,6 +126,14 @@ class SignupModal extends React.Component {
       currUserHealthData = result;
     });
 
+    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+      currUserPrograms = result;
+    })
+
+    await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
+      lupaWorkouts = result;
+    });
+
     let userPayload = {
       userData: currUserData,
       healthData: currUserHealthData,
@@ -117,6 +141,8 @@ class SignupModal extends React.Component {
 
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
+    await this._updateUserProgramsDataInRedux(currUserPrograms);
+    await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
 
   _updateUserInRedux = (userObject) => {
@@ -127,8 +153,30 @@ class SignupModal extends React.Component {
     this.props.updatePacks(packsData);
   }
 
+    /**
+   * 
+   */
+  _updateUserHealthDataInRedux = (healthData) => {
+    this.props.updateHealthData(healthData);
+  }
+
+  /**
+   * 
+   */
+  _updateUserProgramsDataInRedux = (programsData) => {
+    this.props.updateUserPrograms(programsData);
+  }
+
+  /**
+   * 
+   */
+  _updateLupaWorkoutsDataInRedux = (lupaWorkoutsData) => {
+    this.props.updateLupaWorkouts(lupaWorkoutsData);
+  }
+
 
     _registerUser = async () => {
+      const username = this.state.username;
         const email = this.state.email;
         const password = this.state.password;
         const confirmedPassword = this.state.confirmedPassword;
@@ -137,7 +185,7 @@ class SignupModal extends React.Component {
 
         //Check registration status
         let successfulRegistration;
-        await signUpUser(email, password, confirmedPassword, isTrainerAccount, agreedToTerms).then(result => {
+        await signUpUser(username, email, password, confirmedPassword, isTrainerAccount, agreedToTerms).then(result => {
           successfulRegistration = result;
         });
 
@@ -197,6 +245,26 @@ class SignupModal extends React.Component {
                     <View style={{flex: 1}}>
                     <View style={{width: '100%', margin: 5}}>
                             <Text style={styles.textLabel}>
+                                Username
+                            </Text>
+                            <Input 
+                            value={this.state.username} 
+                            onChangeText={text => this.setState({username: text})} 
+                            placeholder="Enter a username" 
+                            inputStyle={{ fontWeight: '500', fontSize: 15,  }} 
+                            inputContainerStyle={{ borderBottomColor: '#545454', borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
+                            containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
+                            editable={true}
+                            enablesReturnKeyAutomatically={true}
+                            returnKeyLabel="Done"
+                            returnKeyType="done"
+                            multiline={false}
+  
+                            />
+                        </View>
+
+                    <View style={{width: '100%', margin: 5}}>
+                            <Text style={styles.textLabel}>
                                 Email
                             </Text>
                             <Input 
@@ -208,6 +276,8 @@ class SignupModal extends React.Component {
                             containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
                             editable={true}
                             enablesReturnKeyAutomatically={true}
+                            returnKeyLabel="Done"
+                            returnKeyType="done"
                             multiline={false}
   
                             />
@@ -228,6 +298,8 @@ class SignupModal extends React.Component {
                             containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
                             editable={true}
                             enablesReturnKeyAutomatically={true}
+                            returnKeyLabel="Done"
+                            returnKeyType="done"
                             multiline={false}
                             />
                         </View>
@@ -247,6 +319,8 @@ class SignupModal extends React.Component {
               containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
                              editable={true}
                              enablesReturnKeyAutomatically={true}
+                             returnKeyLabel="Done"
+                             returnKeyType="done"
                              multiline={false}/>
                         </View>
                     </View>

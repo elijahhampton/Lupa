@@ -57,7 +57,7 @@ export default class UserDisplayCard extends React.Component {
 
         try {
 
-            return <Avatar.Image source={{uri: this.state.userImage}} style={this.props.optionalStyling}/>
+            return <Avatar.Image size={50} source={{uri: this.state.userImage}} style={this.props.optionalStyling}/>
         }
         catch (err)
         {

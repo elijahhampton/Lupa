@@ -62,6 +62,18 @@ export default class CreateEvent extends React.Component {
         }
     }
 
+    resetState = () => {
+        this.setState({
+            eventTitle: '',
+            eventDescription: '',
+            packUUID: this.props.packUUID,
+            eventImage: '',
+            creatingPackEventDialogIsVisible: false,
+            datetime: new Date(),
+            isDateTimePickerVisible: false,
+        })
+    }
+
     _chooseImageFromCameraRoll = async () => {
         packImageSource = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -92,6 +104,9 @@ export default class CreateEvent extends React.Component {
         await this.props.refreshData();
 
         await this.setState({ creatingPackEventDialogIsVisible: false })
+
+        this.resetState();
+        
         //close modal
         await this.props.closeModalMethod();
     }

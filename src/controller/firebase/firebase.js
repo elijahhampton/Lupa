@@ -36,8 +36,8 @@ export class Fire {
     this.sharedFirebaseInstance = fb_init_config;
   }
 
-  init(uuid) {
-    console.log('uhh:       ' + uuid)
+  //type : private / pack
+  init = async (uuid) => {
     this.dbRefString = `messages/${uuid}`;
     this.ref = LUPA_DB_FIREBASE.ref(this.dbRefString);
   }
@@ -102,7 +102,14 @@ export class FirebaseStorageBucket {
 
   saveUserProfileImage = async (blob) => {
     const user_uuid = await LUPA_AUTH.currentUser.uid;
-    LUPA_USER_PROFILE_IMAGES_STORAGE_REF.child(user_uuid).put(blob);
+
+    return new Promise((resolve, reject) => {
+      LUPA_USER_PROFILE_IMAGES_STORAGE_REF.child(user_uuid).put(blob).then(ref => {
+        ref.ref.getDownloadURL().then(url => {
+          resolve(url);
+        })
+      })
+    })
   }
 
   getUserProfileImageFromUUID = async (uuid) => {

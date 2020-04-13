@@ -73,13 +73,19 @@ export default class LupaCalendar extends React.Component {
     });
 }
 
-  _onPress = (item) => {
-    this.setState(() => {
+  _onPress = async (item) => {
+    await this.setState(() => {
       if (!item.match && item != -1) {
         this.state.activeDate.setDate(item);
         return this.state;
       }
     });
+
+    if (this.props.onPress)
+    {
+      console.log(this.state.activeDate)
+      this.props.onPress(this.state.activeDate);
+    }
   };
 
   
@@ -123,7 +129,7 @@ export default class LupaCalendar extends React.Component {
       );
     });
     return (
-      <Surface style={styles.container}>
+      <Surface style={[styles.container, {elevation: this.props.elevation}]}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%", height: "auto" }}>
           <IconButton icon="chevron-left" size={18} onPress={() => this.changeMonth(-1)}/>
           <Text style={{
@@ -150,7 +156,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    elevation: 10,
     borderRadius: 25,
     margin: 10,
   }

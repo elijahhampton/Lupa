@@ -4,6 +4,7 @@ import DashboardView from '../user/dashboard/TrainerDashboardView';
 import { createAppContainer, NavigationActions } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
+import AuthenticationNavigator from './AuthenticationNavigator';
 
 import DrawerMenu from './Components/DrawerMenu';
 
@@ -33,7 +34,7 @@ const LupaDrawerNavigator = createDrawerNavigator(
     },
     {
       initialRouteName: 'Dashboard',
-      contentComponent: () => <DrawerMenu />
+      contentComponent: (props) => <DrawerMenu {...props} logoutMethod={props.screenProps.logoutMethod}/>
     }
   );
 
