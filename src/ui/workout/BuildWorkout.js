@@ -1,6 +1,4 @@
-import * as React from 'react';
-
-import { Video } from 'expo-av';
+import React, { useState } from 'react';
 
 import {
     Text,
@@ -102,7 +100,7 @@ function ProgramDetailsDialog(props) {
                 }}/>
             </Dialog.Content>
             <Dialog.Actions>
-                <Button mode="text" onPress={props.saveProgramMethod(programTitle, programDescription)} theme={{
+                <Button mode="text" onPress={() => props.saveProgramMethod(programTitle, programDescription)} theme={{
                     colors: {
                         primary: "#2196F3"
                     }
@@ -259,7 +257,7 @@ class BuildWorkout extends React.Component {
         return (
             <View style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }} >
                 <View style={styles.textContainer}>
-                    <IconButton style={{ alignSelf: "flex_start" }} color="white" icon="arrow-back" onPress={() => this.props.navigation.goBack(null)} />
+                    <IconButton style={{ alignSelf: "flex-start" }} color="white" icon="arrow-back" onPress={() => this.props.navigation.goBack(null)} />
                     <Text style={{fontFamily: 'avenir-roman', padding: 5, fontWeight: "600", fontSize: 22, color: "white" }}>
                         Design a workout - what are you waiting for?
             </Text>

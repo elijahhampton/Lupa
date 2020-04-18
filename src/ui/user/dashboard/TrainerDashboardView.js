@@ -284,7 +284,7 @@ class TrainerDashboardView extends React.Component {
                 //Return a session notification container
                 //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
                 return (
-                    <SessionNotificationContainer sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus} />
+                    <SessionNotificationContainer sessionData={session.sessionData} sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus} />
                 )
             })
     }
@@ -358,8 +358,6 @@ class TrainerDashboardView extends React.Component {
 
                     <LupaCalendar elevation={10} />
 
-                    <Divider style={styles.divider} />
-
                     <View>
                         <View style={styles.sectionHeader}>
                             <Text style={styles.sectionHeaderText}>
@@ -367,7 +365,7 @@ class TrainerDashboardView extends React.Component {
                         </Text>
                         </View>
 
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{}}>
+                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{flexDirection: "row", justifyContent: "space-around", alignItems: "center", }}>
                             {
                                 this.populateSessions()
                             }

@@ -15,8 +15,11 @@ import {
     TouchableOpacity,
     ScrollView,
     RefreshControl,
+    Image,
+    Button as NativeButton,
     ActionSheetIOS,
-    TextInput
+    TextInput,
+    Dimensions
 } from "react-native";
 
 import {
@@ -31,6 +34,7 @@ import {
     FAB,
     Dialog,
     Chip,
+    Appbar,
 } from 'react-native-paper';
 
 import {
@@ -42,6 +46,7 @@ import {
 
 import {
     Avatar as ReactNativeElementsAvatar,
+    Icon
 } from 'react-native-elements';
 
 import Timecards from './component/Timecards';
@@ -62,7 +67,10 @@ import MyPacksCard from './component/MyPacksCard';
 
 import { connect } from 'react-redux';
 
+import ProfilePicture from '../../images/profile_picture1.jpeg';
+
 import { Feather as FeatherIcon } from '@expo/vector-icons';
+import { Pagination } from 'react-native-snap-carousel';
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -156,6 +164,7 @@ class ProfileView extends React.Component {
             dialogVisible: false,
             checkbox: false,
             bio: '',
+            sessionReviews: [],
         }
     }
 
@@ -168,6 +177,7 @@ class ProfileView extends React.Component {
      */
     componentDidMount = async () => {
         await this.setupProfileInformation();
+        await this.generateSessionReviewData();
     }
 
     _getId() {
@@ -374,6 +384,69 @@ class ProfileView extends React.Component {
         }
     }
 
+    generateSessionReviewData = async () => {
+        let userData, userUUID, sessionReviews = [];
+
+        if (this.state.userData)
+        {
+            if (this.state.userData.sessions_reviews.length != 0)
+            {
+                let reviewData = this.state.userData.sessions_reviews;
+                for (let i = 0; i < reviewData.length; ++i)
+                {
+                    //get users uuid from review object
+                    userUUID = reviewData[i].reviewBy;
+
+                    //get users information from controller
+                    await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(userUUID).then(userDataIn => {
+                        userData = userDataIn;
+                    });
+
+                    //add it to review object and puhs into arr
+                    reviewData.reviewByData = userData;
+                    sessionReviews.push(reviewData);
+                }
+            }
+        }
+        //Set session review state property
+        await this.setState({
+            sessionReviews: sessionReviews
+        })
+    }
+
+    mapUserReviews = () => {
+        return this.state.sessionReviews.map(review => {
+            console.log(review)
+            return (
+                <View style={{ margin: 10, width: Dimensions.get('window').width - 40, height: "auto", padding: 5, borderRadius: 15, flexDirection: "column", backgroundColor: "#ebebeb" }}>
+                <View style={{ width: "100%", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
+                    <View style={{ padding: 5, flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+                        <Surface style={{ margin: 3, elevation: 10, width: 25, height: 25, borderRadius: 25 }}>
+                            <Image source={{uri: review.reviewByData.photo_url}} style={{ width: 25, height: 25, borderRadius: 25 }} />
+                        </Surface>
+
+                        <Text style={{ fontWeight: "bold" }}>
+                            {review.reviewByData.display_name}
+                </Text>
+                    </View>
+
+                    <>
+                        <Text style={{ fontWeight: "bold" }}>
+                            {review.reviewDate}
+            </Text>
+                    </>
+                </View>
+
+                <Text style={{ padding: 3, fontFamily: "avenir-roman" }} numberOfLines={10} ellipsizeMode="tail">
+                   {review.reviewText}
+            </Text>
+
+                <NativeButton title="See Review" />
+            </View>
+            )
+        })
+    }
+
     _navigateToFollowers = () => {
         this.props.navigation.navigate('FollowerView');
     }
@@ -440,8 +513,8 @@ class ProfileView extends React.Component {
 
     renderInteractions = () => {
         return this.props.lupa_data.Users.currUserData.user_uuid == this.state.userUUID ?
-            <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                <Button mode="contained"
+            <View style={{ padding: 10, width: '100%', alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row' }}>
+                {/*  <Button mode="contained"
                     style={{ padding: 3, margin: 10, flex: 3, elevation: 8, alignSelf: "center" }}
                     onPress={() =>
                         this.props.navigation.dispatch(
@@ -461,11 +534,36 @@ class ProfileView extends React.Component {
                     <Text>
                         View Messages
 </Text>
-                </Button>
+                </Button>*/}
+
+                <Icon
+                    name='inbox'
+                    type='message'
+                    color='#2196F3'
+                    size={20}
+                    raised
+                    style={{ backgroundColor: "black", position: 'absolute', left: 0 }}
+                    underlayColor={{ backgroundColor: "black" }}
+                    reverseColor="white"
+                    reverse
+                    onPress={
+                        () =>
+                            this.props.navigation.dispatch(
+
+                                NavigationActions.navigate({
+                                    routeName: 'MessagesView',
+                                    action: NavigationActions.navigate({ routeName: 'MessagesView' })
+                                })
+                            )
+                    }
+                />
             </View>
             :
-            <View style={{ width: '100%', margin: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                <Button onPress={() =>
+            <View style={{ width: '100%', margin: 10, padding: 10,alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row' }}>
+                {
+                    /*
+
+                    <Button onPress={() =>
                     this.props.navigation.dispatch(
 
                         NavigationActions.navigate({
@@ -496,21 +594,11 @@ class ProfileView extends React.Component {
 </Text>
                 </Button>
 
-                {
-                    this.state.followers.includes(this.currUserUUID) ?
-                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: "#2196F3",
-                                text: "white",
-                            }
-                        }}>
-                            <Text>
-                                Follow
-    </Text>
-                        </Button>
-                        :
-                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
+
+
+----------------------
+
+<Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
                             roundness: 20,
                             colors: {
                                 primary: 'white',
@@ -521,7 +609,67 @@ class ProfileView extends React.Component {
                                 Follow
     </Text>
                         </Button>
+                    */}
 
+                <Icon
+                    name='send'
+                    type='feather'
+                    color='#2196F3'
+                    size={20}
+                    raised
+                    reverseColor="white"
+                    reverse
+                    onPress={ () => this.props.navigation.dispatch(
+
+                            NavigationActions.navigate({
+                                routeName: 'PrivateChat',
+                                params: {
+                                    currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+                                    otherUserUUID: this.props.navigation.state.params.userUUID
+                                },
+                                action: NavigationActions.navigate({
+                                    routeName: 'PrivateChat', params: {
+                                        currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+                                        otherUserUUID: this.props.navigation.state.params.userUUID
+                                    }
+                                })
+                            })
+                        )
+
+                    }
+                />
+
+
+
+
+
+
+                {
+                    this.state.followers.includes(this.currUserUUID) ?
+
+                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, width: "auto", elevation: 8 }} theme={{
+                            roundness: 20,
+                            colors: {
+                                primary: '#2196F3',
+                                text: "white",
+                            }
+                        }}>
+                            <Text>
+                                Unfollow
+</Text>
+                        </Button>
+                        :
+                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, width: "25%", elevation: 8 }} theme={{
+                            roundness: 20,
+                            colors: {
+                                primary: 'white',
+                                text: "#2196F3",
+                            }
+                        }}>
+                            <Text>
+                                Follow
+    </Text>
+                        </Button>
                 }
             </View>
 
@@ -583,7 +731,7 @@ class ProfileView extends React.Component {
     render() {
         return (
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
-                <Header transparent style={{ backgroundColor: 'transparent' }}>
+                <Appbar.Header style={{ backgroundColor: "transparent" }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>
@@ -591,7 +739,7 @@ class ProfileView extends React.Component {
                     <Right>
                         {this.getHeaderRight()}
                     </Right>
-                </Header>
+                </Appbar.Header>
 
                 <ScrollView contentContainerStyle={{ flexGrow: 2, flexDirection: 'column', justifyContent: 'space-between' }} showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
                     <View style={styles.user}>
@@ -674,9 +822,9 @@ class ProfileView extends React.Component {
                     {/* interest mapping */}
                     <Surface style={[styles.contentSurface, { elevation: 8, backgroundColor: "#2196F3" }]}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Title style={{ color: 'white' }}>
-                                Interests and Goals
-                                </Title>
+                            <Text style={{ color: 'white', fontSize: 20, fontFamily: "avenir-medium", fontWeight: "bold" }}>
+                                Fitness Interest and Goals
+                                </Text>
                         </View>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center' }}>
                             {
@@ -713,6 +861,26 @@ class ProfileView extends React.Component {
                         }
                     </View>
 
+                    <Surface style={{ backgroundColor: "transparent", width: Dimensions.get('window').width }}>
+                    {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
+                            <Title style={{marginLeft: 10}}>
+                                My Reviews
+                            </Title>
+                            :
+                            <Title style={{marginLeft: 10}}>
+                                {this.state.userData.display_name}'s Session Review
+                        </Title>
+                        }
+                        <View style={{ width: "100%", height: "auto", backgroundColor: "transparent", alignItems: "center", justifyContent: "center" }}>
+                            <ScrollView horizontal centerContent contentContainerStyle={{}}>
+                                <View style={{ flex: 1, width: "100%", backgroundColor: "transparent", justifyContent: "space-evenly" }}>
+                                    {this.mapUserReviews()}
+                                </View>
+                            </ScrollView>
+                            <Pagination dotsLength={this.state.sessionReviews.length} />
+                        </View>
+                    </Surface>
+
                     {
                         this.state.userData.isTrainer == true ?
                             <View style={styles.recommendedWorkouts}>
@@ -733,7 +901,6 @@ class ProfileView extends React.Component {
                     style={styles.fab}
                     small={false}
                     icon="today"
-                    label="Book Trainer"
                     onPress={this._navigateToSessionsView}
 
                 />
@@ -801,7 +968,8 @@ const styles = StyleSheet.create({
     },
     user: {
         flexDirection: "column",
-        margin: 10,
+        margin: 0,
+        backgroundColor: "transparent"
     },
     uesrInfoText: {
         fontWeight: "600",
@@ -835,9 +1003,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#2196F3"
     },
     fab: {
-        alignSelf: "center",
         position: 'absolute',
-        bottom: 40,
+        bottom: 0,
+        marginBottom: 16, marginRight: 16,
+        right: 0,
         backgroundColor: "#2196F3"
     },
 });

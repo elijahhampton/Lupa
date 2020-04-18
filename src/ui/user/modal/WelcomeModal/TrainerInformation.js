@@ -19,8 +19,6 @@ import {
     Provider
 } from 'react-native-paper';
 
-import SafeAreaView from 'react-native-safe-area-view';
-
 import LupaController from '../../../../controller/lupa/LupaController';
 
 const VerificationModal = (props) => {

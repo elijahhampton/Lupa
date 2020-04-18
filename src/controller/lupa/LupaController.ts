@@ -186,6 +186,17 @@ export default class LupaController {
       return USER_CONTROLLER_INSTANCE.getUserPhotoURL(true);
     }
 
+    addUserSessionReview = async (sessionUUID, userReviewingUUID, userToReviewUUID, reviewText, dateSubmitted) => {
+      let retVal;
+
+      alert('INSIDE')
+      await SESSION_CONTROLLER_INSTANCE.addUserSessionReview(sessionUUID, userReviewingUUID, userToReviewUUID, reviewText, dateSubmitted).then(res => {
+        retVal = res;
+      });
+
+      return Promise.resolve(retVal);
+    }
+
     createNewSession = async (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp, locationData) => {
       await SESSION_CONTROLLER_INSTANCE.createSession(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp, locationData);
     }

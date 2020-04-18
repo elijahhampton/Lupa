@@ -1,40 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
     View,
-    StyleSheet,
     Text,
+    StyleSheet,
     Picker,
     Dimensions,
-    TouchableHighlightBase
+    Modal,
+    SafeAreaView,
 } from 'react-native';
 
+import {
+    TextInput,
+    ActivityIndicator,
+    Caption,
+    Headline
+} from 'react-native-paper';
 
-import { Input, Avatar } from 'react-native-elements';
+import { Button, Avatar, Input } from 'react-native-elements';
+
 import * as ImagePicker from 'expo-image-picker';
+
+import * as Location from 'expo-location';
+
+
+import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
+
+import { Feather as Icon } from '@expo/vector-icons';
+import getLocationFromCoordinates from '../../../../modules/location/mapquest/mapquest';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility'
+
 import { connect } from 'react-redux';
 
-import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
-
-const mapStateToProps = (state) => {
-    return {
-        lupa_data: state,
-    }
-} 
-
-const mapDispatchToProps = dispatch => {
-    return {
-      updateCurrentUserAttribute: (payload) => {
-        dispatch({
-          type: 'UPDATE_CURRENT_USER_ATTRIBUTE',
-          payload: payload
-        })
-      },
+mapStateToProps = (state) => {
+    return { 
+      lupa_data: state
     }
   }
+  
+  mapDispatchToProps = dispatch => {
+    return {
+      updateCurrentUserAttribute: (payload) => {
+          dispatch({
+              type: "UPDATE_CURRENT_USER_ATTRIBUTE",
+              payload: payload
+          })
+      }
+    }
+  }
+
+//Activity Indicator to show while fetching location data
+const ActivityIndicatorModal = (props) => {
+    const [isLoading, setIsLoading] = useState(true);
+
+    return (
+                <Modal presentationStyle="overFullScreen" style={styles.activityIndicatorModal} visible={props.isVisible}>
+                    <ActivityIndicator style={{alignSelf: "center"}} animating={isLoading} hidesWhenStopped={false} size='large' color="#2196F3" />
+                </Modal>
+    );
+}
 
 class BasicInformation extends React.Component {
     constructor(props) {
@@ -43,20 +70,111 @@ class BasicInformation extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
+            chosenUsername: "",
+            displayName: "",
+            maketrainerAccount: false,
+            isForwardPageChange: this.props.isForwardPageChange,
+            location: '',
+            locationText: 'Where are you located?',
+         //   setHomeGymText: "Set a Home Gym",
+            locationDataSet: false,
+            showLoadingIndicator: false,
+            displayNameIsInvalid: false,
+            showMapView: false,
+            surroundingGymLocations: [],
             firstName: '',
             lastName: '',
             gender: " ",
             photoSource: undefined,
+            showLoadingIndicator: false,
         }
     }
 
-    componentDidMount() {
-       
+
+    _handleTrainerAccountUpdate = () => {
+        this.setState({ makeTrainerAccount: !this.state.makeTrainerAccount });
+        this.LUPA_CONTROLLER_INSTANCE.updateUser('isTrainer', this.state.maketrainerAccount);
     }
 
+    _handleDisplayNameOnChangeText = text => {
+        this.setState({ displayName: text })
+    }
+
+    _handleUsernameOnChangeText = text => {
+        this.setState({ chosenUsername: text })
+    }
+
+    _handleDisplayNameEndEditing = async () => {
+        const display_name = await this.state.displayName;
+        console.log(display_name);
+        const payload = await getUpdateCurrentUserAttributeActionPayload('display_name', display_name, []);
+        await this.props.updateCurrentUserAttribute(payload);
+
+        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('display_name', this.state.displayName);
+    }
+
+    _handleUsernameEndEditing = () => {
+        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('username', this.state.chosenUsername);
+    }
+
+    checkDisplayNameInputText = () => {
+        const currDisplayName = this.state.displayName;
+
+        try {
+            let displayNameParts = currDisplayName.split(" ");
+            let length = displayNameParts.length;
+
+            if (length != 2)
+            {
+                this.setState({ displayNameIsInvalid: false })
+                return;
+            }
+        } catch (err)
+        {
+            this.setState({ displayNameIsInvalid: false })
+            return;
+        }
+
+        this.setState({ displayNameIsInvalid: true })
+    }
+
+    _getLocationAsync = async () => {
+        let result;
+        //show loading indicator
+        await this.setState({
+            showLoadingIndicator: true,
+        })
+
+        //get users location data
+        await Location.getCurrentPositionAsync({ enableHighAccuracy: true }).then(res => {
+            result = res;
+        })
+
+        //set state
+        await this.setState({
+            location: result
+        })
+
+        //convert data into actual location
+        const locationData = await getLocationFromCoordinates(this.state.location.coords.longitude, this.state.location.coords.latitude);
+        const locationDataText = await locationData.city + ", " + locationData.state;
+
+        //Update user location in database
+        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
+
+        //hide loading indicator
+        await this.setState({
+            locationText: locationDataText,
+            locationDataSet: true,
+        });
+
+        await this.setState({
+            showLoadingIndicator: false,
+        })
+    }
 
     _getAvatar = () => {
-        let avatar = <Avatar quality={0} showEditButton rounded size={120} source={{ uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
+        let avatar = <Avatar quality={0} showEditButton rounded size={50} source={{ uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
         return avatar;
     }
 
@@ -94,30 +212,59 @@ class BasicInformation extends React.Component {
         await this.props.updateCurrentUserAttribute(reduxPayload);
     }
 
-    _handleGenderUpdate = genderIn => {
-        this.setState({ gender: genderIn })
-        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('gender', genderIn);
-    }
 
     render() {
         return (
-            <View style={styles.root}>
-                <View style={styles.instructionalTextContainer}>
-                    <Text style={styles.instructionalText}>
-                         You're almost there!
-                    </Text>
-                </View>
+                <SafeAreaView style={{flex: 1}}>
 
-                <View style={styles.userInput}>
+                    <View style={{flex: 1, alignItems: "center", justifyContent: 'space-evenly'}}>
+                    <View>
                     {
-                       <Avatar showEditButton rounded size={150} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
+                       <Avatar showEditButton rounded size={100} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
                     }
-                </View>
-                
+                    </View>
+                    </View>
 
-                
-                <View style={styles.pickerContainer}>
-                    <Picker
+                    <View style={{flex: 1}}>
+                    <Headline style={{padding: 5}}>
+        What should we call you?
+    </Headline>
+    <Input 
+        placeholder="Ex. John Smith" 
+        onChangeText={text => this._handleDisplayNameOnChangeText(text)} 
+        onSubmitEditing={text => this._handleDisplayNameEndEditing()}
+        value={this.state.displayName}
+        returnKeyType="done"
+        editable={true}
+        />
+                    </View>
+
+
+{/*<TextInput
+                            style={styles.textInput}
+                            mode="outlined"
+                            label="Choose a username"
+                            theme={{ colors: { primary: '#1976D2' } }}
+                            onChangeText={text => this._handleUsernameOnChangeText(text)}
+                            onBlur={this._handleUsernameEndEditing}
+                            value={this.state.chosenUsername}
+/>
+                        
+<TextInput
+                            style={styles.textInput}
+                            mode="outlined"
+                            label="Enter a display name"
+                            theme={{ colors: { primary: '#1976D2' } }}
+                            onChangeText={text => this._handleDisplayNameOnChangeText(text)}
+                            onSubmitEditing={text => this._handleDisplayNameEndEditing(text)}
+                            value={this.state.displayName}
+                            editable={true}
+                            returnKeyType="done"
+/> */}
+
+                        {/*
+
+<Picker
                         placeholder="Select One"
                         placeholderStyle={{ color: "#2874F0" }}
                         note={false}
@@ -130,53 +277,30 @@ class BasicInformation extends React.Component {
                         <Picker.Item label="Male" value="male" />
                         <Picker.Item label="Female" value="female" />
                     </Picker>
-                </View>
+</View>
 
-                
 
-            </View>
+                    <View style={{ justifyContent: "space-evenly", flex: 1 }}>
+    
 
-        );
+                    <Button onPress={this._getLocationAsync} title={this.state.locationText} raised disabled={false} type="solid" buttonStyle={{borderRadius: 30, padding:10, backgroundColor: "#2196F3"}} titleStyle={{color: 'white', fontFamily: "avenir-book"}} style={{color: "black"}} iconRight={true} icon={<Icon name="map-pin" size={15} style={{ margin: 3 }} />} /> 
+
+                   <Button onPress={this.launchMapView} title={this.state.setHomeGymText} raised disabled={!this.state.locationDataSet} type="solid" buttonStyle={this.state.locationDataSet ? {backgroundColor: "#2196F3", borderRadius: 30, padding:10,}: {backgroundColor: "white", borderRadius: 30, padding:10,}} titleStyle={this.state.locationDataSet ? {color: 'white', fontFamily: "avenir-book"} : {color: 'black', fontFamily: "avenir-book"}} style={{color: "black"}} iconRight={true} icon={<Icon name="map-pin" size={15} style={{ margin: 3 }} />} />
+
+                        <Caption style={{alignSelf: "center"}}>
+                            We use your location to suggest trainers and others in your area as well as packs.  Read our Terms of Service and Privacy Policy for more information.
+                    </Caption>
+                    </View>
+            
+                        <ActivityIndicatorModal isVisible={this.state.showLoadingIndicator} /> */}
+            </SafeAreaView>
+        )
     }
 }
 
 const styles = StyleSheet.create({
-    root: {
+    container: {
         flex: 1,
-        flexShrink: 1,
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        padding: 10,
-    },
-    generalText: {
-        fontSize: 30,
-        fontWeight: "400",
-        color: "#9E9E9E",
-        alignSelf: 'center',
-    },
-    instructionalTextContainer: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 10,
-    },
-    instructionalText: {
-        flexShrink: 1,
-        fontSize: 25,
-        fontFamily: "avenir-roman",
-    },
-    userInput: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    pickerContainer: {
-        flex: 1,
-    },
-    inputContainerStyle: {
-        margin: 5,
     }
 })
-
 export default connect(mapStateToProps, mapDispatchToProps)(BasicInformation);

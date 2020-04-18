@@ -227,4 +227,40 @@ export default class SessionController {
     getSuggestedTrainers = async () => {
       return Promise.resolve([]);
     }
+
+    addUserSessionReview = async (sessionUUID, userReviewingUUID, userToReviewUUID, reviewText, dateSubmitted) => {
+      try {
+      let updatedUserReviews = [];
+
+      //get reference to users document
+      let userToReviewDoc = await USERS_COLLECTION.doc(userToReviewUUID);
+      
+      //fetch user's reviews
+      await USERS_COLLECTION.doc(userToReviewUUID).get().then(snapshot => {
+        updatedUserReviews = snapshot.data().session_reviews;
+      });
+
+      //create review object
+      let userSessionReview = {
+        sessionUUID: sessionUUID,
+        reviewBy: userReviewingUUID,
+        reviewText: reviewText,
+        reviewDate: dateSubmitted,
+      }
+      
+      //add review into updated reviews arr
+      await updatedUserReviews.push(userSessionReview);
+      
+      //update users document
+      await userToReviewDoc.update({
+        sessions_reviews: updatedUserReviews,
+      })
+    } 
+    catch(err) {
+      console.log('errrr')
+      return Promise.resolve(false)
+    }
+    return Promise.resolve(true);
+    }
+
 }

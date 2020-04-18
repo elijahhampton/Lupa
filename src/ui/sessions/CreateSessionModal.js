@@ -39,6 +39,7 @@ import { connect } from 'react-redux';
 import LupaMapView from '../user/modal/LupaMapView';
 import LupaCalendar from '../user/dashboard/calendar/LupaCalendar';
 
+import { getPaymentTokenWithCard, initStripe, completePayment } from '../../modules/payments/stripe/index';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -78,6 +79,7 @@ class CreateSessionModal extends React.Component {
             sessionLocation: "Launch Map",
             mapViewVisible:  false,
             sessionLocationData: "",
+            paymentSuccessful: false,
         }
     }
 
@@ -149,17 +151,49 @@ class CreateSessionModal extends React.Component {
         return this.state.sessionTimePeriods.includes(time) ? "flat" : "outlined";
     }
 
-    _handleNewSessionRequest = () => {
-       /* if (this.state.requestedUserData.isTrainer == true)
-        {
-            return <StripePaymentComponent />
-        }
-        */
+    _handleNewSessionRequest = async () => {
+        let paymentToken;
+
         let date = this.state.sessionMonth + "-" + this.state.sessionDay + "-" + this.state.sessionYear;
-        let timestamp = {
+        const timestamp = {
             date: new Date().getDate(),
             time: new Date().getTime(),
         }
+/*
+        const amount = getPaymentAmountByTrainerTier(this.state.requestedUserData.trainer_tier);
+
+        if (this.state.requestedUserData)
+        {
+            if (this.state.requestedUserData.isTrainer == true)
+            {
+                try 
+                {
+                    //initialize stripe
+                    initStripe();
+
+                    //Get a payment token with card data
+                    await getPaymentTokenWithCard("", "", "", "", "", "", "", "").then(token => {
+                        paymentToken = token;
+                    });
+                    
+                    //complete payment
+                    await completePayment("", "", paymentToken);
+
+                    await this.setState({
+                        paymentSuccessful: true
+                    })
+                }
+                catch(err)
+                {
+                    alert('err handling payment')
+                    await this.setState({
+                        paymentSuccessful: false
+                    })
+                    return;
+                }
+            }
+        }
+*/
         this.LUPA_CONTROLLER_INSTANCE.createNewSession(this.props.lupa_data.Users.currUserData.user_uuid, this.state.requestedUserUUID, this.state.requestedUserUUID, date, this.state.sessionTimePeriods, this.state.sessionName, this.state.sessionDescription, timestamp, this.state.sessionLocationData);
         this.props.navigation.goBack();
     }

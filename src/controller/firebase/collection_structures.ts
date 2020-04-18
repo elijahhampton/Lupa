@@ -169,6 +169,8 @@ var lupa_user : LupaUserStructure = {
     certification: "",
     homegym: {},
     chats: [],
+    session_reviews: [],
+    trainer_tier: 0,
 }
 
 export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", gender="", location="", isTrainer=false, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted, bio, recommended_workouts, certification) => {

@@ -12,44 +12,81 @@ import { Button } from 'react-native-elements';
 
 import {NavigationContext, NavigationActions } from 'react-navigation';
 
-import LupaController from '../../../controller/lupa/LupaController';
+import LupaController from '../../../controller/lupa/LupaController'
 
 import { withNavigation } from 'react-navigation';
 
 import { connect } from 'react-redux';
 import { Dialog, Button as MaterialButton, TextInput } from 'react-native-paper';
+import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 
-const mapStateToProps = (state, action) => {
+const mapStateToProps = (state) => {
     return {
         lupa_data: state,
     }
 }
 
-function ReviewDialog(props) {
+class ReviewDialog extends React.Component {
+    constructor(props) {
+        super(props);
 
-    function handleSubmitReview() {
-        //handle review submission
+        this.state = {
+            reviewText: "",
+        }
 
-        //close dialog and main modal
-        props.closeDialogMethod();
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
 
-    return (
-        <Dialog visible={props.isVisible}>
+    handleSubmitReview = async (nextAction) => {
+        const DATE_SUBMITTED = new Date();
+        let success;
+
+        //handle review submission
+        await this.LUPA_CONTROLLER_INSTANCE.addUserSessionReview(this.props.sessionUUID, this.props.userReviewing, this.props.userToReview, this.state.reviewText, DATE_SUBMITTED).then(retVal => {
+            success = retVal;
+        })
+
+
+    }
+
+    closeMethod = async () => {
+        await this.handleSubmitReview(this.props.action);
+        
+        if (this.props.action == 'Finish')
+        {
+            alert('Finish')
+            this.props.closeDialogMethod();
+        }
+
+        if (this.props.action == 'Request')
+        {
+            this.props.closeDialogMethod();
+            this.props.requestAnotherSessionMethod();
+        }
+    }
+
+    onChangeText = (text) => {
+        this.setState({ reviewText: text })
+    }
+
+    render() {
+        const action = this.props.action;
+        return (
+            <Dialog visible={this.props.isVisible}>
         <Dialog.Title>
-            Let us know how your session went with {props.otherUserDisplayName}.
+            Let us know how your session went with {this.props.otherUserDisplayName}.
         </Dialog.Title>
         <Dialog.Content>
             <TextInput mode="outlined" multiline theme={{
                 colors: {
                     primary: "#2196F3"
                 }
-            }}>
+            }} onChangeText={text => this.onChangeText(text)} value={this.state.reviewText}>
 
             </TextInput>
         </Dialog.Content>
         <Dialog.Actions>
-            <MaterialButton mode="text" onPress={() => handleSubmitReview()} theme={{
+            <MaterialButton mode="text" onPress={this.closeMethod} theme={{
                 colors: {
                     primary: "#2196F3"
                 }
@@ -60,7 +97,8 @@ function ReviewDialog(props) {
             </MaterialButton>
         </Dialog.Actions>
     </Dialog>
-    )
+        )
+    }
 }
 
 class SessionCompleteModal extends React.Component {
@@ -82,6 +120,7 @@ class SessionCompleteModal extends React.Component {
                 sessionDate: "",
                 refreshing: false,
                 showReviewDialog: false,
+                action: "",
         }
     }
 
@@ -145,9 +184,6 @@ class SessionCompleteModal extends React.Component {
     }
 
     handleRequestAnotherSession = async () => {
-       
-
-
         await this.props.navigation.dispatch(
 
             await NavigationActions.navigate({
@@ -160,20 +196,22 @@ class SessionCompleteModal extends React.Component {
         await this.props.closeModalMethod();
     }
 
-    handleShowReviewDialogMethod = () => {
+    handleShowReviewDialogMethod = (action) => {
         this.setState({
+            action: action,
             showReviewDialog: true
         })
     }
 
-    handleCloseReviewDialogMethod = () => {
+    handleCloseReviewDialogMethod = (action) => {
         this.setState({
+            action: action,
             showReviewDialog: false
         })
     }
 
-    handleReview = () => {
-        this.handleShowReviewDialogMethod();
+    handleReview = (action) => {
+        this.handleShowReviewDialogMethod(action);
     }
 
     /**
@@ -211,25 +249,18 @@ class SessionCompleteModal extends React.Component {
   title="Request Another Session"
   type="solid"
   style={{padding: 10, margin: 5}}
-  onPress={() => this.props.navigation.dispatch(
-
-    NavigationActions.navigate({
-      routeName: 'Profile',
-      params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'},
-      action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.state.currUserUUID, navFrom: 'Drawer'}})
-    })
-                )}
+  onPress={() => this.handleReview('Request')}
 />
 
 <Button
   title="Finish Session"
   type="outline"
   style={{padding: 10, margin: 5}}
-  onPress={this.handleReview}
+  onPress={() => this.handleReview('Finish')}
 />
             </View>
                 </SafeAreaView>
-                <ReviewDialog isVisible={this.state.showReviewDialog} closeDialogMethod={this.handleFinishSession} otherUserDisplayName={this.state.otherUserInformation.display_name}/>
+                <ReviewDialog isVisible={this.state.showReviewDialog} sessionUUID={this.state.sessionUUID} userReviewing={this.state.currUserData.user_uuid} userToReview={this.state.otherUserInformation.user_uuid}  action={this.state.action} requestAnotherSessionMethod={this.handleRequestAnotherSession}  closeDialogMethod={this.handleFinishSession} otherUserDisplayName={this.state.otherUserInformation.display_name}/>
         </Modal>
         )
     }

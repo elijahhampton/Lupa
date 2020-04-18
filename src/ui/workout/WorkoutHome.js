@@ -28,11 +28,7 @@ import {
     Body,
 } from 'native-base'
 
-var stripe = require('stripe-client')('pk_test_I5wTNl4jS6l9KzproBFvHe4t00OVqp7wjO')
-
 import WebView from 'react-native-webview';
-
-import StripeCheckout from 'expo-stripe-checkout'
 
 import {Pagination } from 'react-native-snap-carousel';
 
@@ -44,72 +40,6 @@ import LiveWorkout from './modal/LiveWorkout';
 import { connect } from 'react-redux';
 
 import MapView from 'react-native-maps';
-
-
-onPaymentSuccess = () => {
-
-}
-
-function ModalView(props) {
-  
-    function onLoadStart() {
-        var information = {
-            bank_account: {
-              country: 'US',
-              currency: 'usd',
-              account_holder_name: 'Noah Martinez',
-              account_holder_type: 'individual',
-              routing_number: '110000000',
-              account_number: '000123456789'
-            }
-          }
-
-          var token;
-
-          stripe.createToken(information).then(result => {
-              console.log(result.id)
-            token = result.id
-          })
-          
-          console.log(token);
-          alert(token);
-    }
-
-    return (
-        <Modal presentationStyle="fullScreen" visible={true}>
-                    <WebView
-                    style={{flex: 1}}
-        originWhitelist={['*']}
-        source={{ uri: 'https://www.google.com' }}
-        onLoadStart={onLoadStart}
-      />
-        </Modal>
-    )
-}
-
-mapStateToProps = (state) => {
-    return {
-        lupa_data: state
-    }
-}
-
-
-const PurchaseProduct = () => {
-    
-    function onLoadStart() {
-
-    }
-
-    return (
-      <WebView
-      style={{flex: 1}}
-        originWhitelist={['*']}
-        source={{ uri: 'https://www.google.com' }}
-        onLoadStart={onLoadStart}
-      />
-    );
-    
-  };
 
 class WorkoutHome extends React.Component {
     constructor(props) {
@@ -129,19 +59,8 @@ class WorkoutHome extends React.Component {
     handleCloseLiveWorkout = () => {
          this.setState({ showLiveWorkout: false })
     }
-
-    
-onPaymentSuccess = (token) => {
-    // send the stripe token to your backend!
-  }
-  
-  onClose = () => {
-    // maybe navigate to other screen here?
-  }
-
     render() {
         return (
-            /*
                 <View style={{flex: 1}}>
                                     <Header transparent style={{alignItems: "center"}}>
                     <Left>
@@ -176,11 +95,6 @@ onPaymentSuccess = (token) => {
                     }
                 </View>
 
-
-                <ModalView />
-            
-
-
                 <View style={{flex: 1.5}}>
                 <Text style={{marginLeft: 20,fontSize: 25, fontWeight: "800"}}>
                         Quick start
@@ -211,23 +125,7 @@ onPaymentSuccess = (token) => {
                     </ScrollView>
                 </View>
 <SafeAreaView />
-                </View>*/
-<View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-<StripeCheckout
-    publicKey="pk_test_I5wTNl4jS6l9KzproBFvHe4t00OVqp7wjO"
-    amount={100000}
-    imageUrl=""
-    storeName="Stripe Checkout"
-    description="Test"
-    currency="USD"
-    allowRememberMe={false}
-    prepopulatedEmail="test@test.com"
-    onClose={this.onClose}
-    onPaymentSuccess={this.onPaymentSuccess}
-    
-  />
-</View>
-                
+                </View>  
         );
     }
 }
