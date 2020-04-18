@@ -811,7 +811,7 @@ export default class UserController {
                             nearbyTrainers.push(data);
                         });
                     });
-
+                    alert('hrer')
                     resolve(nearbyTrainers);
                 }
 
@@ -833,6 +833,7 @@ export default class UserController {
                     }
                 }
 
+                /*
                 //parse all of ths hits for the city
                 for (var i = 0; i < hits.length; ++i) {
                     let locationHighlightedResult = hits[i]._highlightResult;
@@ -840,8 +841,12 @@ export default class UserController {
                     if (compare) {
                         await nearbyTrainers.push(hits[i]);
                     }
-                }
+                }*/
 
+                await nearbyTrainers.filter(trainer => {
+                    return trainer.user_uuid != trainer.user_uuid
+                })
+                alert('here')
                 resolve(nearbyTrainers);
             })
         })

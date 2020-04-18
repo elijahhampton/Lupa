@@ -6,6 +6,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import BuildWorkout from '../workout/BuildWorkout'
 import WorkoutHome from '../workout/WorkoutHome';
 import MessagesView from '../user/chat/MessagesView';
+import SessionsView from '../sessions/SearchView'
 
 const WorkoutViewNavigator = createStackNavigator(
     {
@@ -33,6 +34,14 @@ const WorkoutViewNavigator = createStackNavigator(
             gesturesEnabled: false,
         })
       },
+    SessionsView: {
+        screen: SessionsView,
+        navigationOptions:   ({navigation}) => ({
+            title: "MessagesView",
+            header: null,
+            gesturesEnabled: false,
+        })
+    },
     initialRouteName: 'BuildAWorkout',
     }
 );

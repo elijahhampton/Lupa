@@ -8,6 +8,7 @@ import {
     Text,
     Button as NativeButton,
     TouchableOpacity,
+    ScrollView,
     Dimensions,
 } from 'react-native';
 
@@ -18,9 +19,9 @@ import {
     Surface,
     Caption,
     Button,
-    Paragraph
+    Paragraph,
+    Divider
 } from 'react-native-paper';
-
 
 import SafeAreaView from 'react-native-safe-area-view';
 
@@ -32,7 +33,7 @@ import {
     Button as ElementsButton,
  } from 'react-native-elements';
 
- import { Feather as FeatherIcon } from '@expo/vector-icons';
+ import { MaterialIcons, Feather as FeatherIcon } from '@expo/vector-icons';
 
 const {
     signUpUser
@@ -79,6 +80,16 @@ mapStateToProps = (state) => {
 
   import { connect } from 'react-redux';
 
+  const QUESTIONS = [
+    'Hi',
+    'Hi',
+    'Hi',
+    'Hi',
+    'Hi',
+    'Hi',
+    'Hi'
+  ]
+
 class SignupModal extends React.Component {
 
     constructor(props) {
@@ -97,6 +108,7 @@ class SignupModal extends React.Component {
             passwordSecureTextEntry: true,
             secureConfirmPasswordSecureTextEntry: true,
             alertOverlayVisible: false,
+            buttonYes: false,
         }
     }
 
@@ -108,7 +120,7 @@ class SignupModal extends React.Component {
   _introduceApp = async () => {
     await this._setupRedux();
     await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-    await this.loadFonts();
+    //await this.loadFonts();
     this.props.navigation.navigate('App');
   }
 
@@ -218,9 +230,12 @@ class SignupModal extends React.Component {
 
     render() {
         return (
-                <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(244, 247, 252)', padding: 15}}>
-          
-                    <View style={styles.headerText}>
+          <SafeAreaView forceInset={{bottom: 'never'}}>
+
+          <ScrollView>
+            
+          <View style={{width: "100%", height: Dimensions.get('window').height}}>
+          <View style={styles.headerText}>
                     <Text style={{ fontSize: 35, fontWeight: '700', color: 'black' }}>
             Create an account with
                         </Text>
@@ -240,10 +255,11 @@ class SignupModal extends React.Component {
           </Text>
         </TouchableOpacity>
         </View>
-                    </View>
+        </View>
+                    
 
-                    <View style={{flex: 1}}>
-                    <View style={{width: '100%', margin: 5}}>
+                    <View style={{height: "60%", width: "100%", alignItems: "center", justifyContent: "space-evenly"}}>
+                    <View style={{width: '80%', margin: 5}}>
                             <Text style={styles.textLabel}>
                                 Username
                             </Text>
@@ -251,19 +267,20 @@ class SignupModal extends React.Component {
                             value={this.state.username} 
                             onChangeText={text => this.setState({username: text})} 
                             placeholder="Enter a username" 
-                            inputStyle={{ fontWeight: '500', fontSize: 15,  }} 
-                            inputContainerStyle={{ borderBottomColor: '#545454', borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-                            containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
+                            inputStyle={styles.inputStyle} 
+                            inputContainerStyle={styles.inputContainerStyle} 
+                            containerStyle={styles.containerStyle} 
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
                             returnKeyType="done"
                             multiline={false}
+                            style={{alignSelf: "center"}}
   
                             />
                         </View>
 
-                    <View style={{width: '100%', margin: 5}}>
+                    <View style={{width: '80%', margin: 5}}>
                             <Text style={styles.textLabel}>
                                 Email
                             </Text>
@@ -271,9 +288,9 @@ class SignupModal extends React.Component {
                             value={this.state.email} 
                             onChangeText={text => this.setState({email: text})} 
                             placeholder="Enter an email address" 
-                            inputStyle={{ fontWeight: '500', fontSize: 15,  }} 
-                            inputContainerStyle={{ borderBottomColor: '#545454', borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-                            containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
+                            inputStyle={styles.inputStyle} 
+                            inputContainerStyle={styles.inputContainerStyle} 
+                            containerStyle={styles.containerStyle} 
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
@@ -283,7 +300,7 @@ class SignupModal extends React.Component {
                             />
                         </View>
 
-                    <View style={{width: '100%', margin: 5}}>
+                    <View style={{width: '80%', margin: 5}}>
                             <Text style={styles.textLabel}>
                                 Password
                             </Text>
@@ -293,9 +310,9 @@ class SignupModal extends React.Component {
                             onChangeText={text => this.setState({password: text})} 
                             secureTextEntry={this.state.passwordSecureTextEntry} 
                             placeholder="Enter a password" inputStyle={{fontWeight: '500', fontSize: 15}} 
-                            inputStyle={{ fontWeight: '500', fontSize: 15,  }} 
-                            inputContainerStyle={{ borderBottomColor: '#545454', borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-                            containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
+                            inputStyle={styles.inputStyle} 
+                            inputContainerStyle={styles.inputContainerStyle} 
+                            containerStyle={styles.containerStyle} 
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
@@ -304,7 +321,7 @@ class SignupModal extends React.Component {
                             />
                         </View>
 
-                        <View style={{width: '100%', margin: 5}}>
+                        <View style={{width: '80%', margin: 5}}>
                             <Text style={styles.textLabel}>
                                 Confirm Password
                             </Text>
@@ -314,18 +331,115 @@ class SignupModal extends React.Component {
                              onChangeText={text => this.setState({confirmedPassword: text})} 
                              secureTextEntry={this.state.secureConfirmPasswordSecureTextEntry} 
                              placeholder="Confirm your password" 
-                             inputStyle={{ fontWeight: '500', fontSize: 15,  }} 
-              inputContainerStyle={{ borderBottomColor: '#545454', borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-              containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
+                             inputStyle={styles.inputStyle} 
+                             inputContainerStyle={styles.inputContainerStyle} 
+                             containerStyle={styles.containerStyle} 
                              editable={true}
                              enablesReturnKeyAutomatically={true}
                              returnKeyLabel="Done"
                              returnKeyType="done"
                              multiline={false}/>
                         </View>
+
+                        <View style={{width: '50%', backgroundColor: "white", margin: 10}}>
+                            <Text style={styles.textLabel}>
+                                Birthday
+                            </Text>
+                            <View style={{borderRadius: 20, width: "100%", backgroundColor: "#FAFAFA", flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
+                            <Input 
+                             value="MM"
+                             onChangeText={text => {}} 
+                             placeholder="MM" 
+                             placeholderTextColor="black"
+                             inputStyle={{width: "100%", fontSize: 10}} 
+                             inputContainerStyle={{width: "100%", borderColor: "transparent"}} 
+                             containerStyle={{backgroundColor: "transparent", width: "20%", }} 
+                             editable={true}
+                             enablesReturnKeyAutomatically={true}
+                             returnKeyLabel="Done"
+                             returnKeyType="done"
+                             multiline={false}
+                             />
+
+<Input 
+                             value="DD"
+                             onChangeText={text => {}} 
+                             placeholder="DD" 
+                             placeholderTextColor="black"
+                             inputStyle={{width: "100%", fontSize: 10}} 
+                             inputContainerStyle={{width: "100%", borderColor: "transparent"}} 
+                             containerStyle={{backgroundColor: "transparent", width: "20%", }} 
+                             editable={true}
+                             enablesReturnKeyAutomatically={true}
+                             returnKeyLabel="Done"
+                             returnKeyType="done"
+                             multiline={false}
+                             />
+
+<Input 
+                             value="YYYY"
+                             onChangeText={text => {}} 
+                             placeholder="YYYY" 
+                             placeholderTextColor="black"
+                             inputStyle={{width: "100%", fontSize: 10}} 
+                             inputContainerStyle={{width: "100%", borderColor: "transparent"}} 
+                             containerStyle={{backgroundColor: "transparent", width: "25%", }} 
+                             editable={true}
+                             enablesReturnKeyAutomatically={true}
+                             returnKeyLabel="Done"
+                             returnKeyType="done"
+                             multiline={false}
+                             />
+                            </View>
+                            
+                        </View>
                     </View>
 
-                        <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                    <View style={{padding: 20, alignItems: "center", justifyContent: "center", height: "auto", width: "100%"}}>
+                    <TouchableOpacity style={{width: "100%", height: 70, alignSelf: "center"}}>
+                        <Surface style={{elevation: 10, padding: 10, alignItems: "center", justifyContent: "center", backgroundColor: "#C7DCFF", width: '50%', height: 70, borderRadius: 70, alignSelf: "center"}}>
+                            <Text style={{color: "white", textAlign: "center", textAlignVertical: "center"}}>
+                              Lupa Screening Questionnaire
+                            </Text>
+                            <MaterialIcons name="arrow-drop-down" size={30} style={{color: "white"}} />
+                        </Surface>
+                    </TouchableOpacity>
+                    </View>
+            
+</View>
+            
+                    <View style={{width: "80%", height: "auto"}}>
+                      {
+                        QUESTIONS.map((question, index, arr) => {
+                          return (
+                            <Surface style={[
+                              {
+                              backgroundColor: "white", 
+                              marginTop: 20, 
+                              padding: 10, 
+                              width: Dimensions.get('window').width - 20, 
+                              }, 
+                              index % 2 == 0 ? styles.leftPositionedSurface : styles.rightPositionedSurface
+                              ]}>
+                            <Text style={{fontWeight: "500"}}>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                            </Text>
+                              <View style={{alignSelf: 'center', margin: 5, width: "60%", alignItems: "center", flexDirection: "row", justifyContent: "space-evenly"}}>
+                                <Surface style={{backgroundColor: "#C7DCFF" , alignItems: "center", justifyContent: "center", width: 65, height: 65, margin: 5, borderRadius: 65, elevation: 10}}>
+                                  <MaterialIcons name="check" size={20} />
+                                </Surface>
+
+                                <Surface style={{backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center", width: 65, height: 65, margin: 5, borderRadius: 65, elevation: 10}}>
+                                  <MaterialIcons name="clear" size={20} />
+                                </Surface>
+                              </View>
+                          </Surface>
+                          )
+                        })
+                      }
+                      </View>
+
+                       <View style={{flex: 1, justifyContent: 'flex-end'}}>
                         <ElementsButton
   title="Create Account"
   type="solid"
@@ -337,6 +451,7 @@ class SignupModal extends React.Component {
 />
                         </View>
 
+                        <View style={{margin: 10}}>
                         <CheckBox
                                 center
                                 title='I agree to the Terms of Service and Privacy Policy.'
@@ -363,9 +478,13 @@ class SignupModal extends React.Component {
                               </Paragraph>
                               <NativeButton title="Try again" onPress={() => this.setState({ alertOverlayVisible: false })}/>
                             </>
-                            </Overlay>
+                            </Overlay>    
+                        </View>
+                        
+          </ScrollView>
+          </SafeAreaView>
+        
                     
-                </SafeAreaView>
         );
     }
 }
@@ -382,13 +501,42 @@ const styles = StyleSheet.create({
     headerText: {
         marginTop: 15,
         padding: 10,
-        flex: 1,
+        height: "20%",
     },
     textLabel: {
         fontSize: 15,
         fontWeight: "600",
         color: '#424242',
-        margin: 5
+        margin: 5,
+        alignSelf: "flex-start",
+    },
+    inputStyle: {
+      fontWeight: '500', 
+      fontSize: 15
+    },
+    inputContainerStyle: {
+      borderBottomColor: "transparent",
+      borderTopColor: "transparent", 
+      borderRightColor: "transparent", 
+      borderLeftColor: "transparent", 
+      padding: 3
+    },
+    containerStyle: {
+      width: "100%", 
+      borderRadius: 20, 
+      backgroundColor: '#FAFAFA'
+    },
+    leftPositionedSurface: {
+      left: 0,
+      borderTopRightRadius: 20,
+      borderBottomRightRadius: 20,
+      alignSelf: "flex-start",
+    },
+    rightPositionedSurface: {
+      right: 0,
+      borderTopLeftRadius: 20,
+      borderBottomLeftRadius: 20,
+      alignSelf: "flex-end",
     }
 });
 

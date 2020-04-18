@@ -26,9 +26,12 @@
     "ios": {
       "supportsTablet": false,
       "usesIcloudStorage": true,
-      "bundleIdentifier": "com.lupa.lupa",
+      "bundleIdentifier": "com.lupa.LupaApp",
       "buildNumber": "1.0.0"
     },
-    "description": "Lupa. An app for preventative health care."
-  }
+    "description": "Lupa. An app for preventative health care.",
+    "entryPoint": "node_modules/expo/AppEntry.js"
+  },
+  "displayName": "Lupa",
+  "name": "Lupa"
 }

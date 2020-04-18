@@ -58,9 +58,9 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
 
     let userDoc = await LUPA_DB.collection('users').doc(USER_UUID);
     
-    await userDoc.update({
+  /*  await userDoc.update({
         username: username,
-    })
+    })*/
 
 
     // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong

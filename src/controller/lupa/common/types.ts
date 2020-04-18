@@ -96,6 +96,8 @@ export type LupaUserStructure = {
     certification: String,
     homegym: Object,
     chats: any,
+    session_reviews: [],
+    trainer_tier: Number,
 };
 
 
