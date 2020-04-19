@@ -73,8 +73,6 @@ class CreateSessionModal extends React.Component {
             sessionYear: new Date().getFullYear().toString(),
             sessionDayOfTheWeek: "",
             sessionTimePeriods: [],
-            requestedUserProfileImage: '',
-            currUserProfileImage: '',
             activeDate: new Date(),
             sessionLocation: "Launch Map",
             mapViewVisible:  false,
@@ -88,49 +86,15 @@ class CreateSessionModal extends React.Component {
     }
 
     setupRequestedUserInformation = async () => {
-        let requestedUserDataIn, requestedUserProfileImageIn, currUserProfileImageIn;
+        let requestedUserDataIn;
         //TODO: If it is the current user's UUID then pull user data from Redux Store
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.navigation.state.params.userUUID).then(result => {
             requestedUserDataIn = result;
         })
 
-        try {
-            await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.props.navigation.state.params.userUUID).then(result => {
-                requestedUserProfileImageIn = result;
-            })
-
-            if (requestedUserProfileImageIn == undefined)
-            {
-                requestedUserProfileImageIn = "";
-            }
-        } catch(err)
-        {
-            requestedUserProfileImageIn = "";
-        }
-
-        console.log('sdfsd')
-
-        try {
-            await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
-                currUserProfileImageIn = result;
-            })
-
-            if (currUserProfileImageIn == undefined)
-            {
-                currUserProfileImageIn = ""
-            }
-
-        } catch(err)
-        {
-            currUserProfileImage = "";
-        }
-        console.log('dsfsd')
-
         await this.setState({ 
             requestedUserData: requestedUserDataIn, 
             preferred_workout_times: requestedUserDataIn.preferred_workout_times,
-            requestedUserProfileImage: requestedUserProfileImageIn, 
-            currUserProfileImage: currUserProfileImageIn,
          });
     }
 
@@ -141,10 +105,6 @@ class CreateSessionModal extends React.Component {
             sessionDay: new Date(date).getDate().toString(),
             sessionYear: new Date(date).getFullYear().toString()
         })
-        console.log(this.state.sessionYear)
-        console.log(this.state.sessionMonth);
-        console.log(this.state.sessionDay);
-        console.log(this.state.sessionDayOfTheWeek)
     }
 
     _getButtonMode = time => {
@@ -199,6 +159,19 @@ class CreateSessionModal extends React.Component {
     }
 
     handlePickSessionTime = (time) => {
+        //if the user has already picked a the first time check to make sure the second is linear
+        if (this.state.sessionTimePeriods.length > 0)
+        {
+            //get last time picked
+            let lastPickedTime = this.state.sessionTimePeriods[this.state.sessionTimePeriods.length - 1];
+            //skip if the next time isn't in sequence (i.e. 4:00PM, 5:00PM)
+            if ((parseInt(lastPickedTime.charAt(0)) + 1) != parseInt(time.charAt(0)))
+            {
+                //if the time isn't linear
+                return;
+            }
+        }
+
         if (this.state.sessionTimePeriods.includes(time)) {
             let currentTimes = this.state.sessionTimePeriods;
             let updatedTimes  = currentTimes.slice(currentTimes.indexOf(time));
@@ -278,13 +251,13 @@ class CreateSessionModal extends React.Component {
         let displayName = this.props.lupa_data.Users.currUserData.display_name.split(" ");
         let firstInitial = displayName[0].charAt(0);
         let secondInitial = displayName[1].charAt(0);
-        if (this.state.currUserProfileImage == "" || this.state.currUserProfileImage == undefined)
+        if (this.props.lupa_data.Users.currUserData.photo_url == "" || this.props.lupa_data.Users.currUserData.photo_url == undefined)
         {
             return <Avatar.Text style={{backgroundColor: "#212121", flex: 1}} label={firstInitial+secondInitial}/>
         }
         else
         {
-           return <Image source={{ uri: this.state.currUserProfileImage }} style={{ width: '100%', height: '100%', borderRadius: 80}} />
+           return <Image source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} style={{ width: '100%', height: '100%', borderRadius: 80}} />
         }
     }
 
@@ -302,13 +275,13 @@ class CreateSessionModal extends React.Component {
             secondInitial="K"
         }
 
-        if (this.state.requestedUserProfileImage == "" || this.state.requestedUserProfileImage == undefined)
+        if (this.state.requestedUserData.photo_url == "" || this.state.requestedUserData.photo_url == undefined)
         {
             return <Avatar.Text style={{backgroundColor: "#212121", flex: 1}} label={firstInitial+secondInitial}/>
         }
         else
         {
-            return  <Image source={{ uri: this.state.requestedUserProfileImage }} style={{ width: '100%', height: '100%', borderRadius: 80 }} />
+            return  <Image source={{ uri: this.state.requestedUserData.photo_url }} style={{ width: '100%', height: '100%', borderRadius: 80 }} />
         }
     }
 

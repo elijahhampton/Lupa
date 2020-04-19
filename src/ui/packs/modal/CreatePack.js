@@ -136,6 +136,7 @@ class CreatePack extends React.Component {
     }
 
     createPack = async () => {
+        let updatedInvitedMembers = [];
         await this.setState({ creatingPackDialogIsVisible: true });
         let packLocation, packUUID, pack_image;
         const currUserUUID = await this.props.lupa_data.Users.currUserData.user_uuid;
@@ -144,8 +145,16 @@ class CreatePack extends React.Component {
             packLocation = result;
         });
 
+        for (let i = 0; i < this.state.invitedMembers.length; i++)
+        {
+            let userData = this.state.invitedMembers[i];
+            let modifiedData = userData.user_uuid;
+            await updatedInvitedMembers.push(modifiedData);
+
+        }
+
         //Wait for the pack to be create before we return back to the main page
-       await this.LUPA_CONTROLLER_INSTANCE.createNewPack(currUserUUID, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [currUserUUID], this.state.invitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.state.packType, this.state.packImageSource).then(packData => {
+       await this.LUPA_CONTROLLER_INSTANCE.createNewPack(currUserUUID, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [currUserUUID], updatedInvitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.state.packType, this.state.packImageSource).then(packData => {
         this.props.addCurrentUserIntoPack(packData.data);
         packUUID = packData.data.pack_uuid;
         pack_image = packData.photo_url;
@@ -365,7 +374,7 @@ class CreatePack extends React.Component {
                         }} returnKeyType="done" returnKeyLabel="done" value={this.state.pack_description} onChangeText={text => this.setState({ pack_description: text})}/>
                     </View>
                     
-                    <View style={{alignItems: "center", flexDirection: 'height', width: Dimensions.get('screen').width}}>
+                    <View style={{alignItems: "center", flexDirection: 'column', width: Dimensions.get('screen').width}}>
                         {
                             data.map(item => {
                                 return (
@@ -404,7 +413,7 @@ class CreatePack extends React.Component {
                         </View>
 
 
-                        <ScrollView contentContainerStyle={{flexDirection: 'row', justifyContent: 'space-evenly', flexDirection: 'wrap'}}>
+                        <ScrollView>
                             {
                                 this.mapSearchResults()
                             }

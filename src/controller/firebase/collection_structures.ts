@@ -10,6 +10,7 @@ import {
     SESSION_STATUS,
     PACK_EVENT_STAGE,
 } from '../lupa/common/types';
+import { any } from 'prop-types';
 
 var lupa_pack_event : LupaPackEventStructure = {
     pack_uuid: "",
@@ -141,10 +142,11 @@ var lupa_user : LupaUserStructure = {
     display_name: "",
     username: "",
     email: "",
+    age: "",
     email_verified: false,
     mobile: "",
     gender: "",
-    location: {city: '', state: '', country: ''},
+    location: {city: '', state: '', country: '', longitude: '', latitude: '',},
     isTrainer: false,
     packs: [],
     photo_url: "",
@@ -173,9 +175,11 @@ var lupa_user : LupaUserStructure = {
     trainer_tier: 0,
 }
 
-export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", gender="", location="", isTrainer=false, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted, bio, recommended_workouts, certification) => {
+export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", age="", gender="", location="", isTrainer=false, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted, bio, recommended_workouts, certification) => {
     
     lupa_user.user_uuid = user_uuid;
+    lupa_user.username = username;
+    lupa_user.age = age;
     lupa_user.email = email;
     lupa_user.time_created = time_created;
     lupa_user.isTrainer = false;

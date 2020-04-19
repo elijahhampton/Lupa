@@ -49,6 +49,18 @@ export default class WelcomeLupaIntroduction extends React.Component {
         }
     }
 
+    componentDidMount = async () => {
+        await this.disableNext();
+    }
+
+    enableNext = () => {
+        this.props.setNextDisabled(false);
+    }
+
+    disableNext = () => {
+        this.props.setNextDisabled(true)
+    }
+
     _getLocationAsync = async () => {
         let result;
         //show loading indicator
@@ -82,6 +94,8 @@ export default class WelcomeLupaIntroduction extends React.Component {
         await this.setState({
             showLoadingIndicator: false
         })
+
+        await this.enableNext();
     }
 
     render() {

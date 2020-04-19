@@ -27,10 +27,8 @@ import PackNavigator from './ui/navigators/PackNavigator'
 import {
   logoutUser
 } from './controller/lupa/auth/auth'
-import WorkoutViewNavigator from "./ui/navigators/WorkoutViewNavigator";
-import { AppLoading } from "expo";
 
-const LupaFunctionalContext = React.createContext("Functions");
+import WorkoutViewNavigator from "./ui/navigators/WorkoutViewNavigator";
 
 class Lupa extends React.Component {
   constructor(props) {
@@ -49,7 +47,6 @@ class Lupa extends React.Component {
   }
 
   componentDidMount = async () => {
-    console.log('did mount..');
     await this._showWelcomeModal();
   }
 
@@ -59,7 +56,7 @@ class Lupa extends React.Component {
   await AsyncStorage.getItem(`${user_uuid}_` + 'isNewUser').then(result => {
     _isNewUser = result;
   })
-  
+
   switch(_isNewUser)
   {
     case 'true':
@@ -96,21 +93,29 @@ enableSwipe = () => {
   this.setState({ swipeable: true })
 }
 
+goToIndex = (index) => {
+  this.setState({ currIndex: index})
+}
+
 dashboardNavigatorProps = {
   disableSwipe: this.disableSwipe,
-  logoutMethod: this._navigateToAuth
+  logoutMethod: this._navigateToAuth,
+  goToIndex: index => this.goToIndex(index)
 }
 
 workoutNavigatorProps = {
-  disableSwipe: this.disableSwipe
+  disableSwipe: this.disableSwipe,
+  goToIndex: index => this.goToIndex(index)
 }
 
 packNavigatorProps = {
-  disableSwipe: this.disableSwipe
+  disableSwipe: this.disableSwipe,
+  goToIndex: index => this.goToIndex(index)
 }
 
 searchNavigatorProps = {
-  disableSwipe: this.disableSwipe
+  disableSwipe: this.disableSwipe,
+  goToIndex: index => this.goToIndex(index)
 }
 
 

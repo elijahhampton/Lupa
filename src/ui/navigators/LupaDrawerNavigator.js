@@ -13,6 +13,8 @@ import UserSettings from './SettingsNavigator';
 
 import ProfileNavigator from './ProfileNavigator';
 
+import TrainerInformation from '../user/modal/WelcomeModal/TrainerInformation';
+
 const LupaDrawerNavigator = createDrawerNavigator(
     {
     //Drawer Optons and indexing
@@ -28,8 +30,10 @@ const LupaDrawerNavigator = createDrawerNavigator(
             title: 'UserSettings',
             header: null,
             gesturesEnabled: false,
-
-        })
+        }),
+    },
+    TrainerInformation: {
+      screen: TrainerInformation
     },
     },
     {

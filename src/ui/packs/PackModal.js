@@ -112,18 +112,22 @@ class PackEventCard extends React.Component {
         this.state = {
             packEventModalIsOpen: false,
             packEventObject: this.props.packEventObjectIn,
+            attendees: [],
             packEventImage: "",
+            attendeeProfileImages: []
         }
     }
 
     componentDidMount = async () => {
         await this.setupPackEventCard();
         await this.getPackEventImage();
+        await this.generateEventAttendeePhotos();
     }
 
     setupPackEventCard = async () => {
         await this.setState({
-            packEventObject: this.props.packEventObjectIn
+            packEventObject: this.props.packEventObjectIn,
+            attendees: this.props.packEventObjectIn.attendees,
         })
     }
 
@@ -189,10 +193,45 @@ class PackEventCard extends React.Component {
         return date;
     } 
 
+    handleAttendEvent = async () => {
+        await this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(this.state.packEventObject.pack_event_uuid, "", this.props.currUserUUID);
+        let updatedAttendees = this.state.attendees;
+        updatedAttendees.push(this.props.currUserUUID);
+        await this.setState({
+            attendees: updatedAttendees,
+        })
+    }
+
+    generateEventAttendeePhotos = async () => {
+        let attendeePhotoArr = [], photoIn;
+
+        if (this.state.attendees && this.state.attendees.length > 0)
+        {
+            for (let i = 0; i < this.state.attendees.length; i++)
+            {
+                await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.attendees[i]).then(res => {
+                    photoIn = res.photo_url
+                })
+
+                await attendeePhotoArr.push(photoIn);
+            }
+        }
+
+        await this.setState({
+            attendeeProfileImages: attendeePhotoArr,
+        })
+    }
+
+    mapAttendees = () => {
+        return this.state.attendeeProfileImages.map(image => {
+            return <Avatar.Image size={30} style={{margin: 3}} source={{uri: image}} />
+        })
+    }
+
     render() {
         return (
            // <TouchableOpacity onPress={() => this.handlePackEventModalOpen()}>
-           <Surface style={{padding: 15, borderRadius: 30, margin: 10, width: Dimensions.get('window').width - 40, height: 200, backgroundColor: "#f2f2f2"}}>
+           <Surface style={{padding: 15, borderRadius: 30, margin: 10, width: Dimensions.get('window').width - 40, height: 'auto', backgroundColor: "#f2f2f2"}}>
                        <View>
                        <Title >
                             {this.state.packEventObject.pack_event_title}
@@ -210,20 +249,14 @@ class PackEventCard extends React.Component {
                         </Paragraph>
                            </View>
 
-                           <View>
-                                {
-                                    this.state.packEventObject.attendees.map(attendee => {
-                                        return (
-                                        <Avatar.Text label="EH" />
-                                        )
-                                    })
-                                }
+                           <View style={{padding: 5, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
+                                {this.mapAttendees()}
                            </View>
 
                            <Divider />
 
                            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "flex-start"}}>
-                               <Button color="#2196F3" disabled={true}>
+                               <Button color="#2196F3" disabled={this.state.packEventObject.attendees.includes(this.props.currUserUUID)} onPress={this.handleAttendEvent}>
                                <Text style={{fontFamily: "avenir-book", fontSize: 15}}>
                                   I'm Attending
                                    </Text>
@@ -400,7 +433,7 @@ class PackModal extends React.Component {
         return this.state.packInformation.pack_members && this.state.packInformation.pack_members.map(member => {
              return (
                 <View style={{margin: 5}}>
-                                     <UserDisplayCard userUUID={member} />
+                    <UserDisplayCard userUUID={member} />
                 </View>
              )
         })
@@ -409,7 +442,7 @@ class PackModal extends React.Component {
     _renderPackEventCards = () => {
         return this.state.packEvents.map(eventObject => {
             return (
-                    <PackEventCard packEventObjectIn={eventObject} refreshData={this.refreshPackModal} />
+                    <PackEventCard currUserUUID={this.props.lupa_data.Users.currUserData.user_uuid} packEventObjectIn={eventObject} refreshData={this.refreshPackModal} />
                   );
         })
     }

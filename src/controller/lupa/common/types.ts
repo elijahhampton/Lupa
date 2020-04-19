@@ -63,6 +63,7 @@ export type LupaUserStructure = {
     user_uuid: "",
     display_name: "",
     username: "",
+    age: any,
     email: "",
     email_verified: false,
     mobile: "",
@@ -71,6 +72,8 @@ export type LupaUserStructure = {
         city: '',
         state: '',
         country: '',
+        longitude: '',
+        latitude: '',
     }
     isTrainer: false,
     packs: [],

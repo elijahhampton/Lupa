@@ -4,7 +4,9 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView
+    Modal,
+    ScrollView,
+    Button as NativeButton
 } from 'react-native';
 
 import {
@@ -20,7 +22,10 @@ import { Feather as FeatherIcon } from '@expo/vector-icons';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
+import TimeslotSelector from '../../component/TimeslotSelector';
+
 import { connect } from 'react-redux';
+import { SafeAreaView } from 'react-navigation';
 
 daysOfTheWeek = [
     'Monday',
@@ -38,6 +43,23 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+function ChangeTimesModal(props) {
+    return (
+       <Modal onDismiss={props.closeModalMethod} visible={props.isVisible} animated={true} animationType="slide" presentationStyle="overFullScreen" style={{backgroundColor: 'white'}}>
+           <SafeAreaView style={{flex: 1}}>
+           <TimeslotSelector />
+
+            <NativeButton onPress={props.closeModalMethod} title="Done" style={{position: 'absolute', bottom: 0}} />
+           </SafeAreaView>
+       </Modal>
+    )
+}
+
+/**
+ * Timecards Component
+ * 
+ * @todo: Make current day show current day (handle edge case for Sunday)
+ */
 class Timecards extends React.Component {
     constructor(props) {
         super(props);
@@ -53,11 +75,24 @@ class Timecards extends React.Component {
             fridayTimes: [],
             saturdayTimes: [],
             sundayTimes: [],
-            currDayToShow: daysOfTheWeek[new Date().getDay() - 1],
+            currDayToShow: daysOfTheWeek[new Date().getDay()],
             showTimeMenu: false,
+            showChangeTimeModal: false,
         }
 
        // this._getTimecardInformationByDay();
+    }
+
+    handleShowChangeTimeModal = () => {
+        this.setState({ 
+            showChangeTimeModal: true
+        })
+    }
+
+    handleCloseChangeTimeModal = () => {
+        this.setState({
+            showChangeTimeModal: false
+        })
     }
 
     handleOnPressMenuItem = (key) => {
@@ -73,16 +108,18 @@ class Timecards extends React.Component {
         switch (this.state.currDayToShow)
         {
             case 'Monday':
-                return this.state.mondayTimes.length == 0 ?                     <Caption style={styles.caption}>
+                return this.state.mondayTimes.length == 0 ?
+                <Caption style={styles.caption}>
                     There have been no times added for {this.state.currDayToShow}.
-                </Caption> :
-                  this.props.lupa_data.Users.currUserData.preferred_workout_times.Monday.map(time => {
+                </Caption>
+                 :
+                  this.state.mondayTimes.map(time => {
 
                       return <Button color="#2196F3" mode="text" compact style={styles.captionStyle}>{time}</Button>
                   })
             case 'Tuesday':
                 return this.state.tuesdayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                        You have not added any time slots for availability in your fitness profile.
+                        There have been no times added for {this.state.currDayToShow}.
                     </Caption> :
                       this.state.tuesdayTimes.map(time => {
 
@@ -90,7 +127,7 @@ class Timecards extends React.Component {
                       })
             case 'Wednesday':
                 return this.state.wednesdayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                You have not added any time slots for availability in your fitness profile.
+                There have been no times added for {this.state.currDayToShow}.
             </Caption> :
               this.state.wednesdayTimes.map(time => {
 
@@ -99,7 +136,7 @@ class Timecards extends React.Component {
             case 'Thursday':
                 {
                     return this.state.thursdayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                    You have not added any time slots for availability in your fitness profile.
+                    There have been no times added for {this.state.currDayToShow}.
                 </Caption> :
                   this.state.thursdayTimes.map(time => {
 
@@ -108,7 +145,7 @@ class Timecards extends React.Component {
                 }
             case 'Friday':
                return this.state.fridayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                You have not added any time slots for availability in your fitness profile.
+                There have been no times added for {this.state.currDayToShow}.
             </Caption> :
               this.state.fridayTimes.map(time => {
 
@@ -116,7 +153,7 @@ class Timecards extends React.Component {
               })
             case 'Saturday':
                return this.state.saturdayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                You have not added any time slots for availability in your fitness profile.
+                There have been no times added for {this.state.currDayToShow}.
             </Caption> :
               this.state.saturdayTimes.map(time => {
 
@@ -124,7 +161,7 @@ class Timecards extends React.Component {
               })
             case 'Sunday':
                return this.state.sundayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                You have not added any time slots for availability in your fitness profile.
+                There have been no times added for {this.state.currDayToShow}.
             </Caption> :
               this.state.sundayTimes.map(time => {
 
@@ -136,10 +173,10 @@ class Timecards extends React.Component {
 
     componentDidMount = async () => {
         let timecardData;
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid, 'preferred_workout_times').then(result => {
-            timecardData = result;
-            });
 
+            await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.props.userUUID, 'preferred_workout_times').then(result => {
+                timecardData = result;
+                });
 
 
         await this.setState({
@@ -156,7 +193,8 @@ class Timecards extends React.Component {
     render() {
     return (
         <View style={{ width: "100%", }}>
-            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Menu visible={this.state.showTimeMenu} anchor={<IconButton icon="expand-more" style={{margin: 3}} onPress={() => this.setState({ showTimeMenu: true })}/>}>
                 {
                     daysOfTheWeek.map(day => {
@@ -168,11 +206,25 @@ class Timecards extends React.Component {
                         {this.state.currDayToShow}
                     </Title>
             </View>
+                {
+                    this.props.userUUID == this.props.lupa_data.Users.currUserData.user_uuid ?
+                    <Button onPress={this.handleShowChangeTimeModal} style={{fontSize: 12}} mode="text" theme={{
+                        colors: {
+                            primary: "#2196F3"
+                        }
+                    }}>
+                        Edit Available Times
+                    </Button>
+                    :
+                    null
+                }
+            </View>
             <ScrollView horizontal>
                 {
                     this.getTimeViewContent()
                 }
             </ScrollView> 
+            <ChangeTimesModal isVisible={this.state.showChangeTimeModal} closeModalMethod={this.handleCloseChangeTimeModal}/>
         </View>
     );
     }
@@ -187,7 +239,7 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     caption: {
-        color: 'white',
+    marginLeft: 10, 
     },
     timecard: {
         width: 200,

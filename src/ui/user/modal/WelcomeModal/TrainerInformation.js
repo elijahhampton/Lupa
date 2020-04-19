@@ -102,9 +102,14 @@ export default class TrainerInformation extends React.Component {
     }
 
     sendCertificationNotice = async () => {
-        await this.setState({ verificationSent: true  })
         let currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
         await this.LUPA_CONTROLLER_INSTANCE.addLupaTrainerVerificationRequest(currUserUUID, this.state.certification, this.state.NASM_CERTIFICATE_NUMBER);
+        await this.setState({ verificationSent: true  })
+
+        if (this.props.navigation)
+        {
+            this.props.navigation.goBack();
+        }
     }
 
     render() {

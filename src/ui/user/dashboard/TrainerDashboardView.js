@@ -198,7 +198,7 @@ class TrainerDashboardView extends React.Component {
             if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set' ||
                 new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Set' ||
                 new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set') {
-                this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
+                await this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
             }
 
 
@@ -209,7 +209,7 @@ class TrainerDashboardView extends React.Component {
             if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' ||
                 new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' ||
                 new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending') {
-                this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
+                await this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
                 sessionDataIn.splice(sessionDataIn.splice(i, 1));
             }
         }
@@ -407,17 +407,18 @@ class TrainerDashboardView extends React.Component {
                     <Divider style={styles.divider} />
 
 
-                    <View>
+                   {/* 
+                   <View>
                         <Text style={styles.sectionHeaderText}>
                             Recent Workouts
                         </Text>
                         <Caption>
                             You have not performed any workouts recently.
                         </Caption>
-                    </View>
+                   </View>
+                   */}
                 </ScrollView>
                 <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid} />
-                            <SafeAreaView />
             </View>
         );
     }

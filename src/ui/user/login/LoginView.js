@@ -78,8 +78,8 @@ class LoginView extends Component {
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     this.state = {
-      username: 'Testeraccount@gmail.com',
-      password: 'password',
+      username: 'lupatestaccount1@gmail.com',
+      password: 'Q9X638hs2Y78',
       snackBarIsVisible: false,
       secureTextEntry: true,
     }

@@ -803,6 +803,7 @@ export default class UserController {
                 if (err) throw reject(err);
 
                 if (hits.length == 0) {
+                    alert('bat')
                     await USER_COLLECTION.where('isTrainer', '==', true).limit(3).get().then(result => {
                         let docs = result;
                         let data;
@@ -811,12 +812,16 @@ export default class UserController {
                             nearbyTrainers.push(data);
                         });
                     });
-                    alert('hrer')
                     resolve(nearbyTrainers);
                 }
 
                 //parse all of ths hits for the city
                 for (var i = 0; i < hits.length; ++i) {
+                    //if we come across the current user's uuid then skip
+                    if (hits[i].user_uuid == this.getCurrentUserUUID() || hits[i].isTrainer != true)
+                    {   
+                        continue;
+                    }
                     let locationHighlightedResult = hits[i]._highlightResult;
                     let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
                     if (compare) {
@@ -824,8 +829,13 @@ export default class UserController {
                     }
                 }
 
-                //parse all of ths hits for the city
+                //parse all of ths hits for the state
                 for (var i = 0; i < hits.length; ++i) {
+                    //if we come across the current user's uuid or we already have the hit then skip
+                    if (hits[i].user_uuid == this.getCurrentUserUUID() || nearbyTrainers.includes(hits[i]) || hits[i].isTrainer != true)
+                    {
+                        continue;
+                    }
                     let locationHighlightedResult = hits[i]._highlightResult;
                     let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
                     if (compare) {
@@ -844,9 +854,9 @@ export default class UserController {
                 }*/
 
                 await nearbyTrainers.filter(trainer => {
-                    return trainer.user_uuid != trainer.user_uuid
+                    return trainer.user_uuid != this.getCurrentUserUUID();
                 })
-                alert('here')
+
                 resolve(nearbyTrainers);
             })
         })

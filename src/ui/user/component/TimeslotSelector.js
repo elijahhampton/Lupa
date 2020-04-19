@@ -4,6 +4,7 @@ import {
     View,
     StyleSheet,
     Text,
+    Dimensions,
     ScrollView,
     TouchableOpacity
 } from 'react-native';
@@ -20,9 +21,9 @@ import {
 
 import { 
     timesOfDay 
-} from '../../../../../controller/lupa/common/lupa_pre';
+} from '../../../controller/lupa/common/lupa_pre';
 
-import LupaController from '../../../../../controller/lupa/LupaController';
+import LupaController from '../../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
 
@@ -395,7 +396,7 @@ class TimeslotSelector extends React.Component {
         let currentDay = this._getDay(this.state.dayIndex);
         return (
             <>
-                <View style={{width: "100%", height: 20, margin: 15, alignItems: "center", flexDirection: "row", justifyContent: "space-between"}}>
+                <View style={{width: '100%', alignSelf: 'center', margin: 15, alignItems: "center", flexDirection: "row", justifyContent: "space-between"}}>
                     
                     <IconButton icon="arrow-back" size={20} onPress={this._getPrevDay}/>
                         <Text style={styles.instructionalText}>
@@ -408,7 +409,7 @@ class TimeslotSelector extends React.Component {
 
                 <Surface style={styles.menuSurface}>
                     <List.Section>
-                        <List.Subheader>
+                        <List.Subheader textBreakStrategy="balanced" numberOfLines={2} lineBreakMode="tail">
                             Choose the times of day that you prefer working out.
                         </List.Subheader>
                     <ScrollView>
@@ -444,15 +445,18 @@ class TimeslotSelector extends React.Component {
 
 const styles = StyleSheet.create({
     menuSurface: {
-        width: "100%",
-        height: 350,
-        elevation: 2,
-        borderRadius: 15
+        width: "80%",
+        height: 'auto',
+        elevation: 15,
+        borderRadius: 15,
+        alignSelf: 'center',
+        position: 'absolute',
+        top: Dimensions.get('window').height / 3
     },
     instructionalText: {
         fontWeight: '500',
         fontSize: 20
-    }
+    },
 });
 
 export default connect(mapStateToProps)(TimeslotSelector);
