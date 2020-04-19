@@ -77,10 +77,6 @@ function LupaPacksContent(props) {
     )
 }
 
-function DesignWorkoutProgramContent(props) {
-
-}
-
 function BookATrainerContent(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [trainerData, setTrainerData] = useState([]);
@@ -96,7 +92,6 @@ function BookATrainerContent(props) {
 
       await LUPA_CONTROLLER_INSTANCE.getTrainersBasedOnLocation(location).then(trainerResults => {
           trainerDataIn = trainerResults;
-          alert(trainerDataIn.length);
       })
 
       setTrainerData(trainerDataIn);
@@ -149,23 +144,11 @@ export default function WelcomeContentDriver(props) {
                         return <BookATrainerContent toggleContentMethod={setShowContentWrapper} />
                         break;
                     case 'Design a Workout Program':
-                        return <DesignWorkoutProgramContent toggleContentMethod={setShowContentWrapper} />
-                        break;
+                        props.closeModalMethod();
                     default:
                 }
     }
 
-    function handleShowLupaPacksContent() {
-        return <LupaPacksContent />
-    }
-
-    function handleBookATrainerContent() {
-        return <BookATrainerContent />
-    }
-
-    function handleDesignWorkoutProgramContent() {
-        return <DesignWorkoutProgramContent />
-    }
     return (
         <View style={{flex: 1}}>
                             <View style={{flex: 1, justifyContent: "space-evenly"}}>

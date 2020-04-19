@@ -133,7 +133,7 @@ NavigationActions.navigate({
 
             <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
               <DrawerIcon name="heart" size={12} style={{margin: 3}}/>
-            <Button mode="Dashboard" color="grey" compact>
+            <Button mode="Dashboard" color="grey" compact onPress={() => this.props.navigation.navigate('TrainerInformation')}>
               Register as a Lupa Trainer
             </Button>
             </View>

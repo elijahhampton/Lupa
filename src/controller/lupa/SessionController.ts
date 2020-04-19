@@ -204,7 +204,7 @@ export default class SessionController {
         let otherUserUUID;
         let otherUserData;
 
-        session.attendeeOne == await LUPA_AUTH.currentUser.uid ? otherUserUUID = session.attendeeOne : otherUserUUID = session.attendeeTwo;
+        session.attendeeOne == await LUPA_AUTH.currentUser.uid ? otherUserUUID = session.attendeeTwo : otherUserUUID = session.attendeeOne;
  
         await USERS_COLLECTION.doc(otherUserUUID).get().then(snapshot => {
           otherUserData = snapshot.data();

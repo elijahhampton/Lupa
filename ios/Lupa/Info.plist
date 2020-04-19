@@ -6,10 +6,10 @@
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>Lupa</string>
-	<key>CFBundleIconName</key>
-	<string>AppIcon</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -56,7 +56,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Lupa to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Lupa to access your device&apos;s accelerometer</string>
+	<string>Allow Lupa to access your device's accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Lupa periences permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>

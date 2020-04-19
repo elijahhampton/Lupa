@@ -87,7 +87,21 @@ class BasicInformation extends React.Component {
             gender: " ",
             photoSource: undefined,
             showLoadingIndicator: false,
+            displayNameSet: false,
+            avatarSet: false,
         }
+    }
+
+    componentDidMount = async () => {
+        await this.disableNext();
+    }
+
+    enableNext = () => {
+        this.props.setNextDisabled(false);
+    }
+
+    disableNext = () => {
+        this.props.setNextDisabled(true);
     }
 
 
@@ -106,11 +120,14 @@ class BasicInformation extends React.Component {
 
     _handleDisplayNameEndEditing = async () => {
         const display_name = await this.state.displayName;
-        console.log(display_name);
         const payload = await getUpdateCurrentUserAttributeActionPayload('display_name', display_name, []);
         await this.props.updateCurrentUserAttribute(payload);
 
         await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('display_name', this.state.displayName);
+
+        await this.setState({
+            displayNameSet: true,
+        })
     }
 
     _handleUsernameEndEditing = () => {
@@ -138,41 +155,6 @@ class BasicInformation extends React.Component {
         this.setState({ displayNameIsInvalid: true })
     }
 
-    _getLocationAsync = async () => {
-        let result;
-        //show loading indicator
-        await this.setState({
-            showLoadingIndicator: true,
-        })
-
-        //get users location data
-        await Location.getCurrentPositionAsync({ enableHighAccuracy: true }).then(res => {
-            result = res;
-        })
-
-        //set state
-        await this.setState({
-            location: result
-        })
-
-        //convert data into actual location
-        const locationData = await getLocationFromCoordinates(this.state.location.coords.longitude, this.state.location.coords.latitude);
-        const locationDataText = await locationData.city + ", " + locationData.state;
-
-        //Update user location in database
-        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
-
-        //hide loading indicator
-        await this.setState({
-            locationText: locationDataText,
-            locationDataSet: true,
-        });
-
-        await this.setState({
-            showLoadingIndicator: false,
-        })
-    }
-
     _getAvatar = () => {
         let avatar = <Avatar quality={0} showEditButton rounded size={50} source={{ uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
         return avatar;
@@ -191,7 +173,10 @@ class BasicInformation extends React.Component {
             this._handleUserPhotoUrlUpdate(result.uri);
     
             if (!result.cancelled) {
-                this.setState({ photoSource: result.uri });
+                this.setState({ 
+                    photoSource: result.uri,
+                    avatarSet: true,
+                });
             }
         } catch(error)
         {
@@ -214,6 +199,7 @@ class BasicInformation extends React.Component {
 
 
     render() {
+        this.state.displayNameSet  == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
         return (
                 <SafeAreaView style={{flex: 1}}>
 
@@ -238,61 +224,6 @@ class BasicInformation extends React.Component {
         editable={true}
         />
                     </View>
-
-
-{/*<TextInput
-                            style={styles.textInput}
-                            mode="outlined"
-                            label="Choose a username"
-                            theme={{ colors: { primary: '#1976D2' } }}
-                            onChangeText={text => this._handleUsernameOnChangeText(text)}
-                            onBlur={this._handleUsernameEndEditing}
-                            value={this.state.chosenUsername}
-/>
-                        
-<TextInput
-                            style={styles.textInput}
-                            mode="outlined"
-                            label="Enter a display name"
-                            theme={{ colors: { primary: '#1976D2' } }}
-                            onChangeText={text => this._handleDisplayNameOnChangeText(text)}
-                            onSubmitEditing={text => this._handleDisplayNameEndEditing(text)}
-                            value={this.state.displayName}
-                            editable={true}
-                            returnKeyType="done"
-/> */}
-
-                        {/*
-
-<Picker
-                        placeholder="Select One"
-                        placeholderStyle={{ color: "#2874F0" }}
-                        note={false}
-                        selectedValue={this.state.gender}
-                        onValueChange={value => this._handleGenderUpdate(value)}
-                        style={{ width: Dimensions.get('screen').width, height: 10 }}
-                    >
-                        <Picker.Item label=" " value=" " />
-                        <Picker.Item label="Select a gender" value=" " />
-                        <Picker.Item label="Male" value="male" />
-                        <Picker.Item label="Female" value="female" />
-                    </Picker>
-</View>
-
-
-                    <View style={{ justifyContent: "space-evenly", flex: 1 }}>
-    
-
-                    <Button onPress={this._getLocationAsync} title={this.state.locationText} raised disabled={false} type="solid" buttonStyle={{borderRadius: 30, padding:10, backgroundColor: "#2196F3"}} titleStyle={{color: 'white', fontFamily: "avenir-book"}} style={{color: "black"}} iconRight={true} icon={<Icon name="map-pin" size={15} style={{ margin: 3 }} />} /> 
-
-                   <Button onPress={this.launchMapView} title={this.state.setHomeGymText} raised disabled={!this.state.locationDataSet} type="solid" buttonStyle={this.state.locationDataSet ? {backgroundColor: "#2196F3", borderRadius: 30, padding:10,}: {backgroundColor: "white", borderRadius: 30, padding:10,}} titleStyle={this.state.locationDataSet ? {color: 'white', fontFamily: "avenir-book"} : {color: 'black', fontFamily: "avenir-book"}} style={{color: "black"}} iconRight={true} icon={<Icon name="map-pin" size={15} style={{ margin: 3 }} />} />
-
-                        <Caption style={{alignSelf: "center"}}>
-                            We use your location to suggest trainers and others in your area as well as packs.  Read our Terms of Service and Privacy Policy for more information.
-                    </Caption>
-                    </View>
-            
-                        <ActivityIndicatorModal isVisible={this.state.showLoadingIndicator} /> */}
             </SafeAreaView>
         )
     }

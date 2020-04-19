@@ -134,6 +134,10 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+const mapDispatchToProps = dispatchEvent => {
+    
+}
+
 /**
  * Lupa Profile View
  * 
@@ -141,8 +145,7 @@ const mapStateToProps = (state, action) => {
  * made here.
  * 
  * TODO:
- * ADD EDIT, ADD, and DELETE buttons for content.  (The delete buttons will be mapped beside content in each content area.).
- * EVERYTHINGG SHOULD MAP FROM THE STATE NOT REDUX STORE
+ * @todo Fix Fitness Interest surface displaying wrong caption for current user.
  */
 class ProfileView extends React.Component {
     constructor(props) {
@@ -242,14 +245,25 @@ class ProfileView extends React.Component {
 
     handleFollowUser = async () => {
         let userToFollow = this.state.userUUID;
-        this.LUPA_CONTROLLER_INSTANCE.followUser(userToFollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
-        await this.setupProfileInformation();
+        await this.LUPA_CONTROLLER_INSTANCE.followUser(userToFollow, this.props.lupa_data.Users.currUserData.user_uuid);
+
+        //Update visible state for user to see
+        const followers = this.state.followers;
+        followers.push(this.props.lupa_data.Users.currUserData.user_uuid)
+        await this.setState({
+            followers: followers
+        })
     }
 
     handleUnFollowUser = async () => {
         let userToUnfollow = this.state.userUUID;
-        this.LUPA_CONTROLLER_INSTANCE.unfollowUser(userToUnfollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
-        await this.setupProfileInformation();
+        await this.LUPA_CONTROLLER_INSTANCE.unfollowUser(userToUnfollow, this.props.lupa_data.Users.currUserData.user_uuid);
+        
+        const followers = this.state.followers;
+        followers.splice(this.state.followers.indexOf(userToUnfollow), 1);
+        await this.setState({
+            followers: followers,
+        })
     }
 
     _navigateToSessionsView = () => {
@@ -290,17 +304,36 @@ class ProfileView extends React.Component {
         this.setState({ followerModalIsOpen: false });
     }
 
+    addFitnessInterest = () => {
+
+    }
+
     mapInterest = () => {
-        return this.state.interest.length == 0 ?
-            <Caption>
-                Specializations and strengths that you add to your fitness profile will appear here.
-                                </Caption> : this.state.userData.interest.map(interest => {
-                return (
-                    <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
-                        {interest}
-                    </Chip>
-                );
-            })
+        return this.props.lupa_data.Users.currUserData.user_uuid == this._getId() ?
+        this.state.interest.length == 0 ?
+        <Caption>
+            Specializations and strengths that you add to your fitness profile will appear here.
+         </Caption> : 
+        this.state.userData.interest.map(interest => {
+            return (
+                <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
+                    {interest}
+                </Chip>
+            );
+        })
+        :
+        this.state.interest.length == 0 ?
+        <Caption>
+            This user has not added any fitness interest.
+         </Caption> : 
+        this.state.userData.interest.map(interest => {
+            return (
+                <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
+                    {interest}
+                </Chip>
+            );
+        })
+
     }
 
     mapPacks = () => {
@@ -363,7 +396,7 @@ class ProfileView extends React.Component {
         if (this.state.userRecommendedWorkouts.length == 0) {
             return <View>
                 <Caption>
-                    You don't have any recommended workouts saved!  You can recommend workouts from the workout library inside of your goal pathways.
+                    You don't have any recommended workouts saved!  You can recommend workouts from the workout library located on in the workout home.
 </Caption>
             </View>
         }
@@ -389,9 +422,9 @@ class ProfileView extends React.Component {
 
         if (this.state.userData)
         {
-            if (this.state.userData.sessions_reviews.length != 0)
+            if (this.state.userData.session_reviews.length != 0)
             {
-                let reviewData = this.state.userData.sessions_reviews;
+                let reviewData = this.state.userData.session_reviews;
                 for (let i = 0; i < reviewData.length; ++i)
                 {
                     //get users uuid from review object
@@ -645,7 +678,7 @@ class ProfileView extends React.Component {
 
 
                 {
-                    this.state.followers.includes(this.currUserUUID) ?
+                    this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
 
                         <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, width: "auto", elevation: 8 }} theme={{
                             roundness: 20,
@@ -707,19 +740,19 @@ class ProfileView extends React.Component {
             secondInitial = display_name[1].charAt(0);
         }
 
-        if (this.state.profileImage == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid
-            || this.state.profileImage == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
+        if (this.state.userData.photo_url == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid
+            || this.state.userData.photo_url == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
             return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
                 elevation: 3,
             }} />
         }
 
         try {
-            if (this.props.lupa_data.Users.currUserData.user_uuid == this.currUserUUID) {
+            if (this.props.lupa_data.Users.currUserData.user_uuid == this._getId()) {
                 return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} showEditButton={true} onPress={this._chooseProfilePictureFromCameraRoll} />
             }
 
-            return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.state.profileImage }} />
+            return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.state.userData.photo_url }} />
         }
         catch (err) {
             return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
@@ -731,7 +764,7 @@ class ProfileView extends React.Component {
     render() {
         return (
             <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
-                <Appbar.Header style={{ backgroundColor: "transparent" }}>
+                <Appbar.Header style={{ backgroundColor: "transparent", margin: 10 }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>
@@ -795,8 +828,8 @@ class ProfileView extends React.Component {
                     </View>
 
                     <Divider />
-
-                    <Timecards />
+                    
+                    <Timecards userUUID={this._getId()} />
 
                     <Divider />
                     <>
@@ -823,8 +856,10 @@ class ProfileView extends React.Component {
                     <Surface style={[styles.contentSurface, { elevation: 8, backgroundColor: "#2196F3" }]}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ color: 'white', fontSize: 20, fontFamily: "avenir-medium", fontWeight: "bold" }}>
-                                Fitness Interest and Goals
+                                Fitness Interest
                                 </Text>
+
+                                <IconButton color="white" name="edit" onPress={this.addFitnessInterest}/>
                         </View>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center' }}>
                             {
@@ -897,13 +932,18 @@ class ProfileView extends React.Component {
                             null
                     }
                 </ScrollView>
-                <FAB
+                {
+                    this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
+                    <FAB
                     style={styles.fab}
                     small={false}
                     icon="today"
                     onPress={this._navigateToSessionsView}
-
                 />
+                :
+                null
+                }
+                
                 <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
             </SafeAreaView>
         );
@@ -996,19 +1036,13 @@ const styles = StyleSheet.create({
     },
     fab: {
         position: 'absolute',
-        margin: 16,
+        marginBottom: 15,
+        marginRight: 15, 
         right: 0,
-        bottom: 5,
-        color: "#637DFF",
-        backgroundColor: "#2196F3"
-    },
-    fab: {
-        position: 'absolute',
         bottom: 0,
-        marginBottom: 16, marginRight: 16,
-        right: 0,
         backgroundColor: "#2196F3"
     },
+
 });
 
 export default connect(mapStateToProps)(withNavigation(ProfileView));

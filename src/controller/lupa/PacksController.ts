@@ -10,6 +10,7 @@ import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket, LUPA_PACK_IMAGE_STORAGE_REF}
 
 const PACKS_COLLECTION = LUPA_DB.collection('packs');
 const PACKS_EVENT_COLLECTION = LUPA_DB.collection('pack_events');
+const USERS_COLLECTION = LUPA_DB.collection('users');
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
 const algoliasearch = require('algoliasearch/reactnative.js');
@@ -184,15 +185,25 @@ class PacksController {
   }
 
   acceptPackInviteByPackUUID = async (packUUID, userUUID) => {
-    let packDocumentData = [];
+    let packDocumentData = [], userDocumentData = [];
     let packDocument = PACKS_COLLECTION.doc(packUUID);
     await PACKS_COLLECTION.doc(packUUID).get().then(result => {
       packDocumentData = result.data();
     });
-
+    let userDocument = USERS_COLLECTION.doc(userUUID);
+    await USERS_COLLECTION.doc(userUUID).get().then(result => {
+      userDocumentData = result.data();
+    })
 
     // remove member from invited members
     let members = packDocumentData.pack_invited_members;
+    
+    //If the user isn't on the invite list we can skip this
+    if (!members.includes(userUUID))
+    {
+      return;
+    }
+
     members.splice(members.indexOf(userUUID), 1);
 
     packDocument.set({
@@ -212,6 +223,13 @@ class PacksController {
     },
     {
       merge: true,
+    });
+
+    let userPacks = userDocumentData.packs;
+    userPacks.push(packUUID);
+
+    userDocument.update({
+      packs: userPacks
     })
   }
 
@@ -225,6 +243,13 @@ class PacksController {
 
     // remove member from invited members
     let members = packDocumentData.pack_invited_members;
+
+    //If member isn't on invite list we can skip this
+    if (!members.includes(userUUID))
+    {
+      return;
+    }
+
     members.splice(members.indexOf(userUUID, 1));
 
     packDocument.set({
@@ -821,7 +846,7 @@ class PacksController {
     let attendees = packEventData.attendees;
     attendees.push(userUUID);
     //update events
-    currentDocument.update({
+    await currentDocument.update({
       attendees: attendees
     });
   }

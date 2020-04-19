@@ -52,7 +52,7 @@ export default class UserDisplayCard extends React.Component {
     getUserAvatar = () => {
         if (this.state.userImage == "" || this.state.userImage == undefined)
         {
-            return <Avatar.Text label="UU"  style={this.props.optionalStyling}/>
+            return <Avatar.Text label="UU" color="white"  size={50} style={{backgroundColor: '#212121'}}/>
         }
 
         try {
@@ -61,7 +61,7 @@ export default class UserDisplayCard extends React.Component {
         }
         catch (err)
         {
-           return <Avatar.Text label="UU"  style={this.props.optionalStyling}/>
+           return <Avatar.Text label="UU"  color="white" size={50} style={{backgroundColor: '#212121'}}/>
         }
     }
     render() {

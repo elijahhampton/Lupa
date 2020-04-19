@@ -12,8 +12,6 @@ import {
     Surface
 } from 'react-native-paper';
 
-import ProfilePicture from '../../images/profile_picture1.jpeg';
-
 export default class UpcomingSessionCard extends React.Component {
     constructor(props) {
         super(props);

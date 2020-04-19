@@ -109,6 +109,9 @@ class SignupModal extends React.Component {
             secureConfirmPasswordSecureTextEntry: true,
             alertOverlayVisible: false,
             buttonYes: false,
+            birthdayMonth: "",
+            birthdayDay: "",
+            birthdayYear: "",
         }
     }
 
@@ -120,7 +123,7 @@ class SignupModal extends React.Component {
   _introduceApp = async () => {
     await this._setupRedux();
     await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-    //await this.loadFonts();
+    await loadFonts();
     this.props.navigation.navigate('App');
   }
 
@@ -194,10 +197,11 @@ class SignupModal extends React.Component {
         const confirmedPassword = this.state.confirmedPassword;
         const isTrainerAccount = this.state.isTrainerAccount;
         const agreedToTerms = this.state.agreedToTerms;
+        const birthday = new Date(this.state.birthdayYear, this.state.birthdayMonth, this.state.birthdayDay);
 
         //Check registration status
         let successfulRegistration;
-        await signUpUser(username, email, password, confirmedPassword, isTrainerAccount, agreedToTerms).then(result => {
+        await signUpUser(username, email, password, confirmedPassword, isTrainerAccount, birthday, agreedToTerms).then(result => {
           successfulRegistration = result;
         });
 
@@ -347,8 +351,8 @@ class SignupModal extends React.Component {
                             </Text>
                             <View style={{borderRadius: 20, width: "100%", backgroundColor: "#FAFAFA", flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
                             <Input 
-                             value="MM"
-                             onChangeText={text => {}} 
+                             value={this.state.birthdayMonth}
+                             onChangeText={text => this.setState({ birthdayMonth: text})} 
                              placeholder="MM" 
                              placeholderTextColor="black"
                              inputStyle={{width: "100%", fontSize: 10}} 
@@ -358,12 +362,14 @@ class SignupModal extends React.Component {
                              enablesReturnKeyAutomatically={true}
                              returnKeyLabel="Done"
                              returnKeyType="done"
+                             keyboardType="numeric"
+                             maxLength={2}
                              multiline={false}
                              />
 
 <Input 
-                             value="DD"
-                             onChangeText={text => {}} 
+                             value={this.state.birthdayDay}
+                             onChangeText={text => this.setState({ birthdayDay: text })} 
                              placeholder="DD" 
                              placeholderTextColor="black"
                              inputStyle={{width: "100%", fontSize: 10}} 
@@ -373,12 +379,14 @@ class SignupModal extends React.Component {
                              enablesReturnKeyAutomatically={true}
                              returnKeyLabel="Done"
                              returnKeyType="done"
+                             keyboardType="numeric"
                              multiline={false}
+                             maxLength={2}
                              />
 
 <Input 
-                             value="YYYY"
-                             onChangeText={text => {}} 
+                             value={this.state.birthdayYear}
+                             onChangeText={text => this.setState({ birthdayYear: text })} 
                              placeholder="YYYY" 
                              placeholderTextColor="black"
                              inputStyle={{width: "100%", fontSize: 10}} 
@@ -388,7 +396,9 @@ class SignupModal extends React.Component {
                              enablesReturnKeyAutomatically={true}
                              returnKeyLabel="Done"
                              returnKeyType="done"
+                             keyboardType="numeric"
                              multiline={false}
+                             maxLength={4}
                              />
                             </View>
                             

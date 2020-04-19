@@ -128,11 +128,16 @@ export default class SessionNotificationContainer extends React.Component {
     getSessionBadge = (sessionStatus) => {
         if (sessionStatus == "Pending")
         {
+            alert('badeg')
             return <Feather name="minus-circle" color="red"/>
         }
         else if (sessionStatus == "Set")
         {
-            <Feather name="check" color="green"/>
+            alert('here')
+            return <Feather name="check" color="green"/>
+        }
+        else {
+            return <Feather name="minus-circle" color="red"/>
         }
     }
 
@@ -145,7 +150,7 @@ export default class SessionNotificationContainer extends React.Component {
                         
                     <Image source={{uri: this.state.userData.photo_url}} style={{flex: 1, borderRadius: 80}} />
                     <Badge style={{position: "absolute", backgroundColor: "white", elevation: 10}}>
-                     <Feather name="check" color="green"/>
+                     {this.getSessionBadge()}
                         </Badge>
                     {/*<View style={styles.initialView}>
                         <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>

@@ -33,14 +33,12 @@ LUPA_AUTH.onAuthStateChanged(user => {
  * 
  * This method assigns a user as logged in in firebase.
  */
-export var signUpUser = async (username, email, password, confirmedPassword,isTrainerAccount, agreedToTerms) => {
+export var signUpUser = async (username, email, password, confirmedPassword,isTrainerAccount, birthday, agreedToTerms) => {
     var USER_UUID, ANNOUNCEMENTS_PACK_UID;
     let signUpResultStatus = {
         result: true,
         reason: "",
     }
-
-
 
     await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
         USER_UUID = userCredential.user.uid
@@ -56,18 +54,17 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
         return Promise.resolve(signUpResultStatus);
     });
 
-    let userDoc = await LUPA_DB.collection('users').doc(USER_UUID);
-    
-  /*  await userDoc.update({
-        username: username,
-    })*/
+    //calculate age
+    //let age = await calculateAge(birthday);
+    let age = 26;
 
+    let userDoc = LUPA_DB.collection('users').doc(USER_UUID);
 
     // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong
 
     try {
-        let userData = getLupaUserStructure(USER_UUID, "", "", LUPA_AUTH.currentUser.email,
-        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], "");
+        let userData = getLupaUserStructure(USER_UUID, "", username, LUPA_AUTH.currentUser.email,
+        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, age, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], "");
     
         //Add user to users collection with UID.
     await LUPA_DB.collection('users').doc(USER_UUID).set(userData);

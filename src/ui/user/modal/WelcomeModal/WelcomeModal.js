@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
     Text,
@@ -22,26 +22,33 @@ import { SafeAreaView } from 'react-navigation';
 import WelcomeLupaIntroduction from './WelcomeLupaIntroduction';
 import WelcomeContentDriver from '../WelcomeContentDriver';
 import BasicInformation from './BasicInformation';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import TrainerInformation from './TrainerInformation';
 
+import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
 
-const getView = (viewNumber) => {
+
+const getView = (viewNumber, toggleNext, closeModalMethod) => {
     switch(viewNumber)
     {
         case 0:
-            return <WelcomeLupaIntroduction />
+            return <WelcomeLupaIntroduction setNextDisabled={toggleNext} />
         case 1:
-            return <BasicInformation />
+            return <BasicInformation setNextDisabled={toggleNext} />
         case 2:
             return <TrainerInformation />
         case 3:
-            return <WelcomeContentDriver />
+            return <WelcomeContentDriver closeModalMethod={closeModalMethod} />
     }
 }
 
 export default function WelcomeModal(props) {
     const [viewNumber, setViewNumber] = useState(0);
+    const [isNextEnabled, setIsNextEnabled] = useState(false);
+
+    useEffect(() => {
+        _requestPermissionsAsync();
+    }, [])
+
     return (
         <Modal presentationStyle="fullScreen" style={styles.modal} visible={props.isVisible} onDismiss={props.closeModalMethod}>
             <SafeAreaView>
@@ -51,12 +58,12 @@ export default function WelcomeModal(props) {
                     colors={['#FFFFFF', '#8AC5F3', '#0084EC']}
                     style={styles.container}>
                     {
-                        getView(viewNumber)
+                        getView(viewNumber, setIsNextEnabled, props.closeModalMethod)
                     }
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                         <Pagination dotsLength={3} activeDotIndex={viewNumber} />
                         {
-                            viewNumber != 3 ? <Button color="#0D47A1" mode="text" onPress={() => setViewNumber(viewNumber + 1)}> Next </Button> : <Button mode="contained" color="#0D47A1" onPress={props.closeModalMethod}> <Text> Explore Lupa </Text> </Button>
+                            viewNumber != 3 ? <Button disabled={isNextEnabled} color="#0D47A1" mode="text" onPress={() => setViewNumber(viewNumber + 1)}> Next </Button> : <Button mode="contained" color="#0D47A1" onPress={props.closeModalMethod}> <Text> Explore Lupa </Text> </Button>
                         }
                     </View>
                 </LinearGradient>
