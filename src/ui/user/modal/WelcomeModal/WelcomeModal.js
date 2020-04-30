@@ -7,6 +7,7 @@ import {
     Modal,
     Image,
     Dimensions,
+    SafeAreaView, 
 } from 'react-native';
 
 import {
@@ -17,8 +18,6 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { Pagination } from 'react-native-snap-carousel';
-import { SafeAreaView } from 'react-navigation';
-
 import WelcomeLupaIntroduction from './WelcomeLupaIntroduction';
 import WelcomeContentDriver from '../WelcomeContentDriver';
 import BasicInformation from './BasicInformation';
@@ -44,10 +43,6 @@ const getView = (viewNumber, toggleNext, closeModalMethod) => {
 export default function WelcomeModal(props) {
     const [viewNumber, setViewNumber] = useState(0);
     const [isNextEnabled, setIsNextEnabled] = useState(false);
-
-    useEffect(() => {
-        _requestPermissionsAsync();
-    }, [])
 
     return (
         <Modal presentationStyle="fullScreen" style={styles.modal} visible={props.isVisible} onDismiss={props.closeModalMethod}>

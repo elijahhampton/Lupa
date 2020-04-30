@@ -12,6 +12,10 @@ import {
     Surface
 } from 'react-native-paper';
 
+import {
+    Icon
+} from 'react-native-elements';
+
 export default class UpcomingSessionCard extends React.Component {
     constructor(props) {
         super(props);
@@ -27,24 +31,93 @@ export default class UpcomingSessionCard extends React.Component {
         return times[0];
     }
 
+    getTimeIcon = () => {
+        if (!this.getSessionStartTime())
+        {
+            return (
+                <Icon
+      raised
+      name='sun'
+      type='feather'
+      color='rgba(33,150,243 ,1)'
+      reverseColor="white"
+      size={6}
+      reverse
+      onPress={() => console.log('hello')} />
+                )
+        }
+
+        if (this.getSessionStartTime().charAt(0).toString() < 6)
+        {
+            return (
+            <Icon
+  raised
+  name='sun'
+  type='feather'
+  color='rgba(33,150,243 ,1)'
+  reverseColor="white"
+  size={10}
+  reverse
+  onPress={() => console.log('hello')} />
+            )
+        }
+
+        if (this.getSessionStartTime().charAt(0).toString() >=7 )
+        {
+           return (
+
+           <Icon
+            raised
+            name='moon'
+            type='feather'
+            color='#212121'
+            reverseColor="white"
+            size={10}
+            reverse
+            onPress={() => console.log('hello')} />
+           )
+        }
+        
+    }
+
     render() {
         return (
-            <Surface style={{flexDirection: "row", alignItems: "center", elevation: 8,  backgroundColor: "white", width: Dimensions.get('window').width - 20, height: 80, margin: 10, borderRadius: 20}}>
-                <Surface style={{margin: 10, elevation: 10, width: 65, height: 65, borderRadius: 80}}>
-                    <Image  style={{width: 65, height: 65, borderRadius: 80}} source={{uri: this.state.userData.photo_url}} />
+            <Surface 
+                style={{
+                    flexDirection: "row", 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    elevation: 0,  
+                    backgroundColor: "white", 
+                    width: Dimensions.get('window').width - 20, 
+                    height: 80, 
+                    margin: 10, 
+                    borderRadius: 20}}>
+                <Surface style={{margin: 10, elevation: 10, width: 45, height: 45, borderRadius: 40}}>
+                    <Image  style={{width: 45, height: 45, borderRadius: 45}} source={{uri: this.state.userData.photo_url}} />
                 </Surface>
-                <View>
-                    <Text style={{fontFamily: "avenir-roman"}}>
+                <View style={{backgroundColor: '#F2F2F2', padding: 20, borderRadius: 10, flex: 1, width: '80%', flexDirection: 'column', alignSelf: 'center', alignItems: 'flex-start', justifyContent: 'center'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                    <Text style={{fontWeight: 'bold'}}>
                         {this.state.userData.display_name}
                     </Text>
-                    <Text style={{fontFamily: "avenir-book"}}>
+
+                    <View style={{backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    {
+                        this.getTimeIcon()
+                    }
+                    
+                
+                    <Text style={{fontWeight: "bold"}}>
+                        5:00 PM
+                    </Text>
+                    </View>
+                </View>
+                    <Text style={{fontSize: 12, fontFamily: "avenir-book"}}>
                         {this.state.sessionData.locationData.name}
                     </Text>
-                    <Text style={{fontFamily: "avenir-book"}}>
+                    <Text style={{fontSize: 12, flexWrap: 'wrap'}}>
                     {this.state.sessionData.locationData.address}
-                    </Text>
-                    <Text style={{fontFamily: "avenir-next-bold", fontWeight: "bold"}}>
-                        {this.getSessionStartTime()}
                     </Text>
                 </View>
             </Surface>

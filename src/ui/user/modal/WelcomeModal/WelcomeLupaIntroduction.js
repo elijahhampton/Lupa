@@ -19,11 +19,15 @@ import {
 
 import Map from '../../../images/map.png'
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import getLocationFromCoordinates from '../../../../modules/location/mapquest/mapquest';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
 
+import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions'
+
+import { connect } from 'react-redux';
 //Activity Indicator to show while fetching location data
 const ActivityIndicatorModal = (props) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +39,24 @@ const ActivityIndicatorModal = (props) => {
     );
 }
 
-export default class WelcomeLupaIntroduction extends React.Component {
+mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
+
+mapDispatchToProps = dispatch => {
+    return {
+      updateCurrentUserAttribute: (payload) => {
+          dispatch({
+              type: "UPDATE_CURRENT_USER_ATTRIBUTE",
+              payload: payload
+          })
+      }
+    }
+  }
+
+class WelcomeLupaIntroduction extends React.Component {
     constructor(props) {
         super(props);
 
@@ -62,6 +83,7 @@ export default class WelcomeLupaIntroduction extends React.Component {
     }
 
     _getLocationAsync = async () => {
+        await _requestPermissionsAsync();
         let result;
         //show loading indicator
         await this.setState({
@@ -80,10 +102,15 @@ export default class WelcomeLupaIntroduction extends React.Component {
 
         //convert data into actual location
         const locationData = await getLocationFromCoordinates(this.state.location.coords.longitude, this.state.location.coords.latitude);
+
         const locationDataText = await locationData.city + ", " + locationData.state;
 
         //Update user location in database
         await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
+
+        //udpate user in redux
+        const payload = await getUpdateCurrentUserAttributeActionPayload('location', locationData, []);
+        await this.props.updateCurrentUserAttribute(payload);
 
         //hide loading indicator
         await this.setState({
@@ -196,3 +223,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 })
+
+export default connect(mapStateToProps, mapDispatchToProps)(WelcomeLupaIntroduction);

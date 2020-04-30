@@ -26,7 +26,7 @@ import * as Location from 'expo-location';
 
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
 
-import { Feather as Icon } from '@expo/vector-icons';
+import Feather from 'react-native-vector-icons/Feather';
 import getLocationFromCoordinates from '../../../../modules/location/mapquest/mapquest';
 
 import LupaController from '../../../../controller/lupa/LupaController';
@@ -125,9 +125,14 @@ class BasicInformation extends React.Component {
 
         await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('display_name', this.state.displayName);
 
-        await this.setState({
-            displayNameSet: true,
-        })
+        if (this.state.displayName.length >= 1)
+        {
+            await this.setState({
+                displayNameSet: true,
+            })
+        }
+
+        await this.checkDisplayNameInputText();
     }
 
     _handleUsernameEndEditing = () => {
@@ -180,7 +185,9 @@ class BasicInformation extends React.Component {
             }
         } catch(error)
         {
-            alert(error);
+            this.setState({
+                avatar: false
+            })
         }
     }
 
@@ -199,7 +206,7 @@ class BasicInformation extends React.Component {
 
 
     render() {
-        this.state.displayNameSet  == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
+        this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
         return (
                 <SafeAreaView style={{flex: 1}}>
 
@@ -216,7 +223,7 @@ class BasicInformation extends React.Component {
         What should we call you?
     </Headline>
     <Input 
-        placeholder="Ex. John Smith" 
+        placeholder="Enter your first and last name" 
         onChangeText={text => this._handleDisplayNameOnChangeText(text)} 
         onSubmitEditing={text => this._handleDisplayNameEndEditing()}
         value={this.state.displayName}

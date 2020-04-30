@@ -24,7 +24,7 @@ import _requestPermissionsAsync from '../../../../../controller/lupa/permissions
 
 import { Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
-import { Feather as Icon } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/Feather';
 
 import LupaMapView from '../../LupaMapView';
 

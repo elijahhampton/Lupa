@@ -15,6 +15,7 @@ import {
     Surface,
     Caption,
     IconButton,
+    Snackbar,
     Button,
     ActivityIndicator,
     Divider,
@@ -59,7 +60,15 @@ export default class CreateEvent extends React.Component {
             creatingPackEventDialogIsVisible: false,
             datetime: new Date(),
             isDateTimePickerVisible: false,
+            rejectedReason: "",
+            showSnack: false,
         }
+    }
+
+    _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
+
+    _onDismissSnackBar = () => {
+      this.setState({ showSnack: false });
     }
 
     resetState = () => {
@@ -88,6 +97,36 @@ export default class CreateEvent extends React.Component {
     }
 
     createEvent = async () => {
+        if (this.state.eventTitle == "")
+        {
+            this.setState({
+                showSnack: true,
+                rejectedReason: 'No event title'
+            })
+
+            return;
+        }
+
+        if (this.state.eventDescription == '')
+        {
+            this.setState({
+                showSnack: true,
+                rejectedReason: 'no event description'
+            })
+
+            return;
+        }
+
+        if (this.state.eventImage == "")
+        {
+            this.setState({
+                showSnack: true,
+                rejectedReason: 'no avatar'
+            })
+        }
+
+        //@todo add year in datetime scroller
+
         await this.setState({ creatingPackEventDialogIsVisible: true })
         let eventUUID, eventImageURL;
         //convert date to locale string
@@ -98,7 +137,7 @@ export default class CreateEvent extends React.Component {
             eventUUID = dataResults.data.pack_event_uuid;
             eventImageURL = dataResults.photo_url;
         })
-
+        
         await this.LUPA_CONTROLLER_INSTANCE.updatePackEvent(eventUUID, "pack_event_image", eventImageURL, []);
 
         await this.props.refreshData();
@@ -149,7 +188,9 @@ export default class CreateEvent extends React.Component {
                             colors: {
                             primary: "#2196F3"
                             },
-                        }}/>
+                        }}
+                        maxLength={40}
+                        />
                         </>
 
                         <>  
@@ -160,7 +201,9 @@ export default class CreateEvent extends React.Component {
                             roundness: 15,
                             colors: {
                             primary: "#2196F3",
-                        }}}/>
+                        }}}
+                        maxLength={360}
+                        />
 
                         </>
                 
@@ -186,6 +229,18 @@ export default class CreateEvent extends React.Component {
 
                 </SafeAreaView>
                 <CreatingPackEventActivityIndicator isVisible={this.state.creatingPackEventDialogIsVisible}/>
+                <Snackbar
+          style={{backgroundColor: '#212121'}}
+          theme={{ colors: { accent: '#2196F3' }}}
+          visible={this.state.showSnack}
+          onDismiss={this._onDismissSnackBar}
+          action={{
+            label: 'Okay',
+            onPress: () => this.setState({ showSnack: false }),
+          }}
+        >
+          {this.state.rejectedReason}
+        </Snackbar>
             </Modal>
         )
     }

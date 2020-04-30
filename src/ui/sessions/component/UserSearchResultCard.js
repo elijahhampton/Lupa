@@ -15,9 +15,8 @@ import {
     Avatar
 } from 'react-native-paper';
 
-import {
-    withNavigation
-} from 'react-navigation';
+
+import { withNavigation, NavigationActions } from 'react-navigation';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
@@ -91,7 +90,7 @@ class UserSearchResultCard extends React.Component {
                                 {this.props.title}
                             </Text>
                             <Text style={styles.subtitleText}>
-                                {this.props.email}
+                                {this.props.username}
                             </Text>
     
                         </View>

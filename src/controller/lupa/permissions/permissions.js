@@ -1,20 +1,23 @@
 import React from 'react';
 
 import {
-    Platform
+    Platform, Alert
 } from 'react-native';
 
 import * as Permissions from 'expo-permissions';
+import { requestNotificationPermission } from '../../firebase/firebase';
 
 export default _requestPermissionsAsync = async () => {
   const { status, expires, permissions } = await Permissions.askAsync(
     Permissions.LOCATION,
     Permissions.CAMERA_ROLL,
     Permissions.CAMERA,
-    Permissions.NOTIFICATIONS,
   );
-  if (status !== 'granted') {
 
+  await requestNotificationPermission();
+
+  if (status !== 'granted') {
+    alert('In order to use this app you must enable this permission.  Please visit the settings app on your phone to turn it on.');
   }
 }
 

@@ -7,6 +7,77 @@ import {
 import { getLupaProgramStructure } from '../../../model/data_structures/programs/program_structures';
 import { UserCollectionFields } from '../common/types';
 
+
+import * as EmailValidator from 'email-validator';
+import { enableNetworkProviderAsync } from 'expo-location';
+
+const USERNAME_MAXIMUM_CHARACTER_LIMIT = 30;
+const USERNAME_MINIMUM_CHARACTER_LIMIT = 6;
+const PASSWORD_MINIMUM_LIMIT_LOW = 7;
+const PASSWORD_MAXIMUM_LIMIT_HIGH = 10;
+const INVALID_USERNAME_CHARACTERS = [
+    '!',
+    '@',
+    '#',
+    '$',
+    '^',
+    '&',
+    '%',
+    '*',
+    '(',
+    ')',
+    '+',
+    '=',
+    '-',
+    '[',
+    ']',
+    '\/',
+    '/',
+    '{',
+    '}',
+    '|',
+    ':',
+    '<',
+    '>',
+    '?',
+    '.'
+    ]
+
+    const INVALID_PASSWORD_CHARACTERS = [
+        '@',
+        '#',
+        '$',
+        '^',
+        '&',
+        '%',
+        '*',
+        '(',
+        ')',
+        '+',
+        '=',
+        '-',
+        '[',
+        ']',
+        '\/',
+        '/',
+        '{',
+        '}',
+        '|',
+        ':',
+        '<',
+        '>',
+        '?',
+        '.'
+        ]
+
+        function usernameIsValid(username) {
+            return /^[0-9a-zA-Z_.-]+$/.test(username);
+        }
+
+        function isIllegalPassword(password) {
+            return !/^((?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%&*]{6,20})$/.test(password);
+        }
+
 /**
  * PROBLEMS:
  * 
@@ -24,6 +95,77 @@ LUPA_AUTH.onAuthStateChanged(user => {
     if (user) {console.log('loggin in')} else {console.log('loggin out')}
 })
 
+checkSignUpFields = (username, email, password, confirmedPassword, birthday, agreedToTerms) => {
+    //check if username is already in use
+    //const res = LUPA_CONTROLLER_INSTANCE.checkUserIsInUse(username);
+    /*
+    if (res)
+    {
+        return "username already in use"
+    }
+    */
+
+    let age = birthday;
+    agreedToTerms = true;
+
+    let errObject = {
+        reason: "",
+        field: "",
+    }
+
+    //check username length and characters
+    if (username.length <= USERNAME_MINIMUM_CHARACTER_LIMIT || username.length >=  USERNAME_MAXIMUM_CHARACTER_LIMIT || !usernameIsValid(username))
+    {
+        errObject.reason = 'username not valid'
+        errObject.field = 'Username'
+        return errObject
+    }
+
+
+    //check if valid email
+    if (!EmailValidator.validate(email))
+    {
+        errObject.reason = "email not valid"
+        errObject.field = 'Email'
+        return errObject
+    }
+
+    //check if password and confirmed password match
+    if (password !== confirmedPassword)
+    {
+        errObject.reason = 'passwords do not match';
+        errObject.field = 'Confirmed Password'
+        return errObject
+    }
+
+    //check if password is valid in length and illegal characters
+    if (isIllegalPassword(password))
+    {
+        errObject.reason = "password illegal";
+        errObject.field = "Password"
+        return errObject
+    }
+
+    //check if birthday is over 16 (or 18?)
+    //let age = await calculateAge(birthday);
+    if (age.getFullYear() < 1992)
+    {
+        errObject.reason = "age under 16"
+        errObject.field = 'Birthday'
+        return errObject
+    }
+
+    //check if user has agreed to terms
+    if (agreedToTerms === false)
+    {
+        errObject.reason = "agreed to terms false";
+        errObject.field = 'Terms'
+        return errObject
+    }
+
+    return -1;
+}
+
 /**
  *  Sign Up User
  * @param email User email to store
@@ -31,13 +173,27 @@ LUPA_AUTH.onAuthStateChanged(user => {
  * @promise Returns a promise with a user token filled with user information
  * @return result true or false based on if any errors occurred in the signUpUser function
  * 
- * This method assigns a user as logged in in firebase.
+ * This method as'gs://lupa-cd0e3.appspot.comsigns a user as logged in in firebase.
  */
 export var signUpUser = async (username, email, password, confirmedPassword,isTrainerAccount, birthday, agreedToTerms) => {
     var USER_UUID, ANNOUNCEMENTS_PACK_UID;
     let signUpResultStatus = {
         result: true,
         reason: "",
+        field: undefined,
+    }
+
+    //calculate age
+    //let age = await calculateAge(birthday);
+    let age = 26;
+
+    let err = await checkSignUpFields(username, email, password, confirmedPassword, birthday, agreedToTerms);
+   if (err != -1)
+    {
+        signUpResultStatus.reason = err.reason;
+        signUpResultStatus.result = false;
+        signUpResultStatus.field = err.field;
+        return Promise.resolve(signUpResultStatus);
     }
 
     await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
@@ -48,27 +204,26 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
 
         //Catch error on signup
     }).catch(err => {
-        alert(err);
-        signUpResultStatus.result = false;
-        signUpResultStatus.reason = err;
+       signUpResultStatus.result = false;
+       signUpResultStatus.reason = err;
         return Promise.resolve(signUpResultStatus);
     });
-
-    //calculate age
-    //let age = await calculateAge(birthday);
-    let age = 26;
 
     let userDoc = LUPA_DB.collection('users').doc(USER_UUID);
 
     // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong
-
     try {
         let userData = getLupaUserStructure(USER_UUID, "", username, LUPA_AUTH.currentUser.email,
-        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, age, "", "", isTrainerAccount, "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], "");
+        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, age, "", "", isTrainerAccount, 
+        "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], "", [], {});
     
         //Add user to users collection with UID.
     await LUPA_DB.collection('users').doc(USER_UUID).set(userData);
+    } catch (err) {
+        
+    }
 
+    try {
     await LUPA_DB.collection('packs').where('pack_title', '==', "Announcements").limit(1).get().then(snapshot => {
         let packID;
         snapshot.forEach(doc => {
@@ -90,23 +245,26 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
             console.log('bushh')
         });
     });
+} catch(err) {
 
+}
 
+    try {
     //Add user in health data collection
     let userHealthData = getLupaHealthDataStructure(USER_UUID);
     await LUPA_DB.collection('health_data').doc(USER_UUID).set(userHealthData).catch(err => {
+
     })
-    } catch(error)
-    {   
-        alert(err)
-        //handle error here
-    }
+} catch(err) {
+
+}
 
     try {
         
         let program = getLupaProgramStructure();
         await LUPA_DB.collection('users').doc(USER_UUID).collection('programs').add(program);
-    } catch(err)
+    } 
+    catch(err)
     {
         console.log("trying to add user program.. err")
     }
@@ -120,7 +278,7 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
  * @param {*} password 
  */
 export var loginUser = async (email, password) => {
-    let result;
+    let result = false;
     await LUPA_AUTH.signInWithEmailAndPassword(email, password).then(userCredential => {
         result = true;
     }).catch(err => {

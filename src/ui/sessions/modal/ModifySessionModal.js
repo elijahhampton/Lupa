@@ -6,6 +6,7 @@ import {
     StyleSheet,
     ScrollView,
     DatePickerIOS,
+    Button as NativeButton,
     RefreshControl
 } from 'react-native';
 import { 
@@ -321,6 +322,12 @@ class ModifySessionModal extends React.Component {
     )
 
     showConfirmationButton = () => {
+        if (this.state.sessionData.sessionStatus == 'Set')
+        {
+            return <NativeButton title="Session Complete" onPress={() => this.LUPA_CONTROLLER_INSTANCE.completeSession(this.state.sessionUUID)} />
+        }
+
+
         return this.state.currUserData.user_uuid == this.state.userWhoReceivedRequestData.user_uuid && this.state.sessionData.sessionStatus != "Set"?
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                         <Button mode="text" color="#2196F3" onPress={() => this.handleSessionConfirmation()}>
@@ -432,7 +439,7 @@ Decline Session
                     Session Location: {this.getSessionLocationName()} ({this.getSessionLocationAddress()})
                 </Text>
             </View>
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
                 <Caption>
                     Lupa sessions are not officially monitored.  It is the responsibility of the individual to verify who they are meeting with.  Don't meet with strangers and always meet in public spaces.
                 </Caption>

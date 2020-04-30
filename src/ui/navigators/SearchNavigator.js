@@ -1,5 +1,8 @@
 import React from 'react';
 
+//import { NavigationContainer } from '@react-navigation/native';
+//import { createStackNavigator } from '@react-navigation/stack';
+
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -8,17 +11,56 @@ import SessionsView from '../sessions/CreateSessionModal';
 import SearchView from '../sessions/SearchView';
 import PackModal from '../packs/PackModal';
 import { PackChatModal as PackChat } from '../packs/PackChatModal';
-
+import BuildAWorkout from '../workout/BuildWorkout';
 import PrivateChat from '../user/chat/PrivateChat'
+import MyPrograms from '../workout/Programs';
 
 import MessagesView from '../user/chat/MessagesView';
+import Programs from '../workout/Programs';
+
+/*
+const Stack = createStackNavigator();
+
+export default function SessionsStackNavigator() {
+  return (
+    <NavigationContainer independent={true}>
+    <Stack.Navigator
+      initialRouteName="SearchView"
+      screenOptions={{ gestureEnabled: false }}
+      headerMode="none"
+    >
+      <Stack.Screen
+        name="SearchView"
+        component={SearchView}
+      />
+            <Stack.Screen
+        name="Profile"
+        component={Profile}
+      />
+                  <Stack.Screen
+        name="SessionsView"
+        component={SessionsView}
+      />
+          <Stack.Screen
+        name="MessagesView"
+        component={MessagesView}
+        />
+    </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function SessionsNavigator() {
+    return <SessionsStackNavigator />
+}
+*/
 
 const UserViewNavigator =  createStackNavigator(
     {
-        /* Added the search view here because navigation didn't work to 
+         /*Added the search view here because navigation didn't work to 
         the user profile view without it.. need to reconsider the design of this in the future */
     SearchView: {
-        screen: () => <SearchView />,
+        screen: (props) => <SearchView />,
         navigationOptions: ({navigation}) => ({
             title: "SearchView",
             header: null,
@@ -33,6 +75,14 @@ const UserViewNavigator =  createStackNavigator(
             gesturesEnabled: false,
         })
     },
+    BuildAWorkout: {
+      screen: (props) => <BuildAWorkout {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      navigationOptions:   ({navigation}) => ({
+          title: "Build a Workout",
+          header: null,
+          gesturesEnabled: false,
+      })
+    },
     SessionsView: {
         screen: SessionsView,
         navigationOptions: ({navigation}) => ({
@@ -45,6 +95,14 @@ const UserViewNavigator =  createStackNavigator(
         screen: MessagesView,
         navigationOptions:   ({navigation}) => ({
             title: "MessagesView",
+            header: null,
+            gesturesEnabled: false,
+        })
+      },
+      Programs: {
+        screen: (props) => <Programs {...props} enableSwipe={props.screenProps.enableSwipe} disableSwipe={props.screenProps.disableSwipe} />,
+        navigationOptions:   ({navigation}) => ({
+            title: "Programs",
             header: null,
             gesturesEnabled: false,
         })

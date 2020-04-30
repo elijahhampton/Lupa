@@ -8,7 +8,8 @@ import {
     Button,
     ScrollView,
     TouchableOpacity,
-    Modal
+    Modal,
+    SafeAreaView,
 } from 'react-native';
 
 import {
@@ -28,18 +29,19 @@ import {
     Body,
 } from 'native-base'
 
-import WebView from 'react-native-webview';
+import PushNotification from 'react-native-push-notification'
 
 import {Pagination } from 'react-native-snap-carousel';
 
-import { Feather as FeatherIcon, MaterialIcons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-navigation';
+import FeatherIcon from "react-native-vector-icons/Feather"
 
 import LiveWorkout from './modal/LiveWorkout';
 
 import { connect } from 'react-redux';
 
 import MapView from 'react-native-maps';
+import { sendNotificationToDevice } from '../../modules/push-notifications';
+
 
 class WorkoutHome extends React.Component {
     constructor(props) {
@@ -59,6 +61,11 @@ class WorkoutHome extends React.Component {
     handleCloseLiveWorkout = () => {
          this.setState({ showLiveWorkout: false })
     }
+
+    click = () => {
+        sendNotificationToDevice()
+    }
+
     render() {
         return (
                 <View style={{flex: 1}}>
@@ -78,7 +85,8 @@ class WorkoutHome extends React.Component {
                     </Right>
                 </Header>
                 <View style={{flex: 5}}>
-                    {
+                    {   
+                    this.props.lupa_data.Programs.currUserProgramsState.length ?
                         this.props.lupa_data.Programs.currUserProgramsState.map(program => {
                             
                             return (
@@ -92,13 +100,19 @@ class WorkoutHome extends React.Component {
                             </TouchableOpacity>
                             )
                         })
+                        :
+                        null
                     }
                 </View>
+
+                <Button title="Local" onPress={this.click}/>
+            
 
                 <View style={{flex: 1.5}}>
                 <Text style={{marginLeft: 20,fontSize: 25, fontWeight: "800"}}>
                         Quick start
                     </Text>
+
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} centerContent={true} contentContainerStyle={{alignItems: "center", justifyContent: "center"}}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('BuildAWorkout')}>
                         <Surface 

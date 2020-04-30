@@ -20,7 +20,7 @@ import {
     ActionSheetIOS,
     TextInput,
     Dimensions,
-    Modal,
+    SafeAreaView,
 } from "react-native";
 
 import {
@@ -42,6 +42,7 @@ import {
     Fab,
     Header,
     Left,
+    Body,
     Right
 } from 'native-base';
 
@@ -53,8 +54,6 @@ import {
 import Timecards from './component/Timecards';
 
 import { ImagePicker } from 'expo-image-picker';
-
-import SafeAreaView from 'react-native-safe-area-view';
 
 import LupaMapView from '../modal/LupaMapView'
 
@@ -70,7 +69,10 @@ import { connect } from 'react-redux';
 
 import ProfilePicture from '../../images/profile_picture1.jpeg';
 
-import { Feather as FeatherIcon } from '@expo/vector-icons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+FeatherIcon.loadFont();
+
 import { Pagination } from 'react-native-snap-carousel';
 
 let chosenHeaderImage;
@@ -122,7 +124,77 @@ const InviteToPackDialog = props => {
                     }
                 </Dialog.Content>
                 <Dialog.Actions>
-                    <Button onPress={() => this.handleDialogClose()}>Done</Button>
+                    <Button onPress={() => this.handleDialogClose()}>Invite</Button>
+                </Dialog.Actions>
+            </Dialog>
+        </Portal>
+    )
+}
+
+const USER_INTEREST = [
+        'Improve Strength',
+        'Improve Power',
+        'Improve Endurance',
+        'Improve Speed',
+        'Improve Flexibility',
+        'Improve Agility'
+]
+
+const UpdateInterestDialog = props => {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    let [fitnessInterest, setFitnessInterest] = useState([]);
+
+
+    handleDialogClose = () => {
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest_arr', fitnessInterest);
+        props.closeModalMethod();
+    }
+
+    handleChipSelection = async (interest) => {
+        let interestArr = fitnessInterest;
+        await interestArr.includes(interest) ? 
+            interestArr.splice(interestArr.indexOf(interest), 1) 
+            : 
+            interestArr.push(interest);
+
+            await setFitnessInterest(interestArr)
+    }
+
+    getChipMode = (interest) => {
+        return fitnessInterest.includes(interest) ? "flat" : "outlined"
+    }
+
+    return (
+        <Portal>
+            <Dialog
+                visible={props.isOpen}
+                onDismiss={props.closeModalMethod}
+                style={{borderRadius: 15, backgroundColor: "#212121"}}>
+                <Dialog.Title style={{color: 'white'}}> Update Interest </Dialog.Title>
+                <Dialog.Content>
+                    <ScrollView contentContainerStyle={{flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center'}}>
+                        {
+                            USER_INTEREST.map(interest => {
+                                return (
+                                    <Chip 
+                                        mode={getChipMode(interest)} onPress={() => handleChipSelection(interest)} 
+                                        textStyle={fitnessInterest.includes(interest) ? [styles.selectedChipText] : [styles.unselectedChipText]} 
+                                        style={fitnessInterest.includes(interest) ? [styles.selectedChip, styles.selectedChipText] : [styles.unselectedChip, styles.unselectedChipText]}
+                                        >
+                                        {interest}
+                                    </Chip>
+                                )
+                            })
+                        }
+                    </ScrollView>
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button color="rgba(30,136,229 ,1)" onPress={() => this.handleDialogClose()} theme={{
+                        colors: {
+                            primary: "rgba(30,136,229 ,1)"
+                        }
+                    }}>Update</Button>
                 </Dialog.Actions>
             </Dialog>
         </Portal>
@@ -135,6 +207,10 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+const mapDispatchToProps = dispatchEvent => {
+    
+}
+
 /**
  * Lupa Profile View
  * 
@@ -142,10 +218,9 @@ const mapStateToProps = (state, action) => {
  * made here.
  * 
  * TODO:
- * ADD EDIT, ADD, and DELETE buttons for content.  (The delete buttons will be mapped beside content in each content area.).
- * EVERYTHINGG SHOULD MAP FROM THE STATE NOT REDUX STORE
+ * @todo Fix Fitness Interest surface displaying wrong caption for current user.
  */
-class ModalProfileView extends React.Component {
+class ProfileView extends React.Component {
     constructor(props) {
         super(props);
 
@@ -166,6 +241,9 @@ class ModalProfileView extends React.Component {
             checkbox: false,
             bio: '',
             sessionReviews: [],
+            fitnessInterestDialogOpen: false,
+            city: '',
+            state: '',
         }
     }
 
@@ -181,10 +259,14 @@ class ModalProfileView extends React.Component {
         await this.generateSessionReviewData();
     }
 
+    componentWillUnmount = () => {
+        
+    }
+
     _getId() {
         let id = false;
-        if (this.props.userUUID) {
-            id = this.props.userUUID;
+        if (this.props.navigation.state.params) {
+            id = this.props.navigation.state.params.userUUID;
         }
         return id;
     }
@@ -238,24 +320,37 @@ class ModalProfileView extends React.Component {
             interest: userInfo.interest,
             userRecommendedWorkouts: workoutData,
             bio: userInfo.bio,
+            city: userInfo.city,
+            state: userInfo.state,
         });
     }
 
     handleFollowUser = async () => {
         let userToFollow = this.state.userUUID;
-        this.LUPA_CONTROLLER_INSTANCE.followUser(userToFollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
-        await this.setupProfileInformation();
+        await this.LUPA_CONTROLLER_INSTANCE.followUser(userToFollow, this.props.lupa_data.Users.currUserData.user_uuid);
+
+        //Update visible state for user to see
+        const followers = this.state.followers;
+        followers.push(this.props.lupa_data.Users.currUserData.user_uuid)
+        await this.setState({
+            followers: followers
+        })
     }
 
     handleUnFollowUser = async () => {
         let userToUnfollow = this.state.userUUID;
-        this.LUPA_CONTROLLER_INSTANCE.unfollowUser(userToUnfollow, this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid);
-        await this.setupProfileInformation();
+        await this.LUPA_CONTROLLER_INSTANCE.unfollowUser(userToUnfollow, this.props.lupa_data.Users.currUserData.user_uuid);
+        
+        const followers = this.state.followers;
+        followers.splice(this.state.followers.indexOf(userToUnfollow), 1);
+        await this.setState({
+            followers: followers,
+        })
     }
 
     _navigateToSessionsView = () => {
         this.props.navigation.navigate('SessionsView', {
-            userUUID: this._getId
+            userUUID: this.props.navigation.state.params.userUUID
         });
     }
 
@@ -291,17 +386,40 @@ class ModalProfileView extends React.Component {
         this.setState({ followerModalIsOpen: false });
     }
 
+    addFitnessInterest = () => {
+        this.setState({ fitnessInterestDialogOpen: true })
+    }
+
+    closeFitnessInterestDialog = () => {
+        this.setState({ fitnessInterestDialogOpen: false })
+    }
+
     mapInterest = () => {
-        return this.state.interest.length == 0 ?
-            <Caption>
-                Specializations and strengths that you add to your fitness profile will appear here.
-                                </Caption> : this.state.userData.interest.map(interest => {
-                return (
-                    <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
-                        {interest}
-                    </Chip>
-                );
-            })
+        return this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
+        this.state.interest.length == 0 ?
+        <Caption>
+            Specializations and strengths that you add to your fitness profile will appear here.
+         </Caption> : 
+        this.state.userData.interest.map(interest => {
+            return (
+                <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
+                    {interest}
+                </Chip>
+            );
+        })
+        :
+        this.state.interest.length == 0 ?
+        <Caption>
+            This user has not added any fitness interest.
+         </Caption> : 
+        this.state.userData.interest.map(interest => {
+            return (
+                <Chip style={styles.chipStyle} textStyle={styles.chipTextStyle}>
+                    {interest}
+                </Chip>
+            );
+        })
+
     }
 
     mapPacks = () => {
@@ -328,32 +446,25 @@ class ModalProfileView extends React.Component {
 
     mapBio = () => {
         //if current user viewing profile
-        console.log(this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid)
         if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid) {
             return this.state.isEditingBio == false ?
                 this.state.bio.length == 0 ?
-                    <Caption>
-                        Looks like you have nothing to say.
-                </Caption>
+                    null
                     :
-                    <Text allowFontScaling={true} allowsEditing={false}>
+                    <Text allowFontScaling={true} allowsEditing={false} style={{width: '100%', fontSize: 11, fontWeight: '400'}}>
                         {this.state.bio}
                     </Text>
                 :
-                <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
+                <TextInput maxLength={150} editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
         }
         //if another user viewing profile
         else {
             return this.state.isEditingBio == false ?
+                this.state.bio.length == 0 ?
+                null
+                :
                 <Text allowFontScaling={true} allowsEditing={false}>
-                    {
-                        this.state.bio.length == 0 ?
-                            <Caption>
-                                This user hasn't setup a bio yet.
-                </Caption>
-                            :
-                            this.state.bio
-                    }
+                    {this.state.bio}
                 </Text>
                 :
                 <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
@@ -364,7 +475,7 @@ class ModalProfileView extends React.Component {
         if (this.state.userRecommendedWorkouts.length == 0) {
             return <View>
                 <Caption>
-                    You don't have any recommended workouts saved!  You can recommend workouts from the workout library inside of your goal pathways.
+                    You don't have any recommended workouts saved!  You can recommend workouts from the workout library located on in the workout home.
 </Caption>
             </View>
         }
@@ -390,9 +501,9 @@ class ModalProfileView extends React.Component {
 
         if (this.state.userData)
         {
-            if (this.state.userData.sessions_reviews.length != 0)
+            if (this.state.userData.session_reviews.length != 0)
             {
-                let reviewData = this.state.userData.sessions_reviews;
+                let reviewData = this.state.userData.session_reviews;
                 for (let i = 0; i < reviewData.length; ++i)
                 {
                     //get users uuid from review object
@@ -486,63 +597,61 @@ class ModalProfileView extends React.Component {
         }
     }
 
-    getHeaderLeft = () => {
-       /* if (this.props.navigation.state.params.navFrom) {
-            switch (this.props.navigation.state.params.navFrom) {
-                case 'Drawer':
-                    return <IconButton icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
-                default:
-                    return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
-
-
-            }
-        }
-
-        return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} /> */
-    }
-
     getHeaderRight = () => {
-       /* if (this.props.navigation.state.params.navFrom) {
+        if (this.props.navigation.state.params.navFrom) {
             switch (this.props.navigation.state.params.navFrom) {
                 case 'Drawer':
-                    return <IconButton icon="more-horiz" size={20} onPress={() => this._navigateToSettings()} />
+                    return ( 
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                <IconButton icon="more-horiz" size={20} onPress={() => this._navigateToSettings()} />
+                    <IconButton icon="email" size={20} onPress={() =>
+                        this.props.navigation.dispatch(
+
+                            NavigationActions.navigate({
+                                routeName: 'MessagesView',
+                                action: NavigationActions.navigate({ routeName: 'MessagesView' })
+                            })
+                        )} />
+                        </View>
+                    )
                 default:
                     return <FeatherIcon name="plus-circle" size={20} onPress={() => this._showActionSheet()} />
             }
-        }*/
+        }
     }
 
     renderInteractions = () => {
-        /*return this.props.lupa_data.Users.currUserData.user_uuid == this.state.userUUID ?
-            <View style={{ padding: 10, width: '100%', alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row' }}>
-            
-
-                <Icon
-                    name='inbox'
-                    type='message'
-                    color='#2196F3'
-                    size={20}
-                    raised
-                    style={{ backgroundColor: "black", position: 'absolute', left: 0 }}
-                    underlayColor={{ backgroundColor: "black" }}
-                    reverseColor="white"
-                    reverse
-                    onPress={
-                        () =>
-                            this.props.navigation.dispatch(
-
-                                NavigationActions.navigate({
-                                    routeName: 'MessagesView',
-                                    action: NavigationActions.navigate({ routeName: 'MessagesView' })
-                                })
-                            )
-                    }
-                />
-            </View>
+        return this.props.lupa_data.Users.currUserData.user_uuid == this.state.userUUID ?
+            null
             :
-            <View style={{ width: '100%', margin: 10, padding: 10,alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row' }}>
+            <View style={{ width: Dimensions.get('window').width, margin: 10, padding: 10,alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                {
+                    this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
 
-                <Icon
+                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 8 }} theme={{
+                            roundness: 20,
+                            colors: {
+                                primary: '#2196F3',
+                            }
+                        }}>
+                            <Text>
+                                Unfollow
+</Text>
+                        </Button>
+                        :
+                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 8 }} theme={{
+                            roundness: 20,
+                            colors: {
+                                primary: 'white',
+                            }
+                        }}>
+                            <Text>
+                                Follow
+    </Text>
+                        </Button>
+                }
+
+<Icon
                     name='send'
                     type='feather'
                     color='#2196F3'
@@ -569,42 +678,9 @@ class ModalProfileView extends React.Component {
 
                     }
                 />
-
-
-
-
-
-
-                {
-                    this.state.followers.includes(this.currUserUUID) ?
-
-                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{ padding: 3, margin: 10, width: "auto", elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: '#2196F3',
-                                text: "white",
-                            }
-                        }}>
-                            <Text>
-                                Unfollow
-</Text>
-                        </Button>
-                        :
-                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, width: "25%", elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: 'white',
-                                text: "#2196F3",
-                            }
-                        }}>
-                            <Text>
-                                Follow
-    </Text>
-                        </Button>
-                }
             </View>
 
-*/
+
     }
 
     _showDialog = () => this.setState({ dialogVisible: true });
@@ -638,19 +714,23 @@ class ModalProfileView extends React.Component {
             secondInitial = display_name[1].charAt(0);
         }
 
-        if (this.state.profileImage == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid
-            || this.state.profileImage == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
+        if (this.state.userData.photo_url == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid
+            || this.state.userData.photo_url == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
             return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
                 elevation: 3,
             }} />
         }
 
         try {
-            if (this.props.lupa_data.Users.currUserData.user_uuid == this.currUserUUID) {
-                return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} showEditButton={true} onPress={this._chooseProfilePictureFromCameraRoll} />
+            if (this.props.lupa_data.Users.currUserData.user_uuid == this._getId()) {
+                return (
+                    <Surface style={{elevation: 8, width: 65, height: 65, borderRadius: 65}}>
+                         <ReactNativeElementsAvatar raised rounded size={65} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} showEditButton={true} onPress={this._chooseProfilePictureFromCameraRoll} />
+                    </Surface>
+                )
             }
 
-            return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.state.profileImage }} />
+            return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.state.userData.photo_url }} />
         }
         catch (err) {
             return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
@@ -659,41 +739,58 @@ class ModalProfileView extends React.Component {
         }
     }
 
+    getLocation = () => {
+            return this.currUserUUID = this.props.lupa_data.Users.currUserData.user_uuid ?
+                <View style={{alignItems: 'center', flexDirection: 'row'}}>
+                <MaterialIcons name="place" />
+                                                <Text style={{ fontSize: 12, color: "#212121", fontWeight: "600", padding: 1 }}>
+                                   {this.props.lupa_data.Users.currUserData.location.city + ", " + this.props.lupa_data.Users.currUserData.location.state}
+                                </Text>
+            </View>
+            :
+            <View style={{alignItems: 'center', flexDirection: 'row'}}>
+                <MaterialIcons name="place" />
+                                                <Text style={{ fontSize: 12, color: "#212121", fontWeight: "600", padding: 1 }}>
+                                   {this.state.userData.city+ ", " + this.state.userData.state}
+                                </Text>
+            </View>
+    }
+
     render() {
         return (
-            <Modal style={styles.container} presentationStyle="pageSheet" visible={this.props.isVisible}>
+            <Modal presentationStyle="fullScreen" style={styles.container}>
                 <ScrollView>
-                <Appbar.Header style={{ backgroundColor: "transparent" }}>
-                    <Left>
-                        {this.getHeaderLeft()}
-                    </Left>
+                <Appbar.Header style={{ backgroundColor: "transparent", margin: 10 }}>
+                    <NativeButton title="Close" onPress={this.props.closeModalMethod}/>
 
-                    <Right>
-                        {this.getHeaderRight()}
-                    </Right>
+                    <Appbar.Content title={this.state.userData.username} />
                 </Appbar.Header>
 
                 <ScrollView contentContainerStyle={{ flexGrow: 2, flexDirection: 'column', justifyContent: 'space-between' }} showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
                     <View style={styles.user}>
                         <View style={styles.userInfoContainer}>
-                            <View style={styles.userInfo}>
-                                <Text style={{ fontSize: 18, fontWeight: 'bold', padding: 1 }}>
+                            <View style={[{width: '70%'}, styles.userInfo]}>
+                                <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
                                     {this.state.userData.display_name}
                                 </Text>
-                                <Text style={{ fontSize: 15, fontWeight: "600", padding: 1 }}>
-                                    {this.state.userData.username}
-                                </Text>
+                                {
+                                    this.getLocation()
+                                }
                                 {
                                     true && this.state.userData.isTrainer ? <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
                                         Lupa Trainer
-                            </Text> : <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
-                                            Lupa User
-                            </Text>
+                            </Text> : null
                                 }
                             </View>
-                            <View style={styles.alignCenterColumn}>
+                            <View style={[{width: '30%'}, styles.alignCenterColumn]}>
                                 {this.getUserAvatar()}
                             </View>
+                        </View>
+
+                        <View style={{alignSelf: 'center', margin: 0, padding: 5, width: '85%', alignItems: 'center', justifyContent: 'center'}}>
+                        {
+                                         this.mapBio()
+                                    }
                         </View>
 
                         <View style={styles.userAttributesContainer}>
@@ -719,44 +816,48 @@ class ModalProfileView extends React.Component {
                                 </View>
                             </TouchableOpacity>
 
+
+
                         </View>
+
+                        <Timecards userUUID={this._getId()} />
 
                         {
                             this.renderInteractions()
                         }
+
+                        <Divider />
+
+                        <View style={styles.myPacks}>
+                        {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
+                            <Text style={{fontSize: 15, padding: 10}}>
+                                My Packs
+                            </Text>
+                            :
+                            <Text style={{alignSelf: 'center', fontSize: 15, padding: 10, fontWeight: '600'}}>
+                                {this.state.userData.display_name}'s Packs
+                        </Text>
+                        }
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            {this.mapPacks()}
+                        </ScrollView>
+                    </View>
                     </View>
 
-                    <Divider />
-
-                    <Timecards />
-
-                    <Divider />
-                    <>
-                        <Surface style={styles.contentSurface}>
-                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Title>
-                                    Bio
-                        </Title>
-                                {
-                                    this.renderFinishEditingBioButton()
-                                }
-
-                            </View>
-                            <Divider />
-                            <View style={{ justifyContent: "flex-start", padding: 5 }}>
-                                {
-                                    this.mapBio()
-                                }
-                            </View>
-                        </Surface>
-                    </>
-
-                    {/* interest mapping */}
                     <Surface style={[styles.contentSurface, { elevation: 8, backgroundColor: "#2196F3" }]}>
                         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ color: 'white', fontSize: 20, fontFamily: "avenir-medium", fontWeight: "bold" }}>
-                                Fitness Interest and Goals
+                                Fitness Interest
                                 </Text>
+
+                                {
+                                    this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
+                                    <Button color="white" mode="text" onPress={() => this.addFitnessInterest()}>
+                                        Edit
+                                    </Button>    
+                                    :
+                                    null
+                                }
                         </View>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center' }}>
                             {
@@ -764,23 +865,6 @@ class ModalProfileView extends React.Component {
                             }
                         </View>
                     </Surface>
-                    {/*</View> */}
-
-
-                    <View style={styles.myPacks}>
-                        {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
-                            <Title>
-                                My Packs
-                            </Title>
-                            :
-                            <Title>
-                                {this.state.userData.display_name}'s Packs
-                        </Title>
-                        }
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {this.mapPacks()}
-                        </ScrollView>
-                    </View>
 
                     <View style={styles.recommendedWorkouts}>
                         <View style={styles.recommendedWorkoutsHeader}>
@@ -829,15 +913,21 @@ class ModalProfileView extends React.Component {
                             null
                     }
                 </ScrollView>
-                <FAB
+                {
+                    this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
+                    <FAB
                     style={styles.fab}
                     small={false}
                     icon="today"
                     onPress={this._navigateToSessionsView}
-
                 />
-                {/*<InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />*/}
-                </ScrollView>
+                :
+                null
+                }
+                
+                <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
+                <UpdateInterestDialog userToUpdate={this.props.navigation.state.params.userUUID} isOpen={this.state.fitnessInterestDialogOpen} closeModalMethod={this.closeFitnessInterestDialog}/>
+            </ScrollView>
             </Modal>
         );
     }
@@ -845,6 +935,7 @@ class ModalProfileView extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         backgroundColor: "#FAFAFA",
     },
     menuIcon: {
@@ -884,7 +975,7 @@ const styles = StyleSheet.create({
     },
     myPacks: {
         backgroundColor: "transparent",
-        margin: 10,
+        padding: 5,
     },
     recommendedWorkouts: {
         backgroundColor: "transparent",
@@ -907,10 +998,11 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
     userAttributesContainer: {
-        flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", margin: 3
+        flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", margin: 20
     },
     userAttributeText: {
-        fontWeight: "bold"
+        fontWeight: "500",
+        color: "rgba(33,33,33 ,1)"
     },
     imageBackground: {
         width: "100%",
@@ -928,92 +1020,40 @@ const styles = StyleSheet.create({
     },
     fab: {
         position: 'absolute',
-        margin: 16,
+        marginBottom: 15,
+        marginRight: 15, 
         right: 0,
-        bottom: 5,
-        color: "#637DFF",
-        backgroundColor: "#2196F3"
-    },
-    fab: {
-        position: 'absolute',
         bottom: 0,
-        marginBottom: 16, marginRight: 16,
-        right: 0,
         backgroundColor: "#2196F3"
     },
+    selectedChip: {
+        elevation: 5,
+        margin: 5,
+        width: '100',
+        height: 'auto',
+        backgroundColor: "#2196F3",
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    selectedChipText: {
+        color: '#FFFFFF',
+    },
+    unselectedChip: {
+        elevation: 0,
+        margin: 5,
+        width: 'auto',
+        height: 'auto',
+        opacity: 0.6,
+        backgroundColor: "transparent",
+        borderColor: 'rgba(30,136,229 ,1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2, 
+    },
+    unselectedChipText: {
+        color: "rgba(33,150,243 ,1)"
+    }
+
 });
 
-export default connect(mapStateToProps)(withNavigation(ModalProfileView));
-
- /*  <Button mode="contained"
-                    style={{ padding: 3, margin: 10, flex: 3, elevation: 8, alignSelf: "center" }}
-                    onPress={() =>
-                        this.props.navigation.dispatch(
-
-                            NavigationActions.navigate({
-                                routeName: 'MessagesView',
-                                action: NavigationActions.navigate({ routeName: 'MessagesView' })
-                            })
-                        )
-                    }
-                    theme={{
-                        roundness: 20,
-                        colors: {
-                            primary: "#2196F3"
-                        }
-                    }}>
-                    <Text>
-                        View Messages
-</Text>
-                </Button>*/
-
-                
-                    /*
-
-                    <Button onPress={() =>
-                    this.props.navigation.dispatch(
-
-                        NavigationActions.navigate({
-                            routeName: 'PrivateChat',
-                            params: {
-                                currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-                                otherUserUUID: this.props.navigation.state.params.userUUID
-                            },
-                            action: NavigationActions.navigate({
-                                routeName: 'PrivateChat', params: {
-                                    currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-                                    otherUserUUID: this.props.navigation.state.params.userUUID
-                                }
-                            })
-                        })
-                    )
-                }
-                    mode="contained"
-                    style={{ padding: 3, margin: 10, flex: 3, elevation: 8 }}
-                    theme={{
-                        roundness: 20,
-                        colors: {
-                            primary: "#2196F3"
-                        }
-                    }}>
-                    <Text>
-                        Send a Message
-</Text>
-                </Button>
-
-
-
-----------------------
-
-<Button onPress={() => this.handleFollowUser()} mode="contained" style={{ padding: 3, margin: 10, flex: 1, elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: 'white',
-                                text: "#2196F3",
-                            }
-                        }}>
-                            <Text>
-                                Follow
-    </Text>
-                        </Button>
-                    */
+export default connect(mapStateToProps)(withNavigation(ProfileView));

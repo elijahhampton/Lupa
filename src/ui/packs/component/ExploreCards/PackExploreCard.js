@@ -22,8 +22,9 @@ import {
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
-import { NavigationContext, withNavigation, NavigationActions } from 'react-navigation';
 
+import { withNavigation, NavigationActions } from 'react-navigation';
+import { NavigationContext } from '@react-navigation/native';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 

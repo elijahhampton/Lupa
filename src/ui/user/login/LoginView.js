@@ -15,13 +15,21 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  SafeAreaView
 } from "react-native";
 
-import SafeAreaView from 'react-native-safe-area-view';
-import {Input, Button as ElementsButton } from "react-native-elements";
+import {
+  Snackbar
+} from 'react-native-paper';
+
+import {
+  Input, 
+  Button as ElementsButton 
+} from "react-native-elements";
+
 import LupaController from '../../../controller/lupa/LupaController';
 
-import loadFonts from '../../common/Font/index'
+import { withNavigation } from 'react-navigation';
 
 const {
   loginUser,
@@ -64,6 +72,12 @@ mapDispatchToProps = dispatch => {
         type: 'UPDATE_LUPA_WORKOUTS',
         payload: lupaWorkoutsData,
       })
+    },
+    updateLupaAssessments: (lupaAssessmentData) => {
+      dispatch({
+        type: 'UPDATE_LUPA_ASSESSMENTS',
+        payload: lupaAssessmentData
+      })
     }
   }
 }
@@ -78,10 +92,12 @@ class LoginView extends Component {
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     this.state = {
-      username: 'lupatestaccount1@gmail.com',
+      username: 'ejh0017@gmail.com',
       password: 'Q9X638hs2Y78',
-      snackBarIsVisible: false,
       secureTextEntry: true,
+      showSnack: false,
+      loginRejectReason: "",
+
     }
 
   }
@@ -120,6 +136,14 @@ class LoginView extends Component {
   _updateLupaWorkoutsDataInRedux = (lupaWorkoutsData) => {
     this.props.updateLupaWorkouts(lupaWorkoutsData);
   }
+
+  /**
+   * 
+   */
+  _updateLupaAssessmentDataInRedux = (lupaAssessmentData) => {
+    this.props.updateLupaAssessments(lupaAssessmentData);
+  }
+
   /**
    * 
    */
@@ -138,15 +162,25 @@ class LoginView extends Component {
     const attemptedUsername = this.state.username;
     const attemptedPassword = this.state.password;
 
-    let successfulLogin = await loginUser(attemptedUsername, attemptedPassword);
+    let successfulLogin;
+    await loginUser(attemptedUsername, attemptedPassword).then(result => {
+      successfulLogin = result;
+    })
 
     if (successfulLogin) {
       this._introduceApp();
     } else {
       this.setState({
-        snackBarIsVisible: true,
+        loginRejectReason: 'Invalid Username or Password.  Try again.',
+        showSnack: true
       })
     }
+  }
+
+  _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
+
+  _onDismissSnackBar = () => {
+    this.setState({ showSnack: false });
   }
 
   /**
@@ -158,8 +192,9 @@ class LoginView extends Component {
     });*/
     await this._setupRedux();
     await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-    await loadFonts();
+   // await authStateOnline();
     this.props.navigation.navigate('App');
+
   }
 
   /**
@@ -187,6 +222,9 @@ class LoginView extends Component {
       lupaWorkouts = result;
     });
 
+    await this.LUPA_CONTROLLER_INSTANCE.loadAssessments().then(result => {
+      lupaAssessments = result;
+    })
 
     let userPayload = {
       userData: currUserData,
@@ -198,6 +236,7 @@ class LoginView extends Component {
     await this._updateUserInRedux(userPayload);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
     await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
+    await this._updateLupaAssessmentDataInRedux(lupaAssessments);
   }
 
   render() {
@@ -268,7 +307,7 @@ class LoginView extends Component {
 
 
 
-          <View style={{ flex: 1, justifyContent: 'center' }}>
+          <View style={{ alignSelf: 'center', width: '90%', flex: 1, justifyContent: 'center' }}>
           <ElementsButton
   title="Login"
   type="solid"
@@ -278,6 +317,19 @@ class LoginView extends Component {
   onPress={this.onLogin}
   containerStyle={{borderRadius: 12}}
 />
+
+<Snackbar
+          style={{backgroundColor: '#212121'}}
+          theme={{ colors: { accent: '#2196F3' }}}
+          visible={this.state.showSnack}
+          onDismiss={this._onDismissSnackBar}
+          action={{
+            label: 'Okay',
+            onPress: () => this.setState({ showSnack: false }),
+          }}
+        >
+          {this.state.loginRejectReason}
+        </Snackbar>
           </View>
       </SafeAreaView>
     );
@@ -300,10 +352,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   welcomeBackText: {
-    fontSize: 35, fontWeight: '700', color: 'black'
+    fontSize: 35, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular'
   },
   signInText: {
-    fontSize: 35, fontWeight: '700', color: '#2196F3'
+    fontSize: 35, fontWeight: '700', color: '#2196F3', fontFamily: 'ARSMaquettePro-Regular'
   },
   noAccountTextContainer: {
     flexDirection: 'row', marginTop: 5
@@ -313,4 +365,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginView);
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(LoginView));

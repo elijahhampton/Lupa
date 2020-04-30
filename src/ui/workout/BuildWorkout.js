@@ -5,38 +5,19 @@ import {
     View,
     StyleSheet,
     Dimensions,
-    Easing,
     ScrollView,
     Animated,
-    SafeAreaView,
-    Modal,
-    ListView,
-    FlatList,
     Button as NativeButton,
 } from 'react-native';
 
 import {
     FAB,
     IconButton,
-    Caption,
     Surface,
-    Title,
     Dialog,
-    Headline,
-    Divider,
     Button,
-    Paragraph,
     TextInput
 } from 'react-native-paper';
-
-import {
-    Header,
-    Body,
-    Separator,
-    Right
-} from "native-base";
-
-import { SearchBar, Overlay } from 'react-native-elements';
 
 import TimeLine from 'react-native-timeline-flatlist';
 
@@ -44,39 +25,25 @@ import { connect } from 'react-redux';
 
 import LupaController from '../../controller/lupa/LupaController';
 
-import { Feather as FeatherIcon } from '@expo/vector-icons';
 import WorkoutTool from './component/WorkoutTool';
-
-//need to return a data array in the form:
-/*
-data = [
-    [{}, {}, {}], where each array should contain about 6-7 workouts objects
-    [{}, {}, {}],
-    [{}, {}, {}],
-    [{}, {}, {}],
-    [{}, {}, {}],
-    [{}, {}, {}],
-    [{}, {}, {}],
-    [{}, {}, {}],
-]
-*/
-const data = [
-    { title: 'Warm Up', description: "A short description about this section", workouts: [{ name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }] },
-    { title: 'Primary', description: "A short description about this section", workouts: [{ name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }] },
-    { title: 'Break', description: "A short description about this section", workouts: [{ name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }] },
-    { title: 'Secondary', description: "A short description about this section", workouts: [{ name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }] },
-    { title: 'Senoff', description: "A short description about this section", workouts: [{ name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }] },
-    { title: 'Homework', description: "A short description about this section", workouts: [{ name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }] },
-    { title: 'Homework', description: "A short description about this section", workouts: [{ name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }] },
-    { title: 'Homework', description: "A short description about this section", workouts: [{ name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }, { name: "bye" }] },
-]
-
+import { LinearGradient } from 'expo-linear-gradient';
 
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
     }
 }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+       deleteProgram: (programID) => {
+            dispatch({
+              type: 'DELETE_CURRENT_USER_PROGRAM',
+              payload: programID,
+            })
+          },
+    }
+  }
 
 function ProgramDetailsDialog(props) {
     const [programTitle, setProgramTitle] = useState("");
@@ -143,8 +110,14 @@ class BuildWorkout extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        //when this component mounts we should disable swipe for our main "swipe navigator" focus here
+        this.props.disableSwipe();
+    }
 
+    componentWillUnmount() {
+        //when this component unmounts we should enable swipe for our main "swipe navigator" to allow focus here
+        this.props.enableSwipe();
     }
 
     renderDetailFunction = (rowData, sectionID, rowID) => {
@@ -175,9 +148,6 @@ class BuildWorkout extends React.Component {
                             )
                         })
                     }
-                    {/*<Surface style={{ elevation: 1, width: 90, height: 70, margin: 5, borderRadius: 10, borderColor: "rgba(0, 0, 0, 0.5)", alignItems: "center", justifyContent: "center" }}>
-                        <IconButton icon="add" onPress={() => this.openLibrary()} />
-                </Surface>*/}
                 </ScrollView>
             </>
         )
@@ -253,16 +223,50 @@ class BuildWorkout extends React.Component {
         this.props.navigation.goBack(null);
     }
 
+    handleExitBuildAWorkout = async () => {
+        //if a program has been started then delete it
+        if (this.state.currProgramUUID != "")
+        {
+        //delete workout from FB
+        await this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.currProgramUUID);
+
+        //delete from Redux
+        await this.props.deleteProgram(this.state.currProgramUUID);
+
+        //reset state
+        this.setState({
+            currProgramUUID: "",
+            libraryOpen: true,
+            buildAWorkout: true,
+            logAWorkout: false,
+            searchValue: "",
+            data: [
+                { title: "Warm Up", description: "A short description about this section", workouts: [] },
+                { title: "Primary", description: "A short description about this section",  workouts: [] },
+                { title: "Break", description: "A short description about this section",  workouts: [] },
+                { title: "Secondary", description: "A short description about this section",  workouts: [] },
+                { title: "Cooldown", description: "A short description about this section",  workouts: [] },
+                { title: "Homework", description: "A short description about this section",  workouts: [] },
+            ],
+        })
+        }
+
+        this.props.navigation.goBack(null);
+    }
+
     render() {
         return (
             <View style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }} >
+                                    <LinearGradient style={{position: 'absolute', top: 0, left: 0, right: 0, height: Dimensions.get('window').height}} colors={['#FAFAFA', '#1E88E5']} start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 1 }}>
                 <View style={styles.textContainer}>
-                    <IconButton style={{ alignSelf: "flex-start" }} color="white" icon="arrow-back" onPress={() => this.props.navigation.goBack(null)} />
-                    <Text style={{fontFamily: 'avenir-roman', padding: 5, fontWeight: "600", fontSize: 22, color: "white" }}>
+
+                    <IconButton style={{ alignSelf: "flex-start" }} color="#212121" icon="arrow-back" onPress={() => this.handleExitBuildAWorkout()} />
+                    <Text style={{padding: 5, fontFamily: 'ars-maquette-pro-medium', fontSize: 22, color: "#212121" }}>
                         Design a workout - what are you waiting for?
             </Text>
                 </View>
-                <View style={{ flex: 4 }}>
+                <View style={{ flex: 4, backgroundColor: "transparent" }}>
                     <Surface style={styles.contentContainer}>
                         <TimeLine
                             listViewStyle={{ flex: 1 }}
@@ -291,6 +295,7 @@ class BuildWorkout extends React.Component {
                 
                 <ProgramDetailsDialog saveProgramMethod={(title, description) => this.saveProgram(title, description)}/>
                 <WorkoutTool setProgramUUID={uuid => this.setProgramUUID(uuid)} updateWorkoutData={state => this.updateWorkoutData(state)} />
+                </LinearGradient>
             </View>
         )
     }
@@ -308,7 +313,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         padding: 10,
-        elevation: 10,
+        elevation: 15, 
     },
     scrollViewContent: {
 
@@ -326,4 +331,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(BuildWorkout);
+export default connect(mapStateToProps, mapDispatchToProps)(BuildWorkout);

@@ -6,7 +6,8 @@ import {
     View,
     Modal,
     ScrollView,
-    Button as NativeButton
+    Button as NativeButton,
+    Dimensions
 } from 'react-native';
 
 import {
@@ -15,17 +16,20 @@ import {
     Title,
     Button,
     Caption,
+    Chip,
     IconButton
 } from 'react-native-paper';
 
-import { Feather as FeatherIcon } from '@expo/vector-icons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import TimeslotSelector from '../../component/TimeslotSelector';
 
 import { connect } from 'react-redux';
-import { SafeAreaView } from 'react-navigation';
+
+import { LinearGradient } from 'expo-linear-gradient';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 daysOfTheWeek = [
     'Monday',
@@ -46,11 +50,12 @@ const mapStateToProps = (state, action) => {
 function ChangeTimesModal(props) {
     return (
        <Modal onDismiss={props.closeModalMethod} visible={props.isVisible} animated={true} animationType="slide" presentationStyle="overFullScreen" style={{backgroundColor: 'white'}}>
-           <SafeAreaView style={{flex: 1}}>
+           <LinearGradient style={{position: 'absolute', padding: 15, top: 0, left: 0, right: 0, height: Dimensions.get('window').height}} colors={['#FFFFFF', 'rgba(33,150,243 ,1)']} >
            <TimeslotSelector />
 
-            <NativeButton onPress={props.closeModalMethod} title="Done" style={{position: 'absolute', bottom: 0}} />
-           </SafeAreaView>
+
+           <NativeButton onPress={props.closeModalMethod} title="Done" />
+           </LinearGradient>
        </Modal>
     )
 }
@@ -68,7 +73,7 @@ class Timecards extends React.Component {
         
 
         this.state = {
-            mondayTimes: [],
+            mondayTimes: ['a', 'b', 'c'],
             tuesdayTimes: [],
             wednesdayTimes: [],
             thursdayTimes: [],
@@ -78,6 +83,7 @@ class Timecards extends React.Component {
             currDayToShow: daysOfTheWeek[new Date().getDay()],
             showTimeMenu: false,
             showChangeTimeModal: false,
+            data: ['a', 'b', 'c'],
         }
 
        // this._getTimecardInformationByDay();
@@ -110,16 +116,18 @@ class Timecards extends React.Component {
             case 'Monday':
                 return this.state.mondayTimes.length == 0 ?
                 <Caption style={styles.caption}>
-                    There have been no times added for {this.state.currDayToShow}.
+                    You have no added any available session time for {this.state.currDayToShow}.
                 </Caption>
                  :
                   this.state.mondayTimes.map(time => {
 
-                      return <Button color="#2196F3" mode="text" compact style={styles.captionStyle}>{time}</Button>
+                      return <Chip textStyle={{color: 'white'}} style={{margin: 5, backgroundColor: "#212121", width: 65, alignItems: 'center', justifyContent: 'center'}}>
+                      11:00
+                  </Chip>
                   })
             case 'Tuesday':
                 return this.state.tuesdayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                        There have been no times added for {this.state.currDayToShow}.
+                        You have no added any available session time for {this.state.currDayToShow}.
                     </Caption> :
                       this.state.tuesdayTimes.map(time => {
 
@@ -127,7 +135,7 @@ class Timecards extends React.Component {
                       })
             case 'Wednesday':
                 return this.state.wednesdayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                There have been no times added for {this.state.currDayToShow}.
+                You have no added any available session time for {this.state.currDayToShow}.
             </Caption> :
               this.state.wednesdayTimes.map(time => {
 
@@ -136,7 +144,7 @@ class Timecards extends React.Component {
             case 'Thursday':
                 {
                     return this.state.thursdayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                    There have been no times added for {this.state.currDayToShow}.
+                    You have no added any available session time for {this.state.currDayToShow}.
                 </Caption> :
                   this.state.thursdayTimes.map(time => {
 
@@ -145,7 +153,7 @@ class Timecards extends React.Component {
                 }
             case 'Friday':
                return this.state.fridayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                There have been no times added for {this.state.currDayToShow}.
+                You have no added any available session time for {this.state.currDayToShow}.
             </Caption> :
               this.state.fridayTimes.map(time => {
 
@@ -153,7 +161,7 @@ class Timecards extends React.Component {
               })
             case 'Saturday':
                return this.state.saturdayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                There have been no times added for {this.state.currDayToShow}.
+                You have no added any available session time for {this.state.currDayToShow}.
             </Caption> :
               this.state.saturdayTimes.map(time => {
 
@@ -161,7 +169,7 @@ class Timecards extends React.Component {
               })
             case 'Sunday':
                return this.state.sundayTimes.length == 0 ?                     <Caption style={styles.caption}>
-                There have been no times added for {this.state.currDayToShow}.
+                You have no added any available session time for {this.state.currDayToShow}.
             </Caption> :
               this.state.sundayTimes.map(time => {
 
@@ -192,19 +200,19 @@ class Timecards extends React.Component {
 
     render() {
     return (
-        <View style={{ width: "100%", }}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+        <View style={{ width: "100%", alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Menu visible={this.state.showTimeMenu} anchor={<IconButton icon="expand-more" style={{margin: 3}} onPress={() => this.setState({ showTimeMenu: true })}/>}>
                 {
                     daysOfTheWeek.map(day => {
-                        return <Menu.Item title={day} key={day}  onPress={() => this.handleOnPressMenuItem(day)} />
+                        return <Menu.Item title={day} key={day} onPress={() => this.handleOnPressMenuItem(day)} />
                     })
                 }
             </Menu>
-            <Title style={{color: "#2196F3"}} color="#2196F3">
+            <Text style={{color: "#212121", fontSize: 15, fontWeight: 'bold'}} color="#2196F3">
                         {this.state.currDayToShow}
-                    </Title>
+                    </Text>
             </View>
                 {
                     this.props.userUUID == this.props.lupa_data.Users.currUserData.user_uuid ?

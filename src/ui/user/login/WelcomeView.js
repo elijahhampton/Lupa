@@ -15,14 +15,15 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  SafeAreaView,
 } from "react-native";
 
 import {
   Button,
   Snackbar,
 } from 'react-native-paper';
-
-import SafeAreaView from 'react-native-safe-area-view';
+import { Constants } from "react-native-unimodules";
+import loadFonts from "../../common/Font";
 
 const {
   isSignedIn,
@@ -39,9 +40,11 @@ class WelcomeView extends Component {
     }
 
   }
-s
-  componentDidMount = () => {
-    this._checkSignedInStatus();
+
+  componentDidMount = async () => {
+    await loadFonts();
+    await this._checkSignedInStatus();
+
   }
 
   _checkSignedInStatus = async () => {
@@ -72,13 +75,13 @@ s
 
   render() {
     return (
-      <SafeAreaView style={styles.root}>
+      <View style={styles.root}>
         <StatusBar translucent barStyle="dark-content" />
           <View style={{flex: 1, alignItems: 'flex-start', flexDirection: 'column', marginTop: 10}}>
-                <Text style={{fontSize: 35, fontWeight: '700', color: '#212121', margin: 5, }}>
+                <Text style={{fontFamily: 'ARSMaquettePro-Black', fontSize: 35, fontWeight: '700', color: '#212121', margin: 5, }}>
                 Welcome to Lupa,
                 </Text>
-                <Text style={{fontSize: 30, fontWeight: '700', color: '#2196F3', margin: 5, }}>
+                <Text style={{fontFamily: 'ARSMaquettePro-Black', fontSize: 30, fontWeight: '700', color: '#2196F3', margin: 5, }}>
                 the fitness app for preventative healthcare
                 </Text>
           </View>
@@ -104,7 +107,7 @@ s
                     </Text>
                 </Button>
           </View>
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -115,6 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(244, 247, 252)",
     padding: 15,
     justifyContent: 'space-between',
+    paddingTop: Constants.statusBarHeight,
   },
   textLabel: {
     fontSize: 15,

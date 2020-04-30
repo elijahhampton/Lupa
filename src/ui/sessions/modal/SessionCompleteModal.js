@@ -10,11 +10,10 @@ import {
 
 import { Button } from 'react-native-elements';
 
-import {NavigationContext, NavigationActions } from 'react-navigation';
-
 import LupaController from '../../../controller/lupa/LupaController'
 
-import { withNavigation } from 'react-navigation';
+
+import { withNavigation, NavigationActions, NavigationContext } from 'react-navigation';
 
 import { connect } from 'react-redux';
 import { Dialog, Button as MaterialButton, TextInput } from 'react-native-paper';
@@ -54,7 +53,6 @@ class ReviewDialog extends React.Component {
         
         if (this.props.action == 'Finish')
         {
-            alert('Finish')
             this.props.closeDialogMethod();
         }
 

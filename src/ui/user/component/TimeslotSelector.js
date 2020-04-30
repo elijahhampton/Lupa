@@ -339,7 +339,7 @@ class TimeslotSelector extends React.Component {
                 this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('preferred_workout_times', this.state.sundayTimes, this.state.currentDay)
                 break;
             default:
-                alert('LUPA: No default case');
+
         }
 
         this._refreshUserData();

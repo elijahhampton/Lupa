@@ -1,4 +1,4 @@
-import { createAppContainer, createSwitchNavigator} from 'react-navigation';
+import React from 'react';
 
 import FollowerView from '../user/profile/modal/FollowerModal';
 import ProfileView from '../user/profile/ProfileView';
@@ -10,7 +10,58 @@ import PrivateChat from '../user/chat/PrivateChat';
 
 import MessagesView from '../user/chat/MessagesView'
 
-const ProfileNavigator = createSwitchNavigator(
+//import { NavigationContainer } from '@react-navigation/native';
+//import { createStackNavigator } from '@react-navigation/stack';
+
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+/*
+const Stack = createStackNavigator();
+
+export default function ProfileStackNavigator() {
+  return (
+    <NavigationContainer independent={true}>
+    <Stack.Navigator
+      initialRouteName="ProfileView"
+      screenOptions={{ gestureEnabled: false }}
+      
+    >
+      <Stack.Screen
+        name="ProfileView"
+        component={(props) => <ProfileView {...props} />}
+        
+      />
+            <Stack.Screen
+        name="FollowerView"
+        component={FollowerView}
+      />
+                  <Stack.Screen
+        name="PrivateChat"
+        component={PrivateChat}
+      />
+                        <Stack.Screen
+        name="PackModal"
+        component={PackModal}
+      />
+                        <Stack.Screen
+        name="SessionsView"
+        component={SessionsView}
+      />
+                        <Stack.Screen
+        name="MessagesView"
+        component={MessagesView}
+      />
+    </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function ProfileNavigator() {
+    return <ProfileStackNavigator />
+}
+*/
+
+const ProfileNavigator = createStackNavigator(
     {
     Profile: {
         screen: ProfileView,

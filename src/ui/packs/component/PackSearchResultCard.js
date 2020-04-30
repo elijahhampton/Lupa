@@ -13,9 +13,8 @@ import {
     Avatar
 } from 'react-native-paper';
 
-import {
-    withNavigation,
-} from 'react-navigation';
+
+import { withNavigation, NavigationActions } from 'react-navigation';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
@@ -83,14 +82,14 @@ class PackSearchResultCard extends React.Component {
     getPackAvatar = () => {
         if (this.state.packImage == "" || this.state.packImage == "undefined" || this.state.packImage == '')
         {
-            return <Avatar.Icon icon="group" size={30} style={{margin: 3}}/>
+            return <Avatar.Icon icon="group" size={30} style={{backgroundColor: "#212121", margin: 5}}/>
         }
 
         try {
-            return <Avatar.Image source={{uri: this.state.packImage}} />
+            return <Avatar.Image size={30} source={{uri: this.state.packImage}} style={{margin: 5}} />
         } catch(err)
         {
-            return <Avatar.Icon icon="group" size={30} style={{margin: 3}}/>
+            return <Avatar.Icon icon="group" size={30} style={{backgroundColor: "#212121", margin: 5}}/>
         }
     }
 
@@ -105,6 +104,9 @@ class PackSearchResultCard extends React.Component {
                         <View style={{flexDirection: 'column'}}>
                         <Text style={styles.titleText}>
                                 {this.props.title}
+                            </Text>
+                            <Text>
+                                {this.props.packLocation}
                             </Text>
                         </View>
     

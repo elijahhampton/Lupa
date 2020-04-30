@@ -63,6 +63,38 @@
 	<string>Give Lupa periences permission to access your photos</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Allow Lupa to access your reminders</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>ARSMaquettePro-Regular.ttf</string>
+		<string>ARSMaquettePro-Medium.ttf</string>
+		<string>ARSMaquettePro-Light.ttf</string>
+		<string>ARSMaquettePro-Black.ttf</string>
+		<string>ARSMaquettePro-Bold.ttf</string>
+		<string>MaterialIcons.ttf</string>
+		<string>Ionicons.ttf</string>
+		<string>FeatherIcons.ttf</string>
+		<string>AntDesign.ttf</string>
+		<string>Entypo.ttf</string>
+		<string>EvilIcons.ttf</string>
+		<string>Feather.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome5_Regular.ttf</string>
+		<string>FontAwesome5_Solid.ttf</string>
+		<string>Fontisto.ttf</string>
+		<string>Foundation.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>Octicons.ttf</string>
+		<string>Roboto_medium.ttf</string>
+		<string>Roboto.ttf</string>
+		<string>rubicon-icon-font.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
+		<string>Zocial.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

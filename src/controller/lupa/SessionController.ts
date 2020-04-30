@@ -30,9 +30,29 @@ export default class SessionController {
       return SessionController._instance;
     }
 
+    completeSession = async (uuid) => {
+      let sessionRef = SESSIONS_COLLECTION.doc(uuid);
+      await sessionRef.update({
+        sessionMode: 'Expired',
+        sessionStatus: 'Set'
+      });
+    }
+
     createSession = async  (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp,locationData) => {
         
-        let newSession = getLupaSessionStructure(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp, locationData);
+        let attendeeOneData, attendeeTwoData;
+        
+        await LUPA_DB.collection('users').doc(attendeeOne).get().then(snapshot => {
+          attendeeOneData = snapshot.data();
+        })
+
+        await LUPA_DB.collection('users').doc(attendeeTwo).get().then(snapshot => {
+          attendeeTwoData = snapshot.data();
+        })
+
+        let newSession = getLupaSessionStructure(attendeeOne, attendeeOneData, attendeeTwo, attendeeTwoData, requesterUUID, date, time_periods, name, description, timestamp, locationData);
+      
+        
         SESSIONS_COLLECTION.doc().set(newSession);
 
 
@@ -43,55 +63,24 @@ export default class SessionController {
     getUserSessions = async (currUser=true, uid=undefined) => {
       let sessions = [];
       let currUserUUID = await USER_CONTROLLER_INSTANCE.getCurrentUser().uid;
-      await SESSIONS_COLLECTION.where('attendeeOne', '==', currUserUUID).get().then(docs => {
-        let found = false;
-        docs.forEach(doc => {
-          let sessionData = doc.data();
 
-          if (sessionData.sessionMode != 'Expired' &&  sessionData.sessionStatus != "Pending" || sessionData.attendeeOneRemoved != false)
-          {
-            let sessionID = doc.id;
-            let sessionObject = {sessionID, sessionData}
-            sessions.push(sessionObject);            
-          }
-
+      try {
+        await SESSIONS_COLLECTION.where('participants', 'array-contains', currUserUUID).get().then(docs => {
+          docs.forEach(doc => {
+            let sessionData = doc.data();
+  
+            if (sessionData.sessionMode != 'Expired' || sessionData.sessionStatus != "Pending")
+            {
+              let sessionID = doc.id;
+              let sessionObject = {sessionID, sessionData}
+              sessions.push(sessionObject);            
+            }
+  
+          })
         })
-      });
-
-      await SESSIONS_COLLECTION.where('attendeeTwo', '==', currUserUUID).get().then(docs => {
-
-        docs.forEach(doc => {
-          let sessionData = doc.data();
-          if (sessionData.sessionMode != 'Expired' &&  sessionData.sessionStatus != "Pending" || sessionData.attendeeTwoRemoved != false)
-          {
-
-            let sessionID = doc.id;
-            let sessionObject = {sessionID, sessionData}
-            sessions.push(sessionObject);            
-          }
-        })
-      });
-
-      let count = 0;
-      let currElement;
-      let currIndex;
-      for (let i = 0; i < sessions.length; ++i)
-      {
-        count = 0;
-        currElement = sessions[i];
-        currIndex = i;
-        for (let j = 0; j < sessions.length; ++j)
-        {
-          if (currElement == sessions[j])
-          {
-            count = count + 1;
-          }
-        }
-
-        if (count > 1)
-        {
-          sessions.slice(currIndex);
-        }
+      } catch(err) {
+        //For now if we run into an error we return no sessions
+        return Promise.resolve([]);
       }
 
       return sessions;
@@ -212,8 +201,8 @@ export default class SessionController {
 
         session.otherUserData = otherUserData;
 
-        //We show date if it is within 3 days
-        if ((currentDay - day) <= 3)
+        //We show if date is within 3 days
+        if ((currentDay - day) <= 3 && userSessions[i].sessionData.sessionStatus != 'Pending')
         {
           filteredSessionsArr.push(session);
         }

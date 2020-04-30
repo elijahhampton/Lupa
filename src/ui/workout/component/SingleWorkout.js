@@ -15,7 +15,7 @@ import {
 } from 'react-native-paper';
 import WorkoutPreview from './WorkoutPreview';
 
-import { Feather as FeatherIcon } from '@expo/vector-icons';
+import FeatherIcon from "react-native-vector-icons/Feather"
 
 function getViewStyle(state) {
     if (state)

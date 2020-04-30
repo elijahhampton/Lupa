@@ -17,6 +17,7 @@ import {
     Title,
     Headline,
     Surface,
+    Snackbar,
     Caption,
     Button,
     Paragraph,
@@ -33,7 +34,9 @@ import {
     Button as ElementsButton,
  } from 'react-native-elements';
 
- import { MaterialIcons, Feather as FeatherIcon } from '@expo/vector-icons';
+ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+ import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const {
     signUpUser
@@ -42,6 +45,9 @@ const {
 import LupaController from '../../../controller/lupa/LupaController';
 
 import loadFonts from '../../common/Font/index'
+
+import { getLupaAssessmentStructure } from '../../../controller/firebase/collection_structures'
+import { connect } from 'react-redux';
 
 mapStateToProps = (state) => {
     return { 
@@ -74,21 +80,29 @@ mapStateToProps = (state) => {
           type: 'UPDATE_LUPA_WORKOUTS',
           payload: lupaWorkoutsData,
         })
+      },
+      updateLupaAssessments: (lupaAssessmentData) => {
+        dispatch({
+          type: 'UPDATE_LUPA_ASSESSMENTS',
+          payload: lupaAssessmentData
+        })
       }
     }
   }
 
-  import { connect } from 'react-redux';
+  function getInputContainerValidationStyle(state) {
+    if (state)
+    {
+      //problem with field
+     return { backgroundColor: 'rgba(213,0,0 ,0.5)'}
+    }
+    else
+    {
+      //no problem with field
+      return { backgroundColor: 'transparent' }
+    }
+  }
 
-  const QUESTIONS = [
-    'Hi',
-    'Hi',
-    'Hi',
-    'Hi',
-    'Hi',
-    'Hi',
-    'Hi'
-  ]
 
 class SignupModal extends React.Component {
 
@@ -96,6 +110,8 @@ class SignupModal extends React.Component {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+        this.scrollView = React.createRef();
+        this.handleParQButtonOnPress = this.handleParQButtonOnPress.bind(this);
 
         this.state = {
           username: "",
@@ -109,9 +125,56 @@ class SignupModal extends React.Component {
             secureConfirmPasswordSecureTextEntry: true,
             alertOverlayVisible: false,
             buttonYes: false,
+            buttonNo: true,
             birthdayMonth: "",
             birthdayDay: "",
             birthdayYear: "",
+            showSnack: false,
+            usernameProblem: false,
+            emailProblem: false,
+            passwordProblem: false,
+            confirmedPasswordProblem: false,
+            birthdayProblem: false,
+            termsProblem: false,
+            signupRejectionReason: "",
+            rejectedField: "",
+            parQArr: [
+              {
+                question: 'Has your doctor ever said that you have a heart condition and/or that you should only perform physical activity recommended by a doctor?',
+                check: false,
+                id: 0,
+              },
+              {
+                question: 'Do you feel pain in your chest when you perform physical activity?',
+                check: false,
+                id: 0,
+              },
+              {
+                question: 'In the past month, have you had chest pain when you were not performing any physical activity?',
+                check: false,
+                id: 0,
+              },
+              {
+                question: 'Do you lose your balance because of dizziness or do you ever lose consciousness?',
+                check: false,
+                id: 0,
+              },
+              {
+                question: 'Do you have a bone or joint problem that could be made worse by a chance in your physical activity?',
+                check: false,
+                id: 0,
+              },
+              {
+                question: 'Is your doctor currently prescribing any medication for your blood pressure or for a heart condition?',
+                check: false,
+                id: 0,
+              },
+              {
+                question: 'Do you know of any other reason why you should not engage in physical activity?',
+                check: false,
+                id: 0,
+              },
+            ]
         }
     }
 
@@ -122,13 +185,12 @@ class SignupModal extends React.Component {
    */
   _introduceApp = async () => {
     await this._setupRedux();
-    await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     await loadFonts();
     this.props.navigation.navigate('App');
   }
 
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, lupaWorkouts;
+    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, lupaWorkouts, lupaAssessments;
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -149,6 +211,10 @@ class SignupModal extends React.Component {
       lupaWorkouts = result;
     });
 
+    await this.LUPA_CONTROLLER_INSTANCE.loadAssessments().then(result => {
+      lupaAssessments = result;
+    })
+
     let userPayload = {
       userData: currUserData,
       healthData: currUserHealthData,
@@ -158,6 +224,7 @@ class SignupModal extends React.Component {
     await this._updateUserInRedux(userPayload);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
     await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
+    await this._updateLupaAssessmentDataInRedux(lupaAssessments);
   }
 
   _updateUserInRedux = (userObject) => {
@@ -189,15 +256,81 @@ class SignupModal extends React.Component {
     this.props.updateLupaWorkouts(lupaWorkoutsData);
   }
 
+  /**
+   * 
+   */
+  _updateLupaAssessmentDataInRedux = (lupaAssessmentData) => {
+    this.props.updateLupaAssessments(lupaAssessmentData);
+  }
+
 
     _registerUser = async () => {
+      //Reset the fields that were previously rejected because we now have a new state
+      this.resetRejectedFields();
+      let emptyField = false;
+
       const username = this.state.username;
         const email = this.state.email;
         const password = this.state.password;
         const confirmedPassword = this.state.confirmedPassword;
         const isTrainerAccount = this.state.isTrainerAccount;
         const agreedToTerms = this.state.agreedToTerms;
+        const month = this.state.birthdayMonth;
+        const year =this.state.birthdayYear;
+        const day = this.state.birthdayDay;
         const birthday = new Date(this.state.birthdayYear, this.state.birthdayMonth, this.state.birthdayDay);
+
+        if (username == "")
+        {
+          this.setState({ 
+            usernameProblem: true, 
+          })
+          emptyField = true;
+        }
+        
+        if (email == "")
+        {
+          this.setState({ 
+            emailProblem: true, 
+          })
+          emptyField = true;
+        }
+        
+        if (password == "")
+        {
+          this.setState({ 
+            passwordProblem: true, 
+          })
+          emptyField = true;
+        }
+        
+        if (confirmedPassword == "")
+        {
+          this.setState({ 
+            confirmedPasswordProblem: true, 
+          })
+          emptyField = true;
+        }
+        
+        if (month == "" || day == "" || year == "")
+        {
+          this.setState({ 
+            birthdayProblem: true, 
+          })
+          emptyField = true;
+        }
+
+        if (emptyField == true)
+        {
+          this.setState({
+            showSnack: true, 
+            signupRejectionReason: 'There are fields missing in your form.' 
+          })
+          this.scrollView.current.scrollTo(0);
+          return;
+        }
+
+
 
         //Check registration status
         let successfulRegistration;
@@ -205,19 +338,55 @@ class SignupModal extends React.Component {
           successfulRegistration = result;
         });
 
+        if (successfulRegistration.result)
+        {
+          await this.submitParQ()
+        }
+
         await this.handleOnRegistration(successfulRegistration);
     }
 
     handleOnRegistration = async (registrationStatus) => {
-      if (registrationStatus)
+      if (registrationStatus.result)
       {
-        this._introduceApp();
+        //introduce app
+        await this._introduceApp();
       }
       else
       {
-        await this.setState({ failedSignupReason: registrationStatus.reason, alertOverlayVisible: true });
+        this.scrollView.current.scrollTo(0);
+        await this.setState({signupRejectionReason: registrationStatus.reason, showSnack: true });
+        switch(registrationStatus.field)
+        {
+          case 'Username':
+            this.setState({ rejectedField: registrationStatus.field, usernameProblem: true })
+            break;
+            case 'Email':
+            this.setState({ rejectedField: registrationStatus.field, emailProblem: true })
+            break;
+            case 'Confirmed Password':
+            this.setState({ rejectedField: registrationStatus.field, confirmedPasswordProblem: true })
+            break;
+            case 'Password':
+            this.setState({ rejectedField: registrationStatus.field, passwordProblem: true })
+            break;
+            case 'Birthday':
+            this.setState({ rejectedField: registrationStatus.field, birthdayProblem: true })
+            break;
+            case 'Terms':
+            this.setState({ rejectedField: registrationStatus.field, termsProblem: true })
+            break;
+
+            default: 
+        }
       }
     }
+
+    _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
+
+  _onDismissSnackBar = () => {
+    this.setState({ showSnack: false });
+  }
 
 
     _handleShowPassword = () => {
@@ -232,18 +401,53 @@ class SignupModal extends React.Component {
         })
       }
 
+      handleParQButtonOnPress = (event, index) => {
+        let tmp = this.state.parQArr;
+        tmp[index].check = !tmp[index].check;
+        this.setState({ parQArr: tmp });
+      }
+
+      submitParQ = () => {
+        const parQQuestionsArr = this.state.parQArr;
+        let submittedAnswers = [];
+        for (let i = 0; i < parQQuestionsArr.length; ++i)
+        {
+          let answerObj = {
+            question: parQQuestionsArr[i].question,
+            answer: parQQuestionsArr[i].check.toString()
+          }
+          submittedAnswers.push(answerObj);
+        }
+
+        const assessmentStructure = getLupaAssessmentStructure('PARQ', submittedAnswers);
+
+        this.LUPA_CONTROLLER_INSTANCE.submitAssessment(assessmentStructure);
+      }
+
+      resetRejectedFields = () => {
+        this.setState({
+          showSnack: false,
+          usernameProblem: false,
+          emailProblem: false,
+          passwordProblem: false,
+          confirmedPasswordProblem: false,
+          birthdayProblem: false,
+          termsProblem: false,
+        })
+      }
+
     render() {
         return (
-          <SafeAreaView forceInset={{bottom: 'never'}}>
+          <SafeAreaView style={{flex: 1, backgroundColor: '#F4F7FC'}} forceInset={{bottom: 'never'}}>
 
-          <ScrollView>
+          <ScrollView ref={this.scrollView} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} contentContainerStyle={{backgroundColor: '#F4F7FC'}}>
             
           <View style={{width: "100%", height: Dimensions.get('window').height}}>
           <View style={styles.headerText}>
-                    <Text style={{ fontSize: 35, fontWeight: '700', color: 'black' }}>
+                    <Text style={{width: '100%', fontSize: 28, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular' }}>
             Create an account with
                         </Text>
-                        <Text style={{ fontSize: 35, fontWeight: '700', color: '#2196F3' }}>
+                        <Text style={{ fontSize: 28, fontWeight: '700', color: '#2196F3', fontFamily: 'ARSMaquettePro-Regular' }}>
             Lupa
                         </Text>
                         <View style={{flexDirection: 'row', marginTop: 5}}>
@@ -273,7 +477,7 @@ class SignupModal extends React.Component {
                             placeholder="Enter a username" 
                             inputStyle={styles.inputStyle} 
                             inputContainerStyle={styles.inputContainerStyle} 
-                            containerStyle={styles.containerStyle} 
+                            containerStyle={[styles.containerStyle, getInputContainerValidationStyle(this.state.usernameProblem)]} 
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
@@ -294,7 +498,7 @@ class SignupModal extends React.Component {
                             placeholder="Enter an email address" 
                             inputStyle={styles.inputStyle} 
                             inputContainerStyle={styles.inputContainerStyle} 
-                            containerStyle={styles.containerStyle} 
+                            containerStyle={[styles.containerStyle, getInputContainerValidationStyle(this.state.emailProblem)]}
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
@@ -316,7 +520,7 @@ class SignupModal extends React.Component {
                             placeholder="Enter a password" inputStyle={{fontWeight: '500', fontSize: 15}} 
                             inputStyle={styles.inputStyle} 
                             inputContainerStyle={styles.inputContainerStyle} 
-                            containerStyle={styles.containerStyle} 
+                            containerStyle={[styles.containerStyle, getInputContainerValidationStyle(this.state.passwordProblem)]}
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
@@ -337,7 +541,7 @@ class SignupModal extends React.Component {
                              placeholder="Confirm your password" 
                              inputStyle={styles.inputStyle} 
                              inputContainerStyle={styles.inputContainerStyle} 
-                             containerStyle={styles.containerStyle} 
+                             containerStyle={[styles.containerStyle, getInputContainerValidationStyle(this.state.confirmedPasswordProblem)]}
                              editable={true}
                              enablesReturnKeyAutomatically={true}
                              returnKeyLabel="Done"
@@ -345,7 +549,7 @@ class SignupModal extends React.Component {
                              multiline={false}/>
                         </View>
 
-                        <View style={{width: '50%', backgroundColor: "white", margin: 10}}>
+                        <View style={{width: '50%', backgroundColor: "transparent", margin: 10}}>
                             <Text style={styles.textLabel}>
                                 Birthday
                             </Text>
@@ -357,10 +561,10 @@ class SignupModal extends React.Component {
                              placeholderTextColor="black"
                              inputStyle={{width: "100%", fontSize: 10}} 
                              inputContainerStyle={{width: "100%", borderColor: "transparent"}} 
-                             containerStyle={{backgroundColor: "transparent", width: "20%", }} 
+                             containerStyle={{backgroundColor: getInputContainerValidationStyle(this.state.birthdayProblem), width: "20%", }} 
                              editable={true}
                              enablesReturnKeyAutomatically={true}
-                             returnKeyLabel="Done"
+                             returnKeyLabel="Hi"
                              returnKeyType="done"
                              keyboardType="numeric"
                              maxLength={2}
@@ -374,10 +578,10 @@ class SignupModal extends React.Component {
                              placeholderTextColor="black"
                              inputStyle={{width: "100%", fontSize: 10}} 
                              inputContainerStyle={{width: "100%", borderColor: "transparent"}} 
-                             containerStyle={{backgroundColor: "transparent", width: "20%", }} 
+                             containerStyle={{backgroundColor: getInputContainerValidationStyle(this.state.birthdayProblem), width: "20%", }} 
                              editable={true}
                              enablesReturnKeyAutomatically={true}
-                             returnKeyLabel="Done"
+                             returnKeyLabel="Hi"
                              returnKeyType="done"
                              keyboardType="numeric"
                              multiline={false}
@@ -391,10 +595,10 @@ class SignupModal extends React.Component {
                              placeholderTextColor="black"
                              inputStyle={{width: "100%", fontSize: 10}} 
                              inputContainerStyle={{width: "100%", borderColor: "transparent"}} 
-                             containerStyle={{backgroundColor: "transparent", width: "25%", }} 
+                             containerStyle={{backgroundColor: getInputContainerValidationStyle(this.state.birthdayProblem), width: "25%", }} 
                              editable={true}
                              enablesReturnKeyAutomatically={true}
-                             returnKeyLabel="Done"
+                             returnKeyLabel="Hi"
                              returnKeyType="done"
                              keyboardType="numeric"
                              multiline={false}
@@ -406,7 +610,7 @@ class SignupModal extends React.Component {
                     </View>
 
                     <View style={{padding: 20, alignItems: "center", justifyContent: "center", height: "auto", width: "100%"}}>
-                    <TouchableOpacity style={{width: "100%", height: 70, alignSelf: "center"}}>
+                    <TouchableOpacity style={{width: "100%", height: 70, alignSelf: "center"}} onPress={() => this.scrollView.current.scrollTo(Dimensions.get('window').height)}>
                         <Surface style={{elevation: 10, padding: 10, alignItems: "center", justifyContent: "center", backgroundColor: "#C7DCFF", width: '50%', height: 70, borderRadius: 70, alignSelf: "center"}}>
                             <Text style={{color: "white", textAlign: "center", textAlignVertical: "center"}}>
                               Lupa Screening Questionnaire
@@ -418,30 +622,34 @@ class SignupModal extends React.Component {
             
 </View>
             
-                    <View style={{width: "80%", height: "auto"}}>
+                    <View style={{width: Dimensions.get('window').width, height: "auto"}}>
                       {
-                        QUESTIONS.map((question, index, arr) => {
+                        this.state.parQArr.map((object, index, arr) => {
                           return (
                             <Surface style={[
                               {
                               backgroundColor: "white", 
                               marginTop: 20, 
                               padding: 10, 
-                              width: Dimensions.get('window').width - 20, 
+                              width: Dimensions.get('window').width - 20,  
                               }, 
                               index % 2 == 0 ? styles.leftPositionedSurface : styles.rightPositionedSurface
                               ]}>
                             <Text style={{fontWeight: "500"}}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                            {object.question}
                             </Text>
                               <View style={{alignSelf: 'center', margin: 5, width: "60%", alignItems: "center", flexDirection: "row", justifyContent: "space-evenly"}}>
-                                <Surface style={{backgroundColor: "#C7DCFF" , alignItems: "center", justifyContent: "center", width: 65, height: 65, margin: 5, borderRadius: 65, elevation: 10}}>
+                                <TouchableOpacity key={object.checked} style={{borderRadius: 65}} onPress={(event) => this.handleParQButtonOnPress(event, index)}>
+                                <Surface style={{backgroundColor: this.state.parQArr[index].check == true ? "#C7DCFF" : "#FFFFFF", alignItems: "center", justifyContent: "center", width: 65, height: 65, margin: 5, borderRadius: 65, elevation: 10}}>
                                   <MaterialIcons name="check" size={20} />
                                 </Surface>
+                                </TouchableOpacity>
 
-                                <Surface style={{backgroundColor: "#FFFFFF", alignItems: "center", justifyContent: "center", width: 65, height: 65, margin: 5, borderRadius: 65, elevation: 10}}>
+                                <TouchableOpacity key={!object.checked} style={{borderRadius: 65}} onPress={(event) => this.handleParQButtonOnPress(event, index)}>
+                                <Surface style={{backgroundColor: this.state.parQArr[index].check == true ? "#FFFFFF" : "#C7DCFF", alignItems: "center", justifyContent: "center", width: 65, height: 65, margin: 5, borderRadius: 65, elevation: 10}}>
                                   <MaterialIcons name="clear" size={20} />
                                 </Surface>
+                                </TouchableOpacity>
                               </View>
                           </Surface>
                           )
@@ -449,7 +657,7 @@ class SignupModal extends React.Component {
                       }
                       </View>
 
-                       <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                       <View style={{marginTop: 15, flex: 1, justifyContent: 'flex-end', width: '90%', alignSelf: 'center'}}>
                         <ElementsButton
   title="Create Account"
   type="solid"
@@ -474,24 +682,21 @@ class SignupModal extends React.Component {
                                 checked={this.state.agreedToTerms }
                                 onPress={() => this.setState({ agreedToTerms: !this.state.agreedToTerms })}
                             />
-
-                            <Overlay
-                            overlayStyle={{width: '90%', height: '20%', alignItems: 'center', justifyContent: 'space-evenly'}} 
-                            visible={this.state.alertOverlayVisible}
-                            onRequestClose={() => this.setState({ alertOverlayVisible: false })}
-                            onDismiss={() => this.setState({ alertOverlayVisible: false  })}
-                            animated={true}
-                            animationType="fade">
-                              <>
-                              <Paragraph>
-                                It looks like something went wrong! {this.state.failedSignupReason}
-                              </Paragraph>
-                              <NativeButton title="Try again" onPress={() => this.setState({ alertOverlayVisible: false })}/>
-                            </>
-                            </Overlay>    
-                        </View>
-                        
+  
+                        </View>             
           </ScrollView>
+          <Snackbar
+          style={{backgroundColor: '#212121'}}
+          theme={{ colors: { accent: '#2196F3' }}}
+          visible={this.state.showSnack}
+          onDismiss={this._onDismissSnackBar}
+          action={{
+            label: 'Okay',
+            onPress: () => this.setState({ showSnack: false }),
+          }}
+        >
+          {this.state.signupRejectionReason}
+        </Snackbar>
           </SafeAreaView>
         
                     
@@ -534,7 +739,6 @@ const styles = StyleSheet.create({
     containerStyle: {
       width: "100%", 
       borderRadius: 20, 
-      backgroundColor: '#FAFAFA'
     },
     leftPositionedSurface: {
       left: 0,
@@ -546,7 +750,7 @@ const styles = StyleSheet.create({
       right: 0,
       borderTopLeftRadius: 20,
       borderBottomLeftRadius: 20,
-      alignSelf: "flex-end",
+      alignSelf: 'flex-end'
     }
 });
 

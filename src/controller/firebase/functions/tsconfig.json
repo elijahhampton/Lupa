@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
+    "importHelpers": false,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "outDir": "lib",
+    "sourceMap": false,
+    "strict": false,
+    "target": "es2017",
+    "experimentalDecorators": true,
+  },
+  "compileOnSave": true,
+  "include": [
+    "src/*"
+  ],
+  "exclude": [
+    "./node_modules/",
+    "../../../../node_modules/",
+    "node_modules",
+    "./node_modules",
+    "./node_modules/*",
+    "./node_modules/@types/node/index.d.ts",
+  ]
+}

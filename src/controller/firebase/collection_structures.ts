@@ -6,6 +6,8 @@ import {
     LupaHealthDataStructure, 
     LupaWorkoutStructure,
     LupaUserStructure, 
+    LupaAssessmentStructure,
+    LupaNotificationStructure,
     Days,
     SESSION_STATUS,
     PACK_EVENT_STAGE,
@@ -77,7 +79,9 @@ export const getLupaPackStructure = (packLeader, title, description, location, i
 
 var lupa_session : LupaSessionStructure = {
     attendeeOne: "",
+    attendeeOneData: Object,
     attendeeTwo: "",
+    attendeeTwoData: Object,
     requesterUUID: "",
     date: "",
     time_periods: [],
@@ -93,11 +97,14 @@ var lupa_session : LupaSessionStructure = {
     locationData: {
         
     },
+    participants: [],
 }
 
-export const getLupaSessionStructure = (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, time_created, locationData) => {
+export const getLupaSessionStructure = (attendeeOne, attendeeOneData, attendeeTwo, attendeeTwoData, requesterUUID, date, time_periods, name, description, time_created, locationData) => {
     lupa_session.attendeeOne = attendeeOne;
+    lupa_session.attendeeOneData = attendeeOneData;
     lupa_session.attendeeTwo = attendeeTwo;
+    lupa_session.attendeeTwoData = attendeeTwoData;
     lupa_session.requesterUUID = requesterUUID;
     lupa_session.date = date;
     lupa_session.time_periods = time_periods;
@@ -108,6 +115,10 @@ export const getLupaSessionStructure = (attendeeOne, attendeeTwo, requesterUUID,
     lupa_session.sessionMode = "Active";
     lupa_session.removed = false;
     lupa_session.locationData = locationData;
+    lupa_session.participants = [
+        attendeeOne,
+        attendeeTwo,
+    ]
     return lupa_session;
 }
 
@@ -138,6 +149,7 @@ var lupa_workout : LupaWorkoutStructure = {
 }
 
 var lupa_user : LupaUserStructure = {
+    assessments: [],
     user_uuid: "",
     display_name: "",
     username: "",
@@ -173,9 +185,13 @@ var lupa_user : LupaUserStructure = {
     chats: [],
     session_reviews: [],
     trainer_tier: 0,
+    tokens: {},
 }
 
-export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", age="", gender="", location="", isTrainer=false, first_name="", last_name="", packs=[], photo_url="", time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, sessionsCompleted, bio, recommended_workouts, certification) => {
+export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", 
+    age="", gender="", location="", isTrainer=false, first_name="", last_name="", packs=[], photo_url="", 
+    time_created, preferred_workout_times={}, interest=[], rating=0, experience, followers, following, 
+    sessionsCompleted, bio, recommended_workouts, certification, assessments=[], tokens={}) => {
     
     lupa_user.user_uuid = user_uuid;
     lupa_user.username = username;
@@ -186,8 +202,21 @@ export const getLupaUserStructure = (user_uuid, display_name="", username="", em
     return lupa_user;
 }
 
+var lupa_assessment : LupaAssessmentStructure = {
+    assessment_acronym: '',
+    data: [],
+    complete: false,
+}
+
+export const getLupaAssessmentStructure = (name, data) => {
+    lupa_assessment.assessment_acronym = name;
+    lupa_assessment.data = data;
+    return lupa_assessment;
+}
+
 export {
     lupa_user,
+    lupa_assessment,
     lupa_user_health_data,
     lupa_session,
     lupa_workout,

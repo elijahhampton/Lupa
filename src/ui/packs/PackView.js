@@ -7,6 +7,7 @@ import {
     ActionSheetIOS,
     RefreshControl,
     Dimensions,
+    SafeAreaView, 
     ScrollView,
 } from 'react-native';
 
@@ -26,11 +27,10 @@ import {
     IconButton,
     Title,
 } from 'react-native-paper';
-import { withNavigation } from 'react-navigation';
 
-import {
-    Feather as FeatherIcon
-} from '@expo/vector-icons';
+import { withNavigation, NavigationActions } from 'react-navigation';
+
+import FeatherIcon from "react-native-vector-icons/Feather"
 
 import PackSearchResultCard from './component/PackSearchResultCard';
 import DefaultPack, { SmallPackCard } from './component/ExploreCards/PackExploreCard';
@@ -79,6 +79,8 @@ class PackView extends React.Component {
          let data;
          data = await getCurrentStoreState().Packs.currUserPacksData;
          await this.setState({ currUserPacks: data })
+
+         console.log(this.state.currUserPacks)
      }
  
      async _prepareSearch() {
@@ -131,7 +133,7 @@ class PackView extends React.Component {
              {
                  case "pack":
                      return (
-                         <PackSearchResultCard  title={result.pack_title} isSubscription={result.pack_isSubscription} uuid={result.pack_uuid} />
+                         <PackSearchResultCard  title={result.pack_title} packLocation={result.pack_location.city + ", " + result.pack_location.state} isSubscription={result.pack_isSubscription} uuid={result.pack_uuid} />
                      )
                  default:
              }
@@ -140,13 +142,14 @@ class PackView extends React.Component {
 
      _handleOnRefresh = async () => {
          this.setState({ refreshing: true })
-         //await this.refreshCurrentUserPacks();
+         await this.refreshCurrentUserPacks();
          await this._handleOnRefreshPackData();
          this.setState({ refreshing: false })
      }
 
      _handleOnRefreshPackData = async () => {
-         await this.setupExplorePage();
+        await this.refreshCurrentUserPacks();
+        await this.setupExplorePage();
      }
      
      setupExplorePage = async () => {
@@ -210,7 +213,7 @@ class PackView extends React.Component {
     loadCurrUserPacks = () => {
         try {
             return this.state.currUserPacks.map(pack => {
-                return <MyPacksCard title={pack.pack_title} packImage={pack.pack_image} packUUID={pack.pack_uuid} numMembers={pack.pack_members.length} image={pack.pack_image} packType={pack.pack_type}/>
+                return <MyPacksCard refreshPackViewMethod={this.refreshCurrentUserPacks} title={pack.pack_title} packImage={pack.pack_image} packUUID={pack.pack_uuid} numMembers={pack.pack_members.length} image={pack.pack_image} packType={pack.pack_type}/>
             })
         } catch(err)
         {
@@ -278,14 +281,14 @@ class PackView extends React.Component {
 
     render() {
         return (
-            <Container style={styles.root}>
+            <SafeAreaView style={styles.root}>
                 <Header style={styles.header} transparent={true}>
                     <Left>
                     <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems}/>
                     </Left>
 
                     <Right>
-                <Title style={[styles.headerItems, {fontFamily: 'avenir-next-bold',fontSize: 25, fontWeight: "600", color: "black"}]}>
+                <Title style={[styles.headerItems, {fontFamily: 'ars-maquette-pro-bold',fontSize: 25, fontWeight: "600", color: "black"}]}>
                         Packs
                     </Title>
                     </Right>
@@ -393,10 +396,8 @@ class PackView extends React.Component {
                 </ScrollView>
                 }
 
-                
-
                <CreatePack isOpen={this.state.createPackModalIsOpen} closeModalMethod={this.closeCreatePackModal}/>
-            </Container>
+            </SafeAreaView>
         );
     }
 }
@@ -405,7 +406,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         backgroundColor: "#FFFFFF",
-        padding: 10,
+
     },
     header: {
         backgroundColor: "#FFFFFF", 
@@ -426,13 +427,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         padding: 3,
-        fontFamily: 'avenir-book',
+        fontFamily: 'ars-maquette-pro-medium',
     },
     headerDescriptionText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '400',
         padding: 3,
-        fontFamily: 'avenir-roman',
+        fontFamily: 'ars-maquette-pro-regular',
     },
     sectionContent: {
 
