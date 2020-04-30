@@ -16,9 +16,10 @@ import {
   Button
 } from 'react-native-paper';
 
+
 import { withNavigation, NavigationActions } from 'react-navigation';
 
-import { Feather as DrawerIcon } from '@expo/vector-icons';
+import DrawerIcon from "react-native-vector-icons/Feather"
 
 import SafeAreaView from 'react-native-safe-area-view';
 import * as ImagePicker from 'expo-image-picker';
@@ -67,16 +68,7 @@ class DrawerMenu extends React.Component {
   
   _handleLogout = () => {
     //this.props.navigation.reset();
-    this.props.navigation.push('Login');
-  }
-
-  _getPermissionsAsync = async () => {
-    if (Platform.OS == 'ios') {
-      const { photoPermissionsStatus } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if ( photoPermissionsStatus != 'granted' ) {
-        alert('Sorry, we need camera roll permissions to make this work.');
-      }
-    }
+    //this.props.navigation.push('Login');
   }
 
   _chooseAvatar = async () => {
@@ -163,7 +155,7 @@ NavigationActions.navigate({
   }
 }
 
-export default connect(mapStateToProps)(withNavigation(DrawerMenu));
+export default connect(mapStateToProps)(DrawerMenu);
 
   const styles = StyleSheet.create({
     container: {

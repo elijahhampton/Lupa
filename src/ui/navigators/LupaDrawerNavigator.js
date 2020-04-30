@@ -1,19 +1,34 @@
+
 import React from 'react';
 
 import DashboardView from '../user/dashboard/TrainerDashboardView';
-import { createAppContainer, NavigationActions } from 'react-navigation';
-import { createDrawerNavigator } from 'react-navigation-drawer';
-
-import AuthenticationNavigator from './AuthenticationNavigator';
+//import { NavigationContainer } from '@react-navigation/native'
+//import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import DrawerMenu from './Components/DrawerMenu';
-
-import UserSettings from './SettingsNavigator';
-
 
 import ProfileNavigator from './ProfileNavigator';
 
 import TrainerInformation from '../user/modal/WelcomeModal/TrainerInformation';
+
+import { createAppContainer } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+
+/*
+const Drawer = createDrawerNavigator();
+
+export default function LupaDrawerNavigator() {
+  return (
+    <NavigationContainer independent={true}>
+          <Drawer.Navigator initialRouteName="Dashboard" drawerPosition="left" drawerContent={(props) => <DrawerMenu {...props}  />}>
+     <Drawer.Screen name="Dashboard" component={DashboardView} />
+      <Drawer.Screen name="ProfileView" component={ProfileNavigator} />
+      <Drawer.Screen name="TrainerInformation" component={TrainerInformation} />
+    </Drawer.Navigator>
+    </NavigationContainer>
+  )
+}
+*/
 
 const LupaDrawerNavigator = createDrawerNavigator(
     {
@@ -24,14 +39,6 @@ const LupaDrawerNavigator = createDrawerNavigator(
       Profile: {
         screen: ProfileNavigator
       },
-      UserSettings: {
-        screen: UserSettings,
-        navigationOptions: ({ navigation }) => ({
-            title: 'UserSettings',
-            header: null,
-            gesturesEnabled: false,
-        }),
-    },
     TrainerInformation: {
       screen: TrainerInformation
     },
@@ -41,10 +48,5 @@ const LupaDrawerNavigator = createDrawerNavigator(
       contentComponent: (props) => <DrawerMenu {...props} logoutMethod={props.screenProps.logoutMethod}/>
     }
   );
-
-
-const options = {
-
-}
 
 export default createAppContainer(LupaDrawerNavigator);

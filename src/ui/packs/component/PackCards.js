@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import {
     View,
@@ -13,7 +13,8 @@ import {
     Surface,
     Caption
 } from 'react-native-paper';
-import { withNavigation } from 'react-navigation';
+
+import { withNavigation, NavigationActions } from 'react-navigation';
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 import LupaController from '../../../controller/lupa/LupaController';
@@ -37,7 +38,12 @@ class MyPacksCard extends React.Component {
             this.props.navigation.navigate('PackModal', {
                 navigation: this.props.navigation,
                 packUUID: uuid,
+                refreshPackViewMethod: this.refreshPackView.bind(this)
             })
+    }
+
+    refreshPackView = async () => {
+        await this.props.refreshPackViewMethod();
     }
 
     componentDidMount = async () => {
@@ -54,8 +60,6 @@ class MyPacksCard extends React.Component {
         })
     }
 
-
-
     render() {
         return (
             <>
@@ -68,16 +72,17 @@ class MyPacksCard extends React.Component {
                         </Surface>
                         <View style={styles.cardContentContainer}>
                         <View style={{flexDirection: 'column', alignItems: "flex-start"}}>
-                        <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "black"}}>
+                        <Text style={{flexWrap: 'wrap', alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "black"}}>
                             {this.props.title}
                         </Text>
+                        </View>
+
                         <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "black"}}>
                             {this.props.packType}
                         </Text>
                         <Caption>
                             {this.props.numMembers} member
                         </Caption>
-                        </View>
                         </View>
                 </Surface>
             </TouchableOpacity>
@@ -92,11 +97,11 @@ const styles = StyleSheet.create({
     },
     bottomSurface: {
         margin: 10, 
-        width: Dimensions.get('screen').width / 2, 
+        width: Dimensions.get('screen').width / 1.8, 
         height: 100, 
         elevation: 0, 
         borderRadius: 20, 
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "#F5F5F5",
@@ -114,7 +119,7 @@ const styles = StyleSheet.create({
         alignSelf: "flex-end"
     },
     cardContentContainer: {
-        flex: 1, flexDirection: "column", padding: 15
+        flex: 1, flexDirection: "column", padding: 15, justifyContent: 'space-evenly'
     },
     rating: {
         margin: 2

@@ -6,6 +6,8 @@ import {
     Text,
     Modal,
     ScrollView,
+    Button,
+    SafeAreaView,
 } from 'react-native';
 
 import {
@@ -83,15 +85,22 @@ export default class UserReviewModal extends React.Component {
 
     render() {
         return (
-            <Modal presentationStyle="pageSheet" visible={this.props.isVisible} onDismiss={this.props.closeModalMethod}>
+            <Modal 
+                presentationStyle="fullScreen" 
+                visible={this.props.isVisible} 
+                animated={true}
+                animationType="slide">
+                <SafeAreaView style={{flex: 1}}>
                 <Title style={{alignSelf: 'center', color: "rgba(189,189,189 ,1)"}}>
                     Elijah Hampton's Reviews
                 </Title>
                 
-                <ScrollView contentContainerStyle={{padding: 5}}>
+                <ScrollView contentContainerStyle={{flex: 1, padding: 5}}>
                     {this.mapReviews()}
                 </ScrollView>
-            </Modal>
+                <Button title="Close" style={{alignSelf: 'flex-end'}} onPress={this.props.closeModalMethod} />
+                </SafeAreaView>
+           </Modal>
         )
     }
 }

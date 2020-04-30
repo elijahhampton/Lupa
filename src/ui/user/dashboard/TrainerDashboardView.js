@@ -6,7 +6,7 @@
  *  UserDashboardView
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
     Text,
@@ -15,6 +15,9 @@ import {
     TouchableOpacity,
     ScrollView,
     RefreshControl,
+    Dimensions,
+    Animated,
+    Button as NativeButton
 } from 'react-native';
 
 import {
@@ -27,21 +30,16 @@ import {
     Paragraph,
     Divider,
     Caption,
+    Surface,
     Chip,
     Button
 } from 'react-native-paper';
 
-import { Pagination } from 'react-native-snap-carousel';
-
-import LupaCalendar from './calendar/LupaCalendar'
-
-import SafeAreaView from 'react-native-safe-area-view';
-
 import SessionNotificationContainer, { PackEventNotificationContainer } from './component/SessionNotificationContainer';
 
 import LupaController from '../../../controller/lupa/LupaController';
-
 import { connect } from 'react-redux';
+import LupaJournal from './component/LupaJournal/LupaJournal'
 
 const mapStateToProps = (state, action) => {
     return {
@@ -116,11 +114,11 @@ class TrainerDashboardView extends React.Component {
     }
 
     _onRefresh = async () => {
-        this.setState({ refreshing: true });
+        await this.setState({ refreshing: true });
         await this.fetchSessions()
         await this.fetchPackEvents()
         await this.fetchPackInvites()
-        this.setState({ refreshing: false });
+        await this.setState({ refreshing: false });
     }
 
     /**
@@ -174,7 +172,7 @@ class TrainerDashboardView extends React.Component {
                 case 'June':
                     realMonth = 6;
                     break;
-                case 'July':
+                case 'July': 
                     realMonth = 7;
                     break;
                 case 'August':
@@ -231,18 +229,24 @@ class TrainerDashboardView extends React.Component {
      */
     fetchPackEvents = async () => {
         let currentUserPackEventsData = [];
-
+        //alert(this.state.packEventsData.length)
         try {
             for (let i = 0; i < this.state.currUserPacksData.length; i++) {
-                await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.currUserPacksData[i].id).then(result => {
+                console.log(this.state.currUserPacksData.length)
+                console.log(this.state.currUserPacksData[i].pack_uuid)
+                await this.LUPA_CONTROLLER_INSTANCE.getPackEventsByUUID(this.state.currUserPacksData[i].pack_uuid).then(result => {
                     currentUserPackEventsData = result;
+                    console.log(currentUserPackEventsData)
                 })
+
+                console.log(currentUserPackEventsData.length)
             }
     
             await this.setState({ packEventsData: currentUserPackEventsData });
         }
         catch(err)
         {
+            console.log(err)
             await this.setState({ packEventsData: [] });
         }
 
@@ -335,19 +339,17 @@ class TrainerDashboardView extends React.Component {
             <View style={styles.safeareaview}>
                                         <Appbar.Header
                                         statusBarHeight
-                                        style={{elevation: 0}}
+                                        style={{elevation: 0, alignItems: 'center'}}
                                         theme={{
                                             elevation: 0,
                                             colors: {
                                                 primary: "#2196F3"
                                             }
-                                        }}> 
-                                        <View style={styles.header}>
-                        <IconButton icon="menu" style={styles.iconButton} onPress={() => this.props.navigation.openDrawer()} />
-                        <Text style={styles.headerText}>
-                            Lupa
-                        </Text>
-                    </View>
+                                        }}
+                                        > 
+                                         <Appbar.Action icon="menu" style={{alignSelf: 'flex-end', left: 0,}} onPress={() => this.props.navigation.openDrawer()} />
+                                        <Appbar.Content title="Lupa" titleStyle={styles.headerText} />
+                                       
 </Appbar.Header>
 
                 <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
@@ -356,7 +358,7 @@ class TrainerDashboardView extends React.Component {
                         onRefresh={this._onRefresh}
                     />}>
 
-                    <LupaCalendar elevation={10} />
+                    <LupaJournal />
 
                     <View>
                         <View style={styles.sectionHeader}>
@@ -440,11 +442,10 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         width: "100%", 
         height: "auto",
-        justifyContent: "space-between"
     },
     headerText: {
-        fontSize: 40, 
-        fontFamily: 'avenir-next-bold',
+        fontSize: 30, 
+        fontFamily: 'ars-maquette-pro-bold',
         color: 'white', 
         alignSelf: "center"
     },
@@ -457,14 +458,15 @@ const styles = StyleSheet.create({
     },
     sectionHeaderText: {
         fontSize: 20, 
-        fontWeight: "500", 
-        color: 'white'
+        fontWeight: "700", 
+        color: 'white',
+        fontFamily: 'ars-maquette-pro-regular'
     },
     divider: {
         margin: 8
     },
     iconButton: {
-        alignSelf: "flex-start"
+        
     }
 });
 

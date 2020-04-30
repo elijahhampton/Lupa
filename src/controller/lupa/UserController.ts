@@ -178,7 +178,6 @@ export default class UserController {
     getCurrentUserData = async () => {
         let currentUserInformation;
         let currentUserUUID = await this.getCurrentUserUUID();
-        console.log('is this set by now: ' + currentUserUUID);
         await USER_COLLECTION.where('user_uuid', '==', currentUserUUID).get().then(docs => {
             docs.forEach(doc => {
                 currentUserInformation = doc.data();
@@ -293,11 +292,7 @@ export default class UserController {
                 break;
             case UserCollectionFields.LOCATION:
                 currentUserDocument.update({
-                    location: {
-                        city: value.city,
-                        state: value.state,
-                        country: value.country,
-                    }
+                    location: value,
                 });
                 break;
             case UserCollectionFields.BIO:
@@ -341,6 +336,11 @@ export default class UserController {
                 }, {
                     merge: true,
                 })
+                break;
+            case UserCollectionFields.INTEREST_ARR:
+                currentUserDocument.update({
+                    interest: value,
+                });
                 break;
             case UserCollectionFields.INTEREST:
                 let interestData = [];
@@ -751,7 +751,6 @@ export default class UserController {
     }
 
     getNearbyUsers = async (location) => {
-
         return new Promise((resolve, reject) => {
             let nearbyUsers = new Array();
             usersIndex.search({
@@ -786,7 +785,6 @@ export default class UserController {
                         await nearbyUsers.push(hits[i]);
                     }
                 }
-
                 resolve(nearbyUsers);
             })
         })
@@ -801,9 +799,8 @@ export default class UserController {
                 attributesToHighlight: ['location'],
             }, async (err, { hits }) => {
                 if (err) throw reject(err);
-
+alert(hits.length)
                 if (hits.length == 0) {
-                    alert('bat')
                     await USER_COLLECTION.where('isTrainer', '==', true).limit(3).get().then(result => {
                         let docs = result;
                         let data;
@@ -883,7 +880,6 @@ export default class UserController {
 
         //
         let program_structure_payload = await getLupaProgramStructure();
-        console.log(program_structure_payload)
 
         //
         await USER_COLLECTION.doc(user_uuid).collection("programs").add(program_structure_payload).then(ref => {
@@ -891,6 +887,10 @@ export default class UserController {
         });
 
         //update fb doc with uuid
+        let currentProgramDoc = USER_COLLECTION.doc(user_uuid).collection("programs").doc(programUUID);
+        currentProgramDoc.update({
+            program_uuid: programUUID,
+        })
 
         //
         program_structure_payload.program_uuid = programUUID;
@@ -899,7 +899,6 @@ export default class UserController {
     }
 
     deleteProgram = async (user_uuid, programUUID) => {
-        console.log('in user controller: ' + programUUID);
         await USER_COLLECTION.doc(user_uuid).collection("programs").doc(programUUID).delete();
     }
 
@@ -1001,6 +1000,34 @@ export default class UserController {
 
         return Promise.resolve(result);
     }
+
+    addAssessment = async (assessment_uuid) => {
+        let currUserAssessments = [];
+        await USER_COLLECTION.doc(this.getCurrentUserUUID()).get().then(snapshot => {
+            currUserAssessments = snapshot.data().assessments;
+        })
+
+        if (currUserAssessments.includes(assessment_uuid))
+        {
+            currUserAssessments.splice(currUserAssessments.indexOf(assessment_uuid), 1);
+        }
+
+        currUserAssessments.push(assessment_uuid);
+
+        USER_COLLECTION.doc(this.getCurrentUserUUID()).update({
+            assessments: currUserAssessments
+        })
+    }
+
+    getUserAssessment = async (acronym, user_uuid) => {
+        let retVal;
+        await LUPA_DB.collection('assessments').doc(acronym + "_" + user_uuid).get().then(snapshot => {
+            retVal = snapshot.data();
+        });
+        
+        return Promise.resolve(retVal);
+    }
+
 }
 
 //me

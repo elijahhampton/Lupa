@@ -30,8 +30,6 @@ import {
 
 import { connect, useSelector } from 'react-redux';
 
-import { Feather as FeatherIcon } from '@expo/vector-icons';
-
 import LupaController from '../../../controller/lupa/LupaController';
 import SingleWorkout from "./SingleWorkout";
 import LiveWorkout from "../modal/LiveWorkout";
@@ -386,20 +384,15 @@ class WorkoutTool extends React.Component {
     }
 
     handleBuildAWorkoutButton = () => {
-        console.log(this.state.workoutData)
-        console.log("resetting workout program")
         //reset workout program
         this.resetWorkoutProgram();
 
-        console.log("creating workout program")
         //create program in firebase, redux, and set the current program uuid
         this.createNewWorkoutProgram();
 
-        console.log("setting state")
         //set state for library for when opened
         this.setState({ buildAWorkout: true, logAWorkout: false })
 
-        console.log("open description")
         //set state to show dialog
         this.openBuildAWorkoutDescriptionDialog();
     }
@@ -457,7 +450,7 @@ class WorkoutTool extends React.Component {
                 sectionName = "homework";
                 break;
             default:
-                console.log("name didn't match any")
+                
                 return;
         }
 
@@ -565,8 +558,8 @@ class WorkoutTool extends React.Component {
                         this.state.buildAWorkout || this.state.logAWorkout ?
                             null
                             :
-                            <>
-                                <Text style={{ fontFamily: 'avenir-roman',fontWeight: "500", fontSize: 40, paddingTop: 20, paddingLeft: 20, color: "#212121" }}>
+                            <ScrollView shouldRasterizeIOS={true} contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}>
+                                <Text style={{ fontFamily: 'ars-maquette-pro-regular',fontWeight: "500", fontSize: 40, paddingTop: 20, paddingLeft: 20, color: "#212121" }}>
                                     It looks like you're ready to get started.
                         </Text>
 
@@ -577,7 +570,7 @@ class WorkoutTool extends React.Component {
                                 <View style={{ flex: 1, borderTopLeftRadius: 30, borderBottomLeftRadius: 30, alignItems: "center", justifyContent: "center", }}>
                                     <ElementsButton raised title="Build a workout" type="solid" containerStyle={{width: "80%", padding: 8}} buttonStyle={{borderRadius: 8, backgroundColor: "white"}} titleStyle={{fontFamily: 'avenir-book', color: "#2196F3"}} onPress={() => this.handleBuildAWorkoutButton()}/>
                                 </View>
-                            </>
+                            </ScrollView>
 
                     }
 

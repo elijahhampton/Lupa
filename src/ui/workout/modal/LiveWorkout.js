@@ -27,7 +27,7 @@ import { Video } from 'expo-av'
 import ScrollPicker from 'react-native-wheel-scroll-picker';
 import { Subtitle, Segment } from 'native-base';
 
-import { Feather as FeatherIcon } from '@expo/vector-icons';
+import FeatherIcon from "react-native-vector-icons/Feather"
 
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
@@ -397,7 +397,7 @@ class LiveWorkout extends React.Component {
                             <Appbar.Header statusBarHeight style={{backgroundColor: "white", justifyContent: "space-between"}} style={{elevation: 0, backgroundColor: "white"}}>
                             <Surface>
                                     <Switch onValueChange={this.onToggleSwitch} value={this.state.switchEnabled} color="#2196F3" style={{ margin: 3 }} />
-                                    <Text style={{fontSize: 10, fontFamily: "avenir-next-bold"}}>
+                                    <Text style={{fontSize: 10, fontFamily: "Avenir-Roman"}}>
                                         Toggle Vibration
                             </Text>
                                 </Surface>
@@ -427,7 +427,7 @@ class LiveWorkout extends React.Component {
 
 
                         <View style={{ flex: 1.5}}>
-                            <Text style={{ fontFamily: "avenir-next-bold", fontSize: 25, padding: 10 }}>
+                            <Text style={{ fontFamily: "Avenir-Roman", fontSize: 25, padding: 10 }}>
                                 Workout Details
                             </Text>
                             <View style={{ flex: 1, flexDirection: "column", justifyContent: "space-evenly" }}>
@@ -479,11 +479,11 @@ class LiveWorkout extends React.Component {
                         <View style={{ flex: 1,alignItems: "center", justifyContent: "center"}}>
                                 <TouchableOpacity onPress={() => this.changeWorkout()} style={{ position: "absolute", right: 0, alignSelf: "center" }}>
                                     <Surface style={[styles.interactionSurface, {alignSelf: "center", backgroundColor: "#1565C0", elevation: 8, alignItems: "center", justifyContent: "space-evenly", shadowColor: "#212121", shadowRadius: 10, right: 0, width: Dimensions.get('window').width - 10, height: 150, alignSelf: "center", borderRadius: 0, borderTopLeftRadius: 20, borderBottomLeftRadius: 20 }]}>
-                                   {/*     <Text style={{color: "white", fontSize: 20, fontFamily: "avenir-next-bold" }}>
+                                   {/*     <Text style={{color: "white", fontSize: 20, fontFamily: "Avenir-Roman" }}>
                                             Up Next
                             </Text>
 
-                                        <Text style={{ color: "white", fontSize: 16, fontFamily: "avenir-next-bold" }}>
+                                        <Text style={{ color: "white", fontSize: 16, fontFamily: "Avenir-Roman" }}>
                                             {this.state.nextWorkout ? this.getNextWorkoutTitle() : "Workout Name"
                                             }
 
@@ -635,7 +635,7 @@ class LiveWorkout extends React.Component {
                             </View>
 
                             <View style={{ flex: 2 }}>
-                                <Text style={{ fontFamily: "avenir-next-bold", fontSize: 25, padding: 10 }}>
+                                <Text style={{ fontFamily: "Avenir-Roman", fontSize: 25, padding: 10 }}>
                                     Workout Metrics
                             </Text>
 
@@ -738,7 +738,7 @@ class LiveWorkout extends React.Component {
                                 </View>
                             </View>
                             <Surface style={{backgroundColor: "transparent", elevation: 8, borderRadius: 20, padding: 10, flex: 1, alignItems: "center", justifyContent: "center" }}>
-                            <Text style={{fontFamily: "avenir-next-bold"}}>
+                            <Text style={{fontFamily: "Avenir-Roman"}}>
                                 Muscle Spread
                             </Text>
                             <PieChart

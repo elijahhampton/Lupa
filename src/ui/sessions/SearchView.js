@@ -18,13 +18,18 @@ import {
     Button as NativeButton,
     Dimensions,
     SafeAreaView,
+    Animated,
 } from 'react-native';
 
 import {
     Headline,
     Surface,
+    Portal,
+    Provider,
+    Searchbar,
     Avatar,
     Button,
+    FAB,
 } from 'react-native-paper';
 
 import {
@@ -36,12 +41,12 @@ import {
     Container,
 } from 'native-base';
 
-import {
-    Feather as FeatherIcon
-} from '@expo/vector-icons';
+import MaterialIcon from "react-native-vector-icons/MaterialIcons"
 
 import UserSearchResultCard from './component/UserSearchResultCard';
 import TrainerSearchResultCard from './component/TrainerSearchResultCard';
+
+import { NavigationActions, withNavigation } from 'react-navigation'
 
 import { TrainerCard } from '../packs/component/ExploreCards/PackExploreCard'
 
@@ -72,6 +77,8 @@ class SearchView extends React.Component {
             currUserData: this.props.lupa_data.Users.currUserData,
             suggestedTrainers: [],
             upcomingSessions: [],
+            open: false,
+            searchViewHeight: Dimensions.get('window').height / 2
         }
     }
 
@@ -79,13 +86,17 @@ class SearchView extends React.Component {
         await this.setupExplorePage();
     }
 
+    doIt = () => {
+        const end = this.state.searchViewHeight == Dimensions.get('window').height / 2 ? 0 : Dimensions.get('window').height / 2
+
+        Animated.timing(this.state.searchViewHeight, {
+            toValue: end,
+            duration: 500,
+        }).start();
+    }
+
     setupExplorePage = async () => {
         let suggestedTrainersIn, upcomingSessionsIn;
-
-        await this.LUPA_CONTROLLER_INSTANCE.getTrainersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
-            suggestedTrainersIn = result;
-        });
-
 
         await this.LUPA_CONTROLLER_INSTANCE.getUpcomingSessions(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
             upcomingSessionsIn = result;
@@ -108,8 +119,8 @@ class SearchView extends React.Component {
 
     mapUpcomingSessions = () => {
         return this.state.upcomingSessions.length == 0 ?
-        <Text style={{fontSize: 20, marginLeft: 20, alignSelf: "flex-start"}}>
-            You have no upcoming sessions.
+        <Text style={{fontSize: 15,borderColor: "#212121", padding: 10, marginLeft: 20, alignSelf: "flex-start"}}>
+            You have no sessions scheduled.
         </Text>
         :
         this.state.upcomingSessions.map(session => {
@@ -127,7 +138,7 @@ class SearchView extends React.Component {
                         <Avatar.Image source={{ uri: user.photo_url }} size={50} />
 
                         <View style={{ padding: 10 }}>
-                            <Text style={{ fontFamily: 'avenir-next-bold', color: "white" }}>
+                            <Text style={{ fontFamily: 'Avenir-Roman', color: "white" }}>
                                 {user.display_name}
                             </Text>
                             <Text style={{ fontSize: 15, color: "grey" }}>
@@ -194,11 +205,11 @@ class SearchView extends React.Component {
             switch (result.resultType) {
                 case "trainer":
                     return (
-                        <TrainerSearchResultCard title={result.display_name} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
+                        <TrainerSearchResultCard title={result.display_name} username={result.username} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
                     )
                 case "user":
                     return (
-                        <UserSearchResultCard title={result.display_name} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
+                        <UserSearchResultCard title={result.display_name} username={result.username} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
                     )
                 default:
             }
@@ -216,11 +227,14 @@ class SearchView extends React.Component {
         this.setState({ refreshing: false });
     }
 
+    _onStateChange = ({ open }) => this.setState({ open: !this.state.open });
+
     render() {
+        const open = this.state;
         return (
             <Container style={styles.root}>
                 <View style={{ flex: 1, backgroundColor: "white" }}>
-                    <Surface style={{ elevation: 10, borderBottomLeftRadius: 30, position: "absolute", width: Dimensions.get('window').width, top: 0, height: '40%', backgroundColor: "#2196F3" }}>
+                    <Surface style={{ elevation: 10, borderBottomLeftRadius: 30, position: "absolute", width: Dimensions.get('window').width, top: 0, height: this.state.searchViewHeight, backgroundColor: "#2196F3" }}>
                         <SafeAreaView />
                         <Video
                             source={SessionsVideo}
@@ -231,48 +245,31 @@ class SearchView extends React.Component {
                             shouldPlay
                             isLooping
                             style={{ position: "absolute", borderBottomLeftRadius: 30, width: "100%", height: "100%" }} />
-                        <Text style={{ fontFamily: "avenir-next-bold", fontSize: 30, color: "white", padding: 10, alignSelf: "flex-end" }}>
+                        <Text style={{ fontFamily: "ars-maquette-pro",fontSize: 30, color: "#212121", padding: 10, alignSelf: "flex-end" }}>
                             Sessions
                     </Text>
 
-                        <View style={{ flex: 1 }}>
-                            <Headline style={{ padding: 10, fontFamily: "avenir-next-bold", color: "white" }}>
-                                Suggested Trainers
-                        </Headline>
-                            <View style={{ flex: 1, }}>
-                                <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
-                                    {
-                                        this.mapSuggestedTrainers()
-                                    }
-
-                                </ScrollView>
-                            </View>
-
-                        </View>
-
-                        <SearchBar placeholder="Search the Lupa Database"
+                        <Searchbar 
+                            placeholder="Search Users and Lupa Trainers" 
+                            style={{position: 'absolute', bottom: 20, borderRadius: 30, width: '90%', alignSelf: 'center'}}
                             onChangeText={text => this._performSearch(text)}
-                            platform="ios"
-                            searchIcon={<FeatherIcon name="search" />}
-                            inputStyle={{ backgroundColor: "white" }}
-                            inputContainerStyle={{ backgroundColor: "white", borderRadius: 30 }}
-                            containerStyle={{ borderRadius: 30, position: "absolute", bottom: 0, backgroundColor: "transparent" }}
                             value={this.state.searchValue}
-
-                        />
+                            />
                     </Surface>
 
-                    <View style={{ position: "absolute", bottom: 0, height: "60%" }}>
+                    <View style={{ position: "absolute", bottom: 0, height: Dimensions.get('window').height / 2 }}>
                         {
                             this.state.searchResults == '' ?
-                                <ScrollView contentContainerStyle={[styles.searchContainer]} shouldRasterizeIOS={true}>
-                                    <Text style={{ fontFamily: "avenir-next-bold", fontSize: 30, color: "#212121", padding: 10, alignSelf: "flex-start" }}>
+                                <View style={{flex: 1}} shouldRasterizeIOS={true}>
+                                    <Text style={{ fontFamily: 'ARSMaquettePro-Regular', fontSize: 25, color: "#212121", padding: 10, alignSelf: "flex-start" }}>
                                         Upcoming Sessions
                                      </Text>
+                                    <ScrollView>
                                     {
                                         this.mapUpcomingSessions()
                                     }
-                                </ScrollView>
+                                    </ScrollView>
+                                </View>
                                 :
                                 <ScrollView contentContainerStyle={styles.searchContainer} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handeOnRefresh} />} shouldRasterizeIOS={true}>
                                     {
@@ -282,6 +279,20 @@ class SearchView extends React.Component {
                         }
                     </View>
                 </View>
+           <FAB.Group
+             open={this.state.open}
+             icon={this.state.open ? 'list' : 'menu'}
+             actions={[
+               { icon: 'directions-run', label: 'Programs', onPress: () => this.props.navigation.navigate('Programs'), color: '#FFFFFF', style: {backgroundColor: '#212121'}},
+               { icon: 'fitness-center', label: 'Build a Workout', onPress: () => this.props.navigation.navigate('BuildAWorkout'), color: '#FFFFFF', style: {backgroundColor: '#212121'}},
+             ]}
+             onPress={() => {
+               this.setState({ open: !this.state.open})
+             }}
+             onStateChange={this._onStateChange}
+             style={{position: 'absolute'}}
+             fabStyle={{backgroundColor: "#212121"}}
+           />
             </Container>
         );
     }
@@ -310,9 +321,15 @@ const styles = StyleSheet.create({
 
         backgroundColor: "transparent",
     },
+    searchContainerNoResults: {
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: 'center',
+        backgroundColor: "red",
+    },
     button: {
 
     }
 });
 
-export default connect(mapStateToProps)(SearchView);
+export default connect(mapStateToProps)(withNavigation(SearchView));

@@ -8,7 +8,8 @@ import {
     Dimensions,
     Image,
     ActionSheetIOS,
-    TouchableOpacity
+    TouchableOpacity,
+    SafeAreaView
 } from 'react-native';
 
 import {
@@ -33,8 +34,8 @@ import {
     Ellipse
 } from 'react-native-svg';
 
-import { Feather as FeatherIcon } from '@expo/vector-icons';
-import SafeAreaView from 'react-native-safe-area-view';
+import FeatherIcon from "react-native-vector-icons/Feather"
+
 import { ScrollView } from 'react-native-gesture-handler';
 
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -43,7 +44,8 @@ import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 import LupaController from '../../controller/lupa/LupaController';
 import CreateEvent from './modal/CreateEvent';
-import { withNavigation } from 'react-navigation';
+
+import { withNavigation, NavigationActions } from 'react-navigation';
 import UserDisplayCard from './component/UserDisplayCard';
 
 import { Badge } from 'react-native-elements';
@@ -139,7 +141,7 @@ class PackEventCard extends React.Component {
 
     handlePackEventModalClose = async () => {
         await this.props.refreshData();
-        this.setState({
+        await this.setState({
             packEventModalIsOpen: false
         })
     }
@@ -319,7 +321,12 @@ class PackModal extends React.Component {
     }
 
     componentDidMount = async () => {
+        this.props.disableSwipe();
        await this.setupPackModal();
+    }
+
+    componentWillUnmount() {
+        this.props.enableSwipe();
     }
 
     _navigateToPackChat = () => {
@@ -358,14 +365,6 @@ class PackModal extends React.Component {
             }
         }  
 
-
-        if (packEventsIn.length > 0)
-        {
-            await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventsIn[0].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
-                isAttendingCurrEventIn = result;
-            })
-        }
-
         await this.setState({ 
             packInformation: packInformationIn, 
             packEvents: packEventsIn, 
@@ -373,7 +372,6 @@ class PackModal extends React.Component {
             packRequestsLength: packInformationIn.pack_requests.length, 
             membersLength: packInformationIn.pack_members.length,
             packRequests: packInformationIn.pack_requests,
-            isAttendingCurrEvent: isAttendingCurrEventIn,
             packProfileImage: packProfileImageIn,
         })
 
@@ -403,28 +401,6 @@ class PackModal extends React.Component {
             packEvents: packEventsIn
         })
     }
-
-    checkUserEventAttendance = async (packEventUUID, packEventTitle, userUUID) => {
-        let isAttendingCurrEventIn;
-
-        await this.LUPA_CONTROLLER_INSTANCE.userIsAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(isAttendingCurrEvent => {
-                 isAttendingCurrEventIn = isAttendingCurrEvent;
-             });
-
-        await this.setState({ isAttendingCurrEvent: isAttendingCurrEventIn });
-        }
-
-        handleAttendEventOption = async () => {
-            let index = this.state.currCarouselIndex;
-             await this.LUPA_CONTROLLER_INSTANCE.setUserAsAttendeeForEvent(this.state.packEvents[index].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid);
-             await this.checkUserEventAttendance(this.state.packEvents[index].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid);
-            }
-
-        handleUnattendEventOption = async () => {
-            let index = this.state.currCarouselIndex;
-            await this.LUPA_CONTROLLER_INSTANCE.removeUserAsAttendeeForEvent(this.state.packEvents[index].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid)
-            await this.checkUserEventAttendance(this.state.packEvents[index].pack_event_uuid, "", this.props.lupa_data.Users.currUserData.user_uuid); 
-        }
 
     mapMembers = () => {
         /* This is an existing problem where you cannot access the pack_members field from packInformation..
@@ -457,10 +433,11 @@ class PackModal extends React.Component {
         await this.LUPA_CONTROLLER_INSTANCE.removeUserFromPackByUUID(this.state.packUUID, this.props.lupa_data.Users.currUserData.user_uuid);
         await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser("packs", [this.state.packUUID], "remove");
         await this.LUPA_CONTROLLER_INSTANCE.updatePack(this.state.packUUID, "pack_members", this.props.lupa_data.Users.currUserData.user_uuid, ["remove"]);
+        await this.props.navigation.state.params.refreshPackViewMethod();
         this.props.navigation.goBack(null);
     }
 
-    handlePackInformationModalClose = () => {
+    handlePackInformationModalClose = async () => {
        this.setState({ packInformationModalIsOpen: false })
     }
 
@@ -508,11 +485,6 @@ class PackModal extends React.Component {
                             </View>
 }
 
-getButtonColor = () => {
-    if (this.state.packEvents.length == 0) { return 'grey' }
-    return this.state.packEvents[this.state.currCarouselIndex].attendees.includes(this.props.lupa_data.Users.currUserData.user_uuid) ? "grey" : "#2196F3";
-}
-
     _showActionSheet = () => {
         ActionSheetIOS.showActionSheetWithOptions(
             {
@@ -534,11 +506,10 @@ getButtonColor = () => {
     }
 
     render() {
-        const buttonColors = this.getButtonColor();
         return (
                 <SafeAreaView forceInset={{
                     bottom: 'never'
-                }} style={{ flex: 1, backgroundColor: "#f5f5f5", padding: 5}}>
+                }} style={{ flex: 1, backgroundColor: "#FAFAFA", padding: 5}}>
                     <ScrollView>
                     <Headline style={{alignSelf: "center"}}>
                         {this.state.packInformation.pack_title}
@@ -576,7 +547,7 @@ getButtonColor = () => {
                     </ScrollView>
                     
 
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
+                    <View style={{ height: 'auto', flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
                     {
                                     this._renderMoreVert()
                                 }
@@ -590,89 +561,6 @@ getButtonColor = () => {
                     <PackInformationModal packUUID={this.state.packUUID} isOpen={this.state.packInformationModalIsOpen} closeModalMethod={this.handlePackInformationModalClose} />
                     <PackMembersModal isOpen={this.state.packMembersModalIsOpen} closeModalMethod={this.handlePackMembersModalClose} displayMembersMethod={this.mapMembers} packRequestsLength={this.state.packRequestsLength} packMembersLength={this.state.membersLength}/>
                     <PackRequestsModal refreshData={this.refreshPackModal} isOpen={this.state.packRequestsModalIsVisible} closeModalMethod={this.handlePackRequestModalClose} requestsUUIDs={this.state.packRequests} />
-                    {/*
-                    <Svg height={Dimensions.get('screen').height / 2} width={Dimensions.get('screen').width} style={{position: 'absolute', }}>
-  <Ellipse
-    cx={"55"}
-    cy="100"
-    rx={Dimensions.get('screen').width}
-    ry={Dimensions.get('screen').height / 3}
-    fill="#4b87b6"
-  />
-</Svg>
-                    <View>
-                        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                            <IconButton icon="clear" color="black" onPress={() => this.props.navigation.goBack()} />
-                            <Text style={{
-                                fontSize: 22,
-                                fontWeight: "500",
-                            }}>
-                                {this.state.packInformation.pack_title}
-                            </Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                {
-                                    this._renderMoreVert()
-                                }
-                                <IconButton icon="chat-bubble-outline" color="black" onPress={() => this._navigateToPackChat(this.state.packUUID)} />
-                            </View>
-                        </View>
-                    </View>
-
-
-                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
-                        {
-                            this.renderPackEventsContent()
-                        }
-                    </View>
-
-                    <View style={{ flex: 1 }}>
-                        <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
-                            <TouchableOpacity disabled={this.state.isAttendingCurrEvent} onPress={() => this.handleAttendEventOption()}>
-                            <Surface style={{ elevation: 8, width: 60, height: 60, borderRadius: 60, justifyContent: 'center', alignItems: 'center' }}>
-                                <FeatherIcon name="map-pin" size={25} color={buttonColors} />
-                            </Surface>
-                    </TouchableOpacity>
-
-                        </View>
-
-                        <View style={{ flex: 1, flexDirection: 'row', alignItems: "center", justifyContent: "space-evenly", width: '100%' }}>
-                            <Button mode="outlined" color="#2196F3" onPress={() => this.setState({ packInformationModalIsOpen: true })}>
-                                View Pack Information
-                    </Button>
-
-                            <Button mode="contained" color="#2196F3" onPress={this.handleLeavePack} disabled={this.state.packInformation.pack_isDefault}>
-                                Leave Pack
-                    </Button>
-                        </View>
-                    </View>
-
-                    <View style={{ flex: 1, flexDirection: "column", padding: 10 }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                            <Text style={styles.header}>
-                                Members
-                </Text>
-                            <Button mode="text" color="black" onPress={() => this.setState({ packMembersModalIsOpen: true })} disabled={false}>
-                                View all
-                </Button>
-                        </View>
-
-                        <ScrollView horizontal={true} shouldRasterizeIOS={true} overScrollMode="always" contentContainerStyle={{ alignItems: "flex-start", flexGrow: 2, justifyContent: 'space-around', flexDirection: "row" }}>
-                            {
-                            this.mapMembers()
-                        }
-                        </ScrollView>
-
-
-
-                    </View>
-
-                    <CreateEvent refreshData={this.refreshPackModal} packUUID={this.state.packUUID} isOpen={this.state.createEventModalIsOpen} closeModalMethod={this.handleCreateEventModalClose} />
-                    <PackInformationModal packUUID={this.state.packUUID} isOpen={this.state.packInformationModalIsOpen} closeModalMethod={this.handlePackInformationModalClose} />
-                    <PackMembersModal isOpen={this.state.packMembersModalIsOpen} closeModalMethod={this.handlePackMembersModalClose} displayMembersMethod={this.mapMembers} packRequestsLength={this.state.packRequestsLength} packMembersLength={this.state.membersLength}/>
-                    <PackRequestsModal refreshData={this.refreshPackModal} isOpen={this.state.packRequestsModalIsVisible} closeModalMethod={this.handlePackRequestModalClose} requestsUUIDs={this.state.packRequests} />
-                    */}
-
-                
                     </SafeAreaView>
         );
     }
@@ -707,7 +595,7 @@ const styles = StyleSheet.create({
     },
     header: {
         fontSize: 20,
-        fontFamily: "avenir-next-bold",
+        fontFamily: "Avenir-Roman",
         padding: 10
     },
     event: {

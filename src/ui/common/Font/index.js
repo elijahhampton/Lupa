@@ -12,7 +12,12 @@ async function loadFonts() {
     'din': require('./din-font/D-DIN.otf'),
     'din-bold': require('./din-font/D-DIN-Bold.otf'),
     'din-condensed': require('./din-font/D-DINCondensed.otf'),
-    'din-condensed-bold': require('./din-font/D-DINCondensed-Bold.otf')
+    'din-condensed-bold': require('./din-font/D-DINCondensed-Bold.otf'),
+    'ars-maquette-pro': require('./ars-marquette-font/ARSMaquettePro-Black.ttf'),
+    'ars-maquette-pro-bold': require('./ars-marquette-font/ARSMaquettePro-Bold.ttf'),
+    'ars-maquette-pro-light': require('./ars-marquette-font/ARSMaquettePro-Light.ttf'),
+    'ars-maquette-pro-medium': require('./ars-marquette-font/ARSMaquettePro-Medium.ttf'),
+    'ars-maquette-pro-regular': require('./ars-marquette-font/ARSMaquettePro-Regular.ttf'),
 });
 }
 

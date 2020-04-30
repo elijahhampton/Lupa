@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Dimensions,
     Modal,
+    TouchableOpacity,
     View,
     Image
 } from 'react-native';
@@ -16,6 +17,7 @@ import {
     Button,
     Provider,
     Colors,
+    Snackbar,
     Portal,
     Modal as PaperModal,
     TextInput,
@@ -29,20 +31,16 @@ import * as ImagePicker from 'expo-image-picker';
 
 import SafeAreaView from 'react-native-safe-area-view';
 import { Input, CheckBox, Avatar } from 'react-native-elements';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 var packImageSource = undefined;
 
-import Color from '../../common/Color'
-
 import LupaController from '../../../controller/lupa/LupaController';
 
-import Carousel from 'react-native-snap-carousel';
-
-import UserDisplayCard from '../component/UserDisplayCard';
-
 import { connect } from 'react-redux';
-import { StyleProvider } from 'native-base';
+
+const MINIMUM_TITLE_CHARACTERS = 5;
+
+const MAXIMUM_TITLE_CHARACTERS = 15;
 
 const data = [
     {
@@ -107,7 +105,51 @@ class CreatePack extends React.Component {
             creatingPackDialogIsVisible: false,
             checked: false,
             selected: false,
+            rejectedReason: "",
+            showSnack: false,
         }
+    }
+
+    handleShowSnackbar = () => {
+
+    }
+
+    handleInviteMemberOnPress = () => {
+        if (this.state.noAvatar == true)
+        {
+            this.setState({
+                noAvatar: false,
+                rejectedReason: "Pick an avatar",
+                showSnack: true,
+            })
+            
+            return;
+        }
+
+        if (this.state.pack_title.length <= MINIMUM_TITLE_CHARACTERS || this.state.pack_title.length > MAXIMUM_TITLE_CHARACTERS)
+        {
+            this.setState({
+                rejectedReason: "Warning about no title or min characters",
+                showSnack: true,
+            })
+
+            return;
+        }
+
+        if (this.state.pack_description == "")
+        {
+            this.setState({
+                rejectedReason: "Provie a description for your pack",
+                showSnack: true,
+            })
+
+            return;
+        }
+
+        this.setState({
+            currIndex: 1
+        })
+
     }
 
     isSelectedStyle = (key, item) => {
@@ -135,37 +177,62 @@ class CreatePack extends React.Component {
         this.setState({ packType: key })
     }
 
+    _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
+
+    _onDismissSnackBar = () => {
+      this.setState({ showSnack: false });
+    }
+
     createPack = async () => {
+        if (this.state.invitedMembers.length == 0)
+        {
+            this.setState({
+                showSnack: true,
+                rejectedReason: "You must invite atleast one member to your pack."
+            })
+
+            return;
+        }
+        
         let updatedInvitedMembers = [];
         await this.setState({ creatingPackDialogIsVisible: true });
-        let packLocation, packUUID, pack_image;
-        const currUserUUID = await this.props.lupa_data.Users.currUserData.user_uuid;
 
-        await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(currUserUUID, 'location').then(result => {
-            packLocation = result;
-        });
+        let packLocation = this.props.lupa_data.Users.currUserData.location, packUUID, pack_image;
 
         for (let i = 0; i < this.state.invitedMembers.length; i++)
         {
-            let userData = this.state.invitedMembers[i];
-            let modifiedData = userData.user_uuid;
+            
+            let modifiedData = this.state.invitedMembers[i].user_uuid;
             await updatedInvitedMembers.push(modifiedData);
-
         }
 
         //Wait for the pack to be create before we return back to the main page
-       await this.LUPA_CONTROLLER_INSTANCE.createNewPack(currUserUUID, this.state.pack_title, this.state.pack_description, packLocation, this.state.packImageSource, [currUserUUID], updatedInvitedMembers, 0, 0, new Date(), this.state.subscriptionBasedPack, false, this.state.packType, this.state.packImageSource).then(packData => {
-        this.props.addCurrentUserIntoPack(packData.data);
+       await this.LUPA_CONTROLLER_INSTANCE.createNewPack(
+           this.props.lupa_data.Users.currUserData.user_uuid, 
+           this.state.pack_title, 
+           this.state.pack_description, 
+           packLocation, 
+           this.state.packImageSource, 
+           [this.props.lupa_data.Users.currUserData.user_uuid], 
+           updatedInvitedMembers, 
+           0, 
+           0, 
+           new Date(), 
+           this.state.subscriptionBasedPack, 
+           false, 
+           this.state.packType, 
+           this.state.packImageSource
+           ).then(packData => {
+       this.props.addCurrentUserIntoPack(packData.data);
         packUUID = packData.data.pack_uuid;
         pack_image = packData.photo_url;
-       })
+       });
 
        await this.LUPA_CONTROLLER_INSTANCE.updatePack(packUUID, "pack_image", pack_image);
        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('packs', [packUUID], 'add');
-
        await this.setState({ creatingPackDialogIsVisible: false })
         //Close modal
-       this.closeModal()
+       await this.closeModal()
     }
 
     resetState = () => {
@@ -251,6 +318,7 @@ class CreatePack extends React.Component {
                        {user.display_name}
                     </Text>
                                             </View>
+                                            {/*
 
                     <CheckBox
  right
@@ -258,6 +326,7 @@ class CreatePack extends React.Component {
   uncheckedIcon='circle-o'
   checked={this.state.checked}
 />
+                                            */}
                 </View>
                     </TouchableOpacity>
                 )
@@ -267,7 +336,6 @@ class CreatePack extends React.Component {
     mapInvitedMembers = () => {
         return this.state.invitedMembers.map(user => {
             return (
-                
                 <TouchableOpacity onPress={() => this.handleInviteMember(user)}>
                          <Chip key={user.user_uuid} style={{margin: 2, backgroundColor: "#2196F3"}} textStyle={{color: "white"}} icon="clear" selected={this.state.selected}>
                            {user.display_name}
@@ -279,6 +347,19 @@ class CreatePack extends React.Component {
     }
 
     handleInviteMember = async (user) => {
+
+        if (this.state.invitedMembers.length == 4 && this.state.packType == 'Active')
+        {
+            this.setState({
+                showSnack: true,
+                rejectedReason: "Sorry you have chosen to create an Active Pack.  Active packs can have a maximum of four members.  Remove a user or switch to a community pack."
+            })
+
+            return;
+        }
+
+
+
         this.setState({ 
             selected: !this.state.selected
         })
@@ -326,7 +407,7 @@ class CreatePack extends React.Component {
                                 Cancel
                         </Button>
 
-                            <Button mode="text" color="#2196F3" theme={{ roundness: 15 }} onPress={() => this.setState({ currIndex: 1})}>
+                            <Button mode="text" color="#2196F3" theme={{ roundness: 15 }} onPress={() => this.handleInviteMemberOnPress()}>
                                 Invite Members
                         </Button>
                         </View>
@@ -346,7 +427,7 @@ class CreatePack extends React.Component {
 
                             <Button mode="text" color="#2196F3" onPress={() => this.setState({ currIndex: 0 })}>
                                 Back
-                        </Button>
+                         </Button>
 
                             <Button mode="contained" color="#2196F3" theme={{ roundness: 15 }} onPress={this.createPack}>
                                 Create Pack
@@ -365,13 +446,28 @@ class CreatePack extends React.Component {
                             <Avatar size="large" rounded showEditButton={true} source={{uri: this.state.packImageSource}} onPress={this._chooseImageFromCameraRoll} />
                         </View>
                         
-                        <Input placeholder="Choose a name for your pack" style={{alignSelf: 'center'}} containerStyle={{margin: 10, alignSelf: "center", padding: 5}} inputContainerStyle={{borderBottomWidth: 0, alignSelf: 'center'}} inputStyle={{ fontSize: 25 }} value={this.state.pack_title} onChangeText={text => this.setState({ pack_title: text })}/>
+                        <Input 
+                            placeholder="Choose a name for your pack" 
+                            style={{alignSelf: 'center'}} 
+                            containerStyle={{margin: 10, alignSelf: "center", padding: 5}} 
+                            inputContainerStyle={{borderBottomWidth: 0, alignSelf: 'center'}} 
+                            inputStyle={{ fontSize: 25 }} 
+                            value={this.state.pack_title} 
+                            onChangeText={text => this.setState({ pack_title: text })}
+                            maxLength={20}
+                            />
 
                         <TextInput label="Write a short description for your pack" mode="outlined" placeholder="Ex. Cool example of a pack description." multiline style={{ height: 100, overflow: 'hidden' }} theme={{
                             colors: {
                                 primary: "#2196F3"
                             }
-                        }} returnKeyType="done" returnKeyLabel="done" value={this.state.pack_description} onChangeText={text => this.setState({ pack_description: text})}/>
+                        }} 
+                        returnKeyType="done" 
+                        returnKeyLabel="done" 
+                        value={this.state.pack_description} 
+                        onChangeText={text => this.setState({ pack_description: text})}
+                        maxLength={400}
+                        />
                     </View>
                     
                     <View style={{alignItems: "center", flexDirection: 'column', width: Dimensions.get('screen').width}}>
@@ -435,6 +531,18 @@ class CreatePack extends React.Component {
 
                 </SafeAreaView>
                 <CreatingPackActivityIndicator isVisible={this.state.creatingPackDialogIsVisible}/>
+                <Snackbar
+          style={{backgroundColor: '#212121'}}
+          theme={{ colors: { accent: '#2196F3' }}}
+          visible={this.state.showSnack}
+          onDismiss={this._onDismissSnackBar}
+          action={{
+            label: 'Okay',
+            onPress: () => this.setState({ showSnack: false }),
+          }}
+        >
+          {this.state.rejectedReason}
+        </Snackbar>
             </Modal>
         )
     }

@@ -30,26 +30,20 @@ import SessionCompleteModal from '../../../sessions/modal/SessionCompleteModal';
 import PackEventModal from '../../../packs/modal/PackEventModal';
 
 import LupaController from '../../../../controller/lupa/LupaController';
-import { Feather } from '@expo/vector-icons';
+import Feather from 'react-native-vector-icons/Feather';
 
 export const PackEventNotificationContainer = (props) => {
     const [showModal, setShowModal] = useState(false);
     const [packEventObject, setPackEventObject] = useState(props.packEventObject);
 
     return (
-            <TouchableOpacity style={{flexDirection: 'column', margin: 5}} onPress={() => setShowModal(true)}>
+            <TouchableOpacity style={{flexDirection: 'column', margin: 5, alignItems: 'center', justifyContent: 'center'}} onPress={() => setShowModal(true)}>
                 <Surface style={{elevation: 3, width: 50, height: 50, borderRadius: 50}}>
-                    <Image source={{uri: props.packEventImage}} style={{elevation: 10,}} size={55} />
+                    <Image source={{uri: props.packEventObject.pack_event_image}} style={{flex:1, borderRadius: 50}}/>
                 </Surface>
-                        <Text style={{fontWeight: '500'}}>
-                                {props.packEventTitle}
-                            </Text>
-                            <Text style={{fontWeight: '500'}}>
-                                {props.packEventDate}
-                            </Text>
-                            <Text style={{fontWeight: '500'}}>
+                            <Caption>
                                {props.numAttending} attending
-                            </Text>
+                            </Caption>
                             <PackEventModal isOpen={showModal} closeModalMethod={() => setShowModal(false)} packEventTime={packEventObject.pack_event_time} packEventTitle={packEventObject.pack_event_title} packEventDescription={packEventObject.pack_event_description} packEventAttendees={packEventObject.attendees} packEventDate={packEventObject.pack_event_date} packEventUUID={packEventObject.pack_event_uuid} packEventAttendees={packEventObject.attendees}/>
                     </TouchableOpacity>
     )
@@ -128,12 +122,10 @@ export default class SessionNotificationContainer extends React.Component {
     getSessionBadge = (sessionStatus) => {
         if (sessionStatus == "Pending")
         {
-            alert('badeg')
             return <Feather name="minus-circle" color="red"/>
         }
         else if (sessionStatus == "Set")
         {
-            alert('here')
             return <Feather name="check" color="green"/>
         }
         else {
@@ -150,7 +142,7 @@ export default class SessionNotificationContainer extends React.Component {
                         
                     <Image source={{uri: this.state.userData.photo_url}} style={{flex: 1, borderRadius: 80}} />
                     <Badge style={{position: "absolute", backgroundColor: "white", elevation: 10}}>
-                     {this.getSessionBadge()}
+                     {this.getSessionBadge(this.state.sessionStatus)}
                         </Badge>
                     {/*<View style={styles.initialView}>
                         <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>

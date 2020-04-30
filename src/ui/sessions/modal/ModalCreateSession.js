@@ -31,7 +31,9 @@ import {
 
 import SafeAreaView from 'react-native-safe-area-view';
 
-import { MaterialIcons as Icon, Feather as FeatherIcon } from '@expo/vector-icons';
+import FeatherIcon from "react-native-vector-icons/Feather"
+import MaterialIcon from "react-native-vector-icons/MaterialIcons"
+import Icon from "react-native-vector-icons/MaterialIcons"
 import LupaController from '../../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
@@ -77,6 +79,7 @@ class ModalCreateSessionModal extends React.Component {
             sessionLocation: "Launch Map",
             mapViewVisible:  false,
             sessionLocationData: "",
+            paymentSuccessful: false,
         }
     }
 
@@ -110,7 +113,7 @@ class ModalCreateSessionModal extends React.Component {
         return this.state.sessionTimePeriods.includes(time) ? "flat" : "outlined";
     }
 
-    _handleNewSessionRequest = () => {
+    _handleNewSessionRequest = async () => {
         let paymentToken;
 
         let date = this.state.sessionMonth + "-" + this.state.sessionDay + "-" + this.state.sessionYear;
@@ -118,8 +121,7 @@ class ModalCreateSessionModal extends React.Component {
             date: new Date().getDate(),
             time: new Date().getTime(),
         }
-        
-        /*
+/*
         const amount = getPaymentAmountByTrainerTier(this.state.requestedUserData.trainer_tier);
 
         if (this.state.requestedUserData)
@@ -154,24 +156,23 @@ class ModalCreateSessionModal extends React.Component {
             }
         }
 */
-
         this.LUPA_CONTROLLER_INSTANCE.createNewSession(this.props.lupa_data.Users.currUserData.user_uuid, this.state.requestedUserUUID, this.state.requestedUserUUID, date, this.state.sessionTimePeriods, this.state.sessionName, this.state.sessionDescription, timestamp, this.state.sessionLocationData);
-        this.props.navigation.goBack();
+        this.props.navigation.closeModalMethod();
     }
 
     handlePickSessionTime = (time) => {
-               //if the user has already picked a the first time check to make sure the second is linear
-               if (this.state.sessionTimePeriods.length > 0)
-               {
-                   //get last time picked
-                   let lastPickedTime = this.state.sessionTimePeriods[this.state.sessionTimePeriods.length - 1];
-                   //skip if the next time isn't in sequence (i.e. 4:00PM, 5:00PM)
-                   if ((parseInt(lastPickedTime.charAt(0)) + 1) != parseInt(time.charAt(0)))
-                   {
-                       //if the time isn't linear
-                       return;
-                   }
-               }
+        //if the user has already picked a the first time check to make sure the second is linear
+        if (this.state.sessionTimePeriods.length > 0)
+        {
+            //get last time picked
+            let lastPickedTime = this.state.sessionTimePeriods[this.state.sessionTimePeriods.length - 1];
+            //skip if the next time isn't in sequence (i.e. 4:00PM, 5:00PM)
+            if ((parseInt(lastPickedTime.charAt(0)) + 1) != parseInt(time.charAt(0)))
+            {
+                //if the time isn't linear
+                return;
+            }
+        }
 
         if (this.state.sessionTimePeriods.includes(time)) {
             let currentTimes = this.state.sessionTimePeriods;
@@ -313,11 +314,17 @@ class ModalCreateSessionModal extends React.Component {
 
     render() {
         return (
-                <Modal style={styles.modalContainer} visible={this.props.isVisible} presentationStyle="pageSheet" onDismiss={this.props.closeModalMethod}>
-                    <ScrollView>
+                <Modal 
+                    style={styles.modalContainer} 
+                    visible={this.props.isVisible} 
+                    presentationStyle="fullScreen" 
+                    animationType="slide"
+                    animated={true}>
+                     <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, backgroundColor: "white", flexDirection: 'column', justifyContent: 'space-between'}}>
+                    <SafeAreaView />
                     <View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                            <Surface style={{ width: 90, height: 90, elevation: 3, borderRadius: 80, margin: 10 }}>
+                            <Surface style={{ width: 90, height: 90, elevation: 8, borderRadius: 80, margin: 10 }}>
                                 {
                                     this.getCurrentUserAvatar()
                                 }
@@ -325,7 +332,7 @@ class ModalCreateSessionModal extends React.Component {
 
                             <Icon name="compare-arrows" size={40} />
 
-                            <Surface style={{ width: 90, height: 90, elevation: 3, borderRadius: 80, margin: 10, }}>
+                            <Surface style={{ width: 90, height: 90, elevation: 8, borderRadius: 80, margin: 10, }}>
                                 {
                                     this.getRequestedUserAvatar()
                                 }
@@ -374,7 +381,7 @@ class ModalCreateSessionModal extends React.Component {
                         <View style={{margin: 15}}>
                         <View style={{ padding: 10}}>
                             <View style={{flexDirection: "row", alignItems: "center"}}>
-                                <Icon name="location-on" size={25} color="#2196F3" style={{margin: 5}}/>
+                                <MaterialIcon name="location-on" size={25} color="#2196F3" style={{margin: 5}}/>
                             <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>
                                 Choose a location
                                 </Text>
@@ -403,6 +410,20 @@ class ModalCreateSessionModal extends React.Component {
                         </View>
 
                         <Divider style={{margin: 5}}/>
+                        <View style={{margin: 15 }}>
+                        <View style={{ padding: 10}}>
+                                <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <MaterialIcon name="info" size={25} color="#2196F3" style={{margin: 5}} />
+                                <Text style={{fontFamily: "avenir-roman", fontSize: 20,}}>
+                                Additional Information
+                                </Text>
+                                </View>
+                                <Caption>
+                                - Message about payment.
+                                </Caption>
+                            </View>
+                        </View>
+                        <Divider style={{margin: 5}}/>
 
                         <View style={{width: "100%", justifyContent: "center", alignItems: "center"}}>
                             <TouchableOpacity onPress={this._handleNewSessionRequest} style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
@@ -414,7 +435,7 @@ class ModalCreateSessionModal extends React.Component {
                             </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => alert('cancel')} style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
+                            <TouchableOpacity onPress={() => this.props.closeModalMethod()} style={{width: "100%", alignItems: "center", justifyContent: "center"}}>
                             <View style={{marginLeft: 30, width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "flex-start"}}>
                                 <FeatherIcon  style={{margin: 15}} name="x" color="rgba(33,150,243 ,1)" />
                                 <Text style={{fontFamily: "avenir-book", fontSize: 18}}>
@@ -433,7 +454,7 @@ class ModalCreateSessionModal extends React.Component {
                             closeMapViewMethod={gymData => this.onMapViewClose(gymData)}
                             isVisible={this.state.mapViewVisible}
                         />
-                                            </ScrollView>
+                </ScrollView>
                 </Modal>
         );
     }

@@ -31,7 +31,8 @@ import {
 
 import SafeAreaView from 'react-native-safe-area-view';
 
-import { MaterialIcons as Icon, Feather as FeatherIcon } from '@expo/vector-icons';
+import FeatherIcon from "react-native-vector-icons/Feather"
+import Icon from "react-native-vector-icons/MaterialIcons"
 import LupaController from '../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
@@ -316,7 +317,7 @@ class CreateSessionModal extends React.Component {
                     <SafeAreaView />
                     <View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                            <Surface style={{ width: 90, height: 90, elevation: 3, borderRadius: 80, margin: 10 }}>
+                            <Surface style={{ width: 90, height: 90, elevation: 8, borderRadius: 80, margin: 10 }}>
                                 {
                                     this.getCurrentUserAvatar()
                                 }
@@ -324,7 +325,7 @@ class CreateSessionModal extends React.Component {
 
                             <Icon name="compare-arrows" size={40} />
 
-                            <Surface style={{ width: 90, height: 90, elevation: 3, borderRadius: 80, margin: 10, }}>
+                            <Surface style={{ width: 90, height: 90, elevation: 8, borderRadius: 80, margin: 10, }}>
                                 {
                                     this.getRequestedUserAvatar()
                                 }
@@ -401,6 +402,20 @@ class CreateSessionModal extends React.Component {
                             </TouchableOpacity>
                         </View>
 
+                        <Divider style={{margin: 5}}/>
+                        <View style={{margin: 15 }}>
+                        <View style={{ padding: 10}}>
+                                <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Icon name="info" size={25} color="#2196F3" style={{margin: 5}} />
+                                <Text style={{fontFamily: "avenir-roman", fontSize: 20,}}>
+                                Additional Information
+                                </Text>
+                                </View>
+                                <Caption>
+                                - Message about payment.
+                                </Caption>
+                            </View>
+                        </View>
                         <Divider style={{margin: 5}}/>
 
                         <View style={{width: "100%", justifyContent: "center", alignItems: "center"}}>

@@ -21,3 +21,6 @@ export const ADD_WORKOUT_TO_PROGRAM_ACTION="ADD_WORKOUT_TO_PROGRAM"
 
 //Workouts reducer action types
 export const UPDATE_LUPA_WORKOUTS_ACTION="UPDATE_LUPA_WORKOUTS";
+
+//Assessment reducer action types
+export const UPDATE_LUPA_ASSESSMENTS_ACTION="UPDATE_LUPA_ASSESSMENTS"

@@ -5,6 +5,7 @@ export enum UserCollectionFields {
     PHOTO_URL="photo_url",
     GENDER="gender",
     INTEREST="interest",
+    INTEREST_ARR="interest_arr",
     PREFERRED_WORKOUT_TIMES="preferred_workout_times",
     FOLLOWERS="followers",
     FOLLOWING="following",
@@ -15,6 +16,7 @@ export enum UserCollectionFields {
     PACKS="packs",
     HOME_GYM="homegym",
     CHATS="chats",
+    TOKENS="tokens"
 }
 
 export enum HealthDataCollectionFields {
@@ -62,7 +64,7 @@ export type LupaNotificationStructure = {
 export type LupaUserStructure = {
     user_uuid: "",
     display_name: "",
-    username: "",
+    username: String,
     age: any,
     email: "",
     email_verified: false,
@@ -101,6 +103,14 @@ export type LupaUserStructure = {
     chats: any,
     session_reviews: [],
     trainer_tier: Number,
+    assessments: Array<LupaAssessmentStructure>,
+    tokens: Object,
+};
+
+export type LupaAssessmentStructure = {
+    assessment_acronym: String,
+    data: Array<Object>,
+    complete: Boolean,
 };
 
 
@@ -145,7 +155,9 @@ export type LupaHealthDataStructure = {
 /* LupaSessionDataStructure */
 export type LupaSessionStructure = {
     attendeeOne: "",
+    attendeeOneData: Object,
     attendeeTwo: "",
+    attendeeTwoData: Object,
     requesterUUID: "",
     date: any,
     time_periods: any,
@@ -156,6 +168,7 @@ export type LupaSessionStructure = {
     time_created: { date: any, time: any }
     removed: Boolean,
     locationData: Object,
+    participants: Array<String>
 };
 
 /* LupaPackEventDataStructure */

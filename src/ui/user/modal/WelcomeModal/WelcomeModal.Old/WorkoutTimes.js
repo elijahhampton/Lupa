@@ -21,7 +21,7 @@ import {
     Input
 } from 'react-native-elements';
 
-import { Feather as Icon} from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/Feather';
 import TimeslotSelector from '../component/TimeslotSelector';
 
 const { width } = Dimensions.get('window');

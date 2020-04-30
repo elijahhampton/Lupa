@@ -517,10 +517,14 @@ class PacksController {
 
   getPackInformationByUUID = async (uuid) => {
     let packInformation;
-    await PACKS_COLLECTION.doc(uuid).get().then(result => {
-      packInformation = result.data();
-      packInformation.pack_uuid = result.id;
-    });
+    try {
+      await PACKS_COLLECTION.doc(uuid).get().then(result => {
+        packInformation = result.data();
+        packInformation.pack_uuid = result.id;
+      });
+    } catch (err) {
+      return {} //@todo should return a pack struct here that is pre populated with info that we couldn't find pack
+    }
 
     return Promise.resolve(packInformation);
   }
@@ -528,99 +532,103 @@ class PacksController {
   getPackEventsByUUID = async (packID) => {
     let events = [];
     let result;
-    await PACKS_EVENT_COLLECTION.where('pack_uuid', '==', packID).get().then(docs => {
-      docs.forEach(doc => {
-        result = doc.data();
+    if (packID != undefined)
+    {
 
-        let packEventDate = result.pack_event_date;
+      await PACKS_EVENT_COLLECTION.where('pack_uuid', '==', packID).get().then(docs => {
+        docs.forEach(doc => {
+          result = doc.data();
 
-            //check to see if session has expired
-            let dateParts = packEventDate.split('-');
-            let month = dateParts[0], day = dateParts[1], year = dateParts[2];
-            let realMonth;
-            switch(month)
-            {
-                case 'January':
-                    realMonth = 1;
-                case 'january':
-                    realMonth = 1;
-                    break;
-                case 'February':
-                    realMonth = 2;
-                case 'february':
-                    realMonth = 2;
-                    break;
-                case 'March':
-                    realMonth = 3;
-                case 'march':
-                    realMonth = 3;
-                    break;
-                case "April":
-                    realMonth = 4;
-                case "april":
-                    realMonth = 5;
-                    break;
-                case 'May':
-                    realMonth = 5;
-                case 'may':
-                    realMonth = 5;
-                    break;
-                case 'June':
-                    realMonth = 6;
-                case 'june':
-                   realMonth = 6;
-                    break;
-                case 'July':
-                    realMonth = 7;
-                case 'july':
-                    realMonth = 7;
-                    break;
-                case 'August':
-                    realMonth = 8;
-                case 'august':
-                    realMonth = 8;
-                    break;
-                case 'September':
-                    realMonth = 9;
-                case 'september':
-                    realMonth = 9;
-                    break;
-                case 'October':
-                    realMonth = 10;
-                case 'october':
-                    realMonth = 10;
-                    break;
-                case 'November':
-                    realMonth = 11;
-                case 'november':
-                    realMonth = 11;
-                    break;
-                case 'December':
-                    realMonth = 12;
-                case 'december':
-                    realMonth = 12;
-                    break;
-                default:
-            }
-            //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
-            
-            //Check session is past and remove - we remove pending sessions that have expired - 
-            //todo: NEED TO CHECK FOR TIME HERE AS WELL
-            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year || 
-                new Date().getFullYear() > year || new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year)
-            {
-                result.pack_event_stage = 'Expired';
-                this.updatePackEventField(result.id, 'pack_event_stage', 'Expired');
-            }
-
-        if (result.pack_event_stage != 'Expired')
-        {
-          result.pack_event_uuid = doc.id;
-          events.push(result);
-        }
-
-      });
-    })
+          let packEventDate = result.pack_event_date;
+  
+              //check to see if session has expired
+              let dateParts = packEventDate.split('-');
+              let month = dateParts[0], day = dateParts[1], year = dateParts[2];
+              let realMonth;
+              switch(month)
+              {
+                  case 'January':
+                      realMonth = 1;
+                  case 'january':
+                      realMonth = 1;
+                      break;
+                  case 'February':
+                      realMonth = 2;
+                  case 'february':
+                      realMonth = 2;
+                      break;
+                  case 'March':
+                      realMonth = 3;
+                  case 'march':
+                      realMonth = 3;
+                      break;
+                  case "April":
+                      realMonth = 4;
+                  case "april":
+                      realMonth = 5;
+                      break;
+                  case 'May':
+                      realMonth = 5;
+                  case 'may':
+                      realMonth = 5;
+                      break;
+                  case 'June':
+                      realMonth = 6;
+                  case 'june':
+                     realMonth = 6;
+                      break;
+                  case 'July':
+                      realMonth = 7;
+                  case 'july':
+                      realMonth = 7;
+                      break;
+                  case 'August':
+                      realMonth = 8;
+                  case 'august':
+                      realMonth = 8;
+                      break;
+                  case 'September':
+                      realMonth = 9;
+                  case 'september':
+                      realMonth = 9;
+                      break;
+                  case 'October':
+                      realMonth = 10;
+                  case 'october':
+                      realMonth = 10;
+                      break;
+                  case 'November':
+                      realMonth = 11;
+                  case 'november':
+                      realMonth = 11;
+                      break;
+                  case 'December':
+                      realMonth = 12;
+                  case 'december':
+                      realMonth = 12;
+                      break;
+                  default:
+              }
+              //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
+              
+              //Check session is past and remove - we remove pending sessions that have expired - 
+              //todo: NEED TO CHECK FOR TIME HERE AS WELL
+              if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year || 
+                  new Date().getFullYear() > year || new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year)
+              {
+                  result.pack_event_stage = 'Expired';
+                  this.updatePackEventField(result.id, 'pack_event_stage', 'Expired');
+              }
+  
+          if (result.pack_event_stage != 'Expired')
+          {
+            result.pack_event_uuid = doc.id;
+            events.push(result);
+          }
+  
+        });
+      })
+    }
 
     return Promise.resolve(events);
   }
@@ -776,22 +784,25 @@ class PacksController {
     //create lupa pack event structure
     const newPackEvent  = getLupaPackEventStructure(title, description, parsedDate, parsedTime, eventImage);
     newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
-
+    console.log('A')
     let eventUUID, eventData, imageURL;
     await PACKS_EVENT_COLLECTION.add(newPackEvent).then(ref => {
       eventUUID = ref.id;
     })
 
+    console.log('B')
     await this.getPackEventInformationByUUID(eventUUID).then(snapshot => {
       eventData = snapshot;
     })
 
+    console.log('CS')
     await this.savePackEventImage(eventImage, eventUUID).then(url => {
       imageURL = url;
     })
 
     eventData.pack_event_uuid = eventUUID;
 
+    console.log('d')
     let eventPayload = {
       data: eventData,
       photo_url: imageURL

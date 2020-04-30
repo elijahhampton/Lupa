@@ -1,5 +1,4 @@
 import React from 'react';
-import { Feather as Icon } from '@expo/vector-icons';
 
 export const interestData = [
     'Yoga',

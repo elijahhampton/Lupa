@@ -15,12 +15,12 @@ const userSearchResult = (props) => {
     return (
         <View style={styles.root}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Avatar.Image size={40} source={{url: props.avatarSrc}} style={{margins: 8}}/>
+                    <Avatar.Image size={40} source={{uri: props.avatarSrc}} style={{margin: 5}}/>
                     <View style={styles.userContent}>
-                        <Text style={{fontSize: 17, fontWeight: 'bold'}}>
+                        <Text style={{fontSize: 12, fontWeight: 'bold'}}>
                            {props.displayName}
                         </Text>
-                        <Text style={{fontWeight: 15, fontWeight: "600"}}>
+                        <Text style={{fontSize: 10, fontWeight: "600"}}>
                             {props.username}
                         </Text>
                     </View>

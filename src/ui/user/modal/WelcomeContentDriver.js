@@ -14,7 +14,7 @@ import {
     Surface
 } from 'react-native-paper';
 
-import { MaterialIcons } from '@expo/vector-icons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
@@ -66,6 +66,7 @@ function LupaPacksContent(props) {
             <ScrollView style={{padding: 10}}>
                 {
                     packsData.map(pack => {
+                        alert(pack)
                         return <PackContentDriverCard pack={pack} />
                     })
                 }
@@ -89,6 +90,7 @@ function BookATrainerContent(props) {
         await LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(uuid, 'location').then(res => {
             location = res;
         })
+
 
       await LUPA_CONTROLLER_INSTANCE.getTrainersBasedOnLocation(location).then(trainerResults => {
           trainerDataIn = trainerResults;

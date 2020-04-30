@@ -49,6 +49,12 @@ export default class LupaController {
 
     private static notifications = [];
 
+    isUserLoggedIn = async () => {
+      let result;
+      await LUPA_AUTH.currentUser == null ? result = false : result = true
+    return result;
+    }
+
     /***************** Firebase Storage *********** */
     saveUserProfileImage = async (imageURI) => {
       let url;
@@ -186,10 +192,12 @@ export default class LupaController {
       return USER_CONTROLLER_INSTANCE.getUserPhotoURL(true);
     }
 
+    completeSession = async (uuid) => {
+      await SESSION_CONTROLLER_INSTANCE.completeSession(uuid);
+    }
+
     addUserSessionReview = async (sessionUUID, userReviewingUUID, userToReviewUUID, reviewText, dateSubmitted) => {
       let retVal;
-
-      alert('INSIDE')
       await SESSION_CONTROLLER_INSTANCE.addUserSessionReview(sessionUUID, userReviewingUUID, userToReviewUUID, reviewText, dateSubmitted).then(res => {
         retVal = res;
       });
@@ -235,7 +243,6 @@ export default class LupaController {
 
     /* Algolia */
     indexApplicationData = () => {
-      console.log('Indexing all application data');
       USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
       PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
     }
@@ -519,9 +526,13 @@ export default class LupaController {
 
     getPackEventsByUUID = async (id) => {
       let result = new Array();
-      await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(id).then(packs => {
-        result = packs;
-      });
+
+      if (id != undefined)
+      {
+        await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(id).then(packs => {
+          result = packs;
+        });
+      }
 
       return Promise.resolve(result);
     }
@@ -621,6 +632,24 @@ export default class LupaController {
       return Promise.resolve(workoutData);
     }
 
+    loadAssessments = async () => {
+      let assessments = [];
+      LUPA_DB.collection('lupa_data')
+        .doc('lupa_assessment')
+        .collection('assessments')
+        .get()
+        .then(docs => {
+        docs.forEach(docSnapshot => {
+          let snapshot = docSnapshot.data();
+           assessments.push(snapshot);
+        })
+      }).catch(err => {
+        return Promise.resolve([]);
+      })
+
+      return Promise.resolve(assessments);
+    }
+
     getPrivateChatUUID = async (currUserUUID, userTwo) => {
       let result;
       await USER_CONTROLLER_INSTANCE.getPrivateChatUUID(currUserUUID, userTwo).then(chatUUID => {
@@ -656,5 +685,30 @@ export default class LupaController {
       });
 
       return Promise.resolve(upcomingSessions);
+    }
+
+    submitAssessment = async (assessmentObject) => {
+      //assign assessment to current user
+      let currUser = await USER_CONTROLLER_INSTANCE.getCurrentUserUUID();
+
+      assessmentObject.user_uuid = currUser;
+      assessmentObject.complete = 'true'
+
+      const assessment_uuid = assessmentObject.assessment_acronym + "_" + currUser;
+
+      //add assessment to database and get assessment document ID
+      await LUPA_DB.collection('assessments').doc(assessment_uuid).set(assessmentObject);
+
+      //pass to user controller to add assessment id for user
+      await USER_CONTROLLER_INSTANCE.addAssessment(assessment_uuid);
+    }
+
+    getUserAssessment = async (acronym, user_uuid) => {
+      let assessment;
+      await USER_CONTROLLER_INSTANCE.getUserAssessment(acronym, user_uuid).then(result => {
+        assessment = result;
+      });
+
+      return Promise.resolve(assessment);
     }
 }

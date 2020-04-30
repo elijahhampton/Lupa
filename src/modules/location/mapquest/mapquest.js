@@ -20,12 +20,12 @@ getDataFromLocationObjectByKey = (locObject, desiredKey) => {
 } 
 
 export default getLocationFromCoordinates = async (long, lat) => {
-    const retLocationData = {
+    let retLocationData = {
         city: '',
         state: '',
         country: '',
-        longitude: long,
-        latitude: lat
+        longitude: '',
+        latitude: ''
     }
 
     let locationDataResults;
@@ -53,6 +53,8 @@ export default getLocationFromCoordinates = async (long, lat) => {
     retLocationData.city = userCity;
     retLocationData.state = userState;
     retLocationData.country = userCountry;
+    retLocationData.longitude = long;
+    retLocationData.latitude = lat;
 
     return retLocationData;
 }

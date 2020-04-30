@@ -36,7 +36,7 @@ function PackContentDriverCard(props) {
             <Text>
                 {packObject.pack_location.city + ", " + packObject.pack_location.state}
             </Text>
-            <PackInformationModal packUUID={packObject.pack_uuid} closeModalMethod={() => alert('Close Modal')} isOpen={informationModalIsVisible} />
+            <PackInformationModal packUUID={packObject.id} closeModalMethod={() => setInformationModalVisible(false)} isOpen={informationModalIsVisible} />
         </TouchableOpacity>
     )
 }

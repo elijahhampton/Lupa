@@ -1,9 +1,9 @@
 {
   "name": "functions",
-  "description": "Cloud Functions for Firebase",
   "scripts": {
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
+    "build": "tsc",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
@@ -11,11 +11,13 @@
   "engines": {
     "node": "8"
   },
+  "main": "lib/index.js",
   "dependencies": {
     "firebase-admin": "^8.9.0",
     "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
+    "typescript": "^3.7.3",
     "firebase-functions-test": "^0.1.6"
   },
   "private": true

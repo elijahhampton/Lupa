@@ -38,7 +38,7 @@ class MyPacksCard extends React.Component {
     setupComponent = async () => {
         let packProfileImageIn;
 
-        await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.state.packUUID).then(result => {
+        await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.props.packUUID).then(result => {
             packProfileImageIn = result;
         })
 
@@ -64,7 +64,7 @@ class MyPacksCard extends React.Component {
             <TouchableOpacity onPress={() => this.handleOpenPackInformationModal()}>
                         <View style={{flexDirection: 'column', alignItems: 'center'}}>
                         <Surface style={styles.surface}>
-                <Image resizeMethod="resize" resizeMode="cover" source={{ uri: this.state.packProfileImage }} style={{width: "100%", height: "100%", borderRadius: 20}}/>
+                <Image resizeMethod="resize" resizeMode="cover" source={{ uri: this.state.packProfileImage }} style={{width: "100%", height: "100%", borderRadius: 60}}/>
             </Surface>
              <View style={{margin: 2, flexDirection: 'column', alignItems: 'center'}}>
                  <Caption>
@@ -82,11 +82,11 @@ export default MyPacksCard;
 
 const styles = StyleSheet.create({
     surface: {
-        margin: 10, 
-        width: 100, 
-        height: 100, 
-        borderRadius: 20, 
-        elevation: 3
+        margin: 15, 
+        width: 60, 
+        height: 60,
+        borderRadius: 60, 
+        elevation: 8
     }
 })
 

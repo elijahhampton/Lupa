@@ -12,6 +12,7 @@ var config = {
       path.resolve(__dirname),
       path.resolve(__dirname, "../lupa-api"), // path to the external module
     ];
-  }
+  },
+  assets: ['./assets/fonts/'],
 }
 module.exports = config;
