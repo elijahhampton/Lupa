@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { ADD_WORKOUT_TO_PROGRAM_ACTION, UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PROGRAMS_ACTION, UPDATE_LUPA_WORKOUTS_ACTION, UPDATE_LUPA_ASSESSMENTS_ACTION } from './actionTypes';
+import { ADD_WORKOUT_TO_PROGRAM_ACTION, ADD_CURRENT_USER_SERVICE_ACTION, UPDATE_CURRENT_USER_SERVICES_ACTION, UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PROGRAMS_ACTION, UPDATE_LUPA_WORKOUTS_ACTION, UPDATE_LUPA_ASSESSMENTS_ACTION } from './actionTypes';
 
 
 handleUserAttributeUpdate = (state, payload) => {
@@ -35,7 +35,8 @@ const initialPacksReducerState = {
 }
 
 const initialProgramsReducerState = {
-  currUserProgramsState: {},
+  currUserProgramsData: {},
+  currUserServicesData: {}
 }
 
 const initialAppWorkoutsReducerState = {
@@ -106,7 +107,7 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
   switch(action.type)
   {
     case "ADD_CURRENT_USER_PROGRAM":
-      let updatedProgramsData = state.currUserProgramsState;
+      let updatedProgramsData = state.currUserProgramsData;
       if (!updatedProgramsData.length)
       {
         updatedProgramsData = [action.payload];
@@ -114,10 +115,11 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
       else
       {
         updatedProgramsData.push(action.payload);
+        console.log('push em')
       }
-      return Object.assign({}, state, { currUserProgramsState: updatedProgramsData });
+      return Object.assign({}, state, { currUserProgramsData: updatedProgramsData });
     case "DELETE_CURRENT_USER_PROGRAM":
-      let programs = state.currUserProgramsState;
+      let programs = state.currUserProgramsData;
       let programsToKeep = [];
       for (let i = 0; i < programs.length; i++)
   {
@@ -127,53 +129,57 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
      programsToKeep.push(program);
     }
   }
-      return Object.assign({},  {currUserProgramsState: programsToKeep} );
+      return Object.assign({},  {currUserProgramsData: programsToKeep} );
     case UPDATE_CURRENT_USER_PROGRAMS_ACTION:
-      return Object.assign({}, state, {currUserProgramsState: action.payload});
+       console.log(Object.assign({}, state, {currUserProgramsData: action.payload}))
+      return Object.assign({}, state, {currUserProgramsData: action.payload});
     case ADD_WORKOUT_TO_PROGRAM_ACTION:
       console.log('entering')
         let programID = action.payload.programUUID;
-        console.log('program id: ' + programID)
         let workout = action.payload.workoutData;
-        console.log('workout: ' + workout);
         let sectionName = action.payload.sectionName;
-        console.log('section name: ' + sectionName)
 
-        let programsArr =  state.currUserProgramsState;
+        let programsArr =  state.currUserProgramsData;
         let currProgram;
         for (let i = 0; i < programsArr.length; i++)
         {
-          console.log('IIIIIIIIIIIIIIIIIIIIIIIIIIIIINSIDE FOR LOOP')
-          if (programsArr[i].program_uuid == programID)
+          if (programsArr[i].program_structure_uuid == programID)
           {
-            console.log('TTTTTTTTTTTTTTTTTTTTHE IF STATEMENT')
+             console.debug('Aaaaaaaaaaaaaaaaaaaa')
+            console.debug(programsArr[i])
+            console.debug('Aaaaaaaaaaaaaaaaaaaa')
             switch(sectionName)
             {
               case 'warm up':
-                console.log('WARM UP!!!!!!!!!!!!!!!')
-                programsArr[i].program_structure.warmup.push(workout);
+                programsArr[i].program_workout_data.warmup.push(workout);
                 break;
               case 'primary':
-                programsArr[i].program_structure.primary.push(workout);
+                programsArr[i].program_workout_data.primary.push(workout);
                 break;
               case 'break':
-                console.log('BRRRRRRRRRREEEEEEEEAAAAAAAAAAKKKKKKKKK')
-                programsArr[i].program_structure.break.push(workout);
+                programsArr[i].program_workout_data.break.push(workout);
                 break;
               case 'secondary':
-                programsArr[i].program_structure.secondary.push(workout);
+                programsArr[i].program_workout_data.secondary.push(workout);
                 break;
               case 'cooldown':
-                programsArr[i].program_structure.cooldown.push(workout);
+                programsArr[i].program_workout_data.cooldown.push(workout);
                 break;
               case 'homework':
-                programsArr[i].program_structure.homework.push(workout);
+                programsArr[i].program_workout_data.homework.push(workout);
                 break;
             }
           }
         }
 
-      return Object.assign(state, {currUserProgramsState: programsArr });
+      return Object.assign(state, {currUserProgramsData: programsArr });
+      case UPDATE_CURRENT_USER_SERVICES_ACTION:
+      return Object.assign({}, state, {currUserServicesData: action.payload});
+      case ADD_CURRENT_USER_SERVICE_ACTION:
+        const USER_SERVICE = action.payload;
+        let updatedUserServiceState = state.currUserServicesData;
+        updatedUserServiceState.push(USER_SERVICE);
+      return Object.assign({}, state, {currUserServicesData: updatedUserServiceState})
     default:
       return newState;
   }

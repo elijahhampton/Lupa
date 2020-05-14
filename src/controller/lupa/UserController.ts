@@ -19,7 +19,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
 import { getPathwaysForGoalUUID } from '../../model/data_structures/workout/goal_pathway_structures';
-import { getLupaProgramStructure } from '../../model/data_structures/programs/program_structures';
+import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
+import { SnapshotViewIOSComponent, Alert } from 'react-native';
+import { domainToASCII } from 'url';
 
 export default class UserController {
     private static _instance: UserController;
@@ -465,11 +467,28 @@ export default class UserController {
     }
 
     getUserInformationByUUID = async uuid => {
-        let userResult;
+        let userResult, programsResult = [], servicesResult = [];
         await USER_COLLECTION.doc(uuid).get().then(result => {
             userResult = result.data();
             userResult.id = result.id;
         });
+
+        await USER_COLLECTION.doc(uuid).collection('programs').get().then(docs => {
+            docs.forEach(doc => {
+                let snapshot = doc.data();
+                programsResult.push(snapshot);
+            })
+        });
+
+        await USER_COLLECTION.doc(uuid).collection('services').get().then(docs => {
+            docs.forEach(doc => {
+                let snapshot = doc.data();
+                servicesResult.push(snapshot);
+            })
+        });
+
+        userResult.programs = programsResult;
+        userResult.services = servicesResult;
 
         return Promise.resolve(userResult);
     }
@@ -876,10 +895,8 @@ alert(hits.length)
 
     createProgram = async (user_uuid) => {
         let programUUID;
-        //const USER_PROGRAMS_COLLECTION = this.getUserProgramCollectionReference(user_uuid);
 
-        //
-        let program_structure_payload = await getLupaProgramStructure();
+        let program_structure_payload = await getLupaProgramInformationStructure();
 
         //
         await USER_COLLECTION.doc(user_uuid).collection("programs").add(program_structure_payload).then(ref => {
@@ -889,11 +906,11 @@ alert(hits.length)
         //update fb doc with uuid
         let currentProgramDoc = USER_COLLECTION.doc(user_uuid).collection("programs").doc(programUUID);
         currentProgramDoc.update({
-            program_uuid: programUUID,
+            program_structure_uuid: programUUID,
         })
 
         //
-        program_structure_payload.program_uuid = programUUID;
+        program_structure_payload.program_structure_uuid = programUUID;
 
         return Promise.resolve(program_structure_payload);
     }
@@ -907,17 +924,132 @@ alert(hits.length)
         let uuid = await this.getCurrentUser().uid;
         await USER_COLLECTION.doc(uuid).collection("programs").get().then(docs => {
             docs.forEach(doc => {
+                if (docs.length == 0)
+                {
+                    return Promise.resolve([]);
+                }
                 let snapshot = doc.data();
-                snapshot.program_uuid = doc.id;
-                programs.push(snapshot);
+                if (snapshot.program_name != undefined || snapshot.program_name != "")
+                {
+                    snapshot.program_uuid = doc.id;
+                    programs.push(snapshot);
+                }
             });
         });
+
+        if (programs.length == 0 || !programs.length)
+        {
+            return Promise.resolve([]);
+        }
 
         return Promise.resolve(programs);
     }
 
-    saveProgram = async (user_uuid, workoutData) => {
-        await USER_COLLECTION.doc(user_uuid).collection("programs").doc(workoutData.program_uuid).set(workoutData);
+    createService = async (serviceObject) => {
+        let uuid = await this.getCurrentUser().uid;
+        USER_COLLECTION.doc(uuid).collection('services').add(serviceObject);
+    }
+
+    loadCurrentUserServices = async () => {
+        let services = [];
+        let uuid = await this.getCurrentUser().uid;
+        await USER_COLLECTION.doc(uuid).collection("services").get().then(docs => {
+            docs.forEach(doc => {
+                if (docs.length == 0)
+                {
+                    return Promise.resolve ([]);
+                }
+                let snapshot = doc.data();
+                if (snapshot.service_name != undefined || snapshot.service_name != "")
+                {
+                    snapshot.service_uuid = doc.id;
+                    services.push(snapshot);
+                }
+            });
+        });
+
+        if (services.length == 0 || !services.length)
+        {
+            return Promise.resolve([]);
+        }
+
+        return Promise.resolve(services);
+    }
+
+    saveProgramImage = async (programUUID, url) => {
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', url, true);
+            xhr.send(null);
+        });
+
+        let imageURL;
+        return new Promise((resolve, reject) => {
+            this.fbStorage.saveProgramImage(programUUID, blob).then(url => {
+                resolve(url);
+            })
+        })
+    }
+
+    saveProgram =  async (user_uuid, workoutData) => {
+        let imageURL;
+        await this.saveProgramImage(workoutData.program_structure_uuid, workoutData.program_image).then(url => {
+            imageURL = url;
+        })
+
+        //update the program image in the structure
+        workoutData.program_image = imageURL;
+
+         await USER_COLLECTION.doc(user_uuid).collection("programs").doc(workoutData.program_structure_uuid).set(workoutData);
+    
+         let payload;
+         await USER_COLLECTION.doc(user_uuid).collection("programs").doc(workoutData.program_structure_uuid).get().then(snapshot => {
+             payload = snapshot.data();
+         })
+
+         return Promise.resolve(payload);
+        }
+
+    handleSendUserProgram = async (currUserUUID, currUserData, currUserDisplayName, userList, program) => {
+      
+      try {
+
+      let receivedProgramNotificationStructure = {
+            data: program,
+            from: currUserUUID,
+            fromData: currUserData,
+            to: userList,
+            read: false,
+            type: 'RECEIVED_PROGRAMS',
+            actions: ['Save', 'View', 'Delete'],
+        }
+
+        let userNotifications = [];
+        for (let i = 0; i < userList.length; i++)
+        {   
+            alert(userList[i])
+           await USER_COLLECTION.doc(userList[i]).get().then(snapshot => {
+                userNotifications = snapshot.data().notifications;
+            })
+
+            await userNotifications.push(receivedProgramNotificationStructure);
+
+            await USER_COLLECTION.doc(userList[i]).update({
+                notifications: userNotifications,
+            })
+        }
+
+    } catch(err) {
+        alert('aaaaaa')
+    }
+        
     }
 
     //user one is the sender
@@ -1027,6 +1159,42 @@ alert(hits.length)
         
         return Promise.resolve(retVal);
     }
+
+    /* designing programs */
+    saveProgramWorkoutGraphic = async (workout, programUUID, graphicType, uri) => {
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
+            xhr.send(null);
+        });
+
+        let imageURL;
+        return new Promise((resolve, reject) => {
+            this.fbStorage.saveProgramWorkoutGraphic(blob, workout, programUUID, graphicType).then(url => {
+                resolve(url);
+            })
+        })
+    }
+
+    getUserNotificationsQueue = async () => {
+        let queue;
+        let uuid = await this.getCurrentUserUUID();
+
+        await USER_COLLECTION.doc(uuid).get().then(snapshot => {
+            queue = snapshot.data()
+        })
+
+        const res = queue.notifications;
+
+        return Promise.resolve(res);
+      }
 
 }
 

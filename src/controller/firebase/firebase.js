@@ -30,7 +30,7 @@ let fb_init_config = reactfirebase.initializeApp(firebaseConfig)
 
 
 const LUPA_DB = reactfirestore();
-let LUPA_DB_FIREBASE = reactfirebase.database()
+const LUPA_DB_FIREBASE = reactfirebase.database()
 
 const LUPA_AUTH = reactfirebaseauth();
 
@@ -139,6 +139,8 @@ const LUPA_STORAGE_BUCKET = reactfirebasestorage()
 const LUPA_USER_PROFILE_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('profile_images');
 const LUPA_PACK_IMAGE_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('pack_images');
 const LUPA_PACK_EVENT_IMAGE_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('pack_event_images');
+const LUPA_USER_PROGRAMS_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('program_workout_images')
+const LUPA_PROGRAM_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('program_images')
 //save every user image as: useruuid_imgname
 
 
@@ -180,7 +182,8 @@ on = callback =>
     .on('child_added', snapshot => callback(this.parse(snapshot)));
 
 get timestamp() {
-  return firebase.database.ServerValue.TIMESTAMP;
+  //return this.ref.ServerValue.TIMESTAMP;
+  //return firebase.database.ServerValue.TIMESTAMP;
 }
 // send the message to the Backend
 send = messages => {
@@ -199,7 +202,7 @@ append = message => this.ref.push(message);
 
 // close the connection to the Backend
 off() {
-  this.ref.off();
+  //this.ref.off();
 }
 }
 
@@ -210,6 +213,21 @@ export class FirebaseStorageBucket {
 
   }
 
+  saveProgramWorkoutGraphic = async (blob, workout, programUUID, graphicType) => {
+    const user_uuid = await LUPA_AUTH.currentUser.uid;
+    const fileName = user_uuid+"_"+workout.workout_uid+"_"+programUUID+"_"+graphicType;
+
+    return new Promise((resolve, reject) => {
+      
+      LUPA_USER_PROGRAMS_STORAGE_REF.child(fileName).put(blob).then(ref => {
+       LUPA_USER_PROGRAMS_STORAGE_REF.child(fileName).getDownloadURL().then(url => {
+           resolve(url)
+         })
+       })
+ 
+     })
+  }
+
   getUserProfileImageFromUUID = async (uuid) => {
     let link;
     await LUPA_USER_PROFILE_IMAGES_STORAGE_REF.child(`${uuid}`).getDownloadURL().then(url => {
@@ -217,6 +235,19 @@ export class FirebaseStorageBucket {
     });
 
     return Promise.resolve(link)
+  }
+
+  saveProgramImage = async (programUUID, blob) => {
+    const user_uuid = await LUPA_AUTH.currentUser.uid;
+    return new Promise((resolve, reject) => {
+      
+     LUPA_PROGRAM_IMAGES_STORAGE_REF.child(programUUID).put(blob).then(ref => {
+      LUPA_PROGRAM_IMAGES_STORAGE_REF.child(programUUID).getDownloadURL().then(url => {
+          resolve(url)
+        })
+      })
+
+    })
   }
 
   saveUserProfileImage = async (blob) => {

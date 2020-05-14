@@ -73,7 +73,7 @@ class DefaultPack extends React.Component {
     render() {
         return (
             <TouchableOpacity onPress={() => this._setShowPack()}>
-                        <Surface style={{margin: 10, alignSelf: 'center', width: Dimensions.get('screen').width - 60, marginHorizontal: 20,  height: 400, elevation: 1, borderRadius: 15}}>
+                        <Surface style={{margin: 35, alignSelf: 'center', width: Dimensions.get('screen').width - 60, marginHorizontal: 20,  height: 400, elevation: 15, borderRadius: 15}}>
                         <ImageBackground style={{flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 15,}} imageStyle={{borderRadius: 15}} source={{uri: this.state.packProfileImage}}>
                     <Headline style={{color: 'white', fontWeight: 'bold'}}>
                         {this.props.pack_title}
@@ -174,7 +174,6 @@ class SmPackCard extends React.Component {
 
     render() {
         return (
-            <>
             <Surface style={styles.packCards}>
                 {
                     this.getImageBackground()
@@ -191,10 +190,8 @@ class SmPackCard extends React.Component {
                 <Caption style={{alignSelf: 'center'}}>
                     {this.props.packCity + "," + this.props.packState}
                 </Caption>
+                <FAB onPress={() => this._setShowPack()} icon="menu" color="#FFFFFF" small style={{backgroundColor: "#2196F3",position: 'absolute', top: 10, right: 10, }} /> 
             </Surface>
-    
-            <FAB onPress={() => this._setShowPack()} icon="menu" color="#FFFFFF" small style={{backgroundColor: "#2196F3",position: 'absolute', top: 10, right: 10, }} />
-            </>
         );
     }
 }

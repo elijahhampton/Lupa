@@ -1,9 +1,5 @@
-export type Program = {
-    program_uuid: any,
-    program_name: any,
-    program_description: any,
+/*export type Program = {
     program_structure: {
-        overview: any
         warmup: any,
         primary: any,
         break: any,
@@ -11,4 +7,22 @@ export type Program = {
         cooldown: any,
         homework: any,
     }
+}
+*/
+export type LupaProgramInformationStructure = {
+    program_name: String,
+    program_description: String,
+    program_slots: Number,
+    program_start_date: Date,
+    program_end_date: Date,
+    program_duration: String,
+    program_time: String,
+    program_price: Number,
+    program_location: String,
+    program_type: String,
+    program_allow_waitlist: Boolean,
+    program_structure_uuid: String,
+    program_workout_data: Object,
+    program_image: String,
+    program_tags: Array<String>,
 }

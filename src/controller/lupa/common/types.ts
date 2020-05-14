@@ -60,6 +60,14 @@ export type LupaNotificationStructure = {
     data: {}
 }
 
+export type LupaTrainerService = {
+    service_name: String,
+    service_description: String,
+    service_icon: String,
+    service_icon_type: String,
+    service_colors: Array<String>,
+}
+
 /* LupaUserDataStructure */
 export type LupaUserStructure = {
     user_uuid: "",
@@ -105,6 +113,8 @@ export type LupaUserStructure = {
     trainer_tier: Number,
     assessments: Array<LupaAssessmentStructure>,
     tokens: Object,
+    waitlistedPrograms: Array<String>,
+    notifications: [],
 };
 
 export type LupaAssessmentStructure = {

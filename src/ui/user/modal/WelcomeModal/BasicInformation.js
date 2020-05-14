@@ -186,7 +186,7 @@ class BasicInformation extends React.Component {
         } catch(error)
         {
             this.setState({
-                avatar: false
+                avatarSet: false
             })
         }
     }

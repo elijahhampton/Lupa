@@ -72,9 +72,9 @@ accountList = [
 
 notificationsList = [
     {
-        key: 'Sessions',
-        title: 'Sessions',
-        description: 'You are set to receive notifications for sessions',
+        key: 'Programs',
+        title: 'Programs',
+        description: 'You are set to receive notifications for programs',
     },
     {
         key: 'PackEvents',
@@ -148,7 +148,7 @@ class SettingsModal extends React.Component {
         
         this.state = {
             userData: {},
-            sessionsSwitchIsEnabled: false,
+            programsSwitchIsEnabled: false,
             packEventsSwitchIsEnabled: false,
             packChatSwitchIsEnabled: false,
             messagesSwitchIsEnabled: false,
@@ -195,8 +195,8 @@ class SettingsModal extends React.Component {
 
     renderNotificationSectionSwitches = (key) => {
         switch(key) {
-                case 'Sessions':
-                    return <Switch color="#2196F3" value={this.state.sessionsSwitchIsEnabled} onValueChange={() => this.handleNotificationSwitchesOnPress(key)}/>
+                case 'Programs':
+                    return <Switch color="#2196F3" value={this.state.programsSwitchIsEnabled} onValueChange={() => this.handleNotificationSwitchesOnPress(key)}/>
                 case 'PackEvents':
                     return <Switch color="#2196F3" value={this.state.packEventsSwitchIsEnabled} onValueChange={() => alert('Switch value changed')}/>
                 case 'PackChat':
@@ -210,9 +210,9 @@ class SettingsModal extends React.Component {
 
     handleNotificationSwitchesOnPress = (key) => {
         switch(key) {
-            case 'Sessions':
+            case 'Programs':
                 //set state
-                this.setState({ sessionsSwitchIsEnabled: true });
+                this.setState({ programsSwitchIsEnabled: true });
                 //change description
                 //update value in controller
 

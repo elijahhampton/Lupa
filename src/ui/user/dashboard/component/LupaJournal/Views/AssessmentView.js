@@ -2,12 +2,7 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-    Text,
-    StyleSheet,
-    View,
-    Dimensions,
-    TouchableOpacity,
-    Animated,
+    ScrollView,
 } from 'react-native';
 import AssessmentComponent from '../component/AssessmentComponent';
 
@@ -34,7 +29,7 @@ class AssessmentView extends React.Component {
 
     render() {
         return (
-            <View style={{flex: 1}}>
+            <ScrollView style={{flex: 1}}>
                 {
                     this.state.assessments.map(assessment => {
                         return (
@@ -44,7 +39,7 @@ class AssessmentView extends React.Component {
                         )
                     })
                 }
-            </View>
+            </ScrollView>
         )
     }
 }

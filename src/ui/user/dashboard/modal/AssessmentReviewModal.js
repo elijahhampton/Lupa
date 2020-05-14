@@ -188,18 +188,6 @@ class AssessmentReviewModal extends React.Component {
                     }
                 </View>
 
-                <View style={{alignSelf: 'center', alignItems: 'center', flexDirection: 'row'}}>
-                    <Text style={{fontWeight: '600'}}>
-                        Assessment Status:
-                    </Text>
-                    
-                    <Chip textStyle={{fontWeight: 'bold'}} style={{margin: 3, width: 'auto', backgroundColor: this.state.userAssessmentData.complete == 'Complete' ? '#66BB6A' : '#f44336'}}>
-                        <Text>
-                        {this.state.userAssessmentData.complete}
-                        </Text>
-                    </Chip>
-                </View>
-
                 <>
                 <Caption style={{padding: 10, textAlign: 'center', alignSelf: 'center'}}>
                 It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less.

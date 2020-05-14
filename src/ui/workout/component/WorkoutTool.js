@@ -11,6 +11,7 @@ import {
     ScrollView,
     FlatList,
     TouchableOpacity,
+    InteractionManager,
 } from 'react-native';
 
 import {
@@ -33,6 +34,7 @@ import { connect, useSelector } from 'react-redux';
 import LupaController from '../../../controller/lupa/LupaController';
 import SingleWorkout from "./SingleWorkout";
 import LiveWorkout from "../modal/LiveWorkout";
+import { event } from "firebase-functions/lib/providers/analytics";
 
 const mapStateToProps = (state, action) => {
     return {
@@ -249,6 +251,7 @@ class WorkoutTool extends React.Component {
         this.state = {
             app_workouts: [],
             layoutHeight: 0,
+            layoutWidth: 0,
             tabWidth: 0,
             overlayHeight: new Animated.Value(0),
             overlayWidth: new Animated.Value(Dimensions.get("screen").width / 1.1),
@@ -275,6 +278,7 @@ class WorkoutTool extends React.Component {
                 homework: [],
             },
             showLiveWorkout: false,
+            workoutToolHeight: 0,
         }
 
         this.LUPA_INSTANCE_CONTROLLER = LupaController.getInstance();
@@ -290,6 +294,7 @@ class WorkoutTool extends React.Component {
     }
 
     closeLiveWorkoutModal = () => {
+        console.log('closing')
         this.setState({ showLiveWorkout: false })
     }
 
@@ -324,31 +329,31 @@ class WorkoutTool extends React.Component {
     }
 
     closeLibrary = () => {
-        Animated.timing(this.state.animatedWidth, {
-            toValue: 0,
-            duration: 200,
-        }).start();
-
-
-        Animated.timing(this.state.overlayWidth, {
-            toValue: 0,
-            duration: 300,
-        }).start();
-
-        Animated.timing(this.state.tabXPosition, {
-            toValue: 0,
-            duration: 300,
-        }).start();
-
-        Animated.timing(this.state.tabBorderTopLeft, {
-            toValue: 20,
-            duration: 2500,
-        }).start();
-
-        Animated.timing(this.state.tabHeight, {
-            toValue: 80,
-            duration: 2500,
-        }).start();
+            Animated.timing(this.state.animatedWidth, {
+                toValue: 0,
+                duration: 200,
+            }).start();
+    
+    
+            Animated.timing(this.state.overlayWidth, {
+                toValue: 0,
+                duration: 300,
+            }).start();
+    
+            Animated.timing(this.state.tabXPosition, {
+                toValue: 0,
+                duration: 300,
+            }).start();
+    
+            Animated.timing(this.state.tabBorderTopLeft, {
+                toValue: 20,
+                duration: 2500,
+            }).start();
+    
+            Animated.timing(this.state.tabHeight, {
+                toValue: 60,
+                duration: 2500,
+            }).start();
 
         this.setState({ libraryOpen: false })
     }
@@ -368,13 +373,13 @@ class WorkoutTool extends React.Component {
 
 
     createNewWorkoutProgram = async () => {
-        //Create a new program in FB and receive the program structure
+       //Create a new program in FB and receive the program structure
         const programPayload = await this.LUPA_INSTANCE_CONTROLLER.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
 
         //Add the program to redux
         await this.props.addProgram(programPayload);
-        await this.props.setProgramUUID(programPayload.program_uuid);
-        await this.setState({ currentProgramID: programPayload.program_uuid });
+        await this.props.setProgramUUID(programPayload.program_structure_uuid);
+        await this.setState({ currentProgramID: programPayload.program_structure_uuid }); 
     }
 
     deleteProgram = async () => {
@@ -394,7 +399,7 @@ class WorkoutTool extends React.Component {
         this.setState({ buildAWorkout: true, logAWorkout: false })
 
         //set state to show dialog
-        this.openBuildAWorkoutDescriptionDialog();
+      //  this.openBuildAWorkoutDescriptionDialog();
     }
 
     handleLogAWorkout = async () => {
@@ -546,14 +551,11 @@ class WorkoutTool extends React.Component {
 
     render() {
         return (
-            <Animated.View style={{ position: "absolute", right: 0, flex: 1, width: this.state.animatedWidth, height: "100%", backgroundColor: "rgba(33,33,33 ,0.4)" }} onLayout={event => this.setState({ layoutHeight: event.nativeEvent.layout.height })}>
+            <Animated.View style={{ position: "absolute", right: 0, flex: 1, width: this.state.animatedWidth, height: "100%", backgroundColor: "rgba(33,33,33 ,0.4)" }} onLayout={event => this.setState({ layoutHeight: event.nativeEvent.layout.height, layoutWidth: event.nativeEvent.layout.width })}>
                 
-                <View>
-
-                </View>
 
 
-                <Surface style={{ position: "absolute", elevation: 10, top: this.state.layoutHeight / 4, right: 0, width: this.state.overlayWidth, height: boxHeight, backgroundColor: "#f5f5f5", borderTopLeftRadius: 30, borderBottomLeftRadius: 30 }} >
+                <Surface style={{ position: "absolute", elevation: 10, top: this.state.layoutHeight / 4.2, right: 0, width: this.state.overlayWidth, height: boxHeight, backgroundColor: "#f5f5f5", borderTopLeftRadius: 30, borderBottomLeftRadius: 30 }} onLayout={event => this.setState({ workoutToolHeight: event.nativeEvent.layout.height})}>
                     {
                         this.state.buildAWorkout || this.state.logAWorkout ?
                             null
@@ -563,12 +565,12 @@ class WorkoutTool extends React.Component {
                                     It looks like you're ready to get started.
                         </Text>
 
-                        <Text style={{ fontFamily: 'avenir-roman',fontSize: 20, paddingTop: 20, paddingLeft: 20, color: "#212121" }}>
+                        <Text style={{ fontFamily: 'ARSMaquettePro-Regular',fontSize: 18, paddingTop: 20, paddingLeft: 20, color: "#212121" }}>
                                    Use our tool to pick from over 70 workouts and variations to create your own workout program.  Add up to four workouts to each section.  Save your programs and return to them later.
                         </Text>
 
                                 <View style={{ flex: 1, borderTopLeftRadius: 30, borderBottomLeftRadius: 30, alignItems: "center", justifyContent: "center", }}>
-                                    <ElementsButton raised title="Build a workout" type="solid" containerStyle={{width: "80%", padding: 8}} buttonStyle={{borderRadius: 8, backgroundColor: "white"}} titleStyle={{fontFamily: 'avenir-book', color: "#2196F3"}} onPress={() => this.handleBuildAWorkoutButton()}/>
+                                    <ElementsButton raised title="Build a workout" type="solid" containerStyle={{width: "80%", padding: 8, margin: 50}} buttonStyle={{borderRadius: 8, backgroundColor: "white"}} titleStyle={{fontFamily: 'avenir-book', color: "#2196F3"}} onPress={() => this.handleBuildAWorkoutButton()}/>
                                 </View>
                             </ScrollView>
 
@@ -584,7 +586,13 @@ class WorkoutTool extends React.Component {
                                         {
                                             this.props.lupa_data.Application_Workouts.applicationWorkouts.map(workout => {
                                                 return (
-                                                    <SingleWorkout workoutData={workout} onPress={(workoutIn) => this.handleOnPressWorkout(workoutIn)} />
+                                                    <SingleWorkout  
+                                                        workoutData={workout} 
+                                                        onPress={(workoutIn) => this.handleOnPressWorkout(workoutIn)} 
+                                                        workoutToolWidth={this.state.layoutWidth}
+                                                        workoutToolHeight={boxHeight/4}
+                                                        closeDrawerMethod={this.closeLibrary}
+                                                        />
                                                 )
                                             })
                                         }
@@ -612,6 +620,8 @@ class WorkoutTool extends React.Component {
                         onLayout={event => this.setState({ tabWidth: event.nativeEvent.layout.width })} >
                         {this.getTabIcon()}
                     </Surface>
+
+                   
                 </Surface>
 
                 <BuildAWorkoutDescription isVisible={this.state.buildAWorkoutDescriptionVisible} closeDialogMethod={this.closeBuildAWorkoutDescriptionDialog} />

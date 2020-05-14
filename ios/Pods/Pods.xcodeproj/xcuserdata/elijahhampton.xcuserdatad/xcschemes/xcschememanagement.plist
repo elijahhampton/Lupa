@@ -269,6 +269,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>RNDeviceInfo.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>RNFBAnalytics.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -560,6 +565,16 @@
 			<false/>
 		</dict>
 		<key>nanopb.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>react-native-blur.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>react-native-camera.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

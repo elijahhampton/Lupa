@@ -63,7 +63,7 @@ class MyPacksCard extends React.Component {
     render() {
         return (
             <>
-            <TouchableOpacity onPress={() => this.handleShowPack(this.state.packUUID)}>
+            <TouchableOpacity onPress={() => this.handleShowPack(this.state.packUUID)} style={{marginVertical: 15}}>
                 <Surface style={styles.bottomSurface}>
                         <Surface style={styles.imageSurface}>
                         <Image style={styles.image} 
@@ -99,18 +99,26 @@ const styles = StyleSheet.create({
         margin: 10, 
         width: Dimensions.get('screen').width / 1.8, 
         height: 100, 
-        elevation: 0, 
+        elevation: 10, 
+        borderColor: '#212121',
         borderRadius: 20, 
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#F5F5F5",
+        backgroundColor: "white",
         padding: 5,
     },
     imageSurface: {
         position: 'absolute', 
         top: 12, 
-        right: 12, alignSelf: "center",width: 30, height: 30, alignItems: "center", justifyContent: "center", elevation: 5, borderRadius: 20
+        right: 12, 
+        alignSelf: "center",
+        width: 30, 
+        height: 30, 
+        alignItems: "center", 
+        justifyContent: "center", 
+        elevation: 15, 
+        borderRadius: 20
     },
     image: {
         width: 30,

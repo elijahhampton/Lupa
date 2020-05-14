@@ -20,12 +20,15 @@ import {
 
 
 import {
-    SearchBar
+    SearchBar,
+    Avatar
 } from 'react-native-elements';
 
 import { 
     IconButton,
     Title,
+    Appbar,
+    Chip,
 } from 'react-native-paper';
 
 import { withNavigation, NavigationActions } from 'react-navigation';
@@ -33,6 +36,9 @@ import { withNavigation, NavigationActions } from 'react-navigation';
 import FeatherIcon from "react-native-vector-icons/Feather"
 
 import PackSearchResultCard from './component/PackSearchResultCard';
+import UserSearchResultCard from '../sessions/component/UserSearchResultCard';
+import TrainerSearchResultCard from '../sessions/component/TrainerSearchResultCard';
+
 import DefaultPack, { SmallPackCard } from './component/ExploreCards/PackExploreCard';
 import CreatePack from './modal/CreatePack';
 
@@ -43,6 +49,7 @@ import LupaController from '../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
 import { getCurrentStoreState } from '../../controller/redux/index';
+import CircularUserCard from '../user/component/CircularUserCard';
 
 
 const mapStateToProps = (state, action) => {
@@ -59,8 +66,9 @@ class PackView extends React.Component {
         this.state = {
             explorePagePacks: [],
             activePacks: [],
-            communityPacks: [],
+            communityPacks: [0, 1, 2 ,3, 4],
             defaultPacks: [],
+            usersNearYou: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
             searchValue: "",
             searchResults: [],
             createPackModalIsOpen: false,
@@ -79,8 +87,6 @@ class PackView extends React.Component {
          let data;
          data = await getCurrentStoreState().Packs.currUserPacksData;
          await this.setState({ currUserPacks: data })
-
-         console.log(this.state.currUserPacks)
      }
  
      async _prepareSearch() {
@@ -135,6 +141,14 @@ class PackView extends React.Component {
                      return (
                          <PackSearchResultCard  title={result.pack_title} packLocation={result.pack_location.city + ", " + result.pack_location.state} isSubscription={result.pack_isSubscription} uuid={result.pack_uuid} />
                      )
+                     case "trainer":
+                        return (
+                            <TrainerSearchResultCard title={result.display_name} username={result.username} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
+                        )
+                    case "user":
+                        return (
+                            <UserSearchResultCard title={result.display_name} username={result.username} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
+                        )
                  default:
              }
          })
@@ -162,7 +176,7 @@ class PackView extends React.Component {
          {
              explorePagePacksIn = [];
          }
-
+/*
          try {
             await this.LUPA_CONTROLLER_INSTANCE.getCommunityPacksBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
                 communityPagePacksIn = result;
@@ -171,7 +185,7 @@ class PackView extends React.Component {
          {
             communityPagePacksIn = [];
          }
-
+*/
          try {
             await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserDefaultPacks().then(result => {
                 defaultPacksIn = result;
@@ -189,7 +203,7 @@ class PackView extends React.Component {
          //set component state
         await this.setState({
             activePacks: explorePagePacksIn,
-            communityPacks: communityPagePacksIn,
+            //communityPacks: communityPagePacksIn,
             defaultPacks: defaultPacksIn,
         })
         
@@ -281,44 +295,42 @@ class PackView extends React.Component {
 
     render() {
         return (
-            <SafeAreaView style={styles.root}>
-                <Header style={styles.header} transparent={true}>
-                    <Left>
-                    <IconButton icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems}/>
-                    </Left>
+            <View style={styles.root}>
+                <Appbar.Header style={styles.header} theme={{
+                    elevation: 0,
+                }}>
+                    <Appbar.Action icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#FFFFFF" />
 
-                    <Right>
-                <Title style={[styles.headerItems, {fontFamily: 'ars-maquette-pro-bold',fontSize: 25, fontWeight: "600", color: "black"}]}>
-                        Packs
-                    </Title>
-                    </Right>
-                </Header>
+                    <Appbar.Content title="Community" titleStyle={{fontFamily: 'ars-maquette-pro-bold',fontSize: 25, fontWeight: "600", color: "#212121"}} />
+                </Appbar.Header>
 
                 {
                     this.state.searchValue != "" ?
-                    
-         <ScrollView shouldRasterizeIOS={true} shouldRasterizeIOS={true} showsVerticalScrollIndicator={false}refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handleOnRefresh}/>} >
-                        <SearchBar placeholder="Find a pack by name"
+                    <>
+                                            <SearchBar placeholder="Search for packs and Lupa users"
+                        onResponderGrant={this._prepareSearch}
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
                         containerStyle={{backgroundColor: "transparent"}}
                         value={this.state.searchValue}/>
+         <ScrollView shouldRasterizeIOS={true} shouldRasterizeIOS={true} showsVerticalScrollIndicator={false}refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handleOnRefresh}/>} >
                         
          {
              this.showSearchResults()
          }
      </ScrollView> 
+     </>
 
      :
-
-     <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between', flexDirection: 'column'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handleOnRefresh}/>}>
-                                <SearchBar placeholder="Find a pack by name"
+         <>
+                                         <SearchBar placeholder="Search for packs and Lupa users"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
                         containerStyle={{backgroundColor: "transparent"}}
                         value={this.state.searchValue}/>
+     <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between', flexDirection: 'column'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handleOnRefresh}/>}>
                         
                 {/* My Packs */}
                 <View style={styles.containerSection}>
@@ -327,13 +339,35 @@ class PackView extends React.Component {
                         My Packs
                     </Text>
                     <Text style={styles.headerDescriptionText}>
-                        Packs that you have joined
+                        Community Packs you have joined
                     </Text>
                     </View>
                     <View style={styles.sectionContent}>
                         <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
                             {
                                 this.loadCurrUserPacks()
+                            }
+                        </ScrollView>
+                    </View>
+                </View>
+
+                <View style={styles.containerSection}>
+                    <View style={styles.sectionTextContainer}>
+                    <Text style={styles.headerText}>
+                        Near you
+                    </Text>
+                    <Text style={styles.headerDescriptionText}>
+                        Users near you
+                    </Text>
+                    </View>
+                    <View style={styles.sectionContent}>
+                        <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
+                            {
+                                this.state.usersNearYou.map(user => {
+                                    return (
+                                       <CircularUserCard user={user} />
+                                    )
+                                })
                             }
                         </ScrollView>
                     </View>
@@ -360,28 +394,9 @@ class PackView extends React.Component {
 
                 </View>
 
-                {/* Near you and other packs */}
                 <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerText}>
-                        Near you and other packs
-                    </Text>
-                    </View>
-                    <Text style={styles.headerDescriptionText}>
-                        Active Packs
-                    </Text>
-                    <View style={styles.sectionContent}>
-                        <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
-                           {
-                               this.mapActivePacks()
-                            }
-                        </ScrollView>
-                    </View>
-                </View>
-
-                <View style={styles.containerSection}>
-                    <View style={styles.sectionTextContainer}>
-                    <Text style={styles.headerDescriptionText}>
                         Communities
                     </Text>
                     </View>
@@ -394,10 +409,11 @@ class PackView extends React.Component {
                     </View>
                 </View>
                 </ScrollView>
+                </>
                 }
 
                <CreatePack isOpen={this.state.createPackModalIsOpen} closeModalMethod={this.closeCreatePackModal}/>
-            </SafeAreaView>
+            </View>
         );
     }
 }
@@ -405,12 +421,15 @@ class PackView extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#FFFFFF",
-
+        backgroundColor: "#F2F2F2",
+    },
+    textStyles: {
+        fontFamily: 'ars-maquette-pro-bold',fontSize: 25, fontWeight: "600", color: "black"
     },
     header: {
-        backgroundColor: "#FFFFFF", 
         justifyContent: 'space-between',
+        elevation: 0,
+        backgroundColor: 'transparent'
     },
     headerItems: {
         alignSelf: 'flex-start'
@@ -427,12 +446,14 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         padding: 3,
+        color: '#212121',
         fontFamily: 'ars-maquette-pro-medium',
     },
     headerDescriptionText: {
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: '400',
         padding: 3,
+        color: '#212121',
         fontFamily: 'ars-maquette-pro-regular',
     },
     sectionContent: {

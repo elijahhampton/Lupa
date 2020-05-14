@@ -82,14 +82,14 @@ class PackSearchResultCard extends React.Component {
     getPackAvatar = () => {
         if (this.state.packImage == "" || this.state.packImage == "undefined" || this.state.packImage == '')
         {
-            return <Avatar.Icon icon="group" size={30} style={{backgroundColor: "#212121", margin: 5}}/>
+            return <Avatar.Icon icon="group" size={45} style={{backgroundColor: "#212121", margin: 5}}/>
         }
 
         try {
-            return <Avatar.Image size={30} source={{uri: this.state.packImage}} style={{margin: 5}} />
+            return <Avatar.Image size={45} source={{uri: this.state.packImage}} style={{margin: 5}} />
         } catch(err)
         {
-            return <Avatar.Icon icon="group" size={30} style={{backgroundColor: "#212121", margin: 5}}/>
+            return <Avatar.Icon icon="group" size={45} style={{backgroundColor: "#212121", margin: 5}}/>
         }
     }
 
@@ -97,7 +97,7 @@ class PackSearchResultCard extends React.Component {
         return (
             <>
                 <TouchableOpacity onPress={() => this._handleViewPack(this.state.packUUID)} style={styles.touchableOpacity}>
-                <Surface style={[styles.cardContainer]}>
+                <View style={[styles.cardContainer]}>
                     <View style={styles.cardContent}>
                         <View style={styles.userInfoContent}>
                         {this.getPackAvatar()}
@@ -105,19 +105,23 @@ class PackSearchResultCard extends React.Component {
                         <Text style={styles.titleText}>
                                 {this.props.title}
                             </Text>
-                            <Text>
+                            <Text style={styles.subtitleText}>
                                 {this.props.packLocation}
                             </Text>
                         </View>
     
                             </View>
-                            <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
+                            {
+                                /*
+                                                                <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
     Lupa Pack
     </Chip>
+                                */
+                            }
                     </View>
-                </Surface>
+                </View>
                     </TouchableOpacity>
-                    <PackInformationModal isOpen={this.state.packInformationModalIsOpen} />
+                    <PackInformationModal isOpen={this.state.packInformationModalIsOpen} packUUID={this.props.uuid} />
                     </>
         );
     }
@@ -148,14 +152,16 @@ const styles = StyleSheet.create({
     userInfoContent: {
         flexDirection: "row", 
         alignItems: "center", 
-        justifyContent: 'space-between'
+        justifyContent: 'flex-start'
     },
     titleText: {
         fontWeight: "600",
     },
     subtitleText: {
-        fontWeight: '500',
-        fontSize: 12
+        fontWeight: '200',
+        fontSize: 13,
+        fontFamily: 'ARSMaquettePro-Regular',
+        color: 'grey'
     },
     chipIndicator: {
         width: 100,

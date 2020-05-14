@@ -27,12 +27,15 @@ export default class UpcomingSessionCard extends React.Component {
     }
     
     getSessionStartTime = () => {
-        let times = this.state.sessionData.time_periods.sort();
-        return times[0];
+        //let times = this.state.sessionData.time_periods.sort();
+        //return times[0];
+        return <Text>
+            5:00 PM
+        </Text>
     }
 
     getTimeIcon = () => {
-        if (!this.getSessionStartTime())
+       /* if (!this.getSessionStartTime())
         {
             return (
                 <Icon
@@ -77,7 +80,19 @@ export default class UpcomingSessionCard extends React.Component {
             onPress={() => console.log('hello')} />
            )
         }
-        
+        */
+
+       return (
+        <Icon
+raised
+name='sun'
+type='feather'
+color='rgba(33,150,243 ,1)'
+reverseColor="white"
+size={6}
+reverse
+onPress={() => console.log('hello')} />
+        )
     }
 
     render() {
@@ -88,15 +103,15 @@ export default class UpcomingSessionCard extends React.Component {
                     alignItems: 'center', 
                     justifyContent: 'center',
                     elevation: 0,  
-                    backgroundColor: "white", 
+                    backgroundColor: "transparent", 
                     width: Dimensions.get('window').width - 20, 
                     height: 80, 
-                    margin: 10, 
+                    margin: 15, 
                     borderRadius: 20}}>
                 <Surface style={{margin: 10, elevation: 10, width: 45, height: 45, borderRadius: 40}}>
                     <Image  style={{width: 45, height: 45, borderRadius: 45}} source={{uri: this.state.userData.photo_url}} />
                 </Surface>
-                <View style={{backgroundColor: '#F2F2F2', padding: 20, borderRadius: 10, flex: 1, width: '80%', flexDirection: 'column', alignSelf: 'center', alignItems: 'flex-start', justifyContent: 'center'}}>
+                <Surface style={{elevation: 8, backgroundColor: '#FFFFFF', padding: 20, borderRadius: 10, flex: 1, width: '80%', flexDirection: 'column', alignSelf: 'center', alignItems: 'flex-start', justifyContent: 'center'}}>
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
                     <Text style={{fontWeight: 'bold'}}>
                         {this.state.userData.display_name}
@@ -114,12 +129,12 @@ export default class UpcomingSessionCard extends React.Component {
                     </View>
                 </View>
                     <Text style={{fontSize: 12, fontFamily: "avenir-book"}}>
-                        {this.state.sessionData.locationData.name}
+                        Tiger Gym
                     </Text>
                     <Text style={{fontSize: 12, flexWrap: 'wrap'}}>
-                    {this.state.sessionData.locationData.address}
+                    512 Auburn Way
                     </Text>
-                </View>
+                </Surface>
             </Surface>
         )
     }
