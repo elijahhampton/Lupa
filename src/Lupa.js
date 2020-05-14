@@ -8,11 +8,12 @@
 import React from "react";
 
 import {
+  Text,
   StyleSheet,
   AsyncStorage,
   StatusBar,
-  AlertIOS,
-  Platform
+  View,
+  Dimensions,
 } from "react-native";
 
 
@@ -39,6 +40,8 @@ import loadFonts from './ui/common/Font/index'
 import { connect } from 'react-redux';
 import RemotePushController from "./modules/push-notifications";
 import { generateMessagingToken } from "./controller/firebase/firebase";
+
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 /**
  * 
@@ -87,6 +90,7 @@ mapDispatchToProps = dispatch => {
   }
 }
 
+const LUPA_SCREENS = ['Programs']
 
 class Lupa extends React.Component {
   constructor(props) {
@@ -94,6 +98,7 @@ class Lupa extends React.Component {
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     this.currUserUUID = this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+    this.lupaSwiper = React.createRef();
 
     this.state = {
       currIndex: 1,
@@ -101,6 +106,7 @@ class Lupa extends React.Component {
       ready: false,
       swipeable: true,
       permissions: null,
+      currScreen: ''
     }
 
     this._showWelcomeModal = this._showWelcomeModal.bind(this);
@@ -253,6 +259,11 @@ goToIndex = (index) => {
   this.setState({ currIndex: index})
 }
 
+setScreen = (screen) => {
+  alert(screen)
+  this.setState({ currScreen: screen})
+}
+
 dashboardNavigatorProps = {
   disableSwipe: this.disableSwipe,
   enableSwipe: this.enableSwipe,
@@ -275,21 +286,72 @@ packNavigatorProps = {
 searchNavigatorProps = {
   enableSwipe: this.enableSwipe,
   disableSwipe: this.disableSwipe,
-  goToIndex: index => this.goToIndex(index)
+  goToIndex: index => this.goToIndex(index),
+  setCurrentScreen: screen => this.setScreen(screen)
+}
+
+showBottomNavigator = () => {
+  return LUPA_SCREENS.includes(this.state.currScreen) ?
+  null
+  :
+  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: 'white', width: Dimensions.get('window').width, height: '10%'}}>
+  <View style={{
+    width: 'auto', 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    backgroundColor: '#BDBDBD', 
+    padding: 5, 
+    borderRadius: 20}}>
+    <MaterialIcon name="dashboard" size={20} style={{margin: 3}} />
+    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+      Dashboard
+    </Text>
+  </View>
+
+  <View style={{
+    width: 'auto', 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    backgroundColor: '#BDBDBD', 
+    padding: 5, 
+    borderRadius: 20}}>
+    <MaterialIcon name="home" size={20} style={{margin: 3}} />
+    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+      Home
+    </Text>
+  </View>
+
+  <View style={{
+    width: 'auto', 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    backgroundColor: '#BDBDBD', 
+    padding: 5, 
+    borderRadius: 20}}>
+    <MaterialIcon name="people" size={20} style={{margin: 3}} />
+    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+      Community
+    </Text>
+  </View>
+</View>
 }
 
 
   render() {
-    const currIndex = this.state.currIndex;
     return (
       <>
-      <StatusBar backgroundColor="blue" barStyle="dark-content" />
+      <StatusBar backgroundColor="blue" barStyle="dark-content" networkActivityIndicatorVisible={true} />
         <Swiper style={styles.appContainer}
           loop={false}
           showButtons={false}
           showsPagination={false}
-          index={currIndex}
-          scrollEnabled={this.state.swipeable}>
+          index={this.state.currIndex}
+          scrollEnabled={this.state.swipeable}
+          onIndexChanged={index => console.log('Swiper index changed to: ', index)}
+          >
         <Dashboard screenProps={this.dashboardNavigatorProps} />
         <SearchNavigator screenProps={this.searchNavigatorProps}/>
         <PackNavigator screenProps={this.packNavigatorProps}/>

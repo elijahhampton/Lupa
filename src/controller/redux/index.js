@@ -6,7 +6,7 @@ import { applyMiddleware } from 'redux';
 const LupaStore = createStore(LupaReducer, applyMiddleware(ReduxThunk));
 
 LupaStore.subscribe(() => {
-
+    
 });
 
 export function getCurrentStoreState() {

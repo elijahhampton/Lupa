@@ -14,6 +14,9 @@ import {
     Text,
     TouchableOpacity,
     ScrollView,
+    TouchableHighlight,
+    TouchableWithoutFeedback,
+    ImageBackground,
     RefreshControl,
     Image,
     Button as NativeButton,
@@ -30,12 +33,14 @@ import {
     Button,
     Caption,
     Avatar,
+    Snackbar,
     Divider,
     Portal,
     FAB,
     Dialog,
     Chip,
     Appbar,
+    Paragraph,
 } from 'react-native-paper';
 
 import {
@@ -48,14 +53,19 @@ import {
 
 import {
     Avatar as ReactNativeElementsAvatar,
-    Icon
+    Icon,
+    Button as ElementsButton,
 } from 'react-native-elements';
+
+import { LinearGradient } from 'expo-linear-gradient';
 
 import Timecards from './component/Timecards';
 
 import { ImagePicker } from 'expo-image-picker';
 
 import LupaMapView from '../modal/LupaMapView'
+
+import ThinFeatherIcon from "react-native-feather1s";
 
 import {
     CheckBox
@@ -65,15 +75,17 @@ import { withNavigation, NavigationActions } from 'react-navigation';
 import LupaController from '../../../controller/lupa/LupaController';
 import MyPacksCard from './component/MyPacksCard';
 
-import { connect } from 'react-redux';
+import { connect, useDispatch} from 'react-redux';
 
 import ProfilePicture from '../../images/profile_picture1.jpeg';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-FeatherIcon.loadFont();
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { Pagination } from 'react-native-snap-carousel';
+import ProgramListComponent from '../../workout/component/ProgramListComponent';
+import FollowerModal from './modal/FollowerModal';
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -211,6 +223,312 @@ const mapDispatchToProps = dispatchEvent => {
     
 }
 
+const COLORS_LIST = [
+    {
+        background: '#e57373',
+        accent: '#f44336'
+    },
+    {
+        background: '#7986CB',
+        accent: '#3F51B5'
+    },
+    {
+        background: '#64B5F6',
+        accent: '#2196F3'
+    },
+    {
+        background: '#4DB6AC',
+        accent: '#009688'
+    },
+    {
+        background: '#FFF176',
+        accent: '#FFEB3B'
+    },
+    {
+        background: '#FFB74D',
+        accent: '#FF9800',
+    },
+    {
+        background: '#FF8A65',
+        accent: '#FF5722',
+    },
+    {
+        background: '#90A4AE',
+        accent: '#607D8B',
+    }
+]
+
+const ICONS_LIST = [
+    {
+        icon: 'notifications',
+        iconType: 'material'
+    },
+    {
+        icon: 'directions-run',
+        iconType: 'material'
+    },
+    {
+        icon: 'fitness-center',
+        iconType: 'material'
+    },
+    {
+        icon: 'heart',
+        iconType: 'material'
+    },
+    {
+        icon: 'local-hospital',
+        iconType: 'material'
+    },
+    {
+        icon: 'kitchen',
+        iconType: 'material'
+    },
+    {
+        icon: 'activity',
+        iconType: 'feather'
+    },
+    {
+        icon: 'alert-circle',
+        iconType: 'feather'
+    },
+    {
+        icon: 'eye',
+        iconType: 'feather'
+    },
+    {
+        icon: 'home',
+        iconType: 'feather'
+    },
+    {
+        icon: 'phone',
+        iconType: 'feather'
+    },
+    {
+        icon: 'tablet',
+        iconType: 'feather'
+    },
+    {
+        icon: 'message-circle',
+        iconType: 'feather'
+    },
+]
+
+function CreateServiceDialog(props) {
+    let [serviceName, setServiceName] = useState("");
+    let [serviceDescription, setServiceDescription] = useState("");
+    let [serviceColors, setServiceColors] = useState([]);
+    let [iconName, setIconName] = useState("");
+    let [iconType, setIconType]  = useState("");
+    let [currIconPressed, setCurrentIconPressed] = useState("");
+    let [currColorPressed, setCurrentColorPresssed] = useState("")
+    let [serviceNameError, setServiceNameError] = useState(false)
+    let [serviceDescriptionError, setServiceDescriptionError] = useState(false)
+    let [showSnack, setShowSnack] = useState(false);
+    let [rejectedReason, setRejectedReason] = useState("");
+
+    const dispatch = useDispatch();
+
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    const createService = async (serviceName, serviceDescription, iconName, iconType, serviceColors) => {
+        const USER_SERVICE = await getLupaTrainerService(serviceName, serviceDescription, iconName, iconType, serviceColors);
+
+        //add to local copy
+        await dispatch({type: 'ADD_CURRENT_USER_SERVICE', payload: USER_SERVICE })
+
+        //add to firebase
+        LUPA_CONTROLLER_INSTANCE.createService(USER_SERVICE);
+    }
+
+    const _onDismissSnackBar = () => {
+        setShowSnack(false)
+    }
+
+    const handleCreateServiceOnPress = () => {
+        if (serviceName == "" || serviceName.length > 15 || serviceName.length <= 7)
+        {
+            setServiceNameError(true)
+            setRejectedReason("Invalid service name.  The service name must be between 8 - 15 characters.")
+            setShowSnack(true)
+            return;
+        }
+        else
+        {
+            setServiceNameError(false);
+        }
+
+        //TODO: Check for invalid characters
+
+        if (serviceDescription == "" || serviceDescription.length > 120 || serviceDescription.length < 20)
+        {
+            setServiceDescriptionError(true)
+            setRejectedReason("Invalid service description.  The service description must be between 20 - 120 characters.")
+            setShowSnack(true)
+            return;
+        }
+        else
+        {
+            setServiceDescriptionError(false);
+        }
+
+        //TODO: Check for invalid characters
+
+        //check color
+        if (currIconPressed == "")
+        {
+            setShowSnack(true);
+            setRejectedReason("Sorry you must pick an icon for your service.")
+            return;
+        }
+
+
+        //check icon
+        if (currColorPressed == "")
+        {
+            setShowSnack(true);
+            setRejectedReason("Sorry you must pick a color for your service.")
+            return;
+        }
+
+
+        createService(serviceName, serviceDescription, iconName, iconType, serviceColors);
+
+        props.closeDialogMethod()
+    }
+
+    const handleClickColor = (colors) => {
+        setCurrentColorPresssed(colors.background);
+        let colorsArr = [colors.accent, colors.background];
+        setServiceColors(colorsArr);
+    }
+
+    const handleIconClick = icon => {
+        setCurrentIconPressed(icon.icon)
+        setIconName(icon.icon);
+        setIconType(icon.iconType);
+    }
+
+    return (
+        <Dialog dismissable={true} onDismiss={props.closeDialogMethod} visible={props.isVisible} style={{alignSelf: 'center', width: Dimensions.get('window').width - 30, height: Dimensions.get('window').height - 300}}>
+            <View style={{flex: 1, justifyContent: 'space-between'}}>
+                <View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}> 
+            <Surface style={{elevation: 3, margin: 10, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: '#BBDEFB'}}>
+                <FeatherIcon name="shield" color="#1976D2" size={25} />
+            </Surface>
+            <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Bold'}}>
+                Create a Service
+            </Text>
+            </View>
+            <Text style={{alignSelf: 'center', padding: 10 }}>
+                Create services offering without going through the hassle of creating a full workout program.  Services can range from anything such as as consultations to free trials for the programs you create.
+            </Text>
+                </View>
+
+            <View style={{width: '100%', justifyContent: 'space-between'}}>
+                <TextInput  
+                    value={serviceName} 
+                    onChangeText={text => setServiceName(text)} 
+                    mode="flat" 
+                    placeholder="Service Name (Ex. Consultation)" 
+                    label="Service Name" 
+                    style={{margin: 10}}
+                    theme={{
+                        colors: {
+                            primary: '#212121'
+                        }
+                    }}
+                    error={serviceNameError}
+                    />
+                <TextInput 
+                    value={serviceDescription} 
+                    onChangeText={text => setServiceDescription(text)} 
+                    multiline mode="flat" 
+                    placeholder="Service Description" 
+                    label="Service Description" 
+                    style={{margin: 10}}
+                    theme={{
+                        colors: {
+                            primary: '#212121'
+                        }
+                    }}
+                    error={serviceDescriptionError}
+                     />
+            </View>
+
+            <View style={{padding: 8}}>
+                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 18}}>
+                    Pick a color
+                </Text>
+                <View style={{padding: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                    {
+                        COLORS_LIST.map(color => {
+                            return (
+                                <TouchableWithoutFeedback onPress={ () => handleClickColor(color)} style={{backgroundColor: 'transparent'}}>
+                                    <Surface style={{margin: 3, elevation: 2, borderRadius: 20, width: 20, height: 20, backgroundColor: color.background, borderColor: currColorPressed == color.background ? '#212121' : 'transparent', borderWidth: 1}} />
+                                </TouchableWithoutFeedback>
+                            )
+                        })
+                    }
+                </View>
+            </View>
+
+            <View style={{padding: 8, }}>
+                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 18}}>
+                    Pick an icon
+                </Text>
+                <View style={{padding: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', flexWrap: 'wrap'}}>
+                    {
+                        ICONS_LIST.map(icon => {
+                            if (icon.iconType == "material")
+                            {
+                                return (
+                                    <TouchableWithoutFeedback  onPress={() => handleIconClick(icon)} style={{borderRadius: 20, padding: 5}}>
+                                                                            <MaterialIcon key={icon.icon} name={icon.icon} size={20} style={{backgroundColor: currIconPressed == icon.icon ? 'rgb(174,174,178)' : 'transparent', borderRadius: 20}} />
+                                    </TouchableWithoutFeedback >
+                                )
+                            }   
+                            else if (icon.iconType == "feather")
+                            {
+                                return (
+                                    <TouchableWithoutFeedback  onPress={() => handleIconClick(icon)} style={{borderRadius: 20, padding: 5}}>
+                                                                            <FeatherIcon key={icon.icon} name={icon.icon} size={20} style={{backgroundColor: currIconPressed == icon.icon ? 'rgb(174,174,178)' : 'transparent', borderRadius: 20}}/>
+                                    </TouchableWithoutFeedback >
+                                )
+                            }
+
+                        })
+                    }
+                </View>
+            </View>
+
+            <View style={{alignSelf: 'flex-end', width: '100%', padding: 10, backgroundColor: 'rgb(174,174,178)'}}>
+            <Button mode="contained" style={{width: '30%', alignSelf: 'flex-end'}} theme={{
+                colors: {
+                    primary: '#2196F3'
+                }
+            }}
+            onPress={() => handleCreateServiceOnPress()}>
+                Create
+            </Button>
+</View>
+            </View>
+            <Snackbar
+          style={{backgroundColor: '#212121'}}
+          theme={{ colors: { accent: '#2196F3' }}}
+          visible={showSnack}
+          onDismiss={() => _onDismissSnackBar}
+          action={{
+            label: 'Okay',
+            onPress: () => setShowSnack(false),
+          }}
+        >
+          {rejectedReason}
+        </Snackbar>
+        </Dialog>
+    )
+}
+
 /**
  * Lupa Profile View
  * 
@@ -244,6 +562,7 @@ class ProfileView extends React.Component {
             fitnessInterestDialogOpen: false,
             city: '',
             state: '',
+            showCreateServiceDialog: false,
         }
     }
 
@@ -347,6 +666,12 @@ class ProfileView extends React.Component {
             followers: followers,
         })
     }
+    closeCreateServiceDialog = () => {
+        this.setState({
+            showCreateServiceDialog: false,
+        })
+    }
+
 
     _navigateToSessionsView = () => {
         this.props.navigation.navigate('SessionsView', {
@@ -573,7 +898,7 @@ class ProfileView extends React.Component {
     }
 
     _navigateToSettings = () => {
-        this.props.navigation.navigate('UserSettings');
+        this.props.navigation.navigate('UserSettingsView');
     }
 
     renderFinishEditingBioButton = () => {
@@ -780,51 +1105,475 @@ class ProfileView extends React.Component {
             </View>
     }
 
+    /* ---------------------------- */
+
+    renderFollowButton = () => {
+        if (this.state.userData)
+        {
+            if (this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid)
+            {
+                return (
+                    <View style={{width: '100%'}}>
+                        {
+                                            this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
+                                            <TouchableHighlight style={{borderRadius: 8}}>
+                                                                    <View style={{backgroundColor: '#2196F3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: 110, height: 30}}>
+                        <Text>
+                            Unfollow
+                        </Text>
+                    </View>
+                                            </TouchableHighlight>
+                                            :
+                                            <TouchableHighlight>
+                                            <View style={{backgroundColor: '#2196F3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+<Text>
+    Follow
+</Text>
+</View>
+                    
+                    </TouchableHighlight>
+                    }        
+                    </View>    
+                )
+            }
+        }
+    }
+
+    renderEditBioButton = () => {
+        if (this.state.userData)
+        {
+            if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
+            {
+                return (
+                    <TouchableHighlight style={{width: 'auto', borderRadius: 8}} onPress={ () => console.log()}>
+                                <View style={{width: '100%'}}>
+                            <View style={{backgroundColor: '#e3e3e3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 140, height: 30}}>
+                                <Text>
+                                    Edit Bio
+                                </Text>
+                            </View>
+                        </View>
+                    </TouchableHighlight>
+                )
+            }
+        }
+    }
+
+    mapTrainerPrograms = () => {
+        //if a uuid exist
+        if (this.state.userData.user_uuid)
+        {
+            //if we are dealing with the current user
+            if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
+            {
+                //if there are programs locally
+               if (this.props.lupa_data.Programs.currUserProgramsData.length != undefined)
+               {
+                    if (this.props.lupa_data.Programs.currUserProgramsData.length == 0)
+                    {
+                
+                        if (this.props.lupa_data.Users.currUserData.isTrainer)
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                        Create a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                        else
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                       Join a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                    }
+                    else
+                    {
+                        alert('p')
+                        return this.props.lupa_data.Programs.currUserProgramsData.map(program => {
+                            return (
+                                 <View style={{}}>
+                        <TouchableHighlight>
+                        <Surface style={{elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                      <View style={styles.viewOverlay} />               
+                      <ImageBackground 
+                       imageStyle={{borderRadius: 16}} 
+                       style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
+                       source={{uri: 'https://picsum.photos/700'}}>
+                           <View style={{flex: 1, padding: 15, alignItems: 'flex-start', justifyContent: 'center' }}>
+                           <Text style={{color: 'white', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
+                                Program Name
+                                </Text>
+                                <Text  numberOfLines={3} style={{ color: 'white', fontSize: 12, fontFamily: 'ARSMaquettePro-Medium'}}>
+                                But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system
+                                </Text>
+                           </View>
+                       </ImageBackground>
+                        <MaterialIcon size={30} name="info" color="#FAFAFA" style={{ position: 'absolute', right: 0, top: 0, margin: 5}} />
+                    </Surface>
+                        </TouchableHighlight>
+        
+                    
+                    </View>
+                            )
+                        })
+                    }
+               }
+               else
+               {
+                if (this.props.lupa_data.Users.currUserData.isTrainer)
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                        Create a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                        else
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                       Join a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+               }
+            }
+            else
+            {
+                     //if there are programs loaded for the user
+               if (this.state.userData.programs.length != undefined)
+               {
+                    if (this.state.userData.programs.length == 0)
+                    {
+
+                        if (this.state.userData.isTrainer)
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                        Create a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                        else
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                       Join a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                
+   
+                    }
+                    else
+                    {
+                        return this.state.userData.programs.map(program => {
+                            return (
+                                 <View style={{}}>
+                        <TouchableHighlight>
+                        <Surface style={{elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                      <View style={styles.viewOverlay} />               
+                      <ImageBackground 
+                       imageStyle={{borderRadius: 16}} 
+                       style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
+                       source={{uri: 'https://picsum.photos/700'}}>
+                           <View style={{flex: 1, padding: 15, alignItems: 'flex-start', justifyContent: 'center' }}>
+                           <Text style={{color: 'white', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
+                                Program Name
+                                </Text>
+                                <Text  numberOfLines={3} style={{ color: 'white', fontSize: 12, fontFamily: 'ARSMaquettePro-Medium'}}>
+                                But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system
+                                </Text>
+                           </View>
+                       </ImageBackground>
+                        <MaterialIcon size={30} name="info" color="#FAFAFA" style={{ position: 'absolute', right: 0, top: 0, margin: 5}} />
+                    </Surface>
+                        </TouchableHighlight>
+        
+                    
+                    </View>
+                            )
+                        })
+                    }
+               }
+            }
+        }
+    }
+
+    mapServices = () => {
+        //if a uuid exist
+if (this.state.userData.user_uuid)
+{
+    //if we are dealing with the current user
+    if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
+    {
+
+        //if there are programs locally
+       if (this.props.lupa_data.Programs.currUserServicesData.length != undefined)
+       {
+            if (this.props.lupa_data.Programs.currUserServicesData.length == 0 || typeof(this.props.lupa_data.Programs.currUserServicesData.length == 0) == 'object')
+            {
+                return (
+                    <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
+name="add"
+size={25}
+color="#000000"
+thin={true}
+/>}
+onPress={this.setState({ showCreateServiceDialog: true })}
+/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+         Add a Service
+     </Text>
+</View>
+     <View>
+     </View>
+</View>
+                )
+            }
+            else //services > 0 so we return them
+            {
+                return this.props.lupa_data.Programs.currUserServicesData.map(service => {
+                    return (
+<View style={{margin: 15, padding: 10, backgroundColor: service.service_colors[0], borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: service.service_colors[1]}} small  
+icon={service.service_icon_type == 'feather' ? () => <ThinFeatherIcon
+name={service.service_icon}
+size={25}
+color="#000000"
+thin={true}
+/> : <MaterialIcon name={service.iconName} size={25} color="#000000" />}/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+         {service.service_name}
+     </Text>
+</View>
+     <View>
+     </View>
+</View>
+                    )
+                })
+            }
+        }
+        else
+        {
+            return (
+                <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
+name="add"
+size={25}
+color="#000000"
+thin={true}
+/>}
+onPress={() => this.setState({ showCreateServiceDialog: true })}
+/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+     Add a Service
+ </Text>
+</View>
+ <View>
+ </View>
+</View>
+            )
+        }
+    }
+    else
+    {
+ //if there are programs locally
+ if (this.state.userData.services.length != undefined)
+ {
+      if (this.state.userData.services.length == 0 || typeof(this.state.userData.services.length == 0) == 'object')
+      {
+          return (
+              <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
+name="add"
+size={25}
+color="#000000"
+thin={true}
+/>}
+onPress={() => this.setState({ showCreateServiceDialog: true })}
+/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+   Add a Service
+</Text>
+</View>
+<View>
+</View>
+</View>
+          )
+      }
+      else //services > 0 so we return them
+      {
+          return this.state.userData.servies.map(service => {
+              return (
+<View style={{margin: 15, padding: 10, backgroundColor: '#e57373', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: '#f44336'}} small  icon={() => <ThinFeatherIcon
+name="message-circle"
+size={25}
+color="#000000"
+thin={true}
+/>}/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+   One on One Consulations
+</Text>
+</View>
+<View>
+</View>
+</View>
+              )
+          })
+      }
+  }
+    }
+}
+       
+    }
+
     render() {
         return (
-            <SafeAreaView forceInset={{ top: 'never' }} style={styles.container}>
+            <View style={styles.container}>
+                <SafeAreaView />
                 <Appbar.Header style={{ backgroundColor: "transparent", margin: 10 }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>
 
-                    <Appbar.Content title={this.state.userData.username} />
 
                     <Right>
                         {this.getHeaderRight()}
                     </Right>
                 </Appbar.Header>
 
-                <ScrollView contentContainerStyle={{ flexGrow: 2, flexDirection: 'column', justifyContent: 'space-between' }} showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
+
+                <ScrollView 
+                contentContainerStyle={{ flexGrow: 1 }} 
+                showsVerticalScrollIndicator={false} 
+                shouldRasterizeIOS={true} 
+                refreshControl={<RefreshControl refreshing={this.state.refreshing} 
+                onRefresh={this.handleOnRefresh} />}>
+                <View style={{alignSelf: 'center', marginBottom: 30, alignItems: 'center' }}>
+                        <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Bold'}}> National Academy of Sports Medicine </Text>
+                        <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Regular'}}> Lupa Tier 1 </Text>
+                    </View>
+                    
                     <View style={styles.user}>
                         <View style={styles.userInfoContainer}>
-                            <View style={[{width: '70%'}, styles.userInfo]}>
-                                <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
-                                    {this.state.userData.display_name}
-                                </Text>
-                                {
-                                    this.getLocation()
-                                }
-                                {
-                                    true && this.state.userData.isTrainer ? <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
-                                        Lupa Trainer
-                            </Text> : null
-                                }
-                            </View>
-                            <View style={[{width: '30%'}, styles.alignCenterColumn]}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                            <View style={{flex: 2, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start'}}>
                                 {this.getUserAvatar()}
-                            </View>
-                        </View>
-
-                        <View style={{alignSelf: 'center', margin: 0, padding: 5, width: '85%', alignItems: 'center', justifyContent: 'center'}}>
-                        {
-                                         this.mapBio()
-                                    }
-                        </View>
-
-                        <View style={styles.userAttributesContainer}>
+                                <View style={styles.userAttributesContainer}>
                             <TouchableOpacity onPress={() => this._navigateToFollowers()}>
-                                <View style={styles.alignCenterColumn}>
+                                <View style={{alignItems: 'center'}}>
                                     <Text>
                                         {this.getFollowerLength()}
                                     </Text>
@@ -835,7 +1584,7 @@ class ProfileView extends React.Component {
 
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this._navigateToFollowers()}>
-                                <View style={styles.alignCenterColumn}>
+                                <View style={{alignItems: 'center'}}>
                                     <Text>
                                         {this.getFollowingLength()}
                                     </Text>
@@ -844,12 +1593,57 @@ class ProfileView extends React.Component {
                                 </Text>
                                 </View>
                             </TouchableOpacity>
+                        </View>
+                        {
+                            this.renderFollowButton()
+                        }
+                            </View>
+                            
+                            <View style={{flex: 3, alignItems: 'flex-start'}}>
+                                <View style={{flex: 1, justifyContent: 'flex-start'}}>
+                                <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
+                                    {this.state.userData.display_name}
+                                </Text>
+                                {
+                                    this.getLocation()
+                                }
+                                </View>
+                                <View style={{alignItems: 'flex-start', width: '100%'}}>
+                                                                            <Paragraph style={{paddingVertical: 10, fontSize: 12}}>
+                         But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder.
+                                </Paragraph>
+                                </View>
 
+                                {
+                                    this.renderEditBioButton()
+                                }
+                            </View>
+                            </View>
 
+                            <View style={{width: '100%', alignSelf: 'center', padding: 10}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <Text style={{color: 'rgb(99, 99, 102)', fontFamily: 'ARSMaquettePro-Medium', padding: 10, alignSelf: 'center'}}>
+                                    Program Reviews
+                                </Text>
+
+                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                    <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Regular'}}>
+                                        See all
+                                    </Text>
+                                    <MaterialIcons name="arrow-forward" size={15} color="#212121" />
+                                </View>
+                                </View>
+                                <ScrollView horizontal contentContainerStyle={{padding: 10}} >
+                                    <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgb(199, 199, 204)', borderRadius: 12, width: 150, height: 45}}>
+                                        <Text style={{fontSize: 10}}>
+                                            This user has no reviews.
+                                        </Text>
+                                    </View>
+                                </ScrollView>
+                            </View>
 
                         </View>
 
-                        <Timecards userUUID={this._getId()} />
 
                         {
                             this.renderInteractions()
@@ -858,105 +1652,54 @@ class ProfileView extends React.Component {
                         <Divider />
 
                         <View style={styles.myPacks}>
-                        {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
-                            <Text style={{fontSize: 15, padding: 10}}>
-                                My Packs
+                                                         <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 10}}>
+                                Online Programs
                             </Text>
-                            :
-                            <Text style={{alignSelf: 'center', fontSize: 15, padding: 10, fontWeight: '600'}}>
-                                {this.state.userData.display_name}'s Packs
-                        </Text>
-                        }
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {this.mapPacks()}
+                        <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false}
+                        centerContent
+                        snapToAlignment={'center'}
+                        decelerationRate={0} 
+                        snapToInterval={Dimensions.get('window').width  / 1.3}
+                        pagingEnabled={true}>
+                            {
+                                this.mapTrainerPrograms()
+                            }
                         </ScrollView>
                     </View>
-                    </View>
-
-                    <Surface style={[styles.contentSurface, { elevation: 8, backgroundColor: "#2196F3" }]}>
-                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ color: 'white', fontSize: 20, fontFamily: "avenir-medium", fontWeight: "bold" }}>
-                                Fitness Interest
-                                </Text>
-
-                                {
-                                    this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
-                                    <Button color="white" mode="text" onPress={() => this.addFitnessInterest()}>
-                                        Edit
-                                    </Button>    
-                                    :
-                                    null
-                                }
-                        </View>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center' }}>
-                            {
-                                this.mapInterest()
-                            }
-                        </View>
-                    </Surface>
-
-                    <View style={styles.recommendedWorkouts}>
-                        <View style={styles.recommendedWorkoutsHeader}>
-                            <Title>
-                                Recommended Workouts
-                        </Title>
-                        </View>
-                        {
-                            this.mapRecommendedWorkouts()
-                        }
-                    </View>
-
-                    <Surface style={{ backgroundColor: "transparent", width: Dimensions.get('window').width }}>
-                    {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
-                            <Title style={{marginLeft: 10}}>
-                                My Reviews
-                            </Title>
-                            :
-                            <Title style={{marginLeft: 10}}>
-                                {this.state.userData.display_name}'s Session Review
-                        </Title>
-                        }
-                        <View style={{ width: "100%", height: "auto", backgroundColor: "transparent", alignItems: this.state.sessionReviews.length == 0 ? "flex-start" : "center" , justifyContent: "center" }}>
-                            <ScrollView horizontal centerContent contentContainerStyle={{}}>
-                                <View style={{ flex: 1, width: "100%", backgroundColor: "transparent", justifyContent: "space-evenly" }}>
-                                    {this.mapUserReviews()}
-                                </View>
-                            </ScrollView>
-                            <Pagination dotsLength={this.state.sessionReviews.length} />
-                        </View>
-                    </Surface>
 
                     {
-                        this.state.userData.isTrainer == true ?
-                            <View style={styles.recommendedWorkouts}>
-                                <View style={styles.recommendedWorkoutsHeader}>
-                                    <Title>
-                                        Certification
-                                            </Title>
-                                </View>
-                                <Caption style={{ flexWrap: 'wrap' }}>
-                                    This user is a certified trainer under the {this.state.userData.certification}
-                                </Caption>
-                            </View>
-                            :
-                            null
+                        this.state.userData.isTrainer ?
+                        <View style={styles.myPacks}>
+                        <View style={{margin: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                      <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 10}}>
+             Services
+         </Text>
+
+         <FAB small style={{backgroundColor: '#212121'}} icon="add" onPress={() => this.setState({ showCreateServiceDialog: true })}/>
+           </View>
+<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+{
+    this.mapServices()
+}
+</ScrollView>
+</View>
+
+                        :
+                        null
                     }
+
+
+                    </View>
+                        
+                        <SafeAreaView />
                 </ScrollView>
-                {
-                    this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid ?
-                    <FAB
-                    style={styles.fab}
-                    small={false}
-                    icon="today"
-                    onPress={this._navigateToSessionsView}
-                />
-                :
-                null
-                }
-                
+
                 <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
                 <UpdateInterestDialog userToUpdate={this.props.navigation.state.params.userUUID} isOpen={this.state.fitnessInterestDialogOpen} closeModalMethod={this.closeFitnessInterestDialog}/>
-            </SafeAreaView>
+                <CreateServiceDialog isVisible={this.state.showCreateServiceDialog} closeDialogMethod={this.closeCreateServiceDialog} />
+            </View>
         );
     }
 }
@@ -964,124 +1707,44 @@ class ProfileView extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "#F2F2F2",
     },
-    menuIcon: {
-        position: 'absolute',
-        bottom: 0
-    },
-    contentSurface: {
-        margin: 5,
-        elevation: 0,
-        padding: 15,
+    linearGradient: {
+        flex: 1,
+        paddingLeft: 15,
+        paddingRight: 15,
         borderRadius: 20,
-        flexDirection: 'column',
-        backgroundColor: "transparent",
-        justifyContent: "space-between",
-        margin: 10,
-        borderColor: "#2196F3",
-        borderWidth: 1
-    },
-    chipStyle: {
-        elevation: 3,
-        width: "auto",
-        backgroundColor: "white",
-        margin: 5
-    },
-    chipTextStyle: {
-        color: "#2196F3",
-        fontWeight: 'bold',
-    },
-    surfaceHeader: {
-        height: "15%",
-        width: "100%",
-        elevation: 1
-    },
-    experience: {
-        backgroundColor: "transparent",
-        margin: 10,
-    },
+
+        width: '100%',
+      },
     myPacks: {
         backgroundColor: "transparent",
-        padding: 5,
+
     },
-    recommendedWorkouts: {
-        backgroundColor: "transparent",
-        margin: 10,
-    },
-    recommendedWorkoutsHeader: {
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexDirection: 'row'
-    },
-    userInfo: {
-        flexDirection: "column",
+    userAttributeText: {
+        fontSize: 10,
     },
     user: {
         flexDirection: "column",
         margin: 0,
         backgroundColor: "transparent"
     },
-    uesrInfoText: {
-        fontWeight: "600",
-    },
     userAttributesContainer: {
-        flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", margin: 20
-    },
-    userAttributeText: {
-        fontWeight: "500",
-        color: "rgba(33,33,33 ,1)"
-    },
-    imageBackground: {
-        width: "100%",
-        height: "100%"
+        width: '100%',
+        flexDirection: "row", 
+        alignItems: "center", 
+        justifyContent: "space-evenly", margin: 20
     },
     userInfoContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        margin: 10,
-        marginBottom: 15,
+        width: '100%',
     },
-    alignCenterColumn: {
-        flexDirection: 'column', alignItems: 'center'
+    viewOverlay: {
+        position: 'absolute', 
+        flex: 1,
+        top: 0, left: 0, right:0, 
+        borderRadius: 16, 
+        backgroundColor: 'rgba(0,0,0,0.7)'
     },
-    fab: {
-        position: 'absolute',
-        marginBottom: 15,
-        marginRight: 15, 
-        right: 0,
-        bottom: 0,
-        backgroundColor: "#2196F3"
-    },
-    selectedChip: {
-        elevation: 5,
-        margin: 5,
-        width: '100',
-        height: 'auto',
-        backgroundColor: "#2196F3",
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    selectedChipText: {
-        color: '#FFFFFF',
-    },
-    unselectedChip: {
-        elevation: 0,
-        margin: 5,
-        width: 'auto',
-        height: 'auto',
-        opacity: 0.6,
-        backgroundColor: "transparent",
-        borderColor: 'rgba(30,136,229 ,1)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 2, 
-    },
-    unselectedChipText: {
-        color: "rgba(33,150,243 ,1)"
-    }
-
 });
 
 export default connect(mapStateToProps)(withNavigation(ProfileView));

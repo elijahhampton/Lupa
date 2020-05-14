@@ -160,6 +160,7 @@ export default connect(mapStateToProps)(DrawerMenu);
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: '#F2F2F2'
     },
     navigationItems: {
       flex: 1, 

@@ -33,6 +33,17 @@ const SESSIONS_DOCUMENT_CHANGE_TYPES = {
     SESSION_INVITE: "session_invite"
 }
 
+/** Sends a notification to a user upon receiving a notification of some type. */
+exports.receivedNotification = functions.firestore
+.document('users/{userUUID')
+.onUpdate((change, context) => {
+  const dataAfter = change.after.data();
+  const dataBefore = change.before.data();
+
+  
+})
+
+
 /**
  * Sends a notification to a user when they receive a new session invite.
  */

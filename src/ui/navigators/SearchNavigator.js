@@ -18,6 +18,10 @@ import MyPrograms from '../workout/Programs';
 import MessagesView from '../user/chat/MessagesView';
 import Programs from '../workout/Programs';
 
+import TrainerInformation from '../user/modal/WelcomeModal/TrainerInformation';
+import NotificationsView from '../sessions/NotificationsView';
+import CreateProgram from '../workout/program/CreateProgram';
+
 /*
 const Stack = createStackNavigator();
 
@@ -60,9 +64,17 @@ const UserViewNavigator =  createStackNavigator(
          /*Added the search view here because navigation didn't work to 
         the user profile view without it.. need to reconsider the design of this in the future */
     SearchView: {
-        screen: (props) => <SearchView />,
+        screen: (props) => <SearchView setScreen={screen => props.screenProps.setCurrentScreen(screen)} goToIndex={index => props.screenProps.goToIndex(index)} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
         navigationOptions: ({navigation}) => ({
             title: "SearchView",
+            header: null,
+            gesturesEnabled: false,
+        })
+    },
+    NotificationsView: {
+      screen: (props) => <NotificationsView disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+        navigationOptions: ({navigation}) => ({
+            title: "NotificationsView",
             header: null,
             gesturesEnabled: false,
         })
@@ -91,6 +103,14 @@ const UserViewNavigator =  createStackNavigator(
             gesturesEnabled: false,
         })
     },
+    CreateProgram: {
+      screen: (props) => <CreateProgram {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      navigationOptions: ({navigation}) => ({
+        title: "CreateProgram",
+        header: null,
+        gesturesEnabled: false,
+      })
+    },
     MessagesView: {
         screen: MessagesView,
         navigationOptions:   ({navigation}) => ({
@@ -106,6 +126,14 @@ const UserViewNavigator =  createStackNavigator(
             header: null,
             gesturesEnabled: false,
         })
+      },
+      TrainerInformation: {
+        screen: TrainerInformation,
+        navigationOptions:   ({navigation}) => ({
+          title: "Register as a Trainer",
+          gesturesEnabled: false,
+          headerBackTitle: "Cancel"
+      })
       },
 },
 {

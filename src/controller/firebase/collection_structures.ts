@@ -7,12 +7,31 @@ import {
     LupaWorkoutStructure,
     LupaUserStructure, 
     LupaAssessmentStructure,
+    LupaProgramInformationStructure,
     LupaNotificationStructure,
     Days,
     SESSION_STATUS,
     PACK_EVENT_STAGE,
+    LupaTrainerService,
 } from '../lupa/common/types';
 import { any } from 'prop-types';
+
+var lupa_trainer_service : LupaTrainerService = {
+    service_name: "",
+    service_description: "",
+    service_icon: "",
+    service_icon_type: "",
+    service_colors: [],
+}
+
+export const getLupaTrainerService = (name, description, icon, icon_type, colors) => {
+    lupa_trainer_service.service_name = name;
+    lupa_trainer_service.service_description = description;
+    lupa_trainer_service.service_icon = icon;
+    lupa_trainer_service.service_icon_type = icon_type;
+    lupa_trainer_service.service_colors = colors;
+    return lupa_trainer_service;
+}
 
 var lupa_pack_event : LupaPackEventStructure = {
     pack_uuid: "",
@@ -186,6 +205,8 @@ var lupa_user : LupaUserStructure = {
     session_reviews: [],
     trainer_tier: 0,
     tokens: {},
+    waitlistedPrograms: [],
+    notifications: [],
 }
 
 export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", 

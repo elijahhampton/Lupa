@@ -67,6 +67,12 @@ mapDispatchToProps = dispatch => {
         payload: currUserProgramsData,
       })
     },
+    updateUserServices: (currUserServicesData) => {
+      dispatch({
+        type: 'UPDATE_CURRENT_USER_SERVICES',
+        payload: currUserServicesData,
+      })
+    },
     updateLupaWorkouts: (lupaWorkoutsData) => {
       dispatch({
         type: 'UPDATE_LUPA_WORKOUTS',
@@ -92,7 +98,7 @@ class LoginView extends Component {
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     this.state = {
-      username: 'ejh0017@gmail.com',
+      username: 'newaccount12@gmail.com',
       password: 'Q9X638hs2Y78',
       secureTextEntry: true,
       showSnack: false,
@@ -128,6 +134,13 @@ class LoginView extends Component {
    */
   _updateUserProgramsDataInRedux = (programsData) => {
     this.props.updateUserPrograms(programsData);
+  }
+
+  /**
+   * 
+   */
+  _updateUserServicesInRedux = (servicesData) => {
+    this.props.updateUserServices(servicesData);
   }
 
   /**
@@ -201,7 +214,7 @@ class LoginView extends Component {
    * 
    */
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, lupaWorkouts;
+    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, currUserServices, lupaWorkouts;
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -216,6 +229,10 @@ class LoginView extends Component {
 
     await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
+    })
+
+    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserServices().then(result => {
+      currUserServices = result;
     })
 
     await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
@@ -235,6 +252,7 @@ class LoginView extends Component {
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
+    await this._updateUserServicesInRedux(currUserServices);
     await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
     await this._updateLupaAssessmentDataInRedux(lupaAssessments);
   }

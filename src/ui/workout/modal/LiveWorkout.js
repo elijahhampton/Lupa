@@ -4,30 +4,34 @@ import {
     View,
     Text,
     StyleSheet,
-    ScrollView,
-    TouchableOpacity,
-    Button,
     Modal,
+    Image,
     SafeAreaView,
-    Dimensions,
-    Slider,
+    TouchableHighlight,
 } from 'react-native';
 
 import {
-    Title, Divider, Paragraph, Switch, Surface, Headline,
-    Appbar,
-    Colors,
+    Divider,
+    Surface,
     ActivityIndicator,
+    List,
+    Chip,
+    Switch,
+    Caption,
 } from 'react-native-paper';
+
+import ToggleSwitch from 'toggle-switch-react-native'
+
+
+import { Icon, Button } from 'react-native-elements'
 
 import { PieChart } from 'react-native-chart-kit';
 
 import { Video } from 'expo-av'
 
-import ScrollPicker from 'react-native-wheel-scroll-picker';
-import { Subtitle, Segment } from 'native-base';
-
 import FeatherIcon from "react-native-vector-icons/Feather"
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+
 
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
@@ -91,7 +95,7 @@ const customStyles = {
     stepStrokeCurrentColor: '#2196F3',
     stepStrokeWidth: 3,
     stepStrokeFinishedColor: '#fe7013',
-    stepStrokeUnFinishedColor: '#2196F3',
+    stepStrokeUnFinishedColor: 'rgb(58,58,60)',
     separatorFinishedColor: '#fe7013',
     separatorUnFinishedColor: '#212121',
     stepIndicatorFinishedColor: '#fe7013',
@@ -117,11 +121,9 @@ const PROGRAM_SECTIONS = [
 
 function LoadingNextWorkoutActivityIndicator(props) {
     return (
-       /* <Modal visible={props.isVisible} presentationStyle="overFullScreen" style={{ alignItems: "center", justifyContent: "center", backgroundColor: "transparent", margin: 0 }} >
+        <Modal visible={props.isVisible} presentationStyle="overFullScreen" style={{ alignItems: "center", justifyContent: "center", backgroundColor: "transparent", margin: 0 }} >
             <ActivityIndicator style={{ alignSelf: "center" }} animating={true} color="#03A9F4" size="large" />
-        </Modal>*/
-        <>
-        </>
+        </Modal>
     )
 }
 
@@ -141,7 +143,7 @@ class LiveWorkout extends React.Component {
             loadingNextWorkout: false,
             programDescription: "",
             programData: this.props.programData,
-            workoutData: this.props.programData.program_structure,
+            workoutData: this.props.programData.program_workout_structure,
             currentStage: "",
             currentStageIndex: 0,
             currentStageData: [],
@@ -161,11 +163,11 @@ class LiveWorkout extends React.Component {
     }
 
     async componentDidMount() {
-        await this.setupLiveWorkout()
+       await this.setupLiveWorkout()
     }
 
     setupLiveWorkout = async () => {
-        let nextWorkoutIn, nextStageDataIn, currentStageIndexIn, currentWorkoutIndexIn, stagesScheduledIn = [];
+       let nextWorkoutIn, nextStageDataIn, currentStageIndexIn, currentWorkoutIndexIn, stagesScheduledIn = [];
 
         //Retrieve all stages that have workouts
         let result;
@@ -276,7 +278,8 @@ class LiveWorkout extends React.Component {
                 This is a test description.  This is a test description.  This is a test description.  This is a test description.  This is a test description.  This is a test description.  This is a test description.  This is a test description.   This is a test description.  This is a test description.
             </Text>
         )
-        //return this.state.currentWorkout.workout_description;
+        
+        return this.state.currentWorkout.workout_description;
     }
 
     getNextWorkoutTitle = () => {
@@ -307,7 +310,7 @@ class LiveWorkout extends React.Component {
     }
 
     changeWorkout = async () => {
-        let currentWorkoutIn, currentWorkoutIndexIn, currentStageIndexIn, currentStageIn, currentStageDataIn, nextWorkoutIn, nextStageDataIn;
+      let currentWorkoutIn, currentWorkoutIndexIn, currentStageIndexIn, currentStageIn, currentStageDataIn, nextWorkoutIn, nextStageDataIn;
 
         if (this.state.programFinished) {
             await this.endWorkout();
@@ -389,118 +392,149 @@ class LiveWorkout extends React.Component {
         })
     }
 
+    getWorkoutMedia = () => {
+        try {
+            if ( this.state.currentWorkout.workout_media.media_type == "VIDEO")
+            {
+                return (
+                    <Video source={{ uri: this.state.currentWorkout.workout_media.uri }}
+                    rate={1.0}
+                    volume={10}
+                    isMuted={false}
+                    resizeMode="cover"
+                    shouldPlay={true}
+                    isLooping={true}
+                    style={{
+                    width: "100%",
+                    height: "100%",
+                    borderTopRightRadius: 30, 
+                    borderBottomRightRadius: 30
+                    }}
+                    />
+                )
+            }
+        } catch(err) {
+            return (
+            <View style={{flex: 1, backgroundColor: '#212121'}}>
+
+            </View>
+            )
+        }
+        
+    }
+
     render() {
         return (
             <Modal presentationStyle="fullScreen" style={styles.margin} visible={this.props.isVisible}>
                 <Swiper loop={false} scrollEnabled={true} showsVerticalScrollIndicator={false} showsButtons={false} showsPagination={false} horizontal={false} index={0}>
-                    <View style={{ flex: 1, backgroundColor: "white" }}>
-                            <Appbar.Header statusBarHeight style={{backgroundColor: "white", justifyContent: "space-between"}} style={{elevation: 0, backgroundColor: "white"}}>
-                            <Surface>
-                                    <Switch onValueChange={this.onToggleSwitch} value={this.state.switchEnabled} color="#2196F3" style={{ margin: 3 }} />
-                                    <Text style={{fontSize: 10, fontFamily: "Avenir-Roman"}}>
-                                        Toggle Vibration
-                            </Text>
-                                </Surface>
-                                <Appbar.Content  title="Aura Program"  subtitle="Lupa Curated" />
-                                <Appbar.Action icon="play-arrow" />
-                            </Appbar.Header>
+                    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
 
-                        <Surface style={{ elevation: 0, backgroundColor: "white", borderRadius: 20, margin:8, flex: 1, flexDirection: 'row', }}>
-                            <View style={{ flex: 1.5, alignItems: "center", justifyContent: "space-evenly" }}>
+                        <View style={{flex: 1, flexDirection: 'row'}}>
+                            <Surface style={{elevation: 15, flex: 1, borderTopRightRadius: 30, borderBottomRightRadius: 30, backgroundColor: '#212121'}}>
+                                {
+                                    this.getWorkoutMedia()
+                                }
+                            </Surface>
+                            
+                            <View style={{ flex: 1, alignItems: "center", justifyContent: "space-evenly"}}>
                                 <Text style={{ fontFamily: 'avenir-roman', fontSize: 12, padding: 2 }}>
                                     Lorem ipum dolor sit amet, consectetur adipiscing
                             </Text>
 
-                                <Text style={{ fontFamily: 'avenir-roman', fontSize: 12, padding: 2 }}>
-                                    Lorem ipsum dolor adipiscing
-                            </Text>
-
-                                <Text style={{ fontFamily: 'avenir-roman', fontSize: 12, padding: 2 }}>
-                                    Lorem ipsum dolor sit amet, consectetur
-                            </Text>
-
-                                <Text style={{ fontFamily: 'avenir-roman', fontSize: 12, padding: 2 }}>
-                                    Lorem ipsum dolor sit amet
-                            </Text>
-                            </View>
-                        </Surface>
-
-
-                        <View style={{ flex: 1.5}}>
-                            <Text style={{ fontFamily: "Avenir-Roman", fontSize: 25, padding: 10 }}>
-                                Workout Details
-                            </Text>
-                            <View style={{ flex: 1, flexDirection: "column", justifyContent: "space-evenly" }}>
-                                <Text style={{fontFamily: "avenir-roman", fontSize: 20, paddingLeft: 10}}>
-                                    Workout Name
-                                </Text>
-                                <View style={{flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
-                                <View style={{ flexDirection: "column", alignItems: "center", padding: 10 }}>
-                                    <Text style={{ fontFamily: "avenir-roman", fontSize: 20 }}>
-                                        Sets
-                                        </Text>
-                                    <Text>
-                                        20
-                                        </Text>
-                                </View>
-
-                                <View style={{ flexDirection: "column", alignItems: "center" }}>
-                                    <Text style={{ fontFamily: "avenir-roman", fontSize: 20 }}>
-                                        Reps
-                                        </Text>
-                                    <Text>
-                                        5
-                                        </Text>
-                                </View>
-
-                                <View style={{ flexDirection: "column", alignItems: "center" }}>
-                                    <Text style={{ fontFamily: "avenir-roman", fontSize: 20 }}>
-                                        Tempo
-                                        </Text>
-                                    <Text>
-                                        4-6-2
-                                        </Text>
-                                </View>
-                                </View>
-                            </View>
-
-                            <View style={{ flex: 1 }}>
-                                        <Text style={{ padding: 5, fontFamily: 'avenir-roman', textAlign: "center" }}>
-                                        {this.state.nextWorkout ? 
-                                        this.getCurrentWorkoutDescription 
-                                        : 
-                                        this.getTestDescription()
-                                            }
-
-                                </Text>
                             </View>
                         </View>
 
-                        <View style={{ flex: 1,alignItems: "center", justifyContent: "center"}}>
-                                <TouchableOpacity onPress={() => this.changeWorkout()} style={{ position: "absolute", right: 0, alignSelf: "center" }}>
-                                    <Surface style={[styles.interactionSurface, {alignSelf: "center", backgroundColor: "#1565C0", elevation: 8, alignItems: "center", justifyContent: "space-evenly", shadowColor: "#212121", shadowRadius: 10, right: 0, width: Dimensions.get('window').width - 10, height: 150, alignSelf: "center", borderRadius: 0, borderTopLeftRadius: 20, borderBottomLeftRadius: 20 }]}>
-                                   {/*     <Text style={{color: "white", fontSize: 20, fontFamily: "Avenir-Roman" }}>
-                                            Up Next
-                            </Text>
 
-                                        <Text style={{ color: "white", fontSize: 16, fontFamily: "Avenir-Roman" }}>
-                                            {this.state.nextWorkout ? this.getNextWorkoutTitle() : "Workout Name"
-                                            }
+                        <View style={{ flex: 1,}}>
+                            <View style={{ flex: 2, flexDirection: 'row', justifyContent: 'space-evenly' }}>
 
+                                <View style={{padding: 10, flex: 1, alignItems: 'flex-start', justifyContent: 'space-around'}}>
+<View>
+<Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+    Workout Logistics
+</Text>
+<Text>
+    {this.state.currentWorkout.workout_name}
+</Text>
+</View>
+
+<View>
+<Text>
+      <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+          Sets: { " "}
+      </Text>
+      <Text style={{fontSize: 15}}>
+          10
+      </Text>
+  </Text>
+
+  <Text> 
+      <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+          Reps:{ " "}
+      </Text>
+      <Text style={{fontSize: 15}}>
+          10
+      </Text>
+  </Text>
+</View>
+
+<View>
+    <View style={{paddingBottom: 8}}>
+    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+    Adjust the tempo
+</Text>
+<Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
+    4 * 0 * 2
+</Text>
+    </View>
+<ToggleSwitch
+  isOn={this.state.switchEnabled}
+  onColor="green"
+  offColor="#212121"
+  label={`Tempo ${this.state.switchEnabled == true ? '(On)' : '(Off)'}`}
+  labelStyle={{ color: "black", fontFamily: 'ARSMaquettePro-Regular'}}
+  size="small"
+  onToggle={isOn => console.log("changed to : ", isOn)}
+/>
+</View>
+
+
+  
+
+                                </View>
+
+                                <View style={{flex: 1}}>
+                                    <View style={{flex: 1, padding: 10, }}>
+                                        <Text style={{padding: 10, fontFamily: 'ARSMaquettePro-Medium'}}>
+                                            Participants
                                         </Text>
 
-                                        <Text style={{color: "white", fontFamily: "avenir-roman"}}>
-                                            2:03
-                                        </Text>*/}
-                                         <Video shouldPlay style={{borderRadius: 0, borderTopLeftRadius: 20, borderBottomLeftRadius: 20, width: "100%", height: "100%" }} shouldPlay={false} resizeMode="cover" source={require('../../video/preview2.mov')}/>
-                                    </Surface>
-                                </TouchableOpacity>
-                                        
+                                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                                <Surface style={{elevation: 15, width: 50, height: 50, borderRadius: 50}}>
+                                                    <Image style={{width: 50, height: 50, borderRadius: 50}} source={{uri: this.props.lupa_data.Users.currUserData.photo_url}} />
+                                                </Surface>
+                                        </View>
+                                    </View>
 
-                                       
+                                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                        <TouchableHighlight style={{margin: 10, borderRadius: 10}} onPress={this.changeWorkout}>
+                                        <Surface style={{width: '100%', flexDirection: 'row', alignItems: 'center', height: 50, elevation: 15, borderRadius: 10, alignItems: 'center', backgroundColor: '#212121'}}>
+                                            <View style={{flex: 3, alignItems: 'center', justifyContent: 'center'}}>
+                                            <Text style={{color: 'white', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+                                                Next Workout
+                                            </Text>
+                                            </View>
+                                            <View style={{backgroundColor: 'black', flex: 1, height: 50, alignItems: 'center', justifyContent: 'center', borderTopRightRadius: 10, borderBottomRightRadius: 10}}>
+                                            <FeatherIcon name="arrow-right" size={30} color="#FFFFFF" />
+                                            </View>
+                                        </Surface>
+                                        </TouchableHighlight>
+                                    </View> 
+                                    </View>
+                            </View>
                         </View>
 
-                        <View style={{flex: 1, justifyContent: "center"}}>
+                        <View style={{flex: 0.5, justifyContent: "center"}}>
                         <StepIndicator
                             direction="horizontal"
                             customStyles={customStyles}
@@ -511,14 +545,12 @@ class LiveWorkout extends React.Component {
                         </View>
 
 
-
-                                                <SafeAreaView />
-                    </View>
+                    </SafeAreaView>
 
                     <View style={{ flex: 1, padding: 15}}>
                         <SafeAreaView style={{ flex: 1 }}>
                             <View style={{padding: 15 }}>
-                                <StepIndicator
+                               {/* <StepIndicator
 
                                     direction="horizontal"
                                     customStyles={customStyles}
@@ -630,7 +662,7 @@ class LiveWorkout extends React.Component {
                                             default:
                                         }
                                     }}
-                                />
+                                />*/}
 
                             </View>
 
@@ -737,21 +769,115 @@ class LiveWorkout extends React.Component {
                                     </View>
                                 </View>
                             </View>
-                            <Surface style={{backgroundColor: "transparent", elevation: 8, borderRadius: 20, padding: 10, flex: 1, alignItems: "center", justifyContent: "center" }}>
-                            <Text style={{fontFamily: "Avenir-Roman"}}>
+
+                            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                <Surface style={{flexDirection: 'row', alignItems: 'center', elevation: 10, borderRadius: 20, width: '90%', height: 60, alignItems: 'center', justifyContent: 'center'}}>
+                                    <FeatherIcon size={20} name="bluetooth" color="rgb(0, 30, 152)" />
+                                    <Text style={{fontFamily: 'ARSMAquettePro-Regular'}}>
+                                        Turn on bluetooth to connect your device
+                                    </Text>
+                                </Surface>
+                            </View>
+
+                            <Surface style={{backgroundColor: "transparent", elevation: 8, borderRadius: 20, padding: 10, flex: 1, alignItems: "flex-start", justifyContent: "center" }}>
+                            <Text style={{fontFamily: "Avenir-Roman", fontSize: 20}}>
                                 Muscle Spread
                             </Text>
-                            <PieChart
-  data={data}
-  width={Dimensions.get('window').width - 20}
-  height={220}
-  chartConfig={chartConfig}
-  accessor="population"
-  backgroundColor="transparent"
-  paddingLeft="15"
-  
-  absolute
+                                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Icon
+  name='clock'
+  type='feather'
+  color='#1E88E5'
+  style={{elevation: 15, margin: 15}}
+  iconStyle={{margin: 5, elevation: 15}}
+  size={20}
 />
+                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                            Time Spent: 120bpm
+                                        </Text>
+                                    </View>
+
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Icon
+  name='clock'
+  type='feather'
+  color='#0D47A1'
+  style={{elevation: 15, margin: 15}}
+  iconStyle={{margin: 5, elevation: 15}}
+  size={20}
+/>
+                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                            Time Left: 120bpm
+                                        </Text>
+                                    </View>
+                                </View>
+
+
+                                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Icon
+  name='heart'
+  type='feather'
+  color='red'
+  style={{elevation: 15, margin: 15}}
+  iconStyle={{margin: 5, elevation: 15}}
+  size={20}
+/>
+                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                            Cardio: 120bpm
+                                        </Text>
+                                    </View>
+
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Icon
+  name='activity'
+  type='feather'
+  color='#212121'
+  style={{elevation: 15, margin: 15}}
+  iconStyle={{margin: 5, elevation: 15}}
+  size={20}
+/>
+                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                           Weight Pushed: 120bpm
+                                        </Text>
+                                    </View>
+                                </View>
+
+
+                                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Icon
+  name='target'
+  type='feather'
+  color='#FFC107'
+  style={{elevation: 15, margin: 15}}
+  iconStyle={{margin: 5, elevation: 15}}
+  size={20}
+/>
+                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                            Calories Burned: 120bpm
+                                        </Text>
+                                    </View>
+
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Icon
+  name='heart'
+  type='feather'
+  color='red'
+  style={{elevation: 15, margin: 15}}
+  iconStyle={{margin: 5, elevation: 15}}
+  size={20}
+/>
+                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                            Cardio: 120bpm
+                                        </Text>
+                                    </View>
+                                    </View>
+                                </View>
+
+                                
                             </Surface>
                         </SafeAreaView>
                     </View>

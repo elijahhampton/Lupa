@@ -15,6 +15,7 @@ import MessagesView from '../user/chat/MessagesView'
 
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import SettingsModal from '../user/profile/component/SettingsModal';
 /*
 const Stack = createStackNavigator();
 
@@ -106,6 +107,14 @@ const ProfileNavigator = createStackNavigator(
             gesturesEnabled: false,
         }),
     },
+    UserSettingsView: {
+      screen: SettingsModal,
+      navigationOptions: ({navigation}) => ({
+          title: "UserSettings",
+          header: null,
+          gesturesEnabled: false,
+      }),
+  },
     MessagesView: {
         screen: MessagesView,
         navigationOptions:   ({navigation}) => ({

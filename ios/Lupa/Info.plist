@@ -44,7 +44,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>Allow Lupa to access your calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Lupa to use the camera</string>
+	<string>Allow Lupa to access your camera</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Allow Lupa experiences to access your contacts</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -90,6 +90,7 @@
 		<string>rubicon-icon-font.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>feather1s.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

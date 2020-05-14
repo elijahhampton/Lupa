@@ -260,9 +260,8 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
 }
 
     try {
-        
-        let program = getLupaProgramStructure();
-        await LUPA_DB.collection('users').doc(USER_UUID).collection('programs').add(program);
+        await LUPA_DB.collection('users').doc(USER_UUID).collection('programs').set({});
+        await LUPA_DB.collection('users').doc(USER_UUID).collection('services').set({});
     } 
     catch(err)
     {

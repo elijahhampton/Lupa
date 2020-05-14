@@ -7,6 +7,7 @@ import {
     Button as NativeButton,
     Image,
     Modal,
+    SafeAreaView,
 } from 'react-native';
 
 import {
@@ -24,18 +25,13 @@ import LupaController from '../../../../controller/lupa/LupaController';
 const VerificationModal = (props) => {
     return (
         <Modal visible={props.isVisible} presentationStyle="fullScreen" animated={true} animationType="slide" style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', flex: 1, margin: 0}}>
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontWeight: '500'}}>
+            <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{width: '90%', fontWeight: '500', fontFamily: 'ARSMaquettePro-Black', fontSize: 15}}>
                 Thanks for submitting your information!  We will verify your credentials and update your account if everything checks out.  Please wait up to 24 hours for your account to be updated.
             </Text>
-            </View>
 
-            <Image defaultSource={require('../../../images/verification_complete.png')} style={{width: '80%', height: '50%', alignSelf: 'center'}}  />
-
-            <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
             <NativeButton title="Complete" onPress={() => props.closeModalMethod()}/>
-            </View>
-
+            </SafeAreaView>
         </Modal>
     )
 }
@@ -117,7 +113,9 @@ export default class TrainerInformation extends React.Component {
             <View style={styles.root}>
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <Text style={styles.instructionalText}>
-                    As a Lupa Trainer you will be able to make money based on your tier.  Read more about our tiering system here.
+                    Trainers registered on Lupa have access to exclusive tools such as building client list, creating workout programs, and engaging in research opportunies sponsored by Lupa.  
+                    
+                    As a Lupa Trainer you will be able to make money and engage your clientele through our platform.  We currently only support the NASM certification, but plan on adding many more in the future.
                 </Text>
                 </View>
 
@@ -161,7 +159,7 @@ const styles = StyleSheet.create({
     },
     instructionalText: {
         flexShrink: 1,
-        fontSize: 20,
+        fontSize: 15,
         fontFamily: "avenir-roman",
     },
     verificationModal: {

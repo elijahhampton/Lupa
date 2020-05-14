@@ -63,15 +63,15 @@ class UserSearchResultCard extends React.Component {
                 let userDisplayName = this.props.title.split(" ");
                 let firstName = userDisplayName[0].charAt(0);
                 let lastName = userDisplayName[1].charAt(0);
-                return <Avatar.Text label={firstName+lastName} size={30} style={{margin: 3}}/>
+                return <Avatar.Text label={firstName+lastName} size={45} style={{margin: 8}}/>
             } catch(err)
             {
-                return <Avatar.Image source={{uri: this.props.avatar }} size={30} style={{margin: 3}} />
+                return <Avatar.Image source={{uri: this.props.avatar }} size={45} style={{margin: 8}} />
             }
         }
         else
         {
-            return <Avatar.Image source={{uri: this.props.avatar }} size={30} style={{margin: 3}} />
+            return <Avatar.Image source={{uri: this.props.avatar }} size={45} style={{margin: 8}} />
         }
     }
 
@@ -79,7 +79,7 @@ class UserSearchResultCard extends React.Component {
         return (
             <>
                 <TouchableOpacity onPress={() => this._handleViewProfile()} style={styles.touchableOpacity}>
-                <Surface style={[styles.cardContainer]}>
+                <View style={[styles.cardContainer]}>
                     <View style={styles.cardContent}>
                         <View style={styles.userInfoContent}>
                             {
@@ -87,19 +87,23 @@ class UserSearchResultCard extends React.Component {
                             }
                         <View style={{flexDirection: 'column'}}>
                         <Text style={styles.titleText}>
-                                {this.props.title}
+                                {this.props.username}
                             </Text>
                             <Text style={styles.subtitleText}>
-                                {this.props.username}
+                                {this.props.title}
                             </Text>
     
                         </View>
                             </View>
+                            {
+                                /*
                         <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
                         Lupa User
                         </Chip>
+                                */
+                            }
                     </View>
-                </Surface>
+                </View>
                     </TouchableOpacity>
                 </>
         );
@@ -131,14 +135,16 @@ const styles = StyleSheet.create({
     userInfoContent: {
         flexDirection: "row", 
         alignItems: "center", 
-        justifyContent: 'space-between'
+        justifyContent: 'flex-start'
     },
     titleText: {
         fontWeight: "600",
     },
     subtitleText: {
-        fontWeight: '500',
-        fontSize: 12
+        fontWeight: '200',
+        fontSize: 13,
+        fontFamily: 'ARSMaquettePro-Regular',
+        color: 'grey'
     },
     chipIndicator: {
         width: 100,

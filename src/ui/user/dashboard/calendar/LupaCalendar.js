@@ -103,7 +103,7 @@ export default class LupaCalendar extends React.Component {
               height: 18,
               textAlign: 'center',
               // Highlight header
-              backgroundColor: rowIndex == 0 ? '#ddd' : 'transparent',
+              backgroundColor: rowIndex == 0 ? 'transparent' : 'transparent',
               // Highlight Sundays
               color: colIndex == 0 ? '#2196F3' : '#000',
               // Highlight current date
@@ -123,6 +123,7 @@ export default class LupaCalendar extends React.Component {
             padding: 15,
             justifyContent: 'space-around',
             alignItems: 'center',
+            color: 'white'
           }}>
           {rowItems}
         </View>
@@ -136,7 +137,7 @@ export default class LupaCalendar extends React.Component {
             fontWeight: 'bold',
             fontSize: 15,
             textAlign: 'center',
-            color: "#2196F3",
+            color: "black",
           }}>
             {months[this.state.activeDate.getMonth()]} &nbsp;
             {this.state.activeDate.getFullYear()}
@@ -156,6 +157,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+    color: 'white',
     margin: 10,
+    backgroundColor: 'transparent'
   }
 })

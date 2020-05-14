@@ -42,9 +42,9 @@ class LupaJournal extends React.Component {
         super(props);
 
         this.state = {
-            journalOpen: false,
+            journalOpen: this.props.showJournal,
             journalSurfaceHeight: new Animated.Value(380),
-            showAnalyticalView: false,
+            showAnalyticalView: this.props.showJournal,
             journalDropdownData: [
                 {
                     value: 'Lupa Assessments'
@@ -87,8 +87,9 @@ class LupaJournal extends React.Component {
     }
 
     render() {
+        this.props.showJournal == true ? this.showAnalyticalView : this.handleShowCalendarView
         return (
-            <Surface style={{alignSelf: 'center', margin: 15, padding: 15, backgroundColor: "#F2F2F2", width: Dimensions.get('window').width - 20, height: this.state.journalSurfaceHeight, borderRadius: 25, elevation: 10}}>
+            <Surface style={{alignSelf: 'center', margin: 15, padding: 15, backgroundColor: "#FFFFFF", width: '95%', height: this.state.journalSurfaceHeight, borderRadius: 25, elevation: 5}}>
                     {
                         this.state.showAnalyticalView == true ?
                         <Dropdown value={this.state.journalDropdownValue} data={this.state.journalDropdownData} label="Lupa Assessments" containerStyle={{width: '100%'}} />
@@ -103,7 +104,7 @@ class LupaJournal extends React.Component {
                         <LupaCalendar elevation={0} />
                     }
 
-                    {
+                {
                         this.state.showAnalyticalView == true ?
                         <FAB 
                         icon="event"
@@ -120,8 +121,8 @@ class LupaJournal extends React.Component {
                         onPress={this.showAnalyticalView}
                         color="#FFFFFF"
                         />
-
-                    }
+                }
+                        
                 
                     </Surface>
         )

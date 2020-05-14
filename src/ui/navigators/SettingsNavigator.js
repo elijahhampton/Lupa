@@ -31,7 +31,7 @@ export default function SettingsNavigator() {
 
 
 const SettingsStackNavigator = createStackNavigator({
-    SettingsView: {
+    UserSettingsView: {
         screen: SettingsView,
         navigationOptions: ({ navigation }) => ({
             title: "SettingsView",

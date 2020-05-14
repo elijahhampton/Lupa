@@ -38,6 +38,8 @@ import FeatherIcon from "react-native-vector-icons/Feather"
 
 import { ScrollView } from 'react-native-gesture-handler';
 
+import { BarChart } from 'react-native-chart-kit'
+
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
@@ -55,6 +57,8 @@ import PackInformationModal from './modal/PackInformationModal';
 import PackEventModal from './modal/PackEventModal';
 
 import PackRequestsModal from './modal/PackRequestsModal';
+
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { connect } from 'react-redux';
 import { refreshStoreState } from '../../controller/redux';
@@ -75,6 +79,17 @@ const mapDispatchToProps = dispatchEvent => {
         }
     }
 }
+
+const data = {
+    labels: ["January", "February", "March", "April", "May", "June"],
+    datasets: [
+      {
+        data: [20, 45, 28, 80, 99, 43]
+      }
+    ]
+  };
+
+
 
 const PackMembersModal = (props) => {
     return (
@@ -235,7 +250,7 @@ class PackEventCard extends React.Component {
            // <TouchableOpacity onPress={() => this.handlePackEventModalOpen()}>
            <Surface style={{padding: 15, borderRadius: 30, margin: 10, width: Dimensions.get('window').width - 40, height: 'auto', backgroundColor: "#f2f2f2"}}>
                        <View>
-                       <Title >
+                       <Title style={{fontFamily: 'ARSMaquettePro-Black'}} >
                             {this.state.packEventObject.pack_event_title}
                         </Title>
                         <Text style={{fontFamily: 'avenir-book', fontSize: 15}}>
@@ -505,35 +520,47 @@ class PackModal extends React.Component {
             });
     }
 
+    getNumPackMembers = () => {
+        try {
+            return this.state.membersLength
+        } catch(err) {
+            return 0;
+        }
+
+    }
+
     render() {
         return (
                 <SafeAreaView forceInset={{
                     bottom: 'never'
                 }} style={{ flex: 1, backgroundColor: "#FAFAFA", padding: 5}}>
                     <ScrollView>
-                    <Headline style={{alignSelf: "center"}}>
-                        {this.state.packInformation.pack_title}
-                    </Headline>
-                            
 
-                    <View style={{ flex: 1, flexDirection: "column", }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                            <Text style={styles.header}>
-                                Members
-                </Text>
-                            <Button mode="text" color="black" onPress={() => this.setState({ packMembersModalIsOpen: true })} disabled={false}>
-                                View all
-                </Button>
+                        <View style={{height: 'auto', width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center'}}>
+                            <Surface style={{elevation: 6, width: 100, height: 100, borderRadius: 100, margin: 10, }}>
+                                <Image style={{width: 100, height: 100, borderRadius: 100}} source={{uri: this.state.packInformation.pack_image}}/>
+                            </Surface>
+                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                <Text style={{fontSize: 12, fontFamily: 'ARSMaquettePro-Bold'}}>
+                                {this.state.packInformation.pack_title}
+                                </Text>
+                                <Text>
+                                    |
+                                </Text>
+                                <Text>
+                                    {this.getNumPackMembers()} Members
+                                </Text>
+                            </View>
+                            
+                            <View style={{height: 60}}>
+                            <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center'}}>
+                                {this.mapMembers()}
+                            </ScrollView>
+                            </View>
                         </View>
-                        <View>
-                        <ScrollView horizontal={true} shouldRasterizeIOS={true} overScrollMode="always" contentContainerStyle={{ alignItems: "flex-start", flexGrow: 2, justifyContent: 'flex-start', flexDirection: "row" }}>
-                            {
-                            this.mapMembers()
-                        }
-                        </ScrollView>
-                        </View>
-                    </View>
-                    
+
+                        <Divider style={{padding: 3, marginVertical: 10, }} />
+
                     <View style={{flex: 4, flexGrow: 5}}>
                     <Text style={styles.header}>
                                Upcoming Events

@@ -73,7 +73,7 @@ class Timecards extends React.Component {
         
 
         this.state = {
-            mondayTimes: ['a', 'b', 'c'],
+            mondayTimes: [],
             tuesdayTimes: [],
             wednesdayTimes: [],
             thursdayTimes: [],
@@ -121,9 +121,7 @@ class Timecards extends React.Component {
                  :
                   this.state.mondayTimes.map(time => {
 
-                      return <Chip textStyle={{color: 'white'}} style={{margin: 5, backgroundColor: "#212121", width: 65, alignItems: 'center', justifyContent: 'center'}}>
-                      11:00
-                  </Chip>
+                      return <Button color="#2196F3" mode="text" compact style={styles.captionStyle}>{time}</Button>
                   })
             case 'Tuesday':
                 return this.state.tuesdayTimes.length == 0 ?                     <Caption style={styles.caption}>

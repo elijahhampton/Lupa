@@ -122,8 +122,10 @@ Request to join {" "}
 <Button  onPress={() => this.LUPA_CONTROLLER_INSTANCE.requestToJoinPack(this.props.lupa_data.Users.currUserData.user_uuid, this.state.packUUID)} mode="outlined" style={{padding: 10, borderRadius: 80, width: "85%", flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}} color="black">
 <Icon type="material" name="group" color="black" />
 <>
+<Text style={{fontFamily: 'ARSMaquettePro-Regular'}}>
 Request to join {" "}
-        <Text style={{fontFamily: "Avenir-Roman", fontSize: 15, padding: 5}}>
+</Text>
+        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, padding: 5}}>
             {this.state.packInformation.pack_title}
             </Text>
 </>
@@ -229,7 +231,7 @@ null
                    }
 
                     <View style={{alignItems: "center", justifyContent: "center"}}>
-                    <Text style={{fontFamily: "Avenir-Roman", fontSize: 25, padding: 5}}>
+                    <Text style={{fontFamily: "avenir-roman", fontSize: 25, padding: 5}}>
                             {                            this.state.packInformation.pack_title}
                         </Text>
 
@@ -286,7 +288,7 @@ null
 
 
                     <View style={{margin:  15}}>
-                        <Text style={{color: "#212121", fontSize: 20, fontFamily: "avenir-roman"}}>
+                        <Text style={{color: "#212121", fontSize: 20, fontFamily: "Avenir-Roman"}}>
                             Friends in this pack (0)
                         </Text>
                         <ScrollView horizontal>
@@ -298,7 +300,7 @@ null
 
 
                     <View style={{margin: 15}}>
-                        <Text style={{color: "#212121", fontSize: 20, fontFamily: "avenir-roman"}}>
+                        <Text style={{color: "#212121", fontSize: 20, fontFamily: "Avenir-Roman"}}>
                             Featured Events
                         </Text>
                         <ScrollView horizontal>

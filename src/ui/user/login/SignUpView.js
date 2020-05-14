@@ -75,6 +75,12 @@ mapStateToProps = (state) => {
           payload: currUserProgramsData,
         })
       },
+      updateUserServices: (currUserServicesData) => {
+        dispatch({
+          type: 'UPDATE_CURRENT_USER_SERVICES',
+          payload: currUserServicesData,
+        })
+      },
       updateLupaWorkouts: (lupaWorkoutsData) => {
         dispatch({
           type: 'UPDATE_LUPA_WORKOUTS',
@@ -190,7 +196,7 @@ class SignupModal extends React.Component {
   }
 
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, lupaWorkouts, lupaAssessments;
+    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, currUserServices, lupaWorkouts, lupaAssessments;
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -205,6 +211,10 @@ class SignupModal extends React.Component {
 
     await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
+    })
+
+    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserServices().then(result => {
+      currUserServices = result;
     })
 
     await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
@@ -223,6 +233,7 @@ class SignupModal extends React.Component {
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
+    await this._updateUserServicesInRedux(currUserServices);
     await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
     await this._updateLupaAssessmentDataInRedux(lupaAssessments);
   }
@@ -247,6 +258,13 @@ class SignupModal extends React.Component {
    */
   _updateUserProgramsDataInRedux = (programsData) => {
     this.props.updateUserPrograms(programsData);
+  }
+
+   /**
+   * 
+   */
+  _updateUserServicesInRedux = (servicesData) => {
+    this.props.updateUserServices(servicesData);
   }
 
   /**

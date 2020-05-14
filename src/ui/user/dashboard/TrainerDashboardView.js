@@ -32,7 +32,8 @@ import {
     Caption,
     Surface,
     Chip,
-    Button
+    Button,
+    FAB
 } from 'react-native-paper';
 
 import SessionNotificationContainer, { PackEventNotificationContainer } from './component/SessionNotificationContainer';
@@ -40,6 +41,12 @@ import SessionNotificationContainer, { PackEventNotificationContainer } from './
 import LupaController from '../../../controller/lupa/LupaController';
 import { connect } from 'react-redux';
 import LupaJournal from './component/LupaJournal/LupaJournal'
+
+import FeatherIcon from 'react-native-vector-icons/Feather'
+
+import UpcomingSessionCard from '../../sessions/component/UpcomingSessionCard'
+import Swiper from 'react-native-swiper';
+import { Pagination } from 'react-native-snap-carousel';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -97,6 +104,7 @@ class TrainerDashboardView extends React.Component {
             refreshing: false,
             sessionData: [],
             packEventsData: [],
+            showJournal: false,
             packInvites: [],
             openedPackInviteID: "",
             openedPackTitle: "",
@@ -288,7 +296,8 @@ class TrainerDashboardView extends React.Component {
                 //Return a session notification container
                 //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
                 return (
-                    <SessionNotificationContainer sessionData={session.sessionData} sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus} />
+                    <UpcomingSessionCard  userDataObject={session.sessionData.attendeeTwoData} sesssionDataObject={session.sessionData} />
+                    //<SessionNotificationContainer sessionData={session.sessionData} sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus} />
                 )
             })
     }
@@ -343,7 +352,7 @@ class TrainerDashboardView extends React.Component {
                                         theme={{
                                             elevation: 0,
                                             colors: {
-                                                primary: "#2196F3"
+                                                primary: "transparent"
                                             }
                                         }}
                                         > 
@@ -358,69 +367,58 @@ class TrainerDashboardView extends React.Component {
                         onRefresh={this._onRefresh}
                     />}>
 
-                    <LupaJournal />
+                    <LupaJournal showJournal={this.state.showJournal} />
 
                     <View>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionHeaderText}>
-                                Sessions
-                        </Text>
-                        </View>
+                    <View style={{padding: 10, flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', height: 'auto'}}>
+                        <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#FFFFFF', width: '100%'}}>
+                            <Text style={{color: '#1E88E5', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15, padding: 5, textAlign: 'center'}}>
+                                Finished a workout offline? Log it
+                            </Text>
 
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{flexDirection: "row", justifyContent: "space-around", alignItems: "center", }}>
-                            {
-                                this.populateSessions()
-                            }
-                        </ScrollView>
+                            <Text style={{color: '#292f33', fontWeight: '300', textAlign: 'center'}}>
+                                Log workouts you complete outside of the Lupa app to enhance your live workout experience
+                            </Text>
+
+                            <Button mode="contained" style={{margin: 10, width: '40%', elevation: 0}} theme={{
+                                colors: {
+                                    primary: '#2196F3'
+                                },
+                                roundness: 10
+                            }}>
+                                <Text>
+                                    Open Log
+                                </Text>
+                            </Button>
+                        </Surface>
+
+                        <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#FFFFFF', width: '100%'}}>
+                            <Text style={{color: '#1E88E5', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15, padding: 5, textAlign: 'center'}}>
+                                Try the EMS assessment
+                            </Text>
+
+                            <Text style={{color: '#292f33', fontWeight: '300', textAlign: 'center', padding: 5}}>
+                            The EMS assessment is designed to simulate the critical physical tasks performed by paramedics and EMTs during emergency situations.
+                            </Text>
+
+                            <Button mode="contained" style={{margin: 10, width: '60%', elevation: 0}} theme={{
+                                colors: {
+                                    primary: '#2196F3'
+                                },
+                                roundness: 10,
+    
+                            }}>
+                                <Text>
+                                    Take Assessment
+                                </Text>
+                            </Button>
+                        </Surface>
                     </View>
 
-                    <Divider style={styles.divider} />
-
-                    <View>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionHeaderText}>
-                                Pack Invites
-                        </Text>
-
-                        </View>
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-                            {
-                                this.populatePackInvites()
-                            }
-                        </ScrollView>
                     </View>
-
-                    <Divider style={styles.divider} />
-
-                    <View>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionHeaderText}>
-                                Pack Events
-                        </Text>
-
-                        </View>
-                        <ScrollView shouldRasterizeIOS={true} horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-                            {
-                                this.populatePackEvents()
-                            }
-                        </ScrollView>
-                    </View>
-
-                    <Divider style={styles.divider} />
-
-
-                   {/* 
-                   <View>
-                        <Text style={styles.sectionHeaderText}>
-                            Recent Workouts
-                        </Text>
-                        <Caption>
-                            You have not performed any workouts recently.
-                        </Caption>
-                   </View>
-                   */}
                 </ScrollView>
                 <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid} />
+                {/* <FAB onPress={() => this.setState({ showJournal: !this.state.showJournal })} icon="import-contacts" style={{backgroundColor: '#2196F3', position: 'absolute', bottom: 0, right: 0, margin: 16}} /> */}
             </View>
         );
     }
@@ -428,14 +426,14 @@ class TrainerDashboardView extends React.Component {
 
 const styles = StyleSheet.create({
     scrollView: {
+        alignItems: 'center',
         flexGrow: 2,
-        justifyContent: "space-between",
         flexDirection: 'column',
         padding: 10,
     },
     safeareaview: {
         flex: 1,
-        backgroundColor: "#2196F3"
+        backgroundColor: "#F2F2F2",
     },
     header: {
         flexDirection: 'row', 
@@ -445,22 +443,23 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 30, 
-        fontFamily: 'ars-maquette-pro-bold',
+        fontFamily: 'ARSMaquettePro-Medium',
         color: 'white', 
-        alignSelf: "center"
+        alignSelf: "center",
+        color: '#2196F3'
     },
     sectionHeader: {
         flexDirection: 'row', 
         alignItems: 'center', 
         justifyContent: 'space-between', 
         margin: 3,
-        fontFamily: "avenir-book"
+        fontFamily: "avenir-book",
+        color: '#212121'
     },
     sectionHeaderText: {
-        fontSize: 20, 
-        fontWeight: "700", 
-        color: 'white',
-        fontFamily: 'ars-maquette-pro-regular'
+        fontSize: 18, 
+        color: '#212121',
+        fontFamily: 'ARSMaquettePro-Medium'
     },
     divider: {
         margin: 8

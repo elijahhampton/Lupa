@@ -364,7 +364,8 @@ export default class LupaController {
         const userResults = results[0];
         const packResults = results[1];
 
-        //add the results we want from each into our final results array
+        try {
+                  //add the results we want from each into our final results array
         for (let i = 0; i < userResults.hits.length; ++i)
         {
           userResults.hits[i].isTrainer == true ?  userResults.hits[i].resultType="trainer" :  userResults.hits[i].resultType="user"
@@ -382,6 +383,10 @@ export default class LupaController {
           {
             finalResults.push(packResults.hits[i]);
           }
+        }
+        } catch(err)
+        {
+          
         }
 
         resolve(finalResults);
@@ -606,11 +611,29 @@ export default class LupaController {
     }
 
     saveProgram = async (user_uuid, programUUID) => {
-      await USER_CONTROLLER_INSTANCE.saveProgram(user_uuid, programUUID);
+let res;
+       await USER_CONTROLLER_INSTANCE.saveProgram(user_uuid, programUUID).then(result => {
+        res = result;
+       })
+
+       return Promise.resolve(res);
+    }
+
+    handleSendUserProgram = (currUserUUID, currUserData, currUserDisplayName, userList, program) => {
+       
+      try {
+        USER_CONTROLLER_INSTANCE.handleSendUserProgram(currUserUUID, currUserData, currUserDisplayName, userList, program);
+          } catch(err) {
+          alert('sfsfsffsfs')
+        }
     }
 
     deleteProgram = async (user_uuid, programUUID) => {
       await USER_CONTROLLER_INSTANCE.deleteProgram(user_uuid, programUUID);
+    }
+
+    createService = (serviceObject) => {
+      USER_CONTROLLER_INSTANCE.createService(serviceObject);
     }
     
     loadCurrentUserPrograms = async () => {
@@ -621,6 +644,16 @@ export default class LupaController {
       })
 
       return Promise.resolve(programsData);
+    }
+
+    loadCurrentUserServices = async () => {
+      let servicesData;
+
+      await USER_CONTROLLER_INSTANCE.loadCurrentUserServices().then(result => {
+        servicesData = result;
+      });
+
+      return Promise.resolve(servicesData);
     }
 
     loadWorkouts = async () => {
@@ -711,4 +744,25 @@ export default class LupaController {
 
       return Promise.resolve(assessment);
     }
+
+        /* designing programs */
+        saveProgramWorkoutGraphic = async (workout, programUUID, graphicType, uri) => {
+          let newURI;
+          await USER_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(workout, programUUID, graphicType, uri).then(res => {
+            newURI = res;
+          });
+
+          return Promise.resolve(newURI);
+      }
+
+      getUserNotifications = async () => {
+        let queue;
+       await USER_CONTROLLER_INSTANCE.getUserNotificationsQueue().then(queueResults => {
+        queue = queueResults;
+        })
+
+        return Promise.resolve(queue);
+      }
+
+      
 }

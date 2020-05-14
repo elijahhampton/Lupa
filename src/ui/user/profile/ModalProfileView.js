@@ -12,6 +12,7 @@ import {
     StyleSheet,
     View,
     Text,
+    Modal,
     TouchableOpacity,
     ScrollView,
     RefreshControl,
@@ -69,11 +70,13 @@ import { connect } from 'react-redux';
 
 import ProfilePicture from '../../images/profile_picture1.jpeg';
 
+import ProgramListComponent from '../../workout/component/ProgramListComponent'
+
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-FeatherIcon.loadFont();
 
 import { Pagination } from 'react-native-snap-carousel';
+import { Constants } from 'react-native-unimodules';
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -220,7 +223,7 @@ const mapDispatchToProps = dispatchEvent => {
  * TODO:
  * @todo Fix Fitness Interest surface displaying wrong caption for current user.
  */
-class ProfileView extends React.Component {
+class ModalProfileView extends React.Component {
     constructor(props) {
         super(props);
 
@@ -265,8 +268,8 @@ class ProfileView extends React.Component {
 
     _getId() {
         let id = false;
-        if (this.props.navigation.state.params) {
-            id = this.props.navigation.state.params.userUUID;
+        if (this.props.uuid) {
+            id = this.props.uuid;
         }
         return id;
     }
@@ -346,12 +349,6 @@ class ProfileView extends React.Component {
         await this.setState({
             followers: followers,
         })
-    }
-
-    _navigateToSessionsView = () => {
-        this.props.navigation.navigate('SessionsView', {
-            userUUID: this.props.navigation.state.params.userUUID
-        });
     }
 
     _chooseProfilePictureFromCameraRoll = async () => {
@@ -598,26 +595,7 @@ class ProfileView extends React.Component {
     }
 
     getHeaderRight = () => {
-        if (this.props.navigation.state.params.navFrom) {
-            switch (this.props.navigation.state.params.navFrom) {
-                case 'Drawer':
-                    return ( 
-                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                                <IconButton icon="more-horiz" size={20} onPress={() => this._navigateToSettings()} />
-                    <IconButton icon="email" size={20} onPress={() =>
-                        this.props.navigation.dispatch(
-
-                            NavigationActions.navigate({
-                                routeName: 'MessagesView',
-                                action: NavigationActions.navigate({ routeName: 'MessagesView' })
-                            })
-                        )} />
-                        </View>
-                    )
-                default:
-                    return <FeatherIcon name="plus-circle" size={20} onPress={() => this._showActionSheet()} />
-            }
-        }
+        return <FeatherIcon name="plus-circle" size={20} onPress={() => this._showActionSheet()} />
     }
 
     renderInteractions = () => {
@@ -665,12 +643,12 @@ class ProfileView extends React.Component {
                                 routeName: 'PrivateChat',
                                 params: {
                                     currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-                                    otherUserUUID: this.props.navigation.state.params.userUUID
+                                    otherUserUUID: this.getId()
                                 },
                                 action: NavigationActions.navigate({
                                     routeName: 'PrivateChat', params: {
                                         currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-                                        otherUserUUID: this.props.navigation.state.params.userUUID
+                                        otherUserUUID: this._getId()
                                     }
                                 })
                             })
@@ -756,12 +734,35 @@ class ProfileView extends React.Component {
             </View>
     }
 
+    mapPrograms = () => {
+        /* if (this.props.lupa_data.Programs.currUserProgramsData)
+         {
+             if (this.props.lupa_data.Programs.currUserProgramsData.length)
+             {
+                 this.props.lupa_data.Programs.currUserProgramsData.map(program => {
+                     return (
+                         <Text>
+                             Replace with Program card
+                         </Text>
+                     )
+                 })
+             }
+         }*/
+ 
+         let placeholder = [0, 1, 2, 3]
+         return placeholder.map(number => {
+             return (
+                 <ProgramListComponent />
+             )
+         })
+     }
+
     render() {
         return (
-            <Modal presentationStyle="fullScreen" style={styles.container}>
-                <ScrollView>
+            <Modal presentationStyle="fullScreen" style={styles.container} visible={this.props.isVisible} animated={true} animationType="slide">
+                <ScrollView contentContainerStyle={{marginTop: Constants.statusBarHeight}}>
+                <NativeButton style={{alignSelf: 'center'}} title="Done" onPress={this.props.closeModalMethod}/>
                 <Appbar.Header style={{ backgroundColor: "transparent", margin: 10 }}>
-                    <NativeButton title="Close" onPress={this.props.closeModalMethod}/>
 
                     <Appbar.Content title={this.state.userData.username} />
                 </Appbar.Header>
@@ -830,16 +831,31 @@ class ProfileView extends React.Component {
 
                         <View style={styles.myPacks}>
                         {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
-                            <Text style={{fontSize: 15, padding: 10}}>
-                                My Packs
+                            <Text style={{fontSize: 20, padding: 10}}>
+                                Packs
                             </Text>
                             :
-                            <Text style={{alignSelf: 'center', fontSize: 15, padding: 10, fontWeight: '600'}}>
+                            <Text style={{fontSize: 20, padding: 10, fontWeight: '600'}}>
                                 {this.state.userData.display_name}'s Packs
                         </Text>
                         }
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             {this.mapPacks()}
+                        </ScrollView>
+                    </View>
+
+                    <View style={styles.myPacks}>
+                        {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
+                            <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Medium', padding: 10}}>
+                                Programs
+                            </Text>
+                            :
+                            <Text style={{fontSize: 20, padding: 10, fontWeight: '600'}}>
+                                {this.state.userData.display_name}'s Packs
+                        </Text>
+                        }
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            {this.mapPrograms()}
                         </ScrollView>
                     </View>
                     </View>
@@ -866,37 +882,6 @@ class ProfileView extends React.Component {
                         </View>
                     </Surface>
 
-                    <View style={styles.recommendedWorkouts}>
-                        <View style={styles.recommendedWorkoutsHeader}>
-                            <Title>
-                                Recommended Workouts
-                        </Title>
-                        </View>
-                        {
-                            this.mapRecommendedWorkouts()
-                        }
-                    </View>
-
-                    <Surface style={{ backgroundColor: "transparent", width: Dimensions.get('window').width }}>
-                    {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
-                            <Title style={{marginLeft: 10}}>
-                                My Reviews
-                            </Title>
-                            :
-                            <Title style={{marginLeft: 10}}>
-                                {this.state.userData.display_name}'s Session Review
-                        </Title>
-                        }
-                        <View style={{ width: "100%", height: "auto", backgroundColor: "transparent", alignItems: "center", justifyContent: "center" }}>
-                            <ScrollView horizontal centerContent contentContainerStyle={{}}>
-                                <View style={{ flex: 1, width: "100%", backgroundColor: "transparent", justifyContent: "space-evenly" }}>
-                                    {this.mapUserReviews()}
-                                </View>
-                            </ScrollView>
-                            <Pagination dotsLength={this.state.sessionReviews.length} />
-                        </View>
-                    </Surface>
-
                     {
                         this.state.userData.isTrainer == true ?
                             <View style={styles.recommendedWorkouts}>
@@ -913,20 +898,9 @@ class ProfileView extends React.Component {
                             null
                     }
                 </ScrollView>
-                {
-                    this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
-                    <FAB
-                    style={styles.fab}
-                    small={false}
-                    icon="today"
-                    onPress={this._navigateToSessionsView}
-                />
-                :
-                null
-                }
                 
-                <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
-                <UpdateInterestDialog userToUpdate={this.props.navigation.state.params.userUUID} isOpen={this.state.fitnessInterestDialogOpen} closeModalMethod={this.closeFitnessInterestDialog}/>
+                <InviteToPackDialog userToInvite={this._getId()} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
+                <UpdateInterestDialog userToUpdate={this._getId()} isOpen={this.state.fitnessInterestDialogOpen} closeModalMethod={this.closeFitnessInterestDialog}/>
             </ScrollView>
             </Modal>
         );
@@ -1056,4 +1030,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default connect(mapStateToProps)(withNavigation(ProfileView));
+export default connect(mapStateToProps)(withNavigation(ModalProfileView));

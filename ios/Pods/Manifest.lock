@@ -578,6 +578,16 @@ PODS:
     - React-cxxreact (= 0.62.2)
     - React-jsi (= 0.62.2)
   - React-jsinspector (0.62.2)
+  - react-native-blur (0.8.0):
+    - React
+  - react-native-camera (3.23.1):
+    - React
+    - react-native-camera/RCT (= 3.23.1)
+    - react-native-camera/RN (= 3.23.1)
+  - react-native-camera/RCT (3.23.1):
+    - React
+  - react-native-camera/RN (3.23.1):
+    - React
   - react-native-fbsdk (1.1.2):
     - React
     - react-native-fbsdk/Core (= 1.1.2)
@@ -664,6 +674,8 @@ PODS:
   - RNCPushNotificationIOS (1.1.1):
     - React
   - RNDateTimePicker (2.1.0):
+    - React
+  - RNDeviceInfo (5.5.6):
     - React
   - RNFBAnalytics (6.7.1):
     - Firebase/Analytics (~> 6.13.0)
@@ -787,6 +799,8 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
+  - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-fbsdk (from `../node_modules/react-native-fbsdk`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
@@ -806,6 +820,7 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
@@ -951,6 +966,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
+  react-native-camera:
+    :path: "../node_modules/react-native-camera"
   react-native-fbsdk:
     :path: "../node_modules/react-native-fbsdk"
   react-native-maps:
@@ -987,6 +1006,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/push-notification-ios"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFBAnalytics:
     :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
@@ -1131,6 +1152,8 @@ SPEC CHECKSUMS:
   React-jsi: b6dc94a6a12ff98e8877287a0b7620d365201161
   React-jsiexecutor: 1540d1c01bb493ae3124ed83351b1b6a155db7da
   React-jsinspector: 512e560d0e985d0e8c479a54a4e5c147a9c83493
+  react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
+  react-native-camera: 6fe72fd0a85732e2449928f9c59a2e0bf661ad3b
   react-native-fbsdk: c35d42169e64aaf66f01713c1e18d0674f7f6519
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-randombytes: 991545e6eaaf700b4ee384c291ef3d572e0b2ca8
@@ -1149,6 +1172,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: 5dba3cb07493765fb66156c83c3dd281ca709a48
   RNCPushNotificationIOS: a38f0b8c4f6f5226cd1d8eeb21ab5670f4a09892
   RNDateTimePicker: 68e542a59ff1b73563744145bfc45c2b88a3deea
+  RNDeviceInfo: c3ea4a4d4547740c548cdd1e5a78f9b04e524688
   RNFBAnalytics: c0124134dc7a159297e43e2e5292b8770d78ea78
   RNFBApp: a8a70521201eb3e75761e5495ebf3be319a3a9bc
   RNFBAuth: 3d3491cf27037c65a7f68bd77a990c15fd97ccec
