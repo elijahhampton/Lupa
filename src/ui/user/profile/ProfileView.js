@@ -61,7 +61,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import Timecards from './component/Timecards';
 
-import { ImagePicker } from 'expo-image-picker';
+import ImagePicker from 'react-native-image-picker';
 
 import LupaMapView from '../modal/LupaMapView'
 
@@ -86,6 +86,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { Pagination } from 'react-native-snap-carousel';
 import ProgramListComponent from '../../workout/component/ProgramListComponent';
 import FollowerModal from './modal/FollowerModal';
+import ProgramProfileComponent from '../../workout/program/components/ProgramProfileComponent';
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -680,25 +681,24 @@ class ProfileView extends React.Component {
     }
 
     _chooseProfilePictureFromCameraRoll = async () => {
-        chosenProfileImage = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            aspect: [4, 3],
+        
+        ImagePicker.showImagePicker({}, async (response) => {
+            if (!response.didCancel)
+            {
+                await this.setState({ profileImage: response.uri });
+
+                let imageURL;
+                //update in FB storage
+                await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
+                    imageURL = result;
+                });
+        
+                //update in Firestore
+                await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL);
+        
+            }
         });
-
-        if (!chosenImage.cancelled) {
-            await this.setState({ profileImage: chosenProfileImage.uri });
-        }
-
-        let imageURL;
-        //update in FB storage
-        await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(this.state.profileImage).then(result => {
-            imageURL = result;
-        });
-
-        //update in Firestore
-        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL);
-
+        //TODO
         //update in redux
         //await this.props.updateCurrentUsers()
     }
@@ -1223,32 +1223,9 @@ class ProfileView extends React.Component {
                     }
                     else
                     {
-                        alert('p')
                         return this.props.lupa_data.Programs.currUserProgramsData.map(program => {
                             return (
-                                 <View style={{}}>
-                        <TouchableHighlight>
-                        <Surface style={{elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
-                      <View style={styles.viewOverlay} />               
-                      <ImageBackground 
-                       imageStyle={{borderRadius: 16}} 
-                       style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
-                       source={{uri: 'https://picsum.photos/700'}}>
-                           <View style={{flex: 1, padding: 15, alignItems: 'flex-start', justifyContent: 'center' }}>
-                           <Text style={{color: 'white', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
-                                Program Name
-                                </Text>
-                                <Text  numberOfLines={3} style={{ color: 'white', fontSize: 12, fontFamily: 'ARSMaquettePro-Medium'}}>
-                                But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system
-                                </Text>
-                           </View>
-                       </ImageBackground>
-                        <MaterialIcon size={30} name="info" color="#FAFAFA" style={{ position: 'absolute', right: 0, top: 0, margin: 5}} />
-                    </Surface>
-                        </TouchableHighlight>
-        
-                    
-                    </View>
+                                 <ProgramProfileComponent programData={program} />
                             )
                         })
                     }
@@ -1368,29 +1345,7 @@ class ProfileView extends React.Component {
                     {
                         return this.state.userData.programs.map(program => {
                             return (
-                                 <View style={{}}>
-                        <TouchableHighlight>
-                        <Surface style={{elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
-                      <View style={styles.viewOverlay} />               
-                      <ImageBackground 
-                       imageStyle={{borderRadius: 16}} 
-                       style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
-                       source={{uri: 'https://picsum.photos/700'}}>
-                           <View style={{flex: 1, padding: 15, alignItems: 'flex-start', justifyContent: 'center' }}>
-                           <Text style={{color: 'white', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
-                                Program Name
-                                </Text>
-                                <Text  numberOfLines={3} style={{ color: 'white', fontSize: 12, fontFamily: 'ARSMaquettePro-Medium'}}>
-                                But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system
-                                </Text>
-                           </View>
-                       </ImageBackground>
-                        <MaterialIcon size={30} name="info" color="#FAFAFA" style={{ position: 'absolute', right: 0, top: 0, margin: 5}} />
-                    </Surface>
-                        </TouchableHighlight>
-        
-                    
-                    </View>
+                                 <ProgramProfileComponent programData={program} />
                             )
                         })
                     }
@@ -1420,7 +1375,7 @@ size={25}
 color="#000000"
 thin={true}
 />}
-onPress={this.setState({ showCreateServiceDialog: true })}
+onPress={() => this.setState({ showCreateServiceDialog: true })}
 />
 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
 

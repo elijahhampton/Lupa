@@ -15,6 +15,7 @@ import {
     Modal,
     TouchableOpacity,
     ScrollView,
+    TouchableHighlight,
     RefreshControl,
     Image,
     Button as NativeButton,
@@ -54,7 +55,7 @@ import {
 
 import Timecards from './component/Timecards';
 
-import { ImagePicker } from 'expo-image-picker';
+import ImagePicker from 'react-native-image-picker';
 
 import LupaMapView from '../modal/LupaMapView'
 
@@ -77,6 +78,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { Pagination } from 'react-native-snap-carousel';
 import { Constants } from 'react-native-unimodules';
+import ProgramProfileComponent from '../../workout/program/components/ProgramProfileComponent';
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -352,25 +354,24 @@ class ModalProfileView extends React.Component {
     }
 
     _chooseProfilePictureFromCameraRoll = async () => {
-        chosenProfileImage = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            aspect: [4, 3],
+        
+        ImagePicker.showImagePicker({}, async (response) => {
+            if (!response.didCancel)
+            {
+                await this.setState({ profileImage: response.uri });
+
+                let imageURL;
+                //update in FB storage
+                await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
+                    imageURL = result;
+                });
+        
+                //update in Firestore
+                await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL);
+        
+            }
         });
-
-        if (!chosenImage.cancelled) {
-            await this.setState({ profileImage: chosenProfileImage.uri });
-        }
-
-        let imageURL;
-        //update in FB storage
-        await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(this.state.profileImage).then(result => {
-            imageURL = result;
-        });
-
-        //update in Firestore
-        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL);
-
+        //TODO
         //update in redux
         //await this.props.updateCurrentUsers()
     }
@@ -683,18 +684,25 @@ class ModalProfileView extends React.Component {
     }
 
     getUserAvatar = () => {
-        let display_name = "User Not Found";
-        let firstInitial = "";
-        let secondInitial = "";
-        if (true && this.state.userData.display_name) {
-            display_name = this.state.userData.display_name.split(" ");
-            firstInitial = display_name[0].charAt(0);
-            secondInitial = display_name[1].charAt(0);
-        }
 
         if (this.state.userData.photo_url == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid
             || this.state.userData.photo_url == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
-            return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
+                let display_name = "User Not Found";
+        let firstInitial = "";
+        let secondInitial = "";
+        if (true && this.state.userData.display_name) {
+            try {
+                display_name = this.state.userData.display_name.split(" ");
+                firstInitial = display_name[0].charAt(0);
+                secondInitial = display_name[1].charAt(0);
+            } catch(err)
+            {
+                firstInitial="U"
+                secondInitial="K"
+            }
+        }
+            
+                return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
                 elevation: 3,
             }} />
         }
@@ -711,6 +719,20 @@ class ModalProfileView extends React.Component {
             return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.state.userData.photo_url }} />
         }
         catch (err) {
+            let firstInitial = "";
+        let secondInitial = "";
+        if (true && this.state.userData.display_name) {
+            try {
+                display_name = this.state.userData.display_name.split(" ");
+                firstInitial = display_name[0].charAt(0);
+                secondInitial = display_name[1].charAt(0);
+            } catch(err)
+            {
+                firstInitial="U"
+                secondInitial="K"
+            }
+        }
+        
             return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121" }} theme={{
                 elevation: 3
             }} />
@@ -734,28 +756,340 @@ class ModalProfileView extends React.Component {
             </View>
     }
 
-    mapPrograms = () => {
-        /* if (this.props.lupa_data.Programs.currUserProgramsData)
-         {
-             if (this.props.lupa_data.Programs.currUserProgramsData.length)
-             {
-                 this.props.lupa_data.Programs.currUserProgramsData.map(program => {
-                     return (
-                         <Text>
-                             Replace with Program card
-                         </Text>
-                     )
-                 })
-             }
-         }*/
- 
-         let placeholder = [0, 1, 2, 3]
-         return placeholder.map(number => {
-             return (
-                 <ProgramListComponent />
-             )
-         })
+    mapTrainerPrograms = () => {
+        //if a uuid exist
+        if (this.state.userData.user_uuid)
+        {
+            //if we are dealing with the current user
+            if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
+            {
+                //if there are programs locally
+               if (this.props.lupa_data.Programs.currUserProgramsData.length != undefined)
+               {
+                    if (this.props.lupa_data.Programs.currUserProgramsData.length == 0)
+                    {
+                
+                        if (this.props.lupa_data.Users.currUserData.isTrainer)
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                        Create a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                        else
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                       Join a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                    }
+                    else
+                    {
+                        return this.props.lupa_data.Programs.currUserProgramsData.map(program => {
+                            return (
+                                 <ProgramProfileComponent programData={program} />
+                            )
+                        })
+                    }
+               }
+               else
+               {
+                if (this.props.lupa_data.Users.currUserData.isTrainer)
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                        Create a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                        else
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                       Join a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+               }
+            }
+            else
+            {
+                     //if there are programs loaded for the user
+               if (this.state.userData.programs.length != undefined)
+               {
+                    if (this.state.userData.programs.length == 0)
+                    {
+
+                        if (this.state.userData.isTrainer)
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                        Create a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                        else
+                        {
+                            return (
+                                <TouchableHighlight>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                        <Text style={{fontSize: 15, fontWeight: '400'}}>
+                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                        </Text>
+                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 10,
+        
+                                }}>
+                                    <Text>
+                                       Join a Program
+                                    </Text>
+                                </Button>
+                            </Surface>
+                                </TouchableHighlight>
+            
+                            )
+                        }
+                
+   
+                    }
+                    else
+                    {
+                        return this.state.userData.programs.map(program => {
+                            return (
+                                 <ProgramProfileComponent programData={program} />
+                            )
+                        })
+                    }
+               }
+            }
+        }
      }
+
+     mapServices = () => {
+        //if a uuid exist
+if (this.state.userData.user_uuid)
+{
+    //if we are dealing with the current user
+    if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
+    {
+
+        //if there are programs locally
+       if (this.props.lupa_data.Programs.currUserServicesData.length != undefined)
+       {
+            if (this.props.lupa_data.Programs.currUserServicesData.length == 0 || typeof(this.props.lupa_data.Programs.currUserServicesData.length == 0) == 'object')
+            {
+                return (
+                    <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
+name="add"
+size={25}
+color="#000000"
+thin={true}
+/>}
+onPress={() => this.setState({ showCreateServiceDialog: true })}
+/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+         Add a Service
+     </Text>
+</View>
+     <View>
+     </View>
+</View>
+                )
+            }
+            else //services > 0 so we return them
+            {
+                return this.props.lupa_data.Programs.currUserServicesData.map(service => {
+                    return (
+<View style={{margin: 15, padding: 10, backgroundColor: service.service_colors[0], borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: service.service_colors[1]}} small  
+icon={service.service_icon_type == 'feather' ? () => <ThinFeatherIcon
+name={service.service_icon}
+size={25}
+color="#000000"
+thin={true}
+/> : <MaterialIcon name={service.iconName} size={25} color="#000000" />}/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+         {service.service_name}
+     </Text>
+</View>
+     <View>
+     </View>
+</View>
+                    )
+                })
+            }
+        }
+        else
+        {
+            return (
+                <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
+name="add"
+size={25}
+color="#000000"
+thin={true}
+/>}
+onPress={() => this.setState({ showCreateServiceDialog: true })}
+/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+     Add a Service
+ </Text>
+</View>
+ <View>
+ </View>
+</View>
+            )
+        }
+    }
+    else
+    {
+ //if there are programs locally
+ if (this.state.userData.services.length != undefined)
+ {
+      if (this.state.userData.services.length == 0 || typeof(this.state.userData.services.length == 0) == 'object')
+      {
+          return (
+              <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
+name="add"
+size={25}
+color="#000000"
+thin={true}
+/>}
+onPress={() => this.setState({ showCreateServiceDialog: true })}
+/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+   Add a Service
+</Text>
+</View>
+<View>
+</View>
+</View>
+          )
+      }
+      else //services > 0 so we return them
+      {
+          return this.state.userData.servies.map(service => {
+              return (
+<View style={{margin: 15, padding: 10, backgroundColor: '#e57373', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
+<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: '#f44336'}} small  icon={() => <ThinFeatherIcon
+name="message-circle"
+size={25}
+color="#000000"
+thin={true}
+/>}/>
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+   One on One Consulations
+</Text>
+</View>
+<View>
+</View>
+</View>
+              )
+          })
+      }
+  }
+    }
+}
+       
+    }
 
     render() {
         return (
@@ -830,57 +1164,48 @@ class ModalProfileView extends React.Component {
                         <Divider />
 
                         <View style={styles.myPacks}>
-                        {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
-                            <Text style={{fontSize: 20, padding: 10}}>
-                                Packs
+                                                         <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 10}}>
+                                Online Programs
                             </Text>
-                            :
-                            <Text style={{fontSize: 20, padding: 10, fontWeight: '600'}}>
-                                {this.state.userData.display_name}'s Packs
-                        </Text>
-                        }
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {this.mapPacks()}
-                        </ScrollView>
-                    </View>
-
-                    <View style={styles.myPacks}>
-                        {this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
-                            <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Medium', padding: 10}}>
-                                Programs
-                            </Text>
-                            :
-                            <Text style={{fontSize: 20, padding: 10, fontWeight: '600'}}>
-                                {this.state.userData.display_name}'s Packs
-                        </Text>
-                        }
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {this.mapPrograms()}
-                        </ScrollView>
-                    </View>
-                    </View>
-
-                    <Surface style={[styles.contentSurface, { elevation: 8, backgroundColor: "#2196F3" }]}>
-                        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ color: 'white', fontSize: 20, fontFamily: "avenir-medium", fontWeight: "bold" }}>
-                                Fitness Interest
-                                </Text>
-
-                                {
-                                    this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
-                                    <Button color="white" mode="text" onPress={() => this.addFitnessInterest()}>
-                                        Edit
-                                    </Button>    
-                                    :
-                                    null
-                                }
-                        </View>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false}
+                        centerContent
+                        snapToAlignment={'center'}
+                        decelerationRate={0} 
+                        snapToInterval={Dimensions.get('window').width  / 1.3}
+                        pagingEnabled={true}>
                             {
-                                this.mapInterest()
+                                this.mapTrainerPrograms()
                             }
-                        </View>
-                    </Surface>
+                        </ScrollView>
+                    </View>
+
+                    {
+                        this.state.userData.isTrainer ?
+                        <View style={styles.myPacks}>
+                        <View style={{margin: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                      <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 10}}>
+             Services
+         </Text>
+
+         <FAB small style={{backgroundColor: '#212121'}} icon="add" onPress={() => this.setState({ showCreateServiceDialog: true })}/>
+           </View>
+<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+{
+    this.mapServices()
+}
+</ScrollView>
+</View>
+
+                        :
+                        null
+                    }
+
+
+                    </View>
+                        
+                        <SafeAreaView />
 
                     {
                         this.state.userData.isTrainer == true ?

@@ -11,7 +11,7 @@ import {
 
 
 import { Input, Avatar } from 'react-native-elements';
-import * as ImagePicker from 'expo-image-picker';
+import ImagePicker from 'react-native-image-picker';
 
 import LupaController from '../../../../../controller/lupa/LupaController';
 
@@ -63,18 +63,16 @@ class BasicInformation extends React.Component {
     _chooseProfilePictureFromCameraRoll = async () => {
         try {
 
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                quality: 1
+            ImagePicker.showImagePicker({}, (response) => {
+                if (!response.didCancel)
+                {
+                    this.setState({ photoSource: response.uri });
+
+                        //Update field photo_url field
+            this._handleUserPhotoUrlUpdate(response.uri);
+                }
             });
 
-           //Update field photo_url field
-            this._handleUserPhotoUrlUpdate(result.uri);
-    
-            if (!result.cancelled) {
-                this.setState({ photoSource: result.uri });
-            }
         } catch(error)
         {
             alert(error);

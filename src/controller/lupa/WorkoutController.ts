@@ -73,13 +73,7 @@ export default class WorkoutController {
 
     loadWorkouts = async () => {
         let workouts = [];
-        await WORKOUT_COLLECTION.get().then(docs => {
-            docs.forEach(doc => {
-                let snapshot = doc.data();
-                workouts.push(snapshot);
-            })
-        })
-
-        return Promise.resolve(workouts);
+        const WORKOUTS = require('../../model/data_structures/workout/workouts.json')
+        return Promise.resolve(WORKOUTS.lupa_workouts);
     }
 }

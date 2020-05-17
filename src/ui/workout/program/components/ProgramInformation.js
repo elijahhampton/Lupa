@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 
 
-import * as ImagePicker from 'expo-image-picker';
+import ImagePicker from 'react-native-image-picker'
 
 import {
     View,
@@ -18,12 +18,16 @@ import {
     Picker,
     SafeAreaView,
     Modal,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import {
     Surface,
+    Modal as PaperModal,
     Caption,
+    Button as PaperButton,
     IconButton,
+    Chip,
     TextInput,
     Divider,
 } from 'react-native-paper';
@@ -34,10 +38,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+
 import ProgramListComponent from '../../component/ProgramListComponent'
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import { Input, CheckBox } from 'react-native-elements';
+import { Input, CheckBox, Button as ElementsButton } from 'react-native-elements';
 import { usePowerState } from 'react-native-device-info';
 
 import LupaMapView from '../../../user/modal/LupaMapView'
@@ -263,6 +269,89 @@ class LupaCalendar extends React.Component {
   }
 }
 
+function AddTagsModal(props) {
+  let [tags, setTags] = useState([]);
+  let [inputValue, setInputValue] = useState('');
+
+  handleAddTags = () => {
+    if (tags.length == 10)
+    {
+      return;
+    }
+
+    const newTags = tags;
+    newTags.push(inputValue);
+    setTags(newTags);
+  }
+
+  handleFinish = () => {
+    props.captureTags(tags);
+    props.closeModalMethod()
+  }
+
+  handleCancel = () => {
+    props.closeModalMethod()
+  }
+  return (
+
+    <PaperModal contentContainerStyle={{borderRadius: 10, alignSelf: 'center', top: 120, position: 'absolute', backgroundColor: 'white', width: Dimensions.get('window').width - 30, height: 400}} visible={props.isVisible}>
+          <KeyboardAvoidingView style={{flex: 1}}>
+      <View style={{flex: 1}}>
+        <View style={{flex: 1}}>
+          <Text style={{padding: 10, fontSize: 20, fontFamily: 'ARSMaquettePro-Bold'}}>
+            Add your own tags
+          </Text>
+        </View>
+
+        <View style={{flex: 3, flexWrap: 'wrap', flexDirection: 'row', margin: 10}}>
+          {
+            tags.map(tag => {
+              return (
+                <Chip style={{margin: 5, borderRadius: 5, width: 'auto'}} textStyle={{fontSize: 15}} theme={{
+                  roundness: 0,
+                }}>
+                  {tag}
+                </Chip>
+              )
+            })
+          }
+        </View>
+
+        <View style={{justifyContent: 'center', borderRadius: 10, flex: 1.5, backgroundColor: '#E3F2FD'}}>
+          <Input 
+          placeholder='Try "cardio"'
+          value={inputValue}
+          inputStyle={{fontSize: 12, padding: 10,}}
+          inputContainerStyle={{backgroundColor: 'white', borderWidth: 1, borderBottomWidth: 1, borderColor: '#BBDEFB'}}
+          onSubmitEditing={() => handleAddTags()}
+          onChangeText={text => setInputValue(text)}
+          keyboardAppearance="light"
+          keyboardType="default"
+          returnKeyLabel="submit"
+          returnKeyType="done"
+           />
+
+          <View style={{alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row'}}>
+          <PaperButton mode="text" color="#e53935" onPress={handleCancel}>
+            <Text>
+            Cancel
+            </Text>
+          </PaperButton>
+          <PaperButton mode="text" color="#1E88E5" onPress={() => handleFinish()}>
+            <Text>
+              Done
+            </Text>
+          </PaperButton>
+          </View>
+
+        </View>
+      </View>
+      </KeyboardAvoidingView>
+    </PaperModal>
+
+  )
+}
+
 function ProgramInformation(props) {
     //redux useSelector hook
     const currUserState = useSelector(state => {
@@ -282,14 +371,16 @@ function ProgramInformation(props) {
     let [programEndDate, setProgramEndDate] = useState(new Date())
     let [programTime, setProgramTime] = useState(new Date(1598051730000));
     let [programTimeSet, setProgramTimeIsSet] = useState(false);
-    let [programDuration, setProgramDuration] = useState('');
+    let [programDuration, setProgramDuration] = useState(0);
     let [programDescription, setProgramDescription] = useState('')
     let [programLocation, setProgramLocation] = useState('Launch Map');
     let [programLocationData, setProgramLocationData] = useState('');
     let [numProgramSpots, setNumProgramSpots] = useState('')
     let [programPrice, setProgramPrice] = useState(0)
-    let [programType, setProgramType]  = useState('');
+    let [programType, setProgramType]  = useState('Single');
     let [allowWaitlist, setAllowWaitlist] = useState(false);
+    let [programTags, setProgramTags] = useState([]);
+    let [addTagsModalIsOpen, setAddTagsModalIsOpen] = useState(false)
 
     //visibility modifiers
     let [mapViewVisible, setMapViewVisibility] = useState(false);
@@ -302,22 +393,22 @@ function ProgramInformation(props) {
      */
 
     const _chooseImageFromCameraRoll = async () => {
-      let image = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: false,
-          aspect: [4, 3],
-      });
-
-      if (!image.cancelled) {
-         setProgramImage(image.uri)
-         setIsPromiseImageSet(true)
-      }
       
+      ImagePicker.showImagePicker({}, async (response) => {
+        if (!response.didCancel)
+        {
+          await props.captureImage(response.uri)
+          await setProgramImage(response.uri)
+          await setIsPromiseImageSet(true)
+        }
+    });
+
   }
 
      const handleSaveProgramInformation = async () => {
          //obtain program information structure
-         
+
+         const imgV = programImage;
          await props.saveProgramInformation(
           programName,
           programDescription,
@@ -330,7 +421,8 @@ function ProgramInformation(props) {
           programLocationData,
           programType,
           allowWaitlist,
-          programImage,
+          imgV,
+          programTags,
          )
 
          //move to next page
@@ -397,20 +489,30 @@ function ProgramInformation(props) {
         await setTimePickerVisible(false);
     }
 
+    const showAddTagsModal = () => {
+      setAddTagsModalIsOpen(true);
+    }
+
+    const closeAddTagsModal = () => {
+      setAddTagsModalIsOpen(false)
+    }
+
+
+    const captureTags = (tags) => {
+      setProgramTags(tags);
+    }
+
     return (
         <View style={styles.root}>
             <SafeAreaView />
         <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between'}}>
                             <View style={{padding: 10}}>
-                    <Text style={{fontSize: 12, padding: 10, fontFamily: 'ARSMaquettePro-Medium', color: '#BDBDBD'}}>
-                        Step 1 of 3
-                    </Text>
                     <Text style={{fontSize: 15, padding: 10, fontFamily: 'ARSMaquettePro-Medium', color: '#BDBDBD'}}>
                         Name your program and select a program image, type, price, location
                     </Text>
                 </View>
 
-                <Surface style={{elevation: 2, borderRadius: 10, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, height: 200}}>
+                <Surface style={{margin: 10, elevation: 10, borderRadius: 10, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width/ 1.5, height: 300}}>
                     {
                       isProgramImageSet == true ?
                       <Image source={{uri: programImage }} style={{width: '100%', height: '100%', borderRadius: 10}} />
@@ -420,9 +522,9 @@ function ProgramInformation(props) {
                 </Surface>
             
             <View style={{width: '100%', height: 'auto', marginLeft: 5, padding: 10}} >
-                <TextInput onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" mode="outlined"  style={{margin: 3, width: '90%', alignSelf: 'flex-start'}}/>
-                <TextInput onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description"  mode="outlined" multiline style={{margin: 3, width: '90%', alignSelf: 'flex-start', }}/>
-                <TextInput onChangeText={text => setNumProgramSpots(text)} label="Spots" placeholder="# Spots"  mode="outlined" style={{margin: 3, width: 80, alignSelf: 'flex-start', }}/>
+                <TextInput value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" mode="outlined"  style={{margin: 3, width: '90%', alignSelf: 'flex-start'}} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" />
+                <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description"  mode="outlined" multiline style={{height: 100, margin: 3, width: '90%', alignSelf: 'flex-start', }} enablesReturnKeyAutomatically={true} returnKeyLabel="done" keyboardType="default" />
+                <TextInput value={numProgramSpots} onChangeText={text => setNumProgramSpots(text)} label="Spots" placeholder="# Spots"  mode="outlined" style={{margin: 3, width: 80, alignSelf: 'flex-start', }} keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" />
             </View>
 
 
@@ -432,26 +534,28 @@ function ProgramInformation(props) {
             </View>
     */}
 
+<Divider style={styles.divider} />
+
             <View style={{padding: 10, marginVertical: 15}}>
-            <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>Choose a duration</Text>
-            <Picker selectedValue = {programDuration} onValueChange = {(value) => setProgramDuration(value)}>
-               <Picker.Item label = "Weekly" value = "WEEKLY" />
-               <Picker.Item label = "Bi Weekly" value = "BI_WEEKLY" />
-               <Picker.Item label = "Monthly" value = "MONTHLY" />
-            </Picker>
+            <Text style={{fontFamily: "avenir-roman", fontSize: 20}}> How many sessions per week? </Text>
+            <Slider step={1} value={programDuration} onValueChange={val => setProgramDuration(val)} thumbTintColor="#2196F3" minimumValue={0} maximumValue={7} value={programDuration} />
+            <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontFamily: "ARSMaquettePro-Medium", fontSize: 15}}>
+                                {programDuration} / week
+                                </Text>
          </View>
 
          {
              /* show days to of the week to have it */
          }
 
-            <View style={{padding: 10, marginVertical: 15}}>
+         {/*
+
+                      <View style={{padding: 10, marginVertical: 15}}>
         <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>{programTime == '' ? 'Select a time' : 'Use selected time'}</Text>
                 <Button title={setProgramTimeIsSet == true ? programTime.toString() : 'Set a time'} onPress={() => refRBSheet.current.open()} />
             </View>
 
-            <Divider style={styles.divider} />
-
+         */}
 
 <View style={{padding: 10, marginVertical: 15}}>
 <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>
@@ -461,7 +565,7 @@ function ProgramInformation(props) {
                                 $0 - $10.99
                                 </Text>
 
-    <Slider step={1} value={programPrice} onValueChange={val => setProgramPrice(val)} thumbTintColor="#2196F3" minimumValue={0} maximumValue={10.99} value={0} />
+    <Slider step={1} value={programPrice} onValueChange={val => setProgramPrice(val)} thumbTintColor="#2196F3" minimumValue={0} maximumValue={10.99}/>
     <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontFamily: "ARSMaquettePro-Medium", fontSize: 15}}>
                                 Current: ${programPrice}
                                 </Text>
@@ -469,6 +573,8 @@ function ProgramInformation(props) {
 
     </View>
 </View>
+
+<Divider style={styles.divider} />
 
 <View style={{padding: 10, marginVertical: 15}}>
 <View style={{flexDirection: "row", alignItems: "center"}}>
@@ -478,7 +584,9 @@ function ProgramInformation(props) {
                                 </Text>
                             </View>
                          
-<TouchableOpacity onPress={openMapView}>
+                         {/*
+
+                         <TouchableOpacity onPress={openMapView}>
                             <Surface style={{alignSelf: "center", margin: 10, elevation: 8, width: "85%", height: "auto", padding: 15, borderRadius: 15, alignItems: "center", justifyContent: "center", flexDirection: "row"}}>
                                 <View>
                                 <Text style={{fontFamily: "avenir-roman", fontSize: 18}}>
@@ -495,6 +603,10 @@ function ProgramInformation(props) {
                                 </View>
                             </Surface>
                             </TouchableOpacity>
+                         
+                         */}
+
+                         <ElementsButton type="solid" title={programLocation} containerStyle={{width: '90%', alignSelf: 'center', margin: 5}}  onPress={() => openMapView()}/>
 </View>
 
             <View style={{marginVertical: 15, width: Dimensions.get('window').width, height: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
@@ -537,6 +649,39 @@ function ProgramInformation(props) {
                     </View>
                 </Surface>
                 </TouchableHighlight>
+            </View>
+
+            <View style={{padding: 10, marginVertical: 15}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>
+                                Make your program discoverable
+                                </Text>
+                
+                <TouchableHighlight onPress={() => showAddTagsModal()}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <MaterialIcon name="add" size={15}  color='#2196F3'/>
+                <Caption style={{color: '#2196F3'}}>
+                  Add Tag
+                </Caption>
+                </View> 
+                </TouchableHighlight>
+              </View>
+
+              <View style={{width: '100%', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center'}}>
+                {
+                  programTags.length == 0 ? <Caption>
+                    Add a tag
+                  </Caption>
+                  :
+                  programTags.map(tag => {
+                    return (
+                      <Chip style={{margin: 3, width: 'auto', backgroundColor: '#2196F3'}} textStyle={{color: '#FFFFFF'}} mode="flat" color='#2196F3'>
+                        {tag}
+                      </Chip>
+                    )
+                  })
+                }
+              </View>
             </View>
 
             <Divider style={styles.divider} />
@@ -594,6 +739,8 @@ function ProgramInformation(props) {
             }} />
         </SafeAreaView>
       </RBSheet>
+
+      <AddTagsModal isVisible={addTagsModalIsOpen} closeModalMethod={closeAddTagsModal} captureTags={(tags) => captureTags(tags)} />
         </View>
     )
 }

@@ -55,16 +55,16 @@ mapStateToProps = (state) => {
     }
   }
 
-//Activity Indicator to show while fetching location data
-const ActivityIndicatorModal = (props) => {
-    const [isLoading, setIsLoading] = useState(true);
+// //Activity Indicator to show while fetching location data
+// const ActivityIndicatorModal = (props) => {
+//     const [isLoading, setIsLoading] = useState(true);
 
-    return (
-                <Modal presentationStyle="overFullScreen" style={styles.activityIndicatorModal} visible={props.visible}>
-                    <ActivityIndicator style={{alignSelf: "center"}} animating={isLoading} hidesWhenStopped={false} size='large' color="#2196F3" />
-                </Modal>
-    );
-}
+//     return (
+//                 <Modal presentationStyle="overFullScreen" style={styles.activityIndicatorModal} visible={props.visible}>
+//                     <ActivityIndicator style={{alignSelf: "center"}} animating={isLoading} hidesWhenStopped={false} size='large' color="#2196F3" />
+//                 </Modal>
+//     );
+// }
 
 class ChooseUsername extends React.Component {
     constructor(props) {
@@ -237,7 +237,7 @@ class ChooseUsername extends React.Component {
 
                    {/*  <LupaMapView isVisible={this.state.showMapView} closeMapViewMethod={this.closeMapView} gymData={this.state.surroundingGymLocations} initialRegionLatitude={this.state.locationDataSet ? this.state.location.coords.latitude : 0} initialRegionLongitude={this.state.locationDataSet ? this.state.location.coords.longitude : 0}
                      /> */}
-                    <ActivityIndicatorModal visible={this.state.showLoadingIndicator} />
+                    {/* <ActivityIndicatorModal visible={this.state.showLoadingIndicator} /> */}
                 </SafeAreaView>
             </View>
 

@@ -1,0 +1,147 @@
+{
+"lupa_workouts": [
+  {
+      "workout_name": "Squat",
+      "workout_description": "",
+      "workout_media": {
+          "uri:": "",
+          "media_type": ""
+      },
+      "workout_steps": [],
+      "workout_tags": [],
+      "workout_uid": ""
+  },
+  {
+    "workout_name": "Lunge",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Crunch",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Bench Press",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Leg Press",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Push Up",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Plank",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Wall Sit",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Jumping Jacks",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Dumbbell Curls",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Pullups",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Step Ups",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+},
+{
+    "workout_name": "Plank",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": ""
+}
+]
+}

@@ -8,7 +8,8 @@ import {
 
 import {
     Avatar,
-    Chip
+    Chip,
+    Button
 } from 'react-native-paper';
 
 const userSearchResult = (props) => {
@@ -26,12 +27,20 @@ const userSearchResult = (props) => {
                     </View>
                     </View>
                     {
-                        props.isTrainer == true ?                     <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
-                        Lupa Trainer
-                        </Chip> :                     <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
-                    Lupa User
-                    </Chip>
-                    }
+                            props.hasButton == true ?
+                            <Button mode="contained" style={{elevation: 0}} onPress={props.buttonOnPress} theme={{
+                                colors: {
+                                    primary: '#2196F3'
+                                },
+                                roundness: 7
+                            }}>
+                                <Text>
+                                {props.buttonTitle}
+                                </Text>
+                            </Button>
+                            :
+                            null
+                     }
                 </View>
     )
 };

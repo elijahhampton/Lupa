@@ -16,7 +16,8 @@ export enum UserCollectionFields {
     PACKS="packs",
     HOME_GYM="homegym",
     CHATS="chats",
-    TOKENS="tokens"
+    TOKENS="tokens",
+    PROGRAMS="programs"
 }
 
 export enum HealthDataCollectionFields {
@@ -114,7 +115,9 @@ export type LupaUserStructure = {
     assessments: Array<LupaAssessmentStructure>,
     tokens: Object,
     waitlistedPrograms: Array<String>,
-    notifications: [],
+    notifications: Array<Object>,
+    programs: Array<String>
+
 };
 
 export type LupaAssessmentStructure = {

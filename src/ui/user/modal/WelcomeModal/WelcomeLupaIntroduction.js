@@ -83,8 +83,10 @@ class WelcomeLupaIntroduction extends React.Component {
     }
 
     _getLocationAsync = async () => {
-        await _requestPermissionsAsync();
+       // await _requestPermissionsAsync();
         let result;
+        try {
+
         //show loading indicator
         await this.setState({
             showLoadingIndicator: true,
@@ -122,7 +124,10 @@ class WelcomeLupaIntroduction extends React.Component {
             showLoadingIndicator: false
         })
 
-        await this.enableNext();
+        await this.enableNext(); 
+        } catch( err) {
+            alert(err)
+        }
     }
 
     render() {

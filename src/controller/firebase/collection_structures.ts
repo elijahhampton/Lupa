@@ -207,6 +207,7 @@ var lupa_user : LupaUserStructure = {
     tokens: {},
     waitlistedPrograms: [],
     notifications: [],
+    programs: [],
 }
 
 export const getLupaUserStructure = (user_uuid, display_name="", username="", email, email_verified=false, mobile="", 

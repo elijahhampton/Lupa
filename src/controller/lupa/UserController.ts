@@ -8,6 +8,8 @@ const USER_COLLECTION = LUPA_DB.collection('users');
 //const USER_PROGRAMS = LUPA_DB.collection('users/USER-UUID/programs'); For reference
 const HEALTH_DATA_COLLECTION = LUPA_DB.collection('health_data');
 
+const PROGRAMS_COLLECTION = LUPA_DB.collection('programs');
+
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
 const algoliasearch = require('algoliasearch/reactnative.js');
@@ -15,13 +17,13 @@ const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa4810
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
 
+const programsIndex = algoliaUsersIndex.initIndex("dev_Programs");
+const tmpProgramsIndex = algoliaUsersIndex.initIndex("tempDev_Programs");
+
 import { v4 as uuidv4 } from 'uuid';
 
 import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
-import { getPathwaysForGoalUUID } from '../../model/data_structures/workout/goal_pathway_structures';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
-import { SnapshotViewIOSComponent, Alert } from 'react-native';
-import { domainToASCII } from 'url';
 
 export default class UserController {
     private static _instance: UserController;
@@ -240,6 +242,25 @@ export default class UserController {
         });
 
         switch (fieldToUpdate) {
+            case UserCollectionFields.PROGRAMS:
+                let programs = []
+                if (optionalData == 'add')
+                {
+                    await currentUserDocument.get().then(result => {
+                        programs = result.data().programs;
+                    });
+
+                    programs.push(value);
+
+                    await currentUserDocument.update({
+                        programs: programs
+                    });
+                }
+                else if (optionalData == 'remove')
+                {
+
+                }
+            break;
             case UserCollectionFields.CHATS:
                 let chats;
                 if (optionalData == 'add') {
@@ -612,6 +633,34 @@ export default class UserController {
 
     /**************** *******************/
 
+    indexProgramsIntoAlgolia = async () => {
+        let records = [], program = undefined;
+        
+        await PROGRAMS_COLLECTION.get().then(docs => {
+            docs.forEach(doc => {
+                //Load user data from document
+                program = doc.data();
+
+                records.push(program);
+            });
+
+            algoliaUsersIndex.copyIndex(programsIndex.indexName, tmpProgramsIndex.indexName, [
+                'settings',
+                'synonyms',
+                'rules'
+            ]).then(({ taskID }) =>
+                tmpProgramsIndex.waitTask(taskID)
+            ).then(() => {
+                const objects = records;
+                return tmpProgramsIndex.addObjects(objects);
+            }).then(() =>
+                algoliaUsersIndex.moveIndex(tmpProgramsIndex.indexName, programsIndex.indexName)
+            ).catch(err => {
+                console.error(err);
+            });
+        })
+    }
+
     indexUsersIntoAlgolia = async () => {
         let records = [];
         await USER_COLLECTION.get().then(docs => {
@@ -709,6 +758,31 @@ export default class UserController {
     }
 
 
+    searchPrograms = (startsWith = '') => {
+        let currHit = undefined;
+
+        return new Promise((resolve, reject) => {
+            const query = startsWith.toLowerCase();
+
+            programsIndex.search({
+                query: query,
+            }, (err, { hits }) => {
+                if (err) throw reject(err);
+                let results = [];
+
+
+                for (let i = 0; i < hits.length; i++) {
+                    currHit = hits[i];
+                    results.push(currHit);
+                }
+
+                resolve(results);
+
+            }
+
+            )
+        });
+    }
 
     /**
      * Search users by name
@@ -897,17 +971,13 @@ alert(hits.length)
         let programUUID;
 
         let program_structure_payload = await getLupaProgramInformationStructure();
-
         //
-        await USER_COLLECTION.doc(user_uuid).collection("programs").add(program_structure_payload).then(ref => {
+        await PROGRAMS_COLLECTION.add(program_structure_payload).then(ref => {
             programUUID = ref.id;
         });
 
-        //update fb doc with uuid
-        let currentProgramDoc = USER_COLLECTION.doc(user_uuid).collection("programs").doc(programUUID);
-        currentProgramDoc.update({
-            program_structure_uuid: programUUID,
-        })
+        //
+        await this.updateCurrentUser('programs', programUUID, 'add');
 
         //
         program_structure_payload.program_structure_uuid = programUUID;
@@ -916,33 +986,35 @@ alert(hits.length)
     }
 
     deleteProgram = async (user_uuid, programUUID) => {
-        await USER_COLLECTION.doc(user_uuid).collection("programs").doc(programUUID).delete();
+       // await USER_COLLECTION.doc(user_uuid).collection("programs").doc(programUUID).delete();
     }
 
     loadCurrentUserPrograms = async () => {
-        let programs = [];
+        let programUUIDS = [], programsData = [];
+        let temp;
         let uuid = await this.getCurrentUser().uid;
-        await USER_COLLECTION.doc(uuid).collection("programs").get().then(docs => {
-            docs.forEach(doc => {
-                if (docs.length == 0)
-                {
-                    return Promise.resolve([]);
-                }
-                let snapshot = doc.data();
-                if (snapshot.program_name != undefined || snapshot.program_name != "")
-                {
-                    snapshot.program_uuid = doc.id;
-                    programs.push(snapshot);
-                }
-            });
-        });
+        try {
 
-        if (programs.length == 0 || !programs.length)
-        {
-            return Promise.resolve([]);
+            await USER_COLLECTION.doc(uuid).get().then(snapshot => {
+                temp = snapshot.data();
+             });
+     
+             programUUIDS = temp.programs;
+     
+             for (let i = 0; i < programUUIDS.length; i++)
+             {
+                 await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
+                     temp = snapshot.data();
+                 })
+     
+                 await programsData.push(temp)
+             }
+
+        } catch(err) {
+            programsData = [];
         }
 
-        return Promise.resolve(programs);
+        return Promise.resolve(programsData);
     }
 
     createService = async (serviceObject) => {
@@ -1007,10 +1079,22 @@ alert(hits.length)
         //update the program image in the structure
         workoutData.program_image = imageURL;
 
-         await USER_COLLECTION.doc(user_uuid).collection("programs").doc(workoutData.program_structure_uuid).set(workoutData);
+        /* Perform check on data */
+        let checkedWorkoutData = workoutData;
+
+        if (workoutData.program_tags == undefined || typeof(workoutData.program_tags) != "object")
+        {
+            checkedWorkoutData.program_tags = [];
+        }
+
+        //add program to lupa programs collection
+        await PROGRAMS_COLLECTION.doc(workoutData.program_structure_uuid).set(checkedWorkoutData);
+
+        //add uuid of program to user programs arr
+        await this.updateCurrentUser('programs', workoutData.program_structure_uuid, 'add');
     
          let payload;
-         await USER_COLLECTION.doc(user_uuid).collection("programs").doc(workoutData.program_structure_uuid).get().then(snapshot => {
+         await PROGRAMS_COLLECTION.doc(workoutData.program_structure_uuid).get().then(snapshot => {
              payload = snapshot.data();
          })
 
@@ -1194,6 +1278,18 @@ alert(hits.length)
         const res = queue.notifications;
 
         return Promise.resolve(res);
+      }
+
+      getFeaturedPrograms = async () => {
+          let featuredProfiles = [];
+          await PROGRAMS_COLLECTION.where('program_type', '==', 'Single').limit(3).get().then(docs => {
+              docs.forEach(doc => {
+                  let snapshot = doc.data();
+                  featuredProfiles.push(snapshot);
+              })
+          });
+
+          return Promise.resolve(featuredProfiles)
       }
 
 }

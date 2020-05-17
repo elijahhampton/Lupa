@@ -23,10 +23,13 @@ import {
     FAB,
     IconButton,
     Surface,
+    Modal as PaperModal,
     Dialog,
     Button,
     TextInput,
-    Divider
+    Divider,
+    Title,
+    Caption,
 } from 'react-native-paper';
 
 import { RNCamera } from 'react-native-camera';
@@ -47,32 +50,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import SingleWorkout from './component/SingleWorkout';
 import LupaCamera from './program/LupaCamera'
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
-
-function getViewStyle(state) {
-    if (state)
-    {
-        return {
-            position: "absolute", alignItems: "center", justifyContent: "center", width: 80, height: 50, backgroundColor: "rgba(250,250,250 ,0.6)"
-        }
-    }
-    else
-    {
-        return {
-            position: "absolute", alignItems: "center", justifyContent: "center", width: 80, height: 50
-        }
-    }
-}
-
-function getIconStyle(state) {
-    if (state)
-    {
-        return "rgba(33,150,243 ,1)"
-    }
-    else
-    {
-        return "rgba(33,150,243 ,0)"
-    }
-}
+import { v4 as uuidv4 } from 'uuid';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -108,39 +86,78 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-function ProgramDetailsDialog(props) {
-    const [programTitle, setProgramTitle] = useState("");
-    const [programDescription, setProgramDescription] = useState("");
-
+function WorkoutSchemeModal(props) {
+    let [repSliderValue, setRepSliderValue] = useState(0);
+    let [setSliderValue, setSetSliderValue] = useState(0);
     return (
-        <Dialog>
-            <Dialog.Title>
-                Add a title and description for your program.
-            </Dialog.Title>
-            <Dialog.Content>
-                <TextInput mode="outlined" placeholder="Program Title" onChangeText={text => setProgramTitle(text)} theme={{
-                    colors: {
-                        primary: "#2196F3"
-                    }
-                }}/>
-                <TextInput mode="outlined" placeholder="Program Description" multiline onChangeText={text => setProgramDescription(text)} theme={{
-                    colors: {
-                        primary: "#2196F3"
-                    }
-                }}/>
-            </Dialog.Content>
-            <Dialog.Actions>
-                <Button mode="text" onPress={() => props.saveProgramMethod("No Name", "No Description")} theme={{
-                    colors: {
-                        primary: "#2196F3"
-                    }
-                }}>
-                    Save Program
-                </Button>
-            </Dialog.Actions>
-        </Dialog>
+        <PaperModal visible={false} contentContainerStyle={{borderRadius: 10, alignSelf: 'center', width: Dimensions.get('window').width - 50, height: Dimensions.get('window').height / 2, backgroundColor: '#FFFFFF'}}>
+            <View style={{flex: 1, padding: 5}}>
+                <View style={{flex: 1}}>
+                    <View style={{padding: 5}}>
+                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 20}}>
+                       Change workout sets and reps
+                    </Text>
+                    <Caption>
+                        You can change the sets and reps of any workout before the workout begins when started.
+                    </Caption>
+                    </View>
+                </View>
+
+                <Divider />
+
+                <View style={{flex: 3, justifyContent: 'center'}}>
+                    <Text style={{alignSelf: 'center', padding: 10}}>
+                        {props.workout.workout_name}
+                    </Text>
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                        <Text>
+                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+                            Reps:
+                        </Text>
+                        <Text>
+                            {" "}
+                        </Text>
+                        <Text  style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Medium', color: '#2196F3'}}>
+                            {repSliderValue}
+                        </Text>
+                        </Text>
+                        
+                        <Slider value={repSliderValue} step={1} minimumValue={0} maximumValue={15} onValueChange={value => setRepSliderValue(value)} />
+                    </View>
+
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                    <Text>
+                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+                            Sets:
+                        </Text>
+                        <Text>
+                            {" "}
+                        </Text>
+                        <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Medium', color: '#2196F3'}}>
+                            {setSliderValue}
+                        </Text>
+                        </Text>
+                        <Slider value={setSliderValue} step={1} minimumValue={0} maximumValue={15} onValueChange={value => setSetSliderValue(value)} />
+                    </View>
+                </View>
+
+                <Divider />
+
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Button mode="contained" style={{elevation: 0, width: '80%'}}  theme={{
+                        colors: {
+                            primary: '#2196F3'
+                        }
+                    }} onPress={() => props.captureValues(setSliderValue, repSliderValue)}>
+                        Finish
+                    </Button>
+                </View>
+            </View>
+        </PaperModal>
     )
 }
+
+let index = 0;
 
 class BuildWorkout extends React.Component {
     constructor(props) {
@@ -165,12 +182,12 @@ class BuildWorkout extends React.Component {
             logAWorkout: false,
             searchValue: "",
             data: [
-                { title: "Warm Up", description: "A short description about this section", workouts: [] },
-                { title: "Primary", description: "A short description about this section",  workouts: [] },
-                { title: "Break", description: "A short description about this section",  workouts: [] },
-                { title: "Secondary", description: "A short description about this section",  workouts: [] },
-                { title: "Cooldown", description: "A short description about this section",  workouts: [] },
-                { title: "Homework", description: "A short description about this section",  workouts: [] },
+                { title: "Warm Up", description: "Prepare for physical exertion or a performance by exercising or practicing gently beforehand", workouts: [] },
+                { title: "Primary", description: "Prime workouts to begin the program",  workouts: [] },
+                { title: "Break", description: "A space to add custom workout components for your programs ",  workouts: [] },
+                { title: "Secondary", description: "Secondary prime workouts",  workouts: [] },
+                { title: "Cooldown", description: "Workout components to bring the program to an end",  workouts: [] },
+                { title: "Homework", description: "End your program with custom workout components as post task",  workouts: [] },
             ],
             pan: new Animated.ValueXY(),
             warmUpListTopY: 50,
@@ -182,6 +199,9 @@ class BuildWorkout extends React.Component {
             homeworkListTopY: 0,
             totalSurfaceHeight: 595.7,
             showCamera: false,
+            showWorkoutSchemeModal: false,
+            flatlistValues: [],
+            currPressedNonPopulatedWorkout: "",
         }
 
        this.RBSheet = React.createRef();
@@ -189,6 +209,7 @@ class BuildWorkout extends React.Component {
         this.animatedViewRef = React.createRef()
         this.firstView = React.createRef()
         this.timelineScrollview = React.createRef()
+        this.title = React.createRef()
 
     }
 
@@ -218,7 +239,6 @@ class BuildWorkout extends React.Component {
     }
 
     captureWorkout = (sectionName, workoutObject) => {
-        console.log(workoutObject)
         let currState = this.state.data;
         for(let i = 0; i < currState.length; i++)
         {
@@ -281,18 +301,6 @@ class BuildWorkout extends React.Component {
 
     setProgramUUID = (id) => {
         this.setState({ currProgramUUID: id })
-    }
-
-    showProgramDetailsDialog = () => {
-        this.setState({
-            showProgramDetailsDialog: true,
-        })
-    }
-
-    closeProgramDetailsDialog = () => {
-        this.setState({
-            showProgramDetailsDialog: false
-        })
     }
 
     /**
@@ -377,8 +385,8 @@ class BuildWorkout extends React.Component {
                     let workout = updatedState[1].workouts[i];
                     if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
                     {
-                        workout.workout_media.uri = uri;
-                        workout.workout_media.media_type = mediaType;
+                        updatedState[1].workouts[i].workout_media.uri = uri;
+                        updatedState[1].workouts[i].workout_media.media_type = mediaType;
                         break;
                     }
                 }
@@ -389,8 +397,8 @@ class BuildWorkout extends React.Component {
                     let workout = updatedState[2].workouts[i];
                     if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
                     {
-                        workout.workout_media.uri = uri;
-                        workout.workout_media.media_type = mediaType;
+                        updatedState[2].workouts[i].workout_media.uri = uri;
+                        updatedState[2].workouts[i].workout_media.media_type = mediaType;
                         break;
                     }
                 }
@@ -401,8 +409,8 @@ class BuildWorkout extends React.Component {
                     let workout = updatedState[3].workouts[i];
                     if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
                     {
-                        workout.workout_media.uri = uri;
-                        workout.workout_media.media_type = mediaType;
+                        updatedState[3].workouts[i].workout_media.uri = uri;
+                        updatedState[3].workouts[i].workout_media.media_type = mediaType;
                         break;
                     }
                 }
@@ -413,8 +421,8 @@ class BuildWorkout extends React.Component {
                     let workout = updatedState[4].workouts[i];
                     if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
                     {
-                        workout.workout_media.uri = uri;
-                        workout.workout_media.media_type = mediaType;
+                        updatedState[4].workouts[i].workout_media.uri = uri;
+                        updatedState[4].workouts[i].workout_media.media_type = mediaType;
                         break;
                     }
                 }
@@ -425,8 +433,8 @@ class BuildWorkout extends React.Component {
                     let workout = updatedState[5].workouts[i];
                     if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
                     {
-                        workout.workout_media.uri = uri;
-                        workout.workout_media.media_type = mediaType;
+                        updatedState[5].workouts[i].workout_media.uri = uri;
+                        updatedState[5].workouts[i].workout_media.media_type = mediaType;
                         break;
                     }
                 }
@@ -446,14 +454,227 @@ class BuildWorkout extends React.Component {
         this.setState({ showCamera: true })
     }
 
+    showChangeWorkoutSchemeModal = () => {
+        this.setState({
+            showWorkoutSchemeModal: true
+        })
+    }
+
+    closeChangeWorkoutSchemeModal = () => {
+        this.setState({
+            showWorkoutSchemeModal: false,
+        })
+    }
+
+    captureSetAndRepValues = async (sets, reps) => {
+        const currPressedWorkout = this.state.currWorkoutPressed;
+        const currWorkoutPressedSection = this.state.currWorkoutPressedSection
+
+        let updatedState = this.state.data;
+
+        switch(currWorkoutPressedSection)
+        {
+            case "Warm Up":
+                for (let i = 0; i < updatedState[0].workouts.length; i++)
+                {
+                    let workout = updatedState[0].workouts[i];
+                    if (updatedState[0].workouts[i].workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_sets = sets;
+                        updatedState[0].workouts[i].workout_reps = reps;
+                        break;
+                    }
+                }
+            break;
+            case "Primary":
+                for (let i = 0; i < updatedState[1].workouts.length; i++)
+                {
+                    let workout = updatedState[1].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_sets = sets;
+                        updatedState[0].workouts[i].workout_reps = reps;
+                        break;
+                    }
+                }
+            break;
+            case "Break":
+                for (let i = 0; i < updatedState[2].workouts.length; i++)
+                {
+                    let workout = updatedState[2].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_sets = sets;
+                        updatedState[0].workouts[i].workout_reps = reps;
+                        break;
+                    }
+                }
+            break;
+            case "Secondary":
+                for (let i = 0; i < updatedState[3].workouts.length; i++)
+                {
+                    let workout = updatedState[3].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_sets = sets;
+                        updatedState[0].workouts[i].workout_reps = reps;
+                        break;
+                    }
+                }
+            break;
+            case "Cooldown":
+                for (let i = 0; i < updatedState[4].workouts.length; i++)
+                {
+                    let workout = updatedState[4].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_sets = sets;
+                        updatedState[0].workouts[i].workout_reps = reps;
+                        break;
+                    }
+                }
+            break;
+            case "Homework":
+                for (let i = 0; i < updatedState[5].workouts.length; i++)
+                {
+                    let workout = updatedState[5].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_sets = sets;
+                        updatedState[0].workouts[i].workout_reps = reps;
+                        break;
+                    }
+                }
+            break;
+            default:
+        }
+
+        await this.setState({ data: updatedState })
+        this.closeChangeWorkoutSchemeModal()
+    }
+
+    captureValues = async (value) => {
+        console.log('OOOOOOO: ' + value)
+        //alert(value)
+        const updatedState = await this.state.flatlistValues;
+        await updatedState.push(value);
+
+        await this.setState({
+            flatlistValues: updatedState
+        })
+    }
+
+    captureNonPopulatedWorkout = (obj) => {
+        this.setState({
+            currPressedNonPopulatedWorkout: obj
+        })
+    }
+
+    addNonPopulatedToState = async (section) => {
+        const v4options = {
+            random: [
+              0x10,
+              0x91,
+              0x56,
+              0xbe,
+              0xc4,
+              0xfb,
+              0xc1,
+              0xea,
+              0x71,
+              0xb4,
+              0xef,
+              0xe1,
+              0x67,
+              0x1c,
+              0x58,
+              0x36,
+            ],
+          };
+
+        if (this.state.currPressedNonPopulatedWorkout == undefined 
+            || this.state.currPressedNonPopulatedWorkout.workout_name  == "" 
+            || this.state.currPressedNonPopulatedWorkout.workout_name == undefined)
+        {
+            return;
+        }
+
+        //We assign the workout a new UUID so the workout are the same
+        let updatedWorkout = this.state.currPressedNonPopulatedWorkout;
+        updatedWorkout.workout_uid = uuidv4(v4options);
+
+        let updatedState = this.state.data;
+        switch(section)
+        {
+            case "Warm Up":
+                    updatedState[0].workouts.push(updatedWorkout)
+            break;
+            case "Primary":
+                updatedState[1].workouts.push(updatedWorkout)
+            break;
+            case "Break":
+                updatedState[2].workouts.push(updatedWorkout)
+            break;
+            case "Secondary":
+                updatedState[3].workouts.push(updatedWorkout)
+            break;
+            case "Cooldown":
+                updatedState[4].workouts.push(updatedWorkout)
+            break;
+            case "Homework":
+                updatedState[5].workouts.push(updatedWorkout)
+            break;
+            default:
+        }
+
+        await this.setState({ data: updatedState, currPressedNonPopulatedWorkout: undefined })
+    }
+
+    getWorkoutSurfaceContent = (workout) => {
+        try{
+            if (workout.workout_media.uri != undefined)
+            {
+                return (
+                    workout.workout_media.media_type == "VIDEO" ?
+                    <Video source={{ uri: workout.workout_media.uri }}
+                        rate={1.0}
+                        volume={0}
+                        isMuted={true}
+                        resizeMode="cover"
+                        shouldPlay={false}
+                        isLooping={false}
+                        style={{width: "100%",
+                        height: "100%",
+                        borderRadius: 10}}
+                        />
+                    :
+                    <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: workout.workout_media.uri}} />
+                )
+            }
+            else
+            {
+               return (
+                <View style={{flex: 1, backgroundColor: '#212121'}}>
+    
+                </View>
+               ) 
+            }
+        } catch(err) {
+            alert(err)
+        }
+    }
+
     render() {
         return (
-            <View ref={this.firstView} style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }} >
+            <View ref={this.firstView} style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }}>
                    <SafeAreaView style={{backgroundColor: '#FFFFFF'}} />
                    <Surface style={styles.contentContainer} onLayout={event => this.setState({ totalSurfaceHeight: event.nativeEvent.layout.height})}>
                        <View style={{flex: 1}} >
+                     
                        <TimeLine
-                            listViewStyle={{ flex: 1 }}
+                       onEventPress={(rowData) => this.addNonPopulatedToState(rowData.title)}
+                            captureValues={this.captureValues}
+                            listViewStyle={{ height: '100%'}}
                             data={this.state.data}
                             position="left"
                             separator={true}
@@ -464,14 +685,20 @@ class BuildWorkout extends React.Component {
                             lineColor="#2196F3"
                             renderDetail={(rowData, sectionID, rowID) => {
                                 return (
-                                    <View >
+                                    <View>
                                         <Text style={{ fontFamily: "avenir-roman", fontSize: 20, alignSelf: "flex-start" }}>
                                             {rowData.title}
                                         </Text>
                                         <Text style={{fontSize: 15, fontFamily: 'avenir-light'}}>
                                             {rowData.description}
                                         </Text>
-                                        <ScrollView key={rowData.title} ref={this.timelineScrollview} horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false} onLayout={event => {
+                                        <ScrollView 
+                                        key={rowData.title} 
+                                        ref={this.timelineScrollview} 
+                                        horizontal 
+                                        shouldRasterizeIOS={true} 
+                                        showsHorizontalScrollIndicator={false} onLayout={event => {
+                                        
                                         if (this.timelineScrollview)
                                         {
                     let height;
@@ -508,6 +735,7 @@ class BuildWorkout extends React.Component {
                                                                     break;
                                             }
                                         }
+                                        
                             }}>
                                             {
                                                 rowData.workouts.map(obj => {
@@ -516,21 +744,7 @@ class BuildWorkout extends React.Component {
                                                                                                                     <View style={{alignItems: 'center'}}>
                         <Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
                                                             {
-                                                                obj.workout_media.media_type == "VIDEO" ?
-                                                                <Video source={{ uri: obj.workout_media.uri }}
-                                                                    rate={1.0}
-                                                                    volume={10}
-                                                                    isMuted={false}
-                                                                    resizeMode="cover"
-                                                                    shouldPlay={true}
-                                                                    isLooping={true}
-                                                                    style={{width: "100%",
-                                                                    height: "100%",
-                                                                    borderRadius: 10}}
-                                                                    />
-                                                                :
-                                                                <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: obj.workout_media.uri}} />
-
+                                                                this.getWorkoutSurfaceContent(obj)
                                                             }
                                                         </Surface>
                                                         <Text style={{fontSize: 10}}>
@@ -555,28 +769,32 @@ class BuildWorkout extends React.Component {
                             onPress={() => this.saveProgram()}
                             />
                     </Surface>
-                    <View style={{flex: 1, flexDirection: 'row', padding: 5, backgroundColor: "#212121"}}>
+                    <ScrollView contentContainerStyle={{flexWrap: 'wrap', justifyContent: 'center', width: Dimensions.get('window').width, flex: 1, flexDirection: 'row', padding: 5, backgroundColor: "#212121"}}>
                     {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.map(workout => {
                             if (workout.workout_name == "" || workout.workout_name == undefined)
                             {
                                 return
                             }
+
+                            const layoutValues = this.state.flatlistValues;
+                            layoutValues.sort()
                             return (
                                                                     <SingleWorkout 
                                 workoutData={workout}
-                                warmUpListTopY={this.state.warmUpListTopY} 
-                                warmUpListBottomY={this.state.warmUpListBottomY}
-                                primaryListTopY={this.state.primaryListTopY}
-                                breakListTopY={this.state.breakListTopY}
-                                secondaryListTopY={this.state.secondaryListTopY}
-                                cooldownListTopY={this.state.cooldownListTopY}
-                                homeworkListTopY={this.state.homeworkListTopY}
-                                captureWorkout={(section, workoutObj) => this.captureWorkout(section, workoutObj)} />
+                                warmUpListTopY={layoutValues[1]} 
+                                primaryListTopY={layoutValues[2]}
+                                breakListTopY={layoutValues[3]}
+                                secondaryListTopY={layoutValues[4]}
+                                cooldownListTopY={layoutValues[5]}
+                                homeworkListTopY={layoutValues[5 + 100]}
+                                captureWorkout={(section, workoutObj) => this.captureWorkout(section, workoutObj)} 
+                                captureNonPopulatedWorkout={(obj) => this.captureNonPopulatedWorkout(obj)}
+                                />
                             )
                         })
                     }
-                    </View>
+                    </ScrollView>
 
 
                   <RBSheet
@@ -586,16 +804,18 @@ class BuildWorkout extends React.Component {
           customStyles={{
             container: {
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
+              borderTopRightRadius: 35,
+                borderTopLeftRadius: 35,
             }
           }}
        >
            <View style={{flex: 1}}>
                <Text style={{alignSelf: 'center', fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, padding: 10}}>
-                   Add a customized graphic
+                   Workout Options
                </Text>
                <View style={{flex: 1, justifyContent: 'space-evenly'}}>
-               <View style={{padding: 20, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+               <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="upload"
 size={18}
@@ -610,7 +830,7 @@ style={{margin: 5}}
             </View>
             <Divider />
             <TouchableHighlight onPress={() => this.handleTakePictureOrVideo()}>
-            <View style={{padding: 20, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="camera"
 size={18}
@@ -624,7 +844,20 @@ style={{margin: 5}}
             </View>
             </TouchableHighlight>
             <Divider />
-            <View style={{padding: 20, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <ThinFeatherIcon
+name="trash"
+size={18}
+color="#000000"
+thin={false}
+style={{margin: 5}}
+/>
+                <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+                   Edit Set/Rep Scheme
+                </Text>
+            </View>
+            <Divider />
+            <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="trash"
 size={18}
@@ -644,6 +877,7 @@ style={{margin: 5}}
                 
                 
               {/*  <WorkoutTool setProgramUUID={uuid => this.setProgramUUID(uuid)} updateWorkoutData={state => this.updateWorkoutData(state)} /> */}
+              <WorkoutSchemeModal isVisible={this.state.showWorkoutSchemeModal} workout={this.state.currWorkoutPressed} captureValues={(sets, reps) => this.captureSetAndRepValues(sets, reps)} />
             <LupaCamera 
             isVisible={this.state.showCamera} 
             currWorkoutPressed={this.state.currWorkoutPressed} 
@@ -700,7 +934,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: 'black',
+        backgroundColor: '#212121',
       },
       preview: {
         flex: 1,

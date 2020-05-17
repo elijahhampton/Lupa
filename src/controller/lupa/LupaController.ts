@@ -111,7 +111,7 @@ export default class LupaController {
 
     runAppSetup = () => {
       requestPermissionsAsync();
-      this.indexApplicationData();
+     // this.indexApplicationData();
     }
 
     addLupaTrainerVerificationRequest = (uuid, certification, cert_number) => {
@@ -243,16 +243,17 @@ export default class LupaController {
 
     /* Algolia */
     indexApplicationData = () => {
-      USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
-      PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+      //USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+      //PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+      //USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     indexUsers = async () => {
-      await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+     // await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
     indexPacks = async() => {
-      await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+     // await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
     }
 
     /** Pack Functions */
@@ -326,6 +327,18 @@ export default class LupaController {
       });
 
       return Promise.resolve(userResult)
+    }
+
+    /**
+     * 
+     */
+    searchPrograms = searchQuery => {
+      let retVal;
+      USER_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(result => {
+        retVal = result;
+      });
+
+      return Promise.resolve(retVal);
     }
 
     /**
@@ -611,7 +624,8 @@ export default class LupaController {
     }
 
     saveProgram = async (user_uuid, programUUID) => {
-let res;
+
+      let res;
        await USER_CONTROLLER_INSTANCE.saveProgram(user_uuid, programUUID).then(result => {
         res = result;
        })
@@ -762,6 +776,16 @@ let res;
         })
 
         return Promise.resolve(queue);
+      }
+
+      getFeaturedPrograms = async () => {
+        let retVal;
+
+        await USER_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
+          retVal = result;
+        });
+
+        return Promise.resolve(retVal);
       }
 
       
