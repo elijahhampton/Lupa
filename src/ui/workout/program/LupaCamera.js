@@ -1,5 +1,6 @@
 
 import React from 'react';
+
 import {
   StyleSheet,
   Text,
@@ -29,6 +30,7 @@ import { Video } from 'expo-av'
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import LupaController from '../../../controller/lupa/LupaController';
+import { Constants } from 'react-native-unimodules';
 
 function VideoPreview(props) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -356,8 +358,6 @@ export default class CameraScreen extends React.Component {
         style={[
           styles.flipButton,
           {
-            flex: 0.3,
-            alignSelf: 'flex-end',
             backgroundColor,
           },
         ]}
@@ -391,13 +391,16 @@ export default class CameraScreen extends React.Component {
       left: this.state.autoFocusPoint.drawRectPosition.x - 32,
     };
     return (
-      <RNCamera
+      <View style={{flex: 1}}>
+              <Surface style={{flex: 3, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, elevation: 10}}>
+              <RNCamera
         ref={ref => {
           this.camera = ref;
         }}
         style={{
           flex: 1,
           justifyContent: 'space-between',
+          borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
         }}
         type={this.state.type}
         flashMode={this.state.flash}
@@ -422,19 +425,36 @@ export default class CameraScreen extends React.Component {
         onTextRecognized={canDetectText ? this.textRecognized : null}
         onGoogleVisionBarcodesDetected={canDetectBarcode ? this.barcodeRecognized : null}
       >
+        {
+          this.state.isRecording ?
+          null
+          :
+          <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 150, width: Dimensions.get('window').width}}>
+          <Text style={{fontSize: 25, fontFamily: 'ARSMaquettePro-Bold', textAlign: 'center', color: '#FFFFFF'}}>
+            Record your best two reps.  Make sure to include your full body.
+          </Text>
+        </View>
+        }
+
         <View style={StyleSheet.absoluteFill}>
           <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
           <TouchableWithoutFeedback onPress={this.touchToFocus.bind(this)}>
             <View style={{ flex: 1 }} />
           </TouchableWithoutFeedback>
         </View>
-        <View
+
+        {
+          this.state.isRecording == true ?
+          null
+          :
+          <View
           style={{
-            flex: 0.5,
+            width: Dimensions.get('window').width,
             height: 72,
             backgroundColor: 'transparent',
             flexDirection: 'row',
             justifyContent: 'space-around',
+            marginTop: Constants.statusBarHeight,
           }}
         >
           <View
@@ -442,51 +462,35 @@ export default class CameraScreen extends React.Component {
               backgroundColor: 'transparent',
               flexDirection: 'row',
               justifyContent: 'space-around',
+              width: Dimensions.get('window').width,
+            height: 'auto',
             }}
           >
-            <TouchableOpacity style={styles.flipButton} onPress={this.toggleFacing.bind(this)}>
+            <TouchableOpacity style={[styles.flipButton, {width: 110}]} onPress={this.toggleFacing.bind(this)}>
               <Text style={styles.flipText}> FLIP </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.flipButton} onPress={this.toggleFlash.bind(this)}>
+            <TouchableOpacity style={[styles.flipButton, {width: 110}]} onPress={this.toggleFlash.bind(this)}>
               <Text style={styles.flipText}> FLASH: {this.state.flash} </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.flipButton} onPress={this.toggleWB.bind(this)}>
+            <TouchableOpacity style={[styles.flipButton, {width: 110}]} onPress={this.toggleWB.bind(this)}>
               <Text style={styles.flipText}> WB: {this.state.whiteBalance} </Text>
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-            }}
-          >
-            <TouchableOpacity onPress={this.toggle('canDetectFaces')} style={styles.flipButton}>
-              <Text style={styles.flipText}>
-                {!canDetectFaces ? 'Detect Faces' : 'Detecting Faces'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.toggle('canDetectText')} style={styles.flipButton}>
-              <Text style={styles.flipText}>
-                {!canDetectText ? 'Detect Text' : 'Detecting Text'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.toggle('canDetectBarcode')} style={styles.flipButton}>
-              <Text style={styles.flipText}>
-                {!canDetectBarcode ? 'Detect Barcode' : 'Detecting Barcode'}
-              </Text>
-            </TouchableOpacity>
-          </View>
         </View>
+        }
+
+
         <View style={{ bottom: 0 }}>
           <View
             style={{
-              height: 20,
+              height: 'auto',
               backgroundColor: 'transparent',
-              flexDirection: 'row',
               alignSelf: 'flex-end',
             }}
           >
+                      {this.state.zoom !== 0 && (
+            <Text style={[styles.flipText, {alignSelf: 'center' }]}>Zoom: {this.state.zoom}</Text>
+          )}
             <Slider
               style={{ width: 150, marginTop: 15, alignSelf: 'flex-end' }}
               onValueChange={this.setFocusDepth.bind(this)}
@@ -494,28 +498,18 @@ export default class CameraScreen extends React.Component {
               disabled={this.state.autoFocus === 'on'}
             />
           </View>
-          <View
-            style={{
-              height: 56,
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              alignSelf: 'flex-end',
-            }}
-          >
-            {this.renderRecording()}
-          </View>
-          {this.state.zoom !== 0 && (
-            <Text style={[styles.flipText, styles.zoomText]}>Zoom: {this.state.zoom}</Text>
-          )}
-          <View
-            style={{
-              height: 56,
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              alignSelf: 'flex-end',
-            }}
-          >
-            <TouchableOpacity
+        </View>
+        {!!canDetectFaces && this.renderFaces()}
+        {!!canDetectFaces && this.renderLandmarks()}
+        {!!canDetectText && this.renderTextBlocks()}
+        {!!canDetectBarcode && this.renderBarcodes()}
+      </RNCamera>
+</Surface>
+<View style={{flex: 1}}>
+  <View style={{flex: 1}}>
+
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+<TouchableOpacity
               style={[styles.flipButton, { flex: 0.1, alignSelf: 'flex-end' }]}
               onPress={this.zoomIn.bind(this)}
             >
@@ -533,25 +527,36 @@ export default class CameraScreen extends React.Component {
             >
               <Text style={styles.flipText}> AF : {this.state.autoFocus} </Text>
             </TouchableOpacity>
+</View>
+
+  </View>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'transparent',
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+            }}
+          >
+            {this.renderRecording()}
             <TouchableOpacity
-              style={[styles.flipButton, styles.picButton, { flex: 0.3, alignSelf: 'flex-end' }]}
+              style={[styles.flipButton, styles.picButton]}
               onPress={this.takePicture.bind(this)}
             >
               <Text style={styles.flipText}> SNAP </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[{ backgroundColor: 'grey', flex: 0.3, alignSelf: 'flex-end' }]}
+              style={[styles.flipButton, styles.picButton]}
               onPress={this.props.closeModalMethod.bind(this)}
             >
-              <Text style={styles.flipText}> Close </Text>
-            </TouchableOpacity>
+                      <Text style={styles.flipText}> Close </Text>
+            </TouchableOpacity>     
           </View>
-        </View>
-        {!!canDetectFaces && this.renderFaces()}
-        {!!canDetectFaces && this.renderLandmarks()}
-        {!!canDetectText && this.renderTextBlocks()}
-        {!!canDetectBarcode && this.renderBarcodes()}
-      </RNCamera>
+<SafeAreaView />
+</View>
+
+      </View>
     );
   }
 
@@ -604,12 +609,6 @@ const styles = StyleSheet.create({
   flipText: {
     color: 'white',
     fontSize: 15,
-  },
-  zoomText: {
-    position: 'absolute',
-    bottom: 70,
-    zIndex: 2,
-    left: 2,
   },
   picButton: {
     backgroundColor: 'darkseagreen',

@@ -13,6 +13,7 @@ import {
     Button as NativeButton,
     ScrollView,
     Modal,
+    RefreshControl,
 } from 'react-native';
 
 import {
@@ -69,6 +70,8 @@ import UserSearchResult from '../user/profile/component/UserSearchResult'
 import LupaController from '../../controller/lupa/LupaController'
 import { TouchableHighlight, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { getLupaTrainerService } from '../../controller/firebase/collection_structures';
+import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
+import { getCurrentStoreState } from '../../controller/redux';
 
 const SamplePhotoOne = require('../images/programs/sample_photo_one.jpg')
 const SamplePhotoTwo = require('../images/programs/sample_photo_two.jpg')
@@ -102,6 +105,7 @@ class ShareProgramModal extends React.Component{
         this.state = {
             followingUserObjects: [],
             selectedUsers: [],
+
         }
     }
 
@@ -160,9 +164,17 @@ class ShareProgramModal extends React.Component{
     mapFollowing = () => {
         return this.state.followingUserObjects.map(user => {
             return (
-                <TouchableOpacity onPress={() => this.handleAddToFollowList(user)} style={{backgroundColor: this.waitListIncludesUser(user) ? '#E0E0E0' : 'transparent'}}>
-                    <UserSearchResult avatarSrc={user.photo_url} displayName={user.display_name} username={user.username} isTrainer={user.isTrainer}/>
-                </TouchableOpacity>
+                <View key={user.user_uuid} style={{backgroundColor: this.waitListIncludesUser(user) ? '#E0E0E0' : 'transparent'}}>
+                    <UserSearchResult 
+                        avatarSrc={user.photo_url} 
+                        displayName={user.display_name} 
+                        username={user.username} 
+                        isTrainer={user.isTrainer}
+                        hasButton={true}
+                        buttonTitle="Invite"
+                        buttonOnPress={() => this.handleAddToFollowList(user)}
+                        />
+                </View>
             );
         })
     }
@@ -192,23 +204,23 @@ class ShareProgramModal extends React.Component{
                     <Appbar.Content title="Share Program" />
                 </Appbar.Header>
 
-                <View style={{flex: 1}}>
+                <View style={{flex: 1, backgroundColor: '#F2F2F2'}}>
                     <View style={{backgroundColor: '#F2F2F2'}}>
                     <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: 'transparent'}} >
                                 
                                 <View style={{flex: 1, padding: 10, }}>
                                     <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: ''}} />
+                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: this.props.program.program_image == undefined || this.props.program.program_image == '' ? '' : this.props.program.program_image}} />
                                     </Surface>
                                 </View>
 
                                 <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
                                     <View style={{flex: 2, alignSelf: 'flex-start', padding: 5}}>
                                         <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                        Name
+                                        {this.props.program.program_name}
                                         </Text>
                                         <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Desc
+                                        {this.props.program.program_description}
                                         </Caption>
                                     </View>
 
@@ -216,7 +228,7 @@ class ShareProgramModal extends React.Component{
                                     <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
                                     <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
                                         <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                        0 slots available
+                                        {this.props.program.program_slots} slots available
                                         </Text>
                                     </View>
 
@@ -688,6 +700,11 @@ class Programs extends React.Component {
             pageIsPrograms: true,
             showShareProgramModal: false,
             currProgramClicked: {},
+            refreshing: false,
+            currUserPrograms: this.props.lupa_data.Programs.currUserProgramsData,
+            searchResults: [],
+            searchValue: "",
+            featuredPrograms: [],
         }
 
       this.RBSheet = React.createRef();
@@ -695,7 +712,16 @@ class Programs extends React.Component {
     }
 
     async componentDidMount() {
+        let featuredProgramsIn;
+
         await this.props.disableSwipe();
+        await this.LUPA_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
+            featuredProgramsIn = result;
+        });
+
+        await this.setState({
+            featuredPrograms: featuredProgramsIn,
+        })
        // this.props.navigation.state.params.setScreen('Programs')
     }
 
@@ -751,6 +777,7 @@ class Programs extends React.Component {
 
 
     showFilter = () => {
+        this.setState({ pageIsPrograms: false })
         Animated.timing(this.state.filterHeight, {
             toValue: Dimensions.get('window').height,
             duration: 500
@@ -758,6 +785,7 @@ class Programs extends React.Component {
     }
 
     closeFilter = () => {
+        this.setState({ pageIsPrograms: true  })
         Animated.timing(this.state.filterHeight, {
             toValue: 0,
             duration: 500
@@ -769,6 +797,8 @@ class Programs extends React.Component {
     }
 
     handleApplyFilterOnPress = () => {
+        this.setState({ pageIsPrograms: true })
+
         //apply filters
 
         this.closeFilter()
@@ -827,7 +857,7 @@ class Programs extends React.Component {
         return (
             <RBSheet
             ref={this.RBSheet}
-            height={350}
+            height={200}
             closeOnDragDown={true}
             closeOnPressMask={false}
             openDuration={150}
@@ -845,15 +875,31 @@ class Programs extends React.Component {
             }}
          >
              <SafeAreaView style={{flex: 1, padding: 15}}>
-             <TouchableOpacity containerStyle={{height: 'auto', width: Dimensions.get('window').width,}} style={{ flexDirection: 'row', alignItems: 'center',}} onPress={this.handleShareWithFriend}>
-                    <View style={{width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
-                        <FeatherIcon name="share" size={20} style={{margin: 15}} color="#212121" />
+             <TouchableOpacity containerStyle={{height: 'auto', width: Dimensions.get('window').width,}} style={{ flexDirection: 'row', alignItems: 'center',}} onPress={() => alert('Launch Program')}>
+                    <View style={{margin: 15, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
+                        <FeatherIcon name="activity" size={20} style={{margin: 5}} color="#212121" />
                         <Text style={{fontSize: 18, fontWeight: '300'}}>
-                            Share program
+                            Launch Program
                         </Text>
                     </View>
                     </TouchableOpacity>
                     <Divider />
+                    {
+                        this.userOwnsProgram() ?
+                        <>
+                        <TouchableOpacity containerStyle={{height: 'auto', width: Dimensions.get('window').width,}} style={{ flexDirection: 'row', alignItems: 'center',}} onPress={this.handleShareWithFriend}>
+                        <View style={{margin: 15, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
+                            <FeatherIcon name="share" size={20} style={{margin: 5}} color="#212121" />
+                            <Text style={{fontSize: 18, fontWeight: '300'}}>
+                                Share program
+                            </Text>
+                        </View>
+                        </TouchableOpacity>
+                        <Divider />
+                        </>
+                        :
+                        null
+                    }
              </SafeAreaView>    
              </RBSheet>
         )
@@ -865,37 +911,47 @@ class Programs extends React.Component {
         })
         this.RBSheet.current.open();
     }
+
+    handleOnRefresh = async () => {
+        await this.setState({ refreshing: true })
+        await this.setState({
+            currUserPrograms: getCurrentStoreState().Programs.currUserProgramsData
+        })
+        await this.setState({
+            refreshing: false
+        })
+    }
  
     mapPrograms = () => {
-        if (this.props.lupa_data.Programs.currUserProgramsData.length != undefined)
+        if (this.state.currUserPrograms.length != undefined)
         {
-            if (this.props.lupa_data.Programs.currUserProgramsData.length > 0)
+            if (this.state.currUserPrograms.length > 0)
             {
                 return (
-                    <ScrollView contentContainerStyle={{alignItems: 'center'}}>
+                    <ScrollView contentContainerStyle={{alignItems: 'center', backgroundColor: '#F2F2F2'}}>
                         {
-                              this.props.lupa_data.Programs.currUserProgramsData.map(program => {
+                              this.state.currUserPrograms.map(program => {
                                 return (
-                                                                        <TouchableHighlight onPress={() => this.handleProgramOnPress(program)}>
+                                                                        <TouchableOpacity onPress={() => this.handleProgramOnPress(program)}>
                                     <View style={{}}>
                                     <Surface style={{elevation: 0, width: Dimensions.get('screen').width - 20, height: 120, borderRadius: 16, margin: 5}}>
                                   <View style={styles.viewOverlay} />               
                                   <ImageBackground 
                                    imageStyle={{borderRadius: 16}} 
                                    style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
-                                   source={{uri: 'https://picsum.photos/700'}}>
+                                   source={{uri: program.program_image}}>
                                        <View style={{flex: 1, padding: 15, alignItems: 'flex-start', justifyContent: 'center' }}>
                                        <Text style={{color: 'white', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
-                                            Program Name
+                                            {program.program_name}
                                             </Text>
                                             <Text  numberOfLines={3} style={{ color: 'white', fontSize: 12, fontFamily: 'ARSMaquettePro-Medium'}}>
-                                            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system
+                                           {program.program_description}
                                             </Text>
                                        </View>
                                    </ImageBackground>
                                 </Surface>
                                 </View>
-                                </TouchableHighlight>
+                                </TouchableOpacity>
                                 )
                             })
                         }     
@@ -1037,10 +1093,116 @@ class Programs extends React.Component {
         })
     }
 
+    setPageIsPrograms = () => {
+        this.setState({ pageIsPrograms: true })
+    }
+
     navigateToCreateProgram = () => {
         this.setState({ pageIsPrograms: false })
-        this.props.navigation.navigate('CreateProgram')
+        this.props.navigation.navigate('CreateProgram', {
+            setPageIsPrograms: this.setPageIsPrograms.bind(this)
+        })
     }
+
+    userOwnsProgram = () => {
+      /*  if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.currProgramClicked.program_owner)
+        {
+            return true
+        }
+
+        return false;*/
+
+        return true;
+    }
+
+    async _prepareSearch() {
+        //await LUPA_CONTROLLER_INSTANCE.indexPrograms();
+    }
+
+    _performSearch = async search => {
+        this.setState({
+            searchResults: []
+        })
+
+        this.setState({
+            searchValue: search
+        })
+        let result;
+        await LUPA_CONTROLLER_INSTANCE.searchPrograms(this.state.searchValue).then(data => {
+            result = data;
+        })
+
+        this.setState({
+            searchResults: this.state.searchResults.concat(result)
+        });
+    }
+    
+    showSearchResults() {
+        return this.state.searchResults.map(result => {
+            return (
+                <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
+                                
+                                <View style={{flex: 1, padding: 10, }}>
+                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
+                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
+                                    </Surface>
+                                </View>
+
+                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
+                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
+                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
+                                            5 Week Cardio
+                                        </Text>
+                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                                        </Caption>
+                                    </View>
+
+
+                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
+                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
+                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
+                                            0 spots available
+                                        </Text>
+                                    </View>
+
+                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
+                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
+                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
+                                        </Surface>
+                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
+                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
+                                        </Surface>
+                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
+                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
+                                        </Surface>
+                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
+                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
+                                        </Surface>
+                                    </View>
+                                    </View>
+
+                                    
+                                </View>
+
+
+                              </Surface>
+            )
+        })
+    }
+
+    mapFeaturedPrograms = () => {
+        return this.state.featuredPrograms.map(programs => {
+            return (
+                this.state.data.map(function(currentValue, index, arr) {
+                    return (
+                        <ProgramListComponent key={index} index={index} />
+                    )
+                })
+            )
+        })
+    }
+
 
     render() {
         return (
@@ -1058,7 +1220,27 @@ class Programs extends React.Component {
               <View style={{backgroundColor: '#F2F2F2', flex: 1}}>
                 
 
-                    <ScrollView>
+                    <ScrollView contentContainerStyle={{backgroundColor: '#F2F2F2'}}>
+                    <View>
+                        <Text style={styles.headerText}>
+                        See Trainer Profiles
+                    </Text>
+                    <View style={{height: 'auto'}}>
+                        <ScrollView 
+                        horizontal 
+                        decelerationRate={0} 
+                        shouldRasterizeIOS={true} 
+                        snapToAlignment={'center'} 
+                        centerContent
+                      //  pagingEnabled={true}
+                        snapToInterval={Dimensions.get('window').width / 1.2}
+                        showsHorizontalScrollIndicator={false}>
+                           
+                        </ScrollView>
+                    </View>
+                        </View>
+
+
                         <View>
                         <Text style={styles.headerText}>
                         Programs
@@ -1074,11 +1256,7 @@ class Programs extends React.Component {
                         snapToInterval={Dimensions.get('window').width / 1.2}
                         showsHorizontalScrollIndicator={false}>
                             {
-                                this.state.data.map(function(currentValue, index, arr) {
-                                    return (
-                                        <ProgramListComponent key={index} index={index} />
-                                    )
-                                })
+                                this.mapFeaturedPrograms()
                             }
                         </ScrollView>
                     </View>
@@ -1157,591 +1335,21 @@ class Programs extends React.Component {
                 inputContainerStyle={{borderColor: '#F2F2F2'}} 
                 inputStyle={{ borderColor: '#F2F2F2'}} 
                 placeholder="Search"
+                value={this.state.searchValue}
+                onChangeText={text => this.setState({ searchValue: text })}
                 />
                             <ScrollView style={{backgroundColor: '#F2F2F2'}}>
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
-
-                              <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
+                                {
+                                    this.showSearchResults()
+                                }
                             </ScrollView>
           </Tab>
           <Tab heading="My Programs" tabStyle={{backgroundColor: '#F2F2F2'}} activeTabStyle={{backgroundColor: '#F2F2F2'}}>
-                            <View style={{backgroundColor: '#F2F2F2', flex: 1}}>
+                            <ScrollView centerContent={this.state.currUserPrograms.length == 0 || this.state.currUserPrograms == undefined ? true : false} contentContainerStyle={{flex: 1, backgroundColor: '#F2F2F2'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.setState({ currUserPrograms: getCurrentStoreState().Programs.currUserProgramsData })} />}>
                                 {
                                     this.mapPrograms()
                                 }
-                            </View>
+                            </ScrollView>
                             {this.getRBSheet()}
           </Tab>
 

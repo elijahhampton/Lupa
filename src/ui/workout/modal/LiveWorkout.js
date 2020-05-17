@@ -39,6 +39,8 @@ import Swiper from 'react-native-swiper';
 import StepIndicator from 'react-native-step-indicator';
 
 import MiniTimelineWorkout from '../component/MiniTimelineWorkout';
+import ProgramPreview from '../program/components/ProgramPreview';
+import LiveWorkoutPreview from '../program/LiveWorkoutPreview';
 
 const data = [
     {
@@ -81,7 +83,7 @@ const data = [
     barPercentage: 0.5
   };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
     }
@@ -121,7 +123,7 @@ const PROGRAM_SECTIONS = [
 
 function LoadingNextWorkoutActivityIndicator(props) {
     return (
-        <Modal visible={props.isVisible} presentationStyle="overFullScreen" style={{ alignItems: "center", justifyContent: "center", backgroundColor: "transparent", margin: 0 }} >
+        <Modal visible={false} presentationStyle="overFullScreen" style={{ alignItems: "center", justifyContent: "center", backgroundColor: "transparent", margin: 0 }} >
             <ActivityIndicator style={{ alignSelf: "center" }} animating={true} color="#03A9F4" size="large" />
         </Modal>
     )
@@ -142,8 +144,9 @@ class LiveWorkout extends React.Component {
             programTitle: "",
             loadingNextWorkout: false,
             programDescription: "",
-            programData: this.props.programData,
-            workoutData: this.props.programData.program_workout_structure,
+            programOwnerData: this.props.navigation.state.params.programOwnerData,
+            programData: this.props.navigation.state.params.programData,
+            workoutData: this.props.navigation.state.params.programData.program_workout_structure,
             currentStage: "",
             currentStageIndex: 0,
             currentStageData: [],
@@ -159,6 +162,9 @@ class LiveWorkout extends React.Component {
             currentTime: 0,
             stagesScheduled: [],
             switchEnabled: true,
+            showPreview: true,
+            currSwiperIndex: 0,
+            playVideo: false,
         }
     }
 
@@ -311,7 +317,7 @@ class LiveWorkout extends React.Component {
 
     changeWorkout = async () => {
       let currentWorkoutIn, currentWorkoutIndexIn, currentStageIndexIn, currentStageIn, currentStageDataIn, nextWorkoutIn, nextStageDataIn;
-
+        this.setState({ playVideo: false })
         if (this.state.programFinished) {
             await this.endWorkout();
         }
@@ -397,20 +403,31 @@ class LiveWorkout extends React.Component {
             if ( this.state.currentWorkout.workout_media.media_type == "VIDEO")
             {
                 return (
-                    <Video source={{ uri: this.state.currentWorkout.workout_media.uri }}
+                    <>
+                    <Video 
+                    source={{ uri: this.state.currentWorkout.workout_media.uri }}
                     rate={1.0}
-                    volume={10}
-                    isMuted={false}
+                    volume={0}
+                    isMuted={true}
                     resizeMode="cover"
-                    shouldPlay={true}
+                    shouldPlay={this.state.playVideo}
                     isLooping={true}
                     style={{
                     width: "100%",
                     height: "100%",
                     borderTopRightRadius: 30, 
-                    borderBottomRightRadius: 30
+                    borderBottomRightRadius: 30,
+                    alignItems: 'center',
+                    justifyContent: 'center'
                     }}
-                    />
+                    >
+                        {
+                            this.getVideoIcon()
+                        }
+
+                    </Video>
+
+                    </>
                 )
             }
         } catch(err) {
@@ -423,10 +440,41 @@ class LiveWorkout extends React.Component {
         
     }
 
+    getVideoIcon = () => {
+        return this.state.playVideo == true ?
+                            null
+                            :
+                            <FeatherIcon style={{position: 'absolute', top: 150, left: 75}} color="#FFFFFF" name="play-circle" size={65} onPress={() => this.setState({ playVideo: true })}/>
+    }
+
+    goToPreview = () => {
+        this.setState({
+            currSwiperIndex: 0
+        })
+    }
+
+    goToWorkout = () => {
+        this.setState({
+            currSwiperIndex: 1
+        })
+    }
+
+    goToWorkoutStats = () => {
+        this.setState({
+            currSwiperIndex: 2
+        })
+    }
+
     render() {
         return (
-            <Modal presentationStyle="fullScreen" style={styles.margin} visible={this.props.isVisible}>
-                <Swiper loop={false} scrollEnabled={true} showsVerticalScrollIndicator={false} showsButtons={false} showsPagination={false} horizontal={false} index={0}>
+                <Swiper loop={false} scrollEnabled={true} showsVerticalScrollIndicator={false} showsButtons={false} showsPagination={false} horizontal={false} index={this.state.currSwiperIndex}>
+                {/*
+                    View 1
+                */}
+                <LiveWorkoutPreview programData={this.state.programData} programOwnerData={this.state.programOwnerData} />
+                    {/*
+                        View 2
+                    */}
                     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
 
                         <View style={{flex: 1, flexDirection: 'row'}}>
@@ -434,6 +482,10 @@ class LiveWorkout extends React.Component {
                                 {
                                     this.getWorkoutMedia()
                                 }
+                                {
+                            this.getVideoIcon()
+                        }
+
                             </Surface>
                             
                             <View style={{ flex: 1, alignItems: "center", justifyContent: "space-evenly"}}>
@@ -546,11 +598,15 @@ class LiveWorkout extends React.Component {
 
 
                     </SafeAreaView>
-
-                    <View style={{ flex: 1, padding: 15}}>
+                     {
+                         /*
+                            View 3
+                         */
+                     }
+                 {/*  <View style={{ flex: 1, padding: 15}}>
                         <SafeAreaView style={{ flex: 1 }}>
                             <View style={{padding: 15 }}>
-                               {/* <StepIndicator
+                                <StepIndicator
 
                                     direction="horizontal"
                                     customStyles={customStyles}
@@ -662,7 +718,7 @@ class LiveWorkout extends React.Component {
                                             default:
                                         }
                                     }}
-                                />*/}
+                                />
 
                             </View>
 
@@ -880,11 +936,9 @@ class LiveWorkout extends React.Component {
                                 
                             </Surface>
                         </SafeAreaView>
-                    </View>
+                                </View>*/}
+                    <LoadingNextWorkoutActivityIndicator isVisible={this.state.loadingNextWorkout} />
                 </Swiper>
-                <LoadingNextWorkoutActivityIndicator isVisible={this.state.loadingNextWorkout} />
-
-            </Modal>
         )
     }
 }

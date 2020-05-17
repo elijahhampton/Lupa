@@ -56,7 +56,8 @@ class CreateProgram extends React.Component {
         this.state = {
             currIndex: 0,
             currProgramUUID: "",
-            programData: getLupaProgramInformationStructure()
+            programData: getLupaProgramInformationStructure(),
+            programImage: "",
 
         }
 
@@ -69,6 +70,12 @@ class CreateProgram extends React.Component {
         const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
         this.setState({ currProgramUUID: programPayload.program_structure_uuid })
         this.setState({ programData: programPayload})
+    }
+
+    captureImage = (img) => {
+        this.setState({
+            programImage: img
+        })
     }
 
     saveProgramInformation = async (
@@ -84,6 +91,7 @@ class CreateProgram extends React.Component {
         programType,
         allowWaitlist,
         programImage,
+        programTags,
     ) => {
        let updatedProgramData = this.state.programData;
 
@@ -99,21 +107,31 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_location = programLocationData;
         updatedProgramData.program_type = programType;
         updatedProgramData.program_allow_waitlist = allowWaitlist;
-        updatedProgramData.program_image = programImage;
+        updatedProgramData.program_image = this.state.programImage
+        updatedProgramData.program_tags = programTags;
 
         await this.setState({
             programData: updatedProgramData
         })
     }
 
-    saveProgramWorkoutData = (workoutData) => {
+    saveProgramWorkoutData = async (workoutData) => {
         let updatedProgramData = this.state.programData;
         updatedProgramData.program_workout_structure = workoutData;
+
+        await this.setState({
+            programData: updatedProgramData
+        })
     }
 
     saveProgram = async () => {
-        const programPayload = await this.LUPA_CONTROLLER_INSTANCE.saveProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData);
-        await this.props.addProgram(programPayload);
+        try {
+            const programPayload = await this.LUPA_CONTROLLER_INSTANCE.saveProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData);
+            await this.props.addProgram(programPayload);
+        } catch(err) {
+            alert(err)
+        }
+
         this.exit();
     }
 
@@ -125,6 +143,7 @@ class CreateProgram extends React.Component {
     }
 
     exit = () => {
+        this.props.navigation.state.params.setPageIsPrograms()
         this.props.navigation.goBack();
     }
 
@@ -132,7 +151,7 @@ class CreateProgram extends React.Component {
         return (
             <View style={styles.root}>
                 <Swiper index={this.state.currIndex} showsPagination={false} scrollEnabled={false}>
-                    <ProgramInformation handleCancelOnPress={this.exit} goToIndex={this.nextIndex} saveProgramInformation={(programName,
+                    <ProgramInformation captureImage={img => this.captureImage(img)} handleCancelOnPress={this.exit} goToIndex={this.nextIndex} saveProgramInformation={(programName,
         programDescription,
         numProgramSpots,
         programStartDate,

@@ -115,8 +115,10 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
       else
       {
         updatedProgramsData.push(action.payload);
-        console.log('push em')
+        
       }
+
+      console.log(action.payload)
       return Object.assign({}, state, { currUserProgramsData: updatedProgramsData });
     case "DELETE_CURRENT_USER_PROGRAM":
       let programs = state.currUserProgramsData;

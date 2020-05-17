@@ -11,23 +11,14 @@ import {
 } from 'react-native';
 
 import {
-    TextInput,
-    ActivityIndicator,
-    Caption,
     Headline
 } from 'react-native-paper';
 
-import { Button, Avatar, Input } from 'react-native-elements';
+import { Avatar, Input } from 'react-native-elements';
 
-import * as ImagePicker from 'expo-image-picker';
-
-import * as Location from 'expo-location';
-
+import ImagePicker from 'react-native-image-picker';
 
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
-
-import Feather from 'react-native-vector-icons/Feather';
-import getLocationFromCoordinates from '../../../../modules/location/mapquest/mapquest';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
@@ -51,17 +42,6 @@ mapStateToProps = (state) => {
       }
     }
   }
-
-//Activity Indicator to show while fetching location data
-const ActivityIndicatorModal = (props) => {
-    const [isLoading, setIsLoading] = useState(true);
-
-    return (
-                <Modal presentationStyle="overFullScreen" style={styles.activityIndicatorModal} visible={props.isVisible}>
-                    <ActivityIndicator style={{alignSelf: "center"}} animating={isLoading} hidesWhenStopped={false} size='large' color="#2196F3" />
-                </Modal>
-    );
-}
 
 class BasicInformation extends React.Component {
     constructor(props) {
@@ -93,7 +73,7 @@ class BasicInformation extends React.Component {
     }
 
     componentDidMount = async () => {
-        await this.disableNext();
+       // await this.disableNext();
     }
 
     enableNext = () => {
@@ -114,10 +94,6 @@ class BasicInformation extends React.Component {
         this.setState({ displayName: text })
     }
 
-    _handleUsernameOnChangeText = text => {
-        this.setState({ chosenUsername: text })
-    }
-
     _handleDisplayNameEndEditing = async () => {
         const display_name = await this.state.displayName;
         const payload = await getUpdateCurrentUserAttributeActionPayload('display_name', display_name, []);
@@ -133,10 +109,6 @@ class BasicInformation extends React.Component {
         }
 
         await this.checkDisplayNameInputText();
-    }
-
-    _handleUsernameEndEditing = () => {
-        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('username', this.state.chosenUsername);
     }
 
     checkDisplayNameInputText = () => {
@@ -166,25 +138,30 @@ class BasicInformation extends React.Component {
     }
 
     _chooseProfilePictureFromCameraRoll = async () => {
-        try {
+       try {
 
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                quality: 1
-            });
-
-           //Update field photo_url field
-            this._handleUserPhotoUrlUpdate(result.uri);
-    
-            if (!result.cancelled) {
+        ImagePicker.showImagePicker({}, (response) => {
+            if (!response.didCancel)
+            {
                 this.setState({ 
-                    photoSource: result.uri,
+                    photoSource: response.uri,
                     avatarSet: true,
                 });
+
+            //Update field photo_url field
+            this._handleUserPhotoUrlUpdate(response.uri);
             }
+            else if (response.error)
+            {
+                alert(response.error)
+                console.log(response.error)
+            }
+        });
+
         } catch(error)
         {
+            alert(error)
+            console.log(error)
             this.setState({
                 avatarSet: false
             })
@@ -192,40 +169,45 @@ class BasicInformation extends React.Component {
     }
 
     _handleUserPhotoUrlUpdate = async (photoURI) => {
-        let firebasePhotoURL;
+        try {
+            let firebasePhotoURL;
 
-        await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(photoURI).then(result => {
-            firebasePhotoURL = result;
-        });
+            await this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(photoURI).then(result => {
+                firebasePhotoURL = result;
+            });
+    
+            const reduxPayload = await getUpdateCurrentUserAttributeActionPayload('photo_url', firebasePhotoURL);
+            await this.props.updateCurrentUserAttribute(reduxPayload);
+    
+            this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', firebasePhotoURL);
+        } catch(err) {
+            alert(err)
+        }
 
-        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', firebasePhotoURL);
-
-        const reduxPayload = await getUpdateCurrentUserAttributeActionPayload('photo_url', firebasePhotoURL);
-        await this.props.updateCurrentUserAttribute(reduxPayload);
     }
 
 
     render() {
-        this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
+      //  this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
         return (
-                <SafeAreaView style={{flex: 1}}>
+                <SafeAreaView style={styles.flexFull}>
 
-                    <View style={{flex: 1, alignItems: "center", justifyContent: 'space-evenly'}}>
+                    <View style={[styles.flexFull, {alignItems: "center", justifyContent: 'space-evenly'}]}>
                     <View>
-                    {
+                    {   
                        <Avatar showEditButton rounded size={100} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
                     }
                     </View>
                     </View>
 
-                    <View style={{flex: 1}}>
+                    <View style={styles.flexFull}>
                     <Headline style={{padding: 5}}>
         What should we call you?
     </Headline>
     <Input 
         placeholder="Enter your first and last name" 
         onChangeText={text => this._handleDisplayNameOnChangeText(text)} 
-        onSubmitEditing={text => this._handleDisplayNameEndEditing()}
+        onSubmitEditing={text => this._handleDisplayNameEndEditing(text)}
         value={this.state.displayName}
         returnKeyType="done"
         editable={true}
@@ -239,6 +221,9 @@ class BasicInformation extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    flexFull: {
+        flex: 1
     }
 })
 export default connect(mapStateToProps, mapDispatchToProps)(BasicInformation);

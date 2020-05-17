@@ -22,7 +22,7 @@ import { withNavigation, NavigationActions } from 'react-navigation';
 import DrawerIcon from "react-native-vector-icons/Feather"
 
 import SafeAreaView from 'react-native-safe-area-view';
-import * as ImagePicker from 'expo-image-picker';
+import ImagePicker from 'react-native-image-picker';
 import * as Permissions from 'expo-permissions';
 
 import {
@@ -72,15 +72,12 @@ class DrawerMenu extends React.Component {
   }
 
   _chooseAvatar = async () => {
-    let chosenImage = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      aspect: [4,3],
-    });
-
-    if ( !chosenImage.cancelled ) {
-      this.setState({ image: chosenImage.uri });
-    }
+    ImagePicker.showImagePicker({}, (response) => {
+      if (!response.didCancel)
+      {
+        this.setState({ image: chosenImage.uri });
+      }
+  });
   }
 
   render() {

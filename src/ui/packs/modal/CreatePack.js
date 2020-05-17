@@ -27,7 +27,7 @@ import {
     Searchbar
 } from 'react-native-paper';
 
-import * as ImagePicker from 'expo-image-picker';
+import ImagePicker from 'react-native-image-picker'
 
 import SafeAreaView from 'react-native-safe-area-view';
 import { Input, CheckBox, Avatar } from 'react-native-elements';
@@ -259,17 +259,12 @@ class CreatePack extends React.Component {
     }
 
     _chooseImageFromCameraRoll = async () => {
-        packImageSource = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            aspect: [4, 3],
+        ImagePicker.showImagePicker({}, async (response) => {
+            if (!response.didCancel)
+            {
+                await this.setState({ packImageSource: response.uri });
+            }
         });
-
-        if (!packImageSource.cancelled) {
-            await this.setState({ packImageSource: packImageSource.uri });
-        }
-
-        
     }
 
     _returnTextInput = () => {

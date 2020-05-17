@@ -21,6 +21,8 @@ import Programs from '../workout/Programs';
 import TrainerInformation from '../user/modal/WelcomeModal/TrainerInformation';
 import NotificationsView from '../sessions/NotificationsView';
 import CreateProgram from '../workout/program/CreateProgram';
+import LiveWorkoutPreview from '../workout/program/LiveWorkoutPreview';
+import LiveWorkout from '../workout/modal/LiveWorkout';
 
 /*
 const Stack = createStackNavigator();
@@ -91,6 +93,14 @@ const UserViewNavigator =  createStackNavigator(
       screen: (props) => <BuildAWorkout {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
       navigationOptions:   ({navigation}) => ({
           title: "Build a Workout",
+          header: null,
+          gesturesEnabled: false,
+      })
+    },
+    LiveWorkout: {
+      screen: (props) => <LiveWorkout {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      navigationOptions:   ({navigation}) => ({
+          title: "LiveWorkout",
           header: null,
           gesturesEnabled: false,
       })

@@ -28,9 +28,9 @@ import {
     Button,
     IconButton,
     FAB,
-    Badge,
     Chip,
     Paragraph,
+    Badge,
     Appbar,
 } from 'react-native-paper';
 
@@ -47,7 +47,6 @@ import LupaController from '../../controller/lupa/LupaController';
 import { connect } from 'react-redux';
 import { Pagination } from 'react-native-snap-carousel';
 import Swiper from 'react-native-swiper';
-import { RECORDING_OPTION_IOS_OUTPUT_FORMAT_ILBC } from 'expo-av/build/Audio';
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
@@ -57,6 +56,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import LiveWorkout from '../workout/modal/LiveWorkout';
 import LupaDefaultCameraConfiguration from '../../modules/camera/Camera';
+import LiveWorkoutPreview from '../workout/program/LiveWorkoutPreview';
+import ProgramInformationPreview from '../workout/program/ProgramInformationPreview';
 
 
 const ANIMATED_HEIGT_DURATION = 500;
@@ -574,7 +575,7 @@ class SearchView extends React.Component {
 
 <View style={{bottom: 0, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', position: 'absolute', height: '20%', width: '50%'}}>
 <FAB small onPress={() => this.props.navigation.navigate('MessagesView')} icon="email" color="white" style={{backgroundColor: '#212121', position: 'absolute', alignSelf: 'flex-start', marginLeft: 10}} />
-    <FAB small onPress={() => this.props.navigation.navigate('NotificationsView')} icon="notifications"  color="white"  style={{backgroundColor: '#212121', position: 'absolute', alignSelf: 'flex-end', marginRight: 10}} />
+<FAB small onPress={() => this.props.navigation.navigate('NotificationsView')} icon="notifications"  color="white"  style={{backgroundColor: '#212121', position: 'absolute', alignSelf: 'flex-end', marginRight: 10}} />
 </View>
 
 <Surface style={{ borderBottomLeftRadius: 40, position: 'absolute', elevation: 0, top: this.state.chartTopPosition, alignItems: 'center', justifyContent: 'center', backgroundColor: "white", alignSelf: 'center', width: '100%', height: this.state.chartHeight}}>
@@ -638,7 +639,7 @@ class SearchView extends React.Component {
             </Chip>
 
                 </Surface>
-
+               {/* <ProgramInformationPreview />  */}
             </SafeAreaView>
             </GestureRecognizer>
         );

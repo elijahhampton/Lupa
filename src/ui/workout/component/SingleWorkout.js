@@ -19,6 +19,7 @@ import {
 import WorkoutPreview from './WorkoutPreview';
 
 import FeatherIcon from "react-native-vector-icons/Feather"
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 function getViewStyle(state) {
     if (state)
@@ -63,16 +64,64 @@ class SingleWorkout extends React.Component {
             py: 0,
             originalPositionX: 0,
             originalPositionY: 0,
-
+            warmUpListTopY: this.props.warmUpListTopY,
+            primaryListTopY: this.props.primaryListTopY,
+            breakListTopY: this.props.breakListTopY,
+            secondaryListTopY: this.props.secondaryListTopY,
+            cooldownListTopY: this.props.cooldownListTopY,
+            homeworkListTopY: this.props.homeworkListTopY,
+            isPressed: false,
         }
 
         this.animatedViewRef = React.createRef();
         
     }
 
-    componentDidMount() {
-        
+   static currWorkoutPressed;
+
+    async componentWillUpdate(nextProps, nextState) {
+        if (nextProps.warmUpListTopY != this.state.warmUpListTopY) {
+           // alert(this.state.primaryListTopY)
+          await this.setState({
+              warmUpListTopY: nextProps.warmUpListTopY
+          })
+        //  alert('props changed!')
+        }
+
+        if (nextProps.primaryListTopY != this.state.primaryListTopY) {
+            await this.setState({
+                primaryListTopY: nextProps.primaryListTopY
+            })
+          }
+
+          if (nextProps.breakListTopY != this.state.breakListTopY) {
+            await this.setState({
+                breakListTopY: nextProps.breakListTopY
+            })
+          }
+
+          if (nextProps.secondaryListTopY!= this.state.secondaryListTopY) {
+            await this.setState({
+                secondaryListTopY: nextProps.secondaryListTopY
+            })
+          }
+
+          if (nextProps.cooldownListTopY != this.state.cooldownListTopY) {
+            await this.setState({
+                cooldownListTopY: nextProps.cooldownListTopY
+            })
+          }
+
+          if (nextProps.homeworkListTopY != this.state.homeworkListTopY) {
+            await this.setState({
+                homeworkListTopY: nextProps.homeworkListTopY
+            })
+          }
     }
+
+      shouldComponentUpdate(nextProps, nextState) {
+         return true;
+      }
 
     componentWillMount() {
         this._val = { x:0, y:0 }
@@ -81,7 +130,7 @@ class SingleWorkout extends React.Component {
         this.panResponder = PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onPanResponderReject: () => {
-                alert('p')
+             
             },
             onPanResponderTerminationRequest: () => false,
             onPanResponderGrant: () => {
@@ -89,41 +138,44 @@ class SingleWorkout extends React.Component {
              this.state.pan.setValue({ x: 0, y: 0 });
             },
             onPanResponderRelease: (event, gesture) => {
-                if (gesture.moveY > this.props.warmUpListTopY -20
-                    && gesture.moveY < this.props.warmUpListTopY+20)
+                if (gesture.moveY > 0
+                    && gesture.moveY <  this.state.warmUpListTopY)
                 {
-                    this.props.captureWorkout("Warm Up", this.props.workoutData)
+                   
+                   this.props.captureWorkout("Warm Up", this.props.workoutData)
                 }
 
-                if (gesture.moveY > this.props.primaryListTopY - 40
-                    && gesture.moveY < this.props.primaryListTopY+40)
-                {
-                    this.props.captureWorkout("Primary", this.state.workoutData)
-                }
+                    if (gesture.moveY > this.state.warmUpListTopY
+                        && gesture.moveY < this.state.primaryListTopY)
+                    {
+                        this.props.captureWorkout("Primary", this.state.workoutData)
+                    }
 
-                if (gesture.moveY > this.props.breakListTopY - 40
-                    && gesture.moveY < this.props.breakListTopY + 40)
-                {
-                    this.props.captureWorkout("Break", this.state.workoutData)
-                }
+                    if (gesture.moveY > this.state.primaryListTopY
+                        && gesture.moveY < this.state.breakListTopY)
+                    {
+                        this.props.captureWorkout("Break", this.state.workoutData)
+                    }
 
-                if (gesture.moveY > this.props.secondaryListTopY - 40
-                    && gesture.moveY < this.props.secondaryListTopY)
-                {
-                    this.props.captureWorkout("Secondary", this.state.workoutData)
-                }
+                    if (gesture.moveY > this.state.primaryListTopY
+                        && gesture.moveY < this.state.secondaryListTopY)
+                    {
+             
+                        this.props.captureWorkout("Secondary", this.state.workoutData)
+                    }
 
-                if (gesture.moveY > this.props.cooldownListTopY - 60
-                    && gesture.moveY < this.props.cooldownListTopY + 60)
-                {
-                    this.props.captureWorkout("Cooldown", this.state.workoutData)
-                }
+                    if (gesture.moveY > this.state.secondaryListTopY
+                        && gesture.moveY < this.state.cooldownListTopY)
+                    {
+                        this.props.captureWorkout("Cooldown", this.state.workoutData)
+                    }
 
-                if (gesture.moveY > this.props.homeworkListTopY - 40
-                    && gesture.moveY < this.props.homeworkListTopY + 40 )
-                {
-                    this.props.captureWorkout("Homework", this.state.workoutData)
-                }
+                    if (gesture.moveY > this.state.cooldownListTopY
+                        && gesture.moveY < this.state.homeworkListTopY)
+                    {
+                        this.props.captureWorkout("Homework", this.state.workoutData)
+                    }
+
                 else
                 {
                     Animated.timing(this.state.pan, {
@@ -146,41 +198,43 @@ class SingleWorkout extends React.Component {
               }
             ], {
                 listener: (event, gesture)  => {
-                    console.log('listen: ' + gesture.moveY)
-                    if (gesture.moveY > this.props.warmUpListTopY -40
-                        && gesture.moveY < this.props.warmUpListTopY+40)
+                  // console.log('listen: ' + gesture.moveY)
+                   console.log('aaa: ' + this.state.secondaryListTopY)
+                    if (gesture.moveY > 0
+                    && gesture.moveY <  this.props.warmUpListTopY)
+                {
+                   // console.log('dsfsdsdfs: ' + Dimensions.get('window').height + (0+20))
+                   // this.props.captureWorkout("Warm Up", this.props.workoutData)
+                }
+
+                    if (gesture.moveY > this.props.warmUpListTopY
+                        && gesture.moveY < this.props.primaryListTopY)
                     {
-                        console.log('warm up')
+                        //console.log('BAAAAAAAAAABY')
                     }
 
-                    if (gesture.moveY > this.props.primaryListTopY - 40
-                        && gesture.moveY < this.props.primaryListTopY+40)
+                    if (gesture.moveY > this.props.primaryListTopY
+                        && gesture.moveY < this.props.breakListTopY)
                     {
-                        console.log('primary')
+                       // console.log('CRAAAAAAZT')
                     }
 
-                    if (gesture.moveY > this.props.breakListTopY - 40
-                        && gesture.moveY < this.props.breakListTopY + 40)
-                    {
-                        console.log('break')
-                    }
-
-                    if (gesture.moveY > this.props.secondaryListTopY - 40
+                    if (gesture.moveY > this.props.primaryListTopY
                         && gesture.moveY < this.props.secondaryListTopY)
                     {
-                        console.log('sec')
+                       // console.log('sec')
                     }
 
-                    if (gesture.moveY > this.props.cooldownListTopY - 60
-                        && gesture.moveY < this.props.cooldownListTopY + 60)
+                    if (gesture.moveY > this.props.secondaryListTopY
+                        && gesture.moveY < this.props.cooldownListTopY)
                     {
-                        console.log('cooldowm')
+                       // console.log('cooldowm')
                     }
 
-                    if (gesture.moveY > this.props.homeworkListTopY - 40
-                        && gesture.moveY < this.props.homeworkListTopY + 40 )
+                    if (gesture.moveY > this.props.cooldownListTopY
+                        && gesture.moveY < this.props.homeworkListTopY)
                     {
-                        console.log('homework')
+                       // console.log('homework')
                     }
                 }
             })
@@ -206,53 +260,51 @@ handleOnLongPress = () => {
 
     
     handleSetOriginalPosition = (event) => {
-        console.log('x: ' + this.state.originalPositionX)
-        console.log('y: ' + this.state.originalPositionY)
         this.setState({ originalPositionX: event.nativeEvent.layout.x, originalPositionY: event.nativeEvent.layout.y })
     }
 
-    render() {
-        const panStyle = {
-            transform: this.state.pan.getTranslateTransform()
-          }
+    handleWorkoutOnPress = () => {
+        
+        if (this.state.isPressed)
+        {
 
-        return (
-                                      <Animated.View
-                                      key={() => Math.random()}
-                                      ref={this.animatedViewRef}
-                    style={panStyle}
-          {...this.panResponder.panHandlers}
-        >
-                <Surface style={styles.videoContainer}>
-                    <Video
-                        source={{ uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-                        rate={1.0}
-                        volume={0}
-                        isMuted={true}
-                        resizeMode="cover"
-                        shouldPlay={false}
-                        isLooping={false}
-                        style={styles.video}
-                    />
-    
-                    <View style={getViewStyle(this.state.pressed)}>
-                        <FeatherIcon name="check" color={getIconStyle(this.state.pressed)} />
-                    </View>
-                </Surface>
-                <Text>
-                    {this.props.workoutData.workout_uid}
-                </Text>
-          {/*  <WorkoutPreview isVisible={this.state.workoutPreviewIsVisible} closeModalMethod={() => this.setState({ workoutPreviewIsVisible: false })}/> */}
-            </Animated.View>
+            this.setState({
+                isPressed: false
+            })
+        }
+        else
+        {
+            this.setState({
+                isPressed: true
+            })
+        }
+
+        this.props.captureNonPopulatedWorkout(this.state.workoutData)
+    }
+
+    render() {
+return (
+    <TouchableOpacity onPress={this.handleWorkoutOnPress}>
+    <View style={[{alignItems: 'center'}]}>
+    <Surface style={[this.state.isPressed ? styles.pressed : styles.notPressed , styles.videoContainer]}>
+          
+        </Surface>
+        <Text style={{fontSize: 10, color: 'white'}}>
+            {this.props.workoutData.workout_name}
+        </Text>
+    </View>
+</TouchableOpacity>
+)
+ 
             
-        );
+  
     }
 }
 
 const styles = StyleSheet.create({
     videoContainer: {
         margin: 5,
-        backgroundColor: "white",
+        backgroundColor: "rgb(58,58,60)",
         borderRadius: 10,
         width: Dimensions.get("window").width / 5,
         height: 50,
@@ -260,10 +312,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    video: {
-        width: "100%",
-        height: "100%",
-        borderRadius: 10
+    pressed: {
+        borderColor: '#FFFFFF',
+        borderWidth: 0.5,
+    },
+    notPressed: {
+        borderColor: '#212121',
+        borderWidth: 0.5,
     }
 })
 

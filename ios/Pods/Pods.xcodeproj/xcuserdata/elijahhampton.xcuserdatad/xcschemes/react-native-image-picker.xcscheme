@@ -14,9 +14,9 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9A7E4CFA3D0A965685884E61CE7D0D1D"
-               BuildableName = "libEXImagePicker.a"
-               BlueprintName = "EXImagePicker"
+               BlueprintIdentifier = "81C5C2512295143722B55D1C7F58FEAE"
+               BuildableName = "libreact-native-image-picker.a"
+               BlueprintName = "react-native-image-picker"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

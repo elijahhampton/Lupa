@@ -12,6 +12,8 @@ import {
 } from 'react-native-paper';
 import LiveWorkout from '../workout/modal/LiveWorkout';
 
+import { withNavigation } from 'react-navigation';
+
 function ReceivedProgramNotification(props) {
     let [showLiveWorkout, setShowLiveWorkout] = useState(false);
 
@@ -38,16 +40,19 @@ function ReceivedProgramNotification(props) {
                            colors: {
                                primary: '#212121'
                            }
-                       }} onPress={() => setShowLiveWorkout(true)}>
+                       }} onPress={() => props.navigation.push('LiveWorkout', {
+                           programOwnerData: notificationData.fromData,
+                           programData: notificationData.data,
+                       })}>
                             <Text>
                                 View
                             </Text>
                        </Button>
                        </View>
                        
-                       <LiveWorkout isVisible={showLiveWorkout} programData={notificationData.data} closeModalMethod={() => setShowLiveWorkout(false)}/>
+                     {/*  <LiveWorkout isVisible={showLiveWorkout} programData={notificationData.data} closeModalMethod={() => setShowLiveWorkout(false)}/> */}
                    </View>
     )
 }
 
-export default ReceivedProgramNotification;
+export default withNavigation(ReceivedProgramNotification);

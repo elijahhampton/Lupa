@@ -183,9 +183,6 @@ PODS:
   - EXFont (8.1.1):
     - UMCore
     - UMFontInterface
-  - EXImagePicker (8.0.2):
-    - UMCore
-    - UMFileSystemInterface
   - EXKeepAwake (8.1.0):
     - UMCore
   - EXLinearGradient (8.1.0):
@@ -602,6 +599,8 @@ PODS:
   - react-native-fbsdk/Share (1.1.2):
     - FBSDKShareKit (= 5.8)
     - React
+  - react-native-image-picker (2.3.1):
+    - React
   - react-native-maps (0.27.1):
     - React
   - react-native-randombytes (3.5.3):
@@ -775,7 +774,6 @@ DEPENDENCIES:
   - EXErrorRecovery (from `../node_modules/expo-error-recovery/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo/node_modules/expo-font/ios`)
-  - EXImagePicker (from `../node_modules/expo-image-picker/ios`)
   - EXKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - EXLinearGradient (from `../node_modules/expo/node_modules/expo-linear-gradient/ios`)
   - EXLocation (from `../node_modules/expo/node_modules/expo-location/ios`)
@@ -802,6 +800,7 @@ DEPENDENCIES:
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-fbsdk (from `../node_modules/react-native-fbsdk`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -919,9 +918,6 @@ EXTERNAL SOURCES:
   EXFont:
     :path: !ruby/object:Pathname
     path: "../node_modules/expo/node_modules/expo-font/ios"
-  EXImagePicker:
-    :path: !ruby/object:Pathname
-    path: "../node_modules/expo-image-picker/ios"
   EXKeepAwake:
     :path: !ruby/object:Pathname
     path: "../node_modules/expo-keep-awake/ios"
@@ -972,6 +968,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-fbsdk:
     :path: "../node_modules/react-native-fbsdk"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-randombytes:
@@ -1100,7 +1098,6 @@ SPEC CHECKSUMS:
   EXErrorRecovery: 88541714d9bbf8a823f4ee0b7078a92d3e0e42d2
   EXFileSystem: b82693d78de152efe10a77d4aac781f782e10916
   EXFont: af4c3281cac0bf6ccd8b8a534e9bce6437cc2e17
-  EXImagePicker: 4c2d3cb5012cfde48b225e75ce6870df811f9d30
   EXKeepAwake: 4b53df0b4e87aa9f38bf57461e07fc167716a760
   EXLinearGradient: 8189387e3a65c2a9ba5507432e3a099ea8f7ea86
   EXLocation: 0397e4f11666d6ceb026b6424fdf66995c604964
@@ -1155,6 +1152,7 @@ SPEC CHECKSUMS:
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-camera: 6fe72fd0a85732e2449928f9c59a2e0bf661ad3b
   react-native-fbsdk: c35d42169e64aaf66f01713c1e18d0674f7f6519
+  react-native-image-picker: 668e72d0277dc8c12ae90e835507c1eddd2e4f85
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-randombytes: 991545e6eaaf700b4ee384c291ef3d572e0b2ca8
   react-native-safe-area-context: 8260e5157617df4b72865f44006797f895b2ada7

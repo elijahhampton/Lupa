@@ -27,7 +27,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Avatar } from 'react-native-elements';
 
-import * as ImagePicker from 'expo-image-picker';
+import ImagePicker from 'react-native-image-picker';
 
 import SafeAreaView from 'react-native-safe-area-view';
 
@@ -84,16 +84,12 @@ export default class CreateEvent extends React.Component {
     }
 
     _chooseImageFromCameraRoll = async () => {
-        packImageSource = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            aspect: [4, 3],
+        ImagePicker.showImagePicker({}, (response) => {
+            if (!response.didCancel)
+            {
+                this.setState({ eventImage: response.uri });
+            }
         });
-
-        if (!packImageSource.cancelled) {
-            console.log('and now: ' +  packImageSource.uri)
-            await this.setState({ eventImage: packImageSource.uri });
-        }
     }
 
     createEvent = async () => {
