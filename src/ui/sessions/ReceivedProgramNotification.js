@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { useSelector } from 'react-redux';
 import {
     View,
     Text,
@@ -14,11 +14,44 @@ import LiveWorkout from '../workout/modal/LiveWorkout';
 
 import { withNavigation } from 'react-navigation';
 
+import Swipeout from 'react-native-swipeout';
+import ProgramInformationPreview from '../workout/program/ProgramInformationPreview';
+
+var swipeoutBtns = [
+    {
+      text: 'Delete',
+    },
+    {
+      text: 'Swipe'
+    },
+  ]
+
 function ReceivedProgramNotification(props) {
     let [showLiveWorkout, setShowLiveWorkout] = useState(false);
+    let [programModalVisible, setProgramModalVisible] = useState(false);
+
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
 
     const fromData = props.fromData;
     const notificationData = props.notification;
+
+    const handleOnPress = () => {
+
+        if (notificationData.data.program_participants.includes(currUserData.user_uuid))
+        {
+           props.navigation.push('LiveWorkout', {
+                           programOwnerData: notificationData.fromData,
+                           programData: notificationData.data,
+                       })
+        }
+        else
+        {
+            setProgramModalVisible(true)
+        }
+    }
+
     return (
         <View style={{paddingVertical: 10, backgroundColor: '#F2F2F2', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', height: 'auto', width: Dimensions.get('window').width}}>
                        <View style={{width: '70%', flexDirection: 'row', alignItems: 'center'}}>
@@ -31,7 +64,7 @@ function ReceivedProgramNotification(props) {
                                 {' '}
                                 </Text>
                                <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                               has invited you to try out their program. Try it now.
+                               has invited you to try out a program.
                                </Text>
                            </Text>
                        </View>
@@ -40,17 +73,13 @@ function ReceivedProgramNotification(props) {
                            colors: {
                                primary: '#212121'
                            }
-                       }} onPress={() => props.navigation.push('LiveWorkout', {
-                           programOwnerData: notificationData.fromData,
-                           programData: notificationData.data,
-                       })}>
+                       }} onPress={() => handleOnPress()}>
                             <Text>
                                 View
                             </Text>
                        </Button>
                        </View>
-                       
-                     {/*  <LiveWorkout isVisible={showLiveWorkout} programData={notificationData.data} closeModalMethod={() => setShowLiveWorkout(false)}/> */}
+                       <ProgramInformationPreview isVisible={programModalVisible} programData={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
                    </View>
     )
 }

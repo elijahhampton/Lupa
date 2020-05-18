@@ -99,6 +99,7 @@
     "react-native-stream": "^0.1.9",
     "react-native-svg": "9.13.3",
     "react-native-swipe-gestures": "^1.0.5",
+    "react-native-swipeout": "^2.3.6",
     "react-native-swiper": "^1.5.14",
     "react-native-swiper-flatlist": "^2.0.3",
     "react-native-timeline-flatlist": "^0.7.0",

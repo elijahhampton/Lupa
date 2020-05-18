@@ -554,8 +554,6 @@ class BuildWorkout extends React.Component {
     }
 
     captureValues = async (value) => {
-        console.log('OOOOOOO: ' + value)
-        //alert(value)
         const updatedState = await this.state.flatlistValues;
         await updatedState.push(value);
 
@@ -660,7 +658,7 @@ class BuildWorkout extends React.Component {
                ) 
             }
         } catch(err) {
-            alert(err)
+        
         }
     }
 

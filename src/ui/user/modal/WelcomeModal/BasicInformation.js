@@ -153,14 +153,13 @@ class BasicInformation extends React.Component {
             }
             else if (response.error)
             {
-                alert(response.error)
-                console.log(response.error)
+          
             }
         });
 
         } catch(error)
         {
-            alert(error)
+         
             console.log(error)
             this.setState({
                 avatarSet: false
@@ -181,7 +180,7 @@ class BasicInformation extends React.Component {
     
             this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', firebasePhotoURL);
         } catch(err) {
-            alert(err)
+          
         }
 
     }

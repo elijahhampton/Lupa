@@ -16,6 +16,7 @@ import MessagesView from '../user/chat/MessagesView'
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import SettingsModal from '../user/profile/component/SettingsModal';
+import LiveWorkout from '../workout/modal/LiveWorkout';
 /*
 const Stack = createStackNavigator();
 
@@ -123,7 +124,16 @@ const ProfileNavigator = createStackNavigator(
             gesturesEnabled: false,
         })
       },
+      LiveWorkout: {
+        screen: (props) => <LiveWorkout {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+        navigationOptions:   ({navigation}) => ({
+            title: "LiveWorkout",
+            header: null,
+            gesturesEnabled: false,
+        })
+      },
     },
+    
     {
     initialRouteName: 'Profile',
     }

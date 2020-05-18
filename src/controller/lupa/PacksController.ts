@@ -13,10 +13,10 @@ const PACKS_EVENT_COLLECTION = LUPA_DB.collection('pack_events');
 const USERS_COLLECTION = LUPA_DB.collection('users');
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
-const algoliasearch = require('algoliasearch/reactnative.js');
+/*const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const packsIndex = algoliaIndex.initIndex("dev_PACKS");
-const tmpIndex = algoliaIndex.initIndex("tmpDev_PACKS");
+const tmpIndex = algoliaIndex.initIndex("tmpDev_PACKS");*/
 
 import UserController from './UserController';
 import { getLupaPackStructure, getLupaPackEventStructure } from '../firebase/collection_structures';

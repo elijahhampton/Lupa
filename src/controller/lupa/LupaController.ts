@@ -14,11 +14,11 @@ import { rejects } from 'assert';
 import WorkoutController from './WorkoutController';
 import { promises } from 'dns';
 
-const algoliasearch = require('algoliasearch/reactnative.js');
+/*const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const packsIndex = algoliaIndex.initIndex("dev_PACKS");
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
-const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
+const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");*/
 
 let USER_CONTROLLER_INSTANCE;
 let PACKS_CONTROLLER_INSTANCE;
@@ -111,7 +111,7 @@ export default class LupaController {
 
     runAppSetup = () => {
       requestPermissionsAsync();
-     // this.indexApplicationData();
+      this.indexApplicationData();
     }
 
     addLupaTrainerVerificationRequest = (uuid, certification, cert_number) => {
@@ -245,15 +245,19 @@ export default class LupaController {
     indexApplicationData = () => {
       //USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
       //PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
-      //USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+    //USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     indexUsers = async () => {
      // await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
-    indexPacks = async() => {
+    indexPacks = async () => {
      // await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+    }
+
+    indexPrograms = async () => {
+      // await USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     /** Pack Functions */
@@ -332,12 +336,13 @@ export default class LupaController {
     /**
      * 
      */
-    searchPrograms = searchQuery => {
-      let retVal;
-      USER_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(result => {
+    searchPrograms = async searchQuery => {
+      let retVal = []
+      console.log(searchQuery)
+      await USER_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(result => {
         retVal = result;
       });
-
+      console.log('and here: ' + retVal.length)
       return Promise.resolve(retVal);
     }
 
@@ -350,7 +355,7 @@ export default class LupaController {
      * TODO: Save only necessary information into an object before pushing into final results array.
      */
     search = (searchQuery) => {
-      let finalResults = new Array();
+     /* let finalResults = new Array();
 
       const queries = [{
         indexName: 'dev_USERS',
@@ -404,7 +409,7 @@ export default class LupaController {
 
         resolve(finalResults);
       });
-      })
+      })*/
     
     }
 
@@ -638,7 +643,7 @@ export default class LupaController {
       try {
         USER_CONTROLLER_INSTANCE.handleSendUserProgram(currUserUUID, currUserData, currUserDisplayName, userList, program);
           } catch(err) {
-          alert('sfsfsffsfs')
+        
         }
     }
 
@@ -788,5 +793,11 @@ export default class LupaController {
         return Promise.resolve(retVal);
       }
 
+      purchaseProgram = async (currUserData, programData) => {
+        let updatedProgram;
+        await USER_CONTROLLER_INSTANCE.purchaseProgram(currUserData, programData).then(retVal => {
+          updatedProgram = retVal;
+        })
+      }
       
 }

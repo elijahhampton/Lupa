@@ -16,14 +16,37 @@ import {
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import ProgramInformationPreview from '../ProgramInformationPreview';
+import { useSelector } from 'react-redux';
+import { withNavigation, StackActions } from 'react-navigation';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function ProgramProfileComponent(props) {
-    let [programInformationVisible, setProgramInformationVisible] = useState(false);
-    
+    let [programModalVisible, setProgramModalVisible] = useState(false);
     const program = props.programData;
+
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData
+    })
+
+
+    const handleOnPress = () => {
+
+        if (program.program_participants.includes(currUserData.user_uuid))
+        {
+            props.navigation.push('LiveWorkout', {
+                programData: program,
+                programOwnerData: result.program_owner == currUserData.user_uuid ? currUserData : undefined 
+            });
+        }
+        else
+        {
+            setProgramModalVisible(true)
+        }
+    }
+
     return (
         <View style={{}}>
-        <TouchableHighlight onPress={() => setProgramInformationVisible(true)}>
+        <TouchableOpacity onPress={() => handleOnPress()}>
         <Surface style={{elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
       <View style={{position: 'absolute', 
         flex: 1,
@@ -45,11 +68,11 @@ function ProgramProfileComponent(props) {
        </ImageBackground>
         <MaterialIcon size={30} name="info" color="#FAFAFA" style={{ position: 'absolute', right: 0, top: 0, margin: 5}} />
     </Surface>
-        </TouchableHighlight>
+        </TouchableOpacity>
 
-    <ProgramInformationPreview isVisible={programInformationVisible} programData={props.programData} />
+        <ProgramInformationPreview isVisible={programModalVisible} programData={program} closeModalMethod={() => setProgramModalVisible(false)} />
     </View>
     )
 }
 
-export default ProgramProfileComponent;
+export default withNavigation(ProgramProfileComponent);

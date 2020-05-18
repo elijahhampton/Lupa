@@ -100,42 +100,54 @@ class ProgramListComponent extends React.Component {
             duation:0,
         }).start();
     }
- 
+    
+    getProgramImage = () => {
+        try {
+            return <Image style={{width: '100%', height: '100%', borderRadius:16 }} source={{uri: this.props.programData.program_image}} />
+        } catch(err) {
+            return <View style={{width: '100%', height: '100%', borderRadius: 16, backgroundColor: '#212121' }}>
+
+            </View>
+        }
+    }
     render() {
+        const programData = this.props.programData;
         return (
                 <View>
                     <TouchableHighlight>
                     <Surface style={{elevation: 0, width: Dimensions.get('screen').width /1.3, height: 200, borderRadius: 16, margin: 15}}>
-                   <Image style={{width: '100%', height: '100%', borderRadius:16 }} source={{uri: 'https://picsum.photos/700'}} />
+                    {
+                        this.getProgramImage()
+                    }
                 </Surface>
                     </TouchableHighlight>
 
                 <View style={{marginLeft: 15, width: Dimensions.get('screen').width /1.3}}>
                     <View style={{padding: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-                        Program Name
+                        {programData.program_name}
                     </Text>
                     <Caption>
-                        0 spots available
+                        {programData.program_slots} spots available
                     </Caption>
                     </View>
                     <Text style={{fontWeight: '300', fontSize: 12}}>
-                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its
+                   {programData.program_description}
                     </Text>
 
-                    <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10, width: 120, justifyContent: 'space-evenly', alignSelf: 'flex-end'}}>
-                    <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 4, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 4, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 4, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 4, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
+                    <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10, width: 120, alignSelf: 'flex-end'}}>
+                        {
+                            programData.length == undefined ?
+                            null
+                            :
+                            programData.program_tags.map((tag, index, arr)=> {
+                                return (
+                                    <Caption key={index} >
+                                        {tag}
+                                    </Caption>
+                                )
+                            })
+                        }
                     </View>
                 </View>
                 </View>

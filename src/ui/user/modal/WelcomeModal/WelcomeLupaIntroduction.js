@@ -126,7 +126,7 @@ class WelcomeLupaIntroduction extends React.Component {
 
         await this.enableNext(); 
         } catch( err) {
-            alert(err)
+            
         }
     }
 

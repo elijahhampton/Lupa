@@ -72,6 +72,9 @@ import { TouchableHighlight, TouchableWithoutFeedback } from 'react-native-gestu
 import { getLupaTrainerService } from '../../controller/firebase/collection_structures';
 import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 import { getCurrentStoreState } from '../../controller/redux';
+import LupaCalendar from '../user/dashboard/calendar/LupaCalendar';
+import TrainerInsights from '../user/TrainerInsights';
+import ProgramSearchResultCard from './program/components/ProgramSearchResultCard';
 
 const SamplePhotoOne = require('../images/programs/sample_photo_one.jpg')
 const SamplePhotoTwo = require('../images/programs/sample_photo_two.jpg')
@@ -127,7 +130,7 @@ class ShareProgramModal extends React.Component{
         {
             if (this.state.selectedUsers[i] == userObject.user_uuid)
             {
-                alert('no')
+
               updatedList.splice(i, 1);
               found = true;
               break;
@@ -136,7 +139,7 @@ class ShareProgramModal extends React.Component{
 
         if (found == false)
         {
-            alert('here')
+            
             updatedList.push(userObject.user_uuid);
         }
 
@@ -188,7 +191,7 @@ class ShareProgramModal extends React.Component{
             this.LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(this.props.currUserData.user_uuid, this.props.currUserData, this.props.currUserData.display_name, this.state.selectedUsers, this.props.program);
             this.props.closeModalMethod();
         } catch(err) {
-            alert(err)
+            
         }
     }
 
@@ -357,7 +360,6 @@ class InviteWaitlistFriends extends React.Component {
                         <NativeButton title="Apply" onPress={() => this.props.closeModalMethod(this.state.waitList, 'APPLY')}/>
                     </View>
                 <ScrollView shouldRasterizeIOS={true}>
-               {/* <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/> */}
                 {
                     this.mapFollowing()
                 }
@@ -680,8 +682,9 @@ class Programs extends React.Component {
 
         this.props.disableSwipe();
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
-            data: [0, 1, 2, 3, 4],
             open: false, 
             showLiveWorkout: false,
             lupaProgramsHeight: 0,
@@ -705,6 +708,7 @@ class Programs extends React.Component {
             searchResults: [],
             searchValue: "",
             featuredPrograms: [],
+            trainerInsightsVisible: false,
         }
 
       this.RBSheet = React.createRef();
@@ -712,9 +716,17 @@ class Programs extends React.Component {
     }
 
     async componentDidMount() {
+        await this.props.disableSwipe();
+       // await this.loadFeaturedPrograms();
+    }
+
+    componentWillUnmount() {
+        this.props.enableSwipe();
+    }
+
+    loadFeaturedPrograms = async () => {
         let featuredProgramsIn;
 
-        await this.props.disableSwipe();
         await this.LUPA_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
             featuredProgramsIn = result;
         });
@@ -722,11 +734,16 @@ class Programs extends React.Component {
         await this.setState({
             featuredPrograms: featuredProgramsIn,
         })
-       // this.props.navigation.state.params.setScreen('Programs')
     }
 
-    componentWillUnmount() {
-        this.props.enableSwipe();
+    closeTrainerInsights = () => {
+        this.setState({ trainerInsightsVisible: false })
+    }
+
+    openTrainerInsights = () => {
+        this.setState({
+            trainerInsightsVisible: true 
+        })
     }
 
     showInviteModal = () => {
@@ -875,7 +892,7 @@ class Programs extends React.Component {
             }}
          >
              <SafeAreaView style={{flex: 1, padding: 15}}>
-             <TouchableOpacity containerStyle={{height: 'auto', width: Dimensions.get('window').width,}} style={{ flexDirection: 'row', alignItems: 'center',}} onPress={() => alert('Launch Program')}>
+             <TouchableOpacity containerStyle={{height: 'auto', width: Dimensions.get('window').width,}} style={{ flexDirection: 'row', alignItems: 'center',}} onPress={this.handleLaunchProgram}>
                     <View style={{margin: 15, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
                         <FeatherIcon name="activity" size={20} style={{margin: 5}} color="#212121" />
                         <Text style={{fontSize: 18, fontWeight: '300'}}>
@@ -919,6 +936,14 @@ class Programs extends React.Component {
         })
         await this.setState({
             refreshing: false
+        })
+    }
+
+    handleLaunchProgram = () => {
+        this.RBSheet.current.close()
+        this.props.navigation.push('LiveWorkout', {
+            programData: this.state.currProgramClicked,
+            programOwnerData: undefined
         })
     }
  
@@ -1105,101 +1130,47 @@ class Programs extends React.Component {
     }
 
     userOwnsProgram = () => {
-      /*  if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.currProgramClicked.program_owner)
+        if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.currProgramClicked.program_owner)
         {
             return true
         }
 
-        return false;*/
-
-        return true;
+        return false;
     }
 
     async _prepareSearch() {
-        //await LUPA_CONTROLLER_INSTANCE.indexPrograms();
+     //   await this.LUPA_CONTROLLER_INSTANCE.indexPrograms();
     }
 
     _performSearch = async search => {
         this.setState({
-            searchResults: []
+            searchResults: [],
+            searchValue: search,
         })
 
-        this.setState({
-            searchValue: search
-        })
         let result;
-        await LUPA_CONTROLLER_INSTANCE.searchPrograms(this.state.searchValue).then(data => {
+        await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(this.state.searchValue).then(data => {
             result = data;
         })
 
         this.setState({
-            searchResults: this.state.searchResults.concat(result)
+            searchResults: result
         });
     }
     
     showSearchResults() {
-        return this.state.searchResults.map(result => {
+       return this.state.searchResults.map(result => {
             return (
-                <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 100, backgroundColor: '#FFFFFF'}} >
-                                
-                                <View style={{flex: 1, padding: 10, }}>
-                                    <Surface style={{width: '100%', height: '100%', elevation: 5, borderRadius: 15}}>
-                                        <Image style={{width: '100%', height: '100%', borderRadius: 15}} source={{uri: 'https://picsum.photos/700'}} />
-                                    </Surface>
-                                </View>
-
-                                <View style={{flex: 3, height: '100%', alignItems: 'center'}}>
-                                    <View style={{flex: 2, alignSelf: 'flex-end', padding: 5}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
-                                            5 Week Cardio
-                                        </Text>
-                                        <Caption numberOfLines={2} style={{lineHeight: 12, }}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                                        </Caption>
-                                    </View>
-
-
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                                            0 spots available
-                                        </Text>
-                                    </View>
-
-                                    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-evenly'}}>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 20, height: 20, elevation: 8, borderRadius: 5, backgroundColor: '#2196F3'}}>
-                                        <MaterialIcon name="fitness-center" size={10} color="#FFFFFF" />
-                                        </Surface>
-                                    </View>
-                                    </View>
-
-                                    
-                                </View>
-
-
-                              </Surface>
+             <ProgramSearchResultCard programData={result} />
             )
         })
     }
 
     mapFeaturedPrograms = () => {
-        return this.state.featuredPrograms.map(programs => {
-            return (
-                this.state.data.map(function(currentValue, index, arr) {
+        return this.state.featuredPrograms.map((program, index, arr) => {
                     return (
-                        <ProgramListComponent key={index} index={index} />
+                        <ProgramListComponent  programData={program} key={index} index={index} />
                     )
-                })
-            )
         })
     }
 
@@ -1210,10 +1181,15 @@ class Programs extends React.Component {
 
 <Header hasTabs style={{backgroundColor: '#F2F2F2', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
 <Appbar.BackAction onPress={() => this.props.navigation.goBack()} color="#212121" />
-                    <Text style={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20}}>
-                        Lupa Programs
-                    </Text>
+                    <Appbar.Content title="Lupa Programs" textStyle={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20}} />
                     <Appbar.Action icon="filter-list" onPress={this.showFilter} color="#212121" />
+                    {
+                        this.props.lupa_data.Users.currUserData.isTrainer ?
+                        <Appbar.Action icon={() => <FeatherIcon name="bar-chart" size={22}/>} onPress={this.openTrainerInsights} color="#212121" />
+                        :
+                        null
+                    }
+                   
 </Header>
         <Tabs tabContainerStyle={{backgroundColor: '#F2F2F2'}} renderTabBar={()=> <ScrollableTab ref={this.scrollableTab} tabsContainerStyle={{backgroundColor: '#F2F2F2'}} />}>
           <Tab heading="Featured" tabStyle={{backgroundColor: '#F2F2F2'}} activeTabStyle={{backgroundColor: '#F2F2F2'}}>
@@ -1221,29 +1197,9 @@ class Programs extends React.Component {
                 
 
                     <ScrollView contentContainerStyle={{backgroundColor: '#F2F2F2'}}>
-                    <View>
-                        <Text style={styles.headerText}>
-                        See Trainer Profiles
-                    </Text>
-                    <View style={{height: 'auto'}}>
-                        <ScrollView 
-                        horizontal 
-                        decelerationRate={0} 
-                        shouldRasterizeIOS={true} 
-                        snapToAlignment={'center'} 
-                        centerContent
-                      //  pagingEnabled={true}
-                        snapToInterval={Dimensions.get('window').width / 1.2}
-                        showsHorizontalScrollIndicator={false}>
-                           
-                        </ScrollView>
-                    </View>
-                        </View>
-
-
                         <View>
                         <Text style={styles.headerText}>
-                        Programs
+                        By Lupa Trainers
                     </Text>
                     <View style={{height: 'auto'}}>
                         <ScrollView 
@@ -1336,7 +1292,7 @@ class Programs extends React.Component {
                 inputStyle={{ borderColor: '#F2F2F2'}} 
                 placeholder="Search"
                 value={this.state.searchValue}
-                onChangeText={text => this.setState({ searchValue: text })}
+                onChangeText={text => this._performSearch(text)}
                 />
                             <ScrollView style={{backgroundColor: '#F2F2F2'}}>
                                 {
@@ -1390,6 +1346,8 @@ class Programs extends React.Component {
            <InviteWaitlistFriends following={this.props.lupa_data.Users.currUserData.following}  isVisible={this.state.showInviteModal} closeModalMethod={(list, action) => this.closeInviteModal(list, action)} />
             <CreateServiceDialog isVisible={this.state.showCreateServiceDialog} closeDialogMethod={this.closeCreateServiceDialog} />
             <ShareProgramModal isVisible={this.state.showShareProgramModal} following={this.props.lupa_data.Users.currUserData.following} currUserData={this.props.lupa_data.Users.currUserData} program={this.state.currProgramClicked} closeModalMethod={this.closeShareProgramModal} />
+           <TrainerInsights isVisible={this.state.trainerInsightsVisible} closeModalMethod={this.closeTrainerInsights} />
+           
             </View>
         )
     }

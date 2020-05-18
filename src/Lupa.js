@@ -260,7 +260,6 @@ goToIndex = (index) => {
 }
 
 setScreen = (screen) => {
-  alert(screen)
   this.setState({ currScreen: screen})
 }
 

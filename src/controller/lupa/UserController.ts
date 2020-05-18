@@ -770,10 +770,12 @@ export default class UserController {
                 if (err) throw reject(err);
                 let results = [];
 
-
                 for (let i = 0; i < hits.length; i++) {
                     currHit = hits[i];
-                    results.push(currHit);
+                    if (currHit.program_name != undefined || currHit.program_structure_uuid != undefined)
+                    {
+                        results.push(currHit);
+                    }
                 }
 
                 resolve(results);
@@ -844,7 +846,7 @@ export default class UserController {
     }
 
     getNearbyUsers = async (location) => {
-        return new Promise((resolve, reject) => {
+       /* return new Promise((resolve, reject) => {
             let nearbyUsers = new Array();
             usersIndex.search({
                 query: location.city,
@@ -880,19 +882,19 @@ export default class UserController {
                 }
                 resolve(nearbyUsers);
             })
-        })
+        })*/
 
     }
 
     getNearbyTrainers = async (location) => {
-        return new Promise((resolve, reject) => {
+      /*  return new Promise((resolve, reject) => {
             let nearbyTrainers = new Array();
             usersIndex.search({
                 query: location.city,
                 attributesToHighlight: ['location'],
             }, async (err, { hits }) => {
                 if (err) throw reject(err);
-alert(hits.length)
+
                 if (hits.length == 0) {
                     await USER_COLLECTION.where('isTrainer', '==', true).limit(3).get().then(result => {
                         let docs = result;
@@ -933,23 +935,13 @@ alert(hits.length)
                     }
                 }
 
-                /*
-                //parse all of ths hits for the city
-                for (var i = 0; i < hits.length; ++i) {
-                    let locationHighlightedResult = hits[i]._highlightResult;
-                    let compare = (locationHighlightedResult.location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
-                    if (compare) {
-                        await nearbyTrainers.push(hits[i]);
-                    }
-                }*/
-
                 await nearbyTrainers.filter(trainer => {
                     return trainer.user_uuid != this.getCurrentUserUUID();
                 })
 
                 resolve(nearbyTrainers);
             })
-        })
+        })*/
 
     }
 
@@ -1113,12 +1105,13 @@ alert(hits.length)
             read: false,
             type: 'RECEIVED_PROGRAMS',
             actions: ['Save', 'View', 'Delete'],
+            timestamp: new Date().getTime()
         }
 
         let userNotifications = [];
         for (let i = 0; i < userList.length; i++)
         {   
-            alert(userList[i])
+    
            await USER_COLLECTION.doc(userList[i]).get().then(snapshot => {
                 userNotifications = snapshot.data().notifications;
             })
@@ -1131,7 +1124,7 @@ alert(hits.length)
         }
 
     } catch(err) {
-        alert('aaaaaa')
+        
     }
         
     }
@@ -1292,6 +1285,39 @@ alert(hits.length)
           return Promise.resolve(featuredProfiles)
       }
 
+      purchaseProgram = async (currUserData, programData) => {
+        let updatedProgramSnapshot;
+
+          try {
+            console.log('aaa: ' + programData.program_structure_uuid)
+        //add the program to users list
+        await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
+
+        //add the user as one of the program participants
+        let updatedParticipants;
+        await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
+           updatedParticipants = snapshot.data().program_participants;
+        });
+
+        updatedParticipants.push(currUserData.user_uuid);
+
+        await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
+            program_participants: updatedParticipants,
+        });
+
+        //update the program sales data (LATER)
+
+        await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
+            updatedProgramSnapshot = snapshot.data();
+        })
+    }
+    catch(err) {
+   
+    }
+
+
+        return Promise.resolve(updatedProgramSnapshot);
+      }
 }
 
 //me

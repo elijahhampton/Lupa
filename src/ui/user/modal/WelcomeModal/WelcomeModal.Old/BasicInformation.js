@@ -75,7 +75,7 @@ class BasicInformation extends React.Component {
 
         } catch(error)
         {
-            alert(error);
+            
         }
     }
 

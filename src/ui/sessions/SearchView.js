@@ -15,6 +15,7 @@ import {
     InteractionManager,
     Image,
     Text,
+    Modal,
     Dimensions,
     SafeAreaView,
     Button as NativeButton,
@@ -25,6 +26,7 @@ import {
 
 import {
     Surface,
+    DataTable,
     Button,
     IconButton,
     FAB,
@@ -37,6 +39,8 @@ import {
 import {
     LineChart,
 } from 'react-native-chart-kit';
+
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import { getUniqueId, getManufacturer, getDeviceType, getDeviceId} from 'react-native-device-info';
 
@@ -97,7 +101,6 @@ class SearchView extends React.Component {
         }
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-        this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
 
         this.viewOneAnimatedVal = new Animated.Value(0);
         this.interpolatedViewHeightOne = this.viewOneAnimatedVal.interpolate({inputRange: [0, 1], outputRange: ['30%', '10%']})
@@ -532,7 +535,7 @@ class SearchView extends React.Component {
     this.state.viewOneFocused == true ?
     <>
     <Text style={styles.mainGraphicText}>
-               Book a Yoga Trainer
+             Explore Trainer Programs
             </Text>
             <Paragraph style={styles.subGraphicText}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -639,7 +642,6 @@ class SearchView extends React.Component {
             </Chip>
 
                 </Surface>
-               {/* <ProgramInformationPreview />  */}
             </SafeAreaView>
             </GestureRecognizer>
         );

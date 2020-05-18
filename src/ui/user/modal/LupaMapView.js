@@ -53,7 +53,7 @@ class LupaMapView extends React.Component {
             })
         } catch (err)
         {
-            alert(err);
+        
             results = [];
         }
 
