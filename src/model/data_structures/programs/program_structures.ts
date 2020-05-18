@@ -1,3 +1,5 @@
+import { LupaProgramInformationStructure } from "./common/types";
+
 export enum PROGRAM_SECTIONS {
     OVERVIEW="overview",
     WARM_UP="warmup",
@@ -8,7 +10,7 @@ export enum PROGRAM_SECTIONS {
     HOMEWORK="homework"
 }
 
-var lupa_program_information_structure = {
+var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_uuid: "",
     program_name: "",
     program_description: "",
@@ -40,6 +42,7 @@ var lupa_program_information_structure = {
     program_image: "",
     program_tags: [],
     program_owner: "",
+    program_participants: [],
 }
 
 export const getLupaProgramInformationStructure = (
@@ -57,6 +60,8 @@ export const getLupaProgramInformationStructure = (
     allowWaitlist=false, 
     program_image="",
     tags: [],
+    programOwner="",
+    program_participants=[],
     ) => {
         
     lupa_program_information_structure.program_structure_uuid = uuid;
@@ -81,6 +86,8 @@ export const getLupaProgramInformationStructure = (
 };
 lupa_program_information_structure.program_image = program_image;
 lupa_program_information_structure.program_tags = tags;
+lupa_program_information_structure.program_owner = programOwner;
+lupa_program_information_structure.program_participants = program_participants;
 
     return lupa_program_information_structure;
 }

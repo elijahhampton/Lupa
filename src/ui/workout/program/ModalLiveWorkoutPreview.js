@@ -33,7 +33,7 @@ const mapStateToProps = (state, action) => {
     }
 }
 
-class LiveWorkoutPreview extends React.Component {
+class ModalLiveWorkoutPreview extends React.Component {
     constructor(props) {
         super(props);
 
@@ -172,6 +172,7 @@ class LiveWorkoutPreview extends React.Component {
         const programOwnerData = this.props.programOwnerData;
         const programData = this.props.programData;
         return (
+            <Modal presentationStyle="fullScreen" visible={this.props.isVisible} animated={true} animationType="fade">
             <SafeAreaView  style={{flex: 1}}>
   
                  <LinearGradient
@@ -185,7 +186,7 @@ class LiveWorkoutPreview extends React.Component {
           }}
         />
                                       <Appbar.Header style={{backgroundColor: 'transparent', elevation: 0}}>
-                                      <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
+                                      <Appbar.BackAction onPress={() => this.props.closeModalMethod()} />
                 <Appbar.Content title="Live Workout" />
             
 </Appbar.Header>
@@ -275,15 +276,10 @@ class LiveWorkoutPreview extends React.Component {
                                 }
                             </ScrollView>
                             </View>
-                            <View style={{flex: 1, padding: 10, alignItems: 'center',  justifyContent: 'center', width: '100%'}}>
-                        
-                            <Text style={{color: 'white'}}>
-                                Slide Down to Begin
-                            </Text>
-                            <MaterialIcon name="expand-more" size={20} color="#FFFFFF" />
-                            </View>
+
                         </View>
             </SafeAreaView>
+            </Modal>
         )
     }
 }
@@ -295,4 +291,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(withNavigation(LiveWorkoutPreview));
+export default connect(mapStateToProps)(withNavigation(ModalLiveWorkoutPreview));

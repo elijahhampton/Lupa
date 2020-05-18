@@ -18,6 +18,7 @@ import {
     Chip,
     Switch,
     Caption,
+    Appbar,
 } from 'react-native-paper';
 
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -41,6 +42,8 @@ import StepIndicator from 'react-native-step-indicator';
 import MiniTimelineWorkout from '../component/MiniTimelineWorkout';
 import ProgramPreview from '../program/components/ProgramPreview';
 import LiveWorkoutPreview from '../program/LiveWorkoutPreview';
+import LupaCalendar from '../../user/dashboard/calendar/LupaCalendar';
+import LupaController from '../../../controller/lupa/LupaController';
 
 const data = [
     {
@@ -140,6 +143,8 @@ class LiveWorkout extends React.Component {
     constructor(props) {
         super(props);
 
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
         this.state = {
             programTitle: "",
             loadingNextWorkout: false,
@@ -169,6 +174,19 @@ class LiveWorkout extends React.Component {
     }
 
     async componentDidMount() {
+        if (this.props.navigation.state.params.programOwnerData == undefined)
+        {
+            let programOwnerDataIn;
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.navigation.state.params.programData.program_owner).then(userData => {
+                programOwnerDataIn = userData;
+            });
+
+            await this.setState({
+                programOwnerData: programOwnerDataIn
+            })
+
+        }
+
        await this.setupLiveWorkout()
     }
 
@@ -467,11 +485,12 @@ class LiveWorkout extends React.Component {
 
     render() {
         return (
+            <View style={{flex: 1}}>
                 <Swiper loop={false} scrollEnabled={true} showsVerticalScrollIndicator={false} showsButtons={false} showsPagination={false} horizontal={false} index={this.state.currSwiperIndex}>
                 {/*
                     View 1
                 */}
-                <LiveWorkoutPreview programData={this.state.programData} programOwnerData={this.state.programOwnerData} />
+                <LiveWorkoutPreview programData={this.state.programData} programOwnerData={this.state.programOwnerData} goBack={() => this.props.navigation.state.params.returnToProfile()} />
                     {/*
                         View 2
                     */}
@@ -563,6 +582,9 @@ class LiveWorkout extends React.Component {
 
                                         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                                                 <Surface style={{elevation: 15, width: 50, height: 50, borderRadius: 50}}>
+                                                    {
+                                                        
+                                                    }
                                                     <Image style={{width: 50, height: 50, borderRadius: 50}} source={{uri: this.props.lupa_data.Users.currUserData.photo_url}} />
                                                 </Surface>
                                         </View>
@@ -939,6 +961,7 @@ class LiveWorkout extends React.Component {
                                 </View>*/}
                     <LoadingNextWorkoutActivityIndicator isVisible={this.state.loadingNextWorkout} />
                 </Swiper>
+                </View>
         )
     }
 }

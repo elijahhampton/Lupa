@@ -25,4 +25,6 @@ export type LupaProgramInformationStructure = {
     program_workout_data: Object,
     program_image: String,
     program_tags: Array<String>,
+    program_owner: String,
+    program_participants: Array<String>,
 }

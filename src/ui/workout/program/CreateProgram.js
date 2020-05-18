@@ -109,7 +109,8 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_allow_waitlist = allowWaitlist;
         updatedProgramData.program_image = this.state.programImage
         updatedProgramData.program_tags = programTags;
-
+        updatedProgramData.program_participants = [this.props.lupa_data.Users.currUserData.user_uuid]
+        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
         await this.setState({
             programData: updatedProgramData
         })
@@ -129,7 +130,7 @@ class CreateProgram extends React.Component {
             const programPayload = await this.LUPA_CONTROLLER_INSTANCE.saveProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData);
             await this.props.addProgram(programPayload);
         } catch(err) {
-            alert(err)
+           
         }
 
         this.exit();

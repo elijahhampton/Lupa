@@ -66,7 +66,6 @@ function LupaPacksContent(props) {
             <ScrollView style={{padding: 10}}>
                 {
                     packsData.map(pack => {
-                        alert(pack)
                         return <PackContentDriverCard pack={pack} />
                     })
                 }

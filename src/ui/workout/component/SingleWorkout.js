@@ -81,11 +81,11 @@ class SingleWorkout extends React.Component {
 
     async componentWillUpdate(nextProps, nextState) {
         if (nextProps.warmUpListTopY != this.state.warmUpListTopY) {
-           // alert(this.state.primaryListTopY)
+        
           await this.setState({
               warmUpListTopY: nextProps.warmUpListTopY
           })
-        //  alert('props changed!')
+     
         }
 
         if (nextProps.primaryListTopY != this.state.primaryListTopY) {

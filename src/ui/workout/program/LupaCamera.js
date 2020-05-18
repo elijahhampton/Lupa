@@ -29,6 +29,8 @@ import { Video } from 'expo-av'
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
+import FeatherIcon from 'react-native-vector-icons/Feather'
+
 import LupaController from '../../../controller/lupa/LupaController';
 import { Constants } from 'react-native-unimodules';
 
@@ -61,16 +63,16 @@ function VideoPreview(props) {
                         
                     />
 
-<View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent', width: Dimensions.get('window').width, height: 'auto', justifyContent: 'space-evenly'}}>
+<View style={{padding: 15, flexDirection: 'row', alignItems: 'center', backgroundColor: 'black', width: Dimensions.get('window').width, height: 'auto', justifyContent: 'space-evenly'}}>
 
 <TouchableWithoutFeedback onPress={props.closeVideoPreview} style={{margin: 15}}>
-<Surface style={{backgroundColor: '#2196F3', width: 55, height: 55, borderRadius: 55, alignItems: 'center', justifyContent: 'center'}}>
+<Surface style={{elevation: 3, backgroundColor: '#2196F3', width: 55, height: 55, borderRadius: 55, alignItems: 'center', justifyContent: 'center'}}>
     <MaterialIcon name="cached" color="#FFFFFF" />
 </Surface>
 </TouchableWithoutFeedback>
 
 <TouchableWithoutFeedback onPress={saveVideo} style={{margin: 15}}>
-<Surface style={{backgroundColor: '#2196F3', width: 55, height: 55, borderRadius: 55, alignItems: 'center', justifyContent: 'center'}}>
+<Surface style={{elevation: 3, backgroundColor: '#2196F3', width: 55, height: 55, borderRadius: 55, alignItems: 'center', justifyContent: 'center'}}>
     <MaterialIcon name="done" color="#FFFFFF" />
 </Surface>
 </TouchableWithoutFeedback>
@@ -208,7 +210,17 @@ export default class CameraScreen extends React.Component {
       try {
         const promise = this.camera.recordAsync(this.state.recordOptions);
 
-        if (promise) {
+        this.setState({ isRecording: true });
+
+        if (promise)
+        {
+          const data = await promise;
+          await this.setState({
+            currVideo: data.uri
+        })
+        }
+
+       /* if (promise) {
           this.setState({ isRecording: true });
           const data = await promise;
 
@@ -217,8 +229,8 @@ export default class CameraScreen extends React.Component {
         })
           
           console.warn('takeVideo', data);
-         i
-        }
+         
+        }*/
       } catch (e) {
         console.error(e);
       }
@@ -354,17 +366,10 @@ export default class CameraScreen extends React.Component {
     const action = isRecording ? this.stopVideo : this.takeVideo;
     const button = isRecording ? this.renderStopRecBtn() : this.renderRecBtn();
     return (
-      <TouchableOpacity
-        style={[
-          styles.flipButton,
-          {
-            backgroundColor,
-          },
-        ]}
-        onPress={() => action()}
-      >
-        {button}
-      </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={action} style={{borderRadius: 60}}>
+        <View style={{alignSelf: 'center', width: 60, height: 60, borderRadius: 60, borderWidth: 3, borderColor: '#FFFFFF', padding: 20, backgroundColor: isRecording ? 'darkred' : 'transparent'}} />
+      </TouchableWithoutFeedback>
+    
     );
   };
 
@@ -391,14 +396,14 @@ export default class CameraScreen extends React.Component {
       left: this.state.autoFocusPoint.drawRectPosition.x - 32,
     };
     return (
-      <View style={{flex: 1}}>
-              <Surface style={{flex: 3, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, elevation: 10}}>
+      <SafeAreaView style={{flex: 1, backgroundColor: 'transparent'}}>
+              <Surface style={{flex: 1, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, elevation: 10}}>
               <RNCamera
         ref={ref => {
           this.camera = ref;
         }}
         style={{
-          flex: 1,
+          flex: 1, 
           justifyContent: 'space-between',
           borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
         }}
@@ -425,16 +430,6 @@ export default class CameraScreen extends React.Component {
         onTextRecognized={canDetectText ? this.textRecognized : null}
         onGoogleVisionBarcodesDetected={canDetectBarcode ? this.barcodeRecognized : null}
       >
-        {
-          this.state.isRecording ?
-          null
-          :
-          <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: 150, width: Dimensions.get('window').width}}>
-          <Text style={{fontSize: 25, fontFamily: 'ARSMaquettePro-Bold', textAlign: 'center', color: '#FFFFFF'}}>
-            Record your best two reps.  Make sure to include your full body.
-          </Text>
-        </View>
-        }
 
         <View style={StyleSheet.absoluteFill}>
           <View style={[styles.autoFocusBox, drawFocusRingPosition]} />
@@ -443,7 +438,7 @@ export default class CameraScreen extends React.Component {
           </TouchableWithoutFeedback>
         </View>
 
-        {
+        {/*
           this.state.isRecording == true ?
           null
           :
@@ -477,9 +472,10 @@ export default class CameraScreen extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
+        */
         }
 
-
+{/*
         <View style={{ bottom: 0 }}>
           <View
             style={{
@@ -499,12 +495,73 @@ export default class CameraScreen extends React.Component {
             />
           </View>
         </View>
+                      */}
+       {/* 
+        
         {!!canDetectFaces && this.renderFaces()}
         {!!canDetectFaces && this.renderLandmarks()}
         {!!canDetectText && this.renderTextBlocks()}
-        {!!canDetectBarcode && this.renderBarcodes()}
+        {!!canDetectBarcode && this.renderBarcodes()} 
+        */}
+
+        <View style={{width: Dimensions.get('window').width,
+         //   height: 200,
+            backgroundColor: 'transparent',   
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 10,}}>
+          <FeatherIcon name="x" size={25} color="#FFFFFF" onPress={this.props.closeModalMethod.bind(this)} />
+
+          <FeatherIcon name="zap" size={25} color="#FFFFFF" onPress={this.toggleFlash.bind(this)} />
+        </View>
+
+
+       <View
+          style={{
+            width: Dimensions.get('window').width,
+         //   height: 200,
+            backgroundColor: 'transparent',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            bottom: 0,
+            marginBottom: 5,
+          }}
+        >
+
+          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <MaterialIcon name="restore" size={30} color="white" onPress={this.toggleFacing.bind(this)} />
+          </View>
+
+          <View style={{flex: 2}}>
+          {this.renderRecording()}
+          </View>
+
+          <View style={{flexDirection: 'row',  alignItems: 'center', justifyContent: 'center', flex: 1}}>
+          <TouchableOpacity
+              style={[styles.flipButton, { alignSelf: 'flex-end' }]}
+              onPress={this.zoomIn.bind(this)}
+            >
+              <Text style={styles.flipText}> + </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.flipButton, { alignSelf: 'flex-end' }]}
+              onPress={this.zoomOut.bind(this)}
+            >
+              <Text style={styles.flipText}> - </Text>
+            </TouchableOpacity>
+          </View>
+          
+        </View>
       </RNCamera>
 </Surface>
+<View style={{flex: 0.15, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+  <Text style={{color: 'white', fontSize: 16, fontFamily: 'ARSMaquettePro-Medium'}}>
+      Perform your best two reps.  For the best capture include your entire body.
+  </Text>
+  </View>
+{/*
 <View style={{flex: 1}}>
   <View style={{flex: 1}}>
 
@@ -555,8 +612,8 @@ export default class CameraScreen extends React.Component {
           </View>
 <SafeAreaView />
 </View>
-
-      </View>
+          */}
+      </SafeAreaView>
     );
   }
 

@@ -35,11 +35,53 @@ const SESSIONS_DOCUMENT_CHANGE_TYPES = {
 
 /** Sends a notification to a user upon receiving a notification of some type. */
 exports.receivedNotification = functions.firestore
-.document('users/{userUUID')
+.document('users/{userUUID}')
 .onUpdate((change, context) => {
   const dataAfter = change.after.data();
   const dataBefore = change.before.data();
 
+  //Check to see if the size of the notification array has changed
+  if (dataBefore.notifications.length < dataAfter.notifications.length)
+  {
+    //If the size of the array has grown
+    let newNotification = dataAfter.notifications[dataAfter.notifications.length - 1];
+
+    //Find out which notification it is
+    if (newNotification.type == "RECEIVED_PROGRAMS")
+    {
+      const payload = {
+        data: {
+          title: "New Program Invite",
+          body: `${newNotification.fromData.display_name} has invited you to try a program. Navigate to your notifications for more details.`,
+          time: new Date().getTime().toString()
+        },
+        notification: {
+          title: "New Program Invite",
+          body: `${newNotification.fromData.display_name} has invited you to try a program. Navigate to your notifications for more details.`,
+          time: new Date().getTime().toString()
+        },
+      };
+
+      admin
+        .messaging()
+        .sendToDevice(
+            [dataBefore.tokens.fb_messaging_token], 
+            payload,
+            {
+                // Required for background/quit data-only messages on iOS
+                contentAvailable: true,
+                // Required for background/quit data-only messages on Android
+                priority: 'high',
+            }
+        )
+        .then(function(response) {
+          console.log("Notification sent successfully:", response);
+        })
+        .catch(function(error) {
+          console.log("Notification sent failed:", error);
+    })
+    }
+  }
   
 })
 

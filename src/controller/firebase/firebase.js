@@ -120,7 +120,7 @@ export async function sendNotificationToCurrentUsersDevice() {
           Authorization : `key=${FIREBASE_API_KEY}`
       },
     }).then(res => {
-      alert(res.data);
+      
     })
 }
 

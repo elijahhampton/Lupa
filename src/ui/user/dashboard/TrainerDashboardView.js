@@ -116,17 +116,17 @@ class TrainerDashboardView extends React.Component {
     }
 
     componentDidMount = async () => {
-        await this.fetchSessions();
-        await this.fetchPackEvents();
-        await this.fetchPackInvites();
+       // await this.fetchSessions();
+        //await this.fetchPackEvents();
+        //await this.fetchPackInvites();
     }
 
     _onRefresh = async () => {
-        await this.setState({ refreshing: true });
+       /* await this.setState({ refreshing: true });
         await this.fetchSessions()
         await this.fetchPackEvents()
         await this.fetchPackInvites()
-        await this.setState({ refreshing: false });
+        await this.setState({ refreshing: false });*/
     }
 
     /**
@@ -237,7 +237,6 @@ class TrainerDashboardView extends React.Component {
      */
     fetchPackEvents = async () => {
         let currentUserPackEventsData = [];
-        //alert(this.state.packEventsData.length)
         try {
             for (let i = 0; i < this.state.currUserPacksData.length; i++) {
                 console.log(this.state.currUserPacksData.length)

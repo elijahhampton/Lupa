@@ -90,7 +90,7 @@ class PackView extends React.Component {
      }
  
      async _prepareSearch() {
-         await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+        // await this.LUPA_CONTROLLER_INSTANCE.indexPacks();
      }
  
      _performSearch = async searchQuery => {
@@ -158,6 +158,7 @@ class PackView extends React.Component {
          this.setState({ refreshing: true })
          await this.refreshCurrentUserPacks();
          await this._handleOnRefreshPackData();
+         await this._prepareSearch();
          this.setState({ refreshing: false })
      }
 
@@ -308,7 +309,6 @@ class PackView extends React.Component {
                     this.state.searchValue != "" ?
                     <>
                                             <SearchBar placeholder="Search for packs and Lupa users"
-                        onResponderGrant={this._prepareSearch}
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
