@@ -5,6 +5,7 @@
 import UserController from './UserController';
 import PacksController from './PacksController';
 import SessionController from './SessionController';
+import ProgramController from './ProgramController';
 
 import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 
@@ -24,7 +25,7 @@ let USER_CONTROLLER_INSTANCE;
 let PACKS_CONTROLLER_INSTANCE;
 let SESSION_CONTROLLER_INSTANCE;
 let NOTIFICATIONS_CONTROLLER_INSTANCE;
-let WORKOUT_CONTROLLER_INSTANCE;
+let PROGRAMS_CONTROLLER_INSTANCE;
 
 
 export default class LupaController {
@@ -34,7 +35,7 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE = UserController.getInstance();
       PACKS_CONTROLLER_INSTANCE = PacksController.getInstance();
       SESSION_CONTROLLER_INSTANCE = SessionController.getInstance();
-      WORKOUT_CONTROLLER_INSTANCE = WorkoutController.getInstance();
+      PROGRAMS_CONTROLLER_INSTANCE = ProgramController.getInstance();
     }
 
     public static getInstance() {
@@ -599,26 +600,6 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE.updateCurrentUser('goals', goalUUID, 'remove');
     }
 
-    /** Workouts **/
-    getWorkoutDataFromUUID = async (uuid) => {
-      let workoutData;
-      await WORKOUT_CONTROLLER_INSTANCE.getWorkoutDataFromUUID(uuid).then(async result => {
-        workoutData = await result;
-      });
-
-      return Promise.resolve(workoutData);
-    }
-
-    getWorkoutsFromModalityByType = async (modality) => {
-      let workoutData;
-      await WORKOUT_CONTROLLER_INSTANCE.getWorkoutsFromModalityByType(modality).then(result => {
-        workoutData = result;
-      });
-
-
-      return Promise.resolve(workoutData);
-    }
-
     createNewProgram = async (uuid) => {
       let programStructurePayload;
       await USER_CONTROLLER_INSTANCE.createProgram(uuid).then(result => {
@@ -677,7 +658,7 @@ export default class LupaController {
 
     loadWorkouts = async () => {
       let workoutData;
-      await WORKOUT_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
+      await PROGRAMS_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
         workoutData = result;
       });
 

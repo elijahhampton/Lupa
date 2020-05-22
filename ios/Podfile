@@ -12,6 +12,7 @@ target 'Lupa' do
   pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
   pod 'Firebase/Core', '~> 6.13.0'
   pod 'Firebase/Auth', '~> 6.13.0'
+  pod 'Firebase/Messaging'
 
   # Stripe
   pod 'Stripe', '~> 14.0.1'
@@ -51,6 +52,7 @@ target 'Lupa' do
   pod 'DoubleConversion', :podspec => "#{rnPrefix}/third-party-podspecs/DoubleConversion.podspec"
   pod 'glog', :podspec => "#{rnPrefix}/third-party-podspecs/glog.podspec"
   pod 'Folly', :podspec => "#{rnPrefix}/third-party-podspecs/Folly.podspec"
+  pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
 
   # Other native modules
 

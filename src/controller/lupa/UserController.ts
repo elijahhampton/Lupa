@@ -2,7 +2,7 @@
  * 
  */
 
-import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH, LUPA_DB_FIREBASE, Fire, FirebaseStorageBucket } from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
 //const USER_PROGRAMS = LUPA_DB.collection('users/USER-UUID/programs'); For reference
@@ -24,12 +24,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
+import { EventEmitter } from 'events';
 
 export default class UserController {
     private static _instance: UserController;
     private fbStorage = new FirebaseStorageBucket();
 
     private constructor() {
+    
     }
 
     public static getInstance = () => {
@@ -162,6 +164,9 @@ export default class UserController {
                     break;
                 case 'sessions_completed':
                     retValue = snapshot.sessionsCompleted;
+                    break;
+                case 'bio':
+                    retValue = snapshot.bio;
                     break;
             }
         });
@@ -319,12 +324,9 @@ export default class UserController {
                 });
                 break;
             case UserCollectionFields.BIO:
-                currentUserDocument.set({
+                currentUserDocument.update({
                     bio: value,
-                },
-                    {
-                        merge: true,
-                    })
+                })
                 break;
             case UserCollectionFields.DISPLAY_NAME:
                 LUPA_AUTH.currentUser.updateProfile({
@@ -977,8 +979,36 @@ export default class UserController {
         return Promise.resolve(program_structure_payload);
     }
 
+    arrayRemove(arr, value) { 
+        return arr.filter(function(ele)
+        { return ele != value; 
+        });
+    }
+
+    /**
+     * Used for deleting programs that were in the process of creation
+     */
     deleteProgram = async (user_uuid, programUUID) => {
-       // await USER_COLLECTION.doc(user_uuid).collection("programs").doc(programUUID).delete();
+        let tempData;
+        let updatedProgramList;
+
+        try {
+                    //delete program from curr user's program list (DELETES ALL PROGRAMS? FIX!)
+        await USER_COLLECTION.doc(user_uuid).get().then(snapshot => {
+            tempData = snapshot.data();
+        })
+
+        updatedProgramList = this.arrayRemove(tempData.programs, programUUID);
+
+        await USER_COLLECTION.doc(user_uuid).update({
+            programs: updatedProgramList
+        })
+
+        //delete program from lupa programs
+        await PROGRAMS_COLLECTION.doc(programUUID).delete();
+    } catch(err) {
+        alert(err)
+    }
     }
 
     loadCurrentUserPrograms = async () => {
@@ -998,11 +1028,19 @@ export default class UserController {
                  await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
                      temp = snapshot.data();
                  })
-     
-                 await programsData.push(temp)
+
+                 if (temp.program_name == "" || temp.program_image == "" || temp == undefined)
+                 {
+                     
+                 }
+                 else
+                 {
+                    await programsData.push(temp)
+                 }
              }
 
         } catch(err) {
+            alert(err)
             programsData = [];
         }
 
@@ -1287,9 +1325,12 @@ export default class UserController {
 
       purchaseProgram = async (currUserData, programData) => {
         let updatedProgramSnapshot;
+        let GENERATED_CHAT_UUID, chats;
 
-          try {
-            console.log('aaa: ' + programData.program_structure_uuid)
+        const currUserUUID = await this.getCurrentUserUUID();
+        const programOwnerUUID = programData.program_owner;
+
+        try {
         //add the program to users list
         await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
 
@@ -1299,26 +1340,124 @@ export default class UserController {
            updatedParticipants = snapshot.data().program_participants;
         });
 
-        updatedParticipants.push(currUserData.user_uuid);
+        updatedParticipants.push(currUserUUID);
 
         await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
             program_participants: updatedParticipants,
         });
 
-        //update the program sales data (LATER)
-
-        await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
-            updatedProgramSnapshot = snapshot.data();
-        })
-    }
-    catch(err) {
-   
-    }
+        //setup trainer and user chat channel
+        if (currUserUUID.charAt(0) < programOwnerUUID.charAt(0)) {
+            GENERATED_CHAT_UUID = currUserUUID + programOwnerUUID;
+        }
+        else {
+            GENERATED_CHAT_UUID = programOwnerUUID + currUserUUID;
+        }
 
 
-        return Promise.resolve(updatedProgramSnapshot);
-      }
+        await USER_COLLECTION.doc(currUserUUID).get().then(result => {
+            chats = result.data().chats;
+        });
+
+        let otherUserDocData;
+        let otherUserDoc = USER_COLLECTION.doc(programOwnerUUID);
+
+        let chatID, chatExistUserOne = false;
+        await chats.forEach(element => {
+            if (element.user == programOwnerUUID) {
+                chatExistUserOne = true;
+                chatID = element.chatID;
+            }
+        });
+
+        if (!chatExistUserOne) {
+
+            //if already got it then return it
+            //if not then add it and return it
+            await this.updateCurrentUser('chats', GENERATED_CHAT_UUID, 'add', programOwnerUUID);
+
+            //Update other users chats
+            await USER_COLLECTION.doc(programOwnerUUID).get().then(snapshot => {
+                otherUserDocData = snapshot.data();
+            });
+
+            let otherUserChats = otherUserDocData.chats;
+
+            let chatExistUserTwo;
+            chatExistUserOne = false;
+
+            await otherUserChats.forEach(element => {
+                if (element.user == currUserUUID) {
+                    chatExistUserTwo = true;
+                    chatID = element.chatID;
+                }
+            });
+
+            //add to other user if they don't already have it
+            if (!chatExistUserTwo) {
+                let chatField = {
+                    user: currUserUUID,
+                    chatID: GENERATED_CHAT_UUID,
+                }
+                otherUserChats.push(chatField);
+
+                await otherUserDoc.update({
+                    chats: otherUserChats
+                })
+            }
+      
 }
+        } catch(err) {
+            console.log(err)
+        }   
+
+        /** **************/
+         
+
+        try {
+                     //init Fire
+        await Fire.shared.init(GENERATED_CHAT_UUID);
+
+        let currUserDisplayName = await this.getAttributeFromUUID(currUserUUID, 'display_name')
+        const message = {
+            _id: programOwnerUUID,
+            timestamp: new Date().getTime(),
+            text: `Hello ${currUserDisplayName}.  Thanks for buying my program - you can contact me here.`,
+            user: {
+                _id: programOwnerUUID,
+                name: await this.getAttributeFromUUID(programOwnerUUID, 'display_name'),
+                avatar: await this.getAttributeFromUUID(programOwnerUUID, 'photo_url')
+            }
+          }
+
+        await Fire.shared.append(message)
+
+
+        } catch(err) {
+            alert(err)
+        }
+
+
+
+
+
+
+
+
+
+         /************/
+
+                //update the program sales data (LATER)
+
+                await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
+                    updatedProgramSnapshot = snapshot.data();
+                })
+        
+        
+                return Promise.resolve(updatedProgramSnapshot);
+      }
+    
+    }
 
 //me
 /*

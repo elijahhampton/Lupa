@@ -48,7 +48,7 @@ import LupaController from '../../controller/lupa/LupaController';
 import CreateEvent from './modal/CreateEvent';
 
 import { withNavigation, NavigationActions } from 'react-navigation';
-import UserDisplayCard from './component/UserDisplayCard';
+import UserDisplayCard from '../user/component/UserDisplayCard';
 
 import { Badge } from 'react-native-elements';
 

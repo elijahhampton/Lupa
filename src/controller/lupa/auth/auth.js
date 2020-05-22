@@ -92,7 +92,26 @@ const INVALID_USERNAME_CHARACTERS = [
  * Note: On logout user = null
  */
 LUPA_AUTH.onAuthStateChanged(user => {
-    if (user) {console.log('loggin in')} else {console.log('loggin out')}
+    if (user) 
+    {
+        if (user.emailVerified == true)
+        {
+            //we do nothing if the user has already verified there email
+        }
+        else
+        {
+            //if not we need to send an email verification link
+            user.sendEmailVerification({
+                handleCodeInApp: true,
+                url: 'app/email-verification'
+            })
+        }
+        console.log('loggin in')
+    } 
+    else 
+    {
+        console.log('loggin out')
+    }
 })
 
 checkSignUpFields = (username, email, password, confirmedPassword, birthday, agreedToTerms) => {
@@ -311,10 +330,4 @@ export var isSignedIn = async () => {
     let result = false;
     await LUPA_AUTH.currentUser == null ? result = false : result = true
     return result;
-}
-
-export var sendVerificationEmail = () => {
-    LUPA_AUTH.sendVerificationEmail().then(result => {
-        
-    })
 }

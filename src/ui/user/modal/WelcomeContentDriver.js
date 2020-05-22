@@ -107,9 +107,9 @@ function BookATrainerContent(props) {
             </Text>
             <ScrollView horizontal contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}>
                 {
-                    trainerData.map(trainer => {
+                  /*  trainerData.map(trainer => {
                         return <TrainerContentDriverCard trainer={trainer} />
-                    })
+                    })*/
                 }
             </ScrollView>
             <Button mode="contained" color="#0D47A1" onPress={() => props.toggleContentMethod(false)}>

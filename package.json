@@ -3,7 +3,11 @@
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "jest --verbose --coverage",
+    "test:update": "jest --verbose --coverage --updateSnapshot",
+    "test:watch": "jest --verbose --watch",
+    "coverage": "jest --verbose --coverage && open ./coverage/lcov-report/index.html"
   },
   "dependencies": {
     "@babel/plugin-transform-react-jsx": "^7.9.4",
@@ -65,6 +69,7 @@
     "react-native-autocomplete-input": "^4.1.0",
     "react-native-camera": "^3.23.1",
     "react-native-chart-kit": "^3.9.0",
+    "react-native-contacts": "^5.2.0",
     "react-native-crypto": "^2.2.0",
     "react-native-device-info": "^5.5.6",
     "react-native-dotenv": "^0.2.0",
@@ -121,6 +126,7 @@
     "toggle-switch-react-native": "^2.1.0",
     "url": "^0.11.0",
     "uuid": "^7.0.1",
+    "uuidv4": "^6.0.8",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
@@ -133,7 +139,7 @@
     "@types/node": "^12.11.1",
     "babel-jest": "~24.9.0",
     "babel-preset-expo": "^8.0.0",
-    "jest": "~24.9.0",
+    "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.56.4",
     "react-test-renderer": "~16.9.0"
   },
@@ -141,6 +147,21 @@
   "rnpm": {
     "assets": [
       "./assets/fonts/"
+    ]
+  },
+  "jest": {
+    "preset": "react-native",
+    "cacheDirectory": "./cache",
+    "coveragePathIgnorePatterns": [
+      "./app/utils/vendor"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 80
+      }
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!react-native|react-clone-referenced-element|react-navigation)"
     ]
   }
 }

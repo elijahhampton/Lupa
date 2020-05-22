@@ -7,8 +7,6 @@
  */
 import React, { Component } from "react";
 
-import { connect } from 'react-redux';
-
 import {
   View,
   Text,
@@ -27,16 +25,15 @@ import {
   Button as ElementsButton 
 } from "react-native-elements";
 
-import LupaController from '../../../controller/lupa/LupaController';
-
+import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
-const {
-  loginUser,
-} = require('../../../controller/lupa/auth/auth');
+import LupaController from '../../../controller/lupa/LupaController';
+import { UserAuthenticationHandler } from "../../../controller/firebase/firebase";
+
 
 /**
- * 
+ * Maps the redux state to props.
  */
 mapStateToProps = (state, action) => {
   return {
@@ -45,7 +42,7 @@ mapStateToProps = (state, action) => {
 }
 
 /**
- * 
+ * Allows redux actions to be emitted through props.
  */
 mapDispatchToProps = dispatch => {
   return {
@@ -89,16 +86,17 @@ mapDispatchToProps = dispatch => {
 }
 
 /**
- * 
+ * The LoginView class contains the view the user sees upong logging on.
  */
 class LoginView extends Component {
   constructor(props) {
     super(props);
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    this.userAuthenticationHandler = new UserAuthenticationHandler();
 
     this.state = {
-      username: 'newaccount12@gmail.com',
+      username: 'ejh0017@gmail.com',
       password: 'Q9X638hs2Y78',
       secureTextEntry: true,
       showSnack: false,
@@ -109,57 +107,23 @@ class LoginView extends Component {
   }
 
   /**
-   * 
+   * DISPATCHES PAYLOAD INTO REDUX ONLOGIN CONTAINING USER INFORMATION AND LUPA DATA 
    */
   _updateUserInRedux = (userObject) => {
     this.props.updateUser(userObject);
   }
-
-  /**
-   * 
-   */
   _updatePacksInRedux = (packsData) => {
     this.props.updatePacks(packsData);
   }
-
-  /**
-   * 
-   */
-  _updateUserHealthDataInRedux = (healthData) => {
-    this.props.updateHealthData(healthData);
-  }
-
-  /**
-   * 
-   */
   _updateUserProgramsDataInRedux = (programsData) => {
     this.props.updateUserPrograms(programsData);
   }
-
-  /**
-   * 
-   */
-  _updateUserServicesInRedux = (servicesData) => {
-    this.props.updateUserServices(servicesData);
-  }
-
-  /**
-   * 
-   */
   _updateLupaWorkoutsDataInRedux = (lupaWorkoutsData) => {
     this.props.updateLupaWorkouts(lupaWorkoutsData);
   }
-
-  /**
-   * 
-   */
   _updateLupaAssessmentDataInRedux = (lupaAssessmentData) => {
     this.props.updateLupaAssessments(lupaAssessmentData);
   }
-
-  /**
-   * 
-   */
   _handleShowPassword = () => {
     this.setState({
       secureTextEntry: !this.state.secureTextEntry
@@ -167,7 +131,7 @@ class LoginView extends Component {
   }
 
   /**
-   * 
+   * Handles user authentication once the user presses the login button.
    */
   onLogin = async (e) => {
     e.preventDefault();
@@ -176,7 +140,7 @@ class LoginView extends Component {
     const attemptedPassword = this.state.password;
 
     let successfulLogin;
-    await loginUser(attemptedUsername, attemptedPassword).then(result => {
+    await this.userAuthenticationHandler.loginUser(attemptedUsername, attemptedPassword).then(result => {
       successfulLogin = result;
     })
 
@@ -190,28 +154,20 @@ class LoginView extends Component {
     }
   }
 
-  _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
-
-  _onDismissSnackBar = () => {
-    this.setState({ showSnack: false });
-  }
-
   /**
-   * Introduce the application
+   * Introduce the application by setting up redux, indexing the application, 
+   * and navigating the user into the application.
    */
   _introduceApp = async () => {
-    /*await this.props.navigation.navigate('App', {
-      _setupRedux: this._setupRedux.bind(this)
-    });*/
     await this._setupRedux();
     await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-   // await authStateOnline();
     this.props.navigation.navigate('App');
 
   }
 
   /**
-   * 
+   * Sets up redux by loading the current user's data, packs, and programs
+   * as well as Lupa application data (assessments, workouts);
    */
   _setupRedux = async () => {
     let currUserData, currUserPacks, currUserHealthData, currUserPrograms, currUserServices, lupaWorkouts;
@@ -223,16 +179,9 @@ class LoginView extends Component {
       currUserPacks = result;
     })
 
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
-      currUserHealthData = result;
-    });
 
     await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserServices().then(result => {
-      currUserServices = result;
     })
 
     await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
@@ -245,16 +194,27 @@ class LoginView extends Component {
 
     let userPayload = {
       userData: currUserData,
-      healthData: currUserHealthData,
+      healthData: {}
     }
 
 
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
-    await this._updateUserServicesInRedux(currUserServices);
     await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
     await this._updateLupaAssessmentDataInRedux(lupaAssessments);
+  }
+
+  /**
+   * Handle toggling the visibility of the snackbar.
+   */
+  _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
+
+  /**
+   * Emits a set state action when the snackbar is dismissed.
+   */
+  _onDismissSnackBar = () => {
+    this.setState({ showSnack: false });
   }
 
   render() {

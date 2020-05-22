@@ -45,6 +45,7 @@ class MessagesView extends React.Component {
             userMessageData: [],
             currMessagesIndex: undefined,
             inboxEmpty: true,
+            viewReady: false,
         }
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -82,28 +83,40 @@ class MessagesView extends React.Component {
             messages: [],
         })
         let privateChatUUID;
+
         try {
                     //check for shared chat uuid between users
         await this.LUPA_CONTROLLER_INSTANCE.getPrivateChatUUID(this.props.lupa_data.Users.currUserData.user_uuid, this.state.userMessageData[this.state.currMessagesIndex].user_uuid).then(result => {
             privateChatUUID = result;
         });
+
+        this.setState({
+            viewReady: true
+        })
         }
         catch(err)
         {
+            alert(err)
             await this.setState({
                 viewReady: false,
             })
         }
 
-         //init Fire
+        try {
+                     //init Fire
         await Fire.shared.init(privateChatUUID);
 
         await Fire.shared.on(message =>
           this.setState(previousState => ({
             messages: GiftedChat.append(previousState.messages, message),
-            viewReady: true,
+           // viewReady: true,
           }))
         );
+        } catch(err) {
+            this.setState({
+                viewReady: false
+            })
+        }
       }
 
       componentWillUnmount() {
@@ -152,7 +165,7 @@ class MessagesView extends React.Component {
                     }
                 }}>
                     <Appbar.BackAction onPress={() => this.props.navigation.goBack()} />
-                    <Appbar.Content title="Messages" titleStyle={{fontFamily: "Avenir-Roman"}} />
+                    <Appbar.Content title="Messages" titleStyle={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}} />
                     <Appbar.Action onPress={() => alert('ap')} icon="delete" disabled={!this.state.viewReady && this.state.currMessagesIndex == undefined} color={!this.state.viewReady ? "black" : "grey"} />
                     <Appbar.Action onPress={() => alert('message')} icon="send" disabled={this.state.viewReady} color={this.state.viewReady ? "black" : "grey"} />
 
@@ -162,15 +175,6 @@ class MessagesView extends React.Component {
 <ScrollView horizontal contentContainerStyle={{alignItems: "center", justifyContent: 'flex-end'}} shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
                 {this.renderAvatarList()}
 </ScrollView>
-<View style={{width: "100%", flexDirection: "row", alignItems: "center",justifyContent: "space-between", padding: 5}}>
-<Text style={{alignSelf: "flex-start", margin: 5, fontFamily: "avenir-roman"}}>
-    
-</Text>
-
-<Text style={{fontFamily: "avenir-roman"}}>
-    0 Unread
-</Text>
-</View>
 </View>
 <Divider />
 {
@@ -187,6 +191,11 @@ class MessagesView extends React.Component {
     alwaysShowSend={true}
 
     />
+    :
+    this.state.userMessageData.length >= 1 ?
+    <View style={{flex: 1, alignItems: "center", justifyContent: "center", padding: 20}}>
+    
+    </View>
     :
     <View style={{flex: 1, alignItems: "center", justifyContent: "center", padding: 20}}>
         <Text style={{fontSize: 25, fontFamily: "avenir-roman"}}>

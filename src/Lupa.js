@@ -24,24 +24,17 @@ import Dashboard from './ui/navigators/LupaDrawerNavigator';
 import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal';
 
 import LupaController from './controller/lupa/LupaController';
-import SearchNavigator from "./ui/navigators/SearchNavigator";
 import PackNavigator from './ui/navigators/PackNavigator'
 
 import {
   logoutUser
 } from './controller/lupa/auth/auth'
-
-import WorkoutViewNavigator from "./ui/navigators/WorkoutViewNavigator";
-
 import PushNotification from 'react-native-push-notification'
-
-import loadFonts from './ui/common/Font/index'
-
 import { connect } from 'react-redux';
-import RemotePushController from "./modules/push-notifications";
 import { generateMessagingToken } from "./controller/firebase/firebase";
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import LupaHomeNavigator from "./ui/navigators/LupaHomeNavigator";
 
 /**
  * 
@@ -289,55 +282,6 @@ searchNavigatorProps = {
   setCurrentScreen: screen => this.setScreen(screen)
 }
 
-showBottomNavigator = () => {
-  return LUPA_SCREENS.includes(this.state.currScreen) ?
-  null
-  :
-  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: 'white', width: Dimensions.get('window').width, height: '10%'}}>
-  <View style={{
-    width: 'auto', 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    backgroundColor: '#BDBDBD', 
-    padding: 5, 
-    borderRadius: 20}}>
-    <MaterialIcon name="dashboard" size={20} style={{margin: 3}} />
-    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-      Dashboard
-    </Text>
-  </View>
-
-  <View style={{
-    width: 'auto', 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    backgroundColor: '#BDBDBD', 
-    padding: 5, 
-    borderRadius: 20}}>
-    <MaterialIcon name="home" size={20} style={{margin: 3}} />
-    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-      Home
-    </Text>
-  </View>
-
-  <View style={{
-    width: 'auto', 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    backgroundColor: '#BDBDBD', 
-    padding: 5, 
-    borderRadius: 20}}>
-    <MaterialIcon name="people" size={20} style={{margin: 3}} />
-    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-      Community
-    </Text>
-  </View>
-</View>
-}
-
 
   render() {
     return (
@@ -352,7 +296,7 @@ showBottomNavigator = () => {
           onIndexChanged={index => console.log('Swiper index changed to: ', index)}
           >
         <Dashboard screenProps={this.dashboardNavigatorProps} />
-        <SearchNavigator screenProps={this.searchNavigatorProps}/>
+        <LupaHomeNavigator screenProps={this.searchNavigatorProps}/>
         <PackNavigator screenProps={this.packNavigatorProps}/>
       </Swiper>
       <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/>

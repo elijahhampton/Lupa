@@ -32,6 +32,7 @@ import {
     Button,
     Caption,
     Avatar,
+    Paragraph,
     Divider,
     Portal,
     FAB,
@@ -78,7 +79,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { Pagination } from 'react-native-snap-carousel';
 import { Constants } from 'react-native-unimodules';
-import ProgramProfileComponent from '../../workout/program/components/ProgramProfileComponent';
+import ProgramProfileComponent from '../../workout/program/createprogram/component/ProgramProfileComponent';
 
 let chosenHeaderImage;
 let chosenProfileImage;
@@ -599,6 +600,26 @@ class ModalProfileView extends React.Component {
         return <FeatherIcon name="plus-circle" size={20} onPress={() => this._showActionSheet()} />
     }
 
+    renderEditBioButton = () => {
+        if (this.state.userData)
+        {
+            if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
+            {
+                return (
+                    <TouchableHighlight style={{width: 'auto', borderRadius: 8}} onPress={ () => console.log()}>
+                                <View style={{width: '100%'}}>
+                            <View style={{backgroundColor: '#e3e3e3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 140, height: 30}}>
+                                <Text>
+                                    Edit Bio
+                                </Text>
+                            </View>
+                        </View>
+                    </TouchableHighlight>
+                )
+            }
+        }
+    }
+
     renderInteractions = () => {
         return this.props.lupa_data.Users.currUserData.user_uuid == this.state.userUUID ?
             null
@@ -1091,46 +1112,74 @@ thin={true}
        
     }
 
+    renderFollowButton = () => {
+        if (this.state.userData)
+        {
+            if (this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid)
+            {
+                return (
+                    <View style={{width: '100%'}}>
+                        {
+                                            this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
+                                            <TouchableHighlight style={{borderRadius: 8}}>
+                                                                    <View style={{backgroundColor: '#2196F3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: 110, height: 30}}>
+                        <Text>
+                            Unfollow
+                        </Text>
+                    </View>
+                                            </TouchableHighlight>
+                                            :
+                                            <TouchableHighlight>
+                                            <View style={{backgroundColor: '#2196F3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+<Text>
+    Follow
+</Text>
+</View>
+                    
+                    </TouchableHighlight>
+                    }        
+                    </View>    
+                )
+            }
+        }
+    }
+
+
     render() {
         return (
             <Modal presentationStyle="fullScreen" style={styles.container} visible={this.props.isVisible} animated={true} animationType="slide">
-                <ScrollView contentContainerStyle={{marginTop: Constants.statusBarHeight}}>
-                <NativeButton style={{alignSelf: 'center'}} title="Done" onPress={this.props.closeModalMethod}/>
+                <SafeAreaView style={{flex: 1}}>
+                <ScrollView >
                 <Appbar.Header style={{ backgroundColor: "transparent", margin: 10 }}>
-
+                    <Appbar.BackAction onPress={this.props.closeModalMethod} />
                     <Appbar.Content title={this.state.userData.username} />
                 </Appbar.Header>
 
-                <ScrollView contentContainerStyle={{ flexGrow: 2, flexDirection: 'column', justifyContent: 'space-between' }} showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}>
+
+                <ScrollView 
+                contentContainerStyle={{ flexGrow: 1 }} 
+                showsVerticalScrollIndicator={false} 
+                shouldRasterizeIOS={true} 
+                refreshControl={<RefreshControl refreshing={this.state.refreshing} 
+                onRefresh={this.handleOnRefresh} />}>
+                    {
+                        this.state.userData.isTrainer == true ?
+                                        <View style={{alignSelf: 'center', marginBottom: 30, alignItems: 'center' }}>
+                                        <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Bold'}}> National Academy of Sports Medicine </Text>
+                                        <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Regular'}}> Lupa Tier 1 </Text>
+                                    </View>
+                                    :
+                                    null
+                    }
+                    
                     <View style={styles.user}>
                         <View style={styles.userInfoContainer}>
-                            <View style={[{width: '70%'}, styles.userInfo]}>
-                                <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
-                                    {this.state.userData.display_name}
-                                </Text>
-                                {
-                                    this.getLocation()
-                                }
-                                {
-                                    true && this.state.userData.isTrainer ? <Text style={{ fontSize: 12, fontWeight: "500", color: "grey", padding: 2 }}>
-                                        Lupa Trainer
-                            </Text> : null
-                                }
-                            </View>
-                            <View style={[{width: '30%'}, styles.alignCenterColumn]}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                            <View style={{flex: 2, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start'}}>
                                 {this.getUserAvatar()}
-                            </View>
-                        </View>
-
-                        <View style={{alignSelf: 'center', margin: 0, padding: 5, width: '85%', alignItems: 'center', justifyContent: 'center'}}>
-                        {
-                                         this.mapBio()
-                                    }
-                        </View>
-
-                        <View style={styles.userAttributesContainer}>
-                            <TouchableOpacity onPress={() => this._navigateToFollowers()}>
-                                <View style={styles.alignCenterColumn}>
+                                <View style={styles.userAttributesContainer}>
+                            <TouchableOpacity style={{margin: 3, }} onPress={() => this._navigateToFollowers()}>
+                                <View style={{alignItems: 'center'}}>
                                     <Text>
                                         {this.getFollowerLength()}
                                     </Text>
@@ -1140,8 +1189,8 @@ thin={true}
                                 </View>
 
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this._navigateToFollowers()}>
-                                <View style={styles.alignCenterColumn}>
+                            <TouchableOpacity style={{margin: 3, }} onPress={() => this._navigateToFollowers()}>
+                                <View style={{alignItems: 'center'}}>
                                     <Text>
                                         {this.getFollowingLength()}
                                     </Text>
@@ -1150,12 +1199,62 @@ thin={true}
                                 </Text>
                                 </View>
                             </TouchableOpacity>
+                        </View>
+                        {
+                            this.renderFollowButton()
+                        }
+                            </View>
+                            
+                            <View style={{flex: 3, alignItems: 'flex-start'}}>
+                                <View style={{flex: 1, justifyContent: 'flex-start'}}>
+                                <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
+                                    {this.state.userData.display_name}
+                                </Text>
+                                {
+                                    this.getLocation()
+                                }
+                                </View>
+                                <View style={{alignItems: 'flex-start', width: '100%'}}>
+                                                                            <Paragraph style={{paddingVertical: 10, fontSize: 12}}>
+                         But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder.
+                                </Paragraph>
+                                </View>
 
+                                {
+                                    this.renderEditBioButton()
+                                }
+                            </View>
+                            </View>
+                            
+                            {
+                                this.state.userData.isTrainer == true ?
 
+                            <View style={{width: '100%', alignSelf: 'center', padding: 10}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <Text style={{color: 'rgb(99, 99, 102)', fontFamily: 'ARSMaquettePro-Medium', padding: 10, alignSelf: 'center'}}>
+                                    Program Reviews
+                                </Text>
+
+                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                    <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Regular'}}>
+                                        See all
+                                    </Text>
+                                    <MaterialIcons name="arrow-forward" size={15} color="#212121" />
+                                </View>
+                                </View>
+                                <ScrollView horizontal contentContainerStyle={{padding: 10}} >
+                                    <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgb(199, 199, 204)', borderRadius: 12, width: 150, height: 45}}>
+                                        <Text style={{fontSize: 10}}>
+                                            This user has no reviews.
+                                        </Text>
+                                    </View>
+                                </ScrollView>
+                            </View>
+                            :
+                            null
+                            }
 
                         </View>
-
-                        <Timecards userUUID={this._getId()} />
 
                         {
                             this.renderInteractions()
@@ -1182,6 +1281,7 @@ thin={true}
                     </View>
 
                     {
+                        /*
                         this.state.userData.isTrainer ?
                         <View style={styles.myPacks}>
                         <View style={{margin: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -1200,33 +1300,19 @@ thin={true}
 
                         :
                         null
+                        */
                     }
 
 
                     </View>
                         
                         <SafeAreaView />
-
-                    {
-                        this.state.userData.isTrainer == true ?
-                            <View style={styles.recommendedWorkouts}>
-                                <View style={styles.recommendedWorkoutsHeader}>
-                                    <Title>
-                                        Certification
-                                            </Title>
-                                </View>
-                                <Caption style={{ flexWrap: 'wrap' }}>
-                                    This user is a certified trainer under the {this.state.userData.certification}
-                                </Caption>
-                            </View>
-                            :
-                            null
-                    }
                 </ScrollView>
                 
                 <InviteToPackDialog userToInvite={this._getId()} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
                 <UpdateInterestDialog userToUpdate={this._getId()} isOpen={this.state.fitnessInterestDialogOpen} closeModalMethod={this.closeFitnessInterestDialog}/>
             </ScrollView>
+            </SafeAreaView>
             </Modal>
         );
     }
@@ -1297,7 +1383,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
     userAttributesContainer: {
-        flexDirection: "row", alignItems: "center", justifyContent: "space-evenly", margin: 20
+        flexDirection: "row", alignItems: "center", justifyContent: "space-between", margin: 3, 
     },
     userAttributeText: {
         fontWeight: "500",

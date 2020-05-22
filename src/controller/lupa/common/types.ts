@@ -71,40 +71,40 @@ export type LupaTrainerService = {
 
 /* LupaUserDataStructure */
 export type LupaUserStructure = {
-    user_uuid: "",
-    display_name: "",
+    user_uuid: String,
+    display_name: String,
     username: String,
     age: any,
-    email: "",
+    email: String,
     email_verified: false,
-    mobile: "",
-    gender: "",
-    location: {
-        city: '',
-        state: '',
-        country: '',
-        longitude: '',
-        latitude: '',
-    }
-    isTrainer: false,
-    packs: [],
-    photo_url: "",
-    time_created: "",
-    preferred_workout_times: {
-        Monday: [],
-        Tuesday: [],
-        Wednesday: [],
-        Thursday: [],
-        Friday: [],
-        Saturday: [],
-        Sunday: [],
+    mobile: String,
+    gender: String,
+    location : {
+        city: String,
+        state: String,
+        country: String,
+        longitude: String,
+        latitude: String,
     },
-    interest: [],
-    rating: 0,
-    experience: {},
-    followers: [],
-    following: [],
-    sessionsCompleted: 0,
+    isTrainer: Boolean,
+    packs: Array<LupaPackStructure>,
+    photo_url: String,
+    time_created: Date,
+    preferred_workout_times: {
+        Monday: Array<any>,
+        Tuesday: Array<any>,
+        Wednesday: Array<any>,
+        Thursday: Array<any>,
+        Friday: Array<any>,
+        Saturday: Array<any>,
+        Sunday: Array<any>,
+    },
+    interest: Array<String>,
+    rating: Number,
+    experience: Object,
+    followers: Array<String>,
+    following: Array<String>,
+    sessionsCompleted: Number,
     bio: String,
     recommended_workouts: Array<String>,
     certification: String,
@@ -117,7 +117,7 @@ export type LupaUserStructure = {
     waitlistedPrograms: Array<String>,
     notifications: Array<Object>,
     programs: Array<String>
-
+    services: Array<String>
 };
 
 export type LupaAssessmentStructure = {

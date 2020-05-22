@@ -36,8 +36,8 @@ import { withNavigation, NavigationActions } from 'react-navigation';
 import FeatherIcon from "react-native-vector-icons/Feather"
 
 import PackSearchResultCard from './component/PackSearchResultCard';
-import UserSearchResultCard from '../sessions/component/UserSearchResultCard';
-import TrainerSearchResultCard from '../sessions/component/TrainerSearchResultCard';
+import UserSearchResultCard from '../user/component/UserSearchResultCard';
+import TrainerSearchResultCard from '../user/trainer/component/TrainerSearchResultCard';
 
 import DefaultPack, { SmallPackCard } from './component/ExploreCards/PackExploreCard';
 import CreatePack from './modal/CreatePack';
@@ -302,7 +302,7 @@ class PackView extends React.Component {
                 }}>
                     <Appbar.Action icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#FFFFFF" />
 
-                    <Appbar.Content title="Community" titleStyle={{fontFamily: 'ars-maquette-pro-bold',fontSize: 25, fontWeight: "600", color: "#212121"}} />
+                    <Appbar.Content title="Community" titleStyle={{fontFamily: 'ARSMaquettePro-Black',fontSize: 20, fontWeight: "600", color: "#212121"}} />
                 </Appbar.Header>
 
                 {
@@ -393,7 +393,7 @@ class PackView extends React.Component {
                     </View>
 
                 </View>
-
+{/*
                 <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerText}>
@@ -408,6 +408,7 @@ class PackView extends React.Component {
                         </ScrollView>
                     </View>
                 </View>
+                        */}
                 </ScrollView>
                 </>
                 }

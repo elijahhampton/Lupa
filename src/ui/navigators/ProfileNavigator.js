@@ -17,6 +17,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import SettingsModal from '../user/profile/component/SettingsModal';
 import LiveWorkout from '../workout/modal/LiveWorkout';
+import Programs from '../workout/program/Programs';
 /*
 const Stack = createStackNavigator();
 
@@ -128,6 +129,14 @@ const ProfileNavigator = createStackNavigator(
         screen: (props) => <LiveWorkout {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
         navigationOptions:   ({navigation}) => ({
             title: "LiveWorkout",
+            header: null,
+            gesturesEnabled: false,
+        })
+      },
+      Programs: {
+        screen: (props) => <Programs {...props} enableSwipe={props.screenProps.enableSwipe} disableSwipe={props.screenProps.disableSwipe} />,
+        navigationOptions:   ({navigation}) => ({
+            title: "Programs",
             header: null,
             gesturesEnabled: false,
         })

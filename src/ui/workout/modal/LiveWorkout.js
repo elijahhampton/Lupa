@@ -40,7 +40,7 @@ import Swiper from 'react-native-swiper';
 import StepIndicator from 'react-native-step-indicator';
 
 import MiniTimelineWorkout from '../component/MiniTimelineWorkout';
-import ProgramPreview from '../program/components/ProgramPreview';
+import ProgramPreview from '../program/createprogram/component/ProgramPreview';
 import LiveWorkoutPreview from '../program/LiveWorkoutPreview';
 import LupaCalendar from '../../user/dashboard/calendar/LupaCalendar';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -188,6 +188,13 @@ class LiveWorkout extends React.Component {
         }
 
        await this.setupLiveWorkout()
+    }
+
+    componentWillUnmount = () => {
+        if (this.props.navigation.state.params.setPageIsNotPrograms)
+        {
+            this.props.navigation.state.params.setPageIsNotPrograms();
+        }
     }
 
     setupLiveWorkout = async () => {
@@ -436,12 +443,10 @@ class LiveWorkout extends React.Component {
                     borderTopRightRadius: 30, 
                     borderBottomRightRadius: 30,
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
                     }}
                     >
-                        {
-                            this.getVideoIcon()
-                        }
+                        
 
                     </Video>
 
@@ -462,7 +467,7 @@ class LiveWorkout extends React.Component {
         return this.state.playVideo == true ?
                             null
                             :
-                            <FeatherIcon style={{position: 'absolute', top: 150, left: 75}} color="#FFFFFF" name="play-circle" size={65} onPress={() => this.setState({ playVideo: true })}/>
+                            <FeatherIcon style={{alignSelf: 'center'}} color="#FFFFFF" name="play-circle" size={65} onPress={() => this.setState({ playVideo: true })}/>
     }
 
     goToPreview = () => {
@@ -497,11 +502,12 @@ class LiveWorkout extends React.Component {
                     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
 
                         <View style={{flex: 1, flexDirection: 'row'}}>
-                            <Surface style={{elevation: 15, flex: 1, borderTopRightRadius: 30, borderBottomRightRadius: 30, backgroundColor: '#212121'}}>
+                            <Surface style={{alignItems: 'center', justifyContent: 'center', elevation: 15, flex: 1, borderTopRightRadius: 30, borderBottomRightRadius: 30, backgroundColor: '#212121'}}>
                                 {
                                     this.getWorkoutMedia()
                                 }
                                 {
+
                             this.getVideoIcon()
                         }
 
