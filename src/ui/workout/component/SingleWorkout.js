@@ -119,10 +119,6 @@ class SingleWorkout extends React.Component {
           }
     }
 
-      shouldComponentUpdate(nextProps, nextState) {
-         return true;
-      }
-
     componentWillMount() {
         this._val = { x:0, y:0 }
         this.state.pan.addListener((value) => this._val = value);
@@ -252,6 +248,7 @@ class SingleWorkout extends React.Component {
             this.props.onPress(this.state.workoutData);
         }
     }
+
 handleOnLongPress = () => {
         this.setState({
             workoutPreviewIsVisible: true,

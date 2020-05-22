@@ -110,7 +110,7 @@ export default class TrainerInformation extends React.Component {
 
     render() {
         return (
-            <View style={styles.root}>
+            <SafeAreaView style={styles.root}>
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <Text style={styles.instructionalText}>
                     Trainers registered on Lupa have access to exclusive tools such as building client list, creating workout programs, and engaging in research opportunies sponsored by Lupa.  
@@ -146,7 +146,7 @@ export default class TrainerInformation extends React.Component {
                         }
                     </View>
                     <VerificationModal isVisible={this.state.verificationSent} closeModalMethod={this.closeVerificationCompleteModal} />
-                </View>
+                </SafeAreaView>
 
         )
     }
@@ -155,12 +155,16 @@ export default class TrainerInformation extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        padding: 10
+
     },
     instructionalText: {
+        height: 'auto',
         flexShrink: 1,
         fontSize: 15,
+        padding: 10,
+        marginTop: 25,
         fontFamily: "avenir-roman",
+        flex: 1,
     },
     verificationModal: {
         width: '50%',

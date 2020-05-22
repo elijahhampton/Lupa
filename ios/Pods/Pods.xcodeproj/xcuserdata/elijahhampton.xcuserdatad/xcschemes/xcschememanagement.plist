@@ -574,6 +574,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>react-native-contacts.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>react-native-fbsdk.xcscheme</key>
 		<dict>
 			<key>isShown</key>

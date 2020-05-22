@@ -25,7 +25,7 @@ import { Constants } from 'react-native-unimodules';
 import LupaCalendar from '../../user/dashboard/calendar/LupaCalendar';
 import LupaController from '../../../controller/lupa/LupaController';
 import LiveWorkoutPreview from './LiveWorkoutPreview';
-import ModalLiveWorkoutPreview from './ModalLiveWorkoutPreview';
+import ModalLiveWorkoutPreview from './modal/ModalLiveWorkoutPreview';
 import ModalProfileView from '../../user/profile/ModalProfileView';
 
 import { connect } from 'react-redux';
@@ -99,6 +99,29 @@ class ProgramInformationPreview extends React.Component {
     this.props.closeModalMethod()
  }
 
+ getProgramTags() {
+     try {
+        program.program_tags.map((tag, index, arr) => {
+            if (index == arr.length - 1)
+            {
+                return (
+                    <Caption>
+                    {tag}
+                </Caption>
+                )
+            }
+            return (
+                <Caption>
+                    {tag},
+                </Caption>
+                
+            )
+        })
+     } catch(err) {
+
+     }
+ }
+
  render() {
      const program = this.props.programData;
      return (
@@ -129,22 +152,7 @@ class ProgramInformationPreview extends React.Component {
                 </Paragraph>
                 <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap'}}>
                     {
-                        program.program_tags.map((tag, index, arr) => {
-                            if (index == arr.length - 1)
-                            {
-                                return (
-                                    <Caption>
-                                    {tag}
-                                </Caption>
-                                )
-                            }
-                            return (
-                                <Caption>
-                                    {tag},
-                                </Caption>
-                                
-                            )
-                        })
+                        this.getProgramTags()
                     }
                 </View>
                 </View>

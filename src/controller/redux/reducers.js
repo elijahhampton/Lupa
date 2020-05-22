@@ -20,6 +20,9 @@ handleUserAttributeUpdate = (state, payload) => {
     case 'location':
       updatedState.location = payload.value;
       break;
+    case 'bio':
+      updatedState.bio = payload.value;
+      break;
     default:
   }
 

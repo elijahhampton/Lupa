@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
     Modal,
@@ -6,7 +6,8 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
-    ScrollView
+    ScrollView,
+    Dimensions
 } from 'react-native';
 
 import {
@@ -20,13 +21,18 @@ import {
 import {
     Button,
     IconButton,
+    Title,
+    TextInput,
+    Caption,
     Divider,
     List,
-    Title,
     Switch,
+    Appbar,
 } from 'react-native-paper';
 
 import SafeAreaView from 'react-native-safe-area-view';
+
+import { useDispatch } from 'react-redux';
 
 
 import { withNavigation, NavigationActions, StackActions } from 'react-navigation';
@@ -34,8 +40,85 @@ import { withNavigation, NavigationActions, StackActions } from 'react-navigatio
 import { logoutUser } from '../../../../controller/lupa/auth/auth';
 
 import Color from '../../../common/Color'
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
+import { Constants } from 'react-native-unimodules';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
+
+function EditBioModal(props) {
+    //lupa controller instance
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    //redux dispatch hook
+    const dispatch = useDispatch();
+
+    //user bio from useSelector redux hook
+    const currUserBio = useSelector(state => {
+        return state.Users.currUserData.bio
+    })
+
+    //bio and setbio function from useState
+    let [bioText, setBioText] = useState('');
+
+    //use effect hook
+    useEffect(() => {
+        setBioText(currUserBio)
+    }, [])
+
+    /**
+     * 
+     */
+    handleCloseModal = async () => {
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('bio', bioText, "");
+
+        const PAYLOAD = getUpdateCurrentUserAttributeActionPayload('bio', bioText)
+
+        await dispatch({ type: 'UPDATE_CURRENT_USER_ATTRIBUTE', payload: PAYLOAD });
+
+        props.closeModalMethod();
+    }
+
+
+    return (
+    <Modal presentationStyle="fullScreen" visible={props.isVisible} style={{backgroundColor: 'white'}}>
+       <SafeAreaView style={{flex: 1}}>
+        <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center'}}>
+            <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
+            <Appbar.Content title="Biography" titleStyle={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}/>
+            <Button theme={{colors: {
+                primary: 'rgb(33,150,243)'
+            }}}
+            onPress={() => handleCloseModal()}>
+                <Text>
+                    Save
+                </Text>
+            </Button>
+        </Appbar.Header>
+       <View style={{padding: 10}}>
+       <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 17}}>
+            Write a biography
+        </Text>
+        <Caption>
+           Tell users something about yourself.  Why did you join Lupa?  What are you hoping to accomplish on your fitness journey?  What are your fitness interest? Goals?
+        </Caption>
+       </View>
+
+       <Divider style={{marginVertical: 10}} />
+
+        <View style={{flex: 1}}>
+        <TextInput maxLength={180} value={bioText} onChangeText={text => setBioText(text)} multiline placeholder="Edit your biography" style={{width: Dimensions.get('window').width - 20, height: '30%', alignSelf: 'center'}} mode="outlined" theme={{
+            colors: {
+                primary: 'rgb(33,150,243)'
+            }
+        }}>
+
+</TextInput>
+        </View>
+        </SafeAreaView>
+    </Modal>
+    )
+}
+
 
 accountList = [
     {
@@ -157,7 +240,7 @@ class SettingsModal extends React.Component {
             showChangeAccountPropertyModal: false,
             property: '',
             reload: false,
-            paymentModalIsOpen: true
+            editBioVisible: false,
         }
     }
 
@@ -281,9 +364,9 @@ class SettingsModal extends React.Component {
                         <Body />
 
                         <Right>
-                            <Title style={styles.pageTitle}>
+                            <Text style={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}>
                                 Settings
-                            </Title>
+                            </Text>
                         </Right>
                     </Header>
                     <SafeAreaView style={{flex: 1}}>
@@ -293,9 +376,16 @@ class SettingsModal extends React.Component {
                         {
                             accountList.map(item => {
                                 return (
-                                    <List.Item onPress={() => this.handleOpenChangePropertyModal(item.property)} style={styles.listItem} title={item.title} description={this.getAccountListDescription(item.property)} descriptionEllipsizeMode="tail"/>
+                                    <List.Item titleStyle={styles.titleStyle} onPress={() => this.handleOpenChangePropertyModal(item.property)} style={styles.listItem} title={item.title} description={this.getAccountListDescription(item.property)} descriptionEllipsizeMode="tail"/>
                                 )
                             })
+                        }
+                        </List.Section>
+
+                        <List.Section>
+                        <List.Subheader style={styles.listSubheader}>Personal</List.Subheader>
+                        {
+                             <List.Item titleStyle={styles.titleStyle} onPress={() => this.setState({ editBioVisible: true })} style={[styles.listItem, {height: 'auto'}]} title={'Biography'} description='Edit your bio' descriptionEllipsizeMode="tail"/>
                         }
                         </List.Section>
 
@@ -304,7 +394,7 @@ class SettingsModal extends React.Component {
                         {
                             notificationsList.map((item, index) => {
                                return (
-                                <List.Item style={styles.listItem} key={item.key} title={item.title} right={() => this.renderNotificationSectionSwitches(item.key)}/>
+                                <List.Item titleStyle={styles.titleStyle} style={styles.listItem} key={item.key} title={item.title} right={() => this.renderNotificationSectionSwitches(item.key)}/>
                                )
                             })
                         }
@@ -313,7 +403,7 @@ class SettingsModal extends React.Component {
                         <List.Section style={styles.listSection}>
                         <List.Subheader style={styles.listSubheader}>Lupa Trainer</List.Subheader>
                         {
-                                     <List.Item style={styles.listItem} title={"Certification"} description={this.state.userData.certification}/>
+                                     <List.Item titleStyle={styles.titleStyle} style={styles.listItem} title={"Certification"} description={this.props.lupa_data.Users.currUserData.isTrainer ? this.state.userData.certification : 'This account is not registered as a certified trainer.'}/>
                         }
                         </List.Section>
 
@@ -322,7 +412,7 @@ class SettingsModal extends React.Component {
                         {
                             lupaList.map(item => {
                                 return (
-                                    <List.Item style={styles.listItem} title={item.title} description={item.description} />
+                                    <List.Item titleStyle={styles.titleStyle} style={styles.listItem} title={item.title} description={item.description} />
                                 )
                             })
                         }
@@ -330,6 +420,8 @@ class SettingsModal extends React.Component {
         <Button mode="text" compact color="#2196F3" onPress={() => {this._handleUserLogout()}}>
         Log out
         </Button>
+
+        <EditBioModal isVisible={this.state.editBioVisible} closeModalMethod={() => this.setState({ editBioVisible: false })} />
                 </ScrollView>
                 </SafeAreaView>
                 </Container>
@@ -340,7 +432,7 @@ class SettingsModal extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#FAFAFA"
+        backgroundColor: "#F2F2F2"
     },
     pageTitle: {
         color: '#2196F3'
@@ -360,6 +452,11 @@ const styles = StyleSheet.create({
     alignRowCenter: {
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    titleStyle: {
+        fontSize: 13, 
+        fontWeight: '100', 
+        fontFamily: 'ARSMaquettePro-Regular'
     }
 });
 

@@ -585,6 +585,8 @@ PODS:
     - React
   - react-native-camera/RN (3.23.1):
     - React
+  - react-native-contacts (5.2.0):
+    - React
   - react-native-fbsdk (1.1.2):
     - React
     - react-native-fbsdk/Core (= 1.1.2)
@@ -784,6 +786,7 @@ DEPENDENCIES:
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
   - Firebase/Auth (~> 6.13.0)
   - Firebase/Core (~> 6.13.0)
+  - Firebase/Messaging
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -799,6 +802,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-fbsdk (from `../node_modules/react-native-fbsdk`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
@@ -966,6 +970,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/blur"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
+  react-native-contacts:
+    :path: "../node_modules/react-native-contacts"
   react-native-fbsdk:
     :path: "../node_modules/react-native-fbsdk"
   react-native-image-picker:
@@ -1151,6 +1157,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 512e560d0e985d0e8c479a54a4e5c147a9c83493
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-camera: 6fe72fd0a85732e2449928f9c59a2e0bf661ad3b
+  react-native-contacts: 439dd9c7ea7e0d86190f8370898b82cfb7cf4ef4
   react-native-fbsdk: c35d42169e64aaf66f01713c1e18d0674f7f6519
   react-native-image-picker: 668e72d0277dc8c12ae90e835507c1eddd2e4f85
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
@@ -1206,6 +1213,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 4e6c4c34a89512e2225d336154df1cb689226a29
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
 
-PODFILE CHECKSUM: 9973a6e0e88969ccec04242eadd872c737c63add
+PODFILE CHECKSUM: 4f29fef4966cfb06444248d9489e5fb3a360b8ac
 
 COCOAPODS: 1.9.1

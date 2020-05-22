@@ -275,7 +275,7 @@ class LiveWorkoutPreview extends React.Component {
                                 }
                             </ScrollView>
                             </View>
-                            <View style={{flex: 1, padding: 10, alignItems: 'center',  justifyContent: 'center', width: '100%'}}>
+                            <View style={{padding: 10, alignItems: 'center',  justifyContent: 'center', width: '100%'}}>
                         
                             <Text style={{color: 'white'}}>
                                 Slide Down to Begin

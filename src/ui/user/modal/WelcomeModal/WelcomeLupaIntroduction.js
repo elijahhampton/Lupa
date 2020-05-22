@@ -6,8 +6,10 @@ import {
     StyleSheet,
     Image,
     Dimensions,
+    SafeAreaView,
     Modal,
     TouchableOpacity,
+    StatusBar,
 } from 'react-native';
 
 import * as Location from 'expo-location';
@@ -132,9 +134,10 @@ class WelcomeLupaIntroduction extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1 }}>
-                <View style={{ flex: 2 }}>
-                    <Image source={Map} style={{ width: Dimensions.get('window').width, height: "100%" }} />
+            <SafeAreaView style={{ flex: 1 }}>
+                <StatusBar networkActivityIndicatorVisible={false} hidden={true} />
+                <View style={{ flex: 1 }}>
+                    <Image source={Map} style={{ width: Dimensions.get('window').width, height: "100%" }} resizeMode="cover"/>
                 </View>
                 <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
                     {
@@ -205,7 +208,7 @@ class WelcomeLupaIntroduction extends React.Component {
                 </View>
     
                 <ActivityIndicatorModal isVisible={this.state.showLoadingIndicator} />
-            </View>
+            </SafeAreaView>
         )
     }
 }
