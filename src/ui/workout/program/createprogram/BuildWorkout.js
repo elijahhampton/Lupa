@@ -388,7 +388,7 @@ class BuildWorkout extends React.Component {
     handleCaptureNewMediaURI = async (uri, mediaType) => {
         if (this.state.currPressedPopulatedWorkout == undefined)
         {
-            alert('undefined')
+          
             return;
         }
         let updatedState = this.state.data;

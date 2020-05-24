@@ -96,7 +96,7 @@ class MessagesView extends React.Component {
         }
         catch(err)
         {
-            alert(err)
+            
             await this.setState({
                 viewReady: false,
             })

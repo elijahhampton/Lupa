@@ -162,7 +162,6 @@ class LoginView extends Component {
     await this._setupRedux();
     await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     this.props.navigation.navigate('App');
-
   }
 
   /**

@@ -31,7 +31,7 @@ function AssessmentComponent(props) {
     const assessmentObject = props.assessmentObjectIn;
     
     return (
-        <TouchableOpacity onPress={showReviewModalWrapper} disabled={assessmentObject.assessment_available} style={{margin: 3}}>
+        <TouchableOpacity onPress={showReviewModalWrapper} disabled={!assessmentObject.assessment_available} style={{margin: 3}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>

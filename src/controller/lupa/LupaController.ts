@@ -244,21 +244,21 @@ export default class LupaController {
 
     /* Algolia */
     indexApplicationData = () => {
-      //USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
-      //PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
-    //USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+      USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+    PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+    USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     indexUsers = async () => {
-     // await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+      await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
     indexPacks = async () => {
-     // await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+     await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
     }
 
     indexPrograms = async () => {
-      // await USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+       await USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     /** Pack Functions */
@@ -309,7 +309,7 @@ export default class LupaController {
       return Promise.resolve(trainersNearby);
     }
     getUsersBasedOnLocation = async location => {
-      let nearbyUsers
+      let nearbyUsers = [];
       await USER_CONTROLLER_INSTANCE.getNearbyUsers(location).then(result => {
         nearbyUsers = result;
       });

@@ -45,6 +45,7 @@ function ReceivedProgramNotification(props) {
                            programOwnerData: notificationData.fromData,
                            programData: notificationData.data,
                        })
+
         }
         else
         {

@@ -969,7 +969,11 @@ class Programs extends React.Component {
     
                         </View>
         
-                        <ElementsButton type="solid" title="Create a Workout Program" buttonStyle={{backgroundColor: '#2196F3', borderRadius: 12}} style={{alignSelf: 'center', width: '90%'}} />
+                        <ElementsButton type="solid" title="Create a Workout Program" buttonStyle={{backgroundColor: '#2196F3', borderRadius: 12}} style={{alignSelf: 'center', width: '90%'}} onPress={() => this.props.navigation.navigate('CreateProgram', {
+                            navFrom: 'Programs',
+                            setPageIsPrograms: this.setPageIsPrograms.bind(this),
+                            setPageIsNotPrograms: this.setPageIsNotPrograms.bind(this)
+                        })}/>
                 </View>
                     )
                 }  
@@ -1103,6 +1107,7 @@ class Programs extends React.Component {
         this.setState({ pageIsPrograms: false })
         this.props.navigation.navigate('CreateProgram', {
             setPageIsPrograms: this.setPageIsPrograms.bind(this),
+            setPageIsNotPrograms: this.setPageIsNotPrograms.bind(this),
             navFrom: "Programs",
         })
     }

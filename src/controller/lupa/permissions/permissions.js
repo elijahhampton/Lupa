@@ -17,7 +17,7 @@ export default _requestPermissionsAsync = async () => {
   await requestNotificationPermission();
 
   if (status !== 'granted') {
-    alert('In order to use this app you must enable this permission.  Please visit the settings app on your phone to turn it on.');
+   
   }
 }
 

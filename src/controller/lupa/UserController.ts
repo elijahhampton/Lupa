@@ -16,7 +16,7 @@ const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
-
+ 
 const programsIndex = algoliaUsersIndex.initIndex("dev_Programs");
 const tmpProgramsIndex = algoliaUsersIndex.initIndex("tempDev_Programs");
 
@@ -848,43 +848,67 @@ export default class UserController {
     }
 
     getNearbyUsers = async (location) => {
-       /* return new Promise((resolve, reject) => {
-            let nearbyUsers = new Array();
+        try {
+            console.log('aaaa' + location.state)
+       return new Promise((resolve, reject) => {
+            let nearbyUsers = [];
             usersIndex.search({
-                query: location.city,
+                query: location.state,
                 attributesToHighlight: ['location'],
             }, async (err, { hits }) => {
                 if (err) throw reject(err);
 
+                await USER_COLLECTION.where('isTrainer', '==', true).get().then(result => {
+                    let docs = result;
+                    let data;
+                    docs.forEach(doc => {
+                        data = doc.data();
+                        console.log(data)
+                        nearbyUsers.push(data);
+                    });
+                });
+
+                console.log('AAAAAAAAAAAAAAAAAAAAAAA')
+
+                await USER_COLLECTION.where('isTrainer', '==', false).get().then(result => {
+                    let docs = result;
+                    let data;
+                    docs.forEach(doc => {
+                        data = doc.data();
+                        console.log(data)
+                        nearbyUsers.push(data);
+                    });
+                });
+
+                resolve(nearbyUsers);
+
                 //parse all of ths hits for the city
-                for (var i = 0; i < hits.length; ++i) {
+             /*   for (var i = 0; i < hits.length; ++i) {
                     let locationHighlightedResult = hits[i]._highlightResult;
                     let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
                     if (compare) {
                         await nearbyUsers.push(hits[i]);
                     }
-                }
+                }*/
 
                 //parse all of ths hits for the city
-                for (var i = 0; i < hits.length; ++i) {
+               /* for (var i = 0; i < hits.length; ++i) {
                     let locationHighlightedResult = hits[i]._highlightResult;
-                    let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
-                    if (compare) {
+                   // let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
+                    if (true) {
+                        alert(hits[i])
+                        console.log(hits[i])
                         await nearbyUsers.push(hits[i]);
                     }
-                }
+                }*/
 
-                //parse all of ths hits for the city
-                for (var i = 0; i < hits.length; ++i) {
-                    let locationHighlightedResult = hits[i]._highlightResult;
-                    let compare = (locationHighlightedResult.location.country.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.country.toLowerCase())
-                    if (compare) {
-                        await nearbyUsers.push(hits[i]);
-                    }
-                }
+                
                 resolve(nearbyUsers);
             })
-        })*/
+        })
+    } catch(err) {
+        return Promise.resolve([])
+    }
 
     }
 
@@ -1007,7 +1031,7 @@ export default class UserController {
         //delete program from lupa programs
         await PROGRAMS_COLLECTION.doc(programUUID).delete();
     } catch(err) {
-        alert(err)
+   
     }
     }
 
@@ -1025,6 +1049,7 @@ export default class UserController {
      
              for (let i = 0; i < programUUIDS.length; i++)
              {
+                 try {
                  await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
                      temp = snapshot.data();
                  })
@@ -1037,10 +1062,14 @@ export default class UserController {
                  {
                     await programsData.push(temp)
                  }
+                } catch(err) {
+                    continue;
+                }
+
              }
 
         } catch(err) {
-            alert(err)
+        
             programsData = [];
         }
 
@@ -1434,7 +1463,7 @@ export default class UserController {
 
 
         } catch(err) {
-            alert(err)
+     
         }
 
 

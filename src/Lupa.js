@@ -108,7 +108,7 @@ class Lupa extends React.Component {
     PushNotification.configure({
       // (required) Called when a remote or local notification is opened or received
       onNotification: function(notification) {
-        alert('Received a notification.. need to handle it')
+
         console.log('LOCAL NOTIFICATION ==>', notification)
       },
     popInitialNotification: true,

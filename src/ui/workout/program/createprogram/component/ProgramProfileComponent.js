@@ -36,7 +36,7 @@ function ProgramProfileComponent(props) {
         {
             props.navigation.push('LiveWorkout', {
                 programData: program,
-                programOwnerData: result.program_owner == currUserData.user_uuid ? currUserData : undefined 
+                programOwnerData: program.program_owner == currUserData.user_uuid ? currUserData : undefined 
             });
         }
         else

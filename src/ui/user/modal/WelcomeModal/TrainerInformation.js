@@ -17,7 +17,9 @@ import {
     TextInput,
     Portal,
     Dialog,
-    Provider
+    Provider,
+    Appbar,
+    Paragraph
 } from 'react-native-paper';
 
 import LupaController from '../../../../controller/lupa/LupaController';
@@ -108,15 +110,42 @@ export default class TrainerInformation extends React.Component {
         }
     }
 
+    getHeader = () => {
+        try {
+            if (this.props.navigation.state.params.navFrom)
+            {
+                if (this.props.navigation.state.params.navFrom == 'Drawer')
+                {
+                    return (
+                        <Appbar.Header style={{elevation: 0}} theme={{
+                            colors: {
+                                primary: '#FFFFFF'
+                            }
+                        }}>
+                            <Appbar.BackAction onPress={() => this.props.navigation.goBack()} />
+                            <Appbar.Content title="Trainer Registration" />
+                        </Appbar.Header>
+                    )
+                }
+            }
+        }
+        catch(err) {
+           
+        }
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.root}>
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={styles.instructionalText}>
+                {
+                    this.getHeader()
+                }
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', }}>
+                    <Paragraph style={styles.instructionalText}>
                     Trainers registered on Lupa have access to exclusive tools such as building client list, creating workout programs, and engaging in research opportunies sponsored by Lupa.  
                     
                     As a Lupa Trainer you will be able to make money and engage your clientele through our platform.  We currently only support the NASM certification, but plan on adding many more in the future.
-                </Text>
+                </Paragraph>
                 </View>
 
                     <Provider>
@@ -155,16 +184,18 @@ export default class TrainerInformation extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-
+        padding: 20
     },
     instructionalText: {
         height: 'auto',
         flexShrink: 1,
+        alignSelf: 'center',
         fontSize: 15,
-        padding: 10,
+        paddingHorizontal: 20,
         marginTop: 25,
         fontFamily: "avenir-roman",
         flex: 1,
+        textAlign: 'center',
     },
     verificationModal: {
         width: '50%',

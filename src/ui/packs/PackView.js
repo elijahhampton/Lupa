@@ -68,7 +68,7 @@ class PackView extends React.Component {
             activePacks: [],
             communityPacks: [0, 1, 2 ,3, 4],
             defaultPacks: [],
-            usersNearYou: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+            usersNearYou: [],
             searchValue: "",
             searchResults: [],
             createPackModalIsOpen: false,
@@ -168,32 +168,24 @@ class PackView extends React.Component {
      }
      
      setupExplorePage = async () => {
-         let defaultPacksIn, explorePagePacksIn, communityPagePacksIn;
+         let defaultPacksIn, explorePagePacksIn, communityPagePacksIn, nearYouIn = []
          try {
-            await this.LUPA_CONTROLLER_INSTANCE.getActivePacksBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
-                explorePagePacksIn = result;
-            });
-         } catch(err)
-         {
-             explorePagePacksIn = [];
+             await this.LUPA_CONTROLLER_INSTANCE.getUsersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
+                 nearYouIn = result;
+             })
          }
-/*
-         try {
-            await this.LUPA_CONTROLLER_INSTANCE.getCommunityPacksBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
-                communityPagePacksIn = result;
-            });
-         } catch(err)
-         {
-            communityPagePacksIn = [];
+         catch(err) {
+             
+             nearYouIn = [];
          }
-*/
+
          try {
             await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserDefaultPacks().then(result => {
                 defaultPacksIn = result;
 
                 if (defaultPacksIn == undefined || typeof(defaultPacksIn) != "object")
                 {
-                    defaultPacksIn == [];
+                    defaultPacksIn = [];
                 }
             });
          } catch(err)
@@ -204,8 +196,9 @@ class PackView extends React.Component {
          //set component state
         await this.setState({
             activePacks: explorePagePacksIn,
-            //communityPacks: communityPagePacksIn,
+
             defaultPacks: defaultPacksIn,
+            usersNearYou: nearYouIn,
         })
         
     }
@@ -282,6 +275,18 @@ class PackView extends React.Component {
              {
                  //couldn't find any packs.. this shouldn't happen as we add random packs even if there are none near the user
              }
+         }
+     }
+
+     renderNearbyUsers = () => {
+         try {
+            return this.state.usersNearYou.map(user => {
+                return (
+                    <CircularUserCard user={user} />
+                )
+            })
+         } catch(err) {
+        
          }
      }
 
@@ -363,11 +368,7 @@ class PackView extends React.Component {
                     <View style={styles.sectionContent}>
                         <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
                             {
-                                this.state.usersNearYou.map(user => {
-                                    return (
-                                       <CircularUserCard user={user} />
-                                    )
-                                })
+                                this.renderNearbyUsers()
                             }
                         </ScrollView>
                     </View>

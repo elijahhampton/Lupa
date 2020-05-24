@@ -14,6 +14,8 @@ import CreateProgram from '../workout/program/createprogram/CreateProgram';
 import LiveWorkout from '../workout/modal/LiveWorkout';
 import LupaHome from '../LupaHome';
 
+import CardFormScreen from '../src/scenes/CardFormScreen';
+
 const LupaHomeNavigator =  createStackNavigator(
     {
     LupaHome: {
@@ -87,6 +89,14 @@ const LupaHomeNavigator =  createStackNavigator(
           gesturesEnabled: false,
           headerBackTitle: "Cancel"
       })
+      },
+      CardFormScreen: {
+        screen: CardFormScreen,
+        navigationOptions:   ({navigation}) => ({
+            title: "Programs",
+            header: null,
+            gesturesEnabled: false,
+        })
       },
 },
 {
