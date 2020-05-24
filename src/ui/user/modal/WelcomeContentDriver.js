@@ -85,7 +85,7 @@ function BookATrainerContent(props) {
       let trainerDataIn, location;
     const fetchData = async () => {
         const uuid = await LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
-
+        try {
         await LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(uuid, 'location').then(res => {
             location = res;
         })
@@ -96,6 +96,9 @@ function BookATrainerContent(props) {
       })
 
       setTrainerData(trainerDataIn);
+    } catch(err) {
+        setTrainerData([])
+    }
     };
 
     fetchData();

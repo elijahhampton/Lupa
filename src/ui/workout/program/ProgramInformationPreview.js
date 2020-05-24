@@ -28,6 +28,8 @@ import LiveWorkoutPreview from './LiveWorkoutPreview';
 import ModalLiveWorkoutPreview from './modal/ModalLiveWorkoutPreview';
 import ModalProfileView from '../../user/profile/ModalProfileView';
 
+import { withNavigation } from 'react-navigation'
+
 import { connect } from 'react-redux';
 
 const mapStateToProps = (state, action) => {
@@ -86,13 +88,18 @@ class ProgramInformationPreview extends React.Component {
 
  handlePurchaseProgram = async () => {
      //handle stripe
+    /* this.props.navigation.push('CardFormScreen', {
+         amount: this.props.programData.program_price,
+         currency: 'usd',
+     })*/
 
      //handle program in backend
     try {
         const updatedProgramData = await this.LUPA_CONTROLLER_INSTANCE.purchaseProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.props.programData);  
         await this.props.addProgram(updatedProgramData);
     } catch (err) {
-        console.log(err)
+        alert('Could not purchase the program at this time.  Try again later.')
+        this.props.closeModalMethod()
     }
 
     //close modal
@@ -101,7 +108,7 @@ class ProgramInformationPreview extends React.Component {
 
  getProgramTags() {
      try {
-        program.program_tags.map((tag, index, arr) => {
+       return program.program_tags.map((tag, index, arr) => {
             if (index == arr.length - 1)
             {
                 return (
@@ -227,4 +234,4 @@ onPress={() => this.setState({ showPreviewModal: true })}
  }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProgramInformationPreview);
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(ProgramInformationPreview));

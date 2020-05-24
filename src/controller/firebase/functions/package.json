@@ -5,16 +5,19 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "firebase deploy --only functions && node --experimental-modules",
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "8"
+    "node": "10"
   },
-  "main": "lib/index.js",
+  "main": "lib/index.ts",
   "dependencies": {
+    "cors": "^2.8.5",
     "firebase-admin": "^8.9.0",
-    "firebase-functions": "^3.3.0"
+    "firebase-functions": "^3.3.0",
+    "stripe": "^8.55.0",
+    "tipsi-stripe": "^7.5.3"
   },
   "devDependencies": {
     "typescript": "^3.7.3",

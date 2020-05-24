@@ -58,6 +58,12 @@ import Contacts from 'react-native-contacts';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
+
+import Stripe from 'tipsi-stripe';
+import { initStripe } from '../modules/payments/stripe';
+
+import CardFormScreen from '../modules/payments/src/scenes/CardFormScreen'
+
 const ANIMATED_HEIGT_DURATION = 500;
 const config = {
     velocityThreshold: 0.3,
@@ -106,7 +112,7 @@ function InviteFriendsModal(props) {
             await Contacts.getAll((err, response) => {
                 if (err)
                 {
-                    alert(err)
+                    
                 }
 
                 setContactRecords(response);
@@ -454,6 +460,13 @@ class LupaHome extends React.Component {
         })
       }
 
+      launch = () => {
+          initStripe();
+          Stripe.paymentRequestWithCardForm().then((err, res) => {
+              console.log(res);
+          })
+      }
+
     render() {
         return (
             <GestureRecognizer
@@ -477,7 +490,7 @@ class LupaHome extends React.Component {
                                 <Surface style={{borderBottomLeftRadius: 50, elevation: 10, position: 'absolute', top: this.state.expandedViewHeights, height: this.interpolatedViewHeightThree, width: Dimensions.get('window').width, backgroundColor: 'transparent'}}>
                                 <TouchableHighlight style={{borderBottomLeftRadius: 50, flex: 1}} onPress={this.showAnimatedViewThree}>
                                 <Swiper autoplay={true} autoplayDirection={true} style={{borderBottomLeftRadius: 50,}} index={this.state.swiperThreeViewIndex} scrollEnabled={false} paginationStyle={{justifyContent: 'flex-start', bottom: 20, paddingLeft: 25}}>
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/programs/sample_photo_one.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/programs/sample_photo_one.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewThreeFocused == true ?
@@ -486,7 +499,7 @@ class LupaHome extends React.Component {
                Create a Program
             </Text>
                         <Paragraph style={styles.subGraphicText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                         Have a workout program that you want to share with your friends, family, or the world?  Create it here on Lupa.
                         </Paragraph>
                         </>
     :
@@ -498,7 +511,7 @@ class LupaHome extends React.Component {
            
 </ImageBackground>
 
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/programs/sample_photo_two.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/programs/sample_photo_two.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewThreeFocused == true ?
@@ -507,7 +520,7 @@ class LupaHome extends React.Component {
                Register as a Lupa Trainer
             </Text>
             <Paragraph style={styles.subGraphicText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+             Are you certified fitness trainer?  Register with Lupa and start earning money today.
             </Paragraph>
     </>
     :
@@ -519,7 +532,7 @@ class LupaHome extends React.Component {
           
 </ImageBackground>
 
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/programs/sample_photo_three.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/programs/sample_photo_three.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewThreeFocused == true ?
@@ -528,7 +541,7 @@ class LupaHome extends React.Component {
     Start your career with Lupa
  </Text>
  <Paragraph style={styles.subGraphicText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Enter your certification ID number, register with Lupa, and bring your client list to one centralized platform.
             </Paragraph>
             </>
     :
@@ -554,7 +567,7 @@ class LupaHome extends React.Component {
                                 <Surface style={{borderBottomLeftRadius: 50, elevation: 10, position: 'absolute', top: this.state.expandedViewHeights, height: this.interpolatedViewHeightTwo, width: Dimensions.get('window').width}}>
                                 <TouchableHighlight style={{borderBottomLeftRadius: 50, flex: 1}} onPress={this.showAnimatedViewTwo}>
                                 <Swiper autoplay={true} autoplayDirection={true}  style={{borderBottomLeftRadius: 50,}} index={this.state.swiperTwoViewIndex} scrollEnabled={false} paginationStyle={{justifyContent: 'flex-start', bottom: 20, paddingLeft: 25}}>
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/packprogramone.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/packprogramone.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewTwoFocused == true ?
@@ -563,7 +576,7 @@ class LupaHome extends React.Component {
                Find a Pack
             </Text>
             <Paragraph style={styles.subGraphicText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Sign up under a pack, a group of your peers, and complete your fitness journey together.  Find out more on the pack page.
             </Paragraph>
             </>
     :
@@ -576,7 +589,7 @@ Go to Packs
            
 </ImageBackground>
 
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/packprogramtwo.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/packprogramtwo.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewTwoFocused == true ?
@@ -585,7 +598,7 @@ Go to Packs
                Engage in a Community
             </Text>
             <Paragraph style={styles.subGraphicText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+             Fitness doesn't have to be a solo journey.  Engage with other Lupa users.  Find out more on the packs page.
             </Paragraph>
             </>
     :
@@ -598,7 +611,7 @@ Go to Packs
           
 </ImageBackground>
 
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/packprogramthree.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/packprogramthree.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewTwoFocused == true ?
@@ -607,7 +620,7 @@ Go to Packs
     Progress with your Peers
   </Text>
   <Paragraph style={styles.subGraphicText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            We progress faster when our friends are with us.  Find out more on the packs page.
             </Paragraph>
             </>
     :
@@ -627,7 +640,7 @@ Go to Packs
 <TouchableHighlight style={{borderBottomLeftRadius: 50, flex: 1}} onPress={this.showAnimatedViewOne}>
 
 <Swiper autoplay={true} autoplayDirection={true} style={{borderBottomLeftRadius: 50,}} index={this.state.swiperOneViewIndex} scrollEnabled={false} paginationStyle={{justifyContent: 'flex-start', bottom: 20, paddingLeft: 25}}>
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/fitnesstrainer.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/fitnesstrainer.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewOneFocused == true ?
@@ -636,7 +649,7 @@ Go to Packs
                Book a Fitness Trainer
             </Text>
             <Paragraph style={styles.subGraphicText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Stop dealing with overpriced workout programs.  Easily find a trainer on the programs page.
             </Paragraph>
             </>
             :
@@ -648,7 +661,7 @@ Go to Packs
            
 </ImageBackground>
 
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/yogotrainer.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/yogotrainer.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewOneFocused == true ?
@@ -657,7 +670,7 @@ Go to Packs
              Explore Programs
             </Text>
             <Paragraph style={styles.subGraphicText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+             Explore a catalog of various workout programs.  Find the right one for your journey.
             </Paragraph>
             </>
             :
@@ -669,7 +682,7 @@ Go to Packs
           
 </ImageBackground>
 
-<ImageBackground resizeMode="stretch" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/tracktrainer.jpg')}>
+<ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{borderBottomLeftRadius: 50}} source={require('./images/tracktrainer.jpg')}>
 <View style={styles.viewOverlay} />
 {
     this.state.viewOneFocused == true ?
@@ -678,7 +691,7 @@ Go to Packs
                Create a Workout
             </Text>
             <Paragraph style={styles.subGraphicText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Using Lupa tools create your own exercises, workouts, or complete workout programs.
             </Paragraph>
             </>
             :
@@ -838,7 +851,7 @@ style={{
     :
     null
     }
-<Button style={{alignSelf: 'flex-start', position: 'absolute', bottom: 0, right: 0}} color="white" disabled={this.state.currInteractiveSwiperIndex == 3} onPress={() => this.setState({ currInteractiveSwiperIndex: this.state.currInteractiveSwiperIndex + 1})}>
+<Button style={{alignSelf: 'flex-start', position: 'absolute', bottom: 0, right: 0}} color="white" disabled={this.state.currInteractiveSwiperIndex == 3} onPress={() => this.launch()}>
                         Next
                     </Button>
 </View>
@@ -846,6 +859,7 @@ style={{
                 </View>
 
                 <InviteFriendsModal />
+        
             </SafeAreaView>
             </GestureRecognizer>
         );
@@ -858,14 +872,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#212121",
     },
     mainGraphicText: {
-        fontFamily: 'ARSMaquettePro-Black', 
+        fontFamily: 'ARSMaquettePro-Bold', 
         color: '#FFFFFF', 
         fontSize: 25
     },
     subGraphicText: {
         fontFamily: 'ARSMaquettePro-Medium',
         color: '#FFFFFF',
-        padding: 10,
+        padding: 15,
     },
     graphicButton: {
 
@@ -875,7 +889,7 @@ const styles = StyleSheet.create({
         width: '100%', 
         height: '100%', 
         borderBottomLeftRadius: 50, 
-        backgroundColor: 'rgba(0,0,0,0.3)'
+        backgroundColor: 'rgba(0,0,0,0.6)'
     },
     chipText: {
         color: 'white', 

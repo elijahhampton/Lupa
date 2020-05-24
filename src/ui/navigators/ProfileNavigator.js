@@ -18,6 +18,13 @@ import { createStackNavigator } from 'react-navigation-stack';
 import SettingsModal from '../user/profile/component/SettingsModal';
 import LiveWorkout from '../workout/modal/LiveWorkout';
 import Programs from '../workout/program/Programs';
+
+
+
+
+
+import CardFormScreen from '../src/scenes/CardFormScreen'
+import CreateProgram from '../workout/program/createprogram/CreateProgram';
 /*
 const Stack = createStackNavigator();
 
@@ -139,6 +146,22 @@ const ProfileNavigator = createStackNavigator(
             title: "Programs",
             header: null,
             gesturesEnabled: false,
+        })
+      },
+      CardFormScreen: {
+        screen: CardFormScreen,
+        navigationOptions:   ({navigation}) => ({
+            title: "Card Form",
+            header: null,
+            gesturesEnabled: false,
+        })
+      },
+      CreateProgram: {
+        screen: (props) => <CreateProgram {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+        navigationOptions: ({navigation}) => ({
+          title: "CreateProgram",
+          header: null,
+          gesturesEnabled: false,
         })
       },
     },

@@ -262,7 +262,7 @@ class ModalProfileView extends React.Component {
      */
     componentDidMount = async () => {
         await this.setupProfileInformation();
-        await this.generateSessionReviewData();
+   //     await this.generateSessionReviewData();
     }
 
     componentWillUnmount = () => {
@@ -307,14 +307,6 @@ class ModalProfileView extends React.Component {
             userPackData = this.props.lupa_data.Packs.currrUserPackData;
         }
 
-        let workouts = userInfo.recommended_workouts;
-        let workoutData = [];
-        for (let i = 0; i < workouts.length; i++) {
-            await this.LUPA_CONTROLLER_INSTANCE.getWorkoutDataFromUUID(workouts[i]).then(result => {
-                workoutData.push(result);
-            })
-        }
-
         this.currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
 
         await this.setState({
@@ -324,7 +316,6 @@ class ModalProfileView extends React.Component {
             followers: userInfo.followers,
             following: userInfo.following,
             interest: userInfo.interest,
-            userRecommendedWorkouts: workoutData,
             bio: userInfo.bio,
             city: userInfo.city,
             state: userInfo.state,
@@ -446,51 +437,18 @@ class ModalProfileView extends React.Component {
     mapBio = () => {
         //if current user viewing profile
         if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid) {
-            return this.state.isEditingBio == false ?
-                this.state.bio.length == 0 ?
-                    null
-                    :
-                    <Text allowFontScaling={true} allowsEditing={false} style={{width: '100%', fontSize: 11, fontWeight: '400'}}>
-                        {this.state.bio}
-                    </Text>
-                :
-                <TextInput maxLength={150} editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
-        }
-        //if another user viewing profile
-        else {
-            return this.state.isEditingBio == false ?
-                this.state.bio.length == 0 ?
-                null
-                :
-                <Text allowFontScaling={true} allowsEditing={false}>
-                    {this.state.bio}
-                </Text>
-                :
-                <TextInput editable={true} multiline={true} autoGrow={true} value={this.state.bio} onChangeText={text => this.handleChangeBioText(text)} />
-        }
-    }
-
-    mapRecommendedWorkouts = () => {
-        if (this.state.userRecommendedWorkouts.length == 0) {
-            return <View>
-                <Caption>
-                    You don't have any recommended workouts saved!  You can recommend workouts from the workout library located on in the workout home.
-</Caption>
-            </View>
-        }
-        else {
             return (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {
-                        this.state.userRecommendedWorkouts.map(workout => {
-                            return (<Button mode="text" compact color="black">
-                                {workout.workout_name}
-                            </Button>
-                            )
-                        })
-
-                    }
-                </ScrollView>
+                <Text allowFontScaling={true} allowsEditing={false} style={{width: '100%', fontSize: 11, fontWeight: '400'}}>
+                {this.state.bio}
+            </Text>
+            )
+        }
+        else
+        {
+            return (
+                <Text allowFontScaling={true} allowsEditing={false} style={{width: '100%', fontSize: 11, fontWeight: '400'}}>
+                {this.state.bio}
+            </Text>
             )
         }
     }
@@ -525,7 +483,7 @@ class ModalProfileView extends React.Component {
         })
     }
 
-    mapUserReviews = () => {
+    mapUserReviews = () => {/*
         return this.state.sessionReviews.map(review => {
             console.log(review)
             return (
@@ -555,7 +513,7 @@ class ModalProfileView extends React.Component {
                 <NativeButton title="See Review" />
             </View>
             )
-        })
+        })*/
     }
 
     _navigateToFollowers = () => {
@@ -625,40 +583,9 @@ class ModalProfileView extends React.Component {
             null
             :
             <View style={{ width: Dimensions.get('window').width, margin: 10, padding: 10,alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                {
-                    this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
 
-                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: '#2196F3',
-                            }
-                        }}>
-                            <Text>
-                                Unfollow
-</Text>
-                        </Button>
-                        :
-                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: 'white',
-                            }
-                        }}>
-                            <Text>
-                                Follow
-    </Text>
-                        </Button>
-                }
-
-<Icon
-                    name='send'
-                    type='feather'
-                    color='#2196F3'
-                    size={20}
-                    raised
-                    reverseColor="white"
-                    reverse
+<IconButton
+                    icon="message"
                     onPress={ () => this.props.navigation.dispatch(
 
                             NavigationActions.navigate({
@@ -679,7 +606,6 @@ class ModalProfileView extends React.Component {
                     }
                 />
             </View>
-
 
     }
 
@@ -804,7 +730,9 @@ class ModalProfileView extends React.Component {
                                     },
                                     roundness: 10,
         
-                                }}>
+                                }} onPress={() => this.props.navigation.push('CreateProgram',{
+                                    navFrom: 'Profile'
+                                })}>
                                     <Text>
                                         Create a Program
                                     </Text>
@@ -864,7 +792,9 @@ class ModalProfileView extends React.Component {
                                     },
                                     roundness: 10,
         
-                                }}>
+                                }} onPress={() => this.props.navigation.push('CreateProgram',{
+                                    navFrom: 'Profile'
+                                })}>
                                     <Text>
                                         Create a Program
                                     </Text>
@@ -922,7 +852,9 @@ class ModalProfileView extends React.Component {
                                     },
                                     roundness: 10,
         
-                                }}>
+                                }} onPress={() => this.props.navigation.push('CreateProgram',{
+                                    navFrom: 'Profile'
+                                })}>
                                     <Text>
                                         Create a Program
                                     </Text>
@@ -1112,10 +1044,14 @@ thin={true}
        
     }
 
+     
+    /**
+     * Renders the follow/unfollow button depending on if the current user follows this user
+     */
     renderFollowButton = () => {
         if (this.state.userData)
         {
-            if (this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid)
+            if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
             {
                 return (
                     <View style={{width: '100%'}}>
@@ -1216,13 +1152,9 @@ thin={true}
                                 </View>
                                 <View style={{alignItems: 'flex-start', width: '100%'}}>
                                                                             <Paragraph style={{paddingVertical: 10, fontSize: 12}}>
-                         But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder.
+                                {this.state.userData.bio}
                                 </Paragraph>
                                 </View>
-
-                                {
-                                    this.renderEditBioButton()
-                                }
                             </View>
                             </View>
                             
@@ -1255,10 +1187,6 @@ thin={true}
                             }
 
                         </View>
-
-                        {
-                            this.renderInteractions()
-                        }
 
                         <Divider />
 

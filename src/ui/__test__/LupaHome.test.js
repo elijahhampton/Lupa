@@ -2,7 +2,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import LupaHome from '../LupaHome';
 
-describe('Some component', () => {
+describe('LupaHome Component', () => {
   it('renders correctly', () => {
     const tree = renderer.create(
       <LupaHome />

@@ -76,16 +76,16 @@ const InviteToPackDialog = props => {
     const [checked, setChecked] = useState(false);
     const [packsToInvite, setPacksToInvite] = useState([]);
 
-    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    const LUPA_CONTROLLER_INSTANCE: LupaController = LupaController.getInstance();
 
-    _handlePacksToInvite = (uuid) => {
+    const _handlePacksToInvite = (uuid : String) => {
         let updatedPacks = packsToInvite;
         updatedPacks.push(uuid);
         setPacksToInvite(updatedPacks);
         setChecked(true);
     }
 
-    handleDialogClose = () => {
+    const handleDialogClose = () => {
         LUPA_CONTROLLER_INSTANCE.inviteUserToPacks(packsToInvite, userToInvite);
         props.closeModalMethod();
     }
@@ -106,7 +106,7 @@ const InviteToPackDialog = props => {
                                         checkedIcon='dot-circle-o'
                                         uncheckedIcon='circle-o'
                                         checked={checked}
-                                        onPress={() => this._handlePacksToInvite(pack.id)} />
+                                        onPress={() => _handlePacksToInvite(pack.id)} />
 
                                     <Text>
                                         {pack.pack_title}
@@ -117,7 +117,7 @@ const InviteToPackDialog = props => {
                     }
                 </Dialog.Content>
                 <Dialog.Actions>
-                    <Button onPress={() => this.handleDialogClose()}>Invite</Button>
+                    <Button onPress={() => handleDialogClose()}>Invite</Button>
                 </Dialog.Actions>
             </Dialog>
         </Portal>
@@ -128,10 +128,6 @@ const mapStateToProps = (state, action) => {
     return {
         lupa_data: state
     }
-}
-
-const mapDispatchToProps = dispatchEvent => {
-    
 }
 
 const COLORS_LIST = [
@@ -224,6 +220,7 @@ const ICONS_LIST = [
     },
 ]
 
+/*
 function CreateServiceDialog(props) {
     let [serviceName, setServiceName] = useState("");
     let [serviceDescription, setServiceDescription] = useState("");
@@ -438,7 +435,7 @@ function CreateServiceDialog(props) {
         </Snackbar>
         </Dialog>
     )
-}
+}*/
 
 interface IProfileProps {
     lupa_data: any,
@@ -485,7 +482,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
 
         this.state = {
             userUUID: '',
-            userData: getLupaUserStructure(),
+            userData: {},
             userPackData: [],
             followers: [],
             following: [],
@@ -512,7 +509,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      */
     componentDidMount = async () => {
         await this.setupComponent();
-        await this.generateSessionReviewData();
+       // await this.generateSessionReviewData();
     }
 
     /**
@@ -709,7 +706,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     /**
      * Renders user review data.
      */
-    mapUserReviews = () => {
+   /* mapUserReviews = () => {
         return this.state.sessionReviews.length == 0 ?
         this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
         <Caption style={{marginLeft: 5, alignSelf: 'flex-start'}}>
@@ -750,6 +747,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             )
         })
     }
+*/
 
     /**
      * Navigates to the follower view.
@@ -1061,7 +1059,9 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                     },
                                     roundness: 10,
         
-                                }}>
+                                }} onPress={() => this.props.navigation.push('CreateProgram',{
+                                    navFrom: 'Profile'
+                                })}>
                                     <Text>
                                         Create a Program
                                     </Text>
@@ -1121,7 +1121,9 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                     },
                                     roundness: 10,
         
-                                }}>
+                                }} onPress={() => this.props.navigation.push('CreateProgram',{
+                                    navFrom: 'Profile'
+                                })}>
                                     <Text>
                                         Create a Program
                                     </Text>
@@ -1179,7 +1181,9 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                     },
                                     roundness: 10,
         
-                                }}>
+                                }} onPress={() => this.props.navigation.push('CreateProgram',{
+                                    navFrom: 'Profile'
+                                })}>
                                     <Text>
                                         Create a Program
                                     </Text>

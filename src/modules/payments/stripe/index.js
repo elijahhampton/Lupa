@@ -2,52 +2,8 @@ import stripe from 'tipsi-stripe';
 
 export function initStripe() {
     stripe.setOptions({
-        publishableKey: 'pk_test_I5wTNl4jS6l9KzproBFvHe4t00OVqp7wjO'
+        publishableKey: 'pk_live_0qnly0beDBvvr3pkYIL8VYcF00ydAsthgS'
     })
-}
-
-export async function getPaymentTokenWithCard(customerName, lineOneAddress, lineTwoAddress, city, state, country, postalCode, email) {
-    const token = await stripe.paymentRequestWithCardForm({
-        //Only iOS supports this option
-        smsAutofillDisabled: true,
-        requiredBillingAddressFields: 'full',
-        prefilledInformation: {
-            billingAddress: {
-                name: customerName,
-                line: lineOneAddress,
-                line2: lineTwoAddress,
-                city: city,
-                state: state,
-                country: country,
-                postalCode: postalCode,
-                email: email,
-            },
-        },
-    });
-
-    return token;
-}
-
-export async function completePayment(amount, currency, token) {
-    fetch('https://us-central1-lupa-cd0e3.cloudfunctions.net/payWithStripe', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      amount: 100,
-      currency: "usd",
-      token: this.state.token
-    }),
-  })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      console.log(responseJson);
-    })
-    .catch((error) => {
-      console.error(error);
-    });;
 }
 
 /*

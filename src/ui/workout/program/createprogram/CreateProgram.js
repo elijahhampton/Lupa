@@ -6,7 +6,8 @@ import {
     StyleSheet,
     Button,
     Dimensions,
-    SafeAreaView
+    SafeAreaView,
+    TouchableNativeFeedbackBase
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -68,12 +69,29 @@ class CreateProgram extends React.Component {
     async componentDidMount() {
         this.props.disableSwipe();
 
+        try {
+            if (this.props.navigation.state.params.navFrom)
+            {
+                if (this.props.navigation.state.setPageIsNotPrograms != undefined)
+                {
+                    this.props.navigation.state.params.navFrom == "Programs" ?
+                    this.props.navigation.state.setPageIsNotPrograms()
+                    :
+                    null
+                }   
+            }
+        } catch(err) {
+
+        }
+
+
         const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
         this.setState({ currProgramUUID: programPayload.program_structure_uuid })
         this.setState({ programData: programPayload})
     }
 
     async componentWillUnmount() {
+        this.props.enableSwipe();
         if (this.state.programComplete == false)
         {
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
@@ -161,12 +179,16 @@ class CreateProgram extends React.Component {
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
         }
 
-        if (this.props.navigation.state.params.navFrom)
-        {
-            if (this.props.navigation.state.params.navFrom == "Programs")
+        try {
+            if (this.props.navigation.state.params.navFrom)
             {
-                this.props.navigation.state.params.setPageIsPrograms()
+                if (this.props.navigation.state.params.navFrom == "Programs")
+                {
+                    this.props.navigation.state.params.setPageIsPrograms()
+                }
             }
+        } catch(err) {
+            this.props.navigation.goBack();
         }
       
         this.props.navigation.goBack();
