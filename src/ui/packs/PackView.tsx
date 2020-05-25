@@ -283,7 +283,7 @@ class PackView extends React.Component<IPackViewProps, IPackViewState> implement
          try {
             return this.state.defaultPacks.map(pack => {
                 return (
-                    <DefaultPack packUUID={pack.id} pack_title={pack.pack_title}/>
+                    <DefaultPack pack={pack} packUUID={pack.id} pack_title={pack.pack_title}/>
                 )
             })
          } catch(err)
