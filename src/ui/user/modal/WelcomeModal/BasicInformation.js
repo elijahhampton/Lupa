@@ -140,10 +140,10 @@ class BasicInformation extends React.Component {
     _chooseProfilePictureFromCameraRoll = async () => {
        try {
 
-        ImagePicker.showImagePicker({}, (response) => {
+        ImagePicker.showImagePicker({}, async (response) => {
             if (!response.didCancel)
             {
-                this.setState({ 
+                await this.setState({ 
                     photoSource: response.uri,
                     avatarSet: true,
                 });
@@ -187,7 +187,7 @@ class BasicInformation extends React.Component {
 
 
     render() {
-      //  this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
+        this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
         return (
                 <SafeAreaView style={styles.flexFull}>
 

@@ -119,7 +119,7 @@ const ImproveStrengthWeightliftingGoalPathwayWelcome = props => {
                 </Text>
 
                     <View style={{ width: '100%', backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
-                        <IconButton icon="favorite" onPress={() => alert('Liked')} color="#f44336" />
+                        <IconButton icon="favorite" onPress={() => alert(' ')} color="#f44336" />
                         <Button mode="text" color="white">
                             Exit
                         </Button>

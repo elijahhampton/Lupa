@@ -62,8 +62,6 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import Stripe from 'tipsi-stripe';
 import { initStripe } from '../modules/payments/stripe';
 
-import CardFormScreen from '../modules/payments/src/scenes/CardFormScreen'
-
 const ANIMATED_HEIGT_DURATION = 500;
 const config = {
     velocityThreshold: 0.3,
@@ -460,13 +458,6 @@ class LupaHome extends React.Component {
         })
       }
 
-      launch = () => {
-          initStripe();
-          Stripe.paymentRequestWithCardForm().then((err, res) => {
-              console.log(res);
-          })
-      }
-
     render() {
         return (
             <GestureRecognizer
@@ -851,14 +842,12 @@ style={{
     :
     null
     }
-<Button style={{alignSelf: 'flex-start', position: 'absolute', bottom: 0, right: 0}} color="white" disabled={this.state.currInteractiveSwiperIndex == 3} onPress={() => this.launch()}>
+<Button style={{alignSelf: 'flex-start', position: 'absolute', bottom: 0, right: 0}} color="white" disabled={this.state.currInteractiveSwiperIndex == 3} onPress={() => this.setState({currInteractiveSwiperIndex: this.state.currInteractiveSwiperIndex + 1})}>
                         Next
                     </Button>
 </View>
 
                 </View>
-
-                <InviteFriendsModal />
         
             </SafeAreaView>
             </GestureRecognizer>

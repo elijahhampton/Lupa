@@ -94,23 +94,11 @@ const INVALID_USERNAME_CHARACTERS = [
 LUPA_AUTH.onAuthStateChanged(user => {
     if (user) 
     {
-        if (user.emailVerified == true)
-        {
-            //we do nothing if the user has already verified there email
-        }
-        else
-        {
-            //if not we need to send an email verification link
-            user.sendEmailVerification({
-                handleCodeInApp: true,
-                url: 'app/email-verification'
-            })
-        }
-        console.log('loggin in')
+       
     } 
     else 
     {
-        console.log('loggin out')
+        
     }
 })
 
@@ -144,7 +132,7 @@ checkSignUpFields = (username, email, password, confirmedPassword, birthday, agr
     //check if valid email
     if (!EmailValidator.validate(email))
     {
-        errObject.reason = "email not valid"
+        errObject.reason = "Invalid email"
         errObject.field = 'Email'
         return errObject
     }
@@ -152,7 +140,7 @@ checkSignUpFields = (username, email, password, confirmedPassword, birthday, agr
     //check if password and confirmed password match
     if (password !== confirmedPassword)
     {
-        errObject.reason = 'passwords do not match';
+        errObject.reason = 'Passwords do not match/';
         errObject.field = 'Confirmed Password'
         return errObject
     }
@@ -160,19 +148,19 @@ checkSignUpFields = (username, email, password, confirmedPassword, birthday, agr
     //check if password is valid in length and illegal characters
     if (isIllegalPassword(password))
     {
-        errObject.reason = "password illegal";
+        errObject.reason = "Illegal Passowrd";
         errObject.field = "Password"
         return errObject
     }
 
     //check if birthday is over 16 (or 18?)
     //let age = await calculateAge(birthday);
-    if (age.getFullYear() < 1992)
+   /* if (age.getFullYear() < 1992)
     {
         errObject.reason = "age under 16"
         errObject.field = 'Birthday'
         return errObject
-    }
+    }*/
 
     //check if user has agreed to terms
     if (agreedToTerms === false)
@@ -195,12 +183,14 @@ checkSignUpFields = (username, email, password, confirmedPassword, birthday, agr
  * This method as'gs://lupa-cd0e3.appspot.comsigns a user as logged in in firebase.
  */
 export var signUpUser = async (username, email, password, confirmedPassword,isTrainerAccount, birthday, agreedToTerms) => {
+    
     var USER_UUID, ANNOUNCEMENTS_PACK_UID;
     let signUpResultStatus = {
         result: true,
         reason: "",
         field: undefined,
     }
+    try {
 
     //calculate age
     //let age = await calculateAge(birthday);
@@ -209,6 +199,7 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
     let err = await checkSignUpFields(username, email, password, confirmedPassword, birthday, agreedToTerms);
    if (err != -1)
     {
+
         signUpResultStatus.reason = err.reason;
         signUpResultStatus.result = false;
         signUpResultStatus.field = err.field;
@@ -232,14 +223,15 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
 
     // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong
     try {
-        let userData = getLupaUserStructure(USER_UUID, "", username, LUPA_AUTH.currentUser.email,
-        LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, age, "", "", isTrainerAccount, 
-        "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], "", [], {});
+        let userData = await getLupaUserStructure(USER_UUID, username, email, age);
+
+        console.log(userData)
     
         //Add user to users collection with UID.
     await LUPA_DB.collection('users').doc(USER_UUID).set(userData);
     } catch (err) {
-        
+        console.log(err)
+        console.log('IS IT EW zzzzzzzZZZZZZZZZZZZZZZZZZZZZ:: ' + USER_UUID)
     }
 
     try {
@@ -257,7 +249,7 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
             let currentDoc = LUPA_DB.collection('packs').doc(packID);
             let packMembers = pack.pack_members;
             packMembers.push(USER_UUID);
-            console.log('length: ' + packMembers.length)
+ 
             currentDoc.update({
                 pack_members: packMembers
             });
@@ -268,23 +260,17 @@ export var signUpUser = async (username, email, password, confirmedPassword,isTr
 
 }
 
-    try {
+   try {
     //Add user in health data collection
-    let userHealthData = getLupaHealthDataStructure(USER_UUID);
-    await LUPA_DB.collection('health_data').doc(USER_UUID).set(userHealthData).catch(err => {
-
-    })
+    //let userHealthData = getLupaHealthDataStructure(USER_UUID);
+    //await LUPA_DB.collection('health_data').doc(USER_UUID).set(userHealthData).catch(err => {
+   // })
 } catch(err) {
 
 }
-
-    try {
-        await LUPA_DB.collection('users').doc(USER_UUID).collection('programs').set({});
-        await LUPA_DB.collection('users').doc(USER_UUID).collection('services').set({});
-    } 
-    catch(err)
-    {
-        console.log("trying to add user program.. err")
+    }
+    catch(err) {
+        console.log(err)
     }
 
     return Promise.resolve(signUpResultStatus);

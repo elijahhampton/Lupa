@@ -140,7 +140,7 @@ export default class TrainerInformation extends React.Component {
                 {
                     this.getHeader()
                 }
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', }}>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingVertical: 10 }}>
                     <Paragraph style={styles.instructionalText}>
                     Trainers registered on Lupa have access to exclusive tools such as building client list, creating workout programs, and engaging in research opportunies sponsored by Lupa.  
                     

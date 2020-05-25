@@ -349,7 +349,7 @@ class SettingsModal extends React.Component {
             case 'email':
                 return this.state.userData.email;
             case 'mobile_number':
-                return this.state.userData.mobile_number;
+                return this.state.userData.mobile;
         }
     }
 

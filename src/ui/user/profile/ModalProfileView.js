@@ -84,59 +84,6 @@ import ProgramProfileComponent from '../../workout/program/createprogram/compone
 let chosenHeaderImage;
 let chosenProfileImage;
 
-const InviteToPackDialog = props => {
-    const [userToInvite, setUserToInvite] = useState(props.userToInvite);
-    const [checked, setChecked] = useState(false);
-    const [packsToInvite, setPacksToInvite] = useState([]);
-
-    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    _handlePacksToInvite = (uuid) => {
-        let updatedPacks = packsToInvite;
-        updatedPacks.push(uuid);
-        setPacksToInvite(updatedPacks);
-        setChecked(true);
-    }
-
-    handleDialogClose = () => {
-        LUPA_CONTROLLER_INSTANCE.inviteUserToPacks(packsToInvite, userToInvite);
-        props.closeModalMethod();
-    }
-
-    return (
-        <Portal>
-            <Dialog
-                visible={props.isOpen}
-                onDismiss={props.closeModalMethod}>
-                <Dialog.Title>Pack Invites</Dialog.Title>
-                <Dialog.Content>
-                    {
-                        props.userPacks.map(pack => {
-                            return (
-                                <View key={pack.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <CheckBox
-                                        center
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        checked={checked}
-                                        onPress={() => this._handlePacksToInvite(pack.id)} />
-
-                                    <Text>
-                                        {pack.pack_title}
-                                    </Text>
-                                </View>
-                            )
-                        })
-                    }
-                </Dialog.Content>
-                <Dialog.Actions>
-                    <Button onPress={() => this.handleDialogClose()}>Invite</Button>
-                </Dialog.Actions>
-            </Dialog>
-        </Portal>
-    )
-}
-
 const USER_INTEREST = [
         'Improve Strength',
         'Improve Power',
@@ -621,7 +568,7 @@ class ModalProfileView extends React.Component {
             }, (buttonIndex) => {
                 switch (buttonIndex) {
                     case 0:
-                        this._showDialog();
+                      //  this._showDialog();
                         break;
                     case 1:
                         break;
@@ -1237,8 +1184,7 @@ thin={true}
                         <SafeAreaView />
                 </ScrollView>
                 
-                <InviteToPackDialog userToInvite={this._getId()} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
-                <UpdateInterestDialog userToUpdate={this._getId()} isOpen={this.state.fitnessInterestDialogOpen} closeModalMethod={this.closeFitnessInterestDialog}/>
+               
             </ScrollView>
             </SafeAreaView>
             </Modal>

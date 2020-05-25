@@ -112,7 +112,7 @@ export type LupaUserStructure = {
     chats: any,
     session_reviews: [],
     trainer_tier: Number,
-    assessments: Array<LupaAssessmentStructure>,
+    assessments: Array<String>,
     tokens: Object,
     waitlistedPrograms: Array<String>,
     notifications: Array<Object>,

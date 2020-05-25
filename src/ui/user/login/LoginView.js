@@ -96,8 +96,8 @@ class LoginView extends Component {
     this.userAuthenticationHandler = new UserAuthenticationHandler();
 
     this.state = {
-      username: 'ejh0017@gmail.com',
-      password: 'Q9X638hs2Y78',
+      username: '',
+      password: '',
       secureTextEntry: true,
       showSnack: false,
       loginRejectReason: "",

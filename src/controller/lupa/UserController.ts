@@ -643,6 +643,7 @@ export default class UserController {
                 //Load user data from document
                 program = doc.data();
 
+
                 records.push(program);
             });
 
@@ -713,13 +714,13 @@ export default class UserController {
             });
 
 
-            /*usersIndex.addObjects(records, (err, content) => {
+            usersIndex.addObjects(records, (err, content) => {
                 if (err) {
                     console.log('big error: ' + err);
                 }
 
                 console.log('Completed User Indexing')
-            });*/
+            });
         });
     }
 
@@ -1054,9 +1055,14 @@ export default class UserController {
                      temp = snapshot.data();
                  })
 
+                 if (temp.length == 0)
+                 {
+                     return Promise.resolve([])
+                 }
+
                  if (temp.program_name == "" || temp.program_image == "" || temp == undefined)
                  {
-                     
+                     continue;
                  }
                  else
                  {
@@ -1279,20 +1285,41 @@ export default class UserController {
 
     addAssessment = async (assessment_uuid) => {
         let currUserAssessments = [];
-        await USER_COLLECTION.doc(this.getCurrentUserUUID()).get().then(snapshot => {
-            currUserAssessments = snapshot.data().assessments;
+        let currUserUUID = await this.getCurrentUserUUID();
+        await USER_COLLECTION.doc(currUserUUID).get().then(snapshot => {
+            currUserAssessments = snapshot.data();
         })
 
-        if (currUserAssessments.includes(assessment_uuid))
-        {
-            currUserAssessments.splice(currUserAssessments.indexOf(assessment_uuid), 1);
+        try {
+            let assessments, updatedAssessments;
+        
+            try {
+                assessments = currUserAssessments.assessments;
+            } catch(err) {
+                assessments = [];
+            }
+    
+            if (assessments.includes(assessment_uuid))
+            {
+                updatedAssessments = assessments.splice(assessments.indexOf(assessment_uuid), 1);
+            }
+    
+            updatedAssessments.push(assessment_uuid);
+    
+            USER_COLLECTION.doc(currUserUUID).set({
+                assessments: updatedAssessments
+            },
+            {
+                merge: true
+            })
+        } catch(err) {
+            USER_COLLECTION.doc(currUserUUID).set({
+                assessments: []
+            }, {
+                merge: true
+            })
         }
 
-        currUserAssessments.push(assessment_uuid);
-
-        USER_COLLECTION.doc(this.getCurrentUserUUID()).update({
-            assessments: currUserAssessments
-        })
     }
 
     getUserAssessment = async (acronym, user_uuid) => {

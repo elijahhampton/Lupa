@@ -44,7 +44,8 @@ import {
 
 import {
     Left,
-    Right
+    Right,
+    Body,
 } from 'native-base';
 
 import {
@@ -70,59 +71,6 @@ import MyPacksCard from './component/MyPacksCard';
 import ProgramProfileComponent from '../../workout/program/createprogram/component/ProgramProfileComponent';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
-
-const InviteToPackDialog = props => {
-    const [userToInvite, setUserToInvite] = useState(props.userToInvite);
-    const [checked, setChecked] = useState(false);
-    const [packsToInvite, setPacksToInvite] = useState([]);
-
-    const LUPA_CONTROLLER_INSTANCE: LupaController = LupaController.getInstance();
-
-    const _handlePacksToInvite = (uuid : String) => {
-        let updatedPacks = packsToInvite;
-        updatedPacks.push(uuid);
-        setPacksToInvite(updatedPacks);
-        setChecked(true);
-    }
-
-    const handleDialogClose = () => {
-        LUPA_CONTROLLER_INSTANCE.inviteUserToPacks(packsToInvite, userToInvite);
-        props.closeModalMethod();
-    }
-
-    return (
-        <Portal>
-            <Dialog
-                visible={props.isOpen}
-                onDismiss={props.closeModalMethod}>
-                <Dialog.Title>Pack Invites</Dialog.Title>
-                <Dialog.Content>
-                    {
-                        props.userPacks.map(pack => {
-                            return (
-                                <View key={pack.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <CheckBox
-                                        center
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        checked={checked}
-                                        onPress={() => _handlePacksToInvite(pack.id)} />
-
-                                    <Text>
-                                        {pack.pack_title}
-                                    </Text>
-                                </View>
-                            )
-                        })
-                    }
-                </Dialog.Content>
-                <Dialog.Actions>
-                    <Button onPress={() => handleDialogClose()}>Invite</Button>
-                </Dialog.Actions>
-            </Dialog>
-        </Portal>
-    )
-}
 
 const mapStateToProps = (state, action) => {
     return {
@@ -927,7 +875,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             }, (buttonIndex) => {
                 switch (buttonIndex) {
                     case 0:
-                        this._showDialog();
+                       // this._showDialog();
                         break;
                     case 1:
                         break;
@@ -1383,6 +1331,12 @@ thin={true}
                         {this.getHeaderLeft()}
                     </Left>
 
+                    <Body>
+                        <Text>
+                        { this.state.userData.username}
+                        </Text>
+                    </Body>
+
 
                     <Right>
                         {this.getHeaderRight()}
@@ -1520,7 +1474,7 @@ thin={true}
                         <SafeAreaView />
                 </ScrollView>
 
-                <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
+    
 
             </SafeAreaView>
         );

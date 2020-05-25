@@ -46,23 +46,29 @@ async function saveTokenToDatabase(token) {
   const userId = await reactfirebaseauth().currentUser.uid;
 
   let tokenObject;
+
+  try {
+    await reactfirestore()
+    .collection('users')
+    .doc(userId)
+    .get()
+    .then(snapshot => {
+      tokenObject = snapshot.data().tokens;
+    });
+  
+    tokenObject.fb_messaging_token = token;
+
+      // Add the token to the users datastore
   await reactfirestore()
   .collection('users')
   .doc(userId)
-  .get()
-  .then(snapshot => {
-    tokenObject = snapshot.data().tokens;
+  .update({
+    tokens: tokenObject
   });
+  } catch(err) {
+    generateMessagingToken();
+  }
 
-  tokenObject.fb_messaging_token = token;
-
-  // Add the token to the users datastore
-  await reactfirestore()
-    .collection('users')
-    .doc(userId)
-    .update({
-      tokens: tokenObject
-    });
 }
 
 export function generateMessagingToken() {

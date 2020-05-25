@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     ScrollView,
     Dimensions,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import {
@@ -233,7 +234,7 @@ class SignupModal extends React.Component {
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
-    await this._updateUserServicesInRedux(currUserServices);
+  //  await this._updateUserServicesInRedux(currUserServices);
     await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
     await this._updateLupaAssessmentDataInRedux(lupaAssessments);
   }
@@ -457,7 +458,7 @@ class SignupModal extends React.Component {
     render() {
         return (
           <SafeAreaView style={{flex: 1, backgroundColor: '#F4F7FC'}} forceInset={{bottom: 'never'}}>
-
+            <KeyboardAvoidingView behavior="padding" style={{flex: 1, backgroundColor: '#F4F7FC'}}>
           <ScrollView ref={this.scrollView} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} contentContainerStyle={{backgroundColor: '#F4F7FC'}}>
             
           <View style={{width: "100%", height: Dimensions.get('window').height}}>
@@ -715,6 +716,7 @@ class SignupModal extends React.Component {
         >
           {this.state.signupRejectionReason}
         </Snackbar>
+        </KeyboardAvoidingView>
           </SafeAreaView>
         
                     

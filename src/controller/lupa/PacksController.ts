@@ -426,7 +426,8 @@ class PacksController {
 
   async getCurrentUserDefaultPacks() {
     let defaultPacks = [];
-    await PACKS_COLLECTION.where('pack_isDefault', '==', true).where('pack_members', 'array-contains', LUPA_AUTH.currentUser.uid).get().then(querySnapshot => {
+    let currUserUUID = await LUPA_AUTH.currentUser.uid;
+    await PACKS_COLLECTION.where('pack_isDefault', '==', true).where('pack_members', 'array-contains', currUserUUID).get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         let snapshot = doc.data();
         let snapshotID = doc.id;
@@ -478,13 +479,18 @@ class PacksController {
         await LUPA_DB.collection('users').doc(currentUserUUID).get().then(doc => {
             currentUserInformation = doc.data();
         });
-
-        let packsData = currentUserInformation.packs;
-
-        if (packsData == undefined)
-        {
+        
+        let packsData = []
+        try {
+          packsData = currentUserInformation.packs;
+          if (packsData == undefined)
+          {
+            return Promise.resolve([]);
+          }
+        } catch(err) {
           return Promise.resolve([]);
         }
+
 
         for (let i = 0; i < packsData.length; i++)
         {

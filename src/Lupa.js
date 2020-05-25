@@ -115,12 +115,12 @@ class Lupa extends React.Component {
       requestPermissions: false,
     })
 
-    generateMessagingToken(); //Remove this if it generates the tokens .. keep for now
+    //generateMessagingToken(); //Remove this if it generates the tokens .. keep for now
   }
 
   componentDidMount = async () => {
     this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-    await generateMessagingToken();
+    generateMessagingToken();
   }
 
     /**

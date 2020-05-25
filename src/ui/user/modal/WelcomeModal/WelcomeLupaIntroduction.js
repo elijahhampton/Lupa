@@ -70,6 +70,8 @@ class WelcomeLupaIntroduction extends React.Component {
             locationDataSet: false,
             showLoadingIndicator: false,
         }
+
+        _requestPermissionsAsync()
     }
 
     componentDidMount = async () => {
@@ -85,7 +87,6 @@ class WelcomeLupaIntroduction extends React.Component {
     }
 
     _getLocationAsync = async () => {
-       // await _requestPermissionsAsync();
         let result;
         try {
 
@@ -203,7 +204,7 @@ class WelcomeLupaIntroduction extends React.Component {
                         Welcome to Lupa
                                 </Text>
                     <Text style={{ fontWeight: "400" }}>
-                        It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
+                       Welcome to Lupa.  The fitness app for preventative healthcare.  Get ready to surround yourself with fitness professionals and users on their fitness journey.
                                 </Text>
                 </View>
     

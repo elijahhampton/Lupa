@@ -908,53 +908,63 @@ class Programs extends React.Component {
         {
             if (this.state.currUserPrograms.length > 0)
             {
-                return (
-                    <ScrollView contentContainerStyle={{alignItems: 'center', backgroundColor: '#F2F2F2'}}>
-                        {
-                              this.state.currUserPrograms.map(program => {
-                                    return (
-                                        /* <View>
-                                                                             <TouchableOpacity onPress={() => this.handleProgramOnPress(program)}>
-                                         <View style={{}}>
-                                         <Surface style={{elevation: 0, width: Dimensions.get('screen').width - 20, height: 120, borderRadius: 16, margin: 5}}>
+                try{
+                    return (
+                        <ScrollView contentContainerStyle={{alignItems: 'center', backgroundColor: '#F2F2F2'}}>
+                            {
+                                  this.state.currUserPrograms.map(program => {
+                                        return (
+                                            /* <View>
+                                                                                 <TouchableOpacity onPress={() => this.handleProgramOnPress(program)}>
+                                             <View style={{}}>
+                                             <Surface style={{elevation: 0, width: Dimensions.get('screen').width - 20, height: 120, borderRadius: 16, margin: 5}}>
+                                                   
+                                           <ImageBackground 
+                                            imageStyle={{borderRadius: 16}} 
+                                            style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
+                                            source={{uri: program.program_image}}>
+                                            </ImageBackground>
+                                         </Surface>
+                                         </View>
+                                         </TouchableOpacity>
+                                          <View style={{width: '95%', paddingLeft: 10, alignItems: 'flex-start', justifyContent: 'center' }}>
+                                          <Text style={{color: '#000000', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
+                                               {program.program_name}
+                                               </Text>
+                                               <Text  numberOfLines={3} style={{ color: '#00000', fontSize: 12, fontFamily: 'ARSMaquettePro-Regular'}}>
+                                              {program.program_description}
+                                               </Text>
                                                
-                                       <ImageBackground 
-                                        imageStyle={{borderRadius: 16}} 
-                                        style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
-                                        source={{uri: program.program_image}}>
-                                        </ImageBackground>
-                                     </Surface>
-                                     </View>
-                                     </TouchableOpacity>
-                                      <View style={{width: '95%', paddingLeft: 10, alignItems: 'flex-start', justifyContent: 'center' }}>
-                                      <Text style={{color: '#000000', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
-                                           {program.program_name}
-                                           </Text>
-                                           <Text  numberOfLines={3} style={{ color: '#00000', fontSize: 12, fontFamily: 'ARSMaquettePro-Regular'}}>
-                                          {program.program_description}
-                                           </Text>
-                                           
-                                      </View>
-                                        </View>*/
-     
-                                        <Card style={{width: '92%', marginVertical: 10}} onPress={() => this.handleProgramOnPress(program)}>
-         <Card.Cover source={{ uri: program.program_image }} />
-         <Card.Actions style={{width: '100%', justifyContent: 'space-between', padding: 10}}>
-             
-             <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-                 {program.program_name}
-             </Text>
-             <View style={{flexDirection: 'row'}}>
-             <Button color="rgb(13,71,161)" >Edit </Button>
-           <Button color="rgb(229,57,53)">Delete</Button>
-             </View>
-         </Card.Actions>
-       </Card>
-                                     )
-                            })
-                        }     
-                    </ScrollView>
-                )
+                                          </View>
+                                            </View>*/
+         
+                                            <Card style={{width: '92%', marginVertical: 10}} onPress={() => this.handleProgramOnPress(program)}>
+             <Card.Cover source={{ uri: program.program_image }} />
+             <Card.Actions style={{width: '100%', justifyContent: 'space-between', padding: 10}}>
+                 
+                 <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+                     {program.program_name}
+                 </Text>
+                 <View style={{flexDirection: 'row'}}>
+                 <Button color="rgb(13,71,161)" >Edit </Button>
+               <Button color="rgb(229,57,53)">Delete</Button>
+                 </View>
+             </Card.Actions>
+           </Card>
+                                         )
+                                })
+                            }     
+                        </ScrollView>
+                    )
+                }
+                 catch(err)
+                 {
+                     return (
+                    <ScrollView contentContainerStyle={{alignItems: 'center', backgroundColor: '#F2F2F2'}}>
+                        </ScrollView>
+                     )
+                 }
+                
             }
             else
             {
@@ -986,13 +996,10 @@ class Programs extends React.Component {
                            How will you get started?
                         </Text>
 
-                        <Text style={{padding: 10 }}>
-                            Find a Lupa trainer 
-                        </Text>
+                        <ElementsButton type="solid" title="Find a Trainer" buttonStyle={{backgroundColor: '#2196F3', borderRadius: 12}} style={{alignSelf: 'center', width: Dimensions.get('window').width - 20}} onPress={() => console.log('Find')} />
                         </View>
         
-        
-                        <ElementsButton type="solid" title="Find a trainer" buttonStyle={{backgroundColor: '#', borderRadius: 12}} style={{alignSelf: 'center', width: '90%'}} />
+    
                 </View>
                     )
                 }
@@ -1150,11 +1157,15 @@ class Programs extends React.Component {
     }
 
     mapFeaturedPrograms = () => {
+       try {
         return this.state.featuredPrograms.map((program, index, arr) => {
-                    return (
-                        <ProgramListComponent  programData={program} key={index} index={index}  setPageIsPrograms={this.setPageIsPrograms} setPageIsNotPrograms={this.setPageIsNotPrograms} />
-                    )
-        })
+            return (
+                <ProgramListComponent  programData={program} key={index} index={index}  setPageIsPrograms={this.setPageIsPrograms} setPageIsNotPrograms={this.setPageIsNotPrograms} />
+            )
+})
+       } catch(err) {
+           return;
+       }
     }
 
 
