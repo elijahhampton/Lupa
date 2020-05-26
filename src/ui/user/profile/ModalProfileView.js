@@ -42,27 +42,14 @@ import {
 } from 'react-native-paper';
 
 import {
-    Fab,
-    Header,
-    Left,
-    Body,
-    Right
-} from 'native-base';
-
-import {
     Avatar as ReactNativeElementsAvatar,
     Icon
 } from 'react-native-elements';
 
-import Timecards from './component/Timecards';
 
 import ImagePicker from 'react-native-image-picker';
 
-import LupaMapView from '../modal/LupaMapView'
 
-import {
-    CheckBox
-} from 'react-native-elements';
 
 import { withNavigation, NavigationActions } from 'react-navigation';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -70,142 +57,13 @@ import MyPacksCard from './component/MyPacksCard';
 
 import { connect } from 'react-redux';
 
-import ProfilePicture from '../../images/profile_picture1.jpeg';
-
-import ProgramListComponent from '../../workout/component/ProgramListComponent'
-
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { Pagination } from 'react-native-snap-carousel';
-import { Constants } from 'react-native-unimodules';
 import ProgramProfileComponent from '../../workout/program/createprogram/component/ProgramProfileComponent';
 
 let chosenHeaderImage;
 let chosenProfileImage;
-
-const InviteToPackDialog = props => {
-    const [userToInvite, setUserToInvite] = useState(props.userToInvite);
-    const [checked, setChecked] = useState(false);
-    const [packsToInvite, setPacksToInvite] = useState([]);
-
-    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    _handlePacksToInvite = (uuid) => {
-        let updatedPacks = packsToInvite;
-        updatedPacks.push(uuid);
-        setPacksToInvite(updatedPacks);
-        setChecked(true);
-    }
-
-    handleDialogClose = () => {
-        LUPA_CONTROLLER_INSTANCE.inviteUserToPacks(packsToInvite, userToInvite);
-        props.closeModalMethod();
-    }
-
-    return (
-        <Portal>
-            <Dialog
-                visible={props.isOpen}
-                onDismiss={props.closeModalMethod}>
-                <Dialog.Title>Pack Invites</Dialog.Title>
-                <Dialog.Content>
-                    {
-                        props.userPacks.map(pack => {
-                            return (
-                                <View key={pack.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <CheckBox
-                                        center
-                                        checkedIcon='dot-circle-o'
-                                        uncheckedIcon='circle-o'
-                                        checked={checked}
-                                        onPress={() => this._handlePacksToInvite(pack.id)} />
-
-                                    <Text>
-                                        {pack.pack_title}
-                                    </Text>
-                                </View>
-                            )
-                        })
-                    }
-                </Dialog.Content>
-                <Dialog.Actions>
-                    <Button onPress={() => this.handleDialogClose()}>Invite</Button>
-                </Dialog.Actions>
-            </Dialog>
-        </Portal>
-    )
-}
-
-const USER_INTEREST = [
-        'Improve Strength',
-        'Improve Power',
-        'Improve Endurance',
-        'Improve Speed',
-        'Improve Flexibility',
-        'Improve Agility'
-]
-
-const UpdateInterestDialog = props => {
-    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    let [fitnessInterest, setFitnessInterest] = useState([]);
-
-
-    handleDialogClose = () => {
-        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('interest_arr', fitnessInterest);
-        props.closeModalMethod();
-    }
-
-    handleChipSelection = async (interest) => {
-        let interestArr = fitnessInterest;
-        await interestArr.includes(interest) ? 
-            interestArr.splice(interestArr.indexOf(interest), 1) 
-            : 
-            interestArr.push(interest);
-
-            await setFitnessInterest(interestArr)
-    }
-
-    getChipMode = (interest) => {
-        return fitnessInterest.includes(interest) ? "flat" : "outlined"
-    }
-
-    return (
-        <Portal>
-            <Dialog
-                visible={props.isOpen}
-                onDismiss={props.closeModalMethod}
-                style={{borderRadius: 15, backgroundColor: "#212121"}}>
-                <Dialog.Title style={{color: 'white'}}> Update Interest </Dialog.Title>
-                <Dialog.Content>
-                    <ScrollView contentContainerStyle={{flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center'}}>
-                        {
-                            USER_INTEREST.map(interest => {
-                                return (
-                                    <Chip 
-                                        mode={getChipMode(interest)} onPress={() => handleChipSelection(interest)} 
-                                        textStyle={fitnessInterest.includes(interest) ? [styles.selectedChipText] : [styles.unselectedChipText]} 
-                                        style={fitnessInterest.includes(interest) ? [styles.selectedChip, styles.selectedChipText] : [styles.unselectedChip, styles.unselectedChipText]}
-                                        >
-                                        {interest}
-                                    </Chip>
-                                )
-                            })
-                        }
-                    </ScrollView>
-                </Dialog.Content>
-                <Dialog.Actions>
-                    <Button color="rgba(30,136,229 ,1)" onPress={() => this.handleDialogClose()} theme={{
-                        colors: {
-                            primary: "rgba(30,136,229 ,1)"
-                        }
-                    }}>Update</Button>
-                </Dialog.Actions>
-            </Dialog>
-        </Portal>
-    )
-}
 
 const mapStateToProps = (state, action) => {
     return {
@@ -609,9 +467,6 @@ class ModalProfileView extends React.Component {
 
     }
 
-    _showDialog = () => this.setState({ dialogVisible: true });
-
-    _hideDialog = () => this.setState({ dialogVisible: false });
 
     _showActionSheet = () => {
         ActionSheetIOS.showActionSheetWithOptions(
@@ -621,7 +476,7 @@ class ModalProfileView extends React.Component {
             }, (buttonIndex) => {
                 switch (buttonIndex) {
                     case 0:
-                        this._showDialog();
+                       
                         break;
                     case 1:
                         break;
@@ -1237,8 +1092,7 @@ thin={true}
                         <SafeAreaView />
                 </ScrollView>
                 
-                <InviteToPackDialog userToInvite={this._getId()} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
-                <UpdateInterestDialog userToUpdate={this._getId()} isOpen={this.state.fitnessInterestDialogOpen} closeModalMethod={this.closeFitnessInterestDialog}/>
+                
             </ScrollView>
             </SafeAreaView>
             </Modal>
