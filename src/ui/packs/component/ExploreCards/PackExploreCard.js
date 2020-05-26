@@ -24,13 +24,10 @@ import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 
 import { withNavigation, NavigationActions } from 'react-navigation';
-import { NavigationContext } from '@react-navigation/native';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 
 import PackInformationModal from '../../modal/PackInformationModal';
-
-let contextType = NavigationContext;
 
 class DefaultPack extends React.Component {
     constructor(props) {

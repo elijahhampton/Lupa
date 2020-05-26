@@ -62,7 +62,6 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import Stripe from 'tipsi-stripe';
 import { initStripe } from '../modules/payments/stripe';
 
-import CardFormScreen from '../modules/payments/src/scenes/CardFormScreen'
 
 const ANIMATED_HEIGT_DURATION = 500;
 const config = {
