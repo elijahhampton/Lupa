@@ -9,6 +9,9 @@
 import React, { useState, useEffect } from 'react';
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 
+import ToggleSwitch from 'toggle-switch-react-native'
+
+
 import {
     View,
     StyleSheet,
@@ -25,6 +28,8 @@ import {
     TouchableHighlight,
 } from 'react-native';
 
+import {LinearGradient }from 'expo-linear-gradient';
+
 import {
     Surface,
     DataTable,
@@ -34,11 +39,16 @@ import {
     Chip,
     Paragraph,
     Caption,
+    Card,
     Badge,
     Appbar,
     Divider,
     Avatar,
 } from 'react-native-paper';
+
+import {
+    Input
+} from 'react-native-elements';
 
 import {
     LineChart,
@@ -52,7 +62,6 @@ import { connect } from 'react-redux';
 import { Pagination } from 'react-native-snap-carousel';
 import Swiper from 'react-native-swiper';
 import { Constants } from 'react-native-unimodules';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import Contacts from 'react-native-contacts';
 
@@ -61,6 +70,8 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import Stripe from 'tipsi-stripe';
 import { initStripe } from '../modules/payments/stripe';
+
+import ThinFeatherIcon from "react-native-feather1s";
 
 
 const ANIMATED_HEIGT_DURATION = 500;
@@ -468,6 +479,7 @@ class LupaHome extends React.Component {
 
     render() {
         return (
+            /*
             <GestureRecognizer
             onSwipe={(direction, state) => this.onSwipe(direction, state)}
             onSwipeUp={(state) => this.onSwipeUp(state)}
@@ -860,7 +872,131 @@ style={{
                 <InviteFriendsModal />
         
             </SafeAreaView>
-            </GestureRecognizer>
+</GestureRecognizer>*/
+
+<SafeAreaView style={{flex: 1,  alignItems: 'center'}}>
+    <Appbar.Header  style={{elevation: 0, backgroundColor: 'white', width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+    <ToggleSwitch
+  isOn={true}
+  onColor="#212121"
+  offColor="#212121"
+  label={true ? 'Feed' : '(Off)'}
+  labelStyle={{ color: "black", fontFamily: 'ARSMaquettePro-Bold'}}
+  size="small"
+  onToggle={isOn => console.log("changed to : ", isOn)}
+/>
+
+<View style={{flexDirection: 'row'}}>
+        <IconButton icon="email" color="#212121" size={20} />
+        <IconButton icon="notifications" color="#212121" size={20}/>
+        </View>
+    </Appbar.Header>
+    
+    <View style={{padding: 5, flex: 0.5, alignItems: 'flex-start', justifyContent: 'space-evenly'}} >
+           <ScrollView  horizontal onMoveShouldSetResponder={evt => {
+               this.props.disableSwipe();
+               return true;
+           }} onTouchEnd={() => {
+               this.props.enableSwipe()
+           }}>
+                <>
+                <View>
+                            <Text style={{padding: 10, fontFamily: 'ARSMaquettePro-Regular', fontSize: 18, color: '#212121'}}>
+                Log a workout
+            </Text>
+            <Text style={{paddingHorizontal: 10, fontFamily: 'ARSMaquettePro-Regular', fontSize: 12, color: '#212121'}}>
+                Swipe right to your journal and log a workout you've recently finished on or off of Lupa.
+            </Text>
+            </View>
+            <Button color="#0D47A1" mode="outlined"  theme={{
+                roundness: 20
+            }} style={{alignSelf: 'flex-end'}}>
+                <Text>
+                    Open Log
+                </Text>
+                <FeatherIcon name="arrow-right" />
+            </Button>
+            </>
+
+            <>
+                <View>
+                            <Text style={{padding: 10, fontFamily: 'ARSMaquettePro-Regular', fontSize: 18, color: '#212121'}}>
+                Log a worko
+            </Text>
+            <Text style={{paddingHorizontal: 10, fontFamily: 'ARSMaquettePro-Regular', fontSize: 12, color: '#212121'}}>
+                Swipe right to your journal and log a workout you've recently finished on or off of Lupa.
+            </Text>
+            </View>
+            <Button color="#0D47A1" mode="outlined"  theme={{
+                roundness: 20
+            }} style={{alignSelf: 'flex-end'}}>
+                <Text>
+                    Open Log
+                </Text>
+                <FeatherIcon name="arrow-right" />
+            </Button>
+            </>
+           </ScrollView>
+  
+    </View>
+
+    <View style={{flex: 2.5, justifyContent: 'center', alignItems: 'center'}}>
+        
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        
+        <View style={{padding: 10, alignItems: 'center', }}>
+        <Text style={{fontSize: 15, fontFamily: 'ARSMaquettePro-Regular', fontWeight: '200'}}>
+                <Text style={{fontWeight: '100'}}>
+                Try 5 Week Glutes by
+                </Text>
+                <Text>
+                    {" "}
+                </Text>
+                <Text style={{fontFamily: 'ARSMaquettePro-Bold', fontWeight: '500'}}>
+                 Elijah Hampton
+                </Text>
+            </Text>
+        </View>
+        <Surface style={{borderRadius: 20, elevation: 10, width: 350, height: 300, backgroundColor: 'red'}}>
+           <Image style={{borderRadius: 20, width: '100%', height: '100%'}} source={require('./images/programs/sample_photo_two.jpg')}/>
+        </Surface>
+        <View style={{margin: 15, alignItems: 'center'}}>
+
+
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+
+    <Button color="#0D47A1" mode="text" style={{alignSelf: 'center', padding: 5}}>
+                <Text>
+                    Show me another
+                </Text>
+
+            </Button>
+
+            <Button color="#0D47A1" mode="text" style={{alignSelf: 'center', padding: 5}}>
+                <Text>
+                   Programs Home
+                </Text>
+                <FeatherIcon name="arrow-right" />
+            </Button>
+            </View>
+        </View>
+
+
+
+    </View>
+
+    
+    </View>
+
+    <View style={{flex: 0.4, alignItems: 'center', justifyContent: 'center'}}>
+        <Input 
+        leftIcon={<FeatherIcon name="search" size={15} color="rgb(72, 72, 74)" />} 
+        placeholder="Find me a trainer based on.."
+        inputContainerStyle={{borderWidth: 0, borderBottomWidth: 0, borderRadius: 20, backgroundColor: '#F5F5F5'}}
+        inputStyle={{ fontSize: 15, color: 'rgb(142, 142, 147)', paddingHorizontal: 10}}
+        containerStyle={{width: Dimensions.get('window').width - 50, alignSelf: 'center' }} />
+    </View>
+</SafeAreaView>
         );
     }
 }

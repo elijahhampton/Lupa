@@ -71,6 +71,7 @@
     "react-native-chart-kit": "^3.9.0",
     "react-native-contacts": "^5.2.0",
     "react-native-crypto": "^2.2.0",
+    "react-native-deck-swiper": "^1.6.7",
     "react-native-device-info": "^5.5.6",
     "react-native-dotenv": "^0.2.0",
     "react-native-draggable": "^3.3.0",
