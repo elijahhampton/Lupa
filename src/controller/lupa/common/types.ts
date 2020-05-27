@@ -77,7 +77,6 @@ export type LupaUserStructure = {
     age: any,
     email: String,
     email_verified: false,
-    mobile: String,
     gender: String,
     location : {
         city: String,

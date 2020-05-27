@@ -7,14 +7,9 @@ import {
     LupaWorkoutStructure,
     LupaUserStructure, 
     LupaAssessmentStructure,
-    LupaProgramInformationStructure,
-    LupaNotificationStructure,
-    Days,
     SESSION_STATUS,
-    PACK_EVENT_STAGE,
     LupaTrainerService,
 } from '../lupa/common/types';
-import { any } from 'prop-types';
 
 var lupa_trainer_service : LupaTrainerService = {
     service_name: "",
@@ -175,7 +170,6 @@ var lupa_user : LupaUserStructure = {
     email: "",
     age: "",
     email_verified: false,
-    mobile: "",
     gender: "",
     location: {city: '', state: '', country: '', longitude: '', latitude: '',},
     isTrainer: false,
@@ -212,33 +206,10 @@ var lupa_user : LupaUserStructure = {
 
 export const getLupaUserStructure = (
     user_uuid: String, 
-    {display_name=""} : {display_name: String}, 
     username: String, 
-    email : String, 
-    {email_verified=false} : {email_verified: Boolean}, 
-    {mobile=""} : {mobile : String}, 
-    {age=""} : {age: String}, 
-    {gender=""} : {gender: String}, 
-    {location=""} : {location: String}, 
-    {isTrainer=false} : {isTrainer: Boolean}, 
-    {first_name=""} : {first_name: String}, 
-    {last_name=""} : {last_name: String}, 
-    {packs=[]} : {packs: Array<LupaPackStructure>},
-    {photo_url=""} : {photo_url: String}, 
-    time_created: Date, 
-    {preferred_workout_times={}} : {preferred_workout_times: Object}, 
-    {interest=[]} : {interest: Array<String>}, 
-    {rating=0} : {rating: Number}, 
-    {experience={}} : {experience: Object}, 
-    {followers=[]}: {followers: Array<String>}, 
-    {following=[]}: {following: Array<String>}, 
-    {sessionsCompleted}: {sessionsCompleted: Number}, 
-    {bio=""}: {bio: String}, 
-    {recommended_workouts=[]}: {recommended_workouts: Array<String>}, 
-    {certification=""}: {certification: String}, 
-    {assessments=[]}: {assessments: Array<String>}, 
-    {tokens={}} : {tokens: Object},
-    {services=[]} : {services: Array<String>}) => {
+    email : String,  
+    age : {age: Number}, 
+    time_created: Date, ) => {
     lupa_user.user_uuid = user_uuid;
     lupa_user.username = username;
     lupa_user.age = age;
