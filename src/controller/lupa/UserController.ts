@@ -129,9 +129,6 @@ export default class UserController {
                 case 'location':
                     retValue = snapshot.location;
                     break;
-                case 'mobile':
-                    retValue = snapshot.mobile;
-                    break;
                 case 'packs':
                     retValue = snapshot.packs;
                     break;
@@ -187,12 +184,12 @@ export default class UserController {
     getCurrentUserData = async () => {
         let currentUserInformation;
         let currentUserUUID = await this.getCurrentUserUUID();
-        await USER_COLLECTION.where('user_uuid', '==', currentUserUUID).get().then(docs => {
+        await USER_COLLECTION.where('user_uuid', '==', currentUserUUID).limit(1).get().then(docs => {
             docs.forEach(doc => {
                 currentUserInformation = doc.data();
                 return;
             })
-        });
+        })
 
         return Promise.resolve(currentUserInformation);
     }
@@ -683,7 +680,6 @@ export default class UserController {
                     interest: user.interest,
                     isTrainer: user.isTrainer,
                     location: user.location,
-                    mobile: user.mobile,
                     packs: user.packs,
                     photo_url: user.photo_url,
                     preferred_workout_times: user.preferred_workout_times,
@@ -802,7 +798,6 @@ export default class UserController {
             interest: undefined,
             isTrainer: undefined,
             location: undefined,
-            mobile: undefined,
             packs: undefined,
             photo_url: undefined,
             preferred_workout_times: undefined,
@@ -1069,7 +1064,7 @@ export default class UserController {
              }
 
         } catch(err) {
-        
+            alert(err)
             programsData = [];
         }
 
