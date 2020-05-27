@@ -2,35 +2,24 @@ import React from 'react';
 
 import {
     View,
-    StyleSheet,
-    ImageBackground,
-    Modal,
     Text,
-    Button as NativeButton,
+    StyleSheet,
     TouchableOpacity,
     ScrollView,
     Dimensions,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import {
-    TextInput, 
-    Title,
-    Headline,
     Surface,
     Snackbar,
-    Caption,
-    Button,
-    Paragraph,
-    Divider
 } from 'react-native-paper';
 
 import SafeAreaView from 'react-native-safe-area-view';
 
 import { 
-    SocialIcon,
     Input,
     CheckBox,
-    Overlay,
     Button as ElementsButton,
  } from 'react-native-elements';
 
@@ -38,13 +27,9 @@ import {
 
  import FeatherIcon from 'react-native-vector-icons/Feather';
 
-const {
-    signUpUser
-} = require('../../../controller/lupa/auth/auth');
+import { UserAuthenticationHandler } from '../../../controller/firebase/firebase'
 
 import LupaController from '../../../controller/lupa/LupaController';
-
-import loadFonts from '../../common/Font/index'
 
 import { getLupaAssessmentStructure } from '../../../controller/firebase/collection_structures'
 import { connect } from 'react-redux';
@@ -118,6 +103,7 @@ class SignupModal extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
         this.scrollView = React.createRef();
         this.handleParQButtonOnPress = this.handleParQButtonOnPress.bind(this);
+        this.userAuthenticationHandler = new UserAuthenticationHandler();
 
         this.state = {
           username: "",
@@ -191,12 +177,11 @@ class SignupModal extends React.Component {
    */
   _introduceApp = async () => {
     await this._setupRedux();
-    await loadFonts();
     this.props.navigation.navigate('App');
   }
 
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, currUserServices, lupaWorkouts, lupaAssessments;
+    let currUserData, currUserPacks, currUserPrograms, lupaWorkouts, lupaAssessments;
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -205,16 +190,8 @@ class SignupModal extends React.Component {
       currUserPacks = result;
     })
 
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
-      currUserHealthData = result;
-    });
-
     await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserServices().then(result => {
-      currUserServices = result;
     })
 
     await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
@@ -225,15 +202,14 @@ class SignupModal extends React.Component {
       lupaAssessments = result;
     })
 
-    let userPayload = {
+    const userPayload = {
       userData: currUserData,
-      healthData: currUserHealthData,
+      healthData: {}
     }
 
-    await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
+    await this._updatePacksInRedux(currUserPacks);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
-    await this._updateUserServicesInRedux(currUserServices);
     await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
     await this._updateLupaAssessmentDataInRedux(lupaAssessments);
   }
@@ -241,42 +217,21 @@ class SignupModal extends React.Component {
   _updateUserInRedux = (userObject) => {
     this.props.updateUser(userObject);
   }
-
   _updatePacksInRedux = (packsData) => {
     this.props.updatePacks(packsData);
   }
-
-    /**
-   * 
-   */
   _updateUserHealthDataInRedux = (healthData) => {
     this.props.updateHealthData(healthData);
   }
-
-  /**
-   * 
-   */
   _updateUserProgramsDataInRedux = (programsData) => {
     this.props.updateUserPrograms(programsData);
   }
-
-   /**
-   * 
-   */
   _updateUserServicesInRedux = (servicesData) => {
     this.props.updateUserServices(servicesData);
   }
-
-  /**
-   * 
-   */
   _updateLupaWorkoutsDataInRedux = (lupaWorkoutsData) => {
     this.props.updateLupaWorkouts(lupaWorkoutsData);
   }
-
-  /**
-   * 
-   */
   _updateLupaAssessmentDataInRedux = (lupaAssessmentData) => {
     this.props.updateLupaAssessments(lupaAssessmentData);
   }
@@ -352,7 +307,7 @@ class SignupModal extends React.Component {
 
         //Check registration status
         let successfulRegistration;
-        await signUpUser(username, email, password, confirmedPassword, isTrainerAccount, birthday, agreedToTerms).then(result => {
+        await this.userAuthenticationHandler.signUpUser(username, email, password, confirmedPassword, birthday, agreedToTerms).then(result => {
           successfulRegistration = result;
         });
 
@@ -457,7 +412,7 @@ class SignupModal extends React.Component {
     render() {
         return (
           <SafeAreaView style={{flex: 1, backgroundColor: '#F4F7FC'}} forceInset={{bottom: 'never'}}>
-
+            <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
           <ScrollView ref={this.scrollView} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true} contentContainerStyle={{backgroundColor: '#F4F7FC'}}>
             
           <View style={{width: "100%", height: Dimensions.get('window').height}}>
@@ -715,6 +670,7 @@ class SignupModal extends React.Component {
         >
           {this.state.signupRejectionReason}
         </Snackbar>
+        </KeyboardAvoidingView>
           </SafeAreaView>
         
                     

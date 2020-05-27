@@ -13,6 +13,8 @@ import axios from 'axios';
 import { sendLocalPushNotification } from '../../modules/push-notifications';
 import { getLupaUserStructure } from './collection_structures';
 
+import * as EmailValidator from 'email-validator'
+
 //Initialize firebase
 const firebaseConfig = {
     apiKey: "AIzaSyAPrxdNkncexkRazrgGy4FY6Nd-9ghZVWE",
@@ -33,7 +35,7 @@ let fb_init_config = reactfirebase.initializeApp(firebaseConfig)
 const LUPA_DB = reactfirestore();
 const LUPA_DB_FIREBASE = reactfirebase.database()
 
-const LUPA_AUTH = reactfirebaseauth();
+const LUPA_AUTH = reactfirebaseauth()
 
 var CURRENT_USER_DOC_REF = undefined;
 var CURRENT_USER_DOC_DATA_REF = undefined;
@@ -215,6 +217,32 @@ USERNAME_MAXIMUM_CHARACTER_LIMIT = 30;
 USERNAME_MINIMUM_CHARACTER_LIMIT = 6;
 PASSWORD_MINIMUM_LIMIT_LOW = 7;
 PASSWORD_MAXIMUM_LIMIT_HIGH = 10;
+INVALID_EMAIL_CHARACTERS = [
+  '!',
+  '#',
+  '$',
+  '^',
+  '&',
+  '%',
+  '*',
+  '(',
+  ')',
+  '+',
+  '=',
+  '-',
+  '[',
+  ']',
+  '\/',
+  '/',
+  '{',
+  '}',
+  '|',
+  ':',
+  '<',
+  '>',
+  '?',
+  ]
+
 INVALID_USERNAME_CHARACTERS = [
     '!',
     '@',
@@ -240,7 +268,6 @@ INVALID_USERNAME_CHARACTERS = [
     '<',
     '>',
     '?',
-    '.'
     ]
 
   INVALID_PASSWORD_CHARACTERS = [
@@ -276,6 +303,19 @@ INVALID_USERNAME_CHARACTERS = [
 
  isIllegalPassword(password) {
     return !/^((?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%&*]{6,20})$/.test(password);
+}
+
+calculateAge(dateString) 
+{
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) 
+    {
+        age--;
+    }
+    return age;
 }
 
   reauthenticate = (currentPassword) => {
@@ -329,8 +369,8 @@ loginUser = async (email, password) => {
   return result;
 }
 
-signUpUser = async (username, email, password, confirmedPassword,isTrainerAccount, birthday, agreedToTerms) => {
-  var USER_UUID, ANNOUNCEMENTS_PACK_UID;
+signUpUser = async (username, email, password, confirmedPassword, birthday, agreedToTerms) => {
+  var USER_UUID;
   let signUpResultStatus = {
       result: true,
       reason: "",
@@ -338,18 +378,16 @@ signUpUser = async (username, email, password, confirmedPassword,isTrainerAccoun
   }
 
   //calculate age
-  //let age = await calculateAge(birthday);
-  let age = 26;
-
-  let err = await checkSignUpFields(username, email, password, confirmedPassword, birthday, agreedToTerms);
- if (err != -1)
-  {
+  //let age = await this.calculateAge(birthday)
+  let err = await this.checkSignUpFields(username, email, password, confirmedPassword, 0, agreedToTerms);
+  if (err != -1) {
       signUpResultStatus.reason = err.reason;
       signUpResultStatus.result = false;
       signUpResultStatus.field = err.field;
       return Promise.resolve(signUpResultStatus);
   }
 
+  //Authenticate user in firebase
   await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
       USER_UUID = userCredential.user.uid
       console.log('LUPA: Registering user with firebase authentication.')
@@ -363,18 +401,20 @@ signUpUser = async (username, email, password, confirmedPassword,isTrainerAccoun
       return Promise.resolve(signUpResultStatus);
   });
 
-  let userDoc = LUPA_DB.collection('users').doc(USER_UUID);
+  //Get a reference to the newly create user doc
+  const userDoc = LUPA_DB.collection('users').doc(USER_UUID);
 
-  // Don't need to send a reason back here.. just do a try catch and handle it if something goes wrong
+  //Populate database with user data
   try {
-      let userData = getLupaUserStructure(USER_UUID, "", username, LUPA_AUTH.currentUser.email,
-      LUPA_AUTH.currentUser.emailVerified, LUPA_AUTH.currentUser.phoneNumber, age, "", "", isTrainerAccount, 
-      "", "", [], "", "", {}, [], 0, {}, [], [], 0, "", [], "", [], {});
-  
+      //Obtain a user structure
+      const userData = getLupaUserStructure(USER_UUID, username, email, 0, new Date());
+
       //Add user to users collection with UID.
-  await LUPA_DB.collection('users').doc(USER_UUID).set(userData);
+      await LUPA_DB.collection('users').doc(USER_UUID).set(userData, { merge: true });
   } catch (err) {
-      
+    LUPA_
+    const newData = getLupaUserStructure(USER_UUID, username, email, 0, new Date());
+    await LUPA_DB.collection('users').doc(USER_UUID).set(newData);
   }
 
   try {
@@ -388,15 +428,12 @@ signUpUser = async (username, email, password, confirmedPassword,isTrainerAccoun
           userDoc.update({
               packs: packs
           })
-          console.log(packID);
           let currentDoc = LUPA_DB.collection('packs').doc(packID);
           let packMembers = pack.pack_members;
           packMembers.push(USER_UUID);
-          console.log('length: ' + packMembers.length)
           currentDoc.update({
               pack_members: packMembers
           });
-          console.log('bushh')
       });
   });
 } catch(err) {
@@ -406,18 +443,8 @@ signUpUser = async (username, email, password, confirmedPassword,isTrainerAccoun
   return Promise.resolve(signUpResultStatus);
 }
 
-checkSignUpFields = (username, email, password, confirmedPassword, birthday, agreedToTerms) => {
-  //check if username is already in use
-  //const res = LUPA_CONTROLLER_INSTANCE.checkUserIsInUse(username);
-  /*
-  if (res)
-  {
-      return "username already in use"
-  }
-  */
+checkSignUpFields = (username, email, password, confirmedPassword, age, agreedToTerms) => {
 
-  let age = birthday;
-  agreedToTerms = true;
 
   let errObject = {
       reason: "",
@@ -431,7 +458,6 @@ checkSignUpFields = (username, email, password, confirmedPassword, birthday, agr
       errObject.field = 'Username'
       return errObject
   }
-
 
   //check if valid email
   if (!EmailValidator.validate(email))
@@ -457,14 +483,14 @@ checkSignUpFields = (username, email, password, confirmedPassword, birthday, agr
       return errObject
   }
 
-  //check if birthday is over 16 (or 18?)
-  //let age = await calculateAge(birthday);
-  if (age.getFullYear() < 1992)
+ /* if (age < 16)
   {
       errObject.reason = "age under 16"
       errObject.field = 'Birthday'
       return errObject
-  }
+  }*/
+
+  agreedToTerms == true || false ? null : agreedToTerms = false
 
   //check if user has agreed to terms
   if (agreedToTerms === false)

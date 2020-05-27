@@ -32,11 +32,11 @@ import _requestPermissionsAsync from '../../../../controller/lupa/permissions/pe
 import { connect } from 'react-redux';
 //Activity Indicator to show while fetching location data
 const ActivityIndicatorModal = (props) => {
-    const [isLoading, setIsLoading] = useState(true);
-
     return (
                 <Modal presentationStyle="overFullScreen" style={styles.activityIndicatorModal} visible={props.isVisible}>
-                    <ActivityIndicator style={{alignSelf: "center"}} animating={isLoading} hidesWhenStopped={false} size='large' color="#2196F3" />
+                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <ActivityIndicator style={{alignSelf: "center"}} animating={true} hidesWhenStopped={false} size='large' color="#2196F3" />
+                    </View>
                 </Modal>
     );
 }

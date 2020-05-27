@@ -95,7 +95,7 @@ class BasicInformation extends React.Component {
     }
 
     _handleDisplayNameEndEditing = async () => {
-        const display_name = await this.state.displayName;
+        const display_name = await this.state.displayName.trim();
         const payload = await getUpdateCurrentUserAttributeActionPayload('display_name', display_name, []);
         await this.props.updateCurrentUserAttribute(payload);
 
@@ -112,7 +112,7 @@ class BasicInformation extends React.Component {
     }
 
     checkDisplayNameInputText = () => {
-        const currDisplayName = this.state.displayName;
+        const currDisplayName = this.state.displayName.trim();
 
         try {
             let displayNameParts = currDisplayName.split(" ");
