@@ -474,29 +474,32 @@ class PacksController {
   getCurrentUserPacks = async () => {
     let currentUserPacks = [];
     let currentUserInformation;
-        let currentUserUUID = await LUPA_AUTH.currentUser.uid;
-        await LUPA_DB.collection('users').doc(currentUserUUID).get().then(doc => {
-            currentUserInformation = doc.data();
+    let currentUserUUID = await LUPA_AUTH.currentUser.uid;
+        await LUPA_DB.collection('users').doc(currentUserUUID).get().then(snapshot => {
+            currentUserInformation = snapshot.data();
         });
 
-        let packsData = currentUserInformation.packs;
-
-        if (packsData == undefined)
-        {
-          return Promise.resolve([]);
+        try {
+          let packsData = currentUserInformation.packs;
+          for (let i = 0; i < packsData.length; i++)
+          {
+            let pack = packsData[i];
+              await PACKS_COLLECTION.doc(pack).get().then(snapshot => {
+                let data = snapshot.data();
+                data.pack_uuid = snapshot.id;
+                currentUserPacks.push(data);
+              });
+          }
+        } catch(err) {
+          //if we have an error at least we will get the data for the default announcements pack and give it to the user
+          let announcementsPackData;
+          await PACKS_COLLECTION.doc('xezOnF9aQzyCgH1ohGrR').get().then(snapshot => {
+            announcementsPackData = snapshot.data();
+            announcementsPackData.pack_uuid = snapshot.id;
+            currentUserPacks.push(announcementsPackData);
+          });
+          return Promise.resolve([])
         }
-
-        for (let i = 0; i < packsData.length; i++)
-        {
-          let pack = packsData[i];
-            await PACKS_COLLECTION.doc(pack).get().then(snapshot => {
-              let data = snapshot.data();
-              data.pack_uuid = snapshot.id;
-              currentUserPacks.push(data);
-            })
-        }
-
-        console.log('UMMMMM '  + currentUserPacks.length)
 
     return Promise.resolve(currentUserPacks);
   }
