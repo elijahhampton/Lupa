@@ -6,6 +6,14 @@ export function initStripe() {
     })
 }
 
+export {
+    stripe
+}
+
+export const STRIPE_ENDPOINT = 'https://us-central1-lupa-cd0e3.cloudfunctions.net/payWithStripe'
+export const CURRENCY = 'usd';
+export const LUPA_ERR_TOKEN_UNDEFINED = "TOKEN_UNDEFINED";
+
 /*
 
 {

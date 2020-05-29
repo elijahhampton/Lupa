@@ -246,7 +246,7 @@ export default class SessionController {
       })
     } 
     catch(err) {
-      console.log('errrr')
+      
       return Promise.resolve(false)
     }
     return Promise.resolve(true);

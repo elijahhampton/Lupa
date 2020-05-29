@@ -1,8 +1,10 @@
 const functions = require('firebase-functions')
 const admin = require("firebase-admin");
 
+const cors = require('cors')({origin: true});
+
 const stripe = require('stripe')
-('sk_live_raQf36OIbKRPb4beGEjtbChu00RNRk8BBz');
+('sk_live_xUnU9OwzS35AS93Rk8OT9VY900vCEcnODR');
 
 const firebaseConfig = {
     apiKey: "AIzaSyAPrxdNkncexkRazrgGy4FY6Nd-9ghZVWE",
@@ -32,7 +34,11 @@ const SESSIONS_DOCUMENT_CHANGE_TYPES = {
     SESSION_INVITE: "session_invite"
 }
 
-/** Sends a notification to a user upon receiving a notification of some type. */
+/** Sends a notification to a user upon receiving a notification object 
+ * of some type. 
+ * 
+ * @trigger onUpdate (User)
+ * */
 exports.receivedNotification = functions.firestore
 .document('users/{userUUID}')
 .onUpdate((change, context) => {
@@ -74,20 +80,48 @@ exports.receivedNotification = functions.firestore
             }
         )
         .then(function(response) {
-          console.log("Notification sent successfully:", response);
+
         })
         .catch(function(error) {
-          console.log("Notification sent failed:", error);
+    
     })
     }
   }
   
 })
 
+/**
+ * Handles sending payment data to firebase server.
+ * 
+ * @trigger onRequest (HTTPS)
+ */
+exports.payWithStripe = functions.https.onRequest((request, response) => {
+    // Set your secret key: remember to change this to your live secret key in production
+    // See your keys here: https://dashboard.stripe.com/account/apikeys
+    
+    stripe.charges.create({
+        amount: request.body.amount * 100,
+        currency: request.body.currency,
+        source: request.body.token.tokenId,
+    },
+    {
+      idempotencyKey: request.body.idempotencyKey,
+    }).then((charge) => {
+            // asynchronously called
+            response.send(charge);
+        })
+        .catch(err =>{
+            
+        });
+        
+})
+
+//sk_live_xUnU9OwzS35AS93Rk8OT9VY900vCEcnODR
 
 /**
  * Sends a notification to a user when they receive a new session invite.
  */
+/*
 exports.sessionCreated = functions.firestore
 .document('sessions/{sessionUUID}')
 .onCreate((snapshot, context) => {
@@ -142,25 +176,4 @@ exports.sessionCreated = functions.firestore
                   console.log("Notification sent failed:", error);
 
 });
-});
-
-
-exports.payWithStripe = functions.https.onRequest((request, response) => {
-    // Set your secret key: remember to change this to your live secret key in production
-    // See your keys here: https://dashboard.stripe.com/account/apikeys
-    
-      // eslint-disable-next-line promise/catch-or-return
-stripe.charges.create({
-  amount: response.body.amount,
-  currency: response.body.currency,
-  source: response.body.token
-}).then((charge) => {
-      // asynchronously called
-      console.log(charge);
-      response.send(charge);
-  })
-  .catch(err =>{
-      console.log(err);
-  });
-
-})
+});*/

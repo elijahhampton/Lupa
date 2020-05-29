@@ -101,16 +101,13 @@ LUPA_AUTH.onAuthStateChanged(user => {
         else
         {
             //if not we need to send an email verification link
-            user.sendEmailVerification({
-                handleCodeInApp: true,
-                url: 'app/email-verification'
-            })
+            
         }
-        console.log('loggin in')
+
     } 
     else 
     {
-        console.log('loggin out')
+        
     }
 })
 

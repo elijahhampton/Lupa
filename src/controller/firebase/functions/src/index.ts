@@ -96,7 +96,6 @@ exports.receivedNotification = functions.firestore
 exports.sessionCreated = functions.firestore
 .document('sessions/{sessionUUID}')
 .onCreate((snapshot, context) => {
-    console.log('HI')
     // Get an object representing the document
       // e.g. {'name': 'Marie', 'age': 66}
       //Session document data before update
@@ -141,10 +140,10 @@ exports.sessionCreated = functions.firestore
                     }
                 )
                 .then(function(response) {
-                  console.log("Notification sent successfully:", response);
+
                 })
                 .catch(function(error) {
-                  console.log("Notification sent failed:", error);
+     
 
 });
 });

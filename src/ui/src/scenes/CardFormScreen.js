@@ -15,26 +15,13 @@ class CardFormScreen extends PureComponent {
     token: null,
   }
 
-  handleCardPayPress = async (amount, currency, token, customerName="", lineOneAddress="", lineTwoAddress="", city="", state="", country="", postalCode="", email="") => {
+  handleCardPayPress = async (amount, currency, token) => {
     initStripe()
     try {
       this.setState({ loading: true, token: null })
       const token = await stripe.paymentRequestWithCardForm({
-        //Only iOS supports this option
-        smsAutofillDisabled: true,
-        requiredBillingAddressFields: 'full',
-        prefilledInformation: {
-            billingAddress: {
-                name: customerName,
-                line: lineOneAddress,
-                line2: lineTwoAddress,
-                city: city,
-                state: state,
-                country: country,
-                postalCode: postalCode,
-                email: email,
-            },
-        },
+        
+        
     });
 
       this.setState({ loading: false, token })
@@ -68,28 +55,13 @@ class CardFormScreen extends PureComponent {
 
   render() {
     const { loading, token } = this.state
-
+    const amount = this.props.navigation.state.params.amount;
+    const currency = this.props.navigation.state.params.currency;
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>
-          Card Form Example
-        </Text>
-        <Text style={styles.instruction}>
-          Click button to show Card Form dialog.
-        </Text>
-        <Button
-          text="Enter you card and pay"
-          loading={loading}
-          onPress={this.handleCardPayPress(this.props.navigation.state.params.amount, this.props.navigation.state.params.currency, this.state.token)}
-        />
-        <View
-          style={styles.token}>
-          {token &&
-            <Text style={styles.instruction}>
-              Token: {token.tokenId}
-            </Text>
-          }
-        </View>
+        {
+          this.handleCardPayPress(amount, currency, token)
+        }
       </View>
     )
   }
