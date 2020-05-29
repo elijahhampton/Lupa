@@ -152,15 +152,17 @@ class CreateProgram extends React.Component {
     }
 
     saveProgram = async () => {
+        await this.setState({
+            programComplete: true
+        })
+
         try {
             const programPayload = await this.LUPA_CONTROLLER_INSTANCE.saveProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData);
             await this.props.addProgram(programPayload);
-
-            await this.setState({
-                programComplete: true
-            })
         } catch(err) {
-           
+           await this.setState({
+               programComplete: false
+           })
         }
 
         this.exit();

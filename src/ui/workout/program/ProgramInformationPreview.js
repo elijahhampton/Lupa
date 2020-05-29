@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 import {
     StyleSheet,
@@ -16,7 +16,9 @@ import {
     Headline,
     Paragraph,
     Caption,
-    Avatar
+    Avatar,
+    IconButton,
+    Appbar
 } from 'react-native-paper';
 
 import ThinFeatherIcon from "react-native-feather1s";
@@ -28,9 +30,14 @@ import LiveWorkoutPreview from './LiveWorkoutPreview';
 import ModalLiveWorkoutPreview from './modal/ModalLiveWorkoutPreview';
 import ModalProfileView from '../../user/profile/ModalProfileView';
 
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
+
+import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED } from '../../../modules/payments/stripe/index'
+const { fromString, uuid } = require('uuidv4')
 import { withNavigation } from 'react-navigation'
 
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -49,149 +56,329 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-class ProgramInformationPreview extends React.Component {
- constructor(props) {
-     super(props);
+class ProgramInformationPreview extends PureComponent {
+    constructor(props) {
+        super(props);
 
-     this.state = {
-         programOwnerData: {},
-         ready: false,
-         showProfileModal: false,
-         showPreviewModal: false,
-     }
+        this.state = {
+            programOwnerData: this.props.programOwnerData,
+            ready: false,
+            showProfileModal: false,
+            showPreviewModal: false,
+            loading: false,
+            token: null,
+        }
 
-     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-     
- }
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
- componentDidMount = async () => {
-     let programOwnerDataIn;
-    await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.programData.program_owner).then(userData => {
-        programOwnerDataIn = userData;
-    });
+    }
 
-    await this.setState({
-        programOwnerData: programOwnerDataIn,
-        ready: true,
-    })
- }
+    /**
+     * Lifecycle Method - Handles operations when the component mounts
+     */
+    componentDidMount = async () => {
+        await this.setState({
+            programOwnerData: this.props.programOwnerData,
+            ready: true,
+        })
+    }
 
- getOwnerDisplayName = () => {
-     if (this.state.ready)
-     {
-         return this.state.programOwnerData.display_name
-     }
+    /**
+     * Returns the program owners display name
+     * @return String progam owner's display name
+     */
+    getOwnerDisplayName = () => {
+        if (this.state.ready) {
+            try {
+            return this.state.programOwnerData.display_name
+            } catch(error) {
+                return ''
+            }
+        }
 
-      return ""
+        return ''
+    }
 
- }
+      /**
+     * Returns the program name
+     * @return URI Returns a string for the name, otherwise ''
+     */
+    getProgramName = () => {
+        if (this.state.ready)
+        {
+            try {
+                return this.props.programData.program_name;
+            } catch(err) {
+                return ''
+            }
+        }
 
- handlePurchaseProgram = async () => {
-     //handle stripe
-    /* this.props.navigation.push('CardFormScreen', {
-         amount: this.props.programData.program_price,
-         currency: 'usd',
-     })*/
+        return ''
+    }
 
-     //handle program in backend
-    try {
-        const updatedProgramData = await this.LUPA_CONTROLLER_INSTANCE.purchaseProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.props.programData);  
-        await this.props.addProgram(updatedProgramData);
-    } catch (err) {
-        alert('Could not purchase the program at this time.  Try again later.')
+     /**
+     * Returns the program description
+     * @return URI Returns a string for the description, otherwise ''
+     */
+    getProgramDescription = () => {
+        if(this.state.ready)
+        {
+            try {
+                return this.props.programData.program_description;
+            } catch(err) {
+                return ''
+            }
+        }
+
+        return ''
+    }
+
+    /**
+     * Returns the program image
+     * @return URI Returns a uri for the program image, otherwise ''
+     */
+    getProgramImage = () => {
+        if (this.state.ready)
+        {
+            try {
+                return this.props.programData.program_image;
+            } catch(err) {
+                return ''
+            }
+        }
+        
+        return "";
+    }
+
+    /**
+     * Returns the program price
+     * @return String representing the program price, otherwise, ''
+     */
+    getProgramPrice = () => {
+        if (this.state.ready)
+        {
+            try {
+                return this.props.programData.program_price;
+            } catch(error) {
+                return 0;
+            }
+        }
+    }
+
+    /**
+     * Handles program purchase process
+     */
+    handlePurchaseProgram = async (amount) => {
+        /*
+         //handle stripe
+         await initStripe();
+ 
+         //collect payment information and generate payment token
+         try {
+             this.setState({ loading: true, token: null })
+             const token = await stripe.paymentRequestWithCardForm({
+                 requiredBillingAddressFields: 'zip'
+             });
+ 
+             if (token == undefined) {
+                 throw LUPA_ERR_TOKEN_UNDEFINED;
+             }
+ 
+             await this.setState({ loading: false, token: token })
+ 
+         } catch (error) {
+             await this.setState({
+                 loading: false,
+                 paymentComplete: true,
+                 paymentSuccessful: false,
+             })
+             return;
+         }
+ 
+         //get the token from the state
+         const generatedToken = await this.state.token;
+ 
+         //Send request to make payment
+         try {
+             await this.makePayment(generatedToken, amount)
+         } catch (error) {
+             this.setState({
+                 paymentComplete: true,
+                 paymentSuccessful: true,
+             })
+ 
+             return;
+         }
+         */
+
+        /****  REMOVE THIS IF PAYMENTS ARE LIVE ******/
+        await this.setState({
+            paymentSuccessful: true,
+            paymentComplete: true
+        })
+
+        //If the payment is complete and successful then update database
+        if (this.state.paymentComplete == true && this.state.paymentSuccessful == true) {
+
+            //handle program in backend
+            try {
+                const updatedProgramData = await this.LUPA_CONTROLLER_INSTANCE.purchaseProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.props.programData);
+                await this.props.addProgram(updatedProgramData);
+            } catch (err) {
+                //need to handle the case where there is an error when we add the program
+                this.props.closeModalMethod()
+            }
+        }
+
+        //close modal
         this.props.closeModalMethod()
     }
 
-    //close modal
-    this.props.closeModalMethod()
- }
+    /**
+     * Sends request to server to complete payment
+     */
+    makePayment = async (token, amount) => {
+        const idempotencyKey = await fromString(token.toString() + Math.random().toString())
 
- getProgramTags() {
-     try {
-       return program.program_tags.map((tag, index, arr) => {
-            if (index == arr.length - 1)
-            {
+        axios({
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            url: STRIPE_ENDPOINT,
+            data: JSON.stringify({
+                amount: 0.50,
+                currency: CURRENCY,
+                token: token,
+                idempotencyKey: idempotencyKey,
+            })
+        }).then(response => {
+            this.setState({ loading: false })
+        }).catch(err => {
+            this.setState({
+                paymentSuccessful: false,
+                paymentComplete: true,
+            })
+        })
+    }
+
+    getProgramTags() {
+        try {
+            return program.program_tags.map((tag, index, arr) => {
+                if (index == arr.length - 1) {
+                    return (
+                        <Caption>
+                            {tag}
+                        </Caption>
+                    )
+                }
                 return (
                     <Caption>
-                    {tag}
-                </Caption>
+                        {tag},
+                    </Caption>
+
                 )
-            }
-            return (
-                <Caption>
-                    {tag},
-                </Caption>
-                
-            )
-        })
-     } catch(err) {
+            })
+        } catch (err) {
 
-     }
- }
+        }
+    }
 
- render() {
-     const program = this.props.programData;
-     return (
-         <Modal presentationStyle="fullScreen" visible={this.props.isVisible} style={{flex: 1}} animated={true} animationType="slide">
-             <View style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height / 1.8, backgroundColor: '#212121'}}>
-                    
-                    <Image source={{uri: program.program_image}} style={{width: '100%', height: '100%'}} resizeMode="cover" resizeMethod="resize" />
-                    <FeatherIcon name="x" onPress={() => this.props.closeModalMethod()} size={25} color="#FFFFFF" style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, marginLeft: 16}} />
-             </View>
-             <Surface style={{justifyContent: 'space-around', padding: 10, elevation: 15, borderTopLeftRadius: 25, borderTopRightRadius: 25, position: 'absolute', bottom: 0, width: Dimensions.get('window').width, height: Dimensions.get('window').height / 2.1}}>
-                <View>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Title style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 30}}>
-                    {program.program_name}
-                </Title>
-                <Avatar.Text label="EH" size={30} />
+    render() {
+        const program = this.props.programData;
+        return (
+            <Modal presentationStyle="fullScreen" visible={this.props.isVisible} style={{ flex: 1 }} animated={true} animationType="slide">
+                <View style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height / 1.5, backgroundColor: '#000000', alignItems: 'center', justifyContent: 'center' }}>
+
+                    <Surface style={{ width: '80%', height: '60%', borderRadius: 50, elevation: 30 }}>
+                        <Image source={{ uri: this.getProgramImage() }} style={{ borderRadius: 50, width: '100%', height: '100%' }} />
+                    </Surface>
+
+                </View>
+
+                <View style={{
+                    position: 'absolute',
+                    top: Constants.statusBarHeight,
+                    width: Dimensions.get('window').width,
+                    justifyContent: 'space-between',
+                    flexDirection: 'row'
+                }}>
+                    <IconButton icon="navigate-before" color="#FFFFFF" size={30} onPress={() => this.props.closeModalMethod()} />
+                    <IconButton icon="fullscreen" color="#FFFFFF" />
                 </View>
 
 
-                <Headline style={{fontSize: 20}}>
-     NASM Trainer (${program.program_price}/hr)
-                </Headline>
-                </View>
+                <Surface style={{
+                    backgroundColor: '#2E2F33',
+                    justifyContent: 'space-around',
+                    padding: 15,
+                    elevation: 15,
+                    borderTopLeftRadius: 35,
+                    borderTopRightRadius: 35,
+                    position: 'absolute',
+                    bottom: 0,
+                    width: Dimensions.get('window').width,
+                    height: Dimensions.get('window').height / 2.5
+                }}>
+                    <View style={{ justifyContent: 'space-evenly', flex: 2 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                            <View>
+                                <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 30, color: '#FFFFFF' }}>
+                                    Program Title
+                </Text>
+                                <Text style={{ fontSize: 15, paddingTop: 5, fontFamily: 'ARSMaquettePro-Medium', color: '#FFFFFF' }}>
+                                    In Person, One on One Program
+                </Text>
+                            </View>
+                            <IconButton icon="favorite" color="#ff8080" />
+                        </View>
 
-                <View style={{alignItems: 'center'}}>
-                <Paragraph style={{alignSelf: 'center'}}>
-             {program.program_description}
-                </Paragraph>
-                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap'}}>
-                    {
-                        this.getProgramTags()
-                    }
-                </View>
-                </View>
+                        <Paragraph style={{ width: '95%', alignSelf: 'center', color: '#FFFFFF' }}>
+                            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings
+                    </Paragraph>
 
-                <View>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Caption>
-                        {program.program_type}
-                    </Caption>
+                        <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                            <Avatar.Text label="EH" size={15} style={{ margin: 3 }} />
+                            <Caption style={{ color: '#FFFFFF' }}>
+                                See more programs by {this.getOwnerDisplayName()}
+                            </Caption>
+                        </View>
 
-                    <Caption style={{color: '#2196F3', fontWeight: '600'}}>
-                        See other programs by {this.getOwnerDisplayName()}
-                    </Caption>
-                </View>
-
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Caption>
-                        In Person
-                    </Caption>
-                    
-                    <View style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-                    <Caption style={{fontWeight: '600'}}>
-                        {program.program_location.name } 
-                    </Caption>
-                    <Caption style={{fontWeight: '600'}}>
-                      (  {program.program_location.address } )
-                    </Caption>
                     </View>
-                </View>
-                </View>
-                
-                <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
+
+
+
+                    <View style={{ paddingHorizontal: 20, flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 30, color: '#FFFFFF' }}>
+                            ${this.getProgramPrice()}
+                        </Text>
+
+                        <Button mode="outlined"
+                            style={{
+                                borderColor: '#FFFFFF',
+                                marginHorizontal: 10,
+                                elevation: 0,
+                                width: 200,
+                                height: 55,
+                                alignItems: 'center',
+                                flexDirection: 'row',
+                                justifyContent: 'center'
+                            }}
+                            theme={{
+                                roundness: 25,
+                                colors: {
+                                    primary: '#FFFFFF',
+                                }
+                            }} onPress={() => this.handlePurchaseProgram(program.program_price)}>
+                            <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: 20 }}>
+                                Purchase
+                    </Text>
+                            <MaterialIcon name="keyboard-arrow-right" size={25} />
+                        </Button>
+
+
+                        {/*
                 <Button mode="outlined" style={{marginHorizontal: 10, elevation: 0, flex: 1,  height: 55, alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}} theme={{
                     roundness: 10,
                     colors: {
@@ -207,31 +394,21 @@ onPress={() => this.setState({ showPreviewModal: true })}
 />
 
                 </Button>
-                <Button mode="contained" style={{marginHorizontal: 10, elevation: 0, flex: 7, height: 55, alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}} theme={{
-                    roundness: 10,
-                    colors: {
-                        primary: '#2196F3'
-                    }
-                }} onPress={() => this.handlePurchaseProgram()}>
-                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 20}}>
-                        Purchase
-                    </Text>
+            */}
+                    </View>
 
-                </Button>
-                </View>
-                
-             </Surface>
+                </Surface>
                 {
                     this.state.ready == true ?
-                    <ModalLiveWorkoutPreview programOwnerData={this.state.programOwnerData} programData={program} isVisible={this.state.showPreviewModal} closeModalMethod={() => this.setState({ showPreviewModal: false })} />
-                    :
-                    null
+                        <ModalLiveWorkoutPreview programOwnerData={this.state.programOwnerData} programData={this.props.programData} isVisible={this.state.showPreviewModal} closeModalMethod={() => this.setState({ showPreviewModal: false })} />
+                        :
+                        null
                 }
 
-                    <ModalProfileView uuid={program.progam_owner} isVisible={this.state.showProfileModal} closeModalMethod={() => this.setState({ showPreviewModal: false })} /> 
-         </Modal>
-     )
- }
+                <ModalProfileView uuid={this.props.programOwnerData.user_uuid} isVisible={this.state.showProfileModal} closeModalMethod={() => this.setState({ showPreviewModal: false })} />
+            </Modal>
+        )
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(ProgramInformationPreview));
