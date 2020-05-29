@@ -13,10 +13,10 @@ const PACKS_EVENT_COLLECTION = LUPA_DB.collection('pack_events');
 const USERS_COLLECTION = LUPA_DB.collection('users');
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
-/*const algoliasearch = require('algoliasearch/reactnative.js');
+const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const packsIndex = algoliaIndex.initIndex("dev_PACKS");
-const tmpIndex = algoliaIndex.initIndex("tmpDev_PACKS");*/
+const tmpIndex = algoliaIndex.initIndex("tmpDev_PACKS");
 
 import UserController from './UserController';
 import { getLupaPackStructure, getLupaPackEventStructure } from '../firebase/collection_structures';
@@ -174,13 +174,13 @@ class PacksController {
 
 
 
-     /* packsIndex.addObjects(records, (err, content) => {
+      packsIndex.addObjects(records, (err, content) => {
         if (err) {
           console.log('Error while indexing packs into Algolia: ' + err);
         }
 
         console.log('Completed Packs Indexing');
-      });*/
+      });
     });
   }
 
@@ -787,25 +787,25 @@ class PacksController {
     //create lupa pack event structure
     const newPackEvent  = getLupaPackEventStructure(title, description, parsedDate, parsedTime, eventImage);
     newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
-    console.log('A')
+   
     let eventUUID, eventData, imageURL;
     await PACKS_EVENT_COLLECTION.add(newPackEvent).then(ref => {
       eventUUID = ref.id;
     })
 
-    console.log('B')
+ 
     await this.getPackEventInformationByUUID(eventUUID).then(snapshot => {
       eventData = snapshot;
     })
 
-    console.log('CS')
+  
     await this.savePackEventImage(eventImage, eventUUID).then(url => {
       imageURL = url;
     })
 
     eventData.pack_event_uuid = eventUUID;
 
-    console.log('d')
+   
     let eventPayload = {
       data: eventData,
       photo_url: imageURL

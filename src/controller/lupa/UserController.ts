@@ -709,13 +709,13 @@ export default class UserController {
             });
 
 
-            /*usersIndex.addObjects(records, (err, content) => {
+            usersIndex.addObjects(records, (err, content) => {
                 if (err) {
                     console.log('big error: ' + err);
                 }
 
-                console.log('Completed User Indexing')
-            });*/
+        
+            });
         });
     }
 
@@ -844,7 +844,6 @@ export default class UserController {
 
     getNearbyUsers = async (location) => {
         try {
-            console.log('aaaa' + location.state)
        return new Promise((resolve, reject) => {
             let nearbyUsers = [];
             usersIndex.search({
@@ -858,19 +857,16 @@ export default class UserController {
                     let data;
                     docs.forEach(doc => {
                         data = doc.data();
-                        console.log(data)
                         nearbyUsers.push(data);
                     });
                 });
 
-                console.log('AAAAAAAAAAAAAAAAAAAAAAA')
 
                 await USER_COLLECTION.where('isTrainer', '==', false).get().then(result => {
                     let docs = result;
                     let data;
                     docs.forEach(doc => {
                         data = doc.data();
-                        console.log(data)
                         nearbyUsers.push(data);
                     });
                 });
@@ -1476,7 +1472,6 @@ export default class UserController {
                 await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
                     updatedProgramSnapshot = snapshot.data();
                 })
-        
         
                 return Promise.resolve(updatedProgramSnapshot);
       }
