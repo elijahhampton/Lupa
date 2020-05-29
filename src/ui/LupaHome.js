@@ -850,7 +850,7 @@ style={{
     :
     null
     }
-<Button style={{alignSelf: 'flex-start', position: 'absolute', bottom: 0, right: 0}} color="white" disabled={this.state.currInteractiveSwiperIndex == 3} onPress={() => this.launch()}>
+<Button style={{alignSelf: 'flex-start', position: 'absolute', bottom: 0, right: 0}} color="white" disabled={this.state.currInteractiveSwiperIndex == 3} onPress={() => this.setState({ currInteractiveSwiperIndex: this.state.currInteractiveSwiperIndex + 1})}>
                         Next
                     </Button>
 </View>

@@ -29,6 +29,37 @@ handleUserAttributeUpdate = (state, payload) => {
   return updatedState;
 }
 
+handleProgramAttributeUpdate = (state, payload) => {
+  let programToUpdate;
+  let updatedState = state.currUserProgramsData;
+  console.log(updatedState)
+  switch(payload.attribute)
+  {
+    case 'program_participants':
+      for (let i = 0; i < updatedState.length; i++)
+      {
+        try {
+        if (updatedState[i].program_structure_uuid == payload.program_structure_uuid)
+        {
+          if (payload.optionalOperation == "add")
+          {
+            updatedState[i].program_participants.push(payload.value);
+            break;
+          }
+        }
+      } catch(error) {
+          continue;
+        }
+      }
+      break;
+      default:
+        return state;
+  }
+
+  return updatedState;
+
+}
+
 const initialUserReducerState = {
   currUserData: {},
 }
@@ -113,15 +144,18 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
       let updatedProgramsData = state.currUserProgramsData;
       if (!updatedProgramsData.length)
       {
+        console.log('no length')
         updatedProgramsData = [action.payload];
       }
       else
       {
+        console.log('the payload: ' + action.payload)
+        console.log('added!')
+        console.log('done in reducer')
         updatedProgramsData.push(action.payload);
         
       }
 
-      console.log(action.payload)
       return Object.assign({}, state, { currUserProgramsData: updatedProgramsData });
     case "DELETE_CURRENT_USER_PROGRAM":
       let programs = state.currUserProgramsData;
@@ -136,10 +170,11 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
   }
       return Object.assign({},  {currUserProgramsData: programsToKeep} );
     case UPDATE_CURRENT_USER_PROGRAMS_ACTION:
-       console.log(Object.assign({}, state, {currUserProgramsData: action.payload}))
       return Object.assign({}, state, {currUserProgramsData: action.payload});
+    case 'UPDATE_CURRENT_USER_PROGRAM_ATTRIBUTE':
+      const updatedState = handleProgramAttributeUpdate(state, action.payload);
+      return Object.assign(state, updatedState)
     case ADD_WORKOUT_TO_PROGRAM_ACTION:
-      console.log('entering')
         let programID = action.payload.programUUID;
         let workout = action.payload.workoutData;
         let sectionName = action.payload.sectionName;
@@ -150,9 +185,6 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
         {
           if (programsArr[i].program_structure_uuid == programID)
           {
-             console.debug('Aaaaaaaaaaaaaaaaaaaa')
-            console.debug(programsArr[i])
-            console.debug('Aaaaaaaaaaaaaaaaaaaa')
             switch(sectionName)
             {
               case 'warm up':

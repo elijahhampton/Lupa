@@ -130,7 +130,6 @@ export async function sendNotificationToCurrentUsersDevice() {
 // Callback fired if Instance ID token is updated.
 LUPA_MESSAGING.onTokenRefresh(() => {
   LUPA_MESSAGING.getToken().then((refreshedToken) => {
-    console.log('Token refreshed.');
     saveTokenToDatabase(refreshedToken);
     // ...
   }).catch((err) => {
@@ -156,7 +155,6 @@ export class Fire {
   init = async (uuid) => {
     this.dbRefString = `messages/${uuid}`;
     this.ref = LUPA_DB_FIREBASE.ref(this.dbRefString);
-    console.log('initializing')
   }
 
   getUser() {
@@ -328,18 +326,18 @@ calculateAge(dateString)
     this.reauthenticate(currentPassword).then(() => {
       var user = reactfirebaseauth().currentUser;
       user.updatePassword(newPassword).then(() => {
-        console.log('Password updated.');
-      }).catch((err) => console.log(err))
-    }).catch((err) => console.log(err))
+
+      }).catch((err) => {})
+    }).catch((err) => {})
   }
 
   changeEmail = (currentPassword, newEmail) => {
     this.reauthenticate(currentPassword).then(() => {
       var user = firebase.auth().currentUser;
       user.updateEmail(newEmail).then(() => {
-        console.log("Email updated!");
-      }).catch((error) => { console.log(error); });
-    }).catch((error) => { console.log(error); });
+
+      }).catch((error) => { });
+    }).catch((error) => { });
   }
 
   /**
@@ -390,7 +388,6 @@ signUpUser = async (username, email, password, confirmedPassword, birthday, agre
   //Authenticate user in firebase
   await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
       USER_UUID = userCredential.user.uid
-      console.log('LUPA: Registering user with firebase authentication.')
       //Set sign up result to true
       signUpResultStatus.result = true;
 

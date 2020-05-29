@@ -11,6 +11,20 @@ export function getUpdateCurrentUserAttributeActionPayload(attribute, value, opt
     UPDATE_CURRENT_USER_ATTRIBUTE_ACTION_PAYLOAD.optionalData = optionalData;
     return UPDATE_CURRENT_USER_ATTRIBUTE_ACTION_PAYLOAD;
 }
+
+let UPDATE_CURRENT_USER_PROGRAM_ATTRIBUTE_ACTION_PAYLOAD = {
+    attribute: "",
+    value: [],
+    optionalOperation: "",
+}
+
+export function getUpdateCurrentUserProgramAttributeActionPayload(attribute, value, optionalOperation)
+{
+    UPDATE_CURRENT_USER_PROGRAM_ATTRIBUTE_ACTION_PAYLOAD.attribute = attribute;
+    UPDATE_CURRENT_USER_PROGRAM_ATTRIBUTE_ACTION_PAYLOAD.value = value;
+    UPDATE_CURRENT_USER_PROGRAM_ATTRIBUTE_ACTION_PAYLOAD.optionalOperation = optionalOperation;
+    return UPDATE_CURRENT_USER_PROGRAM_ATTRIBUTE_ACTION_PAYLOAD;
+}
 //Currently have no need for this, but might be useful in the future
 export let UPDATE_CURRENT_USER_ACTION_PAYLOAD = {
     value: undefined,

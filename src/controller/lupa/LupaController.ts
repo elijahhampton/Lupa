@@ -244,21 +244,21 @@ export default class LupaController {
 
     /* Algolia */
     indexApplicationData = () => {
-      USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+      /*USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
-    USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+    USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();*/
     }
 
     indexUsers = async () => {
-      await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+     // await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
     indexPacks = async () => {
-     await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+     //await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
     }
 
     indexPrograms = async () => {
-       await USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+      // await USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     /** Pack Functions */
@@ -343,7 +343,6 @@ export default class LupaController {
       await USER_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(result => {
         retVal = result;
       });
-      console.log('and here: ' + retVal.length)
       return Promise.resolve(retVal);
     }
 
@@ -779,6 +778,28 @@ export default class LupaController {
         await USER_CONTROLLER_INSTANCE.purchaseProgram(currUserData, programData).then(retVal => {
           updatedProgram = retVal;
         })
+
+        return Promise.resolve(updatedProgram)
       }
+
+      /**
+     * Returns an object representing a Lupa Program
+     * See LupaProgramStructure
+     * 
+     * @return Object representing a LupaProgramStructure
+     */
+    getProgramInformationFromUUID = async (uuid) => {
+      let retVal;
+
+      if (typeof uuid != 'string'){
+        return Promise.resolve({})
+      }
+
+      await PROGRAMS_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(result => {
+        retVal = result;
+      });
+
+      return Promise.resolve(retVal);
+    }
       
 }
