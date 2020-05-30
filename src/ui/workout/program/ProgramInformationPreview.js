@@ -11,29 +11,22 @@ import {
 
 import {
     Surface,
-    Title,
     Button,
-    Headline,
     Paragraph,
     Caption,
     Avatar,
     IconButton,
-    Appbar
 } from 'react-native-paper';
 
-import ThinFeatherIcon from "react-native-feather1s";
-import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Constants } from 'react-native-unimodules';
-import LupaCalendar from '../../user/dashboard/calendar/LupaCalendar';
 import LupaController from '../../../controller/lupa/LupaController';
-import LiveWorkoutPreview from './LiveWorkoutPreview';
 import ModalLiveWorkoutPreview from './modal/ModalLiveWorkoutPreview';
 import ModalProfileView from '../../user/profile/ModalProfileView';
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED } from '../../../modules/payments/stripe/index'
-const { fromString, uuid } = require('uuidv4')
+const { fromString } = require('uuidv4')
 import { withNavigation } from 'react-navigation'
 
 import { connect } from 'react-redux';
@@ -405,7 +398,7 @@ onPress={() => this.setState({ showPreviewModal: true })}
                         null
                 }
 
-                <ModalProfileView uuid={this.props.programOwnerData.user_uuid} isVisible={this.state.showProfileModal} closeModalMethod={() => this.setState({ showPreviewModal: false })} />
+            {/*    <ModalProfileView uuid={this.props.programOwnerData.user_uuid} isVisible={this.state.showProfileModal} closeModalMethod={() => this.setState({ showPreviewModal: false })} /> */}
             </Modal>
         )
     }

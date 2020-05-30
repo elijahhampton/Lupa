@@ -1,0 +1,6 @@
+module Pods_Lupa {
+  umbrella header "Pods-Lupa-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -10,7 +10,6 @@ $RNFirebaseAsStaticFramework = true
 
 target 'Lupa' do
   rnPrefix = "../node_modules/react-native"
-  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
   pod 'Firebase/Core', '~> 6.13.0'
   pod 'Firebase/Auth', '~> 6.13.0'
   pod 'Firebase/Messaging'
