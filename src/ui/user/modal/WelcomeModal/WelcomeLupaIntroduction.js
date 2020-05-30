@@ -74,6 +74,7 @@ class WelcomeLupaIntroduction extends React.Component {
 
     componentDidMount = async () => {
         await this.disableNext();
+        await _requestPermissionsAsync();
     }
 
     enableNext = () => {
@@ -85,7 +86,6 @@ class WelcomeLupaIntroduction extends React.Component {
     }
 
     _getLocationAsync = async () => {
-       // await _requestPermissionsAsync();
         let result;
         try {
 
