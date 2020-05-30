@@ -28,13 +28,13 @@
 		52B64906091142C4ACC66FC3 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85A6E8FD5E0B4C7E82D291E0 /* Entypo.ttf */; };
 		5B82E9E1A862424B86A92EE1 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E48A508B0DEE4012A358676B /* Ionicons.ttf */; };
 		782E4B252447D6040005F03A /* TPSStripe in Resources */ = {isa = PBXBuildFile; fileRef = 782E4B242447D6040005F03A /* TPSStripe */; };
-		785A71D624521A0500E730F2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 785A71D524521A0500E730F2 /* GoogleService-Info.plist */; };
 		7875A55824548CF100C15E04 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 7875A55724548CF100C15E04 /* Fonts */; };
 		78D64B80244544B3007C6E72 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78D64B7F244544B3007C6E72 /* MapKit.framework */; };
 		78DC5824245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5823245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf */; };
 		78DC5826245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5825245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf */; };
 		78DC5828245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5827245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf */; };
 		78DC582A245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5829245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf */; };
+		78E385D424829D1A00CA4937 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 78E385D324829D1A00CA4937 /* GoogleService-Info.plist */; };
 		7AC0A355F67240EFBB50AD72 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2F33CFC2633F4E4391DA131B /* Ionicons.ttf */; };
 		7B5E504EB33B490DB897A8CE /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D8A366CCAB57422A80CE329E /* MaterialIcons.ttf */; };
 		7B744978F72B4EF4B492258E /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 995EDFDD6EB142D095752415 /* FontAwesome.ttf */; };
@@ -84,13 +84,13 @@
 		74C9A640D3E540D8BCDA3C4C /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		782E4B242447D6040005F03A /* TPSStripe */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TPSStripe; path = "../node_modules/tipsi-stripe/ios/TPSStripe"; sourceTree = "<group>"; };
 		78325C4C244F89840099D7AF /* lupa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = lupa.entitlements; path = Lupa/lupa.entitlements; sourceTree = "<group>"; };
-		785A71D524521A0500E730F2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7875A55724548CF100C15E04 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
 		78D64B7F244544B3007C6E72 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		78DC5823245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Black.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Black.ttf"; sourceTree = "<group>"; };
 		78DC5825245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Regular.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Regular.ttf"; sourceTree = "<group>"; };
 		78DC5827245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Medium.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Medium.ttf"; sourceTree = "<group>"; };
 		78DC5829245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Bold.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Bold.ttf"; sourceTree = "<group>"; };
+		78E385D324829D1A00CA4937 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7A8B5D53827C44BEAE239AB1 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		810E237337384BB6A2CFD56A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		820F5181DC1C4E5FB19271C9 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
@@ -136,6 +136,7 @@
 		13B07FAE1A68108700A75B9A /* Lupa */ = {
 			isa = PBXGroup;
 			children = (
+				78E385D324829D1A00CA4937 /* GoogleService-Info.plist */,
 				78325C4C244F89840099D7AF /* lupa.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -184,7 +185,6 @@
 				78DC5825245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf */,
 				78DC5823245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf */,
 				7875A55724548CF100C15E04 /* Fonts */,
-				785A71D524521A0500E730F2 /* GoogleService-Info.plist */,
 				782E4B242447D6040005F03A /* TPSStripe */,
 				13B07FAE1A68108700A75B9A /* Lupa */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -314,9 +314,9 @@
 			files = (
 				7875A55824548CF100C15E04 /* Fonts in Resources */,
 				78DC582A245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf in Resources */,
+				78E385D424829D1A00CA4937 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				78DC5828245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf in Resources */,
-				785A71D624521A0500E730F2 /* GoogleService-Info.plist in Resources */,
 				782E4B252447D6040005F03A /* TPSStripe in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				F74B6102C9584E48BA3B0E5F /* AntDesign.ttf in Resources */,
@@ -384,7 +384,6 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Lupa/Pods-Lupa-resources.sh",
-				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -406,7 +405,6 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
@@ -505,9 +503,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Lupa/lupa.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 7;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				INFOPLIST_FILE = Lupa/Info.plist;
@@ -521,7 +519,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rheasilvia.Lupa;
 				PRODUCT_NAME = lupa;
-				PROVISIONING_PROFILE_SPECIFIER = RheaSilviaDist;
+				PROVISIONING_PROFILE_SPECIFIER = ElijahHDev;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -532,9 +530,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Lupa/lupa.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				INFOPLIST_FILE = Lupa/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -547,7 +545,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rheasilvia.Lupa;
 				PRODUCT_NAME = lupa;
-				PROVISIONING_PROFILE_SPECIFIER = RheaSilviaDist;
+				PROVISIONING_PROFILE_SPECIFIER = ElijahHDev;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -640,6 +638,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

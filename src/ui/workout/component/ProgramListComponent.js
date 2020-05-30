@@ -120,7 +120,7 @@ class ProgramListComponent extends React.Component {
                     </View>
                 </View>
 
-                <ProgramInformationPreview isVisible={this.state.programModalVisible} programData={this.props.programData} closeModalMethod={this.handleCloseProgramInformationModal} />
+                <ProgramInformationPreview isVisible={this.state.programModalVisible} programData={this.props.programData} programOwnerData={this.props.programData.program_owner == this.props.lupa_data.Users.currUserData.user_uuid ? this.props.lupa_data.Users.currUserData : undefined} closeModalMethod={this.handleCloseProgramInformationModal} />
                 </View>
         )
     }
