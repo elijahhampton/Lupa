@@ -56,13 +56,15 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Lupa to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Lupa to access your device's accelerometer</string>
+	<string>Allow Lupa to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Lupa periences permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Give Lupa periences permission to access your photos</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Allow Lupa to access your reminders</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Allow Lupa to access your apple music</string> 
 	<key>UIAppFonts</key>
 	<array>
 		<string>ARSMaquettePro-Regular.ttf</string>
@@ -105,8 +107,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
