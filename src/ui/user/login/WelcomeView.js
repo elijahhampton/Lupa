@@ -5,63 +5,32 @@
  * 
  * Login View
  */
-import React, { Component } from "react";
+import React from "react";
 
 import {
   View,
   Text,
   StyleSheet,
-  ImageBackground,
-  TouchableOpacity,
   Image,
   StatusBar,
-  SafeAreaView,
 } from "react-native";
 
 import {
   Button,
-  Snackbar,
 } from 'react-native-paper';
-import { Constants } from "react-native-unimodules";
-import loadFonts from "../../common/Font";
 
-const {
-  isSignedIn,
-} = require('../../../controller/lupa/auth/auth');
+import { Constants } from "react-native-unimodules";
 
 const AppLogo = require('../../images/applogo.png')
 
-class WelcomeView extends Component {
+class WelcomeView extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      
-    }
 
   }
 
   componentDidMount = async () => {
-    await loadFonts();
-    await this._checkSignedInStatus();
 
-  }
-
-  _checkSignedInStatus = async () => {
-    let result;
-    let signedInStatus = isSignedIn().then(res => {
-      result = res;
-    });
-
-    this.setState({
-      isSignedIn: result
-    })
-
-    this.setState({
-      checkedSignedIn: true,
-    });
-
-    if (signedInStatus == true) { await this._introduceApp() }
   }
 
   navigateToLogin = () => {
@@ -76,7 +45,6 @@ class WelcomeView extends Component {
   render() {
     return (
       <View style={styles.root}>
-        <StatusBar translucent barStyle="dark-content" />
           <View style={{flex: 1, alignItems: 'flex-start', flexDirection: 'column', marginTop: 10}}>
                 <Text style={{fontFamily: 'ARSMaquettePro-Black', fontSize: 35, fontWeight: '700', color: '#212121', margin: 5, }}>
                 Welcome to Lupa,

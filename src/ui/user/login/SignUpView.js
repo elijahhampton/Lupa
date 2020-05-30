@@ -7,12 +7,14 @@ import {
     TouchableOpacity,
     ScrollView,
     Dimensions,
+    Modal,
     KeyboardAvoidingView,
 } from 'react-native';
 
 import {
     Surface,
     Snackbar,
+    ActivityIndicator,
 } from 'react-native-paper';
 
 import SafeAreaView from 'react-native-safe-area-view';
@@ -94,6 +96,20 @@ mapStateToProps = (state) => {
     }
   }
 
+  function SignUpLoadingModal(props) {
+    const { isLoading } = props;
+    return (
+      <Modal visible={isLoading} presentationStyle="fullScreen" style={{backgroundColor: '#FFFFFF'}}>
+        <View style={{flex: 1, backgroundColor: '#F2F2F2', justifyContent: 'center'}}>
+           <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular'}}>
+              Setting up your account data...
+           </Text>
+           <ActivityIndicator color="blue" animating={true} size='large' />
+        </View>
+      </Modal>
+    )
+  }
+
 
 class SignupModal extends React.Component {
 
@@ -130,6 +146,7 @@ class SignupModal extends React.Component {
             termsProblem: false,
             signupRejectionReason: "",
             rejectedField: "",
+            loading: false,
             parQArr: [
               {
                 question: 'Has your doctor ever said that you have a heart condition and/or that you should only perform physical activity recommended by a doctor?',
@@ -304,17 +321,23 @@ class SignupModal extends React.Component {
         }
 
 
-
+        await this.setState({ loading: true })
         //Check registration status
         let successfulRegistration;
+        try {
         await this.userAuthenticationHandler.signUpUser(username, email, password, confirmedPassword, birthday, agreedToTerms).then(result => {
           successfulRegistration = result;
         });
+      } catch(error) {
+        successfulRegistration.result = false;
+        successfulRegistration.reason = "Something went wrong! Try again!";
+      }
 
-        if (successfulRegistration.result)
+        if (successfulRegistration.result === true)
         {
           await this.submitParQ()
         }
+        await this.setState({ loading: false })
 
         await this.handleOnRegistration(successfulRegistration);
     }
@@ -355,7 +378,7 @@ class SignupModal extends React.Component {
       }
     }
 
-    _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
+  _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
 
   _onDismissSnackBar = () => {
     this.setState({ showSnack: false });
@@ -380,21 +403,63 @@ class SignupModal extends React.Component {
         this.setState({ parQArr: tmp });
       }
 
-      submitParQ = () => {
-        const parQQuestionsArr = this.state.parQArr;
-        let submittedAnswers = [];
-        for (let i = 0; i < parQQuestionsArr.length; ++i)
-        {
-          let answerObj = {
-            question: parQQuestionsArr[i].question,
-            answer: parQQuestionsArr[i].check.toString()
+      submitParQ = async () => {
+        try {
+          const parQQuestionsArr = this.state.parQArr;
+          let submittedAnswers = [];
+          for (let i = 0; i < parQQuestionsArr.length; ++i)
+          {
+            let answerObj = {
+              question: parQQuestionsArr[i].question,
+              answer: parQQuestionsArr[i].check.toString()
+            }
+            submittedAnswers.push(answerObj);
           }
-          submittedAnswers.push(answerObj);
+  
+          const assessmentStructure = await getLupaAssessmentStructure('PARQ', submittedAnswers);
+  
+          await this.LUPA_CONTROLLER_INSTANCE.submitAssessment(assessmentStructure);
+        } catch(error) {
+          const emptyParQArr = [
+            {
+              question: 'Has your doctor ever said that you have a heart condition and/or that you should only perform physical activity recommended by a doctor?',
+              check: false,
+              id: 0,
+            },
+            {
+              question: 'Do you feel pain in your chest when you perform physical activity?',
+              check: false,
+              id: 0,
+            },
+            {
+              question: 'In the past month, have you had chest pain when you were not performing any physical activity?',
+              check: false,
+              id: 0,
+            },
+            {
+              question: 'Do you lose your balance because of dizziness or do you ever lose consciousness?',
+              check: false,
+              id: 0,
+            },
+            {
+              question: 'Do you have a bone or joint problem that could be made worse by a chance in your physical activity?',
+              check: false,
+              id: 0,
+            },
+            {
+              question: 'Is your doctor currently prescribing any medication for your blood pressure or for a heart condition?',
+              check: false,
+              id: 0,
+            },
+            {
+              question: 'Do you know of any other reason why you should not engage in physical activity?',
+              check: false,
+              id: 0,
+            },
+          ]
+          const errAssessmentStructure = getLupaAssessmentStructure('PARQ', emptyParQArr);
+          this.LUPA_CONTROLLER_INSTANCE.submitAssessment(assessmentStructure);
         }
-
-        const assessmentStructure = getLupaAssessmentStructure('PARQ', submittedAnswers);
-
-        this.LUPA_CONTROLLER_INSTANCE.submitAssessment(assessmentStructure);
       }
 
       resetRejectedFields = () => {
@@ -670,6 +735,8 @@ class SignupModal extends React.Component {
         >
           {this.state.signupRejectionReason}
         </Snackbar>
+
+        <SignUpLoadingModal isLoading={this.state.loading} />
         </KeyboardAvoidingView>
           </SafeAreaView>
         

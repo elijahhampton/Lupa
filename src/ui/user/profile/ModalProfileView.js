@@ -1046,7 +1046,7 @@ thin={true}
                         <Divider />
 
                         <View style={styles.myPacks}>
-                                                         <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 10}}>
+                            <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 10}}>
                                 Online Programs
                             </Text>
                         <ScrollView 

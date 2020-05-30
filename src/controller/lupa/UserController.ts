@@ -1269,8 +1269,10 @@ export default class UserController {
     }
 
     addAssessment = async (assessment_uuid) => {
+        let currUserUUID = await this.getCurrentUserUUID();
+        
         let currUserAssessments = [];
-        await USER_COLLECTION.doc(this.getCurrentUserUUID()).get().then(snapshot => {
+        await USER_COLLECTION.doc(currUserUUID).get().then(snapshot => {
             currUserAssessments = snapshot.data().assessments;
         })
 
@@ -1281,7 +1283,7 @@ export default class UserController {
 
         currUserAssessments.push(assessment_uuid);
 
-        USER_COLLECTION.doc(this.getCurrentUserUUID()).update({
+        await USER_COLLECTION.doc(currUserUUID).update({
             assessments: currUserAssessments
         })
     }

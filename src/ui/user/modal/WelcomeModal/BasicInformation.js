@@ -18,7 +18,7 @@ import { Avatar, Input } from 'react-native-elements';
 
 import ImagePicker from 'react-native-image-picker';
 
-import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
+import _requestPermissionsAsync, { _checkCameraAndPhotoLibraryPermissions } from '../../../../controller/lupa/permissions/permissions';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
@@ -73,7 +73,8 @@ class BasicInformation extends React.Component {
     }
 
     componentDidMount = async () => {
-       // await this.disableNext();
+       await this.disableNext();
+       await _checkCameraAndPhotoLibraryPermissions()
     }
 
     enableNext = () => {

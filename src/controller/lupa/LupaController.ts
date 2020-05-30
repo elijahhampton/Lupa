@@ -111,7 +111,7 @@ export default class LupaController {
     /***********  App IO *************/
 
     runAppSetup = () => {
-      requestPermissionsAsync();
+      //requestPermissionsAsync();
       this.indexApplicationData();
     }
 
@@ -720,6 +720,11 @@ export default class LupaController {
     }
 
     submitAssessment = async (assessmentObject) => {
+      if (typeof(assessmentObject) != "object")
+      {
+        return;
+      }
+      
       //assign assessment to current user
       let currUser = await USER_CONTROLLER_INSTANCE.getCurrentUserUUID();
 

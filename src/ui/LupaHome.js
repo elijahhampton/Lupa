@@ -75,6 +75,7 @@ mapStateToProps = (state, action) => {
     }
 }
 
+{/*
 function InviteFriendsModal(props) {
     let [contactPermissionsGranted, setContactPermissionsGranted] = useState(true);
     let [contactRecords, setContactRecords] =  useState([]);
@@ -195,7 +196,7 @@ function InviteFriendsModal(props) {
             </SafeAreaView>
         </Modal>
     )
-}
+}*/}
 
 class LupaHome extends React.Component {
     constructor(props) {
@@ -856,8 +857,6 @@ style={{
 </View>
 
                 </View>
-
-                <InviteFriendsModal />
         
             </SafeAreaView>
             </GestureRecognizer>
