@@ -8,18 +8,13 @@ import SessionController from './SessionController';
 import ProgramController from './ProgramController';
 
 import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
-
-
-import requestPermissionsAsync from './permissions/permissions';
-import { rejects } from 'assert';
 import WorkoutController from './WorkoutController';
-import { promises } from 'dns';
 
-/*const algoliasearch = require('algoliasearch/reactnative.js');
+const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const packsIndex = algoliaIndex.initIndex("dev_PACKS");
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
-const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");*/
+const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 
 let USER_CONTROLLER_INSTANCE;
 let PACKS_CONTROLLER_INSTANCE;
