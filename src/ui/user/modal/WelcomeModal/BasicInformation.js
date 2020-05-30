@@ -188,7 +188,7 @@ class BasicInformation extends React.Component {
 
 
     render() {
-      //  this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
+       this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
         return (
                 <SafeAreaView style={styles.flexFull}>
 
