@@ -9,26 +9,33 @@ import {
     Avatar
 } from 'react-native-elements';
 
-import ModalProfileView from '../profile/ModalProfileView';
+import { withNavigation } from 'react-navigation';
+
 import {
     Avatar as PaperAvatar
 } from 'react-native-paper';
 
 function CircularUserCard(props) {
     const getAvatar = () => {
+        console.log(props.user.user_uuid)
         try {
-            return <Avatar source={{uri: props.user.photo_url}} rounded size={60} containerStyle={{margin: 10}} avatarStyle={{borderWidth: 3, borderColor: '#616161', borderRadius: 50}} onPress={() => showUserProfile(true)}/>
+            return <Avatar source={{uri: props.user.photo_url}} rounded size={60} containerStyle={{margin: 10}} avatarStyle={{borderWidth: 3, borderColor: '#616161', borderRadius: 50}} onPress={() => props.navigation.push('ProfileView', {
+                navFrom: 'Packs',
+                userUUID: props.user.user_uuid,
+            })}/>
         } catch(error) {
-            return <PaperAvatar.Text label="UU" size={60} color="#212121" />
+            return <PaperAvatar.Text label="UU" size={60} color="#212121" onPress={() => props.navigation.push('ProfileView', {
+                navFrom: 'Packs',
+                userUUID: props.user.user_uuid,
+            })} />
         }
     } 
 
     return (
         <>
             {getAvatar()}
-      {/*  <ModalProfileView isVisible={userProfileVisible} uuid={'acbKf0TQnmcYPJaKoZq501qlZWI2'} closeModalMethod={() => showUserProfile(false)} /> */}
         </>
     )
 }
 
-export default CircularUserCard;
+export default withNavigation(CircularUserCard);

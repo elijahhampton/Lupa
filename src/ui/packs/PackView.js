@@ -281,12 +281,19 @@ class PackView extends React.Component {
      renderNearbyUsers = () => {
          try {
             return this.state.usersNearYou.map(user => {
+                if (typeof(user) != 'object' 
+                || user == undefined || user.user_uuid == undefined || 
+                user.user_uuid == "" || typeof(user.user_uuid) != 'string')
+                {
+                    alert('U')
+                    return null;
+                }
                 return (
                     <CircularUserCard user={user} />
                 )
             })
          } catch(err) {
-        
+            return null;
          }
      }
 
