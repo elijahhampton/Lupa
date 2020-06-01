@@ -17,8 +17,6 @@ import {
 } from 'react-native-paper';
 
 import PackInformationModal from '../../../../packs/modal/PackInformationModal'
-import ModalProfileView from '../../../profile/ModalProfileView';
-import ModalCreateSession from '../../../../sessions/modal/ModalCreateSession';
 import UserReviewModal from '../../UserReviewModal';
 
 function PackContentDriverCard(props) {
@@ -73,7 +71,6 @@ return (
 
                 <FAB onPress={() => setShowProfile(true)} color="#0084EC" icon="event-available" small style={{backgroundColor: "white", position: 'absolute', right: 0, bottom: 0, marginBottom: 15, marginRight: 15 }} />
                 <FAB onPress={() => setShowReviews(true)} color="white" icon="toc" small style={{backgroundColor: "#0084EC", position: 'absolute', left: 0, bottom: 0, marginBottom: 15, marginLeft: 15 }} />
-                <ModalCreateSession userUUID={trainerObject.user_uuid} isVisible={showProfile} closeModalMethod={() => setShowProfile(false)}/>
                 <UserReviewModal userUUID={trainerObject.user_uuid} isVisible={showReviewPreview} closeModalMethod={() => setShowReviews(false)}/>
             </Surface>
 )

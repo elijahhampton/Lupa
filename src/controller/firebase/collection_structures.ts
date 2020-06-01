@@ -1,8 +1,6 @@
 import { 
     LupaPackStructure, 
-    LupaSessionStructure,
     LupaPackEventStructure,
-    LupaTrainerStructure, 
     LupaHealthDataStructure, 
     LupaWorkoutStructure,
     LupaUserStructure, 
@@ -36,6 +34,7 @@ var lupa_pack_event : LupaPackEventStructure = {
     attendees: [],
     pack_event_stage: '',
     pack_event_image: '',
+    pack_event_time: '',
 }
 
 export const getLupaPackEventStructure = (title, description, date, time, image) => {
@@ -47,11 +46,6 @@ export const getLupaPackEventStructure = (title, description, date, time, image)
     lupa_pack_event.pack_event_time = time;
 
     return lupa_pack_event;
-}
-
-var lupa_trainer : LupaTrainerStructure = {
-    user_uuid: "",
-    certifications: [],
 }
 
 var lupa_pack : LupaPackStructure = {
@@ -91,50 +85,6 @@ export const getLupaPackStructure = (packLeader, title, description, location, i
     return lupa_pack;
 }
 
-var lupa_session : LupaSessionStructure = {
-    attendeeOne: "",
-    attendeeOneData: Object,
-    attendeeTwo: "",
-    attendeeTwoData: Object,
-    requesterUUID: "",
-    date: "",
-    time_periods: [],
-    name: "",
-    description: "",
-    sessionStatus: "",
-    sessionMode: "",
-    removed: false,
-    time_created: {
-        date: "",
-        time: "",
-    },
-    locationData: {
-        
-    },
-    participants: [],
-}
-
-export const getLupaSessionStructure = (attendeeOne, attendeeOneData, attendeeTwo, attendeeTwoData, requesterUUID, date, time_periods, name, description, time_created, locationData) => {
-    lupa_session.attendeeOne = attendeeOne;
-    lupa_session.attendeeOneData = attendeeOneData;
-    lupa_session.attendeeTwo = attendeeTwo;
-    lupa_session.attendeeTwoData = attendeeTwoData;
-    lupa_session.requesterUUID = requesterUUID;
-    lupa_session.date = date;
-    lupa_session.time_periods = time_periods;
-    lupa_session.name = name;
-    lupa_session.description = description;
-    lupa_session.time_created = time_created;
-    lupa_session.sessionStatus = SESSION_STATUS.INVITED;
-    lupa_session.sessionMode = "Active";
-    lupa_session.removed = false;
-    lupa_session.locationData = locationData;
-    lupa_session.participants = [
-        attendeeOne,
-        attendeeTwo,
-    ]
-    return lupa_session;
-}
 
 var lupa_user_health_data : LupaHealthDataStructure = {
     user_uuid: "",
@@ -235,7 +185,6 @@ export {
     lupa_user,
     lupa_assessment,
     lupa_user_health_data,
-    lupa_session,
     lupa_workout,
     lupa_pack,
     lupa_pack_event,

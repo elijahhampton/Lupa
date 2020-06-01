@@ -38,7 +38,7 @@ export default class UserReviewModal extends React.Component {
     }
 
     componentDidMount = async () => {
-        await this.generateUserReviews();
+       // await this.generateUserReviews();
     }
 
     generateUserReviews = async () => {
