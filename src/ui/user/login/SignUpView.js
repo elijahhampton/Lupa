@@ -144,6 +144,8 @@ class SignupModal extends React.Component {
             confirmedPasswordProblem: false,
             birthdayProblem: false,
             termsProblem: false,
+            generalRegistrationProblem: false,
+            registeringUser: false,
             signupRejectionReason: "",
             rejectedField: "",
             loading: false,
@@ -256,13 +258,14 @@ class SignupModal extends React.Component {
 
     _registerUser = async () => {
       //Reset the fields that were previously rejected because we now have a new state
+      this.setState({ registeringUser: true })
       this.resetRejectedFields();
       let emptyField = false;
 
-      const username = this.state.username;
-        const email = this.state.email;
-        const password = this.state.password;
-        const confirmedPassword = this.state.confirmedPassword;
+      const username = this.state.username.trim();
+        const email = this.state.email.trim().toLowerCase();
+        const password = this.state.password.trim();
+        const confirmedPassword = this.state.confirmedPassword.trim();
         const isTrainerAccount = this.state.isTrainerAccount;
         const agreedToTerms = this.state.agreedToTerms;
         const month = this.state.birthdayMonth;
@@ -314,13 +317,14 @@ class SignupModal extends React.Component {
         {
           this.setState({
             showSnack: true, 
-            signupRejectionReason: 'There are fields missing in your form.' 
+            signupRejectionReason: 'There are fields missing in your form.',
+            registeringUser: false,
           })
           this.scrollView.current.scrollTo(0);
           return;
         }
 
-
+        
         await this.setState({ loading: true })
         //Check registration status
         let successfulRegistration;
@@ -329,20 +333,26 @@ class SignupModal extends React.Component {
           successfulRegistration = result;
         });
       } catch(error) {
-        successfulRegistration.result = false;
-        successfulRegistration.reason = "Something went wrong! Try again!";
+        this.setState({ loading: false, registeringUser: false });
+
+        const registrationStatus = {
+          result: false,
+          reason: "Something went wrong with your login.  The email you are trying to register with may already be in use"
+        }
+        successfulRegistration = registrationStatus;
       }
 
-        if (successfulRegistration.result === true)
+      /*  if (successfulRegistration.result === true)
         {
           await this.submitParQ()
-        }
+        }*/
         await this.setState({ loading: false })
 
         await this.handleOnRegistration(successfulRegistration);
     }
 
     handleOnRegistration = async (registrationStatus) => {
+      this.setState({ loading: false })
       if (registrationStatus.result)
       {
         //introduce app
@@ -351,7 +361,7 @@ class SignupModal extends React.Component {
       else
       {
         this.scrollView.current.scrollTo(0);
-        await this.setState({signupRejectionReason: registrationStatus.reason, showSnack: true });
+        await this.setState({signupRejectionReason: registrationStatus.reason, showSnack: true, registeringUser: false });
         switch(registrationStatus.field)
         {
           case 'Username':
@@ -374,6 +384,7 @@ class SignupModal extends React.Component {
             break;
 
             default: 
+            this.setState({ rejectedField: "Unknown", generalRegistrationProblem: true })
         }
       }
     }
@@ -381,7 +392,7 @@ class SignupModal extends React.Component {
   _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
 
   _onDismissSnackBar = () => {
-    this.setState({ showSnack: false });
+    this.setState({ showSnack: false, registeringUser: false });
   }
 
 
@@ -551,7 +562,7 @@ class SignupModal extends React.Component {
                                 Password
                             </Text>
                             <Input 
-                            rightIcon={<FeatherIcon name="eye" onPress={this._handleShowPasswords}/>} 
+                            rightIcon={<FeatherIcon name="eye" onPress={this._handleShowPassword} size={25}/>} 
                             value={this.state.password} 
                             onChangeText={text => this.setState({password: text})} 
                             secureTextEntry={this.state.passwordSecureTextEntry} 
@@ -572,7 +583,7 @@ class SignupModal extends React.Component {
                                 Confirm Password
                             </Text>
                             <Input 
-                            rightIcon={<FeatherIcon name="eye" onPress={this._handleShowConfirmPassword}/>} 
+                            rightIcon={<FeatherIcon name="eye" onPress={() => this._handleShowConfirmPassword()} size={25} />} 
                              value={this.state.confirmedPassword} 
                              onChangeText={text => this.setState({confirmedPassword: text})} 
                              secureTextEntry={this.state.secureConfirmPasswordSecureTextEntry} 
@@ -704,6 +715,7 @@ class SignupModal extends React.Component {
   buttonStyle={{backgroundColor: 'transparent'}}
   containerStyle={{borderRadius: 12}}
   onPress={this._registerUser}
+  disabled={this.state.registeringUser}
 />
                         </View>
 
@@ -730,7 +742,7 @@ class SignupModal extends React.Component {
           onDismiss={this._onDismissSnackBar}
           action={{
             label: 'Okay',
-            onPress: () => this.setState({ showSnack: false }),
+            onPress: () => this.setState({ showSnack: false, loading: false }),
           }}
         >
           {this.state.signupRejectionReason}

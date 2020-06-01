@@ -351,6 +351,45 @@ isSignedIn = async () => {
   return result;
 }
 
+usernameIsTaken = (username) => {
+  LUPA_DB.collection('users').where('username', '==', username).limit(1).get().then(querySnapshot => {
+    try {
+    if (querySnapshot.length == 0)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  } catch(error) {
+    alert(error);
+    return false;
+  }
+  })
+  return retVal;
+}
+
+emailIsTaken = (email) => {
+  let retVal = false;
+  LUPA_DB.collection('users').where('email', '==', email).limit(1).get().then(querySnapshot => {
+    try {
+      if (querySnapshot.length == 0)
+      {
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    } catch(error) {
+      alert(error);
+      return false;
+    }
+    })
+  return retVal;
+}
+
 /**
  * 
  * @param {*} email 
@@ -372,7 +411,7 @@ signUpUser = async (username, email, password, confirmedPassword, birthday, agre
   let signUpResultStatus = {
       result: true,
       reason: "",
-      field: undefined,
+      field: "",
   }
 
   //calculate age
@@ -383,24 +422,97 @@ signUpUser = async (username, email, password, confirmedPassword, birthday, agre
       signUpResultStatus.result = false;
       signUpResultStatus.field = err.field;
       return Promise.resolve(signUpResultStatus);
+
   }
 
-  //Authenticate user in firebase
-  await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
-      USER_UUID = userCredential.user.uid
-      //Set sign up result to true
-      signUpResultStatus.result = true;
-
-      //Catch error on signup
-  }).catch(err => {
-     signUpResultStatus.result = false;
-     signUpResultStatus.reason = err;
+  await LUPA_DB.collection('users').where('email', '==', email).get().then(querySnapshot => {
+    try {
+      if (querySnapshot.length == 0)
+      {
+        
+      }
+      else
+      {
+      signUpResultStatus.reason = "This email is already in use."
+      signUpResultStatus.result = false;
+      signUpResultStatus.field = "Username"
       return Promise.resolve(signUpResultStatus);
-  });
+      }
+    } catch(error) {
+      signUpResultStatus.reason = "This email is already in use."
+      signUpResultStatus.result = false;
+      signUpResultStatus.field = "Username"
+      return Promise.resolve(signUpResultStatus);
+    }
+    })
+    
+
+      //Authenticate user in firebase
+  await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then( userCredential => {
+    USER_UUID = userCredential.user.uid
+
+    //Set sign up result to true
+    signUpResultStatus.result = true;
+    signUpResultStatus.reason = ""
+
+    //Catch error on signup
+}).catch(error => {
+  signUpResultStatus.result = false;
+      
+
+  var errorCode = error.code;
+  var errorMessage = error.message;
+  
+  switch(errorCode)
+  {
+    case 'auth/weak-password':
+      //Thrown if there already exists an account with the given email address.
+      signUpResultStatus.reason = "There is already an account registered with this email address.  Try again with another."
+      signUpResultStatus.field = "Password"
+      break;
+    case 'auth/user-disabled':
+      //Thrown if the email address is not valid.
+      signUpResultStatus.reason = "This account has been disabled."
+      signUpResultStatus.field = ""
+      break;
+    case 'auth/operation-not-allowed':
+     //Thrown if email/password accounts are not enabled. Enable email/password accounts 
+     //in the Firebase Console, under the Auth tab.
+     signUpResultStatus.reason = "Creating accounts has been disabled."
+     signUpResultStatus.field = "Email"
+      break;
+    case 'auth/weak-password':
+      //Thrown if the password is not strong enough.
+     signUpResultStatus.reason = "Your password is not strong enough.  Please use another.";
+     signUpResultStatus.field = "Password"
+      break;
+    case 'auth/email-already-in-use':
+    signUpResultStatus.reason = "Email already in use.";
+    signUpResultStatus.field = "Email"
+    break;
+    default:
+      signUpResultStatus.reason = errorMessage;
+      signUpResultStatus.field = ""
+  }
+
+  return Promise.resolve(signUpResultStatus);
+});
+
+  //Check if the UUID is defined for the newly created user
+  if (USER_UUID == undefined)
+  {
+    signUpResultStatus.result = false;
+    signUpResultStatus.reason = "Email already exist or username already exist";
+    signUpResultStatus.field="Email"
+    return Promise.reject(signUpResultStatus);
+  }
+  
 
   //Get a reference to the newly create user doc
-  const userDoc = LUPA_DB.collection('users').doc(USER_UUID);
 
+  const userDoc = await LUPA_DB.collection('users').doc(USER_UUID);
+
+    
   //Populate database with user data
   try {
       //Obtain a user structure
@@ -409,9 +521,10 @@ signUpUser = async (username, email, password, confirmedPassword, birthday, agre
       //Add user to users collection with UID.
       await LUPA_DB.collection('users').doc(USER_UUID).set(userData, { merge: true });
   } catch (err) {
-    LUPA_
-    const newData = getLupaUserStructure(USER_UUID, username, email, 0, new Date());
-    await LUPA_DB.collection('users').doc(USER_UUID).set(newData);
+    //delete previous data
+    signUpResultStatus.result = false;
+    signUpResultStatus.reason = "UNKNOWN_ERROR: Check email and username";
+    signUpResultStatus.field=""
   }
 
   try {

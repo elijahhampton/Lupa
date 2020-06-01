@@ -62,6 +62,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import ProgramProfileComponent from '../../workout/program/createprogram/component/ProgramProfileComponent';
 
+import ThinFeatherIcon from "react-native-feather1s";
+
 let chosenHeaderImage;
 let chosenProfileImage;
 

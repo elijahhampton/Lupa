@@ -146,11 +146,13 @@ export default _requestPermissionsAsync = () => {
     alert('Oops.  It looks like there was an error while trying to anable the Photo Library permission.  You can enable it from the Lupa tab in the Settings app.')
   });
   
-  check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+  //TODO: Change to location in use and fix errors where is always denied or blocked
+  check(PERMISSIONS.IOS.LOCATION_ALWAYS)
   .then((result) => {
     switch (result) {
       case RESULTS.UNAVAILABLE:
         //tell user it is not available on this device
+        
         break;
       case RESULTS.DENIED:
        //request permission
@@ -163,39 +165,11 @@ export default _requestPermissionsAsync = () => {
         break;
       case RESULTS.GRANTED:
         // nothing to do
+        
         break;
       case RESULTS.BLOCKED:
         // alert the user to change it from settings
-        alert('The Location permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
-        break;
-    }
-  })
-  .catch((error) => {
-    // …
-    alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
-  });
-
-  check(PERMISSIONS.IOS.LOCATION_ALWAYS)
-  .then((result) => {
-    switch (result) {
-      case RESULTS.UNAVAILABLE:
-        //tell user it is not available on this device
-        break;
-      case RESULTS.DENIED:
-       //request permission
-       request(PERMISSIONS.IOS.LOCATION_ALWAYS).then((result) => {
-        if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
-        {
-          alert('The Location permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
-        }
-      });
-        break;
-      case RESULTS.GRANTED:
-        // nothing to do
-        break;
-      case RESULTS.BLOCKED:
-        // alert the user to change it from settings
-        alert('The Location permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
+       //may need to handle the case here user says only while using?
         break;
     }
   })

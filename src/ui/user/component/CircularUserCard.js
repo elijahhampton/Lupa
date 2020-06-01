@@ -18,7 +18,7 @@ function CircularUserCard(props) {
     return (
         <>
             <Avatar source={{uri: 'https://picsum.photos/200/300'}} rounded size={60} containerStyle={{margin: 10}} avatarStyle={{borderWidth: 3, borderColor: '#616161', borderRadius: 50}} onPress={() => showUserProfile(true)}/>
-        <ModalProfileView isVisible={userProfileVisible} uuid={'acbKf0TQnmcYPJaKoZq501qlZWI2'} closeModalMethod={() => showUserProfile(false)} />
+      {/*  <ModalProfileView isVisible={userProfileVisible} uuid={'acbKf0TQnmcYPJaKoZq501qlZWI2'} closeModalMethod={() => showUserProfile(false)} /> */}
         </>
     )
 }
