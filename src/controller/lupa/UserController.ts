@@ -24,7 +24,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
-import { EventEmitter } from 'events';
+
+import LOG, {LOG_ERROR} from '../../common/Logger';
 
 export default class UserController {
     private static _instance: UserController;
@@ -852,24 +853,44 @@ export default class UserController {
             }, async (err, { hits }) => {
                 if (err) throw reject(err);
 
-                await USER_COLLECTION.where('isTrainer', '==', true).get().then(result => {
-                    let docs = result;
-                    let data;
-                    docs.forEach(doc => {
-                        data = doc.data();
-                        nearbyUsers.push(data);
+                try {
+                    await USER_COLLECTION.where('isTrainer', '==', true).get().then(result => {
+                        let docs = result;
+                        let data;
+                        docs.forEach(doc => {
+                            data = doc.data();
+                            if (data.user_uuid == undefined  || data.user_uuid == "" || data == undefined || typeof(data) != 'object')
+                            {
+                                console.log('Found one baaaaaaaabyyyyy')
+                                return;
+                            }
+                            nearbyUsers.push(data);
+                        });
                     });
-                });
+                } catch(error) {
+                    //TODO:
+                    LOG_ERROR('UserController.ts', 'Handling error in getNearbyUsers().', error)
+                    resolve(nearbyUsers);
+                }
 
-
-                await USER_COLLECTION.where('isTrainer', '==', false).get().then(result => {
-                    let docs = result;
-                    let data;
-                    docs.forEach(doc => {
-                        data = doc.data();
-                        nearbyUsers.push(data);
+                try {
+                    await USER_COLLECTION.where('isTrainer', '==', false).get().then(result => {
+                        let docs = result;
+                        let data;
+                        docs.forEach(doc => {
+                            data = doc.data();
+                            if (data.user_uuid == undefined || data.user_uuid == "" || data == undefined || typeof(data) != 'object')
+                            {
+                                return;
+                            }
+                            nearbyUsers.push(data);
+                        });
                     });
-                });
+                } catch(error) {
+                    //TODO:
+                    LOG_ERROR('UserController.ts', 'Handling error in getNearbyUsers().', error)
+                    resolve(nearbyUsers);
+                }
 
                 resolve(nearbyUsers);
 

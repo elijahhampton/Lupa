@@ -36,7 +36,7 @@ import {
     FAB
 } from 'react-native-paper';
 
-import { PackEventNotificationContainer } from './component/SessionNotificationContainer';
+import { PackEventNotificationContainer } from './component/SessionNotificationContainer.js';
 
 import LupaController from '../../../controller/lupa/LupaController';
 import { connect } from 'react-redux';

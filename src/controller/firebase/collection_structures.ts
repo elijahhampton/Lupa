@@ -188,5 +188,4 @@ export {
     lupa_workout,
     lupa_pack,
     lupa_pack_event,
-    lupa_trainer,
 };
