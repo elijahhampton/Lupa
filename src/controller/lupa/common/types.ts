@@ -20,10 +20,6 @@ export enum UserCollectionFields {
     PROGRAMS="programs"
 }
 
-export enum HealthDataCollectionFields {
-    GOALS="goals",
-}
-
 export enum Days {
     Monday="Monday", 
     Tuesday="Tuesday",
@@ -34,22 +30,10 @@ export enum Days {
     Sunday="Sunday",
 }
 
-export enum SESSION_STATUS {
-    INVITED="Pending",
-    Confirmed="Confirmed",
-}
-
 /* LupaPackEventEnumStageEnum */
 export enum PACK_EVENT_STAGE {
     UNEXPIRED='unexpired',
     EXPIRED='expired',
-}
-
-/* Lupa Modalities */
-export enum WORKOUT_MODALITY {
-    CALISTHENICS="Calisthenics",
-    WEIGHTLIFTING="Weightlifting",
-    METABOLIC="Metabolic"
 }
 
 /* LupaNotificationDataStructure */

@@ -5,7 +5,7 @@
  * 
  * Login View
  */
-import React, { Component } from "react";
+import React from "react";
 
 import {
   View,
@@ -13,7 +13,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  SafeAreaView
+  SafeAreaView,
+  KeyboardAvoidingView
 } from "react-native";
 
 import {
@@ -30,6 +31,7 @@ import { withNavigation } from 'react-navigation';
 
 import LupaController from '../../../controller/lupa/LupaController';
 import { UserAuthenticationHandler } from "../../../controller/firebase/firebase";
+import { ScrollView } from "react-native-gesture-handler";
 
 
 /**
@@ -88,7 +90,7 @@ mapDispatchToProps = dispatch => {
 /**
  * The LoginView class contains the view the user sees upong logging on.
  */
-class LoginView extends Component {
+class LoginView extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -219,6 +221,8 @@ class LoginView extends Component {
   render() {
     return (
       <SafeAreaView style={{ padding: 15, flex: 1, backgroundColor: 'rgb(244, 247, 252)', justifyContent: 'space-between' }}>
+       <KeyboardAvoidingView behavior="padding" style={{flex: 1, backgroundColor: 'transparent'}}>
+        <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'space-between'}} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
         <View style={styles.headerText}>
           <Text style={styles.welcomeBackText}>
             Welcome back,
@@ -308,6 +312,8 @@ class LoginView extends Component {
           {this.state.loginRejectReason}
         </Snackbar>
           </View>
+          </ScrollView>
+          </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
