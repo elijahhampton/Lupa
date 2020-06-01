@@ -11,30 +11,8 @@ import ProfileNavigator from './ProfileNavigator';
 
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-/*
-const Stack = createStackNavigator();
+import ProfileView from '../user/profile/ProfileView';
 
-export default function PackStackNavigator() {
-    return (
-        <NavigationContainer independent={true}>
-        <Stack.Navigator 
-            initialRouteName="PackView" 
-            screenOptions={{gestureEnabled: false}}
-            headerMode="none">
-            <Stack.Screen 
-                name="PackView"
-                component={PackView}/>
-            <Stack.Screen
-                name="PackChat"
-                component={PackChat} />
-            <Stack.Screen
-                name="PackModal"
-                component={PackModal} />
-        </Stack.Navigator>
-        </NavigationContainer>
-    )
-}
-*/
 const PackNavigator = createStackNavigator(
     {
         PackView: {
@@ -61,14 +39,17 @@ const PackNavigator = createStackNavigator(
                 gesturesEnabled: true,
             })
         },
-        Profile: {
-            screen: ProfileNavigator,
+        ProfileView: {
+            screen: (props) => <ProfileView />,
+            initialParams: {
+                navFrom : '',
+            },
             navigationOptions: ({ navigation }) => ({
-                title: 'UserProfileModal',
+                title: 'ProfileView',
                 header: null,
                 gesturesEnabled: true,
             })
-        }
+        },
     },
     {
         initialRouteName: 'PackView',
