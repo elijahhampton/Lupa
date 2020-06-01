@@ -587,6 +587,8 @@ PODS:
     - React
   - react-native-contacts (5.2.0):
     - React
+  - react-native-geolocation (2.0.2):
+    - React
   - react-native-image-picker (2.3.1):
     - React
   - react-native-maps (0.27.1):
@@ -798,6 +800,7 @@ DEPENDENCIES:
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
+  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
@@ -978,6 +981,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-contacts:
     :path: "../node_modules/react-native-contacts"
+  react-native-geolocation:
+    :path: "../node_modules/@react-native-community/geolocation"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-maps:
@@ -1168,6 +1173,7 @@ SPEC CHECKSUMS:
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-camera: 6fe72fd0a85732e2449928f9c59a2e0bf661ad3b
   react-native-contacts: 439dd9c7ea7e0d86190f8370898b82cfb7cf4ef4
+  react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-image-picker: 668e72d0277dc8c12ae90e835507c1eddd2e4f85
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-randombytes: 991545e6eaaf700b4ee384c291ef3d572e0b2ca8
@@ -1223,6 +1229,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 4e6c4c34a89512e2225d336154df1cb689226a29
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
 
-PODFILE CHECKSUM: 140b3419a6262bc6754ef85aff22203d4de881ff
+PODFILE CHECKSUM: 5c8875b9555399020a83b7f3b5b38a1decaf1b08
 
 COCOAPODS: 1.9.1

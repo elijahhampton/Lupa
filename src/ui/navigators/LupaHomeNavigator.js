@@ -10,6 +10,8 @@ import Programs from '../workout/program/Programs';
 
 import TrainerInformation from '../user/modal/WelcomeModal/TrainerInformation';
 import NotificationsView from '../user/notifications/NotificationsView';
+import PackView from '../packs/PackView'
+import TrainerInsights from '../user/trainer/TrainerInsights'
 import CreateProgram from '../workout/program/createprogram/CreateProgram';
 import LiveWorkout from '../workout/modal/LiveWorkout';
 import LupaHome from '../LupaHome';
@@ -94,6 +96,22 @@ const LupaHomeNavigator =  createStackNavigator(
         screen: CardFormScreen,
         navigationOptions:   ({navigation}) => ({
             title: "Programs",
+            header: null,
+            gesturesEnabled: false,
+        })
+      },
+      PackView: {
+        screen: PackView,
+        navigationOptions:   ({navigation}) => ({
+            title: "Packs",
+            header: null,
+            gesturesEnabled: false,
+        })
+      },
+      TrainerInsights: {
+        screen: TrainerInsights,
+        navigationOptions:   ({navigation}) => ({
+            title: "Packs",
             header: null,
             gesturesEnabled: false,
         })

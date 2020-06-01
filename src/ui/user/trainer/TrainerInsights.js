@@ -28,7 +28,7 @@ function TrainerInsights(props) {
                             primary: '#FFFFFF'
                         }}}>
                         <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
-                            <Appbar.Content title="Programs Dashboard" />
+                            <Appbar.Content title="Insights" />
                           
                         </Appbar.Header>
                         <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between'}}>
@@ -185,13 +185,13 @@ function TrainerInsights(props) {
         <DataTable.Row>
           <DataTable.Cell> Elijah Hampton</DataTable.Cell>
           <DataTable.Cell >02/03/2020</DataTable.Cell>
-          <DataTable.Cell>Rock Hard Glutes</DataTable.Cell>
+          <DataTable.Cell>Program Title</DataTable.Cell>
         </DataTable.Row>
 
         <DataTable.Row>
           <DataTable.Cell> Elijah Hampton</DataTable.Cell>
           <DataTable.Cell >02/03/2020</DataTable.Cell>
-          <DataTable.Cell>Rock Hard Glutes</DataTable.Cell>
+          <DataTable.Cell>Program Title</DataTable.Cell>
         </DataTable.Row>
 
 
