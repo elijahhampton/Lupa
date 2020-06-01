@@ -28,6 +28,7 @@ import {
  import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
  import FeatherIcon from 'react-native-vector-icons/Feather';
+ import ThinFeatherIcon from "react-native-feather1s";
 
 import { UserAuthenticationHandler } from '../../../controller/firebase/firebase'
 
@@ -87,12 +88,12 @@ mapStateToProps = (state) => {
     if (state)
     {
       //problem with field
-     return { backgroundColor: 'rgba(213,0,0 ,0.5)'}
+     return { borderBottomColor: '#e53935'}
     }
     else
     {
       //no problem with field
-      return { backgroundColor: 'transparent' }
+      return { borderBottomColor: "rgb(209, 209, 214)" }
     }
   }
 
@@ -100,17 +101,19 @@ mapStateToProps = (state) => {
     const { isLoading } = props;
     return (
       <Modal visible={isLoading} presentationStyle="fullScreen" style={{backgroundColor: '#FFFFFF'}}>
-        <View style={{flex: 1, backgroundColor: '#F2F2F2', justifyContent: 'center'}}>
+        <View style={{flex: 1, backgroundColor: '#F2F2F2'}}>
+           <View style={{backgroundColor: '#F2F2F2', alignItems: 'center', justifyContent: 'space-evenly', height: '80%', width: '100%'}}>
            <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular'}}>
-              Setting up your account data...
+              Setting up your account...
            </Text>
-           <ActivityIndicator color="blue" animating={true} size='large' />
+           <ActivityIndicator color="#1565C0" animating={true} size='large' />
+        </View>
         </View>
       </Modal>
     )
   }
 
-
+const INPUT_PLACEHOLDER_COLOR = "rgb(99, 99, 102)"
 class SignupModal extends React.Component {
 
     constructor(props) {
@@ -130,7 +133,7 @@ class SignupModal extends React.Component {
             agreedToTerms: false,
             isRegistered: false,
             passwordSecureTextEntry: true,
-            secureConfirmPasswordSecureTextEntry: true,
+            confirmPasswordSecureTextEntry: true,
             alertOverlayVisible: false,
             buttonYes: false,
             buttonNo: true,
@@ -493,21 +496,18 @@ class SignupModal extends React.Component {
             
           <View style={{width: "100%", height: Dimensions.get('window').height}}>
           <View style={styles.headerText}>
-                    <Text style={{width: '100%', fontSize: 28, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular' }}>
-            Create an account with
-                        </Text>
-                        <Text style={{ fontSize: 28, fontWeight: '700', color: '#2196F3', fontFamily: 'ARSMaquettePro-Regular' }}>
-            Lupa
+                    <Text style={{fontSize: 28, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular' }}>
+            Create an account
                         </Text>
                         <View style={{flexDirection: 'row', marginTop: 5}}>
-        <Text style={{fontSize: 17, fontWeight: '500'}}>
+        <Text style={{fontSize: 13, fontWeight: '500', color: 'rgb(142, 142, 147)'}}>
           Already have an account?
         </Text>
         <Text>
           {" "}
         </Text>
         <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
-          <Text style={{fontSize: 17, fontWeight: '500', color: '#2196F3'}}>
+          <Text style={{fontSize: 13, fontWeight: '500', color: '#1565C0'}}>
             Sign In
           </Text>
         </TouchableOpacity>
@@ -516,86 +516,91 @@ class SignupModal extends React.Component {
                     
 
                     <View style={{height: "60%", width: "100%", alignItems: "center", justifyContent: "space-evenly"}}>
-                    <View style={{width: '80%', margin: 5}}>
-                            <Text style={styles.textLabel}>
-                                Username
-                            </Text>
+                    <View style={{width: '90%', margin: 5}}>
                             <Input 
                             value={this.state.username} 
                             onChangeText={text => this.setState({username: text})} 
-                            placeholder="Enter a username" 
+                            placeholder="Username" 
+                            placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
+                            autoCapitalize='none'
                             inputStyle={styles.inputStyle} 
-                            inputContainerStyle={styles.inputContainerStyle} 
-                            containerStyle={[styles.containerStyle, getInputContainerValidationStyle(this.state.usernameProblem)]} 
+                            inputContainerStyle={[styles.inputContainerStyle, getInputContainerValidationStyle(this.state.usernameProblem)]} 
+                            containerStyle={styles.containerStyle} 
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
                             returnKeyType="done"
                             multiline={false}
                             style={{alignSelf: "center"}}
-  
+                            leftIcon={<ThinFeatherIcon thin={false} name="user" size={15} />}
+                            leftIconContainerStyle={styles.leftIconContainerStyle}
                             />
                         </View>
 
-                    <View style={{width: '80%', margin: 5}}>
-                            <Text style={styles.textLabel}>
-                                Email
-                            </Text>
+                    <View style={{width: '90%', margin: 5}}>
                             <Input 
                             value={this.state.email} 
                             onChangeText={text => this.setState({email: text})} 
-                            placeholder="Enter an email address" 
+                            placeholder="Email" 
+                            placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
+                            autoCapitalize='none'
                             inputStyle={styles.inputStyle} 
-                            inputContainerStyle={styles.inputContainerStyle} 
-                            containerStyle={[styles.containerStyle, getInputContainerValidationStyle(this.state.emailProblem)]}
+                            inputContainerStyle={[styles.inputContainerStyle, getInputContainerValidationStyle(this.state.emailProblem)]} 
+                            containerStyle={[styles.containerStyle]}
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
                             returnKeyType="done"
                             multiline={false}
-  
+                            leftIcon={<ThinFeatherIcon thin={false} name="mail" size={15} />}
+                            leftIconContainerStyle={styles.leftIconContainerStyle}
                             />
                         </View>
 
-                    <View style={{width: '80%', margin: 5}}>
-                            <Text style={styles.textLabel}>
-                                Password
-                            </Text>
+                    <View style={{width: '90%', margin: 5}}>
                             <Input 
-                            rightIcon={<FeatherIcon name="eye" onPress={this._handleShowPassword} size={25}/>} 
+                            rightIcon={<ThinFeatherIcon thin={true} name={this.state.passwordSecureTextEntry ? "eye-off" : "eye"} onPress={this._handleShowPassword} size={20}/>} 
                             value={this.state.password} 
                             onChangeText={text => this.setState({password: text})} 
                             secureTextEntry={this.state.passwordSecureTextEntry} 
-                            placeholder="Enter a password" inputStyle={{fontWeight: '500', fontSize: 15}} 
+                            placeholder="Password" 
+                            placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
+                            autoCapitalize='none'
+                            inputStyle={{fontWeight: '500', fontSize: 15}} 
                             inputStyle={styles.inputStyle} 
-                            inputContainerStyle={styles.inputContainerStyle} 
-                            containerStyle={[styles.containerStyle, getInputContainerValidationStyle(this.state.passwordProblem)]}
+                            inputContainerStyle={[styles.inputContainerStyle, getInputContainerValidationStyle(this.state.passwordProblem)]} 
+                            containerStyle={[styles.containerStyle]}
                             editable={true}
                             enablesReturnKeyAutomatically={true}
                             returnKeyLabel="Done"
                             returnKeyType="done"
                             multiline={false}
+                            leftIcon={<ThinFeatherIcon thin={false} name="lock" size={15} />}
+                            leftIconContainerStyle={styles.leftIconContainerStyle}
                             />
                         </View>
 
-                        <View style={{width: '80%', margin: 5}}>
-                            <Text style={styles.textLabel}>
-                                Confirm Password
-                            </Text>
+                        <View style={{width: '90%', margin: 5}}>
+
                             <Input 
-                            rightIcon={<FeatherIcon name="eye" onPress={() => this._handleShowConfirmPassword()} size={25} />} 
+                            rightIcon={<ThinFeatherIcon thin={true} name={this.state.confirmPasswordSecureTextEntry ? "eye-off" : "eye"} onPress={this._handleShowConfirmPassword} size={20} />} 
                              value={this.state.confirmedPassword} 
                              onChangeText={text => this.setState({confirmedPassword: text})} 
-                             secureTextEntry={this.state.secureConfirmPasswordSecureTextEntry} 
-                             placeholder="Confirm your password" 
+                             secureTextEntry={this.state.confirmPasswordSecureTextEntry} 
+                             placeholder="Confirm password" 
+                             placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
+                             autoCapitalize='none'
                              inputStyle={styles.inputStyle} 
-                             inputContainerStyle={styles.inputContainerStyle} 
-                             containerStyle={[styles.containerStyle, getInputContainerValidationStyle(this.state.confirmedPasswordProblem)]}
+                             inputContainerStyle={[styles.inputContainerStyle, getInputContainerValidationStyle(this.state.confirmedPasswordProblem)]} 
+                             containerStyle={[styles.containerStyle]}
                              editable={true}
                              enablesReturnKeyAutomatically={true}
                              returnKeyLabel="Done"
-                             returnKeyType="done"
-                             multiline={false}/>
+                             rexturnKeyType="done"
+                             multiline={false}
+                             leftIcon={<ThinFeatherIcon thin={false} name="lock" size={15} />}
+                             leftIconContainerStyle={styles.leftIconContainerStyle}
+                             />
                         </View>
 
                         <View style={{width: '50%', backgroundColor: "transparent", margin: 10}}>
@@ -610,7 +615,7 @@ class SignupModal extends React.Component {
                              placeholderTextColor="black"
                              inputStyle={{width: "100%", fontSize: 10}} 
                              inputContainerStyle={{width: "100%", borderColor: "transparent"}} 
-                             containerStyle={{backgroundColor: getInputContainerValidationStyle(this.state.birthdayProblem), width: "20%", }} 
+                             containerStyle={[getInputContainerValidationStyle(this.state.birthdayProblem), { width: "20%" }]} 
                              editable={true}
                              enablesReturnKeyAutomatically={true}
                              returnKeyLabel="Hi"
@@ -660,12 +665,9 @@ class SignupModal extends React.Component {
 
                     <View style={{padding: 20, alignItems: "center", justifyContent: "center", height: "auto", width: "100%"}}>
                     <TouchableOpacity style={{width: "100%", height: 70, alignSelf: "center"}} onPress={() => this.scrollView.current.scrollTo(Dimensions.get('window').height)}>
-                        <Surface style={{elevation: 10, padding: 10, alignItems: "center", justifyContent: "center", backgroundColor: "#C7DCFF", width: '50%', height: 70, borderRadius: 70, alignSelf: "center"}}>
-                            <Text style={{color: "white", textAlign: "center", textAlignVertical: "center"}}>
-                              Lupa Screening Questionnaire
+                            <Text style={{fontWeight: '600', color: "#1565C0", textAlign: "center", textAlignVertical: "center"}}>
+                              Begin Lupa Screening Questionnaire
                             </Text>
-                            <MaterialIcons name="arrow-drop-down" size={30} style={{color: "white"}} />
-                        </Surface>
                     </TouchableOpacity>
                     </View>
             
@@ -711,7 +713,7 @@ class SignupModal extends React.Component {
   title="Create Account"
   type="solid"
   raised
-  style={{backgroundColor: "#2196F3", padding: 10, borderRadius: 12}}
+  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 12}}
   buttonStyle={{backgroundColor: 'transparent'}}
   containerStyle={{borderRadius: 12}}
   onPress={this._registerUser}
@@ -770,6 +772,7 @@ const styles = StyleSheet.create({
         marginTop: 15,
         padding: 10,
         height: "20%",
+        alignItems: 'center'
     },
     textLabel: {
         fontSize: 15,
@@ -783,7 +786,7 @@ const styles = StyleSheet.create({
       fontSize: 15
     },
     inputContainerStyle: {
-      borderBottomColor: "transparent",
+      borderBottomWidth: 1.5,
       borderTopColor: "transparent", 
       borderRightColor: "transparent", 
       borderLeftColor: "transparent", 
@@ -792,6 +795,7 @@ const styles = StyleSheet.create({
     containerStyle: {
       width: "100%", 
       borderRadius: 20, 
+      backgroundColor: 'transparent'
     },
     leftPositionedSurface: {
       left: 0,
@@ -804,6 +808,10 @@ const styles = StyleSheet.create({
       borderTopLeftRadius: 20,
       borderBottomLeftRadius: 20,
       alignSelf: 'flex-end'
+    },
+    leftIconContainerStyle: {
+      margin: 5, 
+      alignItems: 'flex-start'
     }
 });
 

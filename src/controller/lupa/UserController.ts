@@ -1059,27 +1059,24 @@ export default class UserController {
      
              for (let i = 0; i < programUUIDS.length; i++)
              {
-                 try {
                  await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
                      temp = snapshot.data();
                  })
 
-                 if (temp.program_name == "" || temp.program_image == "" || temp == undefined)
-                 {
-                     
-                 }
-                 else
-                 {
-                    await programsData.push(temp)
-                 }
-                } catch(err) {
+                 try {
+                     if (typeof(temp) != 'undefined')
+                     {
+                        await programsData.push(temp)
+                     }
+                } catch(error) {
+                    LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
                     continue;
                 }
 
              }
 
-        } catch(err) {
-            alert(err)
+        } catch(error) {
+            LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
             programsData = [];
         }
 
@@ -1354,9 +1351,15 @@ export default class UserController {
 
       getFeaturedPrograms = async () => {
           let featuredProfiles = [];
-          await PROGRAMS_COLLECTION.where('program_type', '==', 'Single').limit(3).get().then(docs => {
+          await PROGRAMS_COLLECTION.where('program_type', '==', 'Single').limit(5).get().then(docs => {
               docs.forEach(doc => {
                   let snapshot = doc.data();
+
+                  if (doc.program_structure_uuid == "" || doc == undefined || doc.program_tite == "")
+                  {
+                      return;
+                  }
+
                   featuredProfiles.push(snapshot);
               })
           });

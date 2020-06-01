@@ -33,7 +33,9 @@ import LupaController from '../../../controller/lupa/LupaController';
 import { UserAuthenticationHandler } from "../../../controller/firebase/firebase";
 import { ScrollView } from "react-native-gesture-handler";
 
-
+import ThinFeatherIcon from "react-native-feather1s";
+import { storeAsyncData, retrieveAsyncData } from "../../../controller/lupa/storage/async";
+import { LOG_ERROR } from "../../../common/Logger";
 /**
  * Maps the redux state to props.
  */
@@ -87,6 +89,8 @@ mapDispatchToProps = dispatch => {
   }
 }
 
+const INPUT_PLACEHOLDER_COLOR = "rgb(99, 99, 102)"
+
 /**
  * The LoginView class contains the view the user sees upong logging on.
  */
@@ -100,12 +104,26 @@ class LoginView extends React.PureComponent {
     this.state = {
       username: '',
       password: '',
-      secureTextEntry: true,
+      securePasswordEntry: true,
       showSnack: false,
       loginRejectReason: "",
 
     }
 
+  }
+
+  componentDidMount = async () => {
+    try {
+      await retrieveAsyncData('PREVIOUS_LOGIN_EMAIL').then(res => {
+        this.setState({ username: res })
+      });
+
+      await retrieveAsyncData('PREVIOUS_LOGIN_PASSWORD').then(res => {
+        this.setState({ password: res})
+      });
+    } catch(error) {
+      LOG_ERROR('LoginView.js', 'Unhandled error in LoginView.js componentDidMount', error);
+    }
   }
 
   /**
@@ -128,7 +146,7 @@ class LoginView extends React.PureComponent {
   }
   _handleShowPassword = () => {
     this.setState({
-      secureTextEntry: !this.state.secureTextEntry
+      securePasswordEntry: !this.state.securePasswordEntry
     })
   }
 
@@ -148,6 +166,8 @@ class LoginView extends React.PureComponent {
 
     if (successfulLogin) {
       this._introduceApp();
+      storeAsyncData('PREVIOUS_LOGIN_EMAIL', attemptedUsername);
+      storeAsyncData('PREVIOUS_LOGIN_PASSWORD', attemptedPassword);
     } else {
       this.setState({
         loginRejectReason: 'Invalid Username or Password.  Try again.',
@@ -220,8 +240,8 @@ class LoginView extends React.PureComponent {
 
   render() {
     return (
-      <SafeAreaView style={{ padding: 15, flex: 1, backgroundColor: 'rgb(244, 247, 252)', justifyContent: 'space-between' }}>
-       <KeyboardAvoidingView behavior="padding" style={{flex: 1, backgroundColor: 'transparent'}}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'rgb(244, 247, 252)', justifyContent: 'space-between' }}>
+       <KeyboardAvoidingView behavior="padding" style={{flex: 1 ,backgroundColor: 'transparent'}}>
         <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'space-between'}} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
         <View style={styles.headerText}>
           <Text style={styles.welcomeBackText}>
@@ -231,14 +251,14 @@ class LoginView extends React.PureComponent {
             sign in to continue
                         </Text>
           <View style={styles.noAccountTextContainer}>
-            <Text style={{ fontSize: 17, fontWeight: '500', color: "black" }}>
+            <Text style={{ fontSize: 13, fontWeight: '500', color: 'rgb(142, 142, 147)' }}>
               Don't have an account?
         </Text>
             <Text>
               {" "}
             </Text>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
-              <Text style={{ fontSize: 17, fontWeight: '500', color: '#2196F3' }}>
+              <Text style={{ fontSize: 13, fontWeight: '500', color: '#1565C0' }}>
                 Sign up
           </Text>
             </TouchableOpacity>
@@ -248,38 +268,42 @@ class LoginView extends React.PureComponent {
 
         <View style={{ flex: 1, justifyContent: 'space-evenly', }}>
           <View style={{ width: '100%', margin: 5 }}>
-            <Text style={styles.textLabel}>
-              Email
-                            </Text>
               <Input 
               placeholder="Enter an email address" 
+              placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
+              autoCapitalize='none'
               inputStyle={styles.inputStyle} 
-              inputContainerStyle={{ borderBottomColor: '#545454', borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-              containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5, backgroundColor: 'transparent' }} 
+              inputContainerStyle={{ borderBottomColor: "rgb(209, 209, 214)", borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
+              containerStyle={{ width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: 'transparent'  }} 
               value={this.state.username} 
               editable={true}
               onChangeText={text => this.setState({username: text})}
               returnKeyType="default"
               keyboardType="default"
+              leftIcon={<ThinFeatherIcon thin={false} name="mail" size={15} />}
+              leftIconContainerStyle={styles.leftIconContainerStyle}
               />
           </View>
 
-          <View style={{ width: '100%', margin: 5 }}>
-            <Text style={styles.textLabel}>
-              Password
-                            </Text>
+          <View style={{ width: '100%', margin: 5}}>
 
              <Input 
              placeholder="Enter a password" 
+             placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
+             autoCapitalize='none'
+             secureTextEntry={this.state.securePasswordEntry}
              inputStyle={styles.inputStyle} 
-             inputContainerStyle={{ borderBottomColor: '#545454', borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-             containerStyle={{ width: '100%', borderRadius: 5, backgroundColor: 'transparent'  }} 
-             containerStyle={{ width: Dimensions.get('screen').width, borderRadius: 5}} 
+             inputContainerStyle={{ borderBottomColor: "rgb(209, 209, 214)", borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
+             containerStyle={{ width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: 'transparent'  }} 
              value={this.state.password} 
              editable={true}
              onChangeText={text => this.setState({password: text})}
-             returnKeyType="default"
-             keyboardType="default"
+             returnKeyType='done'
+             keyboardType='default'
+             returnKeyLabel='done'
+             rightIcon={<ThinFeatherIcon thin={true} name={this.state.securePasswordEntry ? "eye-off" : "eye"} onPress={this._handleShowPassword} size={20}/>} 
+             leftIcon={<ThinFeatherIcon thin={false} name="lock" size={15} />}
+              leftIconContainerStyle={styles.leftIconContainerStyle}
               />
           </View>
           </View>
@@ -293,7 +317,7 @@ class LoginView extends React.PureComponent {
   title="Login"
   type="solid"
   raised
-  style={{backgroundColor: "#2196F3", padding: 10, borderRadius: 12}}
+  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 12}}
   buttonStyle={{backgroundColor: 'transparent'}}
   onPress={this.onLogin}
   containerStyle={{borderRadius: 12}}
@@ -330,21 +354,25 @@ const styles = StyleSheet.create({
     margin: 5
   },
   headerText: {
-          marginTop: 15,
     padding: 10,
     flex: 1,
+    alignItems: 'center'
   },
   welcomeBackText: {
-    fontSize: 35, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular'
+    fontSize: 28, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular'
   },
   signInText: {
-    fontSize: 35, fontWeight: '700', color: '#2196F3', fontFamily: 'ARSMaquettePro-Regular'
+    fontSize: 28, fontWeight: '700', color: '#1565C0', fontFamily: 'ARSMaquettePro-Regular'
   },
   noAccountTextContainer: {
     flexDirection: 'row', marginTop: 5
   },
   inputStyle: {
     fontWeight: '500', fontSize: 15
+  },
+  leftIconContainerStyle: {
+    margin: 5, 
+    alignItems: 'flex-start'
   }
 });
 

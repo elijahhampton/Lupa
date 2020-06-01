@@ -118,9 +118,10 @@ export default class CameraScreen extends React.Component {
     whiteBalance: 'auto',
     ratio: '16:9',
     recordOptions: {
-      mute: false,
-      maxDuration: 20,
+      mute: true,
+     // maxDuration: 20,
       quality: RNCamera.Constants.VideoQuality['288p'],
+      
     },
     isRecording: false,
     canDetectFaces: false,
@@ -220,17 +221,6 @@ export default class CameraScreen extends React.Component {
         })
         }
 
-       /* if (promise) {
-          this.setState({ isRecording: true });
-          const data = await promise;
-
-          await this.setState({
-            currVideo: data.uri
-        })
-          
-          console.warn('takeVideo', data);
-         
-        }*/
       } catch (e) {
         console.error(e);
       }
@@ -362,12 +352,11 @@ export default class CameraScreen extends React.Component {
 
   renderRecording = () => {
     const { isRecording } = this.state;
-    const backgroundColor = isRecording ? 'white' : 'darkred';
+    const backgroundColor = isRecording ? 'darkred' : 'transparent';
     const action = isRecording ? this.stopVideo : this.takeVideo;
-    const button = isRecording ? this.renderStopRecBtn() : this.renderRecBtn();
     return (
       <TouchableWithoutFeedback onPress={action} style={{borderRadius: 60}}>
-        <View style={{alignSelf: 'center', width: 60, height: 60, borderRadius: 60, borderWidth: 3, borderColor: '#FFFFFF', padding: 20, backgroundColor: isRecording ? 'darkred' : 'transparent'}} />
+        <View style={{alignSelf: 'center', width: 60, height: 60, borderRadius: 60, borderWidth: 3, borderColor: '#FFFFFF', padding: 20, backgroundColor: backgroundColor}} />
       </TouchableWithoutFeedback>
     
     );
@@ -379,14 +368,6 @@ export default class CameraScreen extends React.Component {
     await this.setState({ isRecording: false });
     this.setState({ showVideoPrev: true })
   };
-
-  renderRecBtn() {
-    return <Text style={styles.flipText}> REC </Text>;
-  }
-
-  renderStopRecBtn() {
-    return <Text style={styles.flipText}> ☕ </Text>;
-  }
 
   renderCamera() {
     const { canDetectFaces, canDetectText, canDetectBarcode } = this.state;

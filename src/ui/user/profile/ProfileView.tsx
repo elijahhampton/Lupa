@@ -978,7 +978,7 @@ NavigationActions.navigate({
             if (this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid)
             {
                 return (
-                    <View style={{width: '100%'}}>
+                    <View style={{width: '100%', margin: 5}}>
                         {
                                             this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
                                             <TouchableHighlight style={{borderRadius: 8}}>
@@ -990,7 +990,7 @@ NavigationActions.navigate({
                                             </TouchableHighlight>
                                             :
                                             <TouchableHighlight>
-                                            <View style={{backgroundColor: '#2196F3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+                                            <View style={{backgroundColor: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
 <Text>
     Follow
 </Text>
@@ -998,6 +998,30 @@ NavigationActions.navigate({
                     
                     </TouchableHighlight>
                     }        
+                    </View>    
+                )
+            }
+        }
+    }
+
+        /**
+     * Renders the message button if this profile doesn't belong to the current user
+     */
+    renderMessageButton = () => {
+        if (this.state.userData)
+        {
+            if (this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid)
+            {
+                return (
+                    <View style={{width: '100%', margin: 5}}>
+                                            <TouchableHighlight>
+                                            <View style={{backgroundColor: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+<Text>
+    Message
+</Text>
+</View>
+                    
+                    </TouchableHighlight>        
                     </View>    
                 )
             }
@@ -1146,51 +1170,17 @@ NavigationActions.navigate({
                         if (this.state.userData.isTrainer)
                         {
                             return (
-                                <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
-                        <Text style={{fontSize: 15, fontWeight: '400'}}>
-                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
-                        </Text>
-                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
-                                    colors: {
-                                        primary: '#2196F3'
-                                    },
-                                    roundness: 10,
-        
-                                }} onPress={() => this.props.navigation.push('CreateProgram',{
-                                    navFrom: 'Profile'
-                                })}>
-                                    <Text>
-                                        Create a Program
-                                    </Text>
-                                </Button>
-                            </Surface>
-                                </TouchableHighlight>
-            
+                           <Text>
+                               This user has not signed up for any programs.
+                           </Text>
                             )
                         }
                         else
                         {
                             return (
-                                <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
-                        <Text style={{fontSize: 15, fontWeight: '400'}}>
-                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                            <Text>
+                            This user has not signed up for any programs.
                         </Text>
-                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
-                                    colors: {
-                                        primary: '#2196F3'
-                                    },
-                                    roundness: 10,
-        
-                                }}>
-                                    <Text>
-                                       Join a Program
-                                    </Text>
-                                </Button>
-                            </Surface>
-                                </TouchableHighlight>
-            
                             )
                         }
                 
@@ -1418,6 +1408,10 @@ thin={true}
                         {
                             this.renderFollowButton()
                         }
+
+                        {
+                            this.renderMessageButton()
+                        }
                             </View>
                             
                             <View style={{flex: 3, alignItems: 'flex-start'}}>
@@ -1471,11 +1465,6 @@ thin={true}
                             }
 
                         </View>
-
-
-                        {
-                            this.renderInteractions()
-                        }
 
                         <Divider style={{marginVertical: 5}} />
 
