@@ -36,17 +36,11 @@ import {
     FAB
 } from 'react-native-paper';
 
-import SessionNotificationContainer, { PackEventNotificationContainer } from './component/SessionNotificationContainer';
+import { PackEventNotificationContainer } from './component/SessionNotificationContainer';
 
 import LupaController from '../../../controller/lupa/LupaController';
 import { connect } from 'react-redux';
 import LupaJournal from './component/LupaJournal/LupaJournal'
-
-import FeatherIcon from 'react-native-vector-icons/Feather'
-
-import UpcomingSessionCard from '../../sessions/component/UpcomingSessionCard'
-import Swiper from 'react-native-swiper';
-import { Pagination } from 'react-native-snap-carousel';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -102,7 +96,6 @@ class TrainerDashboardView extends React.Component {
 
         this.state = {
             refreshing: false,
-            sessionData: [],
             packEventsData: [],
             showJournal: false,
             packInvites: [],
@@ -116,120 +109,15 @@ class TrainerDashboardView extends React.Component {
     }
 
     componentDidMount = async () => {
-       // await this.fetchSessions();
         //await this.fetchPackEvents();
         //await this.fetchPackInvites();
     }
 
     _onRefresh = async () => {
        /* await this.setState({ refreshing: true });
-        await this.fetchSessions()
         await this.fetchPackEvents()
         await this.fetchPackInvites()
         await this.setState({ refreshing: false });*/
-    }
-
-    /**
-     * Fetch Sessions
-     * 
-     * Fetch user sessions from the LupaController.
-     */
-    fetchSessions = async () => {
-        try {
-            let sessionDataIn;
-
-        await this.LUPA_CONTROLLER_INSTANCE.getUserSessions().then(res => {
-            sessionDataIn = res;
-        });
-
-        //If this user has no sessions then we just return from the function
-        if (sessionDataIn.length == 0 || sessionDataIn.length == undefined) {
-            return;
-        }
-
-
-        //if session status pending and active.. nothing to do
-
-        //if session status is set and expired... nothing to do
-
-        //if session status is set and active... nothing to do
-
-        //Check if session date is passed mark as expired and pending and remove session.. we'll let user remove the others
-        for (let i = 0; i < sessionDataIn.length; ++i) {
-            let sessionDate = sessionDataIn[i].sessionData.date;
-            //check to see if session has expired
-            let sessionDateParts = sessionDate.split('-');
-            let month = sessionDateParts[0], day = sessionDateParts[1], year = sessionDateParts[2];
-            let realMonth;
-            switch (month) {
-                case 'January':
-                    realMonth = 1;
-                    break;
-                case 'February':
-                    realMonth = 2;
-                    break;
-                case 'March':
-                    realMonth = 3;
-                    break;
-                case "April":
-                    realMonth = 4;
-                    break;
-                case 'May':
-                    realMonth = 5;
-                    break;
-                case 'June':
-                    realMonth = 6;
-                    break;
-                case 'July': 
-                    realMonth = 7;
-                    break;
-                case 'August':
-                    realMonth = 8;
-                    break;
-                case 'September':
-                    realMonth = 9;
-                    break;
-                case 'October':
-                    realMonth = 10;
-                    break;
-                case 'November':
-                    realMonth = 11;
-                    break;
-                case 'December':
-                    realMonth = 12;
-                    break;
-                default:
-            }
-
-            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set' ||
-                new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Set' ||
-                new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Set') {
-                await this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
-            }
-
-
-            //Check session is within 3 days and mark as expires soon - TODO - no need to do anything in structures for this.. just visual warning.. just update value in sessionStatus
-
-            //Check session is past and remove - we remove pending sessions that have expired - 
-            //todo: NEED TO CHECK FOR TIME HERE AS WELL
-            if (new Date().getMonth() + 1 >= realMonth && new Date().getDate() > day && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' ||
-                new Date().getFullYear() > year && sessionDataIn[i].sessionData.sessionStatus == 'Pending' ||
-                new Date().getMonth() + 1 > realMonth && new Date().getFullYear() >= year && sessionDataIn[i].sessionData.sessionStatus == 'Pending') {
-                await this.LUPA_CONTROLLER_INSTANCE.updateSession(sessionDataIn[i].sessionID, 'session_mode', 'Expired');
-                sessionDataIn.splice(sessionDataIn.splice(i, 1));
-            }
-        }
-
-
-        await this.setState({
-            sessionData: sessionDataIn
-        });
-        } catch(err)
-        {
-            await this.setState({
-                sessionData: []
-            });
-        }
     }
 
     /**
@@ -273,32 +161,6 @@ class TrainerDashboardView extends React.Component {
             await this.setState({ packInvites: [] });
         }
 
-    }
-
-    /**
-     * Populate Sessions
-     * 
-     * Populate the sessions section with any sessions pending that this user might have.
-     * 
-     * TODO: Pash in session UUID and populate inside of container
-     */
-    populateSessions = () => {
-        return this.state.sessionData.length == 0 ?
-            <Caption>
-                You are not apart of any upcoming sessions.
-          </Caption>
-            :
-            this.state.sessionData.map(session => {
-                let sessionDate = session.sessionData.date;
-                let date = sessionDate.split("-")
-                let parsedDate = date[0] + " " + date[1] + "," + date[2];
-                //Return a session notification container
-                //NEED SOMEWAY TO GET THE DISPLAYNAME INTO THIS BLOCK
-                return (
-                    <UpcomingSessionCard  userDataObject={session.sessionData.attendeeTwoData} sesssionDataObject={session.sessionData} />
-                    //<SessionNotificationContainer sessionData={session.sessionData} sessionMode={session.sessionData.sessionMode} sessionUUID={session.sessionID} title={session.sessionData.name} description={session.sessionData.description} date={parsedDate} sessionStatus={session.sessionData.sessionStatus} />
-                )
-            })
     }
 
     populatePackEvents = () => {

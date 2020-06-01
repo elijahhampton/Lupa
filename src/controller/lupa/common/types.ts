@@ -164,24 +164,6 @@ export type LupaHealthDataStructure = {
     ] //array of objects
 };
 
-/* LupaSessionDataStructure */
-export type LupaSessionStructure = {
-    attendeeOne: "",
-    attendeeOneData: Object,
-    attendeeTwo: "",
-    attendeeTwoData: Object,
-    requesterUUID: "",
-    date: any,
-    time_periods: any,
-    name: String,
-    description: String,
-    sessionStatus: any,
-    sessionMode: any,
-    time_created: { date: any, time: any }
-    removed: Boolean,
-    locationData: Object,
-    participants: Array<String>
-};
 
 /* LupaPackEventDataStructure */
 export type LupaPackEventStructure = {
@@ -193,10 +175,4 @@ export type LupaPackEventStructure = {
     pack_event_stage: String,
     pack_event_image: String,
     pack_event_time: String,
-};
-
-/* LupaTrainerDataStructure */
-export type LupaTrainerStructure = {
-    user_uuid: "",
-    certifications: [],
 };

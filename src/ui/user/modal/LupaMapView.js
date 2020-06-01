@@ -23,7 +23,7 @@ function ConfirmHomeGymDialog(props) {
           },
         ]}
       >
-        Would you like to set {props.gymInformation.name} at {props.gymInformation.formatted_address} as the location for your session?
+        Would you like to set {props.gymInformation.name} at {props.gymInformation.formatted_address} as the location for your program?
       </Banner>
     )
 }

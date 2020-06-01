@@ -248,26 +248,12 @@ class TrainerFlatCard extends React.Component {
     }
 
     handleNavigation = () => {
-        this.props.navigation.dispatch(
-
-            NavigationActions.navigate({
-              routeName: 'Profile',
-              params: {userUUID: this.state.userUUID, navFrom: 'SessionsView'},
-              action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.state.userUUID, navFrom: 'SessionsView'}})
-            })
-                        )
+        
     }
 
     render() {
         return (
-            <TouchableOpacity onPress={() =>        this.props.navigation.dispatch(
-
-                NavigationActions.navigate({
-                  routeName: 'Profile',
-                  params: {userUUID: this.state.userUUID, navFrom: 'SessionsView'},
-                  action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: this.state.userUUID, navFrom: 'SessionsView'}})
-                })
-                            )}>
+            <TouchableOpacity onPress={() => console.log('Pressed')}>
                             <Card style={styles.card}>
 <Card.Cover style={{height: 180}} source={{ uri: this.state.profileImage }} />
 <Card.Actions style={{height: "auto", flexDirection: "column", alignItems: "flex-start"}}>
@@ -279,11 +265,6 @@ class TrainerFlatCard extends React.Component {
 {this.props.location.city + ", " + this.props.location.state }
 </Text>
 </View>
-{/*
-<Caption>
-Elijah Hampton has completed over {this.props.sessionsCompleted} sessions on Lupa.
-</Caption>
-*/}
 </Card.Actions>
 </Card>
 </TouchableOpacity>
