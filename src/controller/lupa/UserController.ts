@@ -893,8 +893,6 @@ export default class UserController {
                     }
                 }*/
 
-                
-                resolve(nearbyUsers);
             })
         })
     } catch(err) {
