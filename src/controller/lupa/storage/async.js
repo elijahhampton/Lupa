@@ -17,7 +17,7 @@ async function storeAsyncData(key, value) {
     }
 };
 
-function retrieveAsyncData(key, value) {
+function retrieveAsyncData(key) {
     let retVal = undefined;
     try {
         retVal = AsyncStorage.getItem(key)

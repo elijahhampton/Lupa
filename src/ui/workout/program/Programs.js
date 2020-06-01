@@ -791,8 +791,8 @@ class Programs extends React.Component {
 
     _renderItem = ({item, index}) => {
         return (
-            <View style={{height: 650}}>
-                                <Surface style={{alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 15, margin: 5, height: 500}}>
+            <View style={{flex: 1}}>
+                                <Surface style={{alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 8, margin: 5, flex: 1}}>
                                     <Image resizeMode="cover" source={item} style={{width: '100%', height: '100%', borderRadius: 15}} />
                                     <Text style={{fontFamily: 'ARSMaquettePro-Black', position: 'absolute', alignSelf: 'center', fontWeight: 'bold', fontSize: 35, color: 'white'}}>
                                         Coming Soon
@@ -806,7 +806,7 @@ class Programs extends React.Component {
                                     Aura Program
                                 </Text>
 
-                                <View style={{marginTop: 50, alignSelf: 'center', width: '60%', height: 'auto', alignItems: 'center', justifyContent: 'center'}}>
+                              {/*  <View style={{marginTop: 50, alignSelf: 'center', width: '60%', height: 'auto', alignItems: 'center', justifyContent: 'center'}}>
                                 <FAB
     style={{position: 'absolute', alignSelf: 'flex-start', backgroundColor: "#FFFFFF"}}
     small
@@ -821,7 +821,7 @@ class Programs extends React.Component {
     icon="share"
     onPress={() => console.log('Pressed')}
   />
-                        </View>
+        </View>*/}
                                 </View>
         );
     }
@@ -912,6 +912,10 @@ class Programs extends React.Component {
                     <ScrollView contentContainerStyle={{alignItems: 'center', backgroundColor: '#F2F2F2'}}>
                         {
                               this.state.currUserPrograms.map(program => {
+                                  if (typeof(program) == 'undefined')
+                                  {
+                                      return;
+                                  }
                                     return (
                                         /* <View>
                                                                              <TouchableOpacity onPress={() => this.handleProgramOnPress(program)}>
@@ -1181,11 +1185,29 @@ class Programs extends React.Component {
                 
 
                     <ScrollView contentContainerStyle={{backgroundColor: '#F2F2F2'}} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.featuredIsRefreshing} onRefresh={() => this.handleOnRefresh()}/>}>
-                        <View>
+                        <View style={{height: Dimensions.get('window').height, justifyContent: 'space-between'}}>
+
+                        <View style={{height: Dimensions.get('window').height / 2.5}}>
+                        <Text style={styles.headerText}>
+                        Curated By Lupa
+                    </Text>
+
+                        <Carousel 
+                        data={this.state.samplePhotoData}
+                        itemWidth={Dimensions.get('window').width - 100}
+                        sliderWidth={Dimensions.get('window').width}
+                        scrollEnabled={true}
+                        firstItem={1}
+                        renderItem={this._renderItem}
+                        />
+                        </View>
+
+
+                        <View style={{flex: 1}}>
                         <Text style={styles.headerText}>
                         By Lupa Trainers
                     </Text>
-                    <View style={{height: 'auto'}}>
+                    <View style={{}}>
                         <ScrollView 
                         horizontal 
                         decelerationRate={0} 
@@ -1202,20 +1224,6 @@ class Programs extends React.Component {
                     </View>
                         </View>
 
-                        <View>
-                        <Text style={styles.headerText}>
-                        Curated By Lupa
-                    </Text>
-
-                        <Carousel 
-                        data={this.state.samplePhotoData}
-                        itemWidth={Dimensions.get('window').width - 100}
-                        sliderWidth={Dimensions.get('window').width}
-                        scrollEnabled={true}
-                        firstItem={1}
-                        renderItem={this._renderItem}
-                        />
-                        </View>
 {/*
                         <View style={{ }}>
                         <Text style={styles.headerText}>
@@ -1264,6 +1272,7 @@ class Programs extends React.Component {
                         
                         </View>
                         */}
+                                                </View>
                     </ScrollView>
                     </View>
                     <SafeAreaView style={{backgroundColor: '#F2F2F2'}} />

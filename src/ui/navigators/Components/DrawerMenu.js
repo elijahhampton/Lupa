@@ -22,6 +22,7 @@ import {
   Button,
   Divider,
 } from 'react-native-paper';
+import { Constants } from 'react-native-unimodules';
 
 /**
  * This component render a drawer menu. The drawer menu contains all of the content for the
@@ -84,18 +85,21 @@ action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: cu
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="activity" size={12} style={styles.iconMargin}/>
         <Button mode="Dashboard" color="grey" compact onPress={() => props.navigation.navigate('Dashboard')}>
-          Dashboard
+          <Text>
+            Dashboard
+          </Text>
         </Button>
         </View>
 
-        <Divider />
 
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="heart" size={12} style={styles.iconMargin}/>
         <Button mode="Dashboard" color="grey" compact onPress={() => props.navigation.navigate('TrainerInformation', {
           navFrom: 'Drawer'
         })}>
+          <Text>
           Register as a Lupa Trainer
+          </Text>
         </Button>
         </View>
 
@@ -106,16 +110,16 @@ action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: cu
           </Caption>
           <Divider />
           <View style={styles.footerSection}>
-          <Caption>
+          <Caption style={{color: '#1565C0'}}>
             Terms of Service
           </Caption>
-          <Caption>
+          <Caption style={{color: '#1565C0'}}>
             Privacy Policy
           </Caption>
           </View>
         </View>
 
-        <Button mode="text" compact color="#2196F3" onPress={_handleLogout}>
+        <Button mode="text" compact color="#1565C0" onPress={_handleLogout}>
     Log out
     </Button>
     </SafeAreaView>
@@ -144,7 +148,7 @@ export default withNavigation(DrawerMenu);
       width: '100%', 
       flexDirection: 'column', 
       position: 'absolute', 
-      bottom: 20
+      bottom: Constants.statusBarHeight
     },
     footerSection: {
       flexDirection: 'row', 
@@ -156,9 +160,9 @@ export default withNavigation(DrawerMenu);
       alignItems: 'center', 
       margin: 10
     },
-    drawerHeaderText: {
-      fontWeight: '500', 
-      fontSize: 15
+    drawerHeaderText: { 
+      fontSize: 15,
+      fontFamily: 'ARSMaquettePro-Regular'
     },
     iconMargin: {
       margin: 3

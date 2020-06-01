@@ -59,13 +59,6 @@ import ThinFeatherIcon from "react-native-feather1s";
 
 const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
 
-
-const ANIMATED_HEIGT_DURATION = 500;
-const config = {
-    velocityThreshold: 0.3,
-    directionalOffsetThreshold: 80
-};
-
 mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
@@ -221,7 +214,7 @@ class LupaHome extends React.Component {
     }
 
     handleStartSwipers = () => {
-        this.swiperTwoInterval = setInterval(this.activateSwiperTwo, 2500);
+        this.swiperTwoInterval = setInterval(this.activateSwiperTwo, 4000);
     }
 
     handleStopSwipers = () => {
@@ -251,23 +244,28 @@ class LupaHome extends React.Component {
             <SafeAreaView style={{ flex: 1, backgroundColor: '#F2F2F2' }}>
                 <Appbar.Header style={{ backgroundColor: '#F2F2F2', elevation: 0 }}>
 
-                    <Appbar.Content title="Lupa" titleStyle={{ fontWeight: '400', fontSize: 40 }} />
-                    <Appbar.Action icon={() => <ThinFeatherIcon
-                        name="bar-chart"
-                        size={25}
+                    <Appbar.Content title="Lupa" titleStyle={{alignSelf: 'flex-start', fontWeight: '400', fontSize: 30 }} />
+                    {
+                        this.props.lupa_data.Users.currUserData.isTrainer == true ?
+                        <Appbar.Action icon={() => <ThinFeatherIcon
+                            name="bar-chart"
+                            color="#000000"
+                            size={20}
+                            thin={true}
+                        />} color="#1E88E5"
+                            onPress={() => this.setState({ trainerInsightsVisible: true })} />
+                        :
+                        null
+                    }
+
+<Appbar.Action icon={() => <ThinFeatherIcon
+                        name="search"
+                        size={20}
                         color="#000000"
                         thin={true}
-                    />} size={30} color="#1E88E5"
-                        onPress={() => this.setState({ trainerInsightsVisible: true })} />
+                    />} color="#1E88E5"
+                        onPress={() => console.log('Log')} />
                 </Appbar.Header>
-                <View style={{ flex: 0.5, width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center' }}>
-                    <SearchBar
-                        placeholder="Find a trainer based on.."
-                        style={{ backgroundColor: 'transparent', width: '100%', width: Dimensions.get('window').width }}
-                        platform="ios"
-                        inputStyle={{ backgroundColor: 'transparent' }}
-                    />
-                </View>
 
                 <Banner
                     style={{ backgroundColor: 'transparent', elevation: 0 }}
@@ -289,7 +287,7 @@ class LupaHome extends React.Component {
                         />
                     }
                 >
-                    Welcome to Lupa.  Start by customizing your experience.  Swipe right to take to an assessment from the dashboard or log a previous workout.
+                    Welcome to Lupa.  Start by customizing your experience.  Swipe right to take to an assessment or log a previous workout from the dashboard.
       </Banner>
 
                 <View
@@ -306,14 +304,14 @@ class LupaHome extends React.Component {
 
                         <Button mode="text" color="#0D47A1" onPress={() => this.props.navigation.push('Programs')}>
                             <Text>
-                                Show me more
+                                Show more
                             </Text>
                         </Button>
                     </View>
                     <ScrollView contentContainerStyle={{}} horizontal pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
                         <Card style={{ elevation: 2, margin: 10, width: Dimensions.get('window').width / 1.2, height: '90%', marginVertical: 10 }} onPress={() => console.log('Pressed')}>
-                            <Card.Cover resizeMode="cover" source={require('./images/programs/sample_photo_two.jpg')} style={{ height: '70%' }} />
-                            <Card.Actions style={{ width: '100%', height: '30%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <Card.Cover resizeMode="cover" source={require('./images/programs/sample_photo_two.jpg')} style={{ height: '65%' }} />
+                            <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
                                 <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
                                     <View style={{ width: '100%', }}>
                                         <Text style={{ fontFamily: 'avenir-roman', fontSize: 15, }} numberOfLines={1}>
@@ -364,7 +362,7 @@ class LupaHome extends React.Component {
                 </View>
 
 
-                <View style={{ flex: 3, width: Dimensions.get('window').width }}>
+                <View style={{ flex: 2.5, width: Dimensions.get('window').width }}>
                     <Swiper
                         horizontal={true}
                         dotStyle={{ width: 3, height: 3 }}
