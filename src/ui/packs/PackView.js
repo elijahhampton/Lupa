@@ -305,9 +305,8 @@ class PackView extends React.Component {
                 <Appbar.Header style={styles.header} theme={{
                     elevation: 0,
                 }}>
-                    <Appbar.Action icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#FFFFFF" />
-
                     <Appbar.Content title="Community" titleStyle={{fontFamily: 'ARSMaquettePro-Black',fontSize: 20, fontWeight: "600", color: "#212121"}} />
+                    <Appbar.Action icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#212121" />
                 </Appbar.Header>
 
                 {
