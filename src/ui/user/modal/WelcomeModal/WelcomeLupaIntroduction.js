@@ -12,8 +12,6 @@ import {
     StatusBar,
 } from 'react-native';
 
-import * as Location from 'expo-location';
-
 import {
     Surface,
     ActivityIndicator

@@ -46,7 +46,7 @@ import {
 import TrainerInsights from './user/trainer/TrainerInsights'
 
 
-import {Icon, SearchBar } from 'react-native-elements';
+import { Icon, SearchBar } from 'react-native-elements';
 
 import { withNavigation } from 'react-navigation'
 
@@ -56,6 +56,8 @@ import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 
 import ThinFeatherIcon from "react-native-feather1s";
+
+const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
 
 
 const ANIMATED_HEIGT_DURATION = 500;
@@ -204,13 +206,14 @@ class LupaHome extends React.Component {
             swiperTwoViewIndex: 0,
             showTrainerRegistrationModal: false,
             trainerInsightsVisible: false,
+            visible: false,
         }
 
     }
 
     componentDidMount() {
-     this.handleStartSwipers();
-     this.setState({ visible: true })
+        this.handleStartSwipers();
+        this.setState({ visible: true })
     }
 
     componentWillUnmount() {
@@ -254,39 +257,39 @@ class LupaHome extends React.Component {
                         size={25}
                         color="#000000"
                         thin={true}
-                    />} size={30} color="#1E88E5" 
-                    onPress={() => this.setState({ trainerInsightsVisible: true })}/>
+                    />} size={30} color="#1E88E5"
+                        onPress={() => this.setState({ trainerInsightsVisible: true })} />
                 </Appbar.Header>
                 <View style={{ flex: 0.5, width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center' }}>
                     <SearchBar
                         placeholder="Find a trainer based on.."
                         style={{ backgroundColor: 'transparent', width: '100%', width: Dimensions.get('window').width }}
                         platform="ios"
-                        inputStyle={{backgroundColor: 'transparent'}}
+                        inputStyle={{ backgroundColor: 'transparent' }}
                     />
                 </View>
 
                 <Banner
-                style={{backgroundColor: 'transparent', elevation: 0}}
-        visible={this.state.visible}
-        actions={[
-          {
-            label: 'Got it',
-            color: '#0D47A1',
-            onPress: () => this.setState({ visible: false }),
-          },
-        ]}
-        icon={({ size }) =>
-          <Image
-            source={{ uri: 'https://avatars3.githubusercontent.com/u/17571969?s=400&v=4' }}
-            style={{
-              width: size,
-              height: size,
-            }}
-          />
-        }
-      >
-        Welcome to Lupa.  Start by customizing your experience.  Swipe right to take to an assessment from the dashboard or log a previous workout.
+                    style={{ backgroundColor: 'transparent', elevation: 0 }}
+                    visible={this.state.visible}
+                    actions={[
+                        {
+                            label: 'Got it',
+                            color: '#0D47A1',
+                            onPress: () => this.setState({ visible: false }),
+                        },
+                    ]}
+                    icon={({ size }) =>
+                        <Image
+                            source={{ uri: 'https://avatars3.githubusercontent.com/u/17571969?s=400&v=4' }}
+                            style={{
+                                width: size,
+                                height: size,
+                            }}
+                        />
+                    }
+                >
+                    Welcome to Lupa.  Start by customizing your experience.  Swipe right to take to an assessment from the dashboard or log a previous workout.
       </Banner>
 
                 <View
@@ -363,66 +366,64 @@ class LupaHome extends React.Component {
 
                 <View style={{ flex: 3, width: Dimensions.get('window').width }}>
                     <Swiper
-                    horizontal={true}
+                        horizontal={true}
                         dotStyle={{ width: 3, height: 3 }}
                         activeDotStyle={{ width: 5, height: 5 }}
                         dotColor="#212121"
                         showsPagination={true}
-                        autoplay={true}
                         autoplayDirection={true}
-                        loop={true}
                         paginationStyle={{ position: 'absolute', bottom: 0, width: Dimensions.get('window').width }}
                         style={{ flex: 3, width: Dimensions.get('window').width, }}
                         scrollEnabled={false}
                         index={this.state.swiperTwoViewIndex}
-                        >
-                        <Surface style={{ backgroundColor: 'transparent', width: '100%', height: '100%', elevation: 5, alignItems: 'center', justifyContent: 'center' }}>
-                            <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={require('./images/packprogramtwo.jpg')}>
-                                <View style={styles.viewOverlay} />
-                                <View style={{ alignItems: 'flex-start', flex: 1, justifyContent: 'center', borderRadius: 20 }}>
-                                    <Text style={styles.mainGraphicText}>
-                                        Engage in Community
-            </Text>
-                                    <Paragraph style={styles.subGraphicText}>
-                                    Sign up under a pack, a group of your peers, and complete your fitness journey together.  Find out more on the pack page.
-            </Paragraph>
-                                </View>
-
-                                <Button mode="contained" color="white" style={styles.graphicButton} onPress={() => this.props.goToIndex(2)}>
-                                    Engage
-            </Button>
-
-                            </ImageBackground>
-                        </Surface>
-
+                    >
                         <Surface style={{ backgroundColor: 'transparent', width: '100%', height: '100%', elevation: 5, alignItems: 'center', justifyContent: 'center' }}>
                             <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={require('./images/programs/sample_photo_two.jpg')}>
                                 <View style={styles.viewOverlay} />
                                 <View style={{ alignItems: 'flex-start', flex: 1, justifyContent: 'center', borderRadius: 20 }}>
                                     <Text style={styles.mainGraphicText}>
                                         Register as a Trainer
-            </Text>
+                                    </Text>
                                     <Paragraph style={styles.subGraphicText}>
-                                    Enter your certification ID number, register with Lupa, and bring your client list to one centralized platform.
-            </Paragraph>
+                                        Enter your certification ID number, register with Lupa, and bring your client list to one centralized platform.
+                                    </Paragraph>
                                 </View>
 
                                 <Button mode="contained" color="white" style={styles.graphicButton} onPress={() => this.props.goToIndex(2)}>
                                     Register
-            </Button>
+                                    </Button>
 
                             </ImageBackground>
                         </Surface>
 
                         <Surface style={{ backgroundColor: 'transparent', width: '100%', height: '100%', elevation: 5, alignItems: 'center', justifyContent: 'center' }}>
-                            <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={require('./images/programs/sample_photo_three.jpg')}>
+                            <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={require('./images/packprogramtwo.jpg')}>
+                                <View style={styles.viewOverlay} />
+                                <View style={{ alignItems: 'flex-start', flex: 1, justifyContent: 'center', borderRadius: 20 }}>
+                                    <Text style={styles.mainGraphicText}>
+                                        Engage in Community
+                                    </Text>
+                                    <Paragraph style={styles.subGraphicText}>
+                                        Sign up under a pack, a group of your peers, and complete your fitness journey together.  Find out more on the pack page.
+                                    </Paragraph>
+                                </View>
+
+                                <Button mode="contained" color="white" style={styles.graphicButton} onPress={() => this.props.goToIndex(2)}>
+                                    Engage
+                                </Button>
+
+                            </ImageBackground>
+                        </Surface>
+
+                        <Surface style={{  width: '100%', height: '100%', elevation: 5, alignItems: 'center', justifyContent: 'center' }}>
+                            <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={CreateProgramImage}>
                                 <View style={styles.viewOverlay} />
                                 <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center', borderRadius: 20 }}>
                                     <Text style={styles.mainGraphicText}>
                                         Create a Program or Workout
             </Text>
                                     <Paragraph style={styles.subGraphicText}>
-                                    Have a workout program that you want to share with your friends, family, or the world?  Create it here on Lupa.
+                                        Have a workout program that you want to share with your friends, family, or the world?  Create it here on Lupa.
             </Paragraph>
                                 </View>
 
@@ -486,7 +487,7 @@ class LupaHome extends React.Component {
 
 
 
-            <TrainerInsights isVisible={this.state.trainerInsightsVisible} closeModalMethod={this.closeTrainerInsightsModalMethod} />
+                <TrainerInsights isVisible={this.state.trainerInsightsVisible} closeModalMethod={this.closeTrainerInsightsModalMethod} />
             </SafeAreaView>
         );
     }

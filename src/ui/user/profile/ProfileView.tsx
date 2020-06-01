@@ -44,7 +44,8 @@ import {
 
 import {
     Left,
-    Right
+    Right,
+    Body
 } from 'native-base';
 
 import {
@@ -655,7 +656,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         //if current user viewing profile
         if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid) {
             return (
-                <Text allowFontScaling={true} allowsEditing={false} style={{width: '100%', fontSize: 11, fontWeight: '400'}}>
+                <Text allowFontScaling={true} allowsEditing={false} style={{fontFamily: 'ARSMaquettePro-Bold', width: '100%', fontSize: 13,}}>
                 {this.state.bio}
             </Text>
             )
@@ -663,7 +664,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         else
         {
             return (
-                <Text allowFontScaling={true} allowsEditing={false} style={{width: '100%', fontSize: 11, fontWeight: '400'}}>
+                <Text allowFontScaling={true} allowsEditing={false} style={{width: '100%', fontSize: 20, fontWeight: '400'}}>
                 {this.state.bio}
             </Text>
             )
@@ -848,63 +849,38 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             null
             :
             <View style={{ width: Dimensions.get('window').width, margin: 10, padding: 10,alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                {
-                    this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
+                        <Button onPress={ () => this.props.navigation.dispatch(
 
-                        <Button onPress={() => this.handleUnFollowUser()} mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 8 }} theme={{
-                            roundness: 20,
-                            colors: {
-                                primary: '#2196F3',
-                            }
-                        }}>
-                            <Text>
-                                Unfollow
-</Text>
-                        </Button>
-                        :
-                        <Button onPress={() => this.handleFollowUser()} mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 8 }} theme={{
-                            roundness: 20,
+NavigationActions.navigate({
+    routeName: 'PrivateChat',
+    params: {
+        currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+        otherUserUUID: this.props.navigation.state.params.userUUID
+    },
+    action: NavigationActions.navigate({
+        routeName: 'PrivateChat', params: {
+            currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+            otherUserUUID: this.props.navigation.state.params.userUUID
+        }
+    })
+})
+)
+
+} mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 2 }} theme={{
+                            roundness: 8,
                             colors: {
                                 primary: 'white',
                             }
                         }}>
                             <Text>
-                                Follow
+                               Message
     </Text>
                         </Button>
-                }
-
-<Icon
-                    name='send'
-                    type='feather'
-                    color='#2196F3'
-                    size={20}
-                    raised
-                    reverseColor="white"
-                    reverse
-                    onPress={ () => this.props.navigation.dispatch(
-
-                            NavigationActions.navigate({
-                                routeName: 'PrivateChat',
-                                params: {
-                                    currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-                                    otherUserUUID: this.props.navigation.state.params.userUUID
-                                },
-                                action: NavigationActions.navigate({
-                                    routeName: 'PrivateChat', params: {
-                                        currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-                                        otherUserUUID: this.props.navigation.state.params.userUUID
-                                    }
-                                })
-                            })
-                        )
-
-                    }
-                />
             </View>
 
 
     }
+
 
     /**
      * Shows invite to pack dialog.
@@ -1378,11 +1354,16 @@ thin={true}
         return (
             <SafeAreaView style={styles.container}>
                 <SafeAreaView />
-                <Appbar.Header style={{ backgroundColor: "transparent", margin: 10 }}>
+                <Appbar.Header style={{ backgroundColor: "transparent", margin: 10, elevation: 0 }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>
-
+                    
+                    <Body>
+                    <Text style={{ fontSize: 15, color: "#212121", fontWeight: '600', padding: 1 }}>
+                                    {this.state.userData.username}
+                                </Text>
+                    </Body>
 
                     <Right>
                         {this.getHeaderRight()}
@@ -1449,7 +1430,7 @@ thin={true}
                                 }
                                 </View>
                                 <View style={{flex: 1, alignItems: 'flex-start', width: '100%'}}>
-                                                                            <Paragraph style={{paddingVertical: 10, fontSize: 12}}>
+                                                                            <Paragraph style={{paddingVertical: 10, fontSize: 10, fontWeight: '500'}}>
                          {
                              this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
                              this.props.lupa_data.Users.currUserData.bio
@@ -1500,7 +1481,7 @@ thin={true}
 
                         <View style={styles.transparentBackground}>
                                                          <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 10}}>
-                                Online Programs
+                                Registered Programs
                             </Text>
                         <ScrollView 
                         horizontal 
