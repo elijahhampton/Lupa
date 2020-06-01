@@ -5,7 +5,6 @@ import ProfileView from '../user/profile/ProfileView';
 
 import PackModal from '../packs/PackModal';
 
-import SessionsView from '../sessions/CreateSessionModal';
 import PrivateChat from '../user/chat/PrivateChat';
 
 import MessagesView from '../user/chat/MessagesView'
@@ -18,58 +17,9 @@ import { createStackNavigator } from 'react-navigation-stack';
 import SettingsModal from '../user/profile/component/SettingsModal';
 import LiveWorkout from '../workout/modal/LiveWorkout';
 import Programs from '../workout/program/Programs';
-
-
-
-
-
 import CardFormScreen from '../src/scenes/CardFormScreen'
 import CreateProgram from '../workout/program/createprogram/CreateProgram';
-/*
-const Stack = createStackNavigator();
 
-export default function ProfileStackNavigator() {
-  return (
-    <NavigationContainer independent={true}>
-    <Stack.Navigator
-      initialRouteName="ProfileView"
-      screenOptions={{ gestureEnabled: false }}
-      
-    >
-      <Stack.Screen
-        name="ProfileView"
-        component={(props) => <ProfileView {...props} />}
-        
-      />
-            <Stack.Screen
-        name="FollowerView"
-        component={FollowerView}
-      />
-                  <Stack.Screen
-        name="PrivateChat"
-        component={PrivateChat}
-      />
-                        <Stack.Screen
-        name="PackModal"
-        component={PackModal}
-      />
-                        <Stack.Screen
-        name="SessionsView"
-        component={SessionsView}
-      />
-                        <Stack.Screen
-        name="MessagesView"
-        component={MessagesView}
-      />
-    </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
-
-function ProfileNavigator() {
-    return <ProfileStackNavigator />
-}
-*/
 
 const ProfileNavigator = createStackNavigator(
     {
@@ -107,14 +57,6 @@ const ProfileNavigator = createStackNavigator(
             header: null,
             gesturesEnabled: false,
         })
-    },
-    SessionsView: {
-        screen: SessionsView,
-        navigationOptions: ({navigation}) => ({
-            title: "SessionsView",
-            header: null,
-            gesturesEnabled: false,
-        }),
     },
     UserSettingsView: {
       screen: SettingsModal,

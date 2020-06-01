@@ -50,10 +50,7 @@ class TrainerSearchResultCard extends React.Component {
     }
 
     _handleSessionRequest = () => {
-        this.props.navigation.navigate('SessionsView', {
-            userUUID: this.props.uuid,
-            navFrom: 'SearchView',
-        })
+        
     }
 
     
