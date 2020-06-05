@@ -69,7 +69,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import MyPacksCard from './component/MyPacksCard';
 import ProgramProfileComponent from '../../workout/program/createprogram/component/ProgramProfileComponent';
-import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
+import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
 
 const InviteToPackDialog = props => {
@@ -131,313 +131,6 @@ const mapStateToProps = (state, action) => {
     }
 }
 
-const COLORS_LIST = [
-    {
-        background: '#e57373',
-        accent: '#f44336'
-    },
-    {
-        background: '#7986CB',
-        accent: '#3F51B5'
-    },
-    {
-        background: '#64B5F6',
-        accent: '#2196F3'
-    },
-    {
-        background: '#4DB6AC',
-        accent: '#009688'
-    },
-    {
-        background: '#FFF176',
-        accent: '#FFEB3B'
-    },
-    {
-        background: '#FFB74D',
-        accent: '#FF9800',
-    },
-    {
-        background: '#FF8A65',
-        accent: '#FF5722',
-    },
-    {
-        background: '#90A4AE',
-        accent: '#607D8B',
-    }
-]
-
-const ICONS_LIST = [
-    {
-        icon: 'notifications',
-        iconType: 'material'
-    },
-    {
-        icon: 'directions-run',
-        iconType: 'material'
-    },
-    {
-        icon: 'fitness-center',
-        iconType: 'material'
-    },
-    {
-        icon: 'heart',
-        iconType: 'material'
-    },
-    {
-        icon: 'local-hospital',
-        iconType: 'material'
-    },
-    {
-        icon: 'kitchen',
-        iconType: 'material'
-    },
-    {
-        icon: 'activity',
-        iconType: 'feather'
-    },
-    {
-        icon: 'alert-circle',
-        iconType: 'feather'
-    },
-    {
-        icon: 'eye',
-        iconType: 'feather'
-    },
-    {
-        icon: 'home',
-        iconType: 'feather'
-    },
-    {
-        icon: 'phone',
-        iconType: 'feather'
-    },
-    {
-        icon: 'tablet',
-        iconType: 'feather'
-    },
-    {
-        icon: 'message-circle',
-        iconType: 'feather'
-    },
-]
-
-/*
-function CreateServiceDialog(props) {
-    let [serviceName, setServiceName] = useState("");
-    let [serviceDescription, setServiceDescription] = useState("");
-    let [serviceColors, setServiceColors] = useState([]);
-    let [iconName, setIconName] = useState("");
-    let [iconType, setIconType]  = useState("");
-    let [currIconPressed, setCurrentIconPressed] = useState("");
-    let [currColorPressed, setCurrentColorPresssed] = useState("")
-    let [serviceNameError, setServiceNameError] = useState(false)
-    let [serviceDescriptionError, setServiceDescriptionError] = useState(false)
-    let [showSnack, setShowSnack] = useState(false);
-    let [rejectedReason, setRejectedReason] = useState("");
-
-    const dispatch = useDispatch();
-
-    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    const createService = async (serviceName, serviceDescription, iconName, iconType, serviceColors) => {
-        const USER_SERVICE = await getLupaTrainerService(serviceName, serviceDescription, iconName, iconType, serviceColors);
-
-        //add to local copy
-        await dispatch({type: 'ADD_CURRENT_USER_SERVICE', payload: USER_SERVICE })
-
-        //add to firebase
-        LUPA_CONTROLLER_INSTANCE.createService(USER_SERVICE);
-    }
-
-    const _onDismissSnackBar = () => {
-        setShowSnack(false)
-    }
-
-    const handleCreateServiceOnPress = () => {
-        if (serviceName == "" || serviceName.length > 15 || serviceName.length <= 7)
-        {
-            setServiceNameError(true)
-            setRejectedReason("Invalid service name.  The service name must be between 8 - 15 characters.")
-            setShowSnack(true)
-            return;
-        }
-        else
-        {
-            setServiceNameError(false);
-        }
-
-        //TODO: Check for invalid characters
-
-        if (serviceDescription == "" || serviceDescription.length > 120 || serviceDescription.length < 20)
-        {
-            setServiceDescriptionError(true)
-            setRejectedReason("Invalid service description.  The service description must be between 20 - 120 characters.")
-            setShowSnack(true)
-            return;
-        }
-        else
-        {
-            setServiceDescriptionError(false);
-        }
-
-        //TODO: Check for invalid characters
-
-        //check color
-        if (currIconPressed == "")
-        {
-            setShowSnack(true);
-            setRejectedReason("Sorry you must pick an icon for your service.")
-            return;
-        }
-
-
-        //check icon
-        if (currColorPressed == "")
-        {
-            setShowSnack(true);
-            setRejectedReason("Sorry you must pick a color for your service.")
-            return;
-        }
-
-
-        createService(serviceName, serviceDescription, iconName, iconType, serviceColors);
-
-        props.closeDialogMethod()
-    }
-
-    const handleClickColor = (colors) => {
-        setCurrentColorPresssed(colors.background);
-        let colorsArr = [colors.accent, colors.background];
-        setServiceColors(colorsArr);
-    }
-
-    const handleIconClick = icon => {
-        setCurrentIconPressed(icon.icon)
-        setIconName(icon.icon);
-        setIconType(icon.iconType);
-    }
-
-    return (
-        <Dialog dismissable={true} onDismiss={props.closeDialogMethod} visible={props.isVisible} style={{alignSelf: 'center', width: Dimensions.get('window').width - 30, height: Dimensions.get('window').height - 300}}>
-            <View style={{flex: 1, justifyContent: 'space-between'}}>
-                <View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}> 
-            <Surface style={{elevation: 3, margin: 10, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: '#BBDEFB'}}>
-                <FeatherIcon name="shield" color="#1976D2" size={25} />
-            </Surface>
-            <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Bold'}}>
-                Create a Service
-            </Text>
-            </View>
-            <Text style={{alignSelf: 'center', padding: 10 }}>
-                Create services offering without going through the hassle of creating a full workout program.  Services can range from anything such as as consultations to free trials for the programs you create.
-            </Text>
-                </View>
-
-            <View style={{width: '100%', justifyContent: 'space-between'}}>
-                <TextInput  
-                    value={serviceName} 
-                    onChangeText={text => setServiceName(text)} 
-                    mode="flat" 
-                    placeholder="Service Name (Ex. Consultation)" 
-                    label="Service Name" 
-                    style={{margin: 10}}
-                    theme={{
-                        colors: {
-                            primary: '#212121'
-                        }
-                    }}
-                    error={serviceNameError}
-                    />
-                <TextInput 
-                    value={serviceDescription} 
-                    onChangeText={text => setServiceDescription(text)} 
-                    multiline mode="flat" 
-                    placeholder="Service Description" 
-                    label="Service Description" 
-                    style={{margin: 10}}
-                    theme={{
-                        colors: {
-                            primary: '#212121'
-                        }
-                    }}
-                    error={serviceDescriptionError}
-                     />
-            </View>
-
-            <View style={{padding: 8}}>
-                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 18}}>
-                    Pick a color
-                </Text>
-                <View style={{padding: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                    {
-                        COLORS_LIST.map(color => {
-                            return (
-                                <TouchableWithoutFeedback onPress={ () => handleClickColor(color)} style={{backgroundColor: 'transparent'}}>
-                                    <Surface style={{margin: 3, elevation: 2, borderRadius: 20, width: 20, height: 20, backgroundColor: color.background, borderColor: currColorPressed == color.background ? '#212121' : 'transparent', borderWidth: 1}} />
-                                </TouchableWithoutFeedback>
-                            )
-                        })
-                    }
-                </View>
-            </View>
-
-            <View style={{padding: 8, }}>
-                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 18}}>
-                    Pick an icon
-                </Text>
-                <View style={{padding: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', flexWrap: 'wrap'}}>
-                    {
-                        ICONS_LIST.map(icon => {
-                            if (icon.iconType == "material")
-                            {
-                                return (
-                                    <TouchableWithoutFeedback  onPress={() => handleIconClick(icon)} style={{borderRadius: 20, padding: 5}}>
-                                                                            <MaterialIcon key={icon.icon} name={icon.icon} size={20} style={{backgroundColor: currIconPressed == icon.icon ? 'rgb(174,174,178)' : 'transparent', borderRadius: 20}} />
-                                    </TouchableWithoutFeedback >
-                                )
-                            }   
-                            else if (icon.iconType == "feather")
-                            {
-                                return (
-                                    <TouchableWithoutFeedback  onPress={() => handleIconClick(icon)} style={{borderRadius: 20, padding: 5}}>
-                                                                            <FeatherIcon key={icon.icon} name={icon.icon} size={20} style={{backgroundColor: currIconPressed == icon.icon ? 'rgb(174,174,178)' : 'transparent', borderRadius: 20}}/>
-                                    </TouchableWithoutFeedback >
-                                )
-                            }
-
-                        })
-                    }
-                </View>
-            </View>
-
-            <View style={{alignSelf: 'flex-end', width: '100%', padding: 10, backgroundColor: 'rgb(174,174,178)'}}>
-            <Button mode="contained" style={{width: '30%', alignSelf: 'flex-end'}} theme={{
-                colors: {
-                    primary: '#2196F3'
-                }
-            }}
-            onPress={() => handleCreateServiceOnPress()}>
-                Create
-            </Button>
-</View>
-            </View>
-            <Snackbar
-          style={{backgroundColor: '#212121'}}
-          theme={{ colors: { accent: '#2196F3' }}}
-          visible={showSnack}
-          onDismiss={() => _onDismissSnackBar}
-          action={{
-            label: 'Okay',
-            onPress: () => setShowSnack(false),
-          }}
-        >
-          {rejectedReason}
-        </Snackbar>
-        </Dialog>
-    )
-}*/
-
 interface IProfileProps {
     lupa_data: any,
     Users: any,
@@ -461,7 +154,6 @@ interface IProfileState {
     fitnessInterestDialogOpen: Boolean,
     city: String,
     state: String,
-    showCreateServiceDialog: Boolean,
     refreshing: Boolean,
 }
 
@@ -483,7 +175,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
 
         this.state = {
             userUUID: '',
-            userData: {},
+            userData: getLupaUserStructurePlaceholder(),
             userPackData: [],
             followers: [],
             following: [],
@@ -496,7 +188,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             fitnessInterestDialogOpen: false,
             city: '',
             state: '',
-            showCreateServiceDialog: false,
             refreshing: false,
         }
     }
@@ -914,24 +605,27 @@ NavigationActions.navigate({
 
     /**
      * Renders this profile's avatar.
-     * @return Returns this profile's avatar is there is a photo url for this user.  Otherwise returns an Avatar with the user's initials.
+     * @return Returns this profile's avatar is there is a photo url for this user.  Otherwise returns an Avatar with an icon
      */
     getUserAvatar = () => {
-        let display_name = "User Not Found";
-        let firstInitial = "";
-        let secondInitial = "";
-        if (true && this.state.userData.display_name) {
-            display_name = this.state.userData.display_name.split(" ");
-            firstInitial = display_name[0].charAt(0);
-            secondInitial = display_name[1].charAt(0);
-        }
-
-        if (this.state.userData.photo_url == undefined && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid
-            || this.state.userData.photo_url == "" && this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
-            return <Avatar.Text size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121", elevation: 3 }} />
+        //if the user data in the state is undefined
+        if (typeof(this.state.userData.photo_url) == undefined)
+        {   //if the user data in the state is ""
+            if (this.state.userData.photo_url == '')
+            {   //if we are dealing with the current user return an avatar with an icon
+                if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
+                {
+                    return <Avatar.Icon size={65} icon={() => <FeatherIcon name="help-circle" color="#212121" size={65} />} style={{elevation: 3}} />
+                }
+                else
+                {   //if we are dealing with another user return an avatar with an icon
+                    return <Avatar.Icon size={65} icon={() => <FeatherIcon name="help-circle" color="#212121" size={65} />} style={{elevation: 3}} />
+                }
+            }
         }
 
         try {
+            //if we are dealing with the current user use the photo_url from the redux store as it may update and return an editable avatar
             if (this.props.lupa_data.Users.currUserData.user_uuid == this._getId()) {
                 return (
                     <Surface style={{elevation: 8, width: 65, height: 65, borderRadius: 65}}>
@@ -940,10 +634,13 @@ NavigationActions.navigate({
                 )
             }
 
+            //if we are dealing with another user use the data from the state
             return <ReactNativeElementsAvatar rounded size={65} source={{ uri: this.state.userData.photo_url }} />
         }
         catch (err) {
-            return <Avatar.Text  size={65} label={firstInitial + secondInitial} style={{ backgroundColor: "#212121", elevation: 3 }} />
+            
+            //if there is an error return an avatar with an icon
+            return <Avatar.Icon size={65} icon={() => <FeatherIcon name="help-circle" color="#212121" size={65} />} style={{elevation: 3}} />
         }
     }
 
@@ -1198,147 +895,6 @@ NavigationActions.navigate({
             }
         }
     }
-    
-    /*
-    mapServices = () => {
-        //if a uuid exist
-if (this.state.userData.user_uuid)
-{
-    //if we are dealing with the current user
-    if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid)
-    {
-
-        //if there are programs locally
-       if (this.props.lupa_data.Programs.currUserServicesData.length != undefined)
-       {
-            if (this.props.lupa_data.Programs.currUserServicesData.length == 0 || typeof(this.props.lupa_data.Programs.currUserServicesData.length == 0) == 'object')
-            {
-                return (
-                    <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
-<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
-name="add"
-size={25}
-color="#000000"
-thin={true}
-/>}
-onPress={() => this.setState({ showCreateServiceDialog: true })}
-/>
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-
-<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-         Add a Service
-     </Text>
-</View>
-     <View>
-     </View>
-</View>
-                )
-            }
-            else //services > 0 so we return them
-            {
-                return this.props.lupa_data.Programs.currUserServicesData.map(service => {
-                    return (
-<View style={{margin: 15, padding: 10, backgroundColor: service.service_colors[0], borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
-<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: service.service_colors[1]}} small  
-icon={service.service_icon_type == 'feather' ? () => <ThinFeatherIcon
-name={service.service_icon}
-size={25}
-color="#000000"
-thin={true}
-/> : <MaterialIcon name={service.iconName} size={25} color="#000000" />}/>
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-
-<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-         {service.service_name}
-     </Text>
-</View>
-     <View>
-     </View>
-</View>
-                    )
-                })
-            }
-        }
-        else
-        {
-            return (
-                <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
-<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
-name="add"
-size={25}
-color="#000000"
-thin={true}
-/>}
-onPress={() => this.setState({ showCreateServiceDialog: true })}
-/>
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-
-<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-     Add a Service
- </Text>
-</View>
- <View>
- </View>
-</View>
-            )
-        }
-    }
-    else
-    {
- //if there are programs locally
- if (this.state.userData.services.length != undefined)
- {
-      if (this.state.userData.services.length == 0 || typeof(this.state.userData.services.length == 0) == 'object')
-      {
-          return (
-              <View style={{margin: 15, padding: 10, backgroundColor: 'grey', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
-<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: 'grey'}} small  icon={() => <ThinFeatherIcon
-name="add"
-size={25}
-color="#000000"
-thin={true}
-/>}
-onPress={() => this.setState({ showCreateServiceDialog: true })}
-/>
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-
-<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-   Add a Service
-</Text>
-</View>
-<View>
-</View>
-</View>
-          )
-      }
-      else //services > 0 so we return them
-      {
-          return this.state.userData.services.map(service => {
-              return (
-<View style={{margin: 15, padding: 10, backgroundColor: '#e57373', borderWidth: 0.5, borderColor: '#212121', borderRadius: 20, height: 'auto', width: Dimensions.get('window').width / 1.8, justifyContent: 'space-between'}}>
-<FAB style={{position: 'absolute', right: -12, top: -15, backgroundColor: '#f44336'}} small  icon={() => <ThinFeatherIcon
-name="message-circle"
-size={25}
-color="#000000"
-thin={true}
-/>}/>
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-
-<Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-   One on One Consulations
-</Text>
-</View>
-<View>
-</View>
-</View>
-              )
-          })
-      }
-  }
-    }
-}
-       
-    }*/
 
     render() {
         return (
