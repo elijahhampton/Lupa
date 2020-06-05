@@ -26,8 +26,6 @@ import ToggleSwitch from 'toggle-switch-react-native'
 
 import { Icon, Button } from 'react-native-elements'
 
-import { PieChart } from 'react-native-chart-kit';
-
 import { Video } from 'expo-av'
 
 import FeatherIcon from "react-native-vector-icons/Feather"

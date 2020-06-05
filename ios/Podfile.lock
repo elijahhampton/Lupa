@@ -170,8 +170,6 @@ PODS:
   - EXAV (8.0.0):
     - UMCore
     - UMPermissionsInterface
-  - EXBlur (8.0.0):
-    - UMCore
   - EXConstants (9.0.0):
     - UMConstantsInterface
     - UMCore
@@ -658,13 +656,9 @@ PODS:
     - React-cxxreact (= 0.62.2)
     - React-jsi (= 0.62.2)
     - ReactCommon/callinvoker (= 0.62.2)
-  - RNCMaskedView (0.1.9):
-    - React
   - RNCPushNotificationIOS (1.1.1):
     - React
   - RNDateTimePicker (2.1.0):
-    - React
-  - RNDeviceInfo (5.5.6):
     - React
   - RNFBAnalytics (6.7.1):
     - Firebase/Analytics (~> 6.13.0)
@@ -761,7 +755,6 @@ DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXAppLoaderProvider (from `../node_modules/expo-app-loader-provider/ios`)
   - EXAV (from `../node_modules/expo-av/ios`)
-  - EXBlur (from `../node_modules/expo-blur/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXErrorRecovery (from `../node_modules/expo-error-recovery/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
@@ -817,10 +810,8 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/callinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
-  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
@@ -902,9 +893,6 @@ EXTERNAL SOURCES:
   EXAV:
     :path: !ruby/object:Pathname
     path: "../node_modules/expo-av/ios"
-  EXBlur:
-    :path: !ruby/object:Pathname
-    path: "../node_modules/expo-blur/ios"
   EXConstants:
     :path: !ruby/object:Pathname
     path: "../node_modules/expo-constants/ios"
@@ -1013,14 +1001,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  RNCMaskedView:
-    :path: "../node_modules/@react-native-community/masked-view"
   RNCPushNotificationIOS:
     :path: "../node_modules/@react-native-community/push-notification-ios"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
-  RNDeviceInfo:
-    :path: "../node_modules/react-native-device-info"
   RNFBAnalytics:
     :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
@@ -1110,7 +1094,6 @@ SPEC CHECKSUMS:
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   EXAppLoaderProvider: f6aeb45ee81887811b34eee5c5f235a6111d58d0
   EXAV: bd1c889906adac7f5b9f59a5cb993219564e26f2
-  EXBlur: dd86bccc0056a5b05059f7ddd8e0a8e83adc7c1e
   EXConstants: 9f18e9ef229706394f41735d9c7f309d479b36c0
   EXErrorRecovery: 88541714d9bbf8a823f4ee0b7078a92d3e0e42d2
   EXFileSystem: b82693d78de152efe10a77d4aac781f782e10916
@@ -1189,10 +1172,8 @@ SPEC CHECKSUMS:
   React-RCTText: fae545b10cfdb3d247c36c56f61a94cfd6dba41d
   React-RCTVibration: 4356114dbcba4ce66991096e51a66e61eda51256
   ReactCommon: ed4e11d27609d571e7eee8b65548efc191116eb3
-  RNCMaskedView: 5dba3cb07493765fb66156c83c3dd281ca709a48
   RNCPushNotificationIOS: a38f0b8c4f6f5226cd1d8eeb21ab5670f4a09892
   RNDateTimePicker: 68e542a59ff1b73563744145bfc45c2b88a3deea
-  RNDeviceInfo: c3ea4a4d4547740c548cdd1e5a78f9b04e524688
   RNFBAnalytics: c0124134dc7a159297e43e2e5292b8770d78ea78
   RNFBApp: a8a70521201eb3e75761e5495ebf3be319a3a9bc
   RNFBAuth: 3d3491cf27037c65a7f68bd77a990c15fd97ccec

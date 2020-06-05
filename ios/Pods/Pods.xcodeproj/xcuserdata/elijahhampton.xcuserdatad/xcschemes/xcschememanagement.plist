@@ -24,11 +24,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>EXBlur.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>EXConstants.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -269,22 +264,12 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>RNCMaskedView.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>RNCPushNotificationIOS.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
 		<key>RNDateTimePicker.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>RNDeviceInfo.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

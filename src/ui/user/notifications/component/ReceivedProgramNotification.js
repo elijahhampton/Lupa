@@ -14,17 +14,8 @@ import LiveWorkout from '../../../workout/modal/LiveWorkout';
 
 import { withNavigation } from 'react-navigation';
 
-import Swipeout from 'react-native-swipeout';
 import ProgramInformationPreview from '../../../workout/program/ProgramInformationPreview';
 
-var swipeoutBtns = [
-    {
-      text: 'Delete',
-    },
-    {
-      text: 'Swipe'
-    },
-  ]
 
 function ReceivedProgramNotification(props) {
     let [showLiveWorkout, setShowLiveWorkout] = useState(false);

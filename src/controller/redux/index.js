@@ -1,9 +1,6 @@
 import  {createStore} from 'redux';
-import ReduxThunk from 'redux-thunk';
 import LupaReducer from './reducers';
-import { applyMiddleware } from 'redux';
-
-const LupaStore = createStore(LupaReducer, applyMiddleware(ReduxThunk));
+const LupaStore = createStore(LupaReducer);
 
 LupaStore.subscribe(() => {
     

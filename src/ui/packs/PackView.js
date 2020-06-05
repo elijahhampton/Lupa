@@ -452,14 +452,13 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         padding: 3,
         color: '#212121',
-        fontFamily: 'ars-maquette-pro-medium',
+        fontFamily: 'HelveticaNeueMedium',
     },
     headerDescriptionText: {
         fontSize: 15,
-        fontWeight: '400',
         padding: 3,
         color: '#212121',
-        fontFamily: 'ars-maquette-pro-regular',
+        fontFamily: 'HelveticaNeueLight',
     },
     sectionContent: {
 

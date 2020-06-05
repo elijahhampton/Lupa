@@ -38,8 +38,6 @@ import FeatherIcon from "react-native-vector-icons/Feather"
 
 import { ScrollView } from 'react-native-gesture-handler';
 
-import { BarChart } from 'react-native-chart-kit'
-
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
