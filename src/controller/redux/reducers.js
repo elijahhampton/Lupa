@@ -144,14 +144,10 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
       let updatedProgramsData = state.currUserProgramsData;
       if (!updatedProgramsData.length)
       {
-        console.log('no length')
         updatedProgramsData = [action.payload];
       }
       else
       {
-        console.log('the payload: ' + action.payload)
-        console.log('added!')
-        console.log('done in reducer')
         updatedProgramsData.push(action.payload);
         
       }
@@ -163,7 +159,7 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
       for (let i = 0; i < programs.length; i++)
   {
     let program = programs[i];
-    if (program.program_uuid != action.payload)
+    if (program.program_structure_uuid != action.payload)
     {
      programsToKeep.push(program);
     }

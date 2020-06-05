@@ -2,7 +2,7 @@
  * 
  */
 
-import LUPA_DB, { LUPA_AUTH, LUPA_DB_FIREBASE, Fire, FirebaseStorageBucket } from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH, FIRESTORE_INSTANCE, LUPA_DB_FIREBASE, Fire, FirebaseStorageBucket } from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
 //const USER_PROGRAMS = LUPA_DB.collection('users/USER-UUID/programs'); For reference
@@ -22,7 +22,7 @@ const tmpProgramsIndex = algoliaUsersIndex.initIndex("tempDev_Programs");
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { UserCollectionFields, HealthDataCollectionFields } from './common/types';
+import { UserCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 
 import LOG, {LOG_ERROR} from '../../common/Logger';
@@ -1066,7 +1066,10 @@ export default class UserController {
                  try {
                      if (typeof(temp) != 'undefined')
                      {
-                        await programsData.push(temp)
+                         if (temp.program_name != "")
+                         {
+                            await programsData.push(temp)
+                         }
                      }
                 } catch(error) {
                     LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
@@ -1082,6 +1085,59 @@ export default class UserController {
 
         return Promise.resolve(programsData);
     }
+
+    deleteUserProgram = async (programUUID, userUUID) => {
+        let programData, programRef;
+            programRef = await PROGRAMS_COLLECTION.doc(programUUID);
+
+            await programRef.get().then(snapshot => {
+                programData = snapshot.data();
+            });
+
+        //get the current user UUID
+        const currUserUUID = await this.getCurrentUserUUID();
+
+        //If the program is not the owner's then we can just delete it from their document
+        if (userUUID != programData.program_owner)
+        {
+            const currUserRef = await USER_COLLECTION.doc(userUUID);
+
+            await currUserRef.update({
+                programs: FIRESTORE_INSTANCE.FieldValue.arrayRemove(programUUID)
+            })
+        }
+        else
+        {
+            try {
+                let programParticipants = programData.program_participants;
+
+                for(let i = 0; i < programParticipants.length; i++)
+                {   
+                    //Get a reference to the current users document
+                    const currUserRef = await USER_COLLECTION.doc(userUUID);
+
+                    //Remove the program uuid from the current users document
+                    await currUserRef.update({
+                        programs: FIRESTORE_INSTANCE.FieldValue.arrayRemove(programUUID)
+                    })
+
+                    //get a reference to the users document
+                    let userRef = await USER_COLLECTION.doc(userUUID);
+
+                    //update the programs section of the users document removing the program uuid from their list
+                    await userRef.update({
+                        programs: FIRESTORE_INSTANCE.FieldValue.arrayRemove(programUUID)
+                    })
+
+
+                    //last we remove the program from the DB completely
+                    await programRef.delete();
+                }
+            } catch (error) {
+                LOG_ERROR('UserController.ts', 'Unhandled error in deleteUserProgram()', error)
+            }
+        }
+}
 
     createService = async (serviceObject) => {
         let uuid = await this.getCurrentUser().uid;

@@ -831,11 +831,11 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 case 'Drawer':
                     return ( 
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                                <IconButton icon="more-horiz" size={20} onPress={() => this._navigateToSettings()} />
+                                                <FeatherIcon name="settings" size={20} onPress={() => this._navigateToSettings()}/>
                         </View>
                     )
                 default:
-                    return <FeatherIcon name="plus-circle" size={20} onPress={() => this._showActionSheet()} />
+                    return <FeatherIcon name="more-vertical" size={20} onPress={() => this._showActionSheet()} />
             }
         }
     }
@@ -990,7 +990,7 @@ NavigationActions.navigate({
                                             </TouchableHighlight>
                                             :
                                             <TouchableHighlight>
-                                            <View style={{backgroundColor: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+                                            <View style={{backgroundColor: '#F2F2F2', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
 <Text>
     Follow
 </Text>
@@ -1015,7 +1015,7 @@ NavigationActions.navigate({
                 return (
                     <View style={{width: '100%', margin: 5}}>
                                             <TouchableHighlight>
-                                            <View style={{backgroundColor: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+                                            <View style={{backgroundColor: '#F2F2F2', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
 <Text>
     Message
 </Text>
@@ -1049,7 +1049,7 @@ NavigationActions.navigate({
                         {
                             return (
                                 <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
                         <Text style={{fontSize: 15, fontWeight: '400'}}>
                             You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
                         </Text>
@@ -1075,7 +1075,7 @@ NavigationActions.navigate({
                         {
                             return (
                                 <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
                         <Text style={{fontSize: 15, fontWeight: '400'}}>
                             You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
                         </Text>
@@ -1111,7 +1111,7 @@ NavigationActions.navigate({
                         {
                             return (
                                 <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
                         <Text style={{fontSize: 15, fontWeight: '400'}}>
                             You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
                         </Text>
@@ -1137,7 +1137,7 @@ NavigationActions.navigate({
                         {
                             return (
                                 <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: 'white', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
+                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
                         <Text style={{fontSize: 15, fontWeight: '400'}}>
                             You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
                         </Text>
@@ -1424,7 +1424,7 @@ thin={true}
                                 }
                                 </View>
                                 <View style={{flex: 1, alignItems: 'flex-start', width: '100%'}}>
-                                                                            <Paragraph style={{paddingVertical: 10, fontSize: 10, fontWeight: '500'}}>
+                                                                            <Paragraph style={{paddingVertical: 10, padding: 5, fontSize: 10, fontWeight: '500'}}>
                          {
                              this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
                              this.props.lupa_data.Users.currUserData.bio
@@ -1469,9 +1469,6 @@ thin={true}
                         <Divider style={{marginVertical: 5}} />
 
                         <View style={styles.transparentBackground}>
-                                                         <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 10}}>
-                                Registered Programs
-                            </Text>
                         <ScrollView 
                         horizontal 
                         showsHorizontalScrollIndicator={false}
@@ -1500,7 +1497,7 @@ thin={true}
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F2F2F2",
+        backgroundColor: "#FFFFFF",
     },
     transparentBackground: {
         backgroundColor: "transparent",

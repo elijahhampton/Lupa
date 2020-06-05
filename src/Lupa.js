@@ -27,8 +27,9 @@ import LupaController from './controller/lupa/LupaController';
 import PackNavigator from './ui/navigators/PackNavigator'
 
 import {
-  logoutUser
+  logoutUser,
 } from './controller/lupa/auth/auth'
+
 import PushNotification from 'react-native-push-notification'
 import { connect } from 'react-redux';
 import { generateMessagingToken } from "./controller/firebase/firebase";

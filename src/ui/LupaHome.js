@@ -41,7 +41,13 @@ import {
     Appbar,
     Divider,
     Avatar,
+    Searchbar,
+
 } from 'react-native-paper';
+
+import {
+    Left
+} from 'native-base';
 
 import TrainerInsights from './user/trainer/TrainerInsights'
 
@@ -56,6 +62,11 @@ import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 
 import ThinFeatherIcon from "react-native-feather1s";
+
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { Pagination } from 'react-native-snap-carousel';
+import BasicInformation from './user/modal/WelcomeModal/BasicInformation';
 
 const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
 
@@ -200,39 +211,26 @@ class LupaHome extends React.Component {
             showTrainerRegistrationModal: false,
             trainerInsightsVisible: false,
             visible: false,
+            usersNearYou: [],
+            currCardIndex: 0,
+            cardData: [1,2,3,4,5,6],
+            data: [
+                {text: 'All', icon: ''}, 
+                {text: 'Increase Agility', icon: 'activity'}, 
+                {text: 'Weight Loss', icon: 'anchor'}, 
+                {text: 'New York', icon: 'map-pin'}
+            ],
+            searching: false,
         }
 
     }
 
-    componentDidMount() {
-        this.handleStartSwipers();
+   async componentDidMount() {
         this.setState({ visible: true })
     }
 
     componentWillUnmount() {
-        this.handleStopSwipers()
-    }
-
-    handleStartSwipers = () => {
-        this.swiperTwoInterval = setInterval(this.activateSwiperTwo, 4000);
-    }
-
-    handleStopSwipers = () => {
-        clearInterval(this.swiperTwoInterval);
-    }
-
-    activateSwiperTwo = () => {
-        if (this.state.swiperTwoViewIndex == 3) {
-            this.setState({
-                swiperTwoViewIndex: 0
-            })
-
-            return;
-        }
-
-        this.setState({
-            swiperTwoViewIndex: this.state.swiperTwoViewIndex + 1
-        })
+    
     }
 
     closeTrainerInsightsModalMethod = () => {
@@ -241,57 +239,78 @@ class LupaHome extends React.Component {
 
     render() {
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: '#F2F2F2' }}>
-                <Appbar.Header style={{ backgroundColor: '#F2F2F2', elevation: 0 }}>
-
+            <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
+                    <Left style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <FeatherIcon name="navigation" color="#2962FF" style={{margin: 3,}} />
+                        <Text style={{fontFamily: 'HelveticaNeueMedium', color: '#2962FF'}}>
+                            36079
+                        </Text>
+                    </Left>
                     <Appbar.Content title="Lupa" titleStyle={{alignSelf: 'flex-start', fontWeight: '400', fontSize: 30 }} />
-                    {
-                        this.props.lupa_data.Users.currUserData.isTrainer == true ?
                         <Appbar.Action icon={() => <ThinFeatherIcon
-                            name="bar-chart"
+                            name="mail"
                             color="#000000"
                             size={20}
-                            thin={true}
+                            thin={false}
                         />} color="#1E88E5"
-                            onPress={() => this.setState({ trainerInsightsVisible: true })} />
-                        :
-                        null
-                    }
+                            onPress={() => this.props.navigation.navigate('MessagesView')} />
 
 <Appbar.Action icon={() => <ThinFeatherIcon
-                        name="search"
+                        name="bell"
                         size={20}
                         color="#000000"
-                        thin={true}
+                        thin={false}
                     />} color="#1E88E5"
-                        onPress={() => console.log('Log')} />
+                        onPress={() => this.props.navigation.navigate('NotificationsView')} />
                 </Appbar.Header>
 
-                <Banner
-                    style={{ backgroundColor: 'transparent', elevation: 0 }}
-                    visible={this.state.visible}
-                    actions={[
+                <View style={{flex: this.state.searching === true ? 0 : 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Searchbar style={{marginHorizontal: 20}} placeholder="Search by trainer or program name" inputStyle={{fontSize: 15, fontFamily: 'HelveticaNeueMedium'}} onFocus={() => this.setState({ searching: true })} onBlur={() => this.setState({ searching: false})} />
+                </View>
+                
+                {
+                    this.state.searching === true ?
+                    <View style={{flex: 1}}>
+                        <ScrollView>
+                        
+                        </ScrollView>
+                    </View>
+                    :
+                    <>
+                    <View style={{flex: 1,}}>
+                    <View>
+                    <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: 20, paddingLeft: 12 }}>
+                            What are you interested in?
+                        </Text>
+
+                    </View>
+                    <View style={{flex: 2}} onMoveShouldSetResponder={evt => {
+                        this.props.disableSwipe();
+                        return true;
+                    }}
+                    onTouchEnd={() => this.props.enableSwipe()}>
+                    <ScrollView bounces={false} horizontal={true} contentContainerStyle={{alignItems: 'center', justifyContent: 'center',}}>
                         {
-                            label: 'Got it',
-                            color: '#0D47A1',
-                            onPress: () => this.setState({ visible: false }),
-                        },
-                    ]}
-                    icon={({ size }) =>
-                        <Image
-                            source={{ uri: 'https://avatars3.githubusercontent.com/u/17571969?s=400&v=4' }}
-                            style={{
-                                width: size,
-                                height: size,
-                            }}
-                        />
-                    }
-                >
-                    Welcome to Lupa.  Start by customizing your experience.  Swipe right to take to an assessment or log a previous workout from the dashboard.
-      </Banner>
+                            this.state.data.map((currVal, index, arr) => {
+                                // off blue - rgba(30,136,229 ,0.3)
+                                // deep - rgba(41,98,255 ,1)
+                                return (
+                                    <Chip style={{backgroundColor: 'rgba(41,98,255 ,1)', elevation: 3, margin: 5, width: 'auto', padding: 5, borderRadius: 8}}>
+                                    <FeatherIcon size={15}  style={{margin: 10}} name={currVal.icon} color="#212121" />
+                                    <Text style={{fontFamily: 'HelveticaNeueMedium', color: '#FFFFFF'}}>
+                                        {currVal.text}
+                                    </Text>
+                                </Chip>
+                               )
+                            })
+                        }
+                    </ScrollView>
+                    </View>
+                </View>
 
                 <View
-                    style={{ flex: 2, justifyContent: 'center', justifyContent: 'center' }}
+                    style={{ flex: 2.5, justifyContent: 'center', justifyContent: 'center' }}
                     onMoveShouldSetResponder={evt => {
                         this.props.disableSwipe();
                         return true;
@@ -299,194 +318,66 @@ class LupaHome extends React.Component {
                     onTouchEnd={() => this.props.enableSwipe()}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                         <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: 20, paddingLeft: 12 }}>
-                            Get started
+                            Start now
                         </Text>
-
-                        <Button mode="text" color="#0D47A1" onPress={() => this.props.navigation.push('Programs')}>
-                            <Text>
-                                Show more
-                            </Text>
-                        </Button>
                     </View>
-                    <ScrollView contentContainerStyle={{}} horizontal pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
-                        <Card style={{ elevation: 2, margin: 10, width: Dimensions.get('window').width / 1.2, height: '90%', marginVertical: 10 }} onPress={() => console.log('Pressed')}>
-                            <Card.Cover resizeMode="cover" source={require('./images/programs/sample_photo_two.jpg')} style={{ height: '65%' }} />
-                            <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-                                <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
-                                    <View style={{ width: '100%', }}>
-                                        <Text style={{ fontFamily: 'avenir-roman', fontSize: 15, }} numberOfLines={1}>
-                                            Program Title (New Haven Park, 1305 Tradition Circle)
-             </Text>
-                                    </View>
+                    <ScrollView onScroll={(event) => {
+                        console.log(event.nativeEvent.contentOffset.x);
+                    }} contentContainerStyle={{}} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
+                        {
+                            this.state.cardData.map((val, index, arr) => {
+                                return (
+                                    <Card key={index} style={{ elevation: 2, margin: 10, width: Dimensions.get('window').width / 1.2, height: '90%', marginVertical: 10 }} onPress={() => console.log('Pressed')}>
+                                    <Card.Cover resizeMode="cover" source={require('./images/programs/sample_photo_two.jpg')} style={{ height: '65%' }} />
+                                    <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                                        <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
+                                            <View style={{ width: '100%', }}>
+                                                <Text style={{ fontFamily: 'avenir-roman', fontSize: 15, }} numberOfLines={1}>
+                                                    Program Title (New Haven Park, 1305 Tradition Circle)
+                     </Text>
+                                            </View>
+        
+                                            <View style={{ width: '100%', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#2962FF' }}>
+                                                    Emily Loefstedt
+                        </Text>
+        
+        
+                                                <Text style={{ fontSize: 14, fontWeight: '400' }}>
+                                                    NASM
+                        </Text>
+        
+                                            </View>
+                                        </View>
+                                    </Card.Actions>
+                                </Card>
+                                )
+                            })
+                        }
 
-                                    <View style={{ width: '100%', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#2962FF' }}>
-                                            Emily Loefstedt
-                </Text>
-
-
-                                        <Text style={{ fontSize: 14, fontWeight: '400' }}>
-                                            NASM
-                </Text>
-
-                                    </View>
-                                </View>
-                            </Card.Actions>
-                        </Card>
-
-                        <Card style={{ elevation: 2, margin: 10, width: Dimensions.get('window').width / 1.2, height: '90%', marginVertical: 10 }} onPress={() => console.log('Pressed')}>
-                            <Card.Cover resizeMode="cover" source={require('./images/programs/sample_photo_two.jpg')} style={{ height: '70%' }} />
-                            <Card.Actions style={{ width: '100%', height: '30%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-                                <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
-                                    <View style={{ width: '100%', }}>
-                                        <Text style={{ fontFamily: 'avenir-roman', fontSize: 15, }} numberOfLines={1}>
-                                            Program Title (Online)
-             </Text>
-                                    </View>
-
-                                    <View style={{ width: '100%', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#2962FF' }}>
-                                            Emily Loefstedt
-                </Text>
-
-
-                                        <Text style={{ fontSize: 14, fontWeight: '400' }}>
-                                            NASM
-                </Text>
-
-                                    </View>
-                                </View>
-                            </Card.Actions>
-                        </Card>
                     </ScrollView>
                 </View>
 
 
-                <View style={{ flex: 2.5, width: Dimensions.get('window').width }}>
-                    <Swiper
-                        horizontal={true}
-                        dotStyle={{ width: 3, height: 3 }}
-                        activeDotStyle={{ width: 5, height: 5 }}
-                        dotColor="#212121"
-                        showsPagination={true}
-                        autoplayDirection={true}
-                        paginationStyle={{ position: 'absolute', bottom: 0, width: Dimensions.get('window').width }}
-                        style={{ flex: 3, width: Dimensions.get('window').width, }}
-                        scrollEnabled={false}
-                        index={this.state.swiperTwoViewIndex}
-                    >
-                        <Surface style={{ backgroundColor: 'transparent', width: '100%', height: '100%', elevation: 5, alignItems: 'center', justifyContent: 'center' }}>
-                            <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={require('./images/programs/sample_photo_two.jpg')}>
-                                <View style={styles.viewOverlay} />
-                                <View style={{ alignItems: 'flex-start', flex: 1, justifyContent: 'center', borderRadius: 20 }}>
-                                    <Text style={styles.mainGraphicText}>
-                                        Register as a Trainer
-                                    </Text>
-                                    <Paragraph style={styles.subGraphicText}>
-                                        Enter your certification ID number, register with Lupa, and bring your client list to one centralized platform.
-                                    </Paragraph>
-                                </View>
+                <View style={{ flex: 0.5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Pagination dotsLength={this.state.cardData.length} activeDotIndex={this.state.currCardIndex} dotColor="rgba(41,98,255 ,1)"/>
 
-                                <Button mode="contained" color="white" style={styles.graphicButton} onPress={() => this.props.goToIndex(2)}>
-                                    Register
-                                    </Button>
-
-                            </ImageBackground>
-                        </Surface>
-
-                        <Surface style={{ backgroundColor: 'transparent', width: '100%', height: '100%', elevation: 5, alignItems: 'center', justifyContent: 'center' }}>
-                            <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={require('./images/packprogramtwo.jpg')}>
-                                <View style={styles.viewOverlay} />
-                                <View style={{ alignItems: 'flex-start', flex: 1, justifyContent: 'center', borderRadius: 20 }}>
-                                    <Text style={styles.mainGraphicText}>
-                                        Engage in Community
-                                    </Text>
-                                    <Paragraph style={styles.subGraphicText}>
-                                        Sign up under a pack, a group of your peers, and complete your fitness journey together.  Find out more on the pack page.
-                                    </Paragraph>
-                                </View>
-
-                                <Button mode="contained" color="white" style={styles.graphicButton} onPress={() => this.props.goToIndex(2)}>
-                                    Engage
-                                </Button>
-
-                            </ImageBackground>
-                        </Surface>
-
-                        <Surface style={{  width: '100%', height: '100%', elevation: 5, alignItems: 'center', justifyContent: 'center' }}>
-                            <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={CreateProgramImage}>
-                                <View style={styles.viewOverlay} />
-                                <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center', borderRadius: 20 }}>
-                                    <Text style={styles.mainGraphicText}>
-                                        Create a Program or Workout
-            </Text>
-                                    <Paragraph style={styles.subGraphicText}>
-                                        Have a workout program that you want to share with your friends, family, or the world?  Create it here on Lupa.
-            </Paragraph>
-                                </View>
-
-                                <Button mode="contained" color="white" style={styles.graphicButton} onPress={() => this.props.navigation.navigate('Programs')}>
-                                    Create
-            </Button>
-
-                            </ImageBackground>
-                        </Surface>
-
-
-                        <Surface style={{ backgroundColor: 'transparent', width: '100%', height: '100%', elevation: 5, alignItems: 'center', justifyContent: 'center' }}>
-                            <ImageBackground resizeMode="cover" style={styles.imageBackground} imageStyle={{ borderRadius: 20, width: '100%', height: '100%' }} source={require('./images/fitnesstrainer.jpg')}>
-                                <View style={styles.viewOverlay} />
-                                <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center', borderRadius: 20 }}>
-                                    <Text style={styles.mainGraphicText}>
-                                        Book a Trainer
-            </Text>
-                                    <Paragraph style={styles.subGraphicText}>
-                                        Stop dealing with overpriced workout programs.  Book a trainer on Lupa with little effort.
-            </Paragraph>
-                                </View>
-
-                                <Button mode="contained" color="white" style={styles.graphicButton} onPress={() => this.props.navigation.navigate('Programs')}>
-                                    Book now
-            </Button>
-
-                            </ImageBackground>
-                        </Surface>
-
-                    </Swiper>
-
-                    <View style={{ flex: 0.2, width: Dimensions.get('window').width, flexDirection: 'row', alignSelf: 'center', alignItems: 'flex-end', justifyContent: 'space-evenly' }}>
-                        {/** 
-                         * <FAB small onPress={() => this.props.navigation.navigate('MessagesView')} icon="email" color="white" style={{backgroundColor: '#212121',  }} />
-<FAB small onPress={() => this.props.navigation.push('NotificationsView')} icon="notifications"  color="white"  style={{backgroundColor: '#212121', }} />
-
-                        */}
-                        <Icon
-                            reverse
-                            name='notifications'
-                            type='material'
-                            color='#212121'
-                            size={20}
-                            raised
-                            onPress={() => this.props.navigation.navigate('NotificationsView')}
-                        />
-
-                        <Icon
-                            reverse
-                            name='email'
-                            type='material'
-                            color='#212121'
-                            size={20}
-                            raised
-                            onPress={() => this.props.navigation.push('MessagesView')}
-                        />
+                    <View style={{margin: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    <Button mode="text" color="#212121" onPress={() => this.props.navigation.navigate('Programs')}>
+                        <Text style={{fontFamily: 'HelveticaNeueMedium', fontSize: 15, padding: 0, margin: 0, color: 'rgba(41,98,255 ,1)'}} them>
+                            Explore More
+                        </Text>
+                    </Button>
+                    <FeatherIcon name="arrow-right" size={20}  />
                     </View>
+                    
                 </View>
-
-
-
-
+                </>
+                }
+                
                 <TrainerInsights isVisible={this.state.trainerInsightsVisible} closeModalMethod={this.closeTrainerInsightsModalMethod} />
-            </SafeAreaView>
+                <SafeAreaView />
+            </View>
         );
     }
 }
@@ -500,27 +391,23 @@ const styles = StyleSheet.create({
         fontFamily: 'ARSMaquettePro-Bold',
         color: '#FFFFFF',
         fontSize: 25,
-        alignSelf: 'center'
+        alignSelf: 'flex-start'
     },
     subGraphicText: {
         fontFamily: 'ARSMaquettePro-Medium',
         color: '#FFFFFF',
-        padding: 15,
-        alignSelf: 'center',
-        textAlign: 'center',
+        alignSelf: 'flex-start',
+        textAlign: 'left',
     },
     graphicButton: {
-        marginBottom: 10,
-        alignSelf: 'center',
-        borderColor: '#FFFFFF',
-        borderWidth: 1,
+        alignSelf: 'flex-start',
     },
     viewOverlay: {
         position: 'absolute',
         width: '100%',
         height: '100%',
         backgroundColor: 'rgba(0,0,0,0.6)',
-        borderRadius: 20,
+        borderRadius: 0,
     },
     chipText: {
         color: 'white',
@@ -534,11 +421,10 @@ const styles = StyleSheet.create({
         elevation: 15
     },
     imageBackground: {
-        width: '90%',
-        height: '80%',
-        borderRadius: 20,
-        alignItems: 'center',
-
+        flex: 1,
+        width: Dimensions.get('window').width,
+        borderRadius: 0,
+        alignItems: 'flex-start',
         justifyContent: 'space-around',
     },
 });

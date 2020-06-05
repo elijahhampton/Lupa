@@ -50,6 +50,7 @@ import LupaController from '../../controller/lupa/LupaController';
 import { connect } from 'react-redux';
 import { getCurrentStoreState } from '../../controller/redux/index';
 import CircularUserCard from '../user/component/CircularUserCard';
+import { LOG_ERROR } from '../../common/Logger';
 
 
 const mapStateToProps = (state, action) => {
@@ -115,11 +116,13 @@ class PackView extends React.Component {
              searchValue: searchQuery,
          })
  
-         await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+        /* await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
              searchResultsIn = searchData;
          })
 
-         await this.setState({ searchResults: searchResultsIn });
+         await this.setState({ searchResults: searchResultsIn });*/
+
+         await this.setState({ searchResults: [] });
      }
  
      showSearchResults() {
@@ -285,7 +288,6 @@ class PackView extends React.Component {
                 || user == undefined || user.user_uuid == undefined || 
                 user.user_uuid == "" || typeof(user.user_uuid) != 'string')
                 {
-                    alert('U')
                     return null;
                 }
                 return (
@@ -293,6 +295,7 @@ class PackView extends React.Component {
                 )
             })
          } catch(err) {
+             LOG_ERROR('PackView.js', 'Exception caught in renderNearbyUsers()', error);
             return null;
          }
      }
@@ -312,7 +315,7 @@ class PackView extends React.Component {
                 <Appbar.Header style={styles.header} theme={{
                     elevation: 0,
                 }}>
-                    <Appbar.Content title="Community" titleStyle={{fontFamily: 'ARSMaquettePro-Black',fontSize: 20, fontWeight: "600", color: "#212121"}} />
+                    <Appbar.Content title="Community" titleStyle={{fontFamily: 'HelveticaNeueMedium',fontSize: 30, fontWeight: "600", color: "#212121"}} />
                     <Appbar.Action icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#212121" />
                 </Appbar.Header>
 
@@ -429,7 +432,7 @@ class PackView extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#F2F2F2",
+        backgroundColor: "#FFFFFF",
     },
     textStyles: {
         fontFamily: 'ars-maquette-pro-bold',fontSize: 25, fontWeight: "600", color: "black"

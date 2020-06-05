@@ -105,7 +105,7 @@ export default class LupaCalendar extends React.Component {
               // Highlight header
               backgroundColor: rowIndex == 0 ? 'transparent' : 'transparent',
               // Highlight Sundays
-              color: colIndex == 0 ? '#2196F3' : '#000',
+              color: colIndex == 0 ? '#1565C0' : '#000',
               // Highlight current date
               fontWeight: item == this.state.activeDate.getDate()
                 ? 'bold' : ''
