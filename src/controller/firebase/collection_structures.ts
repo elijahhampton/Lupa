@@ -169,6 +169,10 @@ export const getLupaUserStructure = (
     return lupa_user;
 }
 
+export const getLupaUserStructurePlaceholder = () => {
+    return lupa_user;
+}
+
 var lupa_assessment : LupaAssessmentStructure = {
     assessment_acronym: '',
     data: [],

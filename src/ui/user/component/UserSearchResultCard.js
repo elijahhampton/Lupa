@@ -20,6 +20,8 @@ import { withNavigation, NavigationActions } from 'react-navigation';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
+import FeatherIcon from 'react-native-vector-icons/Feather';
+
 class UserSearchResultCard extends React.Component {
     constructor(props) {
         super(props);
@@ -33,14 +35,6 @@ class UserSearchResultCard extends React.Component {
         }
     }
 
-    componentDidMount = async () => {
-        await this.setupComponent();
-    }
-
-    setupComponent = async () => {
-
-    }
-
     _handleViewProfile = () => {
         this.props.navigation.navigate('Profile', {
             userUUID: this.props.uuid,
@@ -48,27 +42,44 @@ class UserSearchResultCard extends React.Component {
         });
     }
 
-    _handleSessionRequest = () => {
-       
-    }
-
     returnUserAvatar = () => {
-        if (this.state.profilePicture == "" || this.state.profilePicture == "undefined" 
-         || this.state.profilePicture == '')
-        {
             try {
-                let userDisplayName = this.props.title.split(" ");
-                let firstName = userDisplayName[0].charAt(0);
-                let lastName = userDisplayName[1].charAt(0);
-                return <Avatar.Text label={firstName+lastName} size={45} style={{margin: 8}}/>
+                return <Avatar.Image source={{uri: this.props.user.photo_url }} size={45} style={{margin: 8}} />
             } catch(err)
             {
-                return <Avatar.Image source={{uri: this.props.avatar }} size={45} style={{margin: 8}} />
+                return <Avatar.Icon icon={() => <FeatherIcon name="help-circle" size={45} color="#212121" />} size={45} style={{margin: 8}} />
             }
+    }
+
+    renderUsername = () => {
+        try {
+            return (
+                <Text style={styles.titleText}>
+                                {this.props.user.username}
+                            </Text>
+            )
+        } catch(error) {
+            return (
+                <Text style={styles.titleText}>
+                                User not found
+                            </Text>
+            )
         }
-        else
-        {
-            return <Avatar.Image source={{uri: this.props.avatar }} size={45} style={{margin: 8}} />
+    }
+
+    renderDisplayName = () => {
+        try {
+            return (
+                <Text style={styles.subtitleText}>
+                                {this.props.user.display_name}
+                            </Text>
+            )
+        } catch(error) {
+            return (
+                <Text style={styles.subtitleText}>
+                                
+                            </Text>
+            )
         }
     }
 
@@ -80,25 +91,18 @@ class UserSearchResultCard extends React.Component {
                     <View style={styles.cardContent}>
                         <View style={styles.userInfoContent}>
                             {
-                               this.returnUserAvatar()
+                               this.renderUserAvatar()
                             }
                         <View style={{flexDirection: 'column'}}>
                         <Text style={styles.titleText}>
-                                {this.props.username}
+                             {this.renderUsername()}
                             </Text>
                             <Text style={styles.subtitleText}>
-                                {this.props.title}
+                                {this.renderDisplayName()}
                             </Text>
     
                         </View>
                             </View>
-                            {
-                                /*
-                        <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
-                        Lupa User
-                        </Chip>
-                                */
-                            }
                     </View>
                 </View>
                     </TouchableOpacity>

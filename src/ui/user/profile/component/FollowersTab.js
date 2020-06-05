@@ -75,13 +75,10 @@ class FollowersTab extends React.Component {
     /**
      * Render
      * Renders component content.
-     * 
-     * TODO: At some point this code should be moved into a function.
      */
     render() {
         return (
             <ScrollView shouldRasterizeIOS={true}>
-              {/*  <SearchBar platform="ios" placeholder="Search" containerStyle={styles.searchContainer}/> */}
                 {
                     this.mapFollowers()
                 }
