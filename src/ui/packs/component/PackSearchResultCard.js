@@ -21,6 +21,7 @@ import LupaController from '../../../controller/lupa/LupaController';
 import PackInformationModal from '../modal/PackInformationModal';
 
 import { connect } from 'react-redux';
+import { LOG_ERROR } from '../../../common/Logger';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -42,22 +43,6 @@ class PackSearchResultCard extends React.Component {
         }
     }
 
-    componentDidMount = async () => {
-        await this.setupComponent();
-    }
-
-    setupComponent = async () => {
-        let packImageIn;
-        
-        await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.props.uuid).then(result => {
-            packImageIn = result;
-        });
-
-        await this.setState({
-            packImage: packImageIn,
-        })
-    }
-
     _handleViewPack = async (uuid) => {
         let packInformation;
 
@@ -66,32 +51,68 @@ class PackSearchResultCard extends React.Component {
         });
 
 
-        if (packInformation.pack_members.includes(this.props.lupa_data.Users.currUserData.user_uuid))
-        {
-            this.props.navigation.navigate('PackModal', {
-                packUUID: uuid,
-                navFrom: 'SearchView',
-            });
-        }
-        else
-        {
-            this.setState({ packInformationModalIsOpen: true })
+        try {
+            if (packInformation.pack_members.includes(this.props.lupa_data.Users.currUserData.user_uuid))
+            {
+                this.props.navigation.navigate('PackModal', {
+                    packUUID: uuid,
+                    navFrom: 'SearchView',
+                });
+            }
+            else
+            {
+                this.setState({ packInformationModalIsOpen: true })
+            }
+        } catch(error) {
+            LOG_ERROR('PackSearchResultCard.js', 'Caught exception in _handleViewPack()', error)
+            this.setState({ packInformationModalIsOpen: true });
         }
     }
 
-    getPackAvatar = () => {
-        if (this.state.packImage == "" || this.state.packImage == "undefined" || this.state.packImage == '')
-        {
-            return <Avatar.Icon icon="group" size={45} style={{backgroundColor: "#212121", margin: 5}}/>
-        }
-
+    renderPackAvatar = () => {
         try {
-            return <Avatar.Image size={45} source={{uri: this.state.packImage}} style={{margin: 5}} />
+            return <Avatar.Image size={45} source={{uri: this.props.pack.pack_image}} style={{margin: 5}} />
         } catch(err)
         {
+            LOG_ERROR('PackSearchResultCard.js', 'Caught exception in renderPackAvatar()', error)
             return <Avatar.Icon icon="group" size={45} style={{backgroundColor: "#212121", margin: 5}}/>
         }
     }
+
+    renderPackTitle = () => {
+            try {
+                return (
+                    <Text style={styles.titleText}>
+                    {this.props.pack.pack_title}
+                </Text>
+                )
+        } catch(error) {
+            LOG_ERROR('PackSearchResultCard.js', 'Caught exception in renderPackTitle()', error)
+
+            return (
+                <Text style={styles.titleText}>
+                {this.props.pack.pack_title}
+            </Text>
+            )
+        }
+    }
+
+    renderPackLocation= () => {
+        try {
+            return (
+                <Text style={styles.titleText}>
+                Location Unknown
+            </Text>
+            )
+    } catch(error) {
+        LOG_ERROR('PackSearchResultCard.js', 'Caught exception in renderPackLocation()', error)
+        return (
+            <Text style={styles.titleText}>
+            Location Unknown
+        </Text>
+        )
+    }
+}
 
     render() {
         return (
@@ -100,24 +121,17 @@ class PackSearchResultCard extends React.Component {
                 <View style={[styles.cardContainer]}>
                     <View style={styles.cardContent}>
                         <View style={styles.userInfoContent}>
-                        {this.getPackAvatar()}
+                        {this.renderPackAvatar()}
                         <View style={{flexDirection: 'column'}}>
-                        <Text style={styles.titleText}>
-                                {this.props.title}
-                            </Text>
-                            <Text style={styles.subtitleText}>
-                                {this.props.packLocation}
-                            </Text>
+                        {
+                            this.renderPackTitle()
+                        }
+                            {
+                                this.renderPackLocation()
+                            }
                         </View>
     
                             </View>
-                            {
-                                /*
-                                                                <Chip style={[styles.chipIndicator, { backgroundColor: "#2196F3" }]} mode="flat">
-    Lupa Pack
-    </Chip>
-                                */
-                            }
                     </View>
                 </View>
                     </TouchableOpacity>

@@ -25,6 +25,7 @@ import LupaController from '../../../../controller/lupa/LupaController';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility'
 
 import { connect } from 'react-redux';
+import { LOG_ERROR } from '../../../../common/Logger';
 
 mapStateToProps = (state) => {
     return { 
@@ -92,7 +93,7 @@ class BasicInformation extends React.Component {
     }
 
     _handleDisplayNameOnChangeText = text => {
-        this.setState({ displayName: text })
+        this.setState({ displayName: updatedDisplayName })
     }
 
     _handleDisplayNameEndEditing = async () => {
@@ -104,7 +105,7 @@ class BasicInformation extends React.Component {
 
         if (this.state.displayName.length >= 1)
         {
-            await this.setState({
+            this.setState({
                 displayNameSet: true,
             })
         }
@@ -115,20 +116,7 @@ class BasicInformation extends React.Component {
     checkDisplayNameInputText = () => {
         const currDisplayName = this.state.displayName.trim();
 
-        try {
-            let displayNameParts = currDisplayName.split(" ");
-            let length = displayNameParts.length;
 
-            if (length != 2)
-            {
-                this.setState({ displayNameIsInvalid: false })
-                return;
-            }
-        } catch (err)
-        {
-            this.setState({ displayNameIsInvalid: false })
-            return;
-        }
 
         this.setState({ displayNameIsInvalid: true })
     }
@@ -161,7 +149,8 @@ class BasicInformation extends React.Component {
         } catch(error)
         {
          
-            console.log(error)
+            LOG_ERROR('BasicInformation.js', 'Unhandled exception in _chooseProfilePictureFromCameraRoll()', error);
+
             this.setState({
                 avatarSet: false
             })
@@ -181,7 +170,7 @@ class BasicInformation extends React.Component {
     
             this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', firebasePhotoURL);
         } catch(err) {
-          
+               LOG_ERROR('BasicInformation.js', 'Unhandled exception in _handleUserPhotoUrlUpdate', error);
         }
 
     }
@@ -211,6 +200,9 @@ class BasicInformation extends React.Component {
         value={this.state.displayName}
         returnKeyType="done"
         editable={true}
+        keyboardType="default"
+        keyboardAppearance="light"
+        returnKeyLabel="done"
         />
                     </View>
             </SafeAreaView>
