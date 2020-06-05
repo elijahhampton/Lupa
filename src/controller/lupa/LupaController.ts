@@ -107,7 +107,7 @@ export default class LupaController {
 
     runAppSetup = () => {
       //requestPermissionsAsync();
-      this.indexApplicationData();
+     // this.indexApplicationData();
     }
 
     addLupaTrainerVerificationRequest = (uuid, certification, cert_number) => {

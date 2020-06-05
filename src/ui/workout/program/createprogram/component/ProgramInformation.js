@@ -45,8 +45,6 @@ import ProgramListComponent from '../../../component/ProgramListComponent'
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { Input, CheckBox, Button as ElementsButton } from 'react-native-elements';
-import { usePowerState } from 'react-native-device-info';
-
 import LupaMapView from '../../../../user/modal/LupaMapView'
 import { getLupaProgramInformationStructure } from '../../../../../controller/firebase/collection_structures';
 import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';

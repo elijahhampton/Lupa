@@ -7,7 +7,6 @@ if (!global.atob) { global.atob = decode }
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider as StoreProvider} from 'react-redux';
 
-//import { NavigationContainer } from '@react-navigation/native';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import AuthenticationNavigator from './src/ui/navigators/AuthenticationNavigator';
 import Lupa from './src/Lupa';
@@ -16,8 +15,6 @@ import { connect } from 'react-redux';
 import LupaStore from './src/controller/redux/index';
 
 import LupaController from './src/controller/lupa/LupaController';
-import loadFonts from './src/ui/common/Font/index';
-import { generateMessagingToken } from './src/controller/firebase/firebase';
 
 /**
  * 
@@ -70,9 +67,6 @@ class AppNavigator extends React.Component {
 
       this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
-
-  componentDidMount = async () => {
-  }
 
   generateUserLoggedInStatus = async () => {
     let result;
@@ -173,11 +167,9 @@ class App extends React.Component {
     super(props);
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    loadFonts();
   }
 
   componentDidMount = async () => {
-    await loadFonts();
     await this.setupApp();
   }
   

@@ -561,7 +561,7 @@ class WorkoutTool extends React.Component {
                             null
                             :
                             <ScrollView shouldRasterizeIOS={true} contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}>
-                                <Text style={{ fontFamily: 'ars-maquette-pro-regular',fontWeight: "500", fontSize: 40, paddingTop: 20, paddingLeft: 20, color: "#212121" }}>
+                                <Text style={{ fontFamily: 'HelveticaNeueMedium',fontWeight: "500", fontSize: 40, paddingTop: 20, paddingLeft: 20, color: "#212121" }}>
                                     It looks like you're ready to get started.
                         </Text>
 
