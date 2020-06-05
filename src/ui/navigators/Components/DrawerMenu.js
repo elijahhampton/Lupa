@@ -22,7 +22,10 @@ import {
   Button,
   Divider,
 } from 'react-native-paper';
+
 import { Constants } from 'react-native-unimodules';
+
+const ICON_SIZE = 12;
 
 /**
  * This component render a drawer menu. The drawer menu contains all of the content for the
@@ -34,6 +37,11 @@ function DrawerMenu(props) {
     return state.Users.currUserData;
   })
 
+  /**
+   * Navigates to the ProfileView
+   * @param userUUID String uuid of the user to show on the profile
+   * @param navFrom String Location navigating from
+   */
   const navigateToProfile = () => {
     props.navigation.dispatch(
 
@@ -58,14 +66,7 @@ action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: cu
       style={styles.safeAreaView}
       forceInset={{top: 'always', horizontal: 'never', padding: 20}}>
 
-      <TouchableOpacity onPress={() => props.navigation.dispatch(
-
-NavigationActions.navigate({
-routeName: 'Profile',
-params: {userUUID: currUserData.user_uuid, navFrom: 'Drawer'},
-action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: currUserData.user_uuid, navFrom: 'Drawer'}})
-})
-        )}>
+      <TouchableOpacity onPress={navigateToProfile}>
       <View style={styles.drawerHeader}>
         <View flexDirection="column">
               <Text style={styles.drawerHeaderText}>
@@ -83,8 +84,8 @@ action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: cu
         <Divider />
 
         <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="activity" size={12} style={styles.iconMargin}/>
-        <Button mode="Dashboard" color="grey" compact onPress={() => props.navigation.navigate('Dashboard')}>
+          <DrawerIcon name="clipboard" size={ICON_SIZE} style={styles.iconMargin}/>
+        <Button mode="text" color="grey" compact onPress={() => props.navigation.navigate('Dashboard')}>
           <Text>
             Dashboard
           </Text>
@@ -93,8 +94,8 @@ action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: cu
 
 
         <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="heart" size={12} style={styles.iconMargin}/>
-        <Button mode="Dashboard" color="grey" compact onPress={() => props.navigation.navigate('TrainerInformation', {
+          <DrawerIcon name="file-text" size={ICON_SIZE} style={styles.iconMargin}/>
+        <Button mode="text" color="grey" compact onPress={() => props.navigation.navigate('TrainerInformation', {
           navFrom: 'Drawer'
         })}>
           <Text>

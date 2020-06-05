@@ -96,6 +96,17 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+const mapDispatchToProps = (dispatchEvent) => {
+    return {
+        deleteProgram: (programUUID) => {
+            dispatchEvent({
+                type: "DELETE_CURRENT_USER_PROGRAM",
+                payload: programUUID
+            })
+        },
+    }
+}
+
 class ShareProgramModal extends React.Component{
     constructor(props) {
         super(props);
@@ -789,6 +800,20 @@ class Programs extends React.Component {
 
     _onStateChange = ({ open }) => this.setState({ open: !this.state.open });
 
+    /**
+     * Deletes a user's program from their list and performs a store update
+     */
+    deleteUserProgram = async (programUUID, userUUID) => {
+        //delete from database
+        await this.LUPA_CONTROLLER_INSTANCE.deleteUserProgram(programUUID, userUUID);
+
+        //delete from redux store
+        await this.props.deleteProgram(programUUID);
+
+        //update store
+        this.handleOnRefresh();
+    }
+
     _renderItem = ({item, index}) => {
         return (
             <View style={{flex: 1}}>
@@ -950,7 +975,7 @@ class Programs extends React.Component {
              </Text>
              <View style={{flexDirection: 'row'}}>
              <Button color="rgb(13,71,161)" >Edit </Button>
-           <Button color="rgb(229,57,53)">Delete</Button>
+           <Button color="rgb(229,57,53)" onPress={() => this.deleteUserProgram(program.program_structure_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>Delete</Button>
              </View>
          </Card.Actions>
        </Card>
@@ -1367,4 +1392,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(withNavigation(Programs));
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(Programs));

@@ -94,7 +94,14 @@ class CreateProgram extends React.Component {
         this.props.enableSwipe();
         if (this.state.programComplete == false)
         {
+            //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
+            
+            if (typeof(this.state.currProgramUUID) != 'undefined')
+            {
+                //delete from redux
+                this.props.deleteProgram(this.state.currProgramUUID)
+            }
         }
     }
 
@@ -177,8 +184,15 @@ class CreateProgram extends React.Component {
 
     exit = () => {
         if (this.state.programComplete == false)
-        {
+        {   
+            //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
+            
+            if (typeof(this.state.currProgramUUID) != 'undefined')
+            {
+                            //delete from redux
+            this.props.deleteProgram(this.state.currProgramUUID)
+            }
         }
 
         try {

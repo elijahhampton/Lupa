@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     },
     bottomSurface: {
         margin: 10, 
-        width: Dimensions.get('screen').width / 1.8, 
+        width: Dimensions.get('screen').width / 1.5, 
         height: 100, 
         elevation: 10, 
         borderColor: '#212121',

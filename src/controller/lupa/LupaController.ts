@@ -613,6 +613,10 @@ export default class LupaController {
        return Promise.resolve(res);
     }
 
+    deleteUserProgram = async (programUUID, userUUID) => {
+      await USER_CONTROLLER_INSTANCE.deleteUserProgram(programUUID, userUUID);
+    }
+
     handleSendUserProgram = (currUserUUID, currUserData, currUserDisplayName, userList, program) => {
        
       try {

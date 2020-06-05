@@ -67,6 +67,16 @@
 	<string>Allow Lupa to access your reminders</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>HelveticaNeueMed.ttf</string>
+		<string>HelveticaNeueLt.ttf</string>
+		<string>HelveticaNeueHv.ttf</string>
+		<string>HelveticaNeueBd.ttf</string>
+		<string>HelveticaNeue.ttf</string>
+		<string>HelveticaNeue Thin.ttf</string>
+		<string>HelveticaNeue Medium.ttf</string>
+		<string>HelveticaNeueLight.ttf</string>
+		<string>HelveticaNeue BlackCond.ttf</string>
+		<string>Helvetica Neu Bold.ttf</string>
 		<string>ARSMaquettePro-Regular.ttf</string>
 		<string>ARSMaquettePro-Medium.ttf</string>
 		<string>ARSMaquettePro-Light.ttf</string>
@@ -93,6 +103,7 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>feather1s.ttf</string>
+		<string>HelveticaNeue Light.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

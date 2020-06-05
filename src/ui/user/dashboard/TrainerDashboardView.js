@@ -211,7 +211,6 @@ class TrainerDashboardView extends React.Component {
                                         statusBarHeight
                                         style={{elevation: 0, alignItems: 'center'}}
                                         theme={{
-                                            elevation: 0,
                                             colors: {
                                                 primary: "transparent"
                                             }
@@ -232,7 +231,7 @@ class TrainerDashboardView extends React.Component {
 
                     <View>
                     <View style={{padding: 10, flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', height: 'auto'}}>
-                        <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#FFFFFF', width: '100%'}}>
+                        <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#F2F2F2', width: '100%'}}>
                             <Text style={{color: '#1E88E5', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15, padding: 5, textAlign: 'center'}}>
                                 Finished a workout offline? Log it
                             </Text>
@@ -253,7 +252,7 @@ class TrainerDashboardView extends React.Component {
                             </Button>
                         </Surface>
 
-                        <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#FFFFFF', width: '100%'}}>
+                        <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#F2F2F2', width: '100%'}}>
                             <Text style={{color: '#1E88E5', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15, padding: 5, textAlign: 'center'}}>
                                 Try the EMS assessment
                             </Text>
@@ -294,7 +293,7 @@ const styles = StyleSheet.create({
     },
     safeareaview: {
         flex: 1,
-        backgroundColor: "#F2F2F2",
+        backgroundColor: "#FFFFFF",
     },
     header: {
         flexDirection: 'row', 
@@ -303,11 +302,11 @@ const styles = StyleSheet.create({
         height: "auto",
     },
     headerText: {
-        fontSize: 30, 
-        fontFamily: 'ARSMaquettePro-Medium',
+        fontFamily: 'HelveticaNeueMedium', 
+        fontSize: 30,
         color: 'white', 
         alignSelf: "center",
-        color: '#2196F3'
+        color: '#1565C0'
     },
     sectionHeader: {
         flexDirection: 'row', 

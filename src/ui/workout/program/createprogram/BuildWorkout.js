@@ -619,7 +619,8 @@ class BuildWorkout extends React.Component {
            },
            workout_steps: this.state.currPressedNonPopulatedWorkout.workout_steps,
            workout_tags: this.state.currPressedNonPopulatedWorkout.workout_tags,
-           workout_uid: fromString(Math.random().toString())
+           workout_uid: fromString(Math.random().toString()),
+           workout_section: section //add the section so it is easy to delete
        }
 
         let updatedState = this.state.data;
@@ -647,6 +648,18 @@ class BuildWorkout extends React.Component {
         }
 
         await this.setState({ data: updatedState, currPressedNonPopulatedWorkout: undefined })
+    }
+
+    removePopulatedWorkoutFromProgram = () => {
+        const workoutToRemove = this.state.currPressedPopulatedWorkout;
+        const updatedState = this.state.data;
+        const sectionToAccess = workoutToRemove.workout_section;
+
+        switch(sectionToAccess)
+        {
+            default:
+        }
+
     }
 
     getWorkoutSurfaceContent = (workout) => {
@@ -757,6 +770,9 @@ class BuildWorkout extends React.Component {
                             />
                     </Surface>
                     <View style={{flex: 1}}>
+                    <Text style={{fontFamily: 'ARSMaquettePro-Regular', color: 'white',fontSize: 20, padding: 5,  }}>
+                        General Workouts
+                    </Text>
                     <ScrollView contentContainerStyle={{flexWrap: 'wrap', justifyContent: 'center', width: Dimensions.get('window').width,  flexDirection: 'row', padding: 5, backgroundColor: "#212121"}}>
                     {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.map((workout, index, arr)=> {
@@ -804,22 +820,9 @@ class BuildWorkout extends React.Component {
                <Text style={{alignSelf: 'center', fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, padding: 10}}>
                    Workout Options
                </Text>
+               
                <View style={{flex: 1, justifyContent: 'space-evenly'}}>
-               <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
-            <ThinFeatherIcon
-name="upload"
-size={18}
-color="#000000"
-thin={false}
-style={{margin: 5}}
-        /> 
-
-                <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-                    Upload a picture or video
-                </Text>
-            </View>
-            <Divider />
-            <TouchableHighlight onPress={() => this.handleTakePictureOrVideo()}>
+            <TouchableOpacity onPress={() => this.handleTakePictureOrVideo()}>
             <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="camera"
@@ -829,10 +832,10 @@ thin={false}
 style={{margin: 5}}
 />
                 <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-                    Take a picture or video
+                    Record a Video
                 </Text>
             </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
             <Divider />
             <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
@@ -847,6 +850,7 @@ style={{margin: 5}}
                 </Text>
             </View>
             <Divider />
+            <TouchableOpacity onPress={this.removePopulatedWorkoutFromProgram}>
             <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="trash"
@@ -859,6 +863,7 @@ style={{margin: 5}}
                    Delete Workout
                 </Text>
             </View>
+            </TouchableOpacity>
                </View>
             
            </View>
@@ -875,6 +880,8 @@ style={{margin: 5}}
             handleCaptureNewMediaURI={(uri, type) => this.handleCaptureNewMediaURI(uri, type)}
             closeModalMethod={this.closeModalMethod}
             />
+
+            <SafeAreaView />
             </View>
         )
     }

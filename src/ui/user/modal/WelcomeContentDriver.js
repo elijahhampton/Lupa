@@ -24,19 +24,19 @@ const contentDriverContext = [
     {
         title: "Lupa Packs",
         description: "But I must explain to you how all this mistaken idea of denouncing pleasure",
-        icon: <MaterialIcons name="public" size={25} color="#FFFFFF" />,
+        icon: <MaterialIcons name="public" size={20} color="#FFFFFF" />,
         color: "#1A237E"
     },
     {
         title: "Book a Trainer",
         description: "But I must explain to you how all this mistaken idea of denouncing pleasure",
-        icon: <MaterialIcons name="directions-run" size={25} color="#FFFFFF" />,
+        icon: <MaterialIcons name="directions-run" size={20} color="#FFFFFF" />,
         color: "#0D47A1",
     },
     {
         title: "Design a Workout Program",
         description: "But I must explain to you how all this mistaken idea of denouncing pleasure",
-        icon: <MaterialIcons name="fitness-center" size={25} color="#FFFFFF" />,
+        icon: <MaterialIcons name="fitness-center" size={20} color="#FFFFFF" />,
         color: "#01579B",
     },
 ]
@@ -155,13 +155,10 @@ export default function WelcomeContentDriver(props) {
 
     return (
         <View style={{flex: 1}}>
-                            <View style={{flex: 1, justifyContent: "space-evenly"}}>
+                            <View style={{flex: 0.5, justifyContent: "space-evenly"}}>
                                 <Text style={styles.topText}>
-                                But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure.
-                                </Text>
-
-                                <Text style={styles.topText}>
-                                But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure.
+                                We're excited to have you on board.  Jump right into the action by joining a pack, booking your first trainer, or
+                                designing your first workout.
                                 </Text>
                             </View>
 
@@ -202,7 +199,8 @@ const styles = StyleSheet.create({
     topText: {
         fontSize: 15,
         textAlignVertical: "center",
-        textAlign: "center",
+        textAlign: "left",
+        fontFamily: 'HelveticaNeueLight'
     },
     contentDriverTextView: {
         width: "80%"
@@ -212,8 +210,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         elevation: 5,
         borderRadius: 8,
-        width: 50,
-        height: 50,
+        width: 35,
+        height: 35,
         margin: 10, 
     },
     contentDriverView: {
@@ -223,16 +221,16 @@ const styles = StyleSheet.create({
         padding: 5
     },
     contentDriverHeaderText: {
-        fontSize: 20,
-        fontWeight: "500"
+        fontSize: 15,
+        fontFamily: 'HelveticaNeueLight',
     },
     contentDriverDescriptionText: {
-        fontSize: 15, 
+        fontSize: 12, 
+        fontFamily: 'HelveticaNeueMedium',
     },
     displayedContentTitle: {
         color: '#212121',
         opacity: 0.8,
-        fontSize: 20, 
         alignSelf: "center"
     }
 })

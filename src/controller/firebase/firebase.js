@@ -31,8 +31,7 @@ const firebaseConfig = {
 
 let fb_init_config = reactfirebase.initializeApp(firebaseConfig)
 
-
-const LUPA_DB = reactfirestore();
+const LUPA_DB = reactfirestore()
 const LUPA_DB_FIREBASE = reactfirebase.database()
 
 const LUPA_AUTH = reactfirebaseauth()
@@ -314,6 +313,16 @@ calculateAge(dateString)
         age--;
     }
     return age;
+}
+
+sendPasswordResetEmail = async () => {
+  const email = await LUPA_AUTH.currentUser.email;
+
+LUPA_AUTH.sendPasswordResetEmail(email).then(function() {
+  // Email sent.
+}).catch(function(error) {
+  // An error happened.
+});
 }
 
   reauthenticate = (currentPassword) => {
@@ -730,5 +739,6 @@ export default LUPA_DB;
 export { 
   LUPA_AUTH,
   LUPA_DB_FIREBASE,
+  reactfirestore as FIRESTORE_INSTANCE,
   requestNotificationPermission,
 };

@@ -383,7 +383,7 @@ class SettingsModal extends React.Component {
                         <List.Section>
                         <List.Subheader style={styles.listSubheader}>Personal</List.Subheader>
                         {
-                             <List.Item titleStyle={styles.titleStyle} onPress={() => this.setState({ editBioVisible: true })} style={[styles.listItem, {height: 'auto'}]} title={'Biography'} description='Edit your bio' descriptionEllipsizeMode="tail"/>
+                             <List.Item titleStyle={styles.titleStyle} onPress={() => this.setState({ editBioVisible: true })} style={[styles.listItem, {height: 'auto'}]} title={'Biography'} description={this.props.lupa_data.Users.currUserData.bio == "" ? 'Edit your bio' : this.props.lupa_data.Users.currUserData.bio} descriptionEllipsizeMode="tail"/>
                         }
                         </List.Section>
 
@@ -430,7 +430,7 @@ class SettingsModal extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#F2F2F2"
+        backgroundColor: "#FFFFFF"
     },
     pageTitle: {
         color: '#2196F3'
