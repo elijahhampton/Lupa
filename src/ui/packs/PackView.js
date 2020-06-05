@@ -37,7 +37,6 @@ import FeatherIcon from "react-native-vector-icons/Feather"
 
 import PackSearchResultCard from './component/PackSearchResultCard';
 import UserSearchResultCard from '../user/component/UserSearchResultCard';
-import TrainerSearchResultCard from '../user/trainer/component/TrainerSearchResultCard';
 
 import DefaultPack, { SmallPackCard } from './component/ExploreCards/PackExploreCard';
 import CreatePack from './modal/CreatePack';
@@ -142,17 +141,12 @@ class PackView extends React.Component {
              {
                  case "pack":
                      return (
-                         <PackSearchResultCard  title={result.pack_title} packLocation={result.pack_location.city + ", " + result.pack_location.state} isSubscription={result.pack_isSubscription} uuid={result.pack_uuid} />
+                         <PackSearchResultCard pack={result} />
                      )
-                     case "trainer":
-                        return (
-                            <TrainerSearchResultCard title={result.display_name} username={result.username} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
-                        )
-                    case "user":
-                        return (
-                            <UserSearchResultCard title={result.display_name} username={result.username} email={result.email} avatar={result.photo_url} uuid={result.objectID} />
-                        )
                  default:
+                    return (
+                        <UserSearchResultCard user={result} />
+                    )
              }
          })
      }

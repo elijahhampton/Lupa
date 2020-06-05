@@ -41,19 +41,16 @@ import {
     Tab,
     Tabs,
     ScrollableTab,
-    Left,
-    Right,
-    Body,
 } from 'native-base';
 
 import { withNavigation } from 'react-navigation';
 
-import { connect, useSelector, useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 
 import Carousel from 'react-native-snap-carousel';
-import { SearchBar, Rating, Slider, CheckBox, ListItem, Divider, Avatar} from 'react-native-elements';
+import { SearchBar, Divider } from 'react-native-elements';
 
 import ProgramListComponent from '../component/ProgramListComponent';
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -63,19 +60,13 @@ import ProgramsFilter from './components/ProgramsFilter';
 import { Button as ElementsButton } from 'react-native-elements';
 import UserSearchResult from '../../user/profile/component/UserSearchResult'
 import LupaController from '../../../controller/lupa/LupaController'
-import { TouchableHighlight, TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { getLupaTrainerService } from '../../../controller/firebase/collection_structures';
-import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 import { getCurrentStoreState } from '../../../controller/redux';
-import LupaCalendar from '../../user/dashboard/calendar/LupaCalendar';
 import TrainerInsights from '../../user/trainer/TrainerInsights';
 import ProgramSearchResultCard from './components/ProgramSearchResultCard';
 
 const SamplePhotoOne = require('../../images/programs/sample_photo_one.jpg')
 const SamplePhotoTwo = require('../../images/programs/sample_photo_two.jpg')
 const SamplePhotoThree = require('../../images/programs/sample_photo_three.jpg')
-
-const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
 const list = [
     {
@@ -234,408 +225,6 @@ class ShareProgramModal extends React.Component{
 
 connect(mapStateToProps)(ShareProgramModal);
 
-class InviteWaitlistFriends extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-        this.state = {
-            waitList: [],
-            followingUserObjects: [],
-        }
-    }
-
-    componentDidMount = async () => {
-        await this.setupFollowingTabInformation();
-    }
-
-    setupFollowingTabInformation = async () => {
-        let results = new Array();
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.following).then(objs => {
-            results = objs;
-        });
-
-        await this.setState({ followingUserObjects: results });
-    }
-
-    handleAddToFollowList = (userObject) => {
-        const updatedList = this.state.waitList;
-        var found = false;
-        for(let i = 0; i < this.state.waitList.length; i++)
-        {
-            if (this.state.waitList[i].user_uuid == userObject.user_uuid)
-            {
-              updatedList.splice(i, 1);
-              found = true;
-              break;
-            }
-        }
-
-        if (found == false)
-        {
-            updatedList.push(userObject);
-        }
-
-        this.setState({
-            waitList: updatedList
-        })
-
-    }
-
-    waitListIncludesUser = (userObject) => {
-        for(let i = 0; i < this.state.waitList.length; i++)
-        {
-            if (this.state.waitList[i].user_uuid == userObject.user_uuid)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    mapFollowing = () => {
-        return this.state.followingUserObjects.map(user => {
-            return (
-                <TouchableOpacity onPress={() => this.handleAddToFollowList(user)} style={{backgroundColor: this.waitListIncludesUser(user) ? '#E0E0E0' : 'transparent'}}>
-                    <UserSearchResult avatarSrc={user.photo_url} displayName={user.display_name} username={user.username} isTrainer={user.isTrainer}/>
-                </TouchableOpacity>
-            );
-        })
-    }
-
-    /**
-     * Render
-     * Renders component content.
-     * 
-     * TODO: At some point this code should be moved into a function.
-     */
-    render() {
-        return (
-            <Modal presentationStyle="fullScreen" visible={this.props.isVisible} animated={true} animationType='slide'>
-                <SafeAreaView style={{flex: 1}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <NativeButton title="Cancel" onPress={() => this.props.closeModalMethod(this.state.waitList, 'CANCEL')} />
-                        <NativeButton title="Apply" onPress={() => this.props.closeModalMethod(this.state.waitList, 'APPLY')}/>
-                    </View>
-                <ScrollView shouldRasterizeIOS={true}>
-                {
-                    this.mapFollowing()
-                }
-            </ScrollView>
-                </SafeAreaView>
-            </Modal>
-        )
-    }
-}
-
-const COLORS_LIST = [
-    {
-        background: '#e57373',
-        accent: '#f44336'
-    },
-    {
-        background: '#7986CB',
-        accent: '#3F51B5'
-    },
-    {
-        background: '#64B5F6',
-        accent: '#2196F3'
-    },
-    {
-        background: '#4DB6AC',
-        accent: '#009688'
-    },
-    {
-        background: '#FFF176',
-        accent: '#FFEB3B'
-    },
-    {
-        background: '#FFB74D',
-        accent: '#FF9800',
-    },
-    {
-        background: '#FF8A65',
-        accent: '#FF5722',
-    },
-    {
-        background: '#90A4AE',
-        accent: '#607D8B',
-    }
-]
-
-const ICONS_LIST = [
-    {
-        icon: 'notifications',
-        iconType: 'material'
-    },
-    {
-        icon: 'directions-run',
-        iconType: 'material'
-    },
-    {
-        icon: 'fitness-center',
-        iconType: 'material'
-    },
-    {
-        icon: 'heart',
-        iconType: 'material'
-    },
-    {
-        icon: 'local-hospital',
-        iconType: 'material'
-    },
-    {
-        icon: 'kitchen',
-        iconType: 'material'
-    },
-    {
-        icon: 'activity',
-        iconType: 'feather'
-    },
-    {
-        icon: 'alert-circle',
-        iconType: 'feather'
-    },
-    {
-        icon: 'eye',
-        iconType: 'feather'
-    },
-    {
-        icon: 'home',
-        iconType: 'feather'
-    },
-    {
-        icon: 'phone',
-        iconType: 'feather'
-    },
-    {
-        icon: 'tablet',
-        iconType: 'feather'
-    },
-    {
-        icon: 'message-circle',
-        iconType: 'feather'
-    },
-]
-
-function CreateServiceDialog(props) {
-    let [serviceName, setServiceName] = useState("");
-    let [serviceDescription, setServiceDescription] = useState("");
-    let [serviceColors, setServiceColors] = useState([]);
-    let [iconName, setIconName] = useState("");
-    let [iconType, setIconType]  = useState("");
-    let [currIconPressed, setCurrentIconPressed] = useState("");
-    let [currColorPressed, setCurrentColorPresssed] = useState("")
-    let [serviceNameError, setServiceNameError] = useState(false)
-    let [serviceDescriptionError, setServiceDescriptionError] = useState(false)
-    let [showSnack, setShowSnack] = useState(false);
-    let [rejectedReason, setRejectedReason] = useState("");
-
-    const dispatch = useDispatch();
-
-    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    const createService = async (serviceName, serviceDescription, iconName, iconType, serviceColors) => {
-        const USER_SERVICE = await getLupaTrainerService(serviceName, serviceDescription, iconName, iconType, serviceColors);
-
-        //add to local copy
-        await dispatch({type: 'ADD_CURRENT_USER_SERVICE', payload: USER_SERVICE })
-
-        //add to firebase
-        LUPA_CONTROLLER_INSTANCE.createService(USER_SERVICE);
-    }
-
-    const _onDismissSnackBar = () => {
-        setShowSnack(false)
-    }
-
-    const handleCreateServiceOnPress = () => {
-        if (serviceName == "" || serviceName.length > 15 || serviceName.length <= 7)
-        {
-            setServiceNameError(true)
-            setRejectedReason("Invalid service name.  The service name must be between 8 - 15 characters.")
-            setShowSnack(true)
-            return;
-        }
-        else
-        {
-            setServiceNameError(false);
-        }
-
-        //TODO: Check for invalid characters
-
-        if (serviceDescription == "" || serviceDescription.length > 120 || serviceDescription.length < 20)
-        {
-            setServiceDescriptionError(true)
-            setRejectedReason("Invalid service description.  The service description must be between 20 - 120 characters.")
-            setShowSnack(true)
-            return;
-        }
-        else
-        {
-            setServiceDescriptionError(false);
-        }
-
-        //TODO: Check for invalid characters
-
-        //check color
-        if (currIconPressed == "")
-        {
-            setShowSnack(true);
-            setRejectedReason("Sorry you must pick an icon for your service.")
-            return;
-        }
-
-
-        //check icon
-        if (currColorPressed == "")
-        {
-            setShowSnack(true);
-            setRejectedReason("Sorry you must pick a color for your service.")
-            return;
-        }
-
-
-        createService(serviceName, serviceDescription, iconName, iconType, serviceColors);
-
-        props.closeDialogMethod()
-    }
-
-    const handleClickColor = (colors) => {
-        setCurrentColorPresssed(colors.background);
-        let colorsArr = [colors.accent, colors.background];
-        setServiceColors(colorsArr);
-    }
-
-    const handleIconClick = icon => {
-        setCurrentIconPressed(icon.icon)
-        setIconName(icon.icon);
-        setIconType(icon.iconType);
-    }
-
-    return (
-        <Dialog dismissable={true} onDismiss={props.closeDialogMethod} visible={props.isVisible} style={{alignSelf: 'center', width: Dimensions.get('window').width - 30, height: Dimensions.get('window').height - 300}}>
-            <View style={{flex: 1, justifyContent: 'space-between'}}>
-                <View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}> 
-            <Surface style={{elevation: 3, margin: 10, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: '#BBDEFB'}}>
-                <FeatherIcon name="shield" color="#1976D2" size={25} />
-            </Surface>
-            <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Bold'}}>
-                Create a Service
-            </Text>
-            </View>
-            <Text style={{alignSelf: 'center', padding: 10 }}>
-                Create services offering without going through the hassle of creating a full workout program.  Services can range from anything such as as consultations to free trials for the programs you create.
-            </Text>
-                </View>
-
-            <View style={{width: '100%', justifyContent: 'space-between'}}>
-                <TextInput  
-                    value={serviceName} 
-                    onChangeText={text => setServiceName(text)} 
-                    mode="flat" 
-                    placeholder="Service Name (Ex. Consultation)" 
-                    label="Service Name" 
-                    style={{margin: 10}}
-                    theme={{
-                        colors: {
-                            primary: '#212121'
-                        }
-                    }}
-                    error={serviceNameError}
-                    />
-                <TextInput 
-                    value={serviceDescription} 
-                    onChangeText={text => setServiceDescription(text)} 
-                    multiline mode="flat" 
-                    placeholder="Service Description" 
-                    label="Service Description" 
-                    style={{margin: 10}}
-                    theme={{
-                        colors: {
-                            primary: '#212121'
-                        }
-                    }}
-                    error={serviceDescriptionError}
-                     />
-            </View>
-
-            <View style={{padding: 8}}>
-                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 18}}>
-                    Pick a color
-                </Text>
-                <View style={{padding: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                    {
-                        COLORS_LIST.map(color => {
-                            return (
-                                <TouchableWithoutFeedback onPress={ () => handleClickColor(color)} style={{backgroundColor: 'transparent'}}>
-                                    <Surface style={{margin: 3, elevation: 2, borderRadius: 20, width: 20, height: 20, backgroundColor: color.background, borderColor: currColorPressed == color.background ? '#212121' : 'transparent', borderWidth: 1}} />
-                                </TouchableWithoutFeedback>
-                            )
-                        })
-                    }
-                </View>
-            </View>
-
-            <View style={{padding: 8, }}>
-                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 18}}>
-                    Pick an icon
-                </Text>
-                <View style={{padding: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', flexWrap: 'wrap'}}>
-                    {
-                        ICONS_LIST.map(icon => {
-                            if (icon.iconType == "material")
-                            {
-                                return (
-                                    <TouchableWithoutFeedback  onPress={() => handleIconClick(icon)} style={{borderRadius: 20, padding: 5}}>
-                                                                            <MaterialIcon key={icon.icon} name={icon.icon} size={20} style={{backgroundColor: currIconPressed == icon.icon ? 'rgb(174,174,178)' : 'transparent', borderRadius: 20}} />
-                                    </TouchableWithoutFeedback >
-                                )
-                            }   
-                            else if (icon.iconType == "feather")
-                            {
-                                return (
-                                    <TouchableWithoutFeedback  onPress={() => handleIconClick(icon)} style={{borderRadius: 20, padding: 5}}>
-                                                                            <FeatherIcon key={icon.icon} name={icon.icon} size={20} style={{backgroundColor: currIconPressed == icon.icon ? 'rgb(174,174,178)' : 'transparent', borderRadius: 20}}/>
-                                    </TouchableWithoutFeedback >
-                                )
-                            }
-
-                        })
-                    }
-                </View>
-            </View>
-
-            <View style={{alignSelf: 'flex-end', width: '100%', padding: 10, backgroundColor: 'rgb(174,174,178)'}}>
-            <Button mode="contained" style={{width: '30%', alignSelf: 'flex-end'}} theme={{
-                colors: {
-                    primary: '#2196F3'
-                }
-            }}
-            onPress={() => handleCreateServiceOnPress()}>
-                Create
-            </Button>
-</View>
-            </View>
-            <Snackbar
-          style={{backgroundColor: '#212121'}}
-          theme={{ colors: { accent: '#2196F3' }}}
-          visible={showSnack}
-          onDismiss={() => _onDismissSnackBar}
-          action={{
-            label: 'Okay',
-            onPress: () => setShowSnack(false),
-          }}
-        >
-          {rejectedReason}
-        </Snackbar>
-        </Dialog>
-    )
-}
-
 class Programs extends React.Component {
     constructor(props) {
         super(props);
@@ -658,7 +247,6 @@ class Programs extends React.Component {
             showInviteModal: false,
             waitListData: ['','','',''],
             allSpotsFilled: false,
-            showCreateServiceDialog: false,
             showMyProgramSheet: false,
             pageIsPrograms: true,
             showShareProgramModal: false,
@@ -751,13 +339,6 @@ class Programs extends React.Component {
             pageIsPrograms: true
         })
     }
-
-    closeCreateServiceDialog = () => {
-        this.setState({
-            showCreateServiceDialog: false,
-        })
-    }
-
 
 
     showFilter = () => {

@@ -66,7 +66,6 @@ import ThinFeatherIcon from "react-native-feather1s";
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { Pagination } from 'react-native-snap-carousel';
-import BasicInformation from './user/modal/WelcomeModal/BasicInformation';
 
 const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
 
