@@ -11,36 +11,17 @@ import {
 } from 'react-native';
 
 import {
-    Divider,
     Surface,
     ActivityIndicator,
-    List,
-    Chip,
-    Switch,
-    Caption,
-    Appbar,
 } from 'react-native-paper';
 
 import ToggleSwitch from 'toggle-switch-react-native'
-
-
-import { Icon, Button } from 'react-native-elements'
-
 import { Video } from 'expo-av'
-
 import FeatherIcon from "react-native-vector-icons/Feather"
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-
-
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
-
 import StepIndicator from 'react-native-step-indicator';
-
-import MiniTimelineWorkout from '../component/MiniTimelineWorkout';
-import ProgramPreview from '../program/createprogram/component/ProgramPreview';
 import LiveWorkoutPreview from '../program/LiveWorkoutPreview';
-import LupaCalendar from '../../user/dashboard/calendar/LupaCalendar';
 import LupaController from '../../../controller/lupa/LupaController';
 
 const data = [
@@ -279,8 +260,6 @@ class LiveWorkout extends React.Component {
                 break;
             case "Cooldown":
                 nextStageDataIn = "DONE"
-                //   console.log('setting cooldown')
-                //  console.log(nextStageDataIn)
                 await this.setState({ currentStageData: this.state.workoutData.cooldown, currentStage: stage, currentWorkout: this.state.workoutData.cooldown[0], currentWorkoutIndex: 0, nextStageData: nextStageDataIn });
                 break;
         }
@@ -308,7 +287,7 @@ class LiveWorkout extends React.Component {
             </Text>
         )
         
-        return this.state.currentWorkout.workout_description;
+       // return this.state.currentWorkout.workout_description;
     }
 
     getNextWorkoutTitle = () => {
