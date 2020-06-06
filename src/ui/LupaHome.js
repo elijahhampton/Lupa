@@ -66,6 +66,8 @@ import ThinFeatherIcon from "react-native-feather1s";
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { Pagination } from 'react-native-snap-carousel';
+import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
+import { RFPercentage } from 'react-native-responsive-fontsize';
 
 const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
 
@@ -220,16 +222,30 @@ class LupaHome extends React.Component {
                 {text: 'New York', icon: 'map-pin'}
             ],
             searching: false,
+            featuredPrograms: [],
+            programModalVisible: false,
         }
 
     }
 
    async componentDidMount() {
-        this.setState({ visible: true })
+        await this.loadFeaturedPrograms();
     }
 
     componentWillUnmount() {
     
+    }
+
+    loadFeaturedPrograms = async () => {
+        let featuredProgramsIn;
+
+        await this.LUPA_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
+            featuredProgramsIn = result;
+        });
+
+        await this.setState({
+            featuredPrograms: featuredProgramsIn,
+        })
     }
 
     closeTrainerInsightsModalMethod = () => {
@@ -242,7 +258,7 @@ class LupaHome extends React.Component {
                 <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
                     <Left style={{flexDirection: 'row', alignItems: 'center'}}>
                         <FeatherIcon name="navigation" color="#2962FF" style={{margin: 3,}} />
-                        <Text style={{fontFamily: 'HelveticaNeueMedium', color: '#2962FF'}}>
+                        <Text style={{fontFamily: 'HelveticaNeueMedium', color: 'rgba(41,98,255 ,1)'}}>
                             36079
                         </Text>
                     </Left>
@@ -264,8 +280,8 @@ class LupaHome extends React.Component {
                         onPress={() => this.props.navigation.navigate('NotificationsView')} />
                 </Appbar.Header>
 
-                <View style={{flex: this.state.searching === true ? 0 : 1, alignItems: 'center', justifyContent: 'center'}}>
-                    <Searchbar style={{marginHorizontal: 20}} placeholder="Search by trainer or program name" inputStyle={{fontSize: 15, fontFamily: 'HelveticaNeueMedium'}} onFocus={() => this.setState({ searching: true })} onBlur={() => this.setState({ searching: false})} />
+                <View style={{flex: this.state.searching === true ? 0 : 0.5, alignItems: 'center', justifyContent: 'center', padding: 5}}>
+                    <Searchbar style={{marginHorizontal: 20, margin: 10}} placeholder="Search trainer or program name" inputStyle={{fontSize: 12, fontFamily: 'HelveticaNeueMedium'}} onFocus={() => this.setState({ searching: true })} onBlur={() => this.setState({ searching: false})} />
                 </View>
                 
                 {
@@ -277,9 +293,9 @@ class LupaHome extends React.Component {
                     </View>
                     :
                     <>
-                    <View style={{flex: 1,}}>
+                    <View style={{flex: 0.8}}>
                     <View>
-                    <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: 20, paddingLeft: 12 }}>
+                    <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: RFPercentage(2.5), paddingLeft: 12 }}>
                             What are you interested in?
                         </Text>
 
@@ -309,47 +325,23 @@ class LupaHome extends React.Component {
                 </View>
 
                 <View
-                    style={{ flex: 2.5, justifyContent: 'center', justifyContent: 'center' }}
+                    style={{ flex: 2, justifyContent: 'center', justifyContent: 'center' }}
                     onMoveShouldSetResponder={evt => {
                         this.props.disableSwipe();
                         return true;
                     }}
                     onTouchEnd={() => this.props.enableSwipe()}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                        <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: 20, paddingLeft: 12 }}>
+                        <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: RFPercentage(2.5), paddingLeft: 12 }}>
                             Start now
                         </Text>
                     </View>
                     <ScrollView onScroll={(event) => {
-                        console.log(event.nativeEvent.contentOffset.x);
                     }} contentContainerStyle={{}} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
                         {
-                            this.state.cardData.map((val, index, arr) => {
+                            this.state.featuredPrograms.map((currProgram, index, arr) => {
                                 return (
-                                    <Card key={index} style={{ elevation: 2, margin: 10, width: Dimensions.get('window').width / 1.2, height: '90%', marginVertical: 10 }} onPress={() => console.log('Pressed')}>
-                                    <Card.Cover resizeMode="cover" source={require('./images/programs/sample_photo_two.jpg')} style={{ height: '65%' }} />
-                                    <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-                                        <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
-                                            <View style={{ width: '100%', }}>
-                                                <Text style={{ fontFamily: 'avenir-roman', fontSize: 15, }} numberOfLines={1}>
-                                                    Program Title (New Haven Park, 1305 Tradition Circle)
-                     </Text>
-                                            </View>
-        
-                                            <View style={{ width: '100%', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#2962FF' }}>
-                                                    Emily Loefstedt
-                        </Text>
-        
-        
-                                                <Text style={{ fontSize: 14, fontWeight: '400' }}>
-                                                    NASM
-                        </Text>
-        
-                                            </View>
-                                        </View>
-                                    </Card.Actions>
-                                </Card>
+                                   <FeaturedProgramCard currProgram={currProgram} key={index} />
                                 )
                             })
                         }

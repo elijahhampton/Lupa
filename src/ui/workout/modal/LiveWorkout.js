@@ -8,11 +8,15 @@ import {
     Image,
     SafeAreaView,
     TouchableHighlight,
+    Button,
 } from 'react-native';
 
 import {
     Surface,
     ActivityIndicator,
+    Appbar,
+    IconButton,
+    Avatar
 } from 'react-native-paper';
 
 import ToggleSwitch from 'toggle-switch-react-native'
@@ -21,8 +25,9 @@ import FeatherIcon from "react-native-vector-icons/Feather"
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 import StepIndicator from 'react-native-step-indicator';
-import LiveWorkoutPreview from '../program/LiveWorkoutPreview';
 import LupaController from '../../../controller/lupa/LupaController';
+import ThinFeatherIcon from "react-native-feather1s";
+import { LOG_ERROR } from '../../../common/Logger';
 
 const data = [
     {
@@ -128,7 +133,6 @@ class LiveWorkout extends React.Component {
             programTitle: "",
             loadingNextWorkout: false,
             programDescription: "",
-            programOwnerData: this.props.navigation.state.params.programOwnerData,
             programData: this.props.navigation.state.params.programData,
             workoutData: this.props.navigation.state.params.programData.program_workout_structure,
             currentStage: "",
@@ -153,20 +157,12 @@ class LiveWorkout extends React.Component {
     }
 
     async componentDidMount() {
-        if (this.props.navigation.state.params.programOwnerData == undefined)
-        {
-            let programOwnerDataIn;
-            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.navigation.state.params.programData.program_owner).then(userData => {
-                programOwnerDataIn = userData;
-            });
-
-            await this.setState({
-                programOwnerData: programOwnerDataIn
-            })
-
-        }
-
        await this.setupLiveWorkout()
+
+       if (this.props.navigation.state.params.setPageIsPrograms)
+       {
+        this.props.navigation.state.params.setPageIsPrograms();
+       }
     }
 
     componentWillUnmount = () => {
@@ -300,7 +296,7 @@ class LiveWorkout extends React.Component {
     }
 
     handleCloseLiveWorkout = () => {
-        this.props.closeModalMethod();
+       // this.props.closeModalMethod();
         this.setupLiveWorkout();
     }
 
@@ -444,7 +440,14 @@ class LiveWorkout extends React.Component {
         return this.state.playVideo == true ?
                             null
                             :
-                            <FeatherIcon style={{alignSelf: 'center'}} color="#FFFFFF" name="play-circle" size={65} onPress={() => this.setState({ playVideo: true })}/>
+                            <ThinFeatherIcon
+                            thin={true}
+                            name="play-circle" 
+                            size={65} 
+                            color="#FFFFFF"
+                            onPress={() => this.setState({ playVideo: true })}
+                            style={{alignSelf: 'center'}}
+                          />
     }
 
     goToPreview = () => {
@@ -465,19 +468,36 @@ class LiveWorkout extends React.Component {
         })
     }
 
+    getCurrentUserAvatar = () => {
+        try {
+            return <Image style={{width: 50, height: 50, borderRadius: 50}} source={{uri: this.props.lupa_data.Users.currUserData.photo_url }} />
+        } catch(error) {
+            LOG_ERROR('LiveWorkout.js', 'Caught exception in getCurrentUserAvatar()', error);
+            <Avatar.Icon size={50} name="help" color="#FFFFFF" style={{backgroundColor: '#212121'}}/>
+        }
+    }
+
     render() {
         return (
             <View style={{flex: 1}}>
                 <Swiper loop={false} scrollEnabled={true} showsVerticalScrollIndicator={false} showsButtons={false} showsPagination={false} horizontal={false} index={this.state.currSwiperIndex}>
-                {/*
-                    View 1
-                */}
-                <LiveWorkoutPreview programData={this.state.programData} programOwnerData={this.state.programOwnerData} goBack={() => this.props.navigation.state.params.returnToProfile()} />
                     {/*
                         View 2
                     */}
-                    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+                    <View style={{ flex: 1, backgroundColor: "white" }}>
+                        <Appbar.Header style={{elevation: 0, justifyContent: 'space-between'}} theme={{
+                            colors: {
+                                primary: '#FFFFFF'
+                            }
+                        }}>
+                            <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
 
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+                            <IconButton icon="play-arrow" />
+                            <IconButton icon="pause" />
+                            <IconButton icon="stop" />
+                            </View>
+                        </Appbar.Header>
                         <View style={{flex: 1, flexDirection: 'row'}}>
                             <Surface style={{alignItems: 'center', justifyContent: 'center', elevation: 15, flex: 1, borderTopRightRadius: 30, borderBottomRightRadius: 30, backgroundColor: '#212121'}}>
                                 {
@@ -491,7 +511,7 @@ class LiveWorkout extends React.Component {
                             </Surface>
                             
                             <View style={{ flex: 1, alignItems: "center", justifyContent: "space-evenly"}}>
-                                <Text style={{ fontFamily: 'avenir-roman', fontSize: 12, padding: 2 }}>
+                                <Text style={{ fontFamily: 'HelveticaNeueMedium', fontSize: 12, padding: 2 }}>
                                     Lorem ipum dolor sit amet, consectetur adipiscing
                             </Text>
 
@@ -565,10 +585,7 @@ class LiveWorkout extends React.Component {
 
                                         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                                                 <Surface style={{elevation: 15, width: 50, height: 50, borderRadius: 50}}>
-                                                    {
-                                                        
-                                                    }
-                                                    <Image style={{width: 50, height: 50, borderRadius: 50}} source={{uri: this.props.lupa_data.Users.currUserData.photo_url}} />
+                                                  {this.getCurrentUserAvatar()}
                                                 </Surface>
                                         </View>
                                     </View>
@@ -601,8 +618,8 @@ class LiveWorkout extends React.Component {
                         />
                         </View>
 
-
-                    </SafeAreaView>
+                        <SafeAreaView />
+                    </View>
                      {
                          /*
                             View 3
@@ -944,6 +961,7 @@ class LiveWorkout extends React.Component {
                                 </View>*/}
                     <LoadingNextWorkoutActivityIndicator isVisible={this.state.loadingNextWorkout} />
                 </Swiper>
+                <SafeAreaView />
                 </View>
         )
     }

@@ -46,7 +46,6 @@ class ProgramListComponent extends React.Component {
         {
            this.props.navigation.push('LiveWorkout', {
                 programData: this.props.programData,
-                programOwnerData: this.props.programData.program_owner == this.props.lupa_data.Users.currUserData.user_uuid ? this.props.lupa_data.Users.currUserData : undefined,
                 setPageIsNotPrograms: this.setPageIsNotPrograms.bind(this)
             });
         }
@@ -92,7 +91,7 @@ class ProgramListComponent extends React.Component {
                         {this.props.programData.program_type == 'Single' ? 'One on One' : null}
                     </Caption>
                     </View>
-                    <Text style={{fontWeight: '300', fontSize: 12}}>
+                    <Text style={{textAlign: 'left', fontWeight: '300', fontSize: 12}} numberOfLines={2}>
                    {this.props.programData.program_description}
                     </Text>
 
@@ -120,7 +119,7 @@ class ProgramListComponent extends React.Component {
                     </View>
                 </View>
 
-                <ProgramInformationPreview isVisible={this.state.programModalVisible} programData={this.props.programData} programOwnerData={this.props.programData.program_owner == this.props.lupa_data.Users.currUserData.user_uuid ? this.props.lupa_data.Users.currUserData : undefined} closeModalMethod={this.handleCloseProgramInformationModal} />
+                <ProgramInformationPreview isVisible={this.state.programModalVisible} programData={this.props.programData}  closeModalMethod={this.handleCloseProgramInformationModal} />
                 </View>
         )
     }

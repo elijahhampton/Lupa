@@ -107,7 +107,6 @@ class ProgramProfileComponent extends React.PureComponent {
         {
            this.props.navigation.push('LiveWorkout', {
                 programData: this.props.programData,
-                programOwnerData: this.props.programData.program_owner == this.props.lupa_data.Users.currUserData.user_uuid ? this.props.lupa_data.Users.currUserData : undefined 
             });
         }
         else
@@ -151,7 +150,7 @@ class ProgramProfileComponent extends React.PureComponent {
                     </Text>
                </View>
     
-            <ProgramInformationPreview isVisible={this.state.programModalVisible} programData={this.state.programData} programOwnerData={this.props.programOwnerData} closeModalMethod={this.closeModalMethod} />
+            <ProgramInformationPreview isVisible={this.state.programModalVisible} programData={this.state.programData} closeModalMethod={this.closeModalMethod} />
         </View>
         )
     }

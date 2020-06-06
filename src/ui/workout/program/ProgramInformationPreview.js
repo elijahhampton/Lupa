@@ -20,10 +20,10 @@ import {
 
 import { Constants } from 'react-native-unimodules';
 import LupaController from '../../../controller/lupa/LupaController';
-import ModalLiveWorkoutPreview from './modal/ModalLiveWorkoutPreview';
-import ModalProfileView from '../../user/profile/ModalProfileView';
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
+
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED } from '../../../modules/payments/stripe/index'
 const { fromString } = require('uuidv4')
@@ -31,6 +31,7 @@ import { withNavigation } from 'react-navigation'
 
 import { connect } from 'react-redux';
 import axios from 'axios';
+import { LOG_ERROR } from '../../../common/Logger';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -54,7 +55,6 @@ class ProgramInformationPreview extends PureComponent {
         super(props);
 
         this.state = {
-            programOwnerData: this.props.programOwnerData,
             ready: false,
             showProfileModal: false,
             showPreviewModal: false,
@@ -67,27 +67,16 @@ class ProgramInformationPreview extends PureComponent {
     }
 
     /**
-     * Lifecycle Method - Handles operations when the component mounts
-     */
-    componentDidMount = async () => {
-        await this.setState({
-            programOwnerData: this.props.programOwnerData,
-            ready: true,
-        })
-    }
-
-    /**
      * Returns the program owners display name
      * @return String progam owner's display name
      */
     getOwnerDisplayName = () => {
-        if (this.state.ready) {
             try {
-            return this.state.programOwnerData.display_name
+            return this.props.programData.program_owner.displayName
             } catch(error) {
+                LOG_ERROR('ProgramInformationPreview.js', 'Unhandled exception in getOwnerDisplayName()', error)
                 return ''
             }
-        }
 
         return ''
     }
@@ -97,16 +86,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return URI Returns a string for the name, otherwise ''
      */
     getProgramName = () => {
-        if (this.state.ready)
-        {
             try {
                 return this.props.programData.program_name;
             } catch(err) {
                 return ''
             }
-        }
-
-        return ''
     }
 
      /**
@@ -114,16 +98,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return URI Returns a string for the description, otherwise ''
      */
     getProgramDescription = () => {
-        if(this.state.ready)
-        {
             try {
                 return this.props.programData.program_description;
             } catch(err) {
                 return ''
             }
-        }
-
-        return ''
     }
 
     /**
@@ -131,16 +110,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return URI Returns a uri for the program image, otherwise ''
      */
     getProgramImage = () => {
-        if (this.state.ready)
-        {
             try {
                 return this.props.programData.program_image;
             } catch(err) {
                 return ''
             }
-        }
-        
-        return "";
     }
 
     /**
@@ -148,14 +122,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return String representing the program price, otherwise, ''
      */
     getProgramPrice = () => {
-        if (this.state.ready)
-        {
             try {
                 return this.props.programData.program_price;
             } catch(error) {
                 return 0;
             }
-        }
     }
 
     /**
@@ -278,6 +249,17 @@ class ProgramInformationPreview extends PureComponent {
         }
     }
 
+    getProgramName = () => {
+        try {
+            return this.props.programData.program_name
+        }
+        catch(error) {
+            LOG_ERROR('ProgramInformationPreview.js', 'Unhandled exception in getProgramName()', error)
+            return 'Unknown Program Title'
+        }
+        
+    }
+
     render() {
         const program = this.props.programData;
         return (
@@ -288,6 +270,13 @@ class ProgramInformationPreview extends PureComponent {
                         <Image source={{ uri: this.getProgramImage() }} style={{ borderRadius: 50, width: '100%', height: '100%' }} />
                     </Surface>
 
+                    <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                            <Avatar.Text label="EH" size={15} style={{ margin: 3 }} />
+                            <Caption style={{ color: '#FFFFFF' }}>
+                                See more programs by {this.getOwnerDisplayName()}
+                            </Caption>
+                        </View>
+
                 </View>
 
                 <View style={{
@@ -297,8 +286,8 @@ class ProgramInformationPreview extends PureComponent {
                     justifyContent: 'space-between',
                     flexDirection: 'row'
                 }}>
-                    <IconButton icon="navigate-before" color="#FFFFFF" size={30} onPress={() => this.props.closeModalMethod()} />
-                    <IconButton icon="fullscreen" color="#FFFFFF" />
+                    <IconButton icon="close" color="#FFFFFF" size={30} onPress={() => this.props.closeModalMethod()} />
+                   {/* <IconButton icon="fullscreen" color="#FFFFFF" /> */}
                 </View>
 
 
@@ -315,48 +304,44 @@ class ProgramInformationPreview extends PureComponent {
                     height: Dimensions.get('window').height / 2.5
                 }}>
                     <View style={{ justifyContent: 'space-evenly', flex: 2 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                             <View>
-                                <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 30, color: '#FFFFFF' }}>
-                                    Program Title
+                                <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 20, color: '#FFFFFF' }}>
+                                    {this.getProgramName()}
                 </Text>
-                                <Text style={{ fontSize: 15, paddingTop: 5, fontFamily: 'ARSMaquettePro-Medium', color: '#FFFFFF' }}>
+                                <Text style={{ fontSize: 12, paddingTop: 5, fontFamily: 'ARSMaquettePro-Medium', color: '#FFFFFF' }}>
                                     In Person, One on One Program
                 </Text>
                             </View>
-                            <IconButton icon="favorite" color="#ff8080" />
                         </View>
 
-                        <Paragraph style={{ width: '95%', alignSelf: 'center', color: '#FFFFFF' }}>
-                            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <Paragraph style={{textAlign: 'left', fontSize: RFPercentage(2), width: '95%', alignSelf: 'flex-start', color: '#FFFFFF' }} numberOfLines={4} >
+                            {this.getProgramDescription()}
                     </Paragraph>
-
-                        <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                            <Avatar.Text label="EH" size={15} style={{ margin: 3 }} />
-                            <Caption style={{ color: '#FFFFFF' }}>
-                                See more programs by {this.getOwnerDisplayName()}
-                            </Caption>
+                    <Caption style={{alignSelf: 'flex-start'}}>
+                        Swipe right to read more
+                    </Caption>
                         </View>
 
                     </View>
 
 
 
-                    <View style={{ paddingHorizontal: 20, flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 30, color: '#FFFFFF' }}>
+                    <View style={{ paddingHorizontal: 5, flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 20, color: '#FFFFFF' }}>
                             ${this.getProgramPrice()}
                         </Text>
 
                         <Button mode="outlined"
                             style={{
                                 borderColor: '#FFFFFF',
-                                marginHorizontal: 10,
+                                
                                 elevation: 0,
-                                width: 200,
-                                height: 55,
+                                height: 45,
                                 alignItems: 'center',
                                 flexDirection: 'row',
-                                justifyContent: 'center'
+                                justifyContent: 'center',
                             }}
                             theme={{
                                 roundness: 25,
@@ -367,38 +352,10 @@ class ProgramInformationPreview extends PureComponent {
                             <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: 20 }}>
                                 Purchase
                     </Text>
-                            <MaterialIcon name="keyboard-arrow-right" size={25} />
                         </Button>
-
-
-                        {/*
-                <Button mode="outlined" style={{marginHorizontal: 10, elevation: 0, flex: 1,  height: 55, alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}} theme={{
-                    roundness: 10,
-                    colors: {
-                        primary: '#2196F3'
-                    }
-                }} onPress={() => this.setState({ showPreviewModal: true })}>
-                    <ThinFeatherIcon
-name="eye"
-size={35}
-color="#2196F3"
-thin={true}
-onPress={() => this.setState({ showPreviewModal: true })}
-/>
-
-                </Button>
-            */}
                     </View>
 
                 </Surface>
-                {
-                    this.state.ready == true ?
-                        <ModalLiveWorkoutPreview programOwnerData={this.state.programOwnerData} programData={this.props.programData} isVisible={this.state.showPreviewModal} closeModalMethod={() => this.setState({ showPreviewModal: false })} />
-                        :
-                        null
-                }
-
-            {/*    <ModalProfileView uuid={this.props.programOwnerData.user_uuid} isVisible={this.state.showProfileModal} closeModalMethod={() => this.setState({ showPreviewModal: false })} /> */}
             </Modal>
         )
     }
