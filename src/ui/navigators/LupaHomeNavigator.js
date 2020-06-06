@@ -14,6 +14,7 @@ import PackView from '../packs/PackView'
 import TrainerInsights from '../user/trainer/TrainerInsights'
 import CreateProgram from '../workout/program/createprogram/CreateProgram';
 import LiveWorkout from '../workout/modal/LiveWorkout';
+import LiveWorkoutPreview from '../workout/program/LiveWorkoutPreview'
 import LupaHome from '../LupaHome';
 
 import CardFormScreen from '../src/scenes/CardFormScreen';
@@ -59,6 +60,14 @@ const LupaHomeNavigator =  createStackNavigator(
           header: null,
           gesturesEnabled: false,
       })
+    },
+    LiveWorkoutPreview: {
+      screen: (props) =>  <LiveWorkoutPreview {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      navigationOptions:   ({navigation}) => ({
+        title: "LiveWorkout",
+        header: null,
+        gesturesEnabled: false,
+    })
     },
     CreateProgram: {
       screen: (props) => <CreateProgram {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,

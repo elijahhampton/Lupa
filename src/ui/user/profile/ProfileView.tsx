@@ -797,7 +797,7 @@ NavigationActions.navigate({
                     {
                         return this.props.lupa_data.Programs.currUserProgramsData.map(program => {
                             return (
-                                 <ProgramProfileComponent programData={program} programOwnerData={this.state.userData} />
+                                 <ProgramProfileComponent programData={program} />
                             )
                         })
                     }
@@ -887,7 +887,7 @@ NavigationActions.navigate({
                     {
                         return this.state.userData.programs.map(program => {
                             return (
-                                 <ProgramProfileComponent programData={program} programOwnerData={this.state.userData} />
+                                 <ProgramProfileComponent programData={program} />
                             )
                         })
                     }

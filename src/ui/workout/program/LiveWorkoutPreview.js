@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import {
     Text,
@@ -8,24 +8,30 @@ import {
     StyleSheet,
     ImageBackground,
     Dimensions,
+    Button as NativeButton,
     ScrollView,
     Image,
 } from 'react-native';
 
 import {
     Surface, Paragraph, Caption, Button, IconButton, Avatar,
-    Appbar
+    Appbar,
+    Searchbar,
+    Divider
 } from 'react-native-paper';
 
-import { LinearGradient } from 'expo-linear-gradient';
-
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-
-import ThinFeatherIcon from "react-native-feather1s";
+import {
+    Header,
+    Left,
+    Right,
+    Body,
+} from 'native-base';
 
 import { withNavigation } from 'react-navigation';
-
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+ 
 import { connect} from 'react-redux';
+import { LOG_ERROR } from '../../../common/Logger';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -43,15 +49,20 @@ class LiveWorkoutPreview extends React.Component {
     }
 
     componentDidMount = async () => {
+        this.props.disableSwipe()
         await this.getWorkoutsPreview()
+    }
+
+    componentWillMount() {
+        this.props.enableSwipe()
     }
 
     getWorkoutsPreview = () => {
         let workouts = new Array(8);
 
-        for (let i = 0; i < this.props.programData.program_workout_structure.warmup.length; i++)
+        for (let i = 0; i < this.props.navigation.state.params.programData.program_workout_structure.warmup.length; i++)
         {
-            workouts.push(this.props.programData.program_workout_structure.warmup[i])
+            workouts.push(this.props.navigation.state.params.programData.program_workout_structure.warmup[i])
         }
 
         if (workouts.length == 8)
@@ -63,9 +74,9 @@ class LiveWorkoutPreview extends React.Component {
             return;
         }
 
-        for (let i = 0; i < this.props.programData.program_workout_structure.primary.length; i++)
+        for (let i = 0; i < this.props.navigation.state.params.programData.program_workout_structure.primary.length; i++)
         {
-            workouts.push(this.props.programData.program_workout_structure.primary[i])
+            workouts.push(this.props.navigation.state.params.programData.program_workout_structure.primary[i])
         }
 
         if (workouts.length == 8)
@@ -85,6 +96,14 @@ class LiveWorkoutPreview extends React.Component {
 
     getWorkoutMedia = (workout) => {
         try {
+            if (typeof(workout == undefined)) {
+                return (
+                <View style={{flex: 1, backgroundColor: '#212121', borderRadius: 20}}>
+
+            </View>
+                )
+            }
+
             if ( workout.workout_media.media_type == "VIDEO")
             {
                 return (
@@ -103,7 +122,8 @@ class LiveWorkoutPreview extends React.Component {
                     }} />
                 )
             }
-        } catch(err) {
+        } catch(error) {
+            LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getWorkoutMedia()', error)
             return (
             <View style={{flex: 1, backgroundColor: '#212121', borderRadius: 20}}>
 
@@ -113,67 +133,130 @@ class LiveWorkoutPreview extends React.Component {
         
     }
 
-    userHasProgramSaved = () => {
-        let retVal =  false;
-
-        for (let i = 0; i < this.props.lupa_data.Programs.currUserProgramsData.length; i++)
-        {
-            if (this.props.programData)
-            {
-                if (this.props.lupa_data.Programs.currUserProgramsData[i].program_uuid = this.props.programData.program_structure_uuid)
-                {
-                    retVal = true;
-                    break;
-                }
-            }
-            else
-            {
-                retVal = false;
-            }
-        }
-
-        return retVal;
-    }
-
-    getBookmarkIcon = () => {
-        return this.userHasProgramSaved() ?
-                                            <IconButton icon="bookmark"  />
-                                            :
-                                            <IconButton icon="bookmark-border"  />
-    }
-
     getUserAvatar = () => {
         try {
-            return  <Image style={{width: 50, height: 50, borderRadius: 50}} source={{uri: this.props.programOwnerData.photo_url}} />
-        }  catch(err) {
-            return <Image style={{width: 50, height: 50, borderRadius: 50}} source={{uri: ''}} />
+            return  <Avatar.Image style={{margin: 10, alignSelf: 'flex-end'}} source={{uri: this.props.navigation.state.params.programData.program_owner.photo_url}} size={30} />
+        }  catch(error) {
+            LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getUserAvatar', error)
+            return  <Avatar.Icon icon="search" size={40} color="#212121" style={{margin: 10, alignSelf: 'flex-end'}} />
         }
     }
 
     getDisplayName = () => {
         try {
-            return this.props.programOwnerData.display_name
+            return this.props.navigation.state.params.programData.program_owner.displayName
         } catch(err) {
+            LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getDisplayName()', error)
             return '';
         }
     }
 
     getCertification = () => {
         try {
-            return this.props.programOwnerData.certification
+            return this.props.navigation.state.params.programData.program_owner.certification
         }
-        catch(err) {
+        catch(error) {
+            LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getCertification()', error)
             return 'NASM'
         }
         
     }
 
+    getProgramName = () => {
+        try {
+            return this.props.navigation.state.params.programData.program_name
+        }
+        catch(error) {
+            LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getProgramName()', error)
+            return 'Unknown Program Title'
+        }
+        
+    }
+
     render() {
-        const programOwnerData = this.props.programOwnerData;
-        const programData = this.props.programData;
+        const programData = this.props.navigation.state.params.programData;
         return (
-            <SafeAreaView  style={{flex: 1}}>
-  
+            <View style={{flex: 1}}>
+                <Header style={{backgroundColor: 'transparent'}} span={false} transparent>
+                    <Left>
+                        <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
+                    </Left>
+                    <Body>
+                        <Text style={{fontFamily: 'HelveticaNeueMedium', fontSize: RFPercentage(2)}}>
+                            {this.getProgramName()}
+                        </Text>
+                    </Body>
+
+                    <Right />
+                </Header>
+                <View style={{flex: 2.5}}>
+                    <ImageBackground source={{uri: programData.program_image}} style={{flex: 1}} imageStyle={{width: '100%', height: '100%'}}>
+                    <View style={styles.viewOverlay} />
+                   {this.getUserAvatar()}
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                        <Text style={{color: '#FFFFFF', fontFamily: 'ARSMaquettePro-Medium', fontSize: 20, paddingLeft: 12 }}>
+                            Look ahead
+                        </Text>
+                        <View >
+                        <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false} centerContent contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                                {
+                                    this.state.workoutPreviewArr.map(workout => {
+                                        return (
+                                            <View style={{alignItems: 'center'}}>
+                                         <Surface style={{width: 140, height: 80, margin: 10, borderRadius: 20, elevation: 4}}>
+                                                {
+                                                    this.getWorkoutMedia()
+                                                }
+                                            </Surface>
+                                            <Text>
+                                                <Caption style={{color: 'white'}}>
+                                                    {workout.workout_name}
+                                                </Caption>
+                                            </Text>
+                                            </View>
+                                        )
+                                    })
+                                }
+                            </ScrollView>
+                        </View>
+                    </View>
+
+                        <View style={{padding: 10, position: 'absolute', bottom: 0, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                           <View style={styles.textContainer}>
+                               <Text style={styles.titleText}>
+                                   TRAINER
+                               </Text>
+                               <Text style={styles.contentText}>
+                                {this.getDisplayName()}
+                            </Text>
+                           </View>
+
+
+                           <View style={styles.textContainer}>
+                           <Text style={styles.titleText}>
+                                  CERTIFICATION
+                               </Text>
+                               <Text style={styles.contentText}>
+                               {this.getCertification()}
+                            </Text>
+                           </View>
+                        </View>
+                    </ImageBackground>
+         
+                </View>
+
+                <View style={{flex: 1, justifyContent: 'space-between',  backgroundColor: '#F2F2F2'}}>
+                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Paragraph  style={{fontSize: RFPercentage(1.5) ,padding: 10, fontFamily: 'HelveticaNeueLight', textAlign: 'left', textAlignVertical: 'center', lineHeight: 15}}>
+                    {this.props.navigation.state.params.programData.program_description}
+                    </Paragraph>
+                    </View>
+
+                    <NativeButton title="Start Workout" onPress={() => this.props.navigation.push('LiveWorkout', {
+                        programData: programData,
+                    })}/>
+                </View>
+  {/*
                  <LinearGradient
           colors={['#2196F3',  '#212121', '#000000' ]}
           style={{
@@ -283,7 +366,9 @@ class LiveWorkoutPreview extends React.Component {
                             <MaterialIcon name="expand-more" size={20} color="#FFFFFF" />
                             </View>
                         </View>
-            </SafeAreaView>
+                            */}
+                <SafeAreaView style={{ backgroundColor: '#F2F2F2' }} />
+            </View>
         )
     }
 }
@@ -292,6 +377,26 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent'
+    },
+    viewOverlay: {
+        position: 'absolute',
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        width: '100%',
+        height: '100%',
+    },
+    titleText: {
+        color: '#FFFFFF',
+        fontSize: 12,
+        fontFamily: 'HelveticaNeueBold'
+    },
+    contentText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontFamily: 'HelveticaNeueMedium'
+    },
+    textContainer: {
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })
 

@@ -143,7 +143,12 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_image = this.state.programImage
         updatedProgramData.program_tags = programTags;
         updatedProgramData.program_participants = [this.props.lupa_data.Users.currUserData.user_uuid]
-        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
+        updatedProgramData.program_owner = {
+            uuid:  this.props.lupa_data.Users.currUserData.user_uuid,
+            displayName:  this.props.lupa_data.Users.currUserData.display_name,
+            photo_url:  this.props.lupa_data.Users.currUserData.photo_url,
+            certification:  this.props.lupa_data.Users.currUserData.certification
+        }
         await this.setState({
             programData: updatedProgramData
         })

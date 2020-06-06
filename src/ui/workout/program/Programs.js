@@ -403,8 +403,8 @@ class Programs extends React.Component {
                                     <Text style={{fontFamily: 'ARSMaquettePro-Black', position: 'absolute', alignSelf: 'center', fontWeight: 'bold', fontSize: 35, color: 'white'}}>
                                         Coming Soon
                                     </Text>
-                                    <Chip style={{position: 'absolute', top: 0, right: 0, margin: 14, backgroundColor: '#2196F3'}}>
-                                        Curated By Lupa
+                                    <Chip style={{position: 'absolute', top: 0, right: 0, margin: 5, backgroundColor: '#2196F3'}}>
+                                        Lupa
                                     </Chip>
                                 </Surface>
 
@@ -436,7 +436,7 @@ class Programs extends React.Component {
         return (
             <RBSheet
             ref={this.RBSheet}
-            height={200}
+            height={225}
             closeOnDragDown={true}
             closeOnPressMask={false}
             openDuration={150}
@@ -456,29 +456,32 @@ class Programs extends React.Component {
              <SafeAreaView style={{flex: 1, padding: 15}}>
              <TouchableOpacity containerStyle={{height: 'auto', width: Dimensions.get('window').width,}} style={{ flexDirection: 'row', alignItems: 'center',}} onPress={this.handleLaunchProgram}>
                     <View style={{margin: 15, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
-                        <FeatherIcon name="activity" size={20} style={{margin: 5}} color="#212121" />
-                        <Text style={{fontSize: 18, fontWeight: '300'}}>
+                        <FeatherIcon name="activity" size={20} style={{marginHorizontal: 10}} color="#212121" />
+                        <View>
+                        <Text style={{fontSize: 18, fontWeight: '300', paddingVertical: 2.5}}>
                             Launch Program
                         </Text>
+                        <Text style={{fontFamily: 'HelveticaNeueLight', color: 'rgb(72, 72, 74)'}}>
+                            Launch this workout
+                        </Text>
+                        </View>
                     </View>
                     </TouchableOpacity>
                     <Divider />
-                    {
-                        this.userOwnsProgram() ?
-                        <>
                         <TouchableOpacity containerStyle={{height: 'auto', width: Dimensions.get('window').width,}} style={{ flexDirection: 'row', alignItems: 'center',}} onPress={this.handleShareWithFriend}>
                         <View style={{margin: 15, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
-                            <FeatherIcon name="share" size={20} style={{margin: 5}} color="#212121" />
-                            <Text style={{fontSize: 18, fontWeight: '300'}}>
-                                Share program
-                            </Text>
+                            <FeatherIcon name="share" size={20} style={{margin: 10}} color="#212121" />
+                            <View>
+                        <Text style={{fontSize: 18, fontWeight: '300', paddingVertical: 2.5}}>
+                            Share Program
+                        </Text>
+                        <Text style={{fontFamily: 'HelveticaNeueLight', color: 'rgb(72, 72, 74)'}}>
+                            Send to a friend
+                        </Text>
+                        </View>
                         </View>
                         </TouchableOpacity>
                         <Divider />
-                        </>
-                        :
-                        null
-                    }
              </SafeAreaView>    
              </RBSheet>
         )
@@ -505,7 +508,8 @@ class Programs extends React.Component {
         this.RBSheet.current.close()
         this.props.navigation.push('LiveWorkout', {
             programData: this.state.currProgramClicked,
-            programOwnerData: undefined
+            setPageIsPrograms: this.setPageIsPrograms.bind(this),
+            setPageIsNotPrograms: this.setPageIsNotPrograms.bind(this),
         })
     }
  
@@ -523,29 +527,6 @@ class Programs extends React.Component {
                                       return;
                                   }
                                     return (
-                                        /* <View>
-                                                                             <TouchableOpacity onPress={() => this.handleProgramOnPress(program)}>
-                                         <View style={{}}>
-                                         <Surface style={{elevation: 0, width: Dimensions.get('screen').width - 20, height: 120, borderRadius: 16, margin: 5}}>
-                                               
-                                       <ImageBackground 
-                                        imageStyle={{borderRadius: 16}} 
-                                        style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
-                                        source={{uri: program.program_image}}>
-                                        </ImageBackground>
-                                     </Surface>
-                                     </View>
-                                     </TouchableOpacity>
-                                      <View style={{width: '95%', paddingLeft: 10, alignItems: 'flex-start', justifyContent: 'center' }}>
-                                      <Text style={{color: '#000000', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
-                                           {program.program_name}
-                                           </Text>
-                                           <Text  numberOfLines={3} style={{ color: '#00000', fontSize: 12, fontFamily: 'ARSMaquettePro-Regular'}}>
-                                          {program.program_description}
-                                           </Text>
-                                           
-                                      </View>
-                                        </View>*/
      
                                         <Card style={{width: '92%', marginVertical: 10}} onPress={() => this.handleProgramOnPress(program)}>
          <Card.Cover source={{ uri: program.program_image }} />
@@ -622,74 +603,6 @@ class Programs extends React.Component {
         }
     }
 
-    mapWaitlist = () => {
-            if (this.props.lupa_data.Users.currUserData.length != undefined)
-            {
-                if (this.props.lupa_data.Users.currUserData.length > 0)
-                {
-                    return (
-                        <ScrollView contentContainerStyle={{}}>
-                            {
-                                  this.props.lupa_data.Users.currUserData.waitlistedPrograms.map(program => {
-                                    return (
-                                    <Text> Program </Text>
-                                    )
-                                })
-                            }     
-                        </ScrollView>
-                    )
-                }
-                else
-                {
-                    if (this.props.lupa_data.Users.currUserData.isTrainer)
-                    {
-                        return (
-                            <View style={{flex: 1, backgroundColor: '#F2F2F2',  justifyContent: 'center'}}>
-                            <View style={{padding: 5, alignSelf: 'center', width: '80%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                            <Text style={{fontWeight: '300', textAlign: 'left'}}>
-                               Explore programs that have a waitlist
-                            </Text>
-        
-                            </View>
-            
-                            <ElementsButton type="solid" title="Explore waitlisted programs" buttonStyle={{backgroundColor: '#2196F3', borderRadius: 12}} style={{alignSelf: 'center', width: '90%'}} />
-                    </View>
-                        )
-                    }  
-                    else
-                    {
-                        return (
-                            <View style={{flex: 1, backgroundColor: '#F2F2F2',  justifyContent: 'center'}}>
-                            <View style={{padding: 5, alignSelf: 'center', width: '80%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                            <Text style={{fontWeight: '300', textAlign: 'left'}}>
-                               Explore programs that have a waitlist
-                            </Text>
-        
-                            </View>
-            
-                            <ElementsButton type="solid" title="Explore waitlisted programs" buttonStyle={{backgroundColor: '#2196F3', borderRadius: 12}} style={{alignSelf: 'center', width: '90%'}} />
-                    </View>
-                        )
-                    }
-                }
-            }
-            else
-            {
-                return (
-                    <View style={{flex: 1, backgroundColor: '#F2F2F2',  justifyContent: 'center'}}>
-                    <View style={{padding: 5, alignSelf: 'center', width: '80%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                    <Text style={{fontWeight: '300', textAlign: 'left'}}>
-                       Explore programs that have a waitlist
-                    </Text>
-
-                    </View>
-    
-                    <ElementsButton type="solid" title="Explore waitlisted programs" buttonStyle={{backgroundColor: '#2196F3', borderRadius: 12}} style={{alignSelf: 'center', width: '90%'}} />
-            </View>
-                )
-            }
-    }
-
     handleShareWithFriend = async () => {
         this.RBSheet.current.close();
         this.setState({
@@ -720,15 +633,6 @@ class Programs extends React.Component {
             setPageIsNotPrograms: this.setPageIsNotPrograms.bind(this),
             navFrom: "Programs",
         })
-    }
-
-    userOwnsProgram = () => {
-        if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.currProgramClicked.program_owner)
-        {
-            return true
-        }
-
-        return false;
     }
 
     async _prepareSearch() {
@@ -762,7 +666,7 @@ class Programs extends React.Component {
     mapFeaturedPrograms = () => {
         return this.state.featuredPrograms.map((program, index, arr) => {
                     return (
-                        <ProgramListComponent  programData={program} key={index} index={index}  setPageIsPrograms={this.setPageIsPrograms} setPageIsNotPrograms={this.setPageIsNotPrograms} />
+                        <ProgramListComponent programData={program} key={index} index={index}  setPageIsPrograms={this.setPageIsPrograms} setPageIsNotPrograms={this.setPageIsNotPrograms} />
                     )
         })
     }
@@ -791,7 +695,7 @@ class Programs extends React.Component {
                 
 
                     <ScrollView contentContainerStyle={{backgroundColor: '#F2F2F2'}} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.featuredIsRefreshing} onRefresh={() => this.handleOnRefresh()}/>}>
-                        <View style={{height: Dimensions.get('window').height, justifyContent: 'space-between'}}>
+                        <View style={{justifyContent: 'space-between'}}>
 
                         <View style={{height: Dimensions.get('window').height / 2.5}}>
                         <Text style={styles.headerText}>
@@ -829,55 +733,6 @@ class Programs extends React.Component {
                         </ScrollView>
                     </View>
                         </View>
-
-{/*
-                        <View style={{ }}>
-                        <Text style={styles.headerText}>
-                        Programs with waitlist
-                    </Text>
-                        <View>
-                            <Text style={{margin: 20, }}>
-                                Coming soon.  Add up to four friends to waitlist for your.
-                            </Text>
-                        </View>
-                        </View>
-
-                        <View style={{backgroundColor: 'rgb(209, 209, 214)', marginVertical: 30, justifyContent: 'space-evenly', alignItems: 'center', padding: 10}}>
-                            <Text style={{fontFamily: 'ARSMaquettePro-Regular', color: '#212121', fontSize: 18, fontWeight: '300'}}>
-                                Add four friends and automatically get signed up to a pack when spots are available
-                            </Text>
-                            <View style={{width: '100%', margin: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                                <View style={{width: 60, height: 60, borderRadius: 60, backgroundColor: '#EBEBEB', alignItems: 'center', justifyContent: 'center'}}>
-                                    {
-                                        this.state.waitListData[0] == '' ?
-                                        <MaterialIcon name="add" size={30} />
-                                        :
-                                        <Image source={{uri: this.state.waitListData[0].photo_url}} style={{width: 60, height: 60, borderRadius: 60}} />
-                                    }
-                                </View>
-
-                                <View style={{width: 60, height: 60, borderRadius: 60, backgroundColor: '#EBEBEB', alignItems: 'center', justifyContent: 'center'}}>
-                                    <MaterialIcon name="add" size={30} />
-                                </View>
-
-                                <View style={{width: 60, height: 60, borderRadius: 60, backgroundColor: '#EBEBEB', alignItems: 'center', justifyContent: 'center'}}>
-                                    <MaterialIcon name="add" size={30} />
-                                </View>
-
-                                <View style={{width: 60, height: 60, borderRadius: 60, backgroundColor: '#EBEBEB', alignItems: 'center', justifyContent: 'center'}}>
-                                    <MaterialIcon name="add" size={30} />
-                                </View>
-                            </View>
-
-                            {
-                                this.state.allSpotsFilled == true ?
-                                <NativeButton title="Send out request" onPress={this.handleInviteWaitlist} />
-                                :
-                                <NativeButton title="Invite Friends" onPress={() => this.setState({ showInviteModal: true })} />
-                            }
-                        
-                        </View>
-                        */}
                                                 </View>
                     </ScrollView>
                     </View>

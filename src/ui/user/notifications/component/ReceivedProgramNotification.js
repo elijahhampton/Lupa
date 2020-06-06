@@ -33,7 +33,6 @@ function ReceivedProgramNotification(props) {
         if (notificationData.data.program_participants.includes(currUserData.user_uuid))
         {
            props.navigation.push('LiveWorkout', {
-                           programOwnerData: notificationData.fromData,
                            programData: notificationData.data,
                        })
 
