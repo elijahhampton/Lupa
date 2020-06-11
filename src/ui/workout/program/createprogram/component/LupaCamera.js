@@ -18,9 +18,8 @@ import {
     Modal,
     Provider,
     Portal,
+    Button,
 } from 'react-native-paper';
-
-import { Button } from 'react-native-elements';
 
 // eslint-disable-next-line import/no-unresolved
 import { RNCamera } from 'react-native-camera';
@@ -65,17 +64,13 @@ function VideoPreview(props) {
 
 <View style={{padding: 15, flexDirection: 'row', alignItems: 'center', backgroundColor: 'black', width: Dimensions.get('window').width, height: 'auto', justifyContent: 'space-evenly'}}>
 
-<TouchableWithoutFeedback onPress={props.closeVideoPreview} style={{margin: 15}}>
-<Surface style={{elevation: 3, backgroundColor: '#2196F3', width: 55, height: 55, borderRadius: 55, alignItems: 'center', justifyContent: 'center'}}>
-    <MaterialIcon name="cached" color="#FFFFFF" />
-</Surface>
-</TouchableWithoutFeedback>
+<Button color="#FFFFFF" mode="text" onPress={props.closeVideoPreview} style={{margin: 15}}>
+      Retry
+</Button>
 
-<TouchableWithoutFeedback onPress={saveVideo} style={{margin: 15}}>
-<Surface style={{elevation: 3, backgroundColor: '#2196F3', width: 55, height: 55, borderRadius: 55, alignItems: 'center', justifyContent: 'center'}}>
-    <MaterialIcon name="done" color="#FFFFFF" />
-</Surface>
-</TouchableWithoutFeedback>
+<Button color="#FFFFFF" mode="text" onPress={saveVideo} style={{margin: 15}}>
+      Save
+</Button>
 
 </View>
                           </View>

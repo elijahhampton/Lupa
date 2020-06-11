@@ -43,7 +43,7 @@ class LupaJournal extends React.Component {
 
         this.state = {
             journalOpen: this.props.showJournal,
-            journalSurfaceHeight: new Animated.Value(380),
+            journalSurfaceHeight: new Animated.Value(450),
             showAnalyticalView: this.props.showJournal,
             journalDropdownData: [
                 {
@@ -63,11 +63,7 @@ class LupaJournal extends React.Component {
     }
 
     getAnalyticalView = () => {
-        switch (this.state.journalDropdownValue)
-        {
-            case 'Lupa Assessments':
-                return <AssessmentView />
-        }
+        return <AssessmentView />
     }
 
     showAnalyticalView = () => {
@@ -81,49 +77,15 @@ class LupaJournal extends React.Component {
     handleShowCalendarView = () => {
         this.setState({ showAnalyticalView: false })
         Animated.timing(this.state.journalSurfaceHeight, {
-            toValue: 380,
+            toValue: 400,
             duration: 600,
         }).start();
     }
 
     render() {
-        this.props.showJournal == true ? this.showAnalyticalView : this.handleShowCalendarView
         return (
-            <Surface style={{alignSelf: 'center', margin: 15, padding: 15, backgroundColor: "#FFFFFF", width: '95%', height: this.state.journalSurfaceHeight, borderRadius: 25, elevation: 5}}>
-                    {
-                        this.state.showAnalyticalView == true ?
-                        <Dropdown value={this.state.journalDropdownValue} data={this.state.journalDropdownData} label="Lupa Assessments" containerStyle={{width: '100%'}} />
-                        :
-                        null
-                    }
-                
-                    {
-                        this.state.showAnalyticalView  == true ?
-                        this.getAnalyticalView()
-                        :
-                        <LupaCalendar elevation={0} />
-                    }
-
-                {
-                        this.state.showAnalyticalView == true ?
-                        <FAB 
-                        icon="event"
-                        small
-                        style={{backgroundColor: "#212121", position: 'absolute', bottom: 0, right: 0, marginRight: 15, marginBottom: 15}}
-                        onPress={this.handleShowCalendarView}
-                        color="#FFFFFF"
-                        />
-                        :
-                        <FAB 
-                        icon="import-contacts"
-                        small
-                        style={{backgroundColor: "#212121", position: 'absolute', bottom: 0, right: 0, marginRight: 15, marginBottom: 15}}
-                        onPress={this.showAnalyticalView}
-                        color="#FFFFFF"
-                        />
-                }
-                        
-                
+            <Surface style={{alignSelf: 'center', margin: 15, padding: 15, backgroundColor: "#FFFFFF", width: '95%', height: this.state.journalSurfaceHeight, borderRadius: 25, elevation: 2}}>
+                        <AssessmentView />
                     </Surface>
         )
     }

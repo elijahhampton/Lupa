@@ -16,8 +16,13 @@ import {
     ScrollView,
     RefreshControl,
     Dimensions,
+    Modal as NativeModal,
+    Image,
+    TouchableWithoutFeedback,
     Animated,
-    Button as NativeButton
+    Button as NativeButton,
+    SafeAreaView,
+    Slider
 } from 'react-native';
 
 import {
@@ -26,6 +31,8 @@ import {
     Portal,
     Modal,
     Appbar,
+    Card,
+    TextInput,
     Title,
     Paragraph,
     Divider,
@@ -33,14 +40,37 @@ import {
     Surface,
     Chip,
     Button,
-    FAB
+    FAB,
+    TouchableRipple
 } from 'react-native-paper';
 
-import { PackEventNotificationContainer } from './component/SessionNotificationContainer.js';
+import {
+    Header,
+    Left,
+    Right,
+    Body,
+} from 'native-base';
 
+import { PackEventNotificationContainer } from './component/SessionNotificationContainer.js';
+import { Constants } from 'react-native-unimodules';
 import LupaController from '../../../controller/lupa/LupaController';
 import { connect } from 'react-redux';
 import LupaJournal from './component/LupaJournal/LupaJournal'
+import { withNavigation } from 'react-navigation';
+
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import ThinFeatherIcon from "react-native-feather1s";
+import WorkoutLog from './modal/workoutlog/WorkoutLog.js';
+import { Modalize } from 'react-native-modalize';
+import AssessmentView from './component/LupaJournal/Views/AssessmentView.js';
+import TrainerInsights from '../trainer/TrainerInsights.js';
+import InviteFriendsModal from '../../user/modal/InviteFriendsModal';
+import WorkoutLogModal from '../../workout/modal/WorkoutLogModal'
+import { RFValue } from 'react-native-responsive-fontsize';
+
+const data = [
+
+]
 
 const mapStateToProps = (state, action) => {
     return {
@@ -104,7 +134,12 @@ class TrainerDashboardView extends React.Component {
             packInviteModalOpen: false,
             currUserData: this.props.lupa_data.Users.currUserData,
             currUserPacksData: this.props.lupa_data.Packs.currUserPacksData,
+            trainerInsightsModalIsOpen: false,
+            inviteFriendsModalIsOpen: false,
+            workoutLogModalIsOpen: false,
         }
+
+        this.workoutLogModalRef = React.createRef();
 
     }
 
@@ -204,56 +239,77 @@ class TrainerDashboardView extends React.Component {
         this.setState({ packInviteModalOpen: false })
     }
 
+    showTrainerInsightsModal = () => {
+        this.setState({ trainerInsightsModalIsOpen: true })
+    }
+
+    closeTrainerInsightsModal = () => {
+        this.setState({ trainerInsightsModalIsOpen: false })
+    }
+
+    showInviteFriendsModal = () => {
+        this.setState({ inviteFriendsModalIsOpen: true })
+    }
+
+    closeInviteFriendsModal = () => {
+        this.setState({ inviteFriendsModalIsOpen: false })
+    }
+
+    showWorkoutLogModal = () => {
+        this.setState({ workoutLogModalIsOpen: true })
+    }
+
+    closeWorkoutLogModal = () => {
+        this.setState({ workoutLogModalIsOpen: false })
+    }
+
     render() {
         return (
             <View style={styles.safeareaview}>
-                                        <Appbar.Header
-                                        statusBarHeight
-                                        style={{elevation: 0, alignItems: 'center'}}
-                                        theme={{
-                                            colors: {
-                                                primary: "transparent"
-                                            }
-                                        }}
-                                        > 
-                                         <Appbar.Action icon="menu" style={{alignSelf: 'flex-end', left: 0,}} onPress={() => this.props.navigation.openDrawer()} />
-                                        <Appbar.Content title="Lupa" titleStyle={styles.headerText} />
-                                       
-</Appbar.Header>
+                <View style={{marginTop: Constants.statusBarHeight}}>
+                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                                         <Left>
+                                         <Appbar.Action icon="menu" style={{}} onPress={() => this.props.navigation.openDrawer()} />
+                                         </Left>
+                                        
+                                        <Body />
 
+                                        <Right />
+                                         </View>
+
+                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: Dimensions.get('window').width}}>
+                                        <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                                         <Text style={{paddingLeft: 15, fontFamily: 'HelveticaNeueBold', fontSize: 20}}>
+                                             Welcome,
+                                         </Text>
+                                         <Text>
+                                             {" "}
+                                         </Text>
+                                         <Text style={{color: '#1089ff', fontFamily: 'HelveticaNeueBold', fontSize: 20}}>
+                                            {this.props.lupa_data.Users.currUserData.display_name}
+                                         </Text>
+                                         </View>
+
+                                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                         <ThinFeatherIcon name="bell" thin={true} size={25} style={{marginRight: 20}} onPress={() => this.props.navigation.push('Notifications')} />
+                                         <ThinFeatherIcon name="mail" thin={true} size={25} style={{marginRight: 20}} onPress={() => this.props.navigation.push('Notifications')} />
+                                         </View>
+                                        </View>
+                                         <Divider style={{marginTop: 15}} />
+
+                </View>
+                <View style={{flex: 1}}>
                 <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
                     <RefreshControl
                         refreshing={this.state.refreshing}
                         onRefresh={this._onRefresh}
                     />}>
-
-                    <LupaJournal showJournal={this.state.showJournal} />
-
-                    <View>
+                        
+{/*
+<View>
                     <View style={{padding: 10, flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', height: 'auto'}}>
                         <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#F2F2F2', width: '100%'}}>
-                            <Text style={{color: '#1E88E5', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15, padding: 5, textAlign: 'center'}}>
-                                Finished a workout offline? Log it
-                            </Text>
-
-                            <Text style={{color: '#292f33', fontWeight: '300', textAlign: 'center'}}>
-                                Log workouts you complete outside of the Lupa app to enhance your live workout experience
-                            </Text>
-
-                            <Button mode="contained" style={{margin: 10, width: '40%', elevation: 0}} theme={{
-                                colors: {
-                                    primary: '#2196F3'
-                                },
-                                roundness: 10
-                            }}>
-                                <Text>
-                                    Open Log
-                                </Text>
-                            </Button>
-                        </Surface>
-
-                        <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#F2F2F2', width: '100%'}}>
-                            <Text style={{color: '#1E88E5', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15, padding: 5, textAlign: 'center'}}>
+                            <Text style={{color: '#1565C0', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15, padding: 5, textAlign: 'center'}}>
                                 Try the EMS assessment
                             </Text>
 
@@ -263,7 +319,7 @@ class TrainerDashboardView extends React.Component {
 
                             <Button mode="contained" style={{margin: 10, width: '60%', elevation: 0}} theme={{
                                 colors: {
-                                    primary: '#2196F3'
+                                    primary: '#1565C0'
                                 },
                                 roundness: 10,
     
@@ -272,13 +328,56 @@ class TrainerDashboardView extends React.Component {
                                     Take Assessment
                                 </Text>
                             </Button>
+                            <FeatherIcon name="x" size={15} color="#212121" style={{overflow: 'hidden', backgroundColor: '#F2F2F2', borderRadius: 10, padding: 5, position: 'absolute', top: 0, right: 0, margin: 10}} />
                         </Surface>
+
                     </View>
 
                     </View>
+                        */}
+
+
+                    <AssessmentView />
+                    <Divider style={{width: '100%'}} />
+                    <WorkoutLog workoutLogModalRef={this.workoutLogModalRef} />
+                    <Divider style={{width: '100%'}} />
+
                 </ScrollView>
-                <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid} />
-                {/* <FAB onPress={() => this.setState({ showJournal: !this.state.showJournal })} icon="import-contacts" style={{backgroundColor: '#2196F3', position: 'absolute', bottom: 0, right: 0, margin: 16}} /> */}
+
+                </View>
+
+                {/* <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid} /> */}
+                
+                <View>
+                    <Text style={{padding: 10, fontSize: 22, fontFamily: 'HelveticaNeueMedium'}}>
+                        Invite Friends
+                    </Text>
+                    <Divider />
+                    {
+                        this.props.lupa_data.Users.currUserData.isTrainer  === true ? 
+                        <TouchableWithoutFeedback onPress={this.showInviteFriendsModal}>
+                        <View style={{padding: 20, flexDirection: 'row', alignItems: 'center'}}>
+                        <Text style={{width: '85%', fontSize: RFValue(15), fontFamily: 'HelveticaNeueLight'}}>
+                            Onboard a client and add a free program to your account
+                        </Text>
+                        <Image source={require('../../images/meeting-icon.png')} style={{margin: 5, width: 40, height: 40}} />
+                        </View>
+                        </TouchableWithoutFeedback>
+                        :
+                        <TouchableWithoutFeedback onPress={this.showInviteFriendsModal}>
+                        <View style={{padding: 20, flexDirection: 'row', alignItems: 'center'}}>
+                        <Text style={{width: '85%', fontSize: RFValue(15), fontFamily: 'HelveticaNeueLight'}}>
+                            Invite your friends and add a free program to your account
+                        </Text>
+                        <Image source={require('../../images/meeting-icon.png')} style={{margin: 5, width: 40, height: 40}} />
+                        </View>
+                        </TouchableWithoutFeedback>
+                    }
+                </View>
+
+                    <InviteFriendsModal showGettingStarted={false} isVisible={this.state.inviteFriendsModalIsOpen} closeModalMethod={this.closeInviteFriendsModal} />
+                    <SafeAreaView />
+
             </View>
         );
     }
@@ -290,6 +389,7 @@ const styles = StyleSheet.create({
         flexGrow: 2,
         flexDirection: 'column',
         padding: 10,
+        backgroundColor: '#FFFFFF'
     },
     safeareaview: {
         flex: 1,
@@ -322,11 +422,23 @@ const styles = StyleSheet.create({
         fontFamily: 'ARSMaquettePro-Medium'
     },
     divider: {
-        margin: 8
+        margin: 10
     },
     iconButton: {
         
-    }
+    },
+    chipStyle: {
+        backgroundColor: 'rgba(227,242,253 ,1)', 
+        width: 'auto', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        margin: 5, 
+        alignSelf: 'flex-end'
+    },
+    chipTextStyle: {
+        fontFamily: 'HelveticaNeueLight',
+        fontSize: 15,
+    },
 });
 
 export default connect(mapStateToProps)(TrainerDashboardView);

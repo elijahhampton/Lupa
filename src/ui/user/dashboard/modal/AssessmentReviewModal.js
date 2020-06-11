@@ -80,7 +80,7 @@ class AssessmentReviewModal extends React.Component {
     }
 
     async componentDidMount() {
-        await this.generateUserAssessment();
+       //await this.generateUserAssessment();
     }
 
     generateUserAssessment = async () => {

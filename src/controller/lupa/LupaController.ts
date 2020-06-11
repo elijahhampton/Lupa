@@ -654,31 +654,14 @@ export default class LupaController {
       return Promise.resolve(servicesData);
     }
 
-    loadWorkouts = async () => {
-      let workoutData;
-      await PROGRAMS_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
-        workoutData = result;
-      });
-
-      return Promise.resolve(workoutData);
+    loadWorkouts = () => {
+      let workoutData = PROGRAMS_CONTROLLER_INSTANCE.loadWorkouts();
+      return workoutData;
     }
 
-    loadAssessments = async () => {
-      let assessments = [];
-      LUPA_DB.collection('lupa_data')
-        .doc('lupa_assessment')
-        .collection('assessments')
-        .get()
-        .then(docs => {
-        docs.forEach(docSnapshot => {
-          let snapshot = docSnapshot.data();
-           assessments.push(snapshot);
-        })
-      }).catch(err => {
-        return Promise.resolve([]);
-      })
-
-      return Promise.resolve(assessments);
+    loadAssessments = () => {
+      const ASSESSMENTS = require('../../model/data_structures/assessment/json/assessments.json')
+      return ASSESSMENTS.lupa_assessments;
     }
 
     getPrivateChatUUID = async (currUserUUID, userTwo) => {

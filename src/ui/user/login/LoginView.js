@@ -182,7 +182,7 @@ class LoginView extends React.PureComponent {
    */
   _introduceApp = async () => {
     await this._setupRedux();
-    await this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+    this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     this.props.navigation.navigate('App');
   }
 
@@ -191,7 +191,7 @@ class LoginView extends React.PureComponent {
    * as well as Lupa application data (assessments, workouts);
    */
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, currUserServices, lupaWorkouts;
+    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, currUserServices, lupaAssessments = [], lupaWorkouts = [];
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -205,13 +205,9 @@ class LoginView extends React.PureComponent {
       currUserPrograms = result;
     })
 
-    await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
-      lupaWorkouts = result;
-    });
+    lupaWorkouts = await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts();
 
-    await this.LUPA_CONTROLLER_INSTANCE.loadAssessments().then(result => {
-      lupaAssessments = result;
-    })
+    lupaAssessments = await this.LUPA_CONTROLLER_INSTANCE.loadAssessments();
 
     let userPayload = {
       userData: currUserData,

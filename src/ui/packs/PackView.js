@@ -73,6 +73,7 @@ class PackView extends React.Component {
             searchResults: [],
             createPackModalIsOpen: false,
             refreshing: false,
+            searching: false,
             currUserPacks: this.props.lupa_data.Packs.currUserPacksData
         }
 
@@ -100,8 +101,9 @@ class PackView extends React.Component {
          if (searchQuery == "" || searchQuery == "")
          {
             await this.setState({
+                searching: true,
                 searchValue: "",
-                searchResults: []
+                searchResults: [],
             })
 
             return;
@@ -109,6 +111,7 @@ class PackView extends React.Component {
 
          await this.setState({
              searchResults: [],
+             searching: true,
          })
 
          await this.setState({
@@ -119,14 +122,14 @@ class PackView extends React.Component {
              searchResultsIn = searchData;
          })
 
-         await this.setState({ searchResults: searchResultsIn });*/
+         await this.setState({ searchResults: searchResultsIn, searching: false });*/
 
-         await this.setState({ searchResults: [] });
+         await this.setState({ searchResults: [], searching :false });
      }
  
      showSearchResults() {
         //if the searchResults are 0 or undefined then we don't want to display anything
-        if (this.state.searchResults.length == 0 || this.state.searchResults == undefined)
+        if (this.state.searchResults.length == 0 || typeof(this.state.searchResults) == 'undefined')
         {
             return;
         }

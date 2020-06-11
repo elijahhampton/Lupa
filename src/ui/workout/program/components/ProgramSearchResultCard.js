@@ -84,22 +84,22 @@ function ProgramSearchResultCard(props) {
             </View>
         </View>
 
-        <View style={{flex: 3, height: '100%', justifyContent: 'space-evenly'}}>
-            <View style={{flex: 1, }}>
+        <View style={{flex: 3, height: '100%', justifyContent: 'center'}}>
+            <View style={{}}>
                 <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
                     {result.program_name}
                 </Text>
             </View>
 
         <View style={{flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <Paragraph style={{lineHeight: 12, fontSize: 10, width: '80%', flex: 1, flexWrap: 'wrap'}}>
+        <Text style={{fontSize: 10, width: '80%', flex: 1, flexWrap: 'wrap'}} numberOfLines={4}>
                 {result.program_description}
-                </Paragraph>
+                </Text>
         </View>
 
 
             <View style={{flex: 1, bottom: 0,width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <View style={{flex: 1,justifyContent: 'flex-start'}}>
+            <View style={{flex: 1,justifyContent: 'flex-end'}}>
                 <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 10, color: '#212121'}}>
                 {result.program_duration} sessions per week
                 </Text>

@@ -71,6 +71,7 @@ import MyPacksCard from './component/MyPacksCard';
 import ProgramProfileComponent from '../../workout/program/createprogram/component/ProgramProfileComponent';
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
+import { Constants } from 'react-native-unimodules';
 
 const InviteToPackDialog = props => {
     const [userToInvite, setUserToInvite] = useState(props.userToInvite);
@@ -916,6 +917,15 @@ NavigationActions.navigate({
                     </Right>
                 </Appbar.Header>
 
+                <Button mode="contained" 
+                style={{backgroundColor: '#23374d', position: 'absolute', bottom: Constants.statusBarHeight + 20, height: 40, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: Dimensions.get('window').width - 20}}
+                theme={{roundness: 10}}
+                >
+                            <Text>
+                                Subscribe
+                            </Text>
+                        </Button>
+
 
                 <ScrollView 
                 contentContainerStyle={{ flexGrow: 1 }} 
@@ -1042,9 +1052,9 @@ NavigationActions.navigate({
                         
                         <SafeAreaView />
                 </ScrollView>
-
+                
                 <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
-
+                        
             </SafeAreaView>
         );
     }

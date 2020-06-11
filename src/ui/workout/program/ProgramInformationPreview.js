@@ -71,6 +71,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return String progam owner's display name
      */
     getOwnerDisplayName = () => {
+        if (typeof(this.props.programData) == 'undefined')
+        {
+            return ''
+        }
+
             try {
             return this.props.programData.program_owner.displayName
             } catch(error) {
@@ -86,6 +91,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return URI Returns a string for the name, otherwise ''
      */
     getProgramName = () => {
+        if (typeof(this.props.programData.program_name) == 'undefined')
+        {
+            return ''
+        }
+
             try {
                 return this.props.programData.program_name;
             } catch(err) {
@@ -98,6 +108,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return URI Returns a string for the description, otherwise ''
      */
     getProgramDescription = () => {
+        if (typeof(this.props.programData) == 'undefined')
+        {
+            return ''
+        }
+
             try {
                 return this.props.programData.program_description;
             } catch(err) {
@@ -110,6 +125,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return URI Returns a uri for the program image, otherwise ''
      */
     getProgramImage = () => {
+        if (typeof(this.props.programData) == 'undefined')
+        {
+            return ''
+        }
+
             try {
                 return this.props.programData.program_image;
             } catch(err) {
@@ -122,6 +142,11 @@ class ProgramInformationPreview extends PureComponent {
      * @return String representing the program price, otherwise, ''
      */
     getProgramPrice = () => {
+        if (typeof(this.props.programData) == 'undefined')
+        {
+            return 0
+        }
+
             try {
                 return this.props.programData.program_price;
             } catch(error) {

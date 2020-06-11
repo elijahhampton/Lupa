@@ -1,0 +1,19 @@
+{
+    "lupa_assessments": [
+        {
+            "assessment_acronym": "PARQ",
+            "assessment_available": true,
+            "assessment_colors": [
+                "#f44336",
+                "#FF9800",
+                "#FFE0B2"
+            ],
+            "assessment_description": "The PAR-Q is a self-administered questionnaire designed to assess your readiness to participate in more physical activity or engage in a fitness appraisal.",
+            "assessment_questions": [
+
+            ],
+            "assessment_title": "Physical Assessment and Readiness Questionnaire",
+            "assessment_type": "assessment"
+        }
+    ]
+}

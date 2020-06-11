@@ -68,66 +68,6 @@ class AppNavigator extends React.Component {
       this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
 
-  generateUserLoggedInStatus = async () => {
-    let result;
-    await this.LUPA_CONTROLLER_INSTANCE.isUserLoggedIn().then(res => result = res);
-
-    if (result)
-    {
-      await this.handleUserIsLoggedIn()
-    }
-    else
-    {
-
-    }
-  }
-
-  handleUserIsLoggedIn = async () => {
-    await this._setupRedux();
-    await this.setState({
-      loggedIn: true
-    })
-  }
-
-
-    /**
-   * 
-   */
-  _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, lupaWorkouts;
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
-      currUserData = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-      currUserPacks = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
-      currUserHealthData = result;
-    });
-
-    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-      currUserPrograms = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
-      lupaWorkouts = result;
-    });
-
-
-    let userPayload = {
-      userData: currUserData,
-      healthData: currUserHealthData,
-    }
-
-
-    await this.props.updatePacks(currUserPacks);
-    await this.props.updateUser(userPayload);
-    await this.props.updateUserPrograms(currUserPrograms);
-    await this.props.updateLupaWorkouts(lupaWorkouts);
-  }
-
   render() {
     return (
       <>

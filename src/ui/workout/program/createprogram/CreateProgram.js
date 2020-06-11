@@ -69,22 +69,6 @@ class CreateProgram extends React.Component {
     async componentDidMount() {
         this.props.disableSwipe();
 
-        try {
-            if (this.props.navigation.state.params.navFrom)
-            {
-                if (this.props.navigation.state.setPageIsNotPrograms != undefined)
-                {
-                    this.props.navigation.state.params.navFrom == "Programs" ?
-                    this.props.navigation.state.setPageIsNotPrograms()
-                    :
-                    null
-                }   
-            }
-        } catch(err) {
-
-        }
-
-
         const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
         this.setState({ currProgramUUID: programPayload.program_structure_uuid })
         this.setState({ programData: programPayload})
@@ -198,18 +182,6 @@ class CreateProgram extends React.Component {
                             //delete from redux
             this.props.deleteProgram(this.state.currProgramUUID)
             }
-        }
-
-        try {
-            if (this.props.navigation.state.params.navFrom)
-            {
-                if (this.props.navigation.state.params.navFrom == "Programs")
-                {
-                    this.props.navigation.state.params.setPageIsPrograms()
-                }
-            }
-        } catch(err) {
-            this.props.navigation.goBack();
         }
       
         this.props.navigation.goBack();

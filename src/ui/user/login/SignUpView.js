@@ -203,7 +203,7 @@ class SignupModal extends React.Component {
   }
 
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserPrograms, lupaWorkouts, lupaAssessments;
+    let currUserData, currUserPacks, currUserPrograms, lupaWorkouts = [], lupaAssessments = [];
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -216,13 +216,9 @@ class SignupModal extends React.Component {
       currUserPrograms = result;
     })
 
-    await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
-      lupaWorkouts = result;
-    });
+    lupaWorkouts = await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts()
 
-    await this.LUPA_CONTROLLER_INSTANCE.loadAssessments().then(result => {
-      lupaAssessments = result;
-    })
+    lupaAssessments = await this.LUPA_CONTROLLER_INSTANCE.loadAssessments()
 
     const userPayload = {
       userData: currUserData,

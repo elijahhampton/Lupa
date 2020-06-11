@@ -23,9 +23,11 @@ import {
     FAB,
     IconButton,
     Surface,
+    Menu,
     Modal as PaperModal,
     Dialog,
     Button,
+    Chip,
     TextInput,
     Divider,
     Title,
@@ -221,6 +223,7 @@ class BuildWorkout extends React.Component {
             flatlistValues: [],
             currPressedNonPopulatedWorkout: "",
             currPressedPopulatedWorkout: {},
+            menuVisible: false
         }
 
        this.RBSheet = React.createRef();
@@ -769,10 +772,31 @@ class BuildWorkout extends React.Component {
                             onPress={() => this.saveProgram()}
                             />
                     </Surface>
-                    <View style={{flex: 1}}>
-                    <Text style={{fontFamily: 'ARSMaquettePro-Regular', color: 'white',fontSize: 20, padding: 5,  }}>
-                        General Workouts
-                    </Text>
+                    <View style={{flex: 1.2}}>
+
+                    <Menu
+            visible={this.state.menuVisible}
+            onDismiss={() => this.setState({ menuVisible: false })}
+            
+            anchor={
+                <Button mode="text" compact color="#FFFFFF" onPress={() => this.setState({ menuVisible: true })}>
+                <Text>
+                    All Workouts
+                </Text>
+                <FeatherIcon name="chevron-down" />
+            </Button>
+            }
+          >
+            <Menu.Item onPress={() => {}} title="Workout Category 1" />
+            <Menu.Item onPress={() => {}} title="Workout Category 2" />
+            <Menu.Item onPress={() => {}} title="Workout Category 3" />
+            <Menu.Item onPress={() => {}} title="Workout Category 4" />
+            <Divider />
+            <Menu.Item onPress={() => this.setState({ menuVisible: false })} title="Cancel" />
+          </Menu>
+
+
+
                     <ScrollView contentContainerStyle={{flexWrap: 'wrap', justifyContent: 'center', width: Dimensions.get('window').width,  flexDirection: 'row', padding: 5, backgroundColor: "#212121"}}>
                     {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.map((workout, index, arr)=> {

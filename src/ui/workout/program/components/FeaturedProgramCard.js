@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import ProgramInformationPreview from '../ProgramInformationPreview';
 import { withNavigation } from 'react-navigation';
 
+import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
+
 import {
     View,
     Text,
@@ -13,7 +15,7 @@ import {
     Card
 } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-import { RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 function FeaturedProgramCard(props) {
     let [programModalVisible, setProgramModalVisible] = useState(false);
@@ -59,25 +61,25 @@ const getProgramLocation = () => {
     const key = props.key;
     return (
         <>
-        <Card key={key} style={{ elevation: 2, margin: 10, width: Dimensions.get('window').width / 1.2, height: '90%', marginVertical: 10 }} onPress={() => handleCardOnPress(currProgram)}>
-        <Card.Cover resizeMode='cover' defaultSource={require('../../../images/programs/sample_photo_two.jpg')} source={{uri: currProgram.program_image}} style={{ height: '65%' }} />
+        <Card key={key} style={{borderRadius: 0,  elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: '90%', marginVertical: 10 }} onPress={() => handleCardOnPress(currProgram)}>
+        <Card.Cover resizeMode='contain' defaultSource={require('../../../images/programs/sample_photo_two.jpg')} source={{uri: currProgram.program_image}} style={{ height: '65%' }} />
         <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
             <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
                 <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Text style={{ fontFamily: 'avenir-roman', fontSize: RFPercentage(2),  }} numberOfLines={1}>
+                    <Text style={{ fontFamily: 'avenir-roman', fontSize: RFValue(12),  }} numberOfLines={1}>
                         {getProgramName()}
 </Text>
-<Text style={{ fontSize: 14, fontWeight: '500', color: '#2962FF' }}>
+<Text style={{ fontSize: RFValue(12), fontWeight: '500', color: '#1089ff' }}>
                         Emily Loefstedt
 </Text>
                 </View>
 
-                <Text style={{fontSize: RFPercentage(2)}}>
+
+                <View style={{ width: '100%' }}>
+                <Text style={{fontSize: RFValue(12)}}>
                 ({getProgramLocation().name})
                 </Text>
-
-                <View style={{ width: '100%', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: RFPercentage(1.5), fontWeight: '400',  flexWrap: 'nowrap'}} numberOfLines={1}>
+                <Text style={{ fontSize: RFValue(12), fontWeight: '400',  flexWrap: 'nowrap'}} numberOfLines={1}>
                         {getProgramLocation().address}
 </Text>
 

@@ -29,37 +29,6 @@ import LupaController from '../../../controller/lupa/LupaController';
 import ThinFeatherIcon from "react-native-feather1s";
 import { LOG_ERROR } from '../../../common/Logger';
 
-const data = [
-    {
-      name: "Shoulders",
-      population: 5,
-      color: "#2196F3",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 12
-    },
-    {
-      name: "Biceps",
-      population: 28,
-      color: "#03A9F4",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 12
-    },
-    {
-      name: "Hamstrings",
-      population: 46,
-      color: "#00BCD4",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 12
-    },
-    {
-        name: "Triceps",
-        population: 22,
-        color: "#00BCD4",
-        legendFontColor: "#009688",
-        legendFontSize: 12
-      },
-  ];
-
   const chartConfig = {
     backgroundGradientFrom: "red",
     backgroundGradientFromOpacity: 0,
@@ -77,8 +46,8 @@ const mapStateToProps = (state, action) => {
 }
 
 const customStyles = {
-    stepIndicatorSize: 25,
-    currentStepIndicatorSize: 35,
+    stepIndicatorSize: 22,
+    currentStepIndicatorSize: 25,
     separatorStrokeWidth: 2,
     currentStepStrokeWidth: 3,
     stepStrokeCurrentColor: '#2196F3',
@@ -90,13 +59,13 @@ const customStyles = {
     stepIndicatorFinishedColor: '#fe7013',
     stepIndicatorUnFinishedColor: '#ffffff',
     stepIndicatorCurrentColor: '#ffffff',
-    stepIndicatorLabelFontSize: 12,
-    currentStepIndicatorLabelFontSize: 13,
+    stepIndicatorLabelFontSize: 10,
+    currentStepIndicatorLabelFontSize: 10,
     stepIndicatorLabelCurrentColor: '#212121',
     stepIndicatorLabelFinishedColor: '#ffffff',
     stepIndicatorLabelUnFinishedColor: '#212121',
     labelColor: '#212121',
-    labelSize: 13,
+    labelSize: 10,
     currentStepLabelColor: '#2196F3'
 }
 
