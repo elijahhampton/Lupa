@@ -1417,6 +1417,9 @@ export default class UserController {
                   }
 
                   featuredProfiles.push(snapshot);
+                  featuredProfiles.push(snapshot);
+                  featuredProfiles.push(snapshot);
+                  featuredProfiles.push(snapshot);
               })
           });
 

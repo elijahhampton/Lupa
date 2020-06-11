@@ -32,7 +32,7 @@ const PackNavigator = createStackNavigator(
             })
         },
         PackModal: {
-            screen: (props) => <PackModal {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe}/>,
+            screen: (props) => <PackModal {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
             navigationOptions: ({ navigation }) => ({
                 title: 'PackModal',
                 header: null,

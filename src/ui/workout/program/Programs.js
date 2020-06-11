@@ -57,11 +57,12 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import ProgramsFilter from './components/ProgramsFilter';
 
+import { RFPercentage } from 'react-native-responsive-fontsize'
+
 import { Button as ElementsButton } from 'react-native-elements';
 import UserSearchResult from '../../user/profile/component/UserSearchResult'
 import LupaController from '../../../controller/lupa/LupaController'
 import { getCurrentStoreState } from '../../../controller/redux';
-import TrainerInsights from '../../user/trainer/TrainerInsights';
 import ProgramSearchResultCard from './components/ProgramSearchResultCard';
 
 const SamplePhotoOne = require('../../images/programs/sample_photo_one.jpg')
@@ -196,20 +197,20 @@ class ShareProgramModal extends React.Component{
 
     render() {
         return (
-                <PaperModal contentContainerStyle={{width: Dimensions.get('window').width, height: Dimensions.get('window').height, backgroundColor: '#F2F2F2'}} visible={this.props.isVisible}>
+                <PaperModal contentContainerStyle={{width: Dimensions.get('window').width, height: Dimensions.get('window').height, backgroundColor: '#FFFFFF'}} visible={this.props.isVisible}>
                                    <Appbar.Header style={{elevation: 0}} theme={{
                     colors: {
-                        primary: '#F2F2F2'
+                        primary: '#FFFFFF'
                     }
                 }}>
                     <Appbar.BackAction onPress={this.props.closeModalMethod} />
                     <Appbar.Content title="Share Program" />
                 </Appbar.Header>
 
-                <View style={{flex: 1, backgroundColor: '#F2F2F2'}}>
+                <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
                 <ProgramSearchResultCard programData={this.props.program} />
                               <Divider />
-                    <ScrollView shouldRasterizeIOS={true} contentContainerStyle={{backgroundColor: '#F2F2F2'}}>
+                    <ScrollView shouldRasterizeIOS={true} contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
                     {
                         this.mapFollowing()
                     }
@@ -248,7 +249,6 @@ class Programs extends React.Component {
             waitListData: ['','','',''],
             allSpotsFilled: false,
             showMyProgramSheet: false,
-            pageIsPrograms: true,
             showShareProgramModal: false,
             currProgramClicked: {},
             refreshing: false,
@@ -256,11 +256,11 @@ class Programs extends React.Component {
             searchResults: [],
             searchValue: "",
             featuredPrograms: [],
-            trainerInsightsVisible: false,
             featuredIsRefreshing: false,
         }
 
       this.RBSheet = React.createRef();
+      this.mainRBSheet = React.createRef();
 
     }
 
@@ -291,20 +291,9 @@ class Programs extends React.Component {
         })
     }
 
-    closeTrainerInsights = () => {
-        this.setState({ trainerInsightsVisible: false })
-    }
-
-    openTrainerInsights = () => {
-        this.setState({
-            trainerInsightsVisible: true 
-        })
-    }
-
     showInviteModal = () => {
         this.setState({
             showInviteModal: true,
-            pageIsPrograms: false,
         })
     }
 
@@ -315,7 +304,6 @@ class Programs extends React.Component {
         //clear waitlist
         this.setState({
             waitListData: ['', '', '', ''],
-            pageIsPrograms: true,
         })
     }
 
@@ -336,13 +324,11 @@ class Programs extends React.Component {
 
         this.setState({
             showInviteModal: false,
-            pageIsPrograms: true
         })
     }
 
 
     showFilter = () => {
-        this.setState({ pageIsPrograms: false })
         Animated.timing(this.state.filterHeight, {
             toValue: Dimensions.get('window').height,
             duration: 500
@@ -350,7 +336,6 @@ class Programs extends React.Component {
     }
 
     closeFilter = () => {
-        this.setState({ pageIsPrograms: true  })
         Animated.timing(this.state.filterHeight, {
             toValue: 0,
             duration: 500
@@ -362,10 +347,9 @@ class Programs extends React.Component {
     }
 
     handleApplyFilterOnPress = () => {
-        this.setState({ pageIsPrograms: true })
-
         //apply filters
 
+        //close filter
         this.closeFilter()
     }
 
@@ -408,7 +392,7 @@ class Programs extends React.Component {
                                     </Chip>
                                 </Surface>
 
-                                <Text style={{alignSelf: 'center', fontFamily: 'ARSMaquettePro-Black', color: 'white'}}>
+                                <Text style={{alignSelf: 'center', fontFamily: 'ARSMaquettePro-Black', color: '#212121'}}>
                                     Aura Program
                                 </Text>
 
@@ -418,7 +402,7 @@ class Programs extends React.Component {
     small
     icon={() => <FeatherIcon name="activity" size={25} />}
     onPress={() => console.log('Pressed')}
-    color="#F2F2F2"
+    color="#FFFFFF"
   />
 
 <FAB
@@ -487,6 +471,46 @@ class Programs extends React.Component {
         )
     }
 
+    getMainRBSheet = () => {
+        return (
+            <RBSheet
+            ref={this.mainRBSheet}
+            height={120}
+            closeOnDragDown={true}
+            closeOnPressMask={false}
+            openDuration={150}
+            customStyles={{
+            wrapper: {
+                backgroundColor: 'transparent',
+            },
+              container: {
+                borderTopRightRadius: 35,
+                borderTopLeftRadius: 35,
+              },
+              draggableIcon: {
+                  backgroundColor: 'rgb(209, 209, 214)'
+              }
+            }}
+         >
+             <SafeAreaView style={{flex: 1, padding: 15}}>
+             <TouchableOpacity containerStyle={{height: 'auto', width: Dimensions.get('window').width,}} style={{ flexDirection: 'row', alignItems: 'center',}} onPress={this.navigateToCreateProgram}>
+                    <View style={{margin: 15, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
+                        <FeatherIcon name="edit-2" size={20} style={{marginHorizontal: 10}} color="#212121" />
+                        <View>
+                        <Text style={{fontSize: 18, fontWeight: '300', paddingVertical: 2.5}}>
+                            Design a Program
+                        </Text>
+                        <Text style={{fontFamily: 'HelveticaNeueLight', color: 'rgb(72, 72, 74)'}}>
+                            Design a complete workout program
+                        </Text>
+                        </View>
+                    </View>
+                    </TouchableOpacity>
+             </SafeAreaView>    
+             </RBSheet>
+        )
+    }
+
     handleProgramOnPress = async (program) => {
         await this.setState({
             currProgramClicked: program
@@ -508,8 +532,6 @@ class Programs extends React.Component {
         this.RBSheet.current.close()
         this.props.navigation.push('LiveWorkout', {
             programData: this.state.currProgramClicked,
-            setPageIsPrograms: this.setPageIsPrograms.bind(this),
-            setPageIsNotPrograms: this.setPageIsNotPrograms.bind(this),
         })
     }
  
@@ -519,7 +541,7 @@ class Programs extends React.Component {
             if (this.state.currUserPrograms.length > 0)
             {
                 return (
-                    <ScrollView contentContainerStyle={{alignItems: 'center', backgroundColor: '#F2F2F2'}}>
+                    <ScrollView contentContainerStyle={{alignItems: 'center', backgroundColor: '#FFFFFF'}}>
                         {
                               this.state.currUserPrograms.map(program => {
                                   if (typeof(program) == 'undefined')
@@ -527,10 +549,27 @@ class Programs extends React.Component {
                                       return;
                                   }
                                     return (
+                                        <View>
+                                            <ProgramSearchResultCard  programData={program} />
+                                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+                                            <Button color="rgb(13,71,161)" >
+                                                <Text>
+                                                Edit 
+                                                </Text>
+                                            </Button>
+                                            <Button color="rgb(229,57,53)" 
+                                            onPress={() => this.deleteUserProgram(program.program_structure_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>
+                                                <Text>
+                                                Delete
+                                                </Text>
+                                            </Button>
+                                            </View>
+                                        </View>
+                                        
      
-                                        <Card style={{width: '92%', marginVertical: 10}} onPress={() => this.handleProgramOnPress(program)}>
+                                       /* <Card style={{elevation: 5, width: '92%', marginVertical: 10}} onPress={() => this.handleProgramOnPress(program)}>
          <Card.Cover source={{ uri: program.program_image }} />
-         <Card.Actions style={{width: '100%', justifyContent: 'space-between', padding: 10}}>
+         <Card.Actions style={{backgroundColor: '#FFFFFF',width: '100%', justifyContent: 'space-between', padding: 10}}>
              
              <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
                  {program.program_name}
@@ -540,7 +579,9 @@ class Programs extends React.Component {
            <Button color="rgb(229,57,53)" onPress={() => this.deleteUserProgram(program.program_structure_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>Delete</Button>
              </View>
          </Card.Actions>
-       </Card>
+                                    </Card>*/
+
+                                 
                                      )
                             })
                         }     
@@ -562,8 +603,6 @@ class Programs extends React.Component {
         
                         <ElementsButton type="solid" title="Create a Workout Program" buttonStyle={{backgroundColor: '#2196F3', borderRadius: 12}} style={{alignSelf: 'center', width: '90%'}} onPress={() => this.props.navigation.navigate('CreateProgram', {
                             navFrom: 'Programs',
-                            setPageIsPrograms: this.setPageIsPrograms.bind(this),
-                            setPageIsNotPrograms: this.setPageIsNotPrograms.bind(this)
                         })}/>
                 </View>
                     )
@@ -607,33 +646,23 @@ class Programs extends React.Component {
         this.RBSheet.current.close();
         this.setState({
             showShareProgramModal: true,
-            pageIsPrograms: false,
         })
     }
 
     closeShareProgramModal = () => {
         this.setState({
             showShareProgramModal: false,
-            pageIsPrograms: true,
         })
-    }
-
-    setPageIsPrograms = () => {
-        this.setState({ pageIsPrograms: true })
-    }
-
-    setPageIsNotPrograms = () => {
-        this.setState({ pageIsPrograms: false })
     }
 
     navigateToCreateProgram = () => {
-        this.setState({ pageIsPrograms: false })
+        this.mainRBSheet.current.close()
         this.props.navigation.navigate('CreateProgram', {
-            setPageIsPrograms: this.setPageIsPrograms.bind(this),
-            setPageIsNotPrograms: this.setPageIsNotPrograms.bind(this),
             navFrom: "Programs",
         })
     }
+
+
 
     async _prepareSearch() {
      //   await this.LUPA_CONTROLLER_INSTANCE.indexPrograms();
@@ -666,7 +695,7 @@ class Programs extends React.Component {
     mapFeaturedPrograms = () => {
         return this.state.featuredPrograms.map((program, index, arr) => {
                     return (
-                        <ProgramListComponent programData={program} key={index} index={index}  setPageIsPrograms={this.setPageIsPrograms} setPageIsNotPrograms={this.setPageIsNotPrograms} />
+                        <ProgramListComponent programData={program} key={index} index={index} />
                     )
         })
     }
@@ -674,48 +703,31 @@ class Programs extends React.Component {
 
     render() {
         return (
-            <View style={{flex: 1, backgroundColor: '#F2F2F2'}}>
+            <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
 
-<Header hasTabs style={{backgroundColor: '#F2F2F2', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
+<Header hasTabs style={{backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
 <Appbar.BackAction onPress={() => this.props.navigation.goBack()} color="#212121" />
-                    <Appbar.Content title="Lupa Programs"   titleStyle={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}} />
-                   {/* <Appbar.Action icon="filter-list" onPress={this.showFilter} color="#212121" />
-                    {
-                        this.props.lupa_data.Users.currUserData.isTrainer ?
-                             <Appbar.Action icon={() => <FeatherIcon name="bar-chart" size={22}/>} onPress={this.openTrainerInsights} color="#212121" />
-                       
-                        :
-                        null
-                    } */}
+                    <Appbar.Content title="Lupa Programs"   titleStyle={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 15, fontWeight: '600', alignSelf: 'center'}} />
+                   <Appbar.Action icon={() => <FeatherIcon name="activity" size={20} />} onPress={() => this.mainRBSheet.current.open()} color="#212121" />
                    
 </Header>
-        <Tabs tabContainerStyle={{backgroundColor: '#F2F2F2'}} renderTabBar={()=> <ScrollableTab ref={this.scrollableTab} tabsContainerStyle={{backgroundColor: '#F2F2F2'}} />}>
-          <Tab heading="Featured" tabStyle={{backgroundColor: '#F2F2F2'}} activeTabStyle={{backgroundColor: '#F2F2F2'}}>
-              <View style={{backgroundColor: '#F2F2F2', flex: 1}}>
-                
+        <Tabs tabContainerStyle={{backgroundColor: '#FFFFFF'}} renderTabBar={()=> <ScrollableTab ref={this.scrollableTab} tabsContainerStyle={{backgroundColor: '#FFFFFF'}} />}>
+          <Tab heading="Explore" tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}>
+              <View style={{backgroundColor: '#FFFFFF', flex: 1}}>
+              <SearchBar placeholder="Search"
+                        onChangeText={text => console.log(text)} 
+                        platform="ios"
+                        searchIcon={<FeatherIcon name="search" />}
+                        containerStyle={{backgroundColor: "transparent"}}
+                        value={this.state.searchValue}/>
 
-                    <ScrollView contentContainerStyle={{backgroundColor: '#F2F2F2'}} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.featuredIsRefreshing} onRefresh={() => this.handleOnRefresh()}/>}>
-                        <View style={{justifyContent: 'space-between'}}>
-
-                        <View style={{height: Dimensions.get('window').height / 2.5}}>
-                        <Text style={styles.headerText}>
-                        Curated By Lupa
-                    </Text>
-
-                        <Carousel 
-                        data={this.state.samplePhotoData}
-                        itemWidth={Dimensions.get('window').width - 100}
-                        sliderWidth={Dimensions.get('window').width}
-                        scrollEnabled={true}
-                        firstItem={1}
-                        renderItem={this._renderItem}
-                        />
-                        </View>
-
-
+                    <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF'}} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.featuredIsRefreshing} onRefresh={() => this.handleOnRefresh()}/>}>
                         <View style={{flex: 1}}>
                         <Text style={styles.headerText}>
-                        By Lupa Trainers
+                        Popular
+                    </Text>
+                    <Text style={{paddingLeft: 12, margin: 5}}>
+                        Popular programs this week
                     </Text>
                     <View style={{}}>
                         <ScrollView 
@@ -724,7 +736,7 @@ class Programs extends React.Component {
                         shouldRasterizeIOS={true} 
                         snapToAlignment={'center'} 
                         centerContent
-                      //  pagingEnabled={true}
+                        pagingEnabled={true}
                         snapToInterval={Dimensions.get('window').width / 1.2}
                         showsHorizontalScrollIndicator={false}>
                             {
@@ -733,31 +745,30 @@ class Programs extends React.Component {
                         </ScrollView>
                     </View>
                         </View>
-                                                </View>
+
+                        <View>
+                        <Text style={styles.headerText}>
+                        Subscriptions
+                    </Text>
+                    <Text style={{paddingLeft: 12, margin: 5}}>
+                        Program updates from trainers you are subscribed to
+                    </Text>
+                        </View>
+
+                        <View>
+                        <Text style={styles.headerText}>
+                        Saved
+                    </Text>
+                    <Text style={{paddingLeft: 12, margin: 5}}>
+                        Bookmarked programs saved for later
+                    </Text>
+                        </View>
                     </ScrollView>
                     </View>
-                    <SafeAreaView style={{backgroundColor: '#F2F2F2'}} />
+
           </Tab>
-          <Tab heading="Programs" tabStyle={{backgroundColor: '#F2F2F2'}} activeTabStyle={{backgroundColor: '#F2F2F2'}}>    
-          <SearchBar  
-                platform="ios" 
-                style={{backgroundColor: '#F2F2F2'}}
-                containerStyle={{backgroundColor: '#F2F2F2', borderColor: '#F2F2F2'}} 
-                style={{borderColor: '#F2F2F2'}} 
-                inputContainerStyle={{borderColor: '#F2F2F2'}} 
-                inputStyle={{ borderColor: '#F2F2F2'}} 
-                placeholder="Search"
-                value={this.state.searchValue}
-                onChangeText={text => this._performSearch(text)}
-                />
-                            <ScrollView style={{backgroundColor: '#F2F2F2'}}>
-                                {
-                                    this.showSearchResults()
-                                }
-                            </ScrollView>
-          </Tab>
-          <Tab heading="My Programs" tabStyle={{backgroundColor: '#F2F2F2'}} activeTabStyle={{backgroundColor: '#F2F2F2'}}>
-                            <ScrollView centerContent={this.state.currUserPrograms.length == 0 || this.state.currUserPrograms == undefined ? true : false} contentContainerStyle={{flex: 1, backgroundColor: '#F2F2F2'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.setState({ currUserPrograms: getCurrentStoreState().Programs.currUserProgramsData })} />}>
+          <Tab heading="My Programs" tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}>
+                            <ScrollView centerContent={this.state.currUserPrograms.length == 0 || this.state.currUserPrograms == undefined ? true : false} contentContainerStyle={{flex: 1, backgroundColor: '#FFFFFF'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.setState({ currUserPrograms: getCurrentStoreState().Programs.currUserProgramsData })} />}>
                                 {
                                     this.mapPrograms()
                                 }
@@ -766,7 +777,7 @@ class Programs extends React.Component {
           </Tab>
           {/*
 
-          <Tab heading="Waitlist" tabStyle={{backgroundColor: '#F2F2F2'}} activeTabStyle={{backgroundColor: '#F2F2F2'}}>
+          <Tab heading="Waitlist" tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}>
               {
                   this.mapWaitlist()
               }
@@ -774,36 +785,11 @@ class Programs extends React.Component {
             </Tab>*/}
           
         </Tabs>
-            
-       
-       {
-           this.props.lupa_data.Users.currUserData.isTrainer && this.state.pageIsPrograms ?
-                  <Portal>
-                  <FAB.Group
-                  color="#FFFFFF"
-                    open={this.state.open}
-                    icon={this.state.open ? 'list' : 'add'}
-                    actions={[
-                      { icon: 'fitness-center', label: 'Create a Program', color: "#212121" ,onPress: () => this.navigateToCreateProgram()},
-                     // { icon: () => <FeatherIcon name="shield" size={23} color="#212121" />, label: 'Create a Service', onPress: () => this.setState({ showCreateServiceDialog: true }) },
-                    ]}
-                    onStateChange={this._onStateChange}
-                    onPress={() => {
-                      if (this.state.open) {
-                        // do something if the speed dial is open
-                      }
-                    }}
-                    fabStyle={{backgroundColor: '#2196F3'}}
-                  />
-                </Portal>
-                :
-                null
-       }
 
+       {this.getMainRBSheet()}
         <ProgramsFilter filterHeight={this.state.filterHeight} handleApplyFilterOnPress={this.handleApplyFilterOnPress} handleCancelButtonOnPress={this.handleCancelButtonOnPress} disableSwipe={this.props.disableSwipe} enableSwipe={this.props.enableSwipe} />
             <ShareProgramModal isVisible={this.state.showShareProgramModal} following={this.props.lupa_data.Users.currUserData.following} currUserData={this.props.lupa_data.Users.currUserData} program={this.state.currProgramClicked} closeModalMethod={this.closeShareProgramModal} />
-           <TrainerInsights isVisible={this.state.trainerInsightsVisible} closeModalMethod={this.closeTrainerInsights} />
-           
+
             </View>
         )
     }
@@ -811,16 +797,13 @@ class Programs extends React.Component {
 
 const styles = StyleSheet.create({
     headerText: {
-        fontFamily: 'ARSMaquettePro-Black', 
-        margin: 5, 
-        padding: 5, 
-        alignSelf: 'flex-start', 
-        color: '#212121', 
-        fontWeight: 'bold', 
-        fontSize: 25
+        fontFamily: 'ARSMaquettePro-Medium', 
+        fontSize: 35, 
+        paddingLeft: 12,
+        margin: 5,
     },
     filterText: {
-        color: '#F2F2F2',
+        color: '#FFFFFF',
         fontFamily: 'ARSMaquettePro-Regular',
         fontSize: 15
     }

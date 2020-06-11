@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 
 import {request, PERMISSIONS, RESULTS, check} from 'react-native-permissions';
+import Contacts from 'react-native-contacts'; 
 import { requestNotificationPermission } from '../../firebase/firebase';
 
 /**
@@ -177,6 +178,18 @@ export default _requestPermissionsAsync = () => {
     // …
     alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
   });
+
+
+      Contacts.requestPermission((err, permission) => {
+        if (permission == 'authorized')
+        {
+            //granted
+        }
+        else
+        {
+            //denied
+        }
+      })
 
   requestNotificationPermission();
 }

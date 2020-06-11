@@ -173,7 +173,7 @@ class Lupa extends React.Component {
    * 
    */
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, lupaWorkouts, lupaAssessments;
+    let currUserData, currUserPacks, currUserHealthData = {}, currUserPrograms, lupaWorkouts  =[], lupaAssessments=[];
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -182,21 +182,13 @@ class Lupa extends React.Component {
       currUserPacks = result;
     })
 
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
-      currUserHealthData = result;
-    });
-
     await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
     })
 
-    await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
-      lupaWorkouts = result;
-    });
+    lupaWorkouts = await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts()
 
-    await this.LUPA_CONTROLLER_INSTANCE.loadAssessments().then(result => {
-      lupaAssessments = result;
-    })
+    lupaAssessments = await this.LUPA_CONTROLLER_INSTANCE.loadAssessments()
 
 
     let userPayload = {

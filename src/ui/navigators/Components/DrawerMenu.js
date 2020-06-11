@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { NavigationActions, withNavigation } from 'react-navigation';
 import DrawerIcon from "react-native-vector-icons/Feather"
 
@@ -24,8 +24,10 @@ import {
 } from 'react-native-paper';
 
 import { Constants } from 'react-native-unimodules';
+import TrainerInsights from '../../user/trainer/TrainerInsights';
+import WorkoutLogModal from '../../workout/modal/WorkoutLogModal';
 
-const ICON_SIZE = 12;
+const ICON_SIZE = 20;
 
 /**
  * This component render a drawer menu. The drawer menu contains all of the content for the
@@ -33,6 +35,9 @@ const ICON_SIZE = 12;
  * @param {Object} props Properties that this component receives.
  */
 function DrawerMenu(props) {
+  const [trainerInsightsModalIsOpen, setTrainerInsightsModalOpen] = useState(false)
+  const [workoutLogModalIsOpen, setWorkoutLogIsOpen] = useState(false)
+
   const currUserData = useSelector(state => {
     return state.Users.currUserData;
   })
@@ -51,6 +56,16 @@ params: {userUUID: currUserData.user_uuid, navFrom: 'Drawer'},
 action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: currUserData.user_uuid, navFrom: 'Drawer'}})
 })
         )
+  }
+
+  const navigateToDashboard = () => {
+   props.navigation.navigate('Dashboard')
+  }
+
+  const navigateToTrainerInformation = () => {
+    props.navigation.navigate('TrainerInformation', {
+      navFrom: 'Drawer'
+    })
   }
 
   /**
@@ -83,46 +98,62 @@ action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: cu
 
         <Divider />
 
+        <TouchableOpacity onPress={navigateToDashboard}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="clipboard" size={ICON_SIZE} style={styles.iconMargin}/>
-        <Button mode="text" color="grey" compact onPress={() => props.navigation.navigate('Dashboard')}>
-          <Text>
-            Dashboard
+          <Text style={{fontSize: 16, fontWeight: '300'}}>
+           Dashboard
           </Text>
-        </Button>
         </View>
+        </TouchableOpacity>
 
 
+        <TouchableOpacity onPress={navigateToTrainerInformation}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="file-text" size={ICON_SIZE} style={styles.iconMargin}/>
-        <Button mode="text" color="grey" compact onPress={() => props.navigation.navigate('TrainerInformation', {
-          navFrom: 'Drawer'
-        })}>
-          <Text>
-          Register as a Lupa Trainer
+          <Text style={{fontSize: 16, fontWeight: '300'}}>
+           Register Trainer Account
           </Text>
-        </Button>
+        </View>
+        </TouchableOpacity>
+
+        <Divider />
+
+        <TouchableOpacity onPress={() => setWorkoutLogIsOpen(true)}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="file-text" size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={{fontSize: 16, fontWeight: '300'}}>
+           Log a Workout
+          </Text>
+        </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setTrainerInsightsModalOpen(true)}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="file-text" size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={{fontSize: 16, fontWeight: '300'}}>
+           Trainer Insights
+          </Text>
+        </View>
+        </TouchableOpacity>
+        
+        <Divider />
+
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="clipboard" size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={{fontSize: 16, fontWeight: '300'}}>
+           Terms of Service and Privacy
+          </Text>
         </View>
 
-        <View style={styles.drawerFooter}>
-          <Divider />
-          <Caption style={styles.healthCareCaption}>
-            Preventative Healthcare
-          </Caption>
-          <Divider />
-          <View style={styles.footerSection}>
-          <Caption style={{color: '#1565C0'}}>
-            Terms of Service
-          </Caption>
-          <Caption style={{color: '#1565C0'}}>
-            Privacy Policy
-          </Caption>
-          </View>
-        </View>
-
-        <Button mode="text" compact color="#1565C0" onPress={_handleLogout}>
+        <View style={{position: 'absolute', bottom: 80, width: '100%'}}>
+        <Button style={{alignSelf: 'center'}} mode="text" compact color="#1565C0" onPress={_handleLogout}>
     Log out
     </Button>
+        </View> 
+
+        <TrainerInsights isVisible={trainerInsightsModalIsOpen} closeModalMethod={() => setTrainerInsightsModalOpen(false)} />
+       <WorkoutLogModal isVisible={workoutLogModalIsOpen} closeModalMethod={() => setWorkoutLogIsOpen(false)} />
     </SafeAreaView>
   </View>
   )
@@ -159,14 +190,15 @@ export default withNavigation(DrawerMenu);
     navigationButtonContaner: {
       flexDirection: 'row', 
       alignItems: 'center', 
-      margin: 10
+      margin: 15,
+      width: '90%'
     },
     drawerHeaderText: { 
       fontSize: 15,
       fontFamily: 'ARSMaquettePro-Regular'
     },
     iconMargin: {
-      margin: 3
+      marginHorizontal: 8
     },
     healthCareCaption: {
       alignSelf: 'center', 
