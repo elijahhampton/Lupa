@@ -93,6 +93,31 @@ const initialAssessmentsReducerState = {
 
 const initialState = {}
 
+const formReducer = (state = initialState, action) => {
+  switch(action.type) {
+     case 'FORM_INPUT_UPDATE':
+       const updateValues = {
+         ...state.inputValues,
+         [action.input]: action.value
+       }
+       const updatedValidities = {
+         ...state.inputValidities,
+         [action.input]: action.isValid
+       }
+       let updateFormIsValid = true;
+       for (const key in updatedValidities) {
+        updateFormIsValid = updateFormIsValid && updatedValidities[key];
+       }
+       return {
+      formIsValid: updateFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues,
+    }
+    default:
+      return state
+  }
+}
+
 /**
  * Redux Reducers
  * action: { type, val }
@@ -263,7 +288,8 @@ const LupaReducer = combineReducers({
   Programs: programsReducer,
   Users: userReducer,
   Application_Workouts: workoutsReducer,
-  Assessments: assessmentsReducer
+  Assessments: assessmentsReducer,
+  FormReducer: formReducer,
 });
 
 export default LupaReducer;
