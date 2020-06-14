@@ -33,7 +33,7 @@ function ProgramSearchResultCard(props) {
 
         if (result.program_participants.includes(currUserData.user_uuid))
         {
-           props.navigation.push('LiveWorkout', {
+            props.navigation.push('LiveWorkout', {
                 programData: result,
             });
         }

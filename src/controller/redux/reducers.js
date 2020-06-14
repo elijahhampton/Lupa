@@ -23,6 +23,16 @@ handleUserAttributeUpdate = (state, payload) => {
     case 'bio':
       updatedState.bio = payload.value;
       break;
+    case 'bookmarked_programs':
+      if (updatedState.bookmarked_programs.includes(payload.value))
+      {
+        updatedState.bookmarked_programs.splice(updatedState.bookmarked_programs.indexOf(payload.value), 1);
+      }
+      else
+      {
+        updatedState.bookmarked_programs.push(payload.value)
+      }
+      break;
     default:
   }
 

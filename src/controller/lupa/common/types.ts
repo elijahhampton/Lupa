@@ -17,7 +17,9 @@ export enum UserCollectionFields {
     HOME_GYM="homegym",
     CHATS="chats",
     TOKENS="tokens",
-    PROGRAMS="programs"
+    PROGRAMS="programs",
+    WORKOUT_LOG="workout_log",
+    BOOKMARKED_PROGRAMS="bookmarked_programs"
 }
 
 export enum Days {
@@ -99,8 +101,9 @@ export type LupaUserStructure = {
     tokens: Object,
     waitlistedPrograms: Array<String>,
     notifications: Array<Object>,
-    programs: Array<String>
-    services: Array<String>
+    programs: Array<String>,
+    services: Array<String>,
+    workout_log: []
 };
 
 export type LupaAssessmentStructure = {
@@ -130,6 +133,7 @@ export type LupaPackStructure = {
     pack_time_created: '',
     pack_location: '',
     pack_requests: Array<String>,
+    pack_visibility: String,
 };
 
 /* LupaHealthDataStructure */

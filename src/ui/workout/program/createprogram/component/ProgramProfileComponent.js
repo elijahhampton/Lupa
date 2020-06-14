@@ -50,19 +50,27 @@ class ProgramProfileComponent extends React.PureComponent {
 
         this.state = {
             programModalVisible: false,
-            programData: getLupaProgramInformationStructure()
+            programData: getLupaProgramInformationStructure(),
         }
     }
 
     componentDidMount = async () => {
-        let programInformationIn;
-        await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.programData.program_structure_uuid).then(result => {
-            programInformationIn = result;
-        });
 
-        await this.setState({
-            programData: programInformationIn,
-        })
+            let programInformationIn;
+
+            try {
+                await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.programData.program_structure_uuid).then(result => {
+                    programInformationIn = result;
+                });
+        
+                await this.setState({
+                    programData: programInformationIn,
+                })
+            } catch(error) {
+                this.setState({
+                    programData: []
+                })
+            }
     }
 
     /**

@@ -41,11 +41,10 @@ function AssessmentView(props) {
     }
 
         return (
-            <Animated.View style={{height: surfaceHeight, width: Dimensions.get('window').width - 10}}>
+            <Animated.View style={{height: 'auto', width: Dimensions.get('window').width}}>
             <Surface 
-            style={{alignSelf: 'center', margin: 15, padding: 15, backgroundColor: "#FFFFFF", width: '95%', borderRadius: 25, elevation: 0}}>
-                            <ScrollView>
-                                <TouchableWithoutFeedback onPress={surfaceIsOpen == false ? openTab : closeTab}>
+            style={{alignSelf: 'center', padding: 15, backgroundColor: "#FFFFFF", width: '100%', borderRadius: 25, elevation: 0}}>
+                <TouchableWithoutFeedback onPress={surfaceIsOpen == false ? openTab : closeTab}>
                                 <View>
                                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}> 
                                     <Text style={{paddingVertical: 3, fontSize: 20, fontFamily: 'HelveticaNeueLight'}}>
@@ -59,16 +58,18 @@ function AssessmentView(props) {
                 </View>
                                 </TouchableWithoutFeedback>
 
-                {
-                    lupaAssessments.map(assessment => {
-                        return (
-                            <AssessmentComponent 
-                                assessmentObjectIn={assessment}
-                                />
-                        )
-                    })
-                }
-            </ScrollView>
+                                <ScrollView contentContainerStyle={{height: surfaceIsOpen == true ? 'auto' : 0}}>
+
+{
+    lupaAssessments.map(assessment => {
+        return (
+            <AssessmentComponent 
+                assessmentObjectIn={assessment}
+                />
+        )
+    })
+}
+</ScrollView>
             </Surface>
             </Animated.View>
         )

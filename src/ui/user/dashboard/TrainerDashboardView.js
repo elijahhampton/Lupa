@@ -144,6 +144,7 @@ class TrainerDashboardView extends React.Component {
     }
 
     componentDidMount = async () => {
+        this.props.enableSwipe()
         //await this.fetchPackEvents();
         //await this.fetchPackInvites();
     }
@@ -291,8 +292,8 @@ class TrainerDashboardView extends React.Component {
                                          </View>
 
                                          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                         <ThinFeatherIcon name="bell" thin={true} size={25} style={{marginRight: 20}} onPress={() => this.props.navigation.push('Notifications')} />
-                                         <ThinFeatherIcon name="mail" thin={true} size={25} style={{marginRight: 20}} onPress={() => this.props.navigation.push('Notifications')} />
+                                         <ThinFeatherIcon name="bell" thin={true} size={25} style={{marginRight: 20}} onPress={() => this.props.navigation.navigate('Notifications')} />
+                                         <ThinFeatherIcon name="mail" thin={true} size={25} style={{marginRight: 20}} onPress={() => this.props.navigation.navigate('Messages')} />
                                          </View>
                                         </View>
                                          <Divider style={{marginTop: 15}} />
@@ -304,38 +305,6 @@ class TrainerDashboardView extends React.Component {
                         refreshing={this.state.refreshing}
                         onRefresh={this._onRefresh}
                     />}>
-                        
-{/*
-<View>
-                    <View style={{padding: 10, flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', height: 'auto'}}>
-                        <Surface style={{elevation: 0, padding: 10, margin: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#F2F2F2', width: '100%'}}>
-                            <Text style={{color: '#1565C0', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15, padding: 5, textAlign: 'center'}}>
-                                Try the EMS assessment
-                            </Text>
-
-                            <Text style={{color: '#292f33', fontWeight: '300', textAlign: 'center', padding: 5}}>
-                            The EMS assessment is designed to simulate the critical physical tasks performed by paramedics and EMTs during emergency situations.
-                            </Text>
-
-                            <Button mode="contained" style={{margin: 10, width: '60%', elevation: 0}} theme={{
-                                colors: {
-                                    primary: '#1565C0'
-                                },
-                                roundness: 10,
-    
-                            }}>
-                                <Text>
-                                    Take Assessment
-                                </Text>
-                            </Button>
-                            <FeatherIcon name="x" size={15} color="#212121" style={{overflow: 'hidden', backgroundColor: '#F2F2F2', borderRadius: 10, padding: 5, position: 'absolute', top: 0, right: 0, margin: 10}} />
-                        </Surface>
-
-                    </View>
-
-                    </View>
-                        */}
-
 
                     <AssessmentView />
                     <Divider style={{width: '100%'}} />
@@ -388,7 +357,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexGrow: 2,
         flexDirection: 'column',
-        padding: 10,
+
         backgroundColor: '#FFFFFF'
     },
     safeareaview: {
@@ -441,4 +410,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default connect(mapStateToProps)(TrainerDashboardView);
+export default connect(mapStateToProps)(withNavigation(TrainerDashboardView));

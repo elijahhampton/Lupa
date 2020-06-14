@@ -50,8 +50,6 @@ class CreateProgram extends React.Component {
     constructor(props) {
         super(props);
 
-        this.props.disableSwipe();
-
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
@@ -69,9 +67,19 @@ class CreateProgram extends React.Component {
     async componentDidMount() {
         this.props.disableSwipe();
 
-        const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
-        this.setState({ currProgramUUID: programPayload.program_structure_uuid })
-        this.setState({ programData: programPayload})
+        if (this.props.navigation.state.params.mode == "CREATE")
+        {
+            const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
+            this.setState({ currProgramUUID: programPayload.program_structure_uuid })
+            this.setState({ programData: programPayload})
+        }
+        else if (this.props.navigation.state.params.mode == "EDIT")
+        {
+                this.setState({ programComplete: true })
+                this.setState({ currProgramUUID: this.props.navigation.state.params.programData.program_structure_uuid })
+                this.setState({ programData: this.props.navigation.state.params.programData})
+
+            }
     }
 
     async componentWillUnmount() {

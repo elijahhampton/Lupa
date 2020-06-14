@@ -19,6 +19,7 @@ import LiveWorkout from '../workout/modal/LiveWorkout';
 import Programs from '../workout/program/Programs';
 import CardFormScreen from '../src/scenes/CardFormScreen'
 import CreateProgram from '../workout/program/createprogram/CreateProgram';
+import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 
 
 const ProfileNavigator = createStackNavigator(
@@ -99,7 +100,13 @@ const ProfileNavigator = createStackNavigator(
         })
       },
       CreateProgram: {
-        screen: (props) => <CreateProgram {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+        screen: (props) => <CreateProgram  {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+        initialParams: {
+            mode: "CREATE",
+            currProgramUUID: "",
+            programData: getLupaProgramInformationStructure()
+        },
+        mode: "modal",
         navigationOptions: ({navigation}) => ({
           title: "CreateProgram",
           header: null,

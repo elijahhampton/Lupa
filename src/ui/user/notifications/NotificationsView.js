@@ -40,6 +40,7 @@ class NotificationsView extends React.Component {
         let notificationsIn = [];
 
         this.props.disableSwipe();
+
         try {
             await this.LUPA_CONTROLLER_INSTANCE.getUserNotifications().then(notifications => {
                 notificationsIn = notifications;
@@ -66,8 +67,8 @@ class NotificationsView extends React.Component {
         })
     }
 
-    componentWillUnmount() {
-        this.props.enableSwipe();
+    async componentWillUnmount() {
+        await this.props.enableSwipe();
     }
 
     handleOnRefresh = () => {
@@ -86,7 +87,7 @@ class NotificationsView extends React.Component {
                         primary: '#F2F2F2'
                     }
                 }}>
-                    <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
+                    <Appbar.BackAction onPress={() => this.props.navigation.goBack()} />
                     <Appbar.Content title="Notifications" />
                 </Appbar.Header>
                 <ScrollView contentContainerStyle={{}}>

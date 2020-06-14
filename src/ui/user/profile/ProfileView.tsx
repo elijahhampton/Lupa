@@ -887,6 +887,10 @@ NavigationActions.navigate({
                     else
                     {
                         return this.state.userData.programs.map(program => {
+                            if(typeof(program) == 'undefined')
+                            {
+                                return null
+                            }
                             return (
                                  <ProgramProfileComponent programData={program} />
                             )

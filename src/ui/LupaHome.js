@@ -70,48 +70,36 @@ const SamplePhotoOne = require('./images/programs/sample_photo_one.jpg')
 const SamplePhotoTwo = require('./images/programs/sample_photo_two.jpg')
 const SamplePhotoThree = require('./images/programs/sample_photo_three.jpg')
 
-const cities = [
+const CITIES = [
+    "",
     "Auburn",
-    "San Francisco",
 ]
 
-const states = [
-
+const STATES = [
+    "",
+   "Alabama",
 ]
 
-function SearchFilterPicker(props) {
-    const [selectedValue, setSelectedValue] = useState("")
+const BODY_TYPES = [
+    "",
+    "Body Type",
+    "Body Type",
+    "Body Type",
+]
 
-    const getPickerValues = (currSearchFilter) => {
-        switch(currSearchFilter)
-        {
-            case "City":
-                return cities;
-            default:
-                return []
-        }
-    }
+const PRICES_RANGES = [
+ "$0 - $7",
+ "$7 - $15",
+ "$15 - $25"
+]
 
-    return (
-        <Modalize ref={props.searchAttributePickerModalRef} modalHeight={Dimensions.get('window').height / 3}>
-                <Picker
-  selectedValue={selectedValue}
-  style={{flex: 1}}
-  onValueChange={(itemValue, itemIndex) =>
-    setSelectedValue(itemValue)
-  }>
-      {
-          getPickerValues(props.pickerValues).map(val => {
-              return <Picker.Item label={val} value={val} />
-          })
-      }
-</Picker>
-        </Modalize>
-    )
-}
+const CERTIFICATIONS = [
+    "",
+    "NASM"
+]
 
 
-mapStateToProps = (state, action) => {
+const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
     }
@@ -132,11 +120,11 @@ class LupaHome extends React.Component {
             currCardIndex: 0,
             cardData: [1,2,3,4,5,6],
             data: [ 
-                {text: 'City', icon: 'activity'}, 
-                {text: 'State', icon: 'anchor'}, 
-                {text: 'Body Type', icon: 'map-pin'},
-                {text: 'Certification', icon: 'map-pin'},
-                {text: 'Price', icon: 'map-pin'}
+                {text: 'City', icon: 'activity', chipID: 0}, 
+                {text: 'State', icon: 'anchor', chipID: 1}, 
+                {text: 'Body Type', icon: 'map-pin', chipID: 2},
+                {text: 'Certification', icon: 'map-pin', chipID: 3},
+                {text: 'Price', icon: 'map-pin', chipID: 4}
             ],
             samplePhotoData: [
                 SamplePhotoOne,
@@ -148,7 +136,12 @@ class LupaHome extends React.Component {
             featuredPrograms: [],
             programModalVisible: false,
             inviteFriendsIsVisible: false,
-            currSearchFilter: ""
+            currSearchFilter: "",
+            stateSearchFilterVal: "State",
+            citySearchFilterVal: "City",
+            certificationSearchFilterVal: "Certification",
+            bodyTypeSearchFilterVal: "Body Type",
+            priceSearchFilterVal: "Price",
         }
 
         this.searchAttributePickerModalRef = React.createRef()
@@ -156,7 +149,7 @@ class LupaHome extends React.Component {
     }
 
    async componentDidMount() {
-        this.setState({ inviteFriendsIsVisible: true })
+       // this.setState({ inviteFriendsIsVisible: true })
         await this.loadFeaturedPrograms();
     }
 
@@ -165,11 +158,16 @@ class LupaHome extends React.Component {
     }
 
     loadFeaturedPrograms = async () => {
-        let featuredProgramsIn;
+        let featuredProgramsIn = []
 
-        await this.LUPA_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
-            featuredProgramsIn = result;
-        });
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
+                featuredProgramsIn = result;
+            });
+    
+        } catch(error) {
+            featuredProgramsIn = []
+        } 
 
         await this.setState({
             featuredPrograms: featuredProgramsIn,
@@ -180,9 +178,38 @@ class LupaHome extends React.Component {
         this.setState({ trainerInsightsVisible: false })
     }
 
-    _performSearch = () => {
-        this.state.searchValue == "" ? this.setState({ searching: false }) : this.setState({ searching: true })
-    }
+        _performSearch = async searchQuery => {
+            let searchResultsIn;
+   
+            //If no search query then set state and return
+            if (searchQuery == "" || searchQuery == "")
+            {
+               await this.setState({
+                   searching: true,
+                   searchValue: "",
+                   searchResults: [],
+               })
+   
+               return;
+            }
+   
+            await this.setState({
+                searchResults: [],
+                searching: true,
+            })
+   
+            await this.setState({
+                searchValue: searchQuery,
+            })
+    
+           /* await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+                searchResultsIn = searchData;
+            })*/
+   
+            await this.setState({ searchResults: searchResultsIn, searching: false });
+   
+            await this.setState({ searchResults: [], searching :false });
+        }
 
     _renderItem = ({item, index}) => {
         return (
@@ -204,25 +231,145 @@ class LupaHome extends React.Component {
         );
     }
 
-    getMenuItems = (menuTitle) => {
-        switch(menuTitle)
+
+    handleFilerOnPress = async (chipID) => {
+        await this.setState({ currSearchFilter: chipID})
+        this.searchAttributePickerModalRef.current.open()
+    }
+
+    getChipText(chipID)
+    {
+        switch(chipID)
         {
-            case "City":
-                return (
-                <Menu.Item title="Test" style={{height: 35, padding: 0, margin: 0, alignItems: 'center', justifyContent: 'center'}} />
+            case 0: //city
+                return(
+                    <Text style={{fontFamily: 'HelveticaNeueMedium', color: '#212121'}}>
+                        {this.state.citySearchFilterVal}
+                </Text>
                 )
-                break;
+            case 1: //state
+                return(
+                    <Text style={{fontFamily: 'HelveticaNeueMedium', color: "#212121"}}>
+                    {this.state.stateSearchFilterVal}
+                </Text>
+                )
+            case 2: //body type
+                return(
+                    <Text style={{fontFamily: 'HelveticaNeueMedium', color: "#212121"}}>
+                        {this.state.bodyTypeSearchFilterVal}
+                </Text>
+                )
+            case 3: //certification
+                return(
+                    <Text style={{fontFamily: 'HelveticaNeueMedium', color: "#212121"}}>
+                        {this.state.certificationSearchFilterVal}
+                </Text>
+                )
+            case 4: //price
+                return(
+                    <Text style={{fontFamily: 'HelveticaNeueMedium', color: "#212121"}}>
+                        {this.state.priceSearchFilterVal}
+                </Text>
+                )
+            default:
         }
     }
 
-    handleFilerOnPress = async (menuTitle) => {
-        switch(menuTitle)
+    getPicker = (currSearchFilter) => {
+        switch(currSearchFilter) {
+            case 0:
+                return (
+                    <Picker
+                    style={{flex: 1}}
+                    selectedValue={this.state.citySearchFilterVal}
+                    onValueChange={(itemValue, itemIndex) => {
+                        this.setState({ citySearchFilterVal: itemValue})
+                    }}>
+                        {
+                            this.getPickerValues(this.state.currSearchFilter).map(val => {
+                                return <Picker.Item label={val} value={val} key={val} />
+                            })
+                        }
+                  </Picker>
+                )
+            case 1:
+                return (
+                    <Picker
+                    style={{flex: 1}}
+                    selectedValue={this.state.stateSearchFilterVal}
+                    onValueChange={(itemValue, itemIndex) => {
+                        this.setState({ stateSearchFilterVal: itemValue})
+                    }}>
+                        {
+                            this.getPickerValues(this.state.currSearchFilter).map(val => {
+                                return <Picker.Item label={val} value={val} key={val}/>
+                            })
+                        }
+                  </Picker>
+                )
+                case 2:
+                    return (
+                        <Picker
+                        style={{flex: 1}}
+                        selectedValue={this.state.bodyTypeSearchFilterVal}
+                        onValueChange={(itemValue, itemIndex) => {
+                            this.setState({ bodyTypeSearchFilterVal: itemValue})
+                        }}>
+                            {
+                                this.getPickerValues(this.state.currSearchFilter).map(val => {
+                                    return <Picker.Item label={val} value={val} key={val}/>
+                                })
+                            }
+                      </Picker>
+                    )
+                    case 3:
+                        return (
+                            <Picker
+                            style={{flex: 1}}
+                            selectedValue={this.state.certificationSearchFilterVal}
+                            onValueChange={(itemValue, itemIndex) => {
+                                this.setState({ certificationSearchFilterVal: itemValue})
+                            }}>
+                                {
+                                    this.getPickerValues(this.state.currSearchFilter).map(val => {
+                                        return <Picker.Item label={val} value={val} key={val}/>
+                                    })
+                                }
+                          </Picker>
+                        )
+                        case 4:
+                            return (
+                                <Picker
+                                style={{flex: 1}}
+                                selectedValue={this.state.priceSearchFilterVal}
+                                onValueChange={(itemValue, itemIndex) => {
+                                    this.setState({ priceSearchFilterVal: itemValue})
+                                }}>
+                                    {
+                                        this.getPickerValues(this.state.currSearchFilter).map(val => {
+                                            return <Picker.Item label={val} value={val} key={val}/>
+                                        })
+                                    }
+                              </Picker>
+                            )
+        }
+    }
+
+    getPickerValues = (currSearchFilter) => {
+        switch(currSearchFilter)
         {
-            case "City":
-                console.log('MEE')
-                await this.setState({ currSearchFilter: menuTitle})
-                this.searchAttributePickerModalRef.current.open()
-                break;
+            case 0:
+                return CITIES
+            case 1:
+                return STATES
+            case 2:
+                return BODY_TYPES
+            case 3:
+                return CERTIFICATIONS
+            case 4:
+                return PRICES_RANGES
+            default:
+                return []
         }
     }
 
@@ -231,21 +378,21 @@ class LupaHome extends React.Component {
             <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                 <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 2}}>
                 <SearchBar placeholder="Search trainers"
-                        onChangeText={text => console.log(text)} 
+                        onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
                         containerStyle={{backgroundColor: "transparent"}}
                         value={this.state.searchValue}/>
                 </Appbar.Header>
 
-                <Surface style={{flex: 0.5, marginTop: 1, elevation: 2}}>
+                <Surface style={{height: 80, marginTop: 1, elevation: 2}}>
                     
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}} onMoveShouldSetResponder={evt => {
                         this.props.disableSwipe();
                         return true;
                     }}
                     onTouchEnd={() => this.props.enableSwipe()}>
-                    <FeatherIcon name="sliders" size={20} style={{margin: 6}} />
+                    <FeatherIcon name="sliders" size={15} style={{margin: 6}} />
                     <ScrollView bounces={false} horizontal={true} contentContainerStyle={{alignItems: 'center', justifyContent: 'center',}}>
                         {
                             this.state.data.map((currVal, index, arr) => {
@@ -253,13 +400,13 @@ class LupaHome extends React.Component {
                                 // deep - rgba(41,98,255 ,1)
                                 return (
                                         <Chip 
-                                        onPress={() => this.handleFilerOnPress(currVal.text)} 
+                                        onPress={() => this.handleFilerOnPress(currVal.chipID)} 
                                         mode="outlined"  
                                         icon={() => <FeatherIcon size={15}  name="chevron-down" color="#212121" />} 
                                         style={{backgroundColor: 'transparent', elevation: 0, margin: 5, marginVertical: 10, width: 'auto', borderRadius: 12}}>
-                                            <Text style={{fontFamily: 'HelveticaNeueMedium', color: '#1089ff'}}>
-                                                {currVal.text}
-                                            </Text>
+                                            {
+                                                this.getChipText(currVal.chipID) 
+                                            }
                                         </Chip> 
                                )
                             })
@@ -268,6 +415,15 @@ class LupaHome extends React.Component {
                     </View>
                 </Surface>
 
+                {
+                    this.state.searchValue != "" ?
+                    <View style={{flex: 4}}>
+                        <ScrollView>
+
+                        </ScrollView>
+                    </View>
+                    :
+<ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2,}}>
                 <View style={{flex: 4}}>
                 <View
                     style={{flex: 0.6, justifyContent: 'center', justifyContent: 'center' }}
@@ -342,10 +498,16 @@ class LupaHome extends React.Component {
                         </Text>
                     </Button>
                     </View>
-                    </View>
+                    </View>  
+                    </ScrollView>
+                    }
                     
-                <SearchFilterPicker searchAttributePickerModalRef={this.searchAttributePickerModalRef} pickerValues={this.state.currSearchFilter} />
                 <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
+                
+                <Modalize ref={this.searchAttributePickerModalRef} modalHeight={Dimensions.get('window').height / 3}>
+                    {this.getPicker(this.state.currSearchFilter)}
+        </Modalize>
+                
                 <SafeAreaView />
             </View>
         );

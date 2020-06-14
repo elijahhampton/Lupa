@@ -235,6 +235,10 @@ export default class UserController {
         return false;
     }
 
+    addEntryToWorkoutLog = (entry) => {
+        this.updateCurrentUser('workout_log', entry, 'add', "")
+    }
+
     updateCurrentUser = async (fieldToUpdate, value, optionalData = "", optionalDataTwo = "") => {
         let currentUserHealthDocumentData;
 
@@ -451,39 +455,45 @@ export default class UserController {
             case UserCollectionFields.FOLLOWING:
                 /* For now we don't handle this year */
                 break;
-            case HealthDataCollectionFields.GOALS:
-                let currentUserGoals = currentUserHealthDocumentData.goals;
-                if (optionalData === 'add') {
+            case UserCollectionFields.WORKOUT_LOG:
+            let updatedData = []    
 
-                    let goalStructures = getPathwaysForGoalUUID(value);
-                    let goalObject = {
-                        goal_uuid: value,
-                        pathways: goalStructures
-                    }
+            await currentUserDocument.get().then(snapshot => {
+                updatedData = snapshot.data().workout_log;
+            });
 
-                    currentUserGoals.push(goalObject);
-                    currentUserHealthDocument.set({
-                        goals: currentUserGoals
-                    }, {
-                        merge: true,
-                    })
-                }
-                else if (optionalData === 'remove') {
 
-                    let index;
+            if (optionalData == 'add') {
+                    updatedData.push(value);
+            }    
+            
+            await currentUserDocument.update({
+                    workout_log: updatedData
+                });
 
-                    for (let i = 0; i < currentUserGoals.length; i++) {
-                        index = currentUserGoals[i].goal_uuid.indexOf(value);
-                    }
-
-                    currentUserGoals.splice(index);
-                    currentUserHealthDocument.set({
-                        goals: currentUserGoals
-                    }, {
-                        merge: true,
-                    })
-                }
                 break;
+            case UserCollectionFields.BOOKMARKED_PROGRAMS:
+                let updatedBookmarks;
+
+                await currentUserDocument.get().then(snapshot => {
+                    updatedBookmarks = snapshot.data().bookmarked_programs
+                });
+
+                if (updatedBookmarks.includes(value))
+                {
+                    await updatedBookmarks.splice(updatedBookmarks.indexOf(value), 1);
+                }
+                else
+                {
+                    await updatedBookmarks.push(value)
+                }
+
+                await currentUserDocument.update({
+                    bookmarked_programs: updatedBookmarks
+                })
+
+                break;
+                
         }
     }
 
@@ -1558,6 +1568,56 @@ export default class UserController {
         
                 return Promise.resolve(updatedProgramSnapshot);
       }
+
+      addWorkoutLogEntry = (entry) => {
+        this.updateCurrentUser('workout_log', entry, 'add', "");
+    }
+
+    toggleProgramBookmark = (userUUID, programUUID) => {
+        this.updateCurrentUser('bookmarked_programs', programUUID, '', '')  
+    }
+
+    getBookmarkedPrograms = async () => {
+        let uuid = await this.getCurrentUserUUID();
+        let bookmarks = []
+
+        try {
+            await USER_COLLECTION.doc(uuid).get().then(snapshot => {
+                bookmarks = snapshot.data().bookmarked_programs;
+            });
+
+            if (bookmarks.length == 0)
+            {
+                return Promise.resolve([])
+            }
+        } catch(error) {
+            LOG_ERROR('UserController.js', 'Caught exception in getBookmarkedPrograms() trying to get program data from USERS_COLLECTION', error)
+            return Promise.resolve([])
+        }
+
+        let bookmarked_programs = []
+        try {
+            for (let i = 0; i < bookmarks.length; i++)
+            {
+                let data = undefined;
+                await PROGRAMS_COLLECTION.doc(bookmarks[i]).get().then(snapshot => {
+                    data = snapshot.data();
+                });
+
+                if (typeof(data) == 'undefined')
+                {
+                    continue;
+                }
+
+                bookmarked_programs.push(data);
+            }
+        } catch(error) {
+            LOG_ERROR('UserController.js', 'Caught exception in getBookmarkedPrograms() trying to get program data from PROGRAMS_COLLECTION', error)
+            return Promise.resolve(bookmarked_programs);
+        }
+
+        return Promise.resolve(bookmarked_programs);
+    }
     
     }
 

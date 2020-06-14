@@ -24,6 +24,8 @@ import { Fire } from '../../../controller/firebase/firebase';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
+import { withNavigation } from 'react-navigation'
+
 const ProfilePicture = require('../../images/profile_picture1.jpeg')
 
 import { connect } from 'react-redux';
@@ -53,6 +55,11 @@ class MessagesView extends React.Component {
 
     componentDidMount = async () => {
         await this.setupUserMessageData();
+        this.props.disableSwipe()
+      }
+    
+      async componentWillUnmount() {
+          await this.props.enableSwipe()
       }
 
       setupUserMessageData = async () => {
@@ -216,4 +223,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(MessagesView);
+export default connect(mapStateToProps)(withNavigation(MessagesView));

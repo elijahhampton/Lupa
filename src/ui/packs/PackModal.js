@@ -501,17 +501,19 @@ class PackModal extends React.Component {
     _showActionSheet = () => {
         ActionSheetIOS.showActionSheetWithOptions(
             {
-                options: ['Create an Event', 'Delete Pack', 'Cancel'],
-                cancelButtonIndex: 2,
-            }, (buttonIndex) => {
+                options: ['Cancel', 'Create a Post', 'Create an Event'],
+                cancelButtonIndex: 0,
+            }, 
+            (buttonIndex) => {
                 switch (buttonIndex) {
                     case 0:
-                        this.setState({ createEventModalIsOpen: true });
+                       
                         break;
                     case 1:
-                        //delete pack
+                        //create psot
                         break;
                     case 2:
+                        this.setState({ createEventModalIsOpen: true });
                         break;
                     default:
                 }

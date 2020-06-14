@@ -121,7 +121,6 @@ class SignupModal extends React.Component {
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
         this.scrollView = React.createRef();
-        this.handleParQButtonOnPress = this.handleParQButtonOnPress.bind(this);
         this.userAuthenticationHandler = new UserAuthenticationHandler();
 
         this.state = {
@@ -152,43 +151,6 @@ class SignupModal extends React.Component {
             signupRejectionReason: "",
             rejectedField: "",
             loading: false,
-            parQArr: [
-              {
-                question: 'Has your doctor ever said that you have a heart condition and/or that you should only perform physical activity recommended by a doctor?',
-                check: false,
-                id: 0,
-              },
-              {
-                question: 'Do you feel pain in your chest when you perform physical activity?',
-                check: false,
-                id: 0,
-              },
-              {
-                question: 'In the past month, have you had chest pain when you were not performing any physical activity?',
-                check: false,
-                id: 0,
-              },
-              {
-                question: 'Do you lose your balance because of dizziness or do you ever lose consciousness?',
-                check: false,
-                id: 0,
-              },
-              {
-                question: 'Do you have a bone or joint problem that could be made worse by a chance in your physical activity?',
-                check: false,
-                id: 0,
-              },
-              {
-                question: 'Is your doctor currently prescribing any medication for your blood pressure or for a heart condition?',
-                check: false,
-                id: 0,
-              },
-              {
-                question: 'Do you know of any other reason why you should not engage in physical activity?',
-                check: false,
-                id: 0,
-              },
-            ]
         }
     }
 
@@ -338,13 +300,10 @@ class SignupModal extends React.Component {
           result: false,
           reason: "Something went wrong with your login.  The email you are trying to register with may already be in use"
         }
+
         successfulRegistration = registrationStatus;
       }
 
-      /*  if (successfulRegistration.result === true)
-        {
-          await this.submitParQ()
-        }*/
         await this.setState({ loading: false })
 
         await this.handleOnRegistration(successfulRegistration);
@@ -405,71 +364,6 @@ class SignupModal extends React.Component {
         this.setState({
             confirmPasswordSecureTextEntry: !this.state.confirmPasswordSecureTextEntry
         })
-      }
-
-      handleParQButtonOnPress = (event, index) => {
-        let tmp = this.state.parQArr;
-        tmp[index].check = !tmp[index].check;
-        this.setState({ parQArr: tmp });
-      }
-
-      submitParQ = async () => {
-        try {
-          const parQQuestionsArr = this.state.parQArr;
-          let submittedAnswers = [];
-          for (let i = 0; i < parQQuestionsArr.length; ++i)
-          {
-            let answerObj = {
-              question: parQQuestionsArr[i].question,
-              answer: parQQuestionsArr[i].check.toString()
-            }
-            submittedAnswers.push(answerObj);
-          }
-  
-          const assessmentStructure = await getLupaAssessmentStructure('PARQ', submittedAnswers);
-  
-          await this.LUPA_CONTROLLER_INSTANCE.submitAssessment(assessmentStructure);
-        } catch(error) {
-          const emptyParQArr = [
-            {
-              question: 'Has your doctor ever said that you have a heart condition and/or that you should only perform physical activity recommended by a doctor?',
-              check: false,
-              id: 0,
-            },
-            {
-              question: 'Do you feel pain in your chest when you perform physical activity?',
-              check: false,
-              id: 0,
-            },
-            {
-              question: 'In the past month, have you had chest pain when you were not performing any physical activity?',
-              check: false,
-              id: 0,
-            },
-            {
-              question: 'Do you lose your balance because of dizziness or do you ever lose consciousness?',
-              check: false,
-              id: 0,
-            },
-            {
-              question: 'Do you have a bone or joint problem that could be made worse by a chance in your physical activity?',
-              check: false,
-              id: 0,
-            },
-            {
-              question: 'Is your doctor currently prescribing any medication for your blood pressure or for a heart condition?',
-              check: false,
-              id: 0,
-            },
-            {
-              question: 'Do you know of any other reason why you should not engage in physical activity?',
-              check: false,
-              id: 0,
-            },
-          ]
-          const errAssessmentStructure = getLupaAssessmentStructure('PARQ', emptyParQArr);
-          this.LUPA_CONTROLLER_INSTANCE.submitAssessment(assessmentStructure);
-        }
       }
 
       resetRejectedFields = () => {
@@ -658,51 +552,9 @@ class SignupModal extends React.Component {
                             
                         </View>
                     </View>
-
-                    <View style={{padding: 20, alignItems: "center", justifyContent: "center", height: "auto", width: "100%"}}>
-                    <TouchableOpacity style={{width: "100%", height: 70, alignSelf: "center"}} onPress={() => this.scrollView.current.scrollTo(Dimensions.get('window').height)}>
-                            <Text style={{fontWeight: '600', color: "#1565C0", textAlign: "center", textAlignVertical: "center"}}>
-                              Begin Lupa Screening Questionnaire
-                            </Text>
-                    </TouchableOpacity>
-                    </View>
             
 </View>
             
-                    <View style={{width: Dimensions.get('window').width, height: "auto"}}>
-                      {
-                        this.state.parQArr.map((object, index, arr) => {
-                          return (
-                            <Surface style={[
-                              {
-                              backgroundColor: "white", 
-                              marginTop: 20, 
-                              padding: 10, 
-                              width: Dimensions.get('window').width - 20,  
-                              }, 
-                              index % 2 == 0 ? styles.leftPositionedSurface : styles.rightPositionedSurface
-                              ]}>
-                            <Text style={{fontWeight: "500"}}>
-                            {object.question}
-                            </Text>
-                              <View style={{alignSelf: 'center', margin: 5, width: "60%", alignItems: "center", flexDirection: "row", justifyContent: "space-evenly"}}>
-                                <TouchableOpacity key={object.checked} style={{borderRadius: 65}} onPress={(event) => this.handleParQButtonOnPress(event, index)}>
-                                <Surface style={{backgroundColor: this.state.parQArr[index].check == true ? "#C7DCFF" : "#FFFFFF", alignItems: "center", justifyContent: "center", width: 65, height: 65, margin: 5, borderRadius: 65, elevation: 10}}>
-                                  <MaterialIcons name="check" size={20} />
-                                </Surface>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity key={!object.checked} style={{borderRadius: 65}} onPress={(event) => this.handleParQButtonOnPress(event, index)}>
-                                <Surface style={{backgroundColor: this.state.parQArr[index].check == true ? "#FFFFFF" : "#C7DCFF", alignItems: "center", justifyContent: "center", width: 65, height: 65, margin: 5, borderRadius: 65, elevation: 10}}>
-                                  <MaterialIcons name="clear" size={20} />
-                                </Surface>
-                                </TouchableOpacity>
-                              </View>
-                          </Surface>
-                          )
-                        })
-                      }
-                      </View>
 
                        <View style={{marginTop: 15, flex: 1, justifyContent: 'flex-end', width: '90%', alignSelf: 'center'}}>
                         <ElementsButton
