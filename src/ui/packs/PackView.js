@@ -9,6 +9,9 @@ import {
     Dimensions,
     SafeAreaView, 
     ScrollView,
+    Animated,
+    Image,
+    Easing,
 } from 'react-native';
 
 import {
@@ -26,10 +29,39 @@ import {
 
 import { 
     IconButton,
+    Dialog,
     Title,
+    Surface,
+    Button,
     Appbar,
     Chip,
+    FAB,
+    Divider,
 } from 'react-native-paper';
+
+import Svg, {
+    Circle,
+    Ellipse,
+    G,
+    Text as SVGTest,
+    TSpan,
+    TextPath,
+    Path,
+    Polygon,
+    Polyline,
+    Line,
+    Rect,
+    Use,
+    Symbol,
+    Defs,
+    RadialGradient,
+    Stop,
+    ClipPath,
+    Pattern,
+    Mask,
+  } from 'react-native-svg';
+
+  import { LinearGradient } from 'expo-linear-gradient'
 
 import { withNavigation, NavigationActions } from 'react-navigation';
 
@@ -50,6 +82,9 @@ import { connect } from 'react-redux';
 import { getCurrentStoreState } from '../../controller/redux/index';
 import CircularUserCard from '../user/component/CircularUserCard';
 import { LOG_ERROR } from '../../common/Logger';
+import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
+import { Constants } from 'react-native-unimodules';
+import CreatePackDialog from './dialog/CreatePackDialog';
 
 
 const mapStateToProps = (state, action) => {
@@ -74,10 +109,82 @@ class PackView extends React.Component {
             createPackModalIsOpen: false,
             refreshing: false,
             searching: false,
-            currUserPacks: this.props.lupa_data.Packs.currUserPacksData
+            currUserPacks: this.props.lupa_data.Packs.currUserPacksData,
+            searchViewHeight: new Animated.Value(0),
+            searchViewWidth: new Animated.Value(0),
+            searching: false,
+            fabSpinValue: new Animated.Value(0),
         }
 
+        this.renders = 0;
+
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+        // Second interpolate beginning and end values (in this case 0 and 1)
+this.spin = this.state.fabSpinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg']
+  })
+    }
+
+    showSearch = () => {
+        this.setState({ searching: true })
+        // First set up animation 
+Animated.timing(
+    this.state.fabSpinValue,
+  {
+    toValue: 1,
+    duration: 500,
+    easing: Easing.linear,
+    useNativeDriver: true  // To make use of native driver for performance
+  }
+).start()
+
+        Animated.timing(this.state.searchViewWidth, {
+            duration: 300,
+            toValue: Dimensions.get('window').width,
+            useAnimatedDriver: false,
+            useNativeDriver: false,
+          //  easing: Easing.bounce
+        }).start()
+
+        Animated.timing(this.state.searchViewHeight, {
+            duration: 300,
+            toValue: Dimensions.get('window').height,
+            useAnimatedDriver: false,
+            useNativeDriver: false,
+           // easing: Easing.bounce
+        }).start()
+    }
+
+    closeSearch = () => {
+        this.setState({ searching: false })
+        // First set up animation 
+Animated.timing(
+    this.state.fabSpinValue,
+  {
+    toValue: 0,
+    duration: 500,
+    easing: Easing.linear,
+    useNativeDriver: true  // To make use of native driver for performance
+  }
+).start()
+
+        Animated.timing(this.state.searchViewWidth, {
+            duration: 300,
+            toValue: 0,
+            useAnimatedDriver: false,
+            useNativeDriver: false,
+          //  easing: Easing.bounce
+        }).start()
+
+        Animated.timing(this.state.searchViewHeight, {
+            duration: 300,
+            toValue: 0,
+            useAnimatedDriver: false,
+            useNativeDriver: false,
+           // easing: Easing.bounce
+        }).start()
     }
 
     componentDidMount = async () => {
@@ -221,7 +328,7 @@ class PackView extends React.Component {
     loadCurrUserPacks = () => {
         try {
             return this.state.currUserPacks.map(pack => {
-                return <MyPacksCard refreshPackViewMethod={this.refreshCurrentUserPacks} title={pack.pack_title} packImage={pack.pack_image} packUUID={pack.pack_uuid} numMembers={pack.pack_members.length} image={pack.pack_image} packType={pack.pack_type}/>
+                return <MyPacksCard pack={pack} refreshPackViewMethod={this.refreshCurrentUserPacks} title={pack.pack_title} packImage={pack.pack_image} packUUID={pack.pack_uuid} numMembers={pack.pack_members.length} image={pack.pack_image} packType={pack.pack_type}/>
             })
         } catch(err)
         {
@@ -239,42 +346,6 @@ class PackView extends React.Component {
          } catch(err)
          {
              return null;
-         }
-     }
-
-     mapActivePacks = () => {
-         if (true && this.state.activePacks.length)
-         {
-             if (this.state.activePacks.length > 0)
-             {
-                return this.state.activePacks.map(pack => {
-                    return (
-                        <SmallPackCard packCity={pack.pack_location.city} packState={pack.pack_location.state} packDescription={pack.pack_description} />
-                    )
-                })
-             }
-             else
-             {
-                 //couldn't find any packs.. this shouldn't happen as we add random packs even if there are none near the user
-             }
-         }
-     }
-
-     mapCommunityPacks = () => {
-        if (true && this.state.communityPacks.length)
-         {
-             if (this.state.communityPacks.length > 0)
-             {
-                return this.state.communityPacks.map(pack => {
-                    return (
-                        <SmallPackCard />
-                    )
-                })
-             }
-             else
-             {
-                 //couldn't find any packs.. this shouldn't happen as we add random packs even if there are none near the user
-             }
          }
      }
 
@@ -311,10 +382,36 @@ class PackView extends React.Component {
             <View style={styles.root}>
                 <Appbar.Header style={styles.header} theme={{
                     elevation: 0,
-                }}>
-                    <Appbar.Content title="Community" titleStyle={{fontFamily: 'HelveticaNeueMedium',fontSize: 30, fontWeight: "600", color: "#212121"}} />
+                }} statusBarHeight>
+                    <View style={{flexDirection: 'row'}}>
+                    <Appbar.Content title="Community" titleStyle={{fontFamily: 'HelveticaNeueMedium',fontSize: 25, alignSelf: 'flex-start', fontWeight: "600", color: "#212121"}} />
                     <Appbar.Action icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#212121" />
+                    </View>
+                   
+                
                 </Appbar.Header>
+                <View style={{width: Dimensions.get('window').width}}>
+                    <ScrollView horizontal contentContainerStyle={{padding: 5}}>
+            <Button mode="text" compact color="#212121">
+                <Text>
+                    Snippets
+                </Text>
+            </Button>
+            <Button mode="text" compact color="#212121">
+                <Text>
+                    Daily Body
+                </Text>
+            </Button>
+
+            <Button mode="text" compact color="#212121">
+                <Text>
+                   Tutorial
+                </Text>
+            </Button>
+                    </ScrollView>
+                    <Divider />
+               
+                </View>
 
                 {
                     this.state.searchValue != "" ?
@@ -335,34 +432,8 @@ class PackView extends React.Component {
 
      :
          <>
-                                         <SearchBar placeholder="Search for packs and Lupa users"
-                        onChangeText={text => this._performSearch(text)} 
-                        platform="ios"
-                        searchIcon={<FeatherIcon name="search" />}
-                        containerStyle={{backgroundColor: "transparent"}}
-                        value={this.state.searchValue}/>
      <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between', flexDirection: 'column'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handleOnRefresh}/>}>
-                        
-                {/* My Packs */}
-                <View style={styles.containerSection}>
-                    <View style={styles.sectionTextContainer}>
-                    <Text style={styles.headerText}>
-                        My Packs
-                    </Text>
-                    <Text style={styles.headerDescriptionText}>
-                        Community Packs you have joined
-                    </Text>
-                    </View>
-                    <View style={styles.sectionContent}>
-                        <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
-                            {
-                                this.loadCurrUserPacks()
-                            }
-                        </ScrollView>
-                    </View>
-                </View>
-
-                <View style={styles.containerSection}>
+     <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerText}>
                         Near you
@@ -380,8 +451,8 @@ class PackView extends React.Component {
                     </View>
                 </View>
 
-                {/* Default Packs */}
-                <View style={styles.containerSection}>
+                                {/* Default Packs */}
+                                <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerText}>
                         Default Packs
@@ -400,27 +471,58 @@ class PackView extends React.Component {
                     </View>
 
                 </View>
-{/*
+
+                {/* My Packs */}
                 <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerText}>
-                        Communities
+                        My Packs
                     </Text>
                     </View>
                     <View style={styles.sectionContent}>
-                        <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
-                           {
-                               this.mapCommunityPacks()
+                        <View>
+                            {
+                                this.loadCurrUserPacks()
                             }
-                        </ScrollView>
+                        </View>
                     </View>
                 </View>
-                        */}
                 </ScrollView>
                 </>
                 }
 
-               <CreatePack isOpen={this.state.createPackModalIsOpen} closeModalMethod={this.closeCreatePackModal}/>
+               <Animated.View style={{backgroundColor: 'white', height: this.state.searchViewHeight, width: this.state.searchViewWidth, position: 'absolute', bottom: 0, right: 0, margin: 0}}>
+              
+                    <View style={{marginTop: Constants.statusBarHeight}}>
+                   <SearchBar placeholder="Search"
+                        onChangeText={text => this._performSearch(text)} 
+                        platform="ios"
+                        searchIcon={<FeatherIcon name="search" />}
+                        containerStyle={{backgroundColor: "transparent"}}
+        value={this.state.searchValue}/>
+                    </View>
+
+                    {
+                        this.state.searchValue == "" ?
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                            <Text style={{color: 'rgb(199, 199, 204)', fontFamily: 'HelveticaNeueLight', fontSize: 20, padding: 10}}>
+                                Your fitness directory.  In your pocket.
+                            </Text>
+                        </View>
+                        :
+                        <ScrollView contentContainerStyle={{backgroundColor: 'white'}}>
+                        
+                        </ScrollView>
+                        //perform search
+                    }
+
+               
+
+</Animated.View>
+          <FAB icon={this.state.searching === true ? 'close' : 'search'} color="rgba(255,255,255 ,1)" onPress={this.state.searching == true ? this.closeSearch : this.showSearch} style={{ transform: [{rotate: this.spin}], backgroundColor: '#23374d', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
+            
+           <CreatePackDialog isVisible={this.state.createPackModalIsOpen} closeDialogMethod={this.closeCreatePackModal} /> 
+            <SafeAreaView />
             </View>
         );
     }
@@ -437,7 +539,8 @@ const styles = StyleSheet.create({
     header: {
         justifyContent: 'space-between',
         elevation: 0,
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        flexDirection: 'column'
     },
     headerItems: {
         alignSelf: 'flex-start'
@@ -447,15 +550,20 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width,
         margin: 8,
     },
+    headerText: {
+        fontSize: 20,
+        padding: 3,
+        color: '#212121',
+        fontWeight: '300'
+    },
     sectionTextContainer: {
         flexDirection: 'column',
     },
-    headerText: {
-        fontSize: 18,
-        fontWeight: '500',
-        padding: 3,
-        color: '#212121',
-        fontFamily: 'HelveticaNeueMedium',
+    searchHeader: {
+        fontFamily: 'ARSMaquettePro-Medium', 
+        fontSize: 35, 
+        paddingLeft: 12,
+        marginTop: Constants.statusBarHeight,
     },
     headerDescriptionText: {
         fontSize: 15,

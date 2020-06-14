@@ -121,21 +121,27 @@ action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: cu
 
         <TouchableOpacity onPress={() => setWorkoutLogIsOpen(true)}>
         <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="file-text" size={ICON_SIZE} style={styles.iconMargin}/>
+          <DrawerIcon name="book-open" size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={{fontSize: 16, fontWeight: '300'}}>
            Log a Workout
           </Text>
         </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => setTrainerInsightsModalOpen(true)}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="file-text" size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={{fontSize: 16, fontWeight: '300'}}>
-           Trainer Insights
-          </Text>
-        </View>
-        </TouchableOpacity>
+
+        {
+          currUserData.isTrainer === true ?
+          <TouchableOpacity onPress={() => setTrainerInsightsModalOpen(true)}>
+          <View style={styles.navigationButtonContaner}>
+            <DrawerIcon name="bar-chart" size={ICON_SIZE} style={styles.iconMargin}/>
+            <Text style={{fontSize: 16, fontWeight: '300'}}>
+             Trainer Insights
+            </Text>
+          </View>
+          </TouchableOpacity>
+          :
+          null
+        }
         
         <Divider />
 

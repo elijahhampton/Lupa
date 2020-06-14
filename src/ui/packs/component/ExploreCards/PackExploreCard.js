@@ -28,6 +28,7 @@ import LupaController from '../../../../controller/lupa/LupaController';
 
 
 import PackInformationModal from '../../modal/PackInformationModal';
+import { LOG_ERROR } from '../../../../common/Logger';
 
 class DefaultPack extends React.Component {
     constructor(props) {
@@ -70,7 +71,7 @@ class DefaultPack extends React.Component {
     render() {
         return (
             <TouchableOpacity onPress={() => this._setShowPack()}>
-                        <Surface style={{margin: 35, alignSelf: 'center', width: Dimensions.get('screen').width - 60, marginHorizontal: 20,  height: 400, elevation: 15, borderRadius: 15}}>
+                        <Surface style={{margin: 35, alignSelf: 'center', width: Dimensions.get('screen').width - 80, marginHorizontal: 20,  height: 350, elevation: 15, borderRadius: 15}}>
                         <ImageBackground style={{flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 15,}} imageStyle={{borderRadius: 15}} source={{uri: this.state.packProfileImage}}>
                     <Headline style={{color: 'white', fontWeight: 'bold'}}>
                         {this.props.pack_title}
@@ -105,7 +106,7 @@ class SmPackCard extends React.Component {
     }
 
     setupComponent = async () => {
-       await this.loadImageBackground();
+      
     }
 
     _setShowPack = () => {
@@ -120,53 +121,32 @@ class SmPackCard extends React.Component {
         })
     }
 
-    loadImageBackground = async () => {
-        try {
-            await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.state.packUUID).then(result => {
-                packImageIn = result;
-            });
-
-            if (packImageIn == "" || packImageIn == undefined)
-            {
-                packImageIn = "";
-            }
-            
-            if (this.state.packImage != "" && this.state.packImage != undefined)
-            {
-                packImageIn = this.state.packImage;
-            }
-        } catch(err)
-        {
-            if (this.state.packImage != "" && this.state.packImage != undefined)
-            {
-                packImageIn = this.state.packImage;
-            }
-            else
-            {
-                packImageIn = "";
-            }
-        }
-
-        await this.setState({ packImage: packImageIn });
-    }
 
     getImageBackground = () => {
         if (this.state.packImage == "" || this.state.packImage == undefined)
         {
             return (
-                                    <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}}>
-                <ImageBackground 
-                imageStyle={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}} 
-                style={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}} 
-                resizeMode={ImageResizeMode.cover} 
-                source={{uri: this.state.packImage}} />
-                </View>
+                <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}} />
             )
         }
 
-        return (
-            <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}} />
+        try {
+            return (
+                <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}}>
+<ImageBackground 
+imageStyle={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}} 
+style={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}} 
+resizeMode={ImageResizeMode.cover} 
+source={{uri: this.state.packImage}} />
+</View>
         )
+        } catch(error) {
+            LOG_ERROR('PackExploreCard.js', 'Caught exception in getImageBackground()', error);
+            return (
+                <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}} />
+            )
+        }
+
     }
 
     render() {

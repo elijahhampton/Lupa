@@ -114,6 +114,7 @@ class ShareProgramModal extends React.Component{
 
     componentDidMount = async () => {
         let results = [];
+        
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.following).then(objs => {
             results = objs;
         })
@@ -142,8 +143,6 @@ class ShareProgramModal extends React.Component{
             
             updatedList.push(userObject.user_uuid);
         }
-
-        console.log(updatedList.length)
 
         this.setState({
             selectedUsers: updatedList,
@@ -257,6 +256,7 @@ class Programs extends React.Component {
             searchValue: "",
             featuredPrograms: [],
             featuredIsRefreshing: false,
+            bookmarkedPrograms: [],
         }
 
       this.RBSheet = React.createRef();
@@ -266,16 +266,86 @@ class Programs extends React.Component {
 
     async componentDidMount() {
         await this.props.disableSwipe();
-      await this.loadFeaturedPrograms();
+      await this.setupComponent()
     }
 
     componentWillUnmount() {
         this.props.enableSwipe();
     }
 
+    setupComponent = async () => {
+        let featuredProgramsIn = [], bookmarkedData = [];
+
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
+                featuredProgramsIn = result;
+            });
+        } catch(error) {
+            alert('me')
+            LOG_ERROR('Programs.js', 'Caught exception in setupComponent() trying ti load user featured programs', error);
+            featuredProgramsIn = []
+        }
+
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getBookmarkedPrograms().then(result => {
+                bookmarkedData = result;
+            });
+        } catch(error) {
+            alert('he')
+            LOG_ERROR('Programs.js', 'Caught exception in setupComponent() trying to load user bookmarked programs', error);
+            bookmarkedData = []
+        }
+
+        await this.setState({
+            featuredPrograms: featuredProgramsIn,
+            bookmarkedPrograms: bookmarkedData,
+        })
+    }
+
+    getCurrentUserBookmarkedPrograms = async () => {
+        let bookmarkedData = []
+
+        await this.LUPA_CONTROLLER_INSTANCE.getBookmarkedPrograms().then(result => {
+            bookmarkedData = result;
+        });
+
+        this.setState({
+            bookmarkedPrograms: bookmarkedData
+        })
+    }
+
+    getBookmarkedProgramsView = () => {
+        return this.state.bookmarkedPrograms.length == 0 ?
+        <View>
+            <Text style={{fontFamily: 'HelveticaNeueMedium', paddingLeft: 12, margin: 5,}}>
+                You haven't bookmarked any programs.
+            </Text>
+        </View>
+        :
+        <View style={{width: Dimensions.get('window').width}}>
+            <ScrollView horizontal centerContent>
+                {
+                    this.state.bookmarkedPrograms.map((bookmarkedProgram, index, arr) => {
+                        if (typeof(bookmarkedProgram) == 'undefined')
+                        {
+                            return null;
+                        }
+                        return (
+                            <Surface style={{shadowOpacity: 0.1, elevation: 8, borderRadius: 10, margin: 15, width: Dimensions.get('window').width - 50, height: 150}}>
+                                <Image style={{borderRadius: 10, width: '100%', height: '100%'}} source={{uri: bookmarkedProgram.program_image}} />
+                                <FeatherIcon name="bookmark" size={20} style={{padding: 8, borderRadius: 18, overflow: true ,position: 'absolute', bottom: 0, right: 0, margin: 12, backgroundColor: 'white'}} />
+                            </Surface>
+                        )
+                    })
+                }
+            </ScrollView>
+        </View>
+    }
+
     handleOnRefresh = async () => {
         this.setState({ refreshing: true })
         await this.loadFeaturedPrograms()
+        await this.getCurrentUserBookmarkedPrograms()
         this.setState({ refreshing: false })
     }
 
@@ -552,7 +622,11 @@ class Programs extends React.Component {
                                         <View>
                                             <ProgramSearchResultCard  programData={program} />
                                             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-                                            <Button color="rgb(13,71,161)" >
+                                            <Button color="rgb(13,71,161)" onPress={() => this.props.navigation.push('CreateProgram', {
+                                                mode: "EDIT",
+                                                currProgramUUID: program.program_structure_uuid,
+                                                programData: program,
+                                            })}>
                                                 <Text>
                                                 Edit 
                                                 </Text>
@@ -564,6 +638,7 @@ class Programs extends React.Component {
                                                 </Text>
                                             </Button>
                                             </View>
+                                            <Divider />
                                         </View>
                                         
      
@@ -659,6 +734,7 @@ class Programs extends React.Component {
         this.mainRBSheet.current.close()
         this.props.navigation.navigate('CreateProgram', {
             navFrom: "Programs",
+            currProgramUUID: undefined,
         })
     }
 
@@ -747,12 +823,18 @@ class Programs extends React.Component {
                         </View>
 
                         <View>
-                        <Text style={styles.headerText}>
+                            <View>
+                            <Text style={styles.headerText}>
                         Subscriptions
                     </Text>
                     <Text style={{paddingLeft: 12, margin: 5}}>
                         Program updates from trainers you are subscribed to
                     </Text>
+                            </View>
+
+                            <Text style={{fontFamily: 'HelveticaNeueMedium', paddingLeft: 12, margin: 5, }}>
+                                You haven't subscribed to any trainers.
+                            </Text>
                         </View>
 
                         <View>
@@ -762,6 +844,7 @@ class Programs extends React.Component {
                     <Text style={{paddingLeft: 12, margin: 5}}>
                         Bookmarked programs saved for later
                     </Text>
+                    {this.getBookmarkedProgramsView()}
                         </View>
                     </ScrollView>
                     </View>
@@ -775,21 +858,13 @@ class Programs extends React.Component {
                             </ScrollView>
                             {this.getRBSheet()}
           </Tab>
-          {/*
-
-          <Tab heading="Waitlist" tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}>
-              {
-                  this.mapWaitlist()
-              }
-
-            </Tab>*/}
           
         </Tabs>
 
        {this.getMainRBSheet()}
         <ProgramsFilter filterHeight={this.state.filterHeight} handleApplyFilterOnPress={this.handleApplyFilterOnPress} handleCancelButtonOnPress={this.handleCancelButtonOnPress} disableSwipe={this.props.disableSwipe} enableSwipe={this.props.enableSwipe} />
             <ShareProgramModal isVisible={this.state.showShareProgramModal} following={this.props.lupa_data.Users.currUserData.following} currUserData={this.props.lupa_data.Users.currUserData} program={this.state.currProgramClicked} closeModalMethod={this.closeShareProgramModal} />
-
+            <SafeAreaView />
             </View>
         )
     }

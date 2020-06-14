@@ -13,6 +13,8 @@ import TrainerInformation from '../user/modal/WelcomeModal/TrainerInformation';
 
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
+import NotificationsView from '../user/notifications/NotificationsView'
+import MessagesView from '../user/chat/MessagesView'
 
 /*
 const Drawer = createDrawerNavigator();
@@ -34,13 +36,19 @@ const LupaDrawerNavigator = createDrawerNavigator(
     {
     //Drawer Optons and indexing
       Dashboard: {
-        screen: DashboardView
+        screen: (props) => <DashboardView {...props}  disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe}/>
       },
       Profile: {
         screen: ProfileNavigator
       },
     TrainerInformation: {
       screen: TrainerInformation
+    },
+    Notifications: {
+      screen: (props) => <NotificationsView {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+    },
+    Messages: {
+      screen: (props) => <MessagesView {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />
     },
     },
     {

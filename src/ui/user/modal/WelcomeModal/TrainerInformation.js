@@ -141,11 +141,11 @@ export default class TrainerInformation extends React.Component {
                     this.getHeader()
                 }
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', }}>
-                    <Paragraph style={styles.instructionalText}>
+                    <Text style={styles.instructionalText}>
                     Trainers registered on Lupa have access to exclusive tools such as building client list, creating workout programs, and engaging in research opportunies sponsored by Lupa.  
-                    
-                    As a Lupa Trainer you will be able to make money and engage your clientele through our platform.  We currently only support the NASM certification, but plan on adding many more in the future.
-                </Paragraph>
+                    As a Lupa Trainer you will be able to make money and engage your clientele through our platform.  We currently only support the NASM certification, b
+                    but plan on adding many more in the future.
+                </Text>
                 </View>
 
                     <Provider>
@@ -166,7 +166,7 @@ export default class TrainerInformation extends React.Component {
           </Menu>
           </Provider>
 
-                    <View style={{flex: 3, justifyContent: 'center'}}>
+                    <View style={{flex: 2.5, justifyContent: 'center'}}>
                         {
                             this.state.buttonText == 'Select a certification' ? 
                             null
@@ -184,18 +184,19 @@ export default class TrainerInformation extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        padding: 20
+        padding: 10
     },
     instructionalText: {
         height: 'auto',
         flexShrink: 1,
         alignSelf: 'center',
         fontSize: 15,
-        paddingHorizontal: 20,
-        marginTop: 25,
-        fontFamily: "avenir-roman",
+        marginHorizontal: 15,
+        padding: 10,
+        marginTop: 5,
         flex: 1,
         textAlign: 'center',
+        width: '100%',
     },
     verificationModal: {
         width: '50%',

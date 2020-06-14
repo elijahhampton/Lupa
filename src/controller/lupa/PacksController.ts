@@ -129,7 +129,7 @@ class PacksController {
       docs.forEach(doc => {
               //Load pack from document
       let pack = doc.data();
-
+      
       //Set object ID (although this may not be necessary)
       pack.objectID = doc.id;
 
@@ -678,10 +678,10 @@ class PacksController {
     return Promise.resolve(packEventsData);
   }
 
-  createPack = async (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packImageSource) => {
-    const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type);
+  createPack = async (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packImageSource, packVisibility) => {
+    const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packVisibility);
     let packRef;
-    let packSnapshot, packData, packPhotoUrl;
+    let packData;
     await PACKS_COLLECTION.add(lupaPackStructure).then(ref => {
       packRef = ref.id;
     });
@@ -690,18 +690,9 @@ class PacksController {
       packData = snapshot;
     })
 
-    await this.savePackImage(image, packRef).then(url => {
-      packPhotoUrl = url;
-    });
+    packData.pack_uuid = await packRef;
 
-    packData.pack_uuid = packRef;
-    packData.pack_image = packPhotoUrl;
-    let packPayload = {
-      data: packData,
-      photo_url: packPhotoUrl
-    }
-
-    return Promise.resolve(packPayload);
+    return Promise.resolve(packData);
   }
 
   createPackEvent = async (packUUID, title, description, datetime, eventImage) => {

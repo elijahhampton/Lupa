@@ -68,6 +68,26 @@ class ProgramListComponent extends React.Component {
             </View>
         }
     }
+
+    getProgramName = () => {
+        
+        try {
+            return (
+                <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: 'black'}}>
+                        {this.props.programData.program_name}
+                    </Text>
+            )
+        } catch(error) {
+            LOG_ERROR('ProgramListComponent.js', 'Caught exception in getProgramName()', error)
+            return (
+                <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: 'black'}}>
+                    Unable to load program name
+                    </Text>
+            )
+        }
+    }
+
+
     render() {
         const programData = this.props.programData;
         return (
@@ -82,9 +102,7 @@ class ProgramListComponent extends React.Component {
 
                 <View style={{marginLeft: 15, width: Dimensions.get('screen').width /1.3}}>
                     <View style={{padding: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: 'black'}}>
-                        {this.props.programData.program_name}
-                    </Text>
+                    {this.getProgramName()}
                     <Caption style={{color: 'black'}}>
                         {this.props.programData.program_type == 'Single' ? 'One on One' : null}
                     </Caption>

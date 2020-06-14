@@ -106,8 +106,7 @@ export default class LupaController {
     /***********  App IO *************/
 
     runAppSetup = () => {
-      //requestPermissionsAsync();
-     // this.indexApplicationData();
+      this.indexApplicationData();
     }
 
     addLupaTrainerVerificationRequest = (uuid, certification, cert_number) => {
@@ -239,28 +238,28 @@ export default class LupaController {
 
     /* Algolia */
     indexApplicationData = () => {
-   // USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
-    //PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
-    //USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+      //USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+      //PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+      //USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     indexUsers = async () => {
-    // await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+      //await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
     indexPacks = async () => {
-    // await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
+      //await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
     }
 
     indexPrograms = async () => {
-     // await USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+      //await USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     /** Pack Functions */
-    createNewPack = async (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource) => {
+    createNewPack = async (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource, packVisibility) => {
       //validate data
       //call packs controller to create pack
-      const packData = await PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource);
+      const packData = await PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource, packVisibility);
       
       return Promise.resolve(packData);
     }
@@ -787,6 +786,23 @@ export default class LupaController {
       });
 
       return Promise.resolve(retVal);
+    }
+
+    addEntryToWorkoutLog = (entry) => {
+      USER_CONTROLLER_INSTANCE.addEntryToWorkoutLog(entry);
+    }
+
+    toggleProgramBookmark = (userUUID, programUUID) => {
+      USER_CONTROLLER_INSTANCE.toggleProgramBookmark(userUUID, programUUID)
+    }
+
+    getBookmarkedPrograms = async () => {
+      let data = undefined;
+      await USER_CONTROLLER_INSTANCE.getBookmarkedPrograms().then(result => {
+        data = result;
+      });
+
+      return Promise.resolve(data);
     }
       
 }

@@ -19,10 +19,15 @@ import {
 } from 'react-native-paper';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { useSelector } from 'react-redux';
 
 function WorkoutLog(props) {
     let [surfaceHeight, setSurfaceHeight] = useState(new Animated.Value(130))
     let [surfaceIsOpen, setSurfaceOpen] = useState(false)
+
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData
+    })
 
     const openTab  = () => {
         Animated.timing(surfaceHeight, {
@@ -42,10 +47,9 @@ function WorkoutLog(props) {
 
 
     return (
-        <Animated.View style={{height: surfaceHeight, width: Dimensions.get('window').width - 10}}>
-        <Surface style={{alignSelf: 'center', margin: 15, padding: 15, backgroundColor: "#FFFFFF", width: '95%', borderRadius: 25, elevation: 0}}>
-                    <ScrollView>
-                    <TouchableWithoutFeedback onPress={surfaceIsOpen == false ? openTab : closeTab}>
+        <Animated.View style={{height: 'auto', width: Dimensions.get('window').width}}>
+        <Surface style={{alignSelf: 'center',  padding: 15, backgroundColor: "#FFFFFF", width: '100%', borderRadius: 25, elevation: 0}}>
+        <TouchableWithoutFeedback onPress={surfaceIsOpen == false ? openTab : closeTab}>
                             <View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <Text style={{paddingVertical: 3, fontSize: 20, fontFamily: 'HelveticaNeueLight'}}>
@@ -58,8 +62,31 @@ function WorkoutLog(props) {
                 </Text>
                 </View>
                 </TouchableWithoutFeedback>
-                
-            </ScrollView>
+                <ScrollView contentContainerStyle={{height: surfaceIsOpen == true ? 'auto' : 0}}>
+                    {currUserData.workout_log.map(logItem => {
+                        return (
+                            <Surface style={{padding: 10, marginVertical: 10, borderRadius: 10, width: '100%', backgroundColor: 'rgb(242,242,247)'}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <Text style={{padding: 3, fontFamily: 'HelveticaNeueLight'}}>
+                                        {logItem.workoutName}
+                                    </Text>
+
+                                    <Text style={{fontFamily: 'HelveticaNeueMedium'}}>
+                                        {new Date(logItem.date).toLocaleDateString()}
+                                    </Text>
+                                </View>
+                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                    <Text style={{marginHorizontal: 3, fontFamily: 'HelveticaNeueMedium'}}>
+                                        Sets: {logItem.sets}
+                                    </Text>
+                                    <Text style={{marginHorizontal: 3, fontFamily: 'HelveticaNeueMedium'}}>
+                                        Reps: {logItem.reps}
+                                    </Text>
+                                </View>
+                            </Surface>
+                        )
+                    })}
+                </ScrollView>
                         
                     </Surface>
                     </Animated.View>

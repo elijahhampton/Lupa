@@ -32,6 +32,8 @@ import { withNavigation } from 'react-navigation'
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { LOG_ERROR } from '../../../common/Logger';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
+import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -47,6 +49,12 @@ const mapDispatchToProps = dispatch => {
                 payload: programPayload,
             })
         },
+        updateCurrentUserAttribute: (payload) => {
+            dispatch({
+                type: "UPDATE_CURRENT_USER_ATTRIBUTE",
+              payload: payload
+            })
+        }
     }
 }
 
@@ -60,10 +68,19 @@ class ProgramInformationPreview extends PureComponent {
             showPreviewModal: false,
             loading: false,
             token: null,
+            programData: getLupaProgramInformationStructure()
         }
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+        this.handleToggleBookmark = this.handleToggleBookmark.bind(this);
 
+    }
+
+    async componentDidMount() {
+        //TEMPORARY FIX - Undefined error for object keys of programData props
+       await this.setState({
+            programData: this.props.programData
+        })
     }
 
     /**
@@ -91,15 +108,18 @@ class ProgramInformationPreview extends PureComponent {
      * @return URI Returns a string for the name, otherwise ''
      */
     getProgramName = () => {
-        if (typeof(this.props.programData.program_name) == 'undefined')
-        {
-            return ''
-        }
-
             try {
-                return this.props.programData.program_name;
+                return (
+                    <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 20, color: '#FFFFFF' }}>
+                               {this.props.programData.program_name}
+                    </Text>
+                )
             } catch(err) {
-                return ''
+                return (
+                    <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 20, color: '#FFFFFF' }}>
+                                    Unable to load program name
+                                    </Text>
+                )
             }
     }
 
@@ -273,16 +293,11 @@ class ProgramInformationPreview extends PureComponent {
 
         }
     }
-
-    getProgramName = () => {
-        try {
-            return this.props.programData.program_name
-        }
-        catch(error) {
-            LOG_ERROR('ProgramInformationPreview.js', 'Unhandled exception in getProgramName()', error)
-            return 'Unknown Program Title'
-        }
-        
+    
+    handleToggleBookmark = () => {
+       const payload = getUpdateCurrentUserAttributeActionPayload('bookmarked_programs', this.state.programData.program_structure_uuid, '');
+       this.LUPA_CONTROLLER_INSTANCE.toggleProgramBookmark(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
+       this.props.updateCurrentUserAttribute(payload)
     }
 
     render() {
@@ -330,10 +345,13 @@ class ProgramInformationPreview extends PureComponent {
                 }}>
                     <View style={{ justifyContent: 'space-evenly', flex: 2 }}>
                         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                            <View>
-                                <Text style={{ fontFamily: 'ARSMaquettePro-Black', fontSize: 20, color: '#FFFFFF' }}>
-                                    {this.getProgramName()}
-                </Text>
+                            <View style={{width: '100%', justifyContent: 'center'}}>
+                                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                {
+                                    this.getProgramName()
+                                }
+                                    <IconButton icon={this.props.lupa_data.Users.currUserData.bookmarked_programs.includes(this.state.programData.program_structure_uuid) ? 'bookmark' : "bookmark-border"} color="#FFFFFF" size={30} onPress={this.handleToggleBookmark.bind(this)} />
+                                </View>
                                 <Text style={{ fontSize: 12, paddingTop: 5, fontFamily: 'ARSMaquettePro-Medium', color: '#FFFFFF' }}>
                                     In Person, One on One Program
                 </Text>

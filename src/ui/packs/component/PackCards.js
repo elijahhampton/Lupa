@@ -11,7 +11,9 @@ import {
 
 import {
     Surface,
-    Caption
+    Caption,
+    Dialog,
+    Chip,
 } from 'react-native-paper';
 
 import { withNavigation, NavigationActions } from 'react-navigation';
@@ -62,31 +64,30 @@ class MyPacksCard extends React.Component {
 
     render() {
         return (
-            <>
             <TouchableOpacity onPress={() => this.handleShowPack(this.state.packUUID)} style={{marginVertical: 15}}>
-                <Surface style={styles.bottomSurface}>
-                        <Surface style={styles.imageSurface}>
-                        <Image style={styles.image} 
+                            <View style={{margin: 5, height: 120, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
+                <Surface style={{margin: 5, marginRight: 20, width: 100, height: 100, backgroundColor: '#FFFFFF', elevation: 2, borderRadius: 5}}>
+                <Image style={styles.image} 
                                     resizeMode={ImageResizeMode.cover} 
                                     source={{uri: this.state.packProfileImage}} />
-                        </Surface>
-                        <View style={styles.cardContentContainer}>
-                        <View style={{flexDirection: 'column', alignItems: "flex-start"}}>
-                        <Text style={{flexWrap: 'wrap', alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "black"}}>
-                            {this.props.title}
-                        </Text>
-                        </View>
-
-                        <Text style={{alignSelf: "flex-start", fontWeight: "600", fontSize: 15, color: "black"}}>
-                            {this.props.packType}
-                        </Text>
-                        <Caption>
-                            {this.props.numMembers} member
-                        </Caption>
-                        </View>
                 </Surface>
+
+                <View style={{flex: 1, height: 120, justifyContent: 'space-evenly', width: '100%'}}>
+                    <Text style={{color: 'rgba(28, 28, 30, 0.8)', fontSize: 15, fontFamily: 'HelveticaNeueMedium'}}>
+                        {this.props.title} (Community)
+                    </Text>
+                    <View>
+                    <Text style={{color: 'rgba(28, 28, 30, 0.4)', fontSize: 15, fontFamily: 'HelveticaNeueMedium'}}>
+                       {this.props.pack.pack_location.city}, {this.props.pack.pack_location.state} 
+                    </Text>
+
+                        <Text numberOfLines={2} style={{color: 'rgba(25,118,210 ,1)', fontSize: 12, fontFamily: 'HelveticaNeueLight'}}>
+                            {this.props.pack.pack_description}
+                        </Text>
+                    </View>
+                </View>
+            </View>
             </TouchableOpacity>
-            </>
         )
     }
 }
@@ -121,10 +122,8 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     image: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        alignSelf: "flex-end"
+        width: '100%',
+        height: '100%'
     },
     cardContentContainer: {
         flex: 1, flexDirection: "column", padding: 15, justifyContent: 'space-evenly'

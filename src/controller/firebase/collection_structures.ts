@@ -64,9 +64,10 @@ var lupa_pack : LupaPackStructure = {
     pack_time_created: '',
     pack_location: '',
     pack_requests: [],
+    pack_visibility: "Public",
 }
 
-export const getLupaPackStructure = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type) => {
+export const getLupaPackStructure = (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packVisiblity) => {
     lupa_pack.pack_leader = packLeader;
     lupa_pack.pack_title = title;
     lupa_pack.pack_description = description;
@@ -81,6 +82,7 @@ export const getLupaPackStructure = (packLeader, title, description, location, i
     lupa_pack.pack_isDefault = isDefault;
     lupa_pack.pack_type = type;
     lupa_pack.pack_requests = [];
+    lupa_pack.pack_visibility = packVisiblity;
 
     return lupa_pack;
 }
