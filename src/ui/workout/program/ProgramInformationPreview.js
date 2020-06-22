@@ -39,6 +39,7 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED } from '../../../modules/payments/stripe/index'
 const { fromString } = require('uuidv4')
 import { withNavigation } from 'react-navigation'
+import FeatherIcon from 'react-native-vector-icons/Feather'
 
 import { connect, useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -105,9 +106,6 @@ function ProgramInformationPreview(props) {
             await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.programData.program_structure_uuid).then(data => {
                 result = data;
             })
-
-            console.log('LOOOOOOOOOOOOOOOOOOOOK HERE')
-            console.warn(result)
 
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.programData.program_owner.uuid).then(data => {
                 userData = data
@@ -327,6 +325,8 @@ function ProgramInformationPreview(props) {
     return (
         <Modal presentationStyle="fullScreen" visible={props.isVisible} style={{ flex: 1 }} animated={true} animationType="slide">
                <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+                   <SafeAreaView />
+                   <IconButton icon={() => <FeatherIcon name="x" size={25} onPress={() => props.closeModalMethod()}/>} />
                    <ScrollView contentContainerStyle={{}}>
                    <View style={{alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width, height: 300}}>
                        <Image style={{width: '100%', height: '100%'}} source={{uri: getProgramImage()}} />
@@ -366,7 +366,7 @@ function ProgramInformationPreview(props) {
                        <Divider style={{width: '100%'}} />
                        <>
                        <View style={{paddingVertical: 20}}>
-                       <View style={{paddingLeft: 20, width: '100%', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
+                       <View style={{paddingLeft: 10, width: '100%', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
                            {getProgramName()}
                            <View style={{width: Dimensions.get('window').width, flexDirection: 'column', justifyContent: 'space-evenly'}}>
                            <View style={{flexDirection: 'row', alignItems: 'center'}}>

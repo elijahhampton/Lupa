@@ -49,12 +49,12 @@ class LiveWorkoutPreview extends React.Component {
     }
 
     componentDidMount = async () => {
-        this.props.disableSwipe()
+        console.log('disable swipe')
         await this.getWorkoutsPreview()
     }
 
     componentWillMount() {
-        this.props.enableSwipe()
+        console.log('enable swipe')
     }
 
     getWorkoutsPreview = () => {

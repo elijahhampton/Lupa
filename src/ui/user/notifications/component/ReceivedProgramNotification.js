@@ -9,6 +9,7 @@ import {
 import {
     Avatar,
     Button,
+    Appbar,
 } from 'react-native-paper';
 import LiveWorkout from '../../../workout/modal/LiveWorkout';
 

@@ -229,7 +229,7 @@ class Programs extends React.Component {
     constructor(props) {
         super(props);
 
-        this.props.disableSwipe();
+        console.log('disable swipe');
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -265,12 +265,12 @@ class Programs extends React.Component {
     }
 
     async componentDidMount() {
-        await this.props.disableSwipe();
+        await console.log('disable swipe');
       await this.setupComponent()
     }
 
     componentWillUnmount() {
-        this.props.enableSwipe();
+        console.log('enable swipe');
     }
 
     setupComponent = async () => {
