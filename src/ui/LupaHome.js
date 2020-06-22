@@ -49,6 +49,7 @@ import {
 } from 'native-base';
 
 import InviteFriendsModal from './user/modal/InviteFriendsModal'
+import CustomizedInviteFriendsModal from './user/modal/InviteFriendsModal'
 
 import { Icon, SearchBar } from 'react-native-elements';
 
@@ -62,8 +63,11 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
-import { RFPercentage } from 'react-native-responsive-fontsize';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import {Picker} from '@react-native-community/picker';
+
+import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+import CircularUserCard from './user/component/CircularUserCard';
 
 const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
 const SamplePhotoOne = require('./images/programs/sample_photo_one.jpg')
@@ -142,16 +146,39 @@ class LupaHome extends React.Component {
             certificationSearchFilterVal: "Certification",
             bodyTypeSearchFilterVal: "Body Type",
             priceSearchFilterVal: "Price",
+            height: new Animated.Value(80),
+            customizedInviteFriendsModalIsOpen: false,
         }
 
         this.searchAttributePickerModalRef = React.createRef()
-
+        this.offset = 0
     }
 
    async componentDidMount() {
-       // this.setState({ inviteFriendsIsVisible: true })
-        await this.loadFeaturedPrograms();
+        await this.setupComponent();
     }
+
+    setupComponent = async () => {
+        // this.setState({ inviteFriendsIsVisible: true })
+        await this.loadFeaturedPrograms();
+
+        let nearYouIn = []
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getUsersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
+                nearYouIn = result;
+            })
+        }
+        catch(err) {
+        
+            nearYouIn = [];
+        }
+
+        //set component state
+       await this.setState({
+           usersNearYou: nearYouIn,
+       })
+       
+   }
 
     componentWillUnmount() {
     
@@ -172,6 +199,31 @@ class LupaHome extends React.Component {
         await this.setState({
             featuredPrograms: featuredProgramsIn,
         })
+    }
+
+    renderNearbyUsers = () => {
+        try {
+           return this.state.usersNearYou.map(user => {
+               if (typeof(user) != 'object' 
+               || user == undefined || user.user_uuid == undefined || 
+               user.user_uuid == "" || typeof(user.user_uuid) != 'string')
+               {
+                   return null;
+               }
+
+               
+
+               return (
+                   
+                   <CircularUserCard user={user} />
+               )
+
+
+           })
+        } catch(err) {
+            LOG_ERROR('PackView.js', 'Exception caught in renderNearbyUsers()', error);
+           return null;
+        }
     }
 
     closeTrainerInsightsModalMethod = () => {
@@ -214,7 +266,7 @@ class LupaHome extends React.Component {
     _renderItem = ({item, index}) => {
         return (
             <>
-                                <Surface style={{height: '80%', width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 3, margin: 5}}>
+                                <Surface style={{height: 200, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 3, margin: 5}}>
                                     <Image resizeMode="cover" source={item} style={{width: '100%', height: '100%', borderRadius: 15}} />
                                     <Text style={{fontFamily: 'ARSMaquettePro-Black', position: 'absolute', alignSelf: 'center', fontWeight: 'bold', fontSize: 35, color: 'white'}}>
                                         Coming Soon
@@ -373,11 +425,35 @@ class LupaHome extends React.Component {
         }
     }
 
+    onScroll = (event) => {
+        var currentOffset = event.nativeEvent.contentOffset.y;
+        var direction = currentOffset > this.offset ? this.showFilters() : this.hideFilters();
+    this.offset = currentOffset;
+    console.log(direction);
+    }
+
+    showFilters = () => {
+            Animated.timing(this.state.height, {
+                toValue: 0,
+                duration: 100
+            }).start()
+    }
+
+    hideFilters = () => {
+            Animated.timing(this.state.height, {
+                toValue: 80,
+                duration: 100
+            }).start()
+    }
+
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                
                 <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 2}}>
-                <SearchBar placeholder="Search trainers"
+                <SearchBar placeholder="Look for trainers or workout programs"
+                        inputStyle={{fontSize: 15, fontWeight: '300'}}
+                        placeholderTextColor="rgb(99, 99, 102)"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
@@ -385,7 +461,7 @@ class LupaHome extends React.Component {
                         value={this.state.searchValue}/>
                 </Appbar.Header>
 
-                <Surface style={{height: 80, marginTop: 1, elevation: 2}}>
+                <Surface style={{height: this.state.height, marginTop: 1, elevation: 2}}>
                     
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}} onMoveShouldSetResponder={evt => {
                         this.props.disableSwipe();
@@ -417,28 +493,64 @@ class LupaHome extends React.Component {
 
                 {
                     this.state.searchValue != "" ?
-                    <View style={{flex: 4}}>
+                    <View style={{flex: 1}}>
                         <ScrollView>
 
                         </ScrollView>
                     </View>
                     :
-<ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2,}}>
-                <View style={{flex: 4}}>
-                <View
-                    style={{flex: 0.6, justifyContent: 'center', justifyContent: 'center' }}
+               <View style={{flex: 1}}>
+<ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
+<View
+                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}
                     onMoveShouldSetResponder={evt => {
                         this.props.disableSwipe();
                         return true;
                     }}
                     onTouchEnd={() => this.props.enableSwipe()}>
                     
-                    <View style={{padding: 5}}>
-                    <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: RFPercentage(2.5) }}>
-                        Curated By Lupa
+                    <View style={{padding: 5, width: '80%'}}>
+                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 20 }}>
+                       Your next fitness guide
                     </Text>
-                    <Text style={{color: 'rgba(58, 58, 60, 0.9)', fontFamily: 'HelveticaNeueLight', fontSize: RFPercentage(1.8), }}>
-                        Free Workouts and programs curated by Lupa
+                    </View>
+
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                            {
+                                this.renderNearbyUsers()
+                            }
+                    </ScrollView>
+</View>
+
+<View style={{padding: 20, height: 300, alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
+                        <View>
+                        <Text style={{fontWeight: '400', paddingLeft: 20,  fontSize: 20, marginVertical: 5}}>
+                            Starting and continuing a journey of a lifetime
+                        </Text>
+                        <Text style={{paddingLeft: 20, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                            It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
+                        </Text>
+                        </View>
+                        <Button mode="contained" color="#212121" style={{marginLeft: 20, width: 'auto'}} theme={{
+                            roundness: 8
+                        }} onPress={() => this.setState({ customizedInviteFriendsModalIsOpen: true})}>
+                            <Text>
+                                Invite Friends
+                            </Text>
+                        </Button>
+                    </View>
+
+                <View
+                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}
+                    onMoveShouldSetResponder={evt => {
+                        this.props.disableSwipe();
+                        return true;
+                    }}
+                    onTouchEnd={() => this.props.enableSwipe()}>
+                    
+                    <View style={{padding: 5, width: '80%'}}>
+                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 20 }}>
+                        Curated by us, for you
                     </Text>
                     </View>
 
@@ -456,59 +568,74 @@ class LupaHome extends React.Component {
 
                         </View>
 
-                
 
+                        <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, height: 300, backgroundColor: 'black', marginVertical: 10}}>
+                        <View>
+                        <Text style={{paddingLeft: 20, color: 'white', fontSize: 20, marginVertical: 5}}>
+                            Did you complete any type of exercise today?
+                        </Text>
+                        <Text style={{color: 'white', paddingLeft: 20, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                           Every time you complete a physical activity you are one step closer to completing your goals.  Keep track of your progress by logging your workout or checking in for the day.
+                        </Text>
+                        </View>
+
+                        <Button mode="contained" color="white" style={{marginLeft: 20, alignItems: 'center', justifyContent: 'center', width: '30%'}} theme={{
+                            roundness: 8
+                        }} >
+                            <Text>
+                                Log it
+                            </Text>
+                        </Button>
+                        </View>
+
+            
 
                 <View
-                    style={{ flex: 0.7, justifyContent: 'center', justifyContent: 'center' }}
+                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}
                     onMoveShouldSetResponder={evt => {
                         this.props.disableSwipe();
                         return true;
                     }}
                     onTouchEnd={() => this.props.enableSwipe()}>
                     <View style={{padding: 5}}>
-                    <Text style={{ fontFamily: 'ARSMaquettePro-Medium', fontSize: RFPercentage(2.5) }}>
-                        Start now
-                    </Text>
-                    <Text style={{ color: 'rgba(58, 58, 60, 0.9)', fontFamily: 'HelveticaNeueLight', fontSize: RFPercentage(1.8), }}>
-                        Top picks of programs based on your account
-                    </Text>
+                    <Text style={{fontSize: RFValue(15), fontWeight: '300', paddingVertical: 10, paddingLeft: 20 }}>
+                        Start now with top picks
+                        </Text>
                     </View>
                     <ScrollView onScroll={(event) => {
                     }} contentContainerStyle={{}} scrollEnabled={this.state.featuredPrograms.length > 1 ? true : false} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
                         {
                             this.state.featuredPrograms.map((currProgram, index, arr) => {
                                 return (
-                                   <FeaturedProgramCard currProgram={currProgram} key={index} />
+                                   <FeaturedProgramCard currProgram={currProgram} programOwnerUUID={currProgram.program_owner.uuid} key={index} />
                                 )
                             })
                         }
 
                     </ScrollView>
                 </View>
-                </View>
 
-            
-                
-                    <View style={{width: Dimensions.get('window').width, flex: 0.5}}>
-                    <View style={{flex: 1, width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                    <Button mode="contained" color="#23374d" onPress={() => this.props.navigation.navigate('Programs')} style={{width: Dimensions.get('window').width - 100, borderRadius: 10}}>
+                    <View style={{marginVertical: 10, width: Dimensions.get('window').width}}>
+                    <View style={{width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                    <Button mode="contained" color="#23374d" onPress={() => this.props.navigation.navigate('Programs')} style={{height: 40, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 100, borderRadius: 10}}>
                         <Text style={{fontFamily: 'HelveticaNeueMedium', fontSize: 15, padding: 0, margin: 0, color: '#FFFFFF'}}>
                             Explore More
                         </Text>
                     </Button>
                     </View>
-                    </View>  
+                    </View> 
+    
                     </ScrollView>
-                    }
+                    </View>
+    }
                     
-                <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
+              <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
                 
+              <CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} />
                 <Modalize ref={this.searchAttributePickerModalRef} modalHeight={Dimensions.get('window').height / 3}>
                     {this.getPicker(this.state.currSearchFilter)}
-        </Modalize>
-                
-                <SafeAreaView />
+                </Modalize>
+        
             </View>
         );
     }

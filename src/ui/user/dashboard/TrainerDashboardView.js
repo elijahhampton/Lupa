@@ -316,35 +316,8 @@ class TrainerDashboardView extends React.Component {
                 </View>
 
                 {/* <PackInviteModal refreshData={this.fetchPackInvites} closeModalMethod={this.handlePackInviteModalClose} isOpen={this.state.packInviteModalOpen} packID={this.state.openedPackInviteID} packTitle={this.state.openedPackTitle} currUserID={this.props.lupa_data.Users.currUserData.user_uuid} /> */}
-                
-                <View>
-                    <Text style={{padding: 10, fontSize: 22, fontFamily: 'HelveticaNeueMedium'}}>
-                        Invite Friends
-                    </Text>
-                    <Divider />
-                    {
-                        this.props.lupa_data.Users.currUserData.isTrainer  === true ? 
-                        <TouchableWithoutFeedback onPress={this.showInviteFriendsModal}>
-                        <View style={{padding: 20, flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={{width: '85%', fontSize: RFValue(15), fontFamily: 'HelveticaNeueLight'}}>
-                            Onboard a client and add a free program to your account
-                        </Text>
-                        <Image source={require('../../images/meeting-icon.png')} style={{margin: 5, width: 40, height: 40}} />
-                        </View>
-                        </TouchableWithoutFeedback>
-                        :
-                        <TouchableWithoutFeedback onPress={this.showInviteFriendsModal}>
-                        <View style={{padding: 20, flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={{width: '85%', fontSize: RFValue(15), fontFamily: 'HelveticaNeueLight'}}>
-                            Invite your friends and add a free program to your account
-                        </Text>
-                        <Image source={require('../../images/meeting-icon.png')} style={{margin: 5, width: 40, height: 40}} />
-                        </View>
-                        </TouchableWithoutFeedback>
-                    }
-                </View>
 
-                    <InviteFriendsModal showGettingStarted={false} isVisible={this.state.inviteFriendsModalIsOpen} closeModalMethod={this.closeInviteFriendsModal} />
+
                     <SafeAreaView />
 
             </View>

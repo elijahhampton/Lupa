@@ -9,7 +9,8 @@
       },
       "workout_steps": [],
       "workout_tags": [],
-      "workout_uid": ""
+      "workout_uid": "",
+      "workout_cue": ""
   },
   {
     "workout_name": "Lunge",
@@ -20,7 +21,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Crunch",
@@ -31,7 +33,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Bench Press",
@@ -42,7 +45,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Leg Press",
@@ -53,7 +57,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Push Up",
@@ -64,7 +69,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Plank",
@@ -75,7 +81,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Wall Sit",
@@ -86,7 +93,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Jumping Jacks",
@@ -97,7 +105,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Dumbbell Curls",
@@ -108,7 +117,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Pullups",
@@ -119,7 +129,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Step Ups",
@@ -130,7 +141,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 },
 {
     "workout_name": "Plank",
@@ -141,7 +153,8 @@
     },
     "workout_steps": [],
     "workout_tags": [],
-    "workout_uid": ""
+    "workout_uid": "",
+    "workout_cue": ""
 }
 ]
 }

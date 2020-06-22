@@ -622,7 +622,7 @@ class Programs extends React.Component {
                                         <View>
                                             <ProgramSearchResultCard  programData={program} />
                                             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-                                            <Button color="rgb(13,71,161)" onPress={() => this.props.navigation.push('CreateProgram', {
+                                           {/*} <Button color="rgb(13,71,161)" onPress={() => this.props.navigation.push('CreateProgram', {
                                                 mode: "EDIT",
                                                 currProgramUUID: program.program_structure_uuid,
                                                 programData: program,
@@ -630,7 +630,7 @@ class Programs extends React.Component {
                                                 <Text>
                                                 Edit 
                                                 </Text>
-                                            </Button>
+                                        </Button> */}
                                             <Button color="rgb(229,57,53)" 
                                             onPress={() => this.deleteUserProgram(program.program_structure_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>
                                                 <Text>

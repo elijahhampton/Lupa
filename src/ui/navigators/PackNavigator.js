@@ -16,7 +16,7 @@ import ProfileView from '../user/profile/ProfileView';
 const PackNavigator = createStackNavigator(
     {
         PackView: {
-            screen: PackView,
+            screen: (props) =>  <PackView  {...props} goToIndex={props.screenProps.goToIndex}/>,
             navigationOptions: ({ navigation }) => ({
                 title: 'PackView',
                 header: null,

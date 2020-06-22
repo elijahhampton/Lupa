@@ -135,7 +135,7 @@ class ProgramListComponent extends React.Component {
                     </View>
                 </View>
 
-                <ProgramInformationPreview isVisible={this.state.programModalVisible} programData={this.props.programData}  closeModalMethod={this.handleCloseProgramInformationModal} />
+                <ProgramInformationPreview isVisible={this.state.programModalVisible} programData={this.props.programData} closeModalMethod={this.handleCloseProgramInformationModal} />
                 </View>
         )
     }

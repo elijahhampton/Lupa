@@ -11,6 +11,7 @@ import {
   Modal as NativeModal,
   TouchableWithoutFeedback,
   Dimensions,
+  ImageBackground,
 } from 'react-native';
 
 import {
@@ -35,10 +36,17 @@ import { Constants } from 'react-native-unimodules';
 
 function VideoPreview(props) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
+  const { mediaCaptureType } = props;
   const saveVideo = async () => {
     const newURI = await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(props.currWorkoutPressed, props.currProgramUUID, 'VIDEO', props.videoSrcProps)
     await props.captureURI(newURI, "VIDEO")
+    await  props.closeVideoPreview()
+   await  props.closeMainModal()
+  }
+
+  const saveImage = async () => {
+    const newURI = await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(props.currWorkoutPressed, props.currProgramUUID, 'IMAGE', props.videoSrcProps)
+    await props.captureURI(newURI, "IMAGE")
     await  props.closeVideoPreview()
    await  props.closeMainModal()
   }
@@ -50,17 +58,22 @@ function VideoPreview(props) {
         animated={true}
         animationType="slide">
                           <View style={{flex: 1, backgroundColor: 'transparent'}}>
-                          <Video
-                        source={{ uri: props.videoSrcProps }}
-                        rate={1.0}
-                        volume={10}
-                        isMuted={false}
-                        resizeMode="cover"
-                        shouldPlay={true}
-                        isLooping={true}
-                        style={{flex: 1}}
-                        
-                    />
+                            {
+                              props.mediaCaptureType  == 'VIDEO' ?
+                              <Video
+                              source={{ uri: props.videoSrcProps }}
+                              rate={1.0}
+                              volume={10}
+                              isMuted={false}
+                              resizeMode="cover"
+                              shouldPlay={true}
+                              isLooping={true}
+                              style={{flex: 1}}
+                              
+                          />
+                          :
+                          <ImageBackground style={{flex: 1}} source={{uri: props.videoSrcProps }} />
+                            }
 
 <View style={{padding: 15, flexDirection: 'row', alignItems: 'center', backgroundColor: 'black', width: Dimensions.get('window').width, height: 'auto', justifyContent: 'space-evenly'}}>
 
@@ -68,7 +81,7 @@ function VideoPreview(props) {
       Retry
 </Button>
 
-<Button color="#FFFFFF" mode="text" onPress={saveVideo} style={{margin: 15}}>
+<Button color="#FFFFFF" mode="text" onPress={mediaCaptureType == 'VIDEO' ? saveVideo : saveImage} style={{margin: 15}}>
       Save
 </Button>
 
@@ -348,13 +361,25 @@ export default class CameraScreen extends React.Component {
   renderRecording = () => {
     const { isRecording } = this.state;
     const backgroundColor = isRecording ? 'darkred' : 'transparent';
-    const action = isRecording ? this.stopVideo : this.takeVideo;
-    return (
-      <TouchableWithoutFeedback onPress={action} style={{borderRadius: 60}}>
-        <View style={{alignSelf: 'center', width: 60, height: 60, borderRadius: 60, borderWidth: 3, borderColor: '#FFFFFF', padding: 20, backgroundColor: backgroundColor}} />
-      </TouchableWithoutFeedback>
+    const videoAction = isRecording ? this.stopVideo : this.takeVideo;
+    const pictureAction = this.takePicture
+    const { mediaCaptureType } = this.props;
     
-    );
+    if (mediaCaptureType == 'VIDEO')
+    {
+      return (
+        <TouchableWithoutFeedback onPress={videoAction} style={{borderRadius: 60}}>
+          <View style={{alignSelf: 'center', width: 60, height: 60, borderRadius: 60, borderWidth: 3, borderColor: '#FFFFFF', padding: 20, backgroundColor: backgroundColor}} />
+        </TouchableWithoutFeedback>
+      );
+    }
+    else
+    {
+      <TouchableWithoutFeedback onPress={pictureAction} style={{borderRadius: 60}}>
+          <View style={{alignSelf: 'center', width: 60, height: 60, borderRadius: 60, borderWidth: 3, borderColor: '#FFFFFF', padding: 20, backgroundColor: backgroundColor}} />
+        </TouchableWithoutFeedback>
+    }
+
   };
 
   stopVideo = async () => {
@@ -605,6 +630,7 @@ export default class CameraScreen extends React.Component {
         currProgramUUID={this.props.currProgramUUID}
         closeMainModal={this.props.closeModalMethod}
         captureURI={(uri, type) => this.props.handleCaptureNewMediaURI(uri, type)}
+        mediaCaptureType={this.props.mediaCaptureType}
        />
         </Modal>
     )

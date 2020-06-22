@@ -48,20 +48,6 @@ class MyPacksCard extends React.Component {
         await this.props.refreshPackViewMethod();
     }
 
-    componentDidMount = async () => {
-        await this.setupComponent();
-    }
-
-    setupComponent = async () => {
-        await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.state.packUUID).then(result => {
-            packProfileImageIn = result;
-        })
-
-        await this.setState({
-            packProfileImage: packProfileImageIn
-        })
-    }
-
     render() {
         return (
             <TouchableOpacity onPress={() => this.handleShowPack(this.state.packUUID)} style={{marginVertical: 15}}>
@@ -69,7 +55,7 @@ class MyPacksCard extends React.Component {
                 <Surface style={{margin: 5, marginRight: 20, width: 100, height: 100, backgroundColor: '#FFFFFF', elevation: 2, borderRadius: 5}}>
                 <Image style={styles.image} 
                                     resizeMode={ImageResizeMode.cover} 
-                                    source={{uri: this.state.packProfileImage}} />
+                                    source={{uri: this.props.pack.pack_image}} />
                 </Surface>
 
                 <View style={{flex: 1, height: 120, justifyContent: 'space-evenly', width: '100%'}}>

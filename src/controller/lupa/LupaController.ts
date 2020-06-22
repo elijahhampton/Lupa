@@ -750,7 +750,7 @@ export default class LupaController {
       }
 
       getFeaturedPrograms = async () => {
-        let retVal;
+        let retVal = []
 
         await USER_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
           retVal = result;
@@ -797,8 +797,18 @@ export default class LupaController {
     }
 
     getBookmarkedPrograms = async () => {
-      let data = undefined;
+      let data = []
+
       await USER_CONTROLLER_INSTANCE.getBookmarkedPrograms().then(result => {
+        data = result;
+      });
+
+      return Promise.resolve(data);
+    }
+
+    getPacksWithoutParticipatingUUID = async (userUUID) => {
+      let data = []
+      await PACKS_CONTROLLER_INSTANCE.getPacksWithoutParticipatingUUID(userUUID).then(result => {
         data = result;
       });
 
