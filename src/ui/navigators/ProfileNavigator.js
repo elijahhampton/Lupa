@@ -76,7 +76,7 @@ const ProfileNavigator = createStackNavigator(
         })
       },
       LiveWorkout: {
-        screen: (props) => <LiveWorkout {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+        screen: (props) => <LiveWorkout {...props}  />,
         navigationOptions:   ({navigation}) => ({
             title: "LiveWorkout",
             header: null,
@@ -84,7 +84,7 @@ const ProfileNavigator = createStackNavigator(
         })
       },
       Programs: {
-        screen: (props) => <Programs {...props} enableSwipe={props.screenProps.enableSwipe} disableSwipe={props.screenProps.disableSwipe} />,
+        screen: (props) => <Programs {...props} />,
         navigationOptions:   ({navigation}) => ({
             title: "Programs",
             header: null,
@@ -100,7 +100,7 @@ const ProfileNavigator = createStackNavigator(
         })
       },
       CreateProgram: {
-        screen: (props) => <CreateProgram  {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+        screen: (props) => <CreateProgram  {...props} />,
         initialParams: {
             mode: "CREATE",
             currProgramUUID: "",

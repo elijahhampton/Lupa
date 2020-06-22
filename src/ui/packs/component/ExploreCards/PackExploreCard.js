@@ -53,7 +53,7 @@ class DefaultPack extends React.Component {
     render() {
         return (
             <TouchableOpacity onPress={() => this._setShowPack()}>
-                        <Surface style={{margin: 35, alignSelf: 'center', width: Dimensions.get('screen').width - 80, marginHorizontal: 20,  height: 250, elevation: 15, borderRadius: 15}}>
+                        <Surface style={{margin: 35, alignSelf: 'center', width: Dimensions.get('screen').width - 80, marginHorizontal: 20,  height: 250, elevation: 1, borderRadius: 15}}>
                         <ImageBackground style={{flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 15,}} imageStyle={{borderRadius: 15}} source={{uri: this.props.pack.pack_image}}>
                     <Headline style={{color: 'white', fontWeight: 'bold'}}>
                         {this.props.pack_title}

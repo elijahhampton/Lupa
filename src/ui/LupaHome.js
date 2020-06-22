@@ -30,7 +30,6 @@ import {
     DataTable,
     Button,
     IconButton,
-    FAB,
     Chip,
     Paragraph,
     Card,
@@ -40,6 +39,7 @@ import {
     Appbar,
     Divider,
     Avatar,
+    FAB,
     Menu,
 
 } from 'react-native-paper';
@@ -452,7 +452,7 @@ class LupaHome extends React.Component {
                 
                 <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 2}}>
                 <SearchBar placeholder="Look for trainers or workout programs"
-                        inputStyle={{fontSize: 15, fontWeight: '300'}}
+                        inputStyle={{fontSize: 16, fontWeight: '300', fontFamily: 'HelveticaNeueLight'}}
                         placeholderTextColor="rgb(99, 99, 102)"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
@@ -461,57 +461,29 @@ class LupaHome extends React.Component {
                         value={this.state.searchValue}/>
                 </Appbar.Header>
 
-                <Surface style={{height: this.state.height, marginTop: 1, elevation: 2}}>
-                    
-                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}} onMoveShouldSetResponder={evt => {
-                        this.props.disableSwipe();
-                        return true;
-                    }}
-                    onTouchEnd={() => this.props.enableSwipe()}>
-                    <FeatherIcon name="sliders" size={15} style={{margin: 6}} />
-                    <ScrollView bounces={false} horizontal={true} contentContainerStyle={{alignItems: 'center', justifyContent: 'center',}}>
-                        {
-                            this.state.data.map((currVal, index, arr) => {
-                                // off blue - rgba(30,136,229 ,0.3)
-                                // deep - rgba(41,98,255 ,1)
-                                return (
-                                        <Chip 
-                                        onPress={() => this.handleFilerOnPress(currVal.chipID)} 
-                                        mode="outlined"  
-                                        icon={() => <FeatherIcon size={15}  name="chevron-down" color="#212121" />} 
-                                        style={{backgroundColor: 'transparent', elevation: 0, margin: 5, marginVertical: 10, width: 'auto', borderRadius: 12}}>
-                                            {
-                                                this.getChipText(currVal.chipID) 
-                                            }
-                                        </Chip> 
-                               )
-                            })
-                        }
-                    </ScrollView>
-                    </View>
-                </Surface>
-
                 {
                     this.state.searchValue != "" ?
                     <View style={{flex: 1}}>
                         <ScrollView>
-
+                      
                         </ScrollView>
+                        <FAB icon="filter-list" color="#FFFFFF" style={{backgroundColor: 'rgba(1,87,155 ,1)', position: 'absolute', bottom: 0, right: 0, margin: 15}} />
                     </View>
                     :
                <View style={{flex: 1}}>
 <ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
+
 <View
                     style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}
                     onMoveShouldSetResponder={evt => {
-                        this.props.disableSwipe();
+                        console.log('disable swipe');
                         return true;
                     }}
-                    onTouchEnd={() => this.props.enableSwipe()}>
+                    onTouchEnd={() => console.log('enable swipe')}>
                     
                     <View style={{padding: 5, width: '80%'}}>
-                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 20 }}>
-                       Your next fitness guide
+                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 10 }}>
+                       Find fitness trainers
                     </Text>
                     </View>
 
@@ -522,12 +494,12 @@ class LupaHome extends React.Component {
                     </ScrollView>
 </View>
 
-<View style={{padding: 20, height: 300, alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
+<View style={{padding: 20, height: 250, alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
                         <View>
-                        <Text style={{fontWeight: '400', paddingLeft: 20,  fontSize: 20, marginVertical: 5}}>
+                        <Text style={{fontWeight: '400', paddingLeft: 10,  fontSize: 20, marginVertical: 5}}>
                             Starting and continuing a journey of a lifetime
                         </Text>
-                        <Text style={{paddingLeft: 20, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                        <Text style={{paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
                             It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
                         </Text>
                         </View>
@@ -543,13 +515,13 @@ class LupaHome extends React.Component {
                 <View
                     style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}
                     onMoveShouldSetResponder={evt => {
-                        this.props.disableSwipe();
+                        console.log('disable swipe');
                         return true;
                     }}
-                    onTouchEnd={() => this.props.enableSwipe()}>
+                    onTouchEnd={() => console.log('enable swipe')}>
                     
                     <View style={{padding: 5, width: '80%'}}>
-                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 20 }}>
+                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 10 }}>
                         Curated by us, for you
                     </Text>
                     </View>
@@ -571,10 +543,10 @@ class LupaHome extends React.Component {
 
                         <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, height: 300, backgroundColor: 'black', marginVertical: 10}}>
                         <View>
-                        <Text style={{paddingLeft: 20, color: 'white', fontSize: 20, marginVertical: 5}}>
+                        <Text style={{paddingLeft: 10, color: 'white', fontSize: 20, marginVertical: 5}}>
                             Did you complete any type of exercise today?
                         </Text>
-                        <Text style={{color: 'white', paddingLeft: 20, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                        <Text style={{color: 'white', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
                            Every time you complete a physical activity you are one step closer to completing your goals.  Keep track of your progress by logging your workout or checking in for the day.
                         </Text>
                         </View>
@@ -593,13 +565,13 @@ class LupaHome extends React.Component {
                 <View
                     style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}
                     onMoveShouldSetResponder={evt => {
-                        this.props.disableSwipe();
+                        console.log('disable swipe');
                         return true;
                     }}
-                    onTouchEnd={() => this.props.enableSwipe()}>
+                    onTouchEnd={() => console.log('enable swipe')}>
                     <View style={{padding: 5}}>
-                    <Text style={{fontSize: RFValue(15), fontWeight: '300', paddingVertical: 10, paddingLeft: 20 }}>
-                        Start now with top picks
+                    <Text style={{fontSize: RFValue(15), fontWeight: '300', paddingVertical: 10, paddingLeft: 10 }}>
+                        Top picks
                         </Text>
                     </View>
                     <ScrollView onScroll={(event) => {
@@ -617,7 +589,7 @@ class LupaHome extends React.Component {
 
                     <View style={{marginVertical: 10, width: Dimensions.get('window').width}}>
                     <View style={{width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                    <Button mode="contained" color="#23374d" onPress={() => this.props.navigation.navigate('Programs')} style={{height: 40, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 100, borderRadius: 10}}>
+                    <Button mode="contained" color="#212121" onPress={() => this.props.navigation.navigate('Programs')} style={{height: 40, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 100, borderRadius: 10}}>
                         <Text style={{fontFamily: 'HelveticaNeueMedium', fontSize: 15, padding: 0, margin: 0, color: '#FFFFFF'}}>
                             Explore More
                         </Text>

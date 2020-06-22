@@ -376,7 +376,7 @@ Animated.timing(
                  <Card style={{marginVertical: 20, margin: 10, width: Dimensions.get('window').width - 100, borderRadius: 20}}>
                  <Card.Cover source={{uri: pack.pack_image}} />
                  <Card.Content style={{padding: 0, margin: 0}}>
-                     <Text style={{width: '100%', paddingVertical: 8, fontFamily: 'HelveticaNeueMedium', fontSize: 18, }}>
+                     <Text style={{color: 'rgb(44, 44, 46)', width: '100%', paddingVertical: 8, fontFamily: 'HelveticaNeueLight', fontSize: 18, }}>
                          Find out more about the {pack.pack_title} pack
                      </Text>
                      <Text style={{fontFamily: 'HelveticaNeueLight'}}>
@@ -435,27 +435,6 @@ Animated.timing(
                    
                 
                 </Appbar.Header>
-                <View style={{width: Dimensions.get('window').width}}>
-                    <ScrollView horizontal contentContainerStyle={{padding: 5}}>
-                        {
-                            TAB_BUTTONS.map((buttonText, index, arr) => {
-                                return (
-                                    <View style={{alignItems: 'center'}}>
-                                        <Button key={index} mode="text" compact color="#212121" style={{/*borderRadius: 0, borderBottomWidth: this.state.currentTab == buttonText ? 2 : 0, borderBottomColor: this.state.currentTab == buttonText ? '#212121' : 'transparent'*/}} onPress={() => this.setState({ currentTab: buttonText })}>
-                                            <Text>
-                                                {buttonText}
-                                            </Text>
-                                        </Button>
-                                        {this.state.currentTab == buttonText ? <View style={{width: '85%', marginTop: 8, borderBottomWidth: 2, borderBottomColor: '#212121', borderTopColor: 'transparent', borderLeftColor: 'transparent', borderRightColor: 'transparent'}}/>
-                                   : null}
-                                    </View>
-                                )
-                            })
-                        }
-                    </ScrollView>
-                    <Divider />
-               
-                </View>
 
                 {
                     this.state.searchValue != "" ?
@@ -497,11 +476,11 @@ Animated.timing(
                     key={'discover-trainers-button'} 
                     color="#23374d" 
                     mode="contained" 
-                    style={{width: '85%', alignSelf: 'center', marginVertical: 20, height: 50, alignItems: 'center', justifyContent: 'center'}} 
+                    style={{elevation: 0, width: 'auto', marginLeft: 20, alignSelf: 'flex-start', marginVertical: 20, alignItems: 'center', justifyContent: 'center'}} 
                     theme={{
                         roundness: 10,
                     }}
-                    onPress={() => this.props.goToIndex(1)}>
+                    >
                         <Text>
                             Discover Trainers
                         </Text>

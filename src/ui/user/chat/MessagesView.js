@@ -55,11 +55,11 @@ class MessagesView extends React.Component {
 
     componentDidMount = async () => {
         await this.setupUserMessageData();
-        this.props.disableSwipe()
+        console.log('disable swipe')
       }
     
       async componentWillUnmount() {
-          await this.props.enableSwipe()
+          await console.log('enable swipe')
       }
 
       setupUserMessageData = async () => {

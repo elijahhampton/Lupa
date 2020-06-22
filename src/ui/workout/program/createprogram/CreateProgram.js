@@ -65,7 +65,7 @@ class CreateProgram extends React.Component {
     }
 
     async componentDidMount() {
-        this.props.disableSwipe();
+        console.log('disable swipe');
 
             const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
             this.setState({ currProgramUUID: programPayload.program_structure_uuid })
@@ -73,7 +73,7 @@ class CreateProgram extends React.Component {
     }
 
     async componentWillUnmount() {
-        this.props.enableSwipe();
+        console.log('enable swipe');
         if (this.state.programComplete == false)
         {
             //delete from database

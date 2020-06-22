@@ -39,7 +39,7 @@ class NotificationsView extends React.Component {
     componentDidMount = async () =>  {
         let notificationsIn = [];
 
-        this.props.disableSwipe();
+        console.log('disable swipe');
 
         try {
             await this.LUPA_CONTROLLER_INSTANCE.getUserNotifications().then(notifications => {
@@ -68,7 +68,7 @@ class NotificationsView extends React.Component {
     }
 
     async componentWillUnmount() {
-        await this.props.enableSwipe();
+        await console.log('enable swipe');
     }
 
     handleOnRefresh = () => {
