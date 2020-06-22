@@ -50,7 +50,7 @@ class ProgramProfileComponent extends React.PureComponent {
 
         this.state = {
             programModalVisible: false,
-            programData: getLupaProgramInformationStructure(),
+            programData: this.props.programData
         }
     }
 

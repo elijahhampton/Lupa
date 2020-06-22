@@ -25,6 +25,7 @@ import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal';
 
 import LupaController from './controller/lupa/LupaController';
 import PackNavigator from './ui/navigators/PackNavigator'
+import { createAppContainer } from 'react-navigation';
 
 import {
   logoutUser,
@@ -36,6 +37,8 @@ import { generateMessagingToken } from "./controller/firebase/firebase";
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LupaHomeNavigator from "./ui/navigators/LupaHomeNavigator";
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 /**
  * 
@@ -279,7 +282,14 @@ searchNavigatorProps = {
   render() {
     return (
       <>
-      <StatusBar backgroundColor="blue" barStyle="dark-content" networkActivityIndicatorVisible={true} />
+<TabNavigator />
+<NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Home" component={(props) => <Dashboard {...props} screenProps={this.dashboardNavigatorProps} />} />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+      {/*<StatusBar backgroundColor="blue" barStyle="dark-content" networkActivityIndicatorVisible={true} />
         <Swiper style={styles.appContainer}
           loop={false}
           showButtons={false}
@@ -292,7 +302,7 @@ searchNavigatorProps = {
         <LupaHomeNavigator screenProps={this.searchNavigatorProps}/>
         <PackNavigator screenProps={this.packNavigatorProps}/>
       </Swiper>
-      <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/>
+    <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/> */}
       </>
     );
   }
@@ -304,5 +314,25 @@ const styles = StyleSheet.create({
     display: 'flex'
   }
 });
+
+
+
+const TabNavigator = createAppContainer(
+  createBottomTabNavigator(
+    {
+  Dashboard: {
+    screen: <Dashboard screenProps={this.dashboardNavigatorProps} />
+  },
+  Train:  {
+    screen: <LupaHomeNavigator screenProps={this.searchNavigatorProps}/>
+  },
+  Packs: {
+    screen: <PackNavigator screenProps={this.packNavigatorProps}/>
+  }
+}
+)
+)
+
+//createAppContainer(TabNavigator);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Lupa);

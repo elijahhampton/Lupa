@@ -150,7 +150,7 @@ function ProgramPreview(props) {
                     On your profile
                 </Text>
                 <View style={{alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width}}>
-                <ProgramProfileComponent programData={props.programData} />
+                <ProgramProfileComponent programData={props.programData} programOwnerUUID={props.programData.program_owner.uuid} />
                 </View>
         </View>
                     

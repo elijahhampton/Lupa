@@ -17,9 +17,8 @@ import {
 
 function CircularUserCard(props) {
     const getAvatar = () => {
-        console.log(props.user.user_uuid)
         try {
-            return <Avatar source={{uri: props.user.photo_url}} rounded size={60} containerStyle={{margin: 10}} avatarStyle={{borderWidth: 3, borderColor: '#616161', borderRadius: 50}} onPress={() => props.navigation.push('ProfileView', {
+            return <Avatar source={{uri: props.user.photo_url}} rounded size={60} containerStyle={{margin: 10}} avatarStyle={{borderWidth: 1.5, borderColor: '#', borderRadius: 50}} onPress={() => props.navigation.push('ProfileView', {
                 navFrom: 'Packs',
                 userUUID: props.user.user_uuid,
             })}/>

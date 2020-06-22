@@ -28,6 +28,8 @@
     "@react-native-firebase/perf": "^6.7.1",
     "@react-native-firebase/remote-config": "^6.7.1",
     "@react-native-firebase/storage": "^6.7.1",
+    "@react-navigation/bottom-tabs": "^5.5.2",
+    "@react-navigation/native": "^5.5.1",
     "algoliasearch": "^3.35.1",
     "assert": "^2.0.0",
     "axios": "^0.19.2",
