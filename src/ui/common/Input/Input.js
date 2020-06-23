@@ -1,13 +1,15 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 
 import {
     View,
     Text,
     TextInput,
     StyleSheet,
+    Dimensions,
 } from 'react-native';
 
 const INPUT_CHANGE = 'INPUT_CHANGE'
+const INPUT_BLUR = 'INPUT_BLUR'
 
 const inputReducer = (state, action) => {
     switch(action.type) {
@@ -15,7 +17,7 @@ const inputReducer = (state, action) => {
             return {
                 ...state,
                 value: action.value,
-                isValid: isValid,
+                isValid: action.isValid,
             }
         case INPUT_BLUR:
             return {
@@ -28,21 +30,21 @@ const inputReducer = (state, action) => {
 }
 
 const Input = props => {
+    const [focused, setIsFocused] = useState(false)
     const [inputState, dispatch] = useReducer(inputReducer, {
         value: props.initialValue ? props.initialValue : '',
         isValid: props.initiallyValid,
         touched: false,
     });
 
-    const { onInputChange } = props;
+    const { onInputChange, id } = props;
 
     useEffect(() => {
         if(inputState.touched) {
-            onInputChange(inputState.value, inputState.isValid);
+            onInputChange(id, inputState.value, inputState.isValid);
         }
 
-
-    }, [inputState, onInputChange])
+    }, [inputState, onInputChange, id])
 
 
 
@@ -68,61 +70,62 @@ const Input = props => {
       };
 
       const lostFocusHandler = () => {
-          dispatch({ type: 'INPUT_BLUR' })
+          setIsFocused(false)
+          dispatch({ type: INPUT_BLUR })
       }
     
 
     return (
         <View style={styles.formControl}>
-            <Text style={styles.label}>
-                {props.label}
-            </Text>
-            <TextInput 
-            {...props}
-            style={styles.input}
-            value={formState.inputValues.title}
-            onChangeText={textChangeHandler.bind(this, 'title')}
-            keyboardType="default"
-            autoCapitalize="sentences"
-            autoCorrect
-            returnKeyType="next"
-            onEndEditing={() => console.log('onEndEditing')}
-            onBlur={lostFocusHandler}
-            />
-            {
-                !inputState.isValid && 
-                <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>
-                        {props.errorText}
-                    </Text>
-                </View>
-            }
-        </View>
+      <Text style={[styles.label, focused ? { color: 'rgba(13,71,161 ,1)' } : {color: 'rgb(142, 142, 147)'}]}>{props.label}</Text>
+      <TextInput
+        {...props}
+        style={[focused ? styles.focusedInput : styles.input]}
+        value={inputState.value}
+        onChangeText={textChangeHandler}
+        onBlur={lostFocusHandler}
+      />
+      {!inputState.isValid && <Text>{props.errorText}</Text>}
+    </View>
     )
 }
 
 const styles = StyleSheet.create({
     formControl: {
-      width: '100%'
-    },
-    label: {
-      fontFamily: 'open-sans-bold',
-      marginVertical: 8
-    },
-    input: {
-      paddingHorizontal: 2,
-      paddingVertical: 5,
-      borderBottomColor: '#ccc',
-      borderBottomWidth: 1
-    },
-    errorContainer: {
-        marginVertical: 5,
-    },
-    errorText: {
-        fontFamily: 'open-sans',
-        color: 'red',
-        fontSize: 13
-    }
+        width: '100%'
+      },
+      label: {
+        fontFamily: 'HelveticaNeueMedium',
+        color: 'rgb(142, 142, 147)',
+        marginVertical: 8,
+        marginLeft: 20,
+      },
+      input: {
+        width: '90%',
+        marginHorizontal: 20,
+        alignSelf: 'center',
+        borderWidth: 1,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderTopColor: 'transparent',
+        borderRadius: 0,
+        height: 40,
+        paddingHorizontal: 10,
+        borderColor: 'rgb(142, 142, 147)'
+      },
+      focusedInput: {
+        width: '90%',
+        marginHorizontal: 20,
+        alignSelf: 'center',
+        borderWidth: 1,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderTopColor: 'transparent',
+        borderRadius: 0,
+        height: 40,
+        paddingHorizontal: 10,
+        borderColor: 'rgba(13,71,161 ,1)'
+      }
   });
 
 export default Input;

@@ -20,7 +20,6 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 
 import { 
-    Input,
     CheckBox,
     Button as ElementsButton,
  } from 'react-native-elements';
@@ -39,6 +38,8 @@ import LupaController from '../../../controller/lupa/LupaController';
 
 import { getLupaAssessmentStructure } from '../../../controller/firebase/collection_structures'
 import { connect, useDispatch } from 'react-redux';
+
+import Input from '../../common/Input/Input'
 /*
 mapStateToProps = (state) => {
     return { 
@@ -664,32 +665,32 @@ const styles = StyleSheet.create({
 export default connect(mapStateToProps, mapDispatchToProps)(SignupModal);
 */
 
-const formReducer = (state = initialState, action) => {
-  switch(action.type) {
-     case 'FORM_INPUT_UPDATE':
-       const updatedValues = {
-         ...state.inputValues,
-         [action.input]: action.value
-       }
-       const updatedValidities = {
-         ...state.inputValidities,
-         [action.input]: action.isValid
-       }
-       let updatedFormIsValid = true;
-       for (const key in updatedValidities) {
-        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-       }
-       return {
+const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
+
+const formReducer = (state, action) => {
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
       formIsValid: updatedFormIsValid,
       inputValidities: updatedValidities,
-      inputValues: updatedValues,
-    }
-    default:
-      return state
+      inputValues: updatedValues
+    };
   }
-}
+  return state;
+};
 
-function SignUp(props) {
+const SignUp = props => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
   const dispatch = useDispatch();
@@ -706,8 +707,7 @@ function SignUp(props) {
     formIsValid: false,
   })
 
-  const signupHandler = () => {
-    alert(formState.inputValues.password)
+  const signupHandler = async () => {
     dispatch(authActions.signup(formState.inputValues.email, formState.inputValues.password));
   }
 
@@ -723,7 +723,10 @@ function SignUp(props) {
   [dispatchFormState]
   );
 
+  const { navigation } = props
+
   return (
+    <SafeAreaView style={{flex: 1}}>
     <KeyboardAvoidingView 
     behavior="padding"
     keyboardVerticalOffset={50}
@@ -742,7 +745,7 @@ function SignUp(props) {
         <Text>
           {" "}
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={{fontSize: 13, fontWeight: '500', color: '#1565C0'}}>
             Sign In
           </Text>
@@ -782,22 +785,21 @@ function SignUp(props) {
               errorMessage="Please enter a valid password." 
               onInputChange={inputChangeHandler}
               initialValue='' />
-            <Input id="confirm-password" label="Confirm Password" keyboardType="default" secureTextEntry required minLength={5} autoCapitalize={false} errorMessage="The passwords do not match!" onValueChange={() => {}} initialValue='' />
-          
-            <View style={{marginTop: 15, justifyContent: 'flex-end', width: '90%', alignSelf: 'center'}}>
-                        <ElementsButton
-  title="Create Account"
-  type="solid"
-  raised
-  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 12}}
-  buttonStyle={{backgroundColor: 'transparent'}}
-  containerStyle={{borderRadius: 12}}
-  onPress={signupHandler}
-  disabled={false}
-/>
-                        </View>
+            
+            <Input i
+              d="confirm-password" 
+              label="Confirm Password" 
+              keyboardType="default" 
+              secureTextEntry 
+              required 
+              minLength={5} 
+              autoCapitalize={false} 
+              errorMessage="The passwords do not match!" 
+              onInputChange={inputChangeHandler}
+              initialValue='' />
 
-                        <View style={{margin: 10}}>
+
+<View style={{margin: 10}}>
                         <CheckBox
                                 center
                                 title='I agree to the Terms of Service and Privacy Policy.'
@@ -812,9 +814,23 @@ function SignUp(props) {
                             />
   
                         </View>  
+          
+            <View style={{marginTop: 15, justifyContent: 'flex-end', width: '90%', alignSelf: 'center'}}>
+                        <ElementsButton
+  title="Create Account"
+  type="solid"
+  raised
+  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 12}}
+  buttonStyle={{backgroundColor: 'transparent'}}
+  containerStyle={{borderRadius: 12}}
+  onPress={signupHandler}
+  disabled={false}
+/>
+                        </View>
           </ScrollView>
       </View>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }
 
