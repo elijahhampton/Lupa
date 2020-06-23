@@ -1,8 +1,8 @@
-import LUPA_DB, { LUPA_AUTH } from '../../firebase/firebase';
+import LUPA_DB, { LUPA_AUTH, UserAuthenticationHandler } from '../../firebase/firebase';
 
 export const SIGNUP = 'SIGNUP'
 
-export const signup = (email, password) => {
+export const signup = (username, email, password) => {
     let USER_UUID;
     
     return async dispatch => {
@@ -15,6 +15,8 @@ export const signup = (email, password) => {
     alert(error.message)
     throw new Error('Something went wrong!')
   });
+
+  await UserAuthenticationHandler.signUpUser(USER_UUID, username, email, password);
 
   //user is gined in now
   //LUPA_AUTH.currentUser.getTokenId()
