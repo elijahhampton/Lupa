@@ -783,8 +783,8 @@ class Programs extends React.Component {
             <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
 
     <Appbar.Header statusBarHeight style={{ marginBottom: 30, paddingVertical: 5, backgroundColor: '#FFFFFF', elevation: 0, justifyContent: 'space-between'}}>
-        <Appbar.Action icon={() => <FeatherIcon name="zap" size={25} />} onPress={() => this.props.navigation.goBack()}/>
-        <Appbar.Action icon={() => <FeatherIcon name="activity" size={25} />} onPress={() => this.mainRBSheet.current.open()}/>
+        <Appbar.Action icon={() => <FeatherIcon name="home" size={25} />} onPress={() => this.props.navigation.goBack()}/>
+        <Appbar.Action icon={() => <FeatherIcon name="more-vertical" size={25} />} onPress={() => this.mainRBSheet.current.open()}/>
     </Appbar.Header>
 
               <View style={{backgroundColor: '#FFFFFF', flex: 1}}>
@@ -792,20 +792,20 @@ class Programs extends React.Component {
                         this.state.searchValue == '' ?
                         <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF'}} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.featuredIsRefreshing} onRefresh={() => this.handleOnRefresh()}/>}>
                     <View style={{width: Dimensions.get('window').width}}>
-        <Input 
-        rightIconContainerStyle={{position: 'absolute', right: 20}} 
-        rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
-        placeholder="Try fitness programs for running" 
-        placeholderTextColor="#212121"  
-        style={{}} 
-        containerStyle={{width: Dimensions.get('screen').width, padding: 0, marginLeft: 10}} 
-        inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
-        value={this.state.searchValue}
-        keyboardType="default"
-        returnKeyLabel="done"
-        returnKeyType="done"
-        onChangeText={text => this._performSearch(text)}
-        />
+                    <Searchbar 
+       style={{marginVertical: 5, borderRadius: 10, width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
+       placeholder="Try fitness programs for running" 
+       placeholderTextColor="rgb(99, 99, 102)" 
+       icon={() => <FeatherIcon name="search" size={20} /> }
+       inputStyle={{width: '100%', fontWeight: '300', fontSize: 15, padding: 0, margin: 0, width: '100%'}}
+       theme={{
+           colors: {
+               primary: '#1089ff',
+           }
+       }}
+       onChangeText={text => this._performSearch(text)}
+       value={this.state.searchValue}
+       />
         </View>
                         <View style={{flex: 1}}>
                         <Text style={styles.headerText}>
@@ -860,20 +860,18 @@ class Programs extends React.Component {
                     <View style={{flex: 1}}>
                         <View>
                         <View style={{width: Dimensions.get('window').width}}>
-        <Input 
-        rightIconContainerStyle={{position: 'absolute', right: 20}} 
-        rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
-        placeholder="Try fitness programs for running" 
-        placeholderTextColor="#212121"  
-        style={{}} 
-        containerStyle={{width: Dimensions.get('screen').width, padding: 0, marginLeft: 10}} 
-        inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
-        value={this.state.searchValue}
-        keyboardType="default"
-        returnKeyLabel="done"
-        returnKeyType="done"
-        onChangeText={text => this._performSearch(text)}
-        />
+                        <Searchbar 
+       style={{marginVertical: 5, borderRadius: 10, width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
+       placeholder="Try fitness programs for running" 
+       placeholderTextColor="rgb(99, 99, 102)" 
+       icon={() => <FeatherIcon name="search" size={20} /> }
+       inputStyle={{width: '100%', fontWeight: '300', fontSize: 15, padding: 0, margin: 0, width: '100%'}}
+       theme={{
+           colors: {
+               primary: '#1089ff',
+           }
+       }}
+       />
         </View>
                         </View>
                         <View style={{flex: 1}}>

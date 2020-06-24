@@ -16,14 +16,6 @@ import {
 } from 'react-native';
 
 import {
-    Header,
-    Container,
-    Left,
-    Right,
-} from 'native-base';
-
-
-import {
     SearchBar,
     Avatar
 } from 'react-native-elements';
@@ -33,6 +25,7 @@ import {
     Dialog,
     Title,
     Card,
+    Searchbar,
     Surface,
     Button,
     Appbar,
@@ -474,11 +467,11 @@ Animated.timing(
                 <View>
                     <Button 
                     key={'discover-trainers-button'} 
-                    color="#23374d" 
+                    color="#1089ff" 
                     mode="contained" 
-                    style={{elevation: 0, width: 'auto', marginLeft: 20, alignSelf: 'flex-start', marginVertical: 20, alignItems: 'center', justifyContent: 'center'}} 
+                    style={{elevation: 6, width: 'auto', marginLeft: 20, alignSelf: 'flex-start', marginVertical: 20, alignItems: 'center', justifyContent: 'center'}} 
                     theme={{
-                        roundness: 10,
+                        roundness: 7,
                     }}
                     >
                         <Text>
@@ -543,12 +536,20 @@ Animated.timing(
                <Animated.View style={{backgroundColor: 'white', height: this.state.searchViewHeight, width: this.state.searchViewWidth, position: 'absolute', bottom: 0, right: 0, margin: 0}}>
               
                     <View style={{marginTop: Constants.statusBarHeight}}>
-                   <SearchBar placeholder="Search"
-                        onChangeText={text => this._performSearch(text)} 
-                        platform="ios"
-                        searchIcon={<FeatherIcon name="search" />}
-                        containerStyle={{backgroundColor: "transparent"}}
-        value={this.state.searchValue}/>
+                    <Searchbar 
+       style={{marginVertical: 5, borderRadius: 10, width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
+       placeholder="Search workout programs, fitness professionals" 
+       placeholderTextColor="rgb(99, 99, 102)" 
+       icon={() => <FeatherIcon name="search" size={20} /> }
+       inputStyle={{width: '100%', fontWeight: '300', fontSize: 15, padding: 0, margin: 0, width: '100%'}}
+       theme={{
+           colors: {
+               primary: '#1089ff',
+           }
+       }}
+       onChangeText={text => this._performSearch(text)}
+       value={this.state.searchValue}
+       />
                     </View>
 
                     {
@@ -568,7 +569,7 @@ Animated.timing(
                
 
 </Animated.View>
-          <FAB icon={this.state.searching === true ? 'close' : 'search'} color="rgba(255,255,255 ,1)" onPress={this.state.searching == true ? this.closeSearch : this.showSearch} style={{ transform: [{rotate: this.spin}], backgroundColor: '#23374d', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
+          <FAB icon={this.state.searching === true ? 'close' : 'search'} color="rgba(255,255,255 ,1)" onPress={this.state.searching == true ? this.closeSearch : this.showSearch} style={{ transform: [{rotate: this.spin}], backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
             
            <CreatePackDialog isVisible={this.state.createPackModalIsOpen} closeDialogMethod={this.closeCreatePackModal} /> 
             </View>

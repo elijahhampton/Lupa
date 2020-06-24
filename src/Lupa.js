@@ -39,7 +39,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LupaHomeNavigator from "./ui/navigators/LupaHomeNavigator";
 
 import { createBottomTabNavigator } from 'react-navigation-tabs'
-import ThinFeatherIcon from "react-native-feather1s/src/Feather1s";
+import FeatherIcon from "react-native-vector-icons/Feather";
 
 /**
  * 
@@ -302,10 +302,10 @@ const config = {
     style: {
     },
     labelPosition: 'below icon',
+    showIcon: true,
+    showLabel: false,
   },
   adaptive: true,
-  showIcon: true,
-  showLabel: false,
   lazy: true
 }
 
@@ -333,19 +333,19 @@ const BottomTabNavigator = createBottomTabNavigator({
  Dashboard: {
     screen: Dashboard,
     navigationOptions: {
-      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"}) => <ThinFeatherIcon thin={true} name="clipboard" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'} />,
+      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"}) => <FeatherIcon thin={false} name="clipboard" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'} />,
     }
   },
   Train:  {
     screen: LupaHomeNavigator,
     navigationOptions: {
-      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"})  => <ThinFeatherIcon thin={true} name="user" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'}/>
+      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"})  => <FeatherIcon thin={false} name="activity" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'}/>
     }
   },
   Community: {
     screen: PackNavigator,
     navigationOptions: {
-      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"})  => <ThinFeatherIcon thin={true} name="globe" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'}/>
+      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"})  => <FeatherIcon thin={false} name="globe" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'}/>
     }
   }
 }, {
