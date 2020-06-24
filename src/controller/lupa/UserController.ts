@@ -499,10 +499,14 @@ export default class UserController {
 
     getUserInformationByUUID = async uuid => {
         let userResult, programsResult = [], servicesResult = [];
-        await USER_COLLECTION.doc(uuid).get().then(result => {
-            userResult = result.data();
-            userResult.id = result.id;
-        });
+        try {
+            await USER_COLLECTION.doc(uuid).get().then(result => {
+                userResult = result.data();
+            });
+        } catch(error) {
+            LOG_ERROR('UserController.ts', 'Caught exception in getUserInformationByUUID', error)
+            return {}
+        }
 
         await USER_COLLECTION.doc(uuid).collection('programs').get().then(docs => {
             docs.forEach(doc => {
@@ -511,15 +515,8 @@ export default class UserController {
             })
         });
 
-        await USER_COLLECTION.doc(uuid).collection('services').get().then(docs => {
-            docs.forEach(doc => {
-                let snapshot = doc.data();
-                servicesResult.push(snapshot);
-            })
-        });
 
         userResult.programs = programsResult;
-        userResult.services = servicesResult;
 
         return Promise.resolve(userResult);
     }
@@ -1420,16 +1417,18 @@ export default class UserController {
           await PROGRAMS_COLLECTION.where('program_type', '==', 'Single').limit(5).get().then(docs => {
               docs.forEach(doc => {
                   let snapshot = doc.data();
+                if (typeof(snapshot.program_owner) != 'object' || typeof(snapshot) == 'undefined' || snapshot.program_name.length == 0 || typeof(snapshot.program_name) == 'undefined')
+                {
 
-                  if (doc.program_structure_uuid == "" || doc == undefined || doc.program_tite == "")
-                  {
-                      return;
-                  }
+                }
+                else
+                {
+                    featuredProfiles.push(snapshot);
+                    featuredProfiles.push(snapshot);
+                    featuredProfiles.push(snapshot);
+                    featuredProfiles.push(snapshot);
+                }
 
-                  featuredProfiles.push(snapshot);
-                  featuredProfiles.push(snapshot);
-                  featuredProfiles.push(snapshot);
-                  featuredProfiles.push(snapshot);
               })
           });
 

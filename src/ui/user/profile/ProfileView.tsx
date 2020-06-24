@@ -72,6 +72,7 @@ import ProgramProfileComponent from '../../workout/program/createprogram/compone
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
 import { Constants } from 'react-native-unimodules';
+import ProgramSearchResultCard from '../../workout/program/components/ProgramSearchResultCard';
 
 const InviteToPackDialog = props => {
     const [userToInvite, setUserToInvite] = useState(props.userToInvite);
@@ -798,7 +799,7 @@ NavigationActions.navigate({
                     {
                         return this.props.lupa_data.Programs.currUserProgramsData.map(program => {
                             return (
-                                 <ProgramProfileComponent programData={program} />
+                                <ProgramSearchResultCard programData={program} />
                             )
                         })
                     }
@@ -921,16 +922,6 @@ NavigationActions.navigate({
                     </Right>
                 </Appbar.Header>
 
-                <Button mode="contained" 
-                style={{backgroundColor: '#23374d', position: 'absolute', bottom: Constants.statusBarHeight + 20, height: 40, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: Dimensions.get('window').width - 20}}
-                theme={{roundness: 10}}
-                >
-                            <Text>
-                                Subscribe
-                            </Text>
-                        </Button>
-
-
                 <ScrollView 
                 contentContainerStyle={{ flexGrow: 1 }} 
                 showsVerticalScrollIndicator={false} 
@@ -1034,9 +1025,18 @@ NavigationActions.navigate({
                             null
                             }
 
+<Button mode="contained" 
+                style={{backgroundColor: '#23374d', height: 40, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: Dimensions.get('window').width - 20}}
+                theme={{roundness: 10}}
+                >
+                            <Text>
+                                Subscribe
+                            </Text>
+                        </Button>
+
                         </View>
 
-                        <Divider style={{marginVertical: 5}} />
+                        <Divider style={{marginVertical: 10, marginHorizontal: 10, backgroundColor: 'rgb(209, 209, 214)'}} />
 
                         <View style={styles.transparentBackground}>
                         <ScrollView 

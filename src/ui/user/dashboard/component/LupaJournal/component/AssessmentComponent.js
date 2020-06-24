@@ -53,7 +53,7 @@ function AssessmentComponent(props) {
             }
             </View>
         </View>
-        <View style={{paddingLeft: 20}}>
+        <View style={{paddingLeft: 10}}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize: 12, fontWeight: '500'}}>
          {assessmentObject.assessment_title}
         </Text>

@@ -25,6 +25,7 @@ import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal';
 
 import LupaController from './controller/lupa/LupaController';
 import PackNavigator from './ui/navigators/PackNavigator'
+import { createAppContainer } from 'react-navigation';
 
 import {
   logoutUser,
@@ -36,6 +37,9 @@ import { generateMessagingToken } from "./controller/firebase/firebase";
 
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LupaHomeNavigator from "./ui/navigators/LupaHomeNavigator";
+
+import { createBottomTabNavigator } from 'react-navigation-tabs'
+import ThinFeatherIcon from "react-native-feather1s/src/Feather1s";
 
 /**
  * 
@@ -279,23 +283,30 @@ searchNavigatorProps = {
   render() {
     return (
       <>
-      <StatusBar backgroundColor="blue" barStyle="dark-content" networkActivityIndicatorVisible={true} />
-        <Swiper style={styles.appContainer}
-          loop={false}
-          showButtons={false}
-          showsPagination={false}
-          index={this.state.currIndex}
-          scrollEnabled={this.state.swipeable}
-          onIndexChanged={index => console.log('Swiper index changed to: ', index)}
-          >
-        <Dashboard screenProps={this.dashboardNavigatorProps} />
-        <LupaHomeNavigator screenProps={this.searchNavigatorProps}/>
-        <PackNavigator screenProps={this.packNavigatorProps}/>
-      </Swiper>
-      <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/>
+      <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
+      <LupaBottomTabNavigator />
+      <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/> 
       </>
     );
   }
+}
+
+const config = {
+  tabBarOptions: {
+    activeTintColor: '#1089ff',
+    inactiveTintColor: 'rgb(58, 58, 60)',
+    labelStyle: {
+      fontSize: 12,
+      fontWeight: '400',
+    },
+    style: {
+    },
+    labelPosition: 'below icon',
+  },
+  adaptive: true,
+  showIcon: true,
+  showLabel: false,
+  lazy: true
 }
 
 
@@ -304,5 +315,47 @@ const styles = StyleSheet.create({
     display: 'flex'
   }
 });
+
+
+class LupaBottomTabNavigator extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <Navigator />
+    )
+  }
+}
+
+const BottomTabNavigator = createBottomTabNavigator({
+ Dashboard: {
+    screen: Dashboard,
+    navigationOptions: {
+      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"}) => <ThinFeatherIcon thin={true} name="clipboard" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'} />,
+    }
+  },
+  Train:  {
+    screen: LupaHomeNavigator,
+    navigationOptions: {
+      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"})  => <ThinFeatherIcon thin={true} name="user" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'}/>
+    }
+  },
+  Community: {
+    screen: PackNavigator,
+    navigationOptions: {
+      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"})  => <ThinFeatherIcon thin={true} name="globe" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'}/>
+    }
+  }
+}, {
+  order: ['Dashboard', 'Train', 'Community'],
+  initialRouteName: 'Train',
+  ...config
+})
+
+const Navigator = createAppContainer(BottomTabNavigator)
+
+//createAppContainer(TabNavigator);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Lupa);

@@ -16,9 +16,15 @@ import {
 } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import LupaController from '../../../../controller/lupa/LupaController';
+import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
+import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
 
 function FeaturedProgramCard(props) {
     let [programModalVisible, setProgramModalVisible] = useState(false);
+
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
@@ -26,9 +32,11 @@ function FeaturedProgramCard(props) {
    const handleCardOnPress = (programData) => {
         if (programData.program_participants.includes(currUserData.user_uuid))
         {
-          props.navigation.push('LiveWorkoutPreview', {
+          /*props.navigation.push('LiveWorkoutPreview', {
                 programData: programData,
-            });
+            });*/
+
+            setProgramModalVisible(true)
         }
         else
         {
@@ -57,11 +65,11 @@ const getProgramLocation = () => {
     }
 }
 
-    const currProgram = props.currProgram;
+    const { currProgram, programOwnerUUID } = props
     const key = props.key;
     return (
         <>
-        <Card key={key} style={{borderRadius: 0,  elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: '90%', marginVertical: 10 }} onPress={() => handleCardOnPress(currProgram)}>
+        <Card key={key} style={{borderRadius: 0,  elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 10 }} onPress={() => handleCardOnPress(currProgram)}>
         <Card.Cover resizeMode='contain' defaultSource={require('../../../images/programs/sample_photo_two.jpg')} source={{uri: currProgram.program_image}} style={{ height: '65%' }} />
         <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
             <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>

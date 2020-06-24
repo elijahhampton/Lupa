@@ -104,7 +104,7 @@ function TrainerInsights(props) {
                             Gross:
                         </Text>
                         <Text style={{fontSize: 15}}>
-                            $156.00
+                            $0
                         </Text>
                         </Text>
 
@@ -113,7 +113,7 @@ function TrainerInsights(props) {
                             Net:
                         </Text>
                         <Text style={{fontSize: 15}}>
-                            $156.00
+                            $0
                         </Text>
                         </Text>
                     </View>
@@ -132,7 +132,7 @@ function TrainerInsights(props) {
                                             Sales
                                         </Text>
                                         <Text style={{fontSize: 20}}>
-                                            10
+                                            0
                                         </Text>
                                     </View>
                                 </Surface>
@@ -147,7 +147,7 @@ function TrainerInsights(props) {
                                             Shares
                                         </Text>
                                         <Text style={{fontSize: 20}}>
-                                            10
+                                            0
                                         </Text>
                                     </View>
                                 </Surface>
@@ -162,7 +162,7 @@ function TrainerInsights(props) {
                                             Views
                                         </Text>
                                         <Text style={{fontSize: 20}}>
-                                            10
+                                            0
                                         </Text>
                                     </View>
                                 </Surface>

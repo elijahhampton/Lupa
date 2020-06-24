@@ -135,7 +135,6 @@ class PackEventCard extends React.Component {
 
     componentDidMount = async () => {
         await this.setupPackEventCard();
-        await this.getPackEventImage();
         await this.generateEventAttendeePhotos();
     }
 
@@ -159,31 +158,10 @@ class PackEventCard extends React.Component {
         })
     }
 
-    getPackEventImage = async () => {
-        let packEventImageIn;
-
-        await this.LUPA_CONTROLLER_INSTANCE.getPackEventImageFromUUID(this.state.packEventObject.pack_event_uuid).then(imageURL => {
-            packEventImageIn = imageURL;
-        });
-
-        await this.setState({
-            packEventImage: packEventImageIn
-        })
-    }
-
     getPackEventCardImage = () => {
-        if (this.state.packEventImage == "" || this.state.packEventImage == undefined)
-        {
-            return (
-                <View style={{width: "100%", height: "100%", borderRadius:20, backgroundColor: "white" }}>
-
-                </View>
-            )
-        }
-
         try {
             return (
-                <Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: this.state.packEventImage }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
+                <Image style={{ width: "100%", height: "100%", borderRadius: 20 }} source={{ uri: this.state.packEventObject.pack_event_image }} resizeMethod="auto" resizeMode={ImageResizeMode.cover} />
             )
         }
         catch(err)
@@ -334,12 +312,12 @@ class PackModal extends React.Component {
     }
 
     componentDidMount = async () => {
-        this.props.disableSwipe();
+        console.log('disable swipe');
        await this.setupPackModal();
     }
 
     componentWillUnmount() {
-        this.props.enableSwipe();
+        console.log('enable swipe');
     }
 
     _navigateToPackChat = () => {
@@ -367,16 +345,6 @@ class PackModal extends React.Component {
                 packEventsIn = packEvents;
             }
         });
-
-        if (packEventsIn.length > 0)
-        {
-            for (let i = 0; i < packEventsIn.length; i++)
-            {
-                await this.LUPA_CONTROLLER_INSTANCE.getPackEventImageFromUUID(packEventsIn[i].pack_event_uuid).then(result => {
-                    packEventsIn[i].pack_event_photo_url = result;
-                });
-            }
-        }  
 
         await this.setState({ 
             packInformation: packInformationIn, 

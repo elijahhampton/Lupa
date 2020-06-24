@@ -11,12 +11,14 @@ import {
     Constants,
     TouchableWithoutFeedback,
     PanResponder,
+    TextInput as NativeTextInput,
     ScrollView,
     Image,
     TouchableHighlight,
     Animated,
     Button as NativeButton,
     Slider,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import {
@@ -52,7 +54,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import SingleWorkout from '../../component/SingleWorkout';
 import LupaCamera from './component/LupaCamera'
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
-import {fromString, uuid} from 'uuidv4';
+import {fromString} from 'uuidv4';
+
+import ImagePicker from 'react-native-image-picker';
+import { LOG_ERROR } from '../../../../common/Logger';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -158,26 +163,246 @@ function WorkoutSchemeModal(props) {
         </PaperModal>
     )
 }
-const v4options = {
-    random: [
-      0x10,
-      0x91,
-      0x56,
-      0xbe,
-      0xc4,
-      0xfb,
-      0xc1,
-      0xea,
-      0x71,
-      0xb4,
-      0xef,
-      0xe1,
-      0x67,
-      0x1c,
-      0x58,
-      0x36,
-    ],
-  };
+
+function AddDescriptionModal(props) {
+    const [description, setDescription] = useState("")
+
+    const saveDescription = () => {
+        props.captureData(description)
+        props.closeDialogMethod()
+    }
+
+    return (
+                    <Dialog visible={props.isVisible} style={{position: 'absolute', top: Dimensions.get('window').height / 4, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
+                        colors: {
+                            primary: '#23374d'
+                        }
+                    }}>
+            <Dialog.Title>
+                Add a description
+            </Dialog.Title>
+            <Divider />
+            <Dialog.Content>
+                <TextInput value={description} onChangeText={text => setDescription(text)} multiline mode="flat" placeholder="The purpose of this exercise is to..." label="Descriptions" theme={{
+                        colors: {
+                            primary: '#23374d'
+                        }
+                    }}/>
+            </Dialog.Content>
+            <Dialog.Actions>
+                <Button mode="text" theme={{
+                        colors: {
+                            primary: '#23374d'
+                        }
+                    }} onPress={() => props.closeDialogMethod()}>
+                    Cancel
+                </Button>
+                <Button mode="text" theme={{
+                        colors: {
+                            primary: '#23374d'
+                        }
+                    }} onPress={saveDescription}>
+                    Save
+                </Button>
+            </Dialog.Actions>
+        </Dialog>
+    )
+}
+
+function AddCueModal(props) {
+    const [cue, setCue] = useState("");
+
+    const saveCue = () => {
+        props.captureData(cue);
+        props.closeDialogMethod();
+    }
+
+    return (
+                    <Dialog visible={props.isVisible} style={{position: 'absolute', top: Dimensions.get('window').height / 4.3, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
+                        colors: {
+                            primary: '#23374d'
+                        }
+                    }}>
+            <Dialog.Title>
+                Add a cue
+            </Dialog.Title>
+            <Divider />
+            <Dialog.Content style={{alignItems: 'center', padding: 20}}>
+                <NativeTextInput value={cue} onChangeText={text => setCue(text)} placeholder="Watch your back in this movement" style={{fontSize: 15, padding: 5, width: '100%', borderBottomWidth: 1.5}} />
+            </Dialog.Content>
+            <Dialog.Actions>
+                <Button mode="text" theme={{
+                        colors: {
+                            primary: '#23374d'
+                        }
+                    }} onPress={() => props.closeDialogMethod()}>
+                    Cancel
+                </Button>
+                <Button mode="text" theme={{
+                        colors: {
+                            primary: '#23374d'
+                        }
+                    }} onPress={saveCue}>
+                    Save
+                </Button>
+            </Dialog.Actions>
+        </Dialog>
+    )
+}
+
+function AddedExercisePreviewModal(props) {
+    const { exerciseData, isVisible } = props;
+
+    const getWorkoutMedia = () => {
+        if (typeof(exerciseData) == 'undefined' || typeof(exerciseData.workout_media.uri) == 'undefined')
+        {
+            return (
+                <View style={{flex: 1, backgroundColor: '#FAFAFA'}}/>
+            )
+        }
+        try {
+            return (
+                <Image resizeMode="cover" style={{width: '100%', height: '100%', borderRadius: 20}} source={{uri: exerciseData.workout_media.uri}} />
+            )
+        } catch(error) {
+            LOG_ERROR('BuildWorkout.js', 'Caught exception in AddedExercisePreviewModal trying to display workout image.', error)
+            return (
+                <View style={{flex: 1, backgroundColor: '#FAFAFA'}}/>
+            )
+        }
+    }
+
+    const getWorkoutDescription = () => {
+        if (typeof(exerciseData) == 'undefined')
+        {
+            return (
+                <Text>
+                     {" "}
+                </Text>
+            )
+        }
+        try {
+            return (
+                <Text>
+                    {exerciseData.workout_description}
+                </Text>
+            )
+        } catch(error) {
+            LOG_ERROR('BuildWorkout.js', 'Caught exception in AddedExercisePreviewModal trying to display workout image.', error)
+                return (
+                    <Text>
+                         {" "}
+                    </Text>
+                )
+        }
+    }
+
+    const getWorkoutCue = () => {
+        if (typeof(exerciseData) == 'undefined')
+        {
+            return (
+                <Text>
+                     {" "}
+                </Text>
+            )
+        }
+        try {
+            return (
+                <Text>
+                    {exerciseData.workout_cue}
+                </Text>
+            )
+        } catch(error) {
+            LOG_ERROR('BuildWorkout.js', 'Caught exception in AddedExercisePreviewModal trying to display workout image.', error)
+                return (
+                    <Text>
+                         {" "}
+                    </Text>
+                )
+        }
+    }
+
+    const getWorkoutSets= () => {
+        if (typeof(exerciseData) == 'undefined')
+        {
+            return (
+                <Text>
+                     {" "}
+                </Text>
+            )
+        }
+        try {
+            return (
+                <Text>
+                    {exerciseData.workout_sets}
+                </Text>
+            )
+        } catch(error) {
+            LOG_ERROR('BuildWorkout.js', 'Caught exception in AddedExercisePreviewModal trying to display workout image.', error)
+                return (
+                    <Text>
+                         {" "}
+                    </Text>
+                )
+        }
+    }
+
+    const getWorkoutReps = () => {
+        if (typeof(exerciseData) == 'undefined')
+        {
+            return (
+                <Text>
+                     {" "}
+                </Text>
+            )
+        }
+        try {
+            return (
+                <Text>
+                    {exerciseData.workout_reps}
+                </Text>
+            )
+        } catch(error) {
+            LOG_ERROR('BuildWorkout.js', 'Caught exception in AddedExercisePreviewModal trying to display workout image.', error)
+                return (
+                    <Text>
+                         {" "}
+                    </Text>
+                )
+        }
+    }
+    return (
+        <PaperModal visible={props.isVisible} contentContainerStyle={{borderRadius: 10, alignSelf: 'center', width: Dimensions.get('window').width - 50, height: Dimensions.get('window').height / 2, backgroundColor: '#FFFFFF'}}>
+            <View style={{flex: 1, padding: 5}}>
+                <Surface style={{marginTop: 10, width: '50%', elevation: 5, height: 110, alignSelf: 'center', borderRadius: 20}}>
+                    {getWorkoutMedia()}
+                </Surface>
+            </View>
+
+            <View style={{flex: 1}}>
+                <Text>
+                    {getWorkoutDescription()}
+                </Text>
+
+                <Text>
+                    {getWorkoutCue()}
+                </Text>
+
+                <Text>
+                    {getWorkoutSets()}
+                </Text>
+
+                <Text>
+                    {getWorkoutReps()}
+                </Text>
+            </View>
+
+            <Button mode="text" onPress={props.closeModalMethod}>
+                Done
+            </Button>
+        </PaperModal>
+    )
+}
 
 class BuildWorkout extends React.Component {
     constructor(props) {
@@ -187,17 +412,20 @@ class BuildWorkout extends React.Component {
 
         this.state = {
             currProgramUUID: "",
-            currWorkoutPressed: "",
+            currWorkoutPressed: {
+                workout_name: '',
+                workout_description: '',
+                workout_media: {
+                    workout_media: '',
+                    uri: '',
+                },
+                workout_reps: 0,
+                workout_sets: 0,
+                workout_tags: [],
+                workout_uid: '',
+                workout_cue: '',
+            },
             currWorkoutPressedSection: "",
-            layoutHeight: 0,
-            tabWidth: 0,
-            overlayHeight: new Animated.Value(0),
-            overlayWidth: new Animated.Value(Dimensions.get("screen").width / 1.1),
-            animatedWidth: new Animated.Value(Dimensions.get("screen").width),
-            tabXPosition: new Animated.Value(Dimensions.get("screen").width / 1.1 - 50),
-            tabBorderTopLeft: new Animated.Value(0),
-            tabHeight: new Animated.Value(35),
-            libraryOpen: true,
             buildAWorkout: true,
             logAWorkout: false,
             searchValue: "",
@@ -222,8 +450,24 @@ class BuildWorkout extends React.Component {
             showWorkoutSchemeModal: false,
             flatlistValues: [],
             currPressedNonPopulatedWorkout: "",
-            currPressedPopulatedWorkout: {},
-            menuVisible: false
+            currPressedPopulatedWorkout: {
+                workout_name: '',
+                workout_description: '',
+                workout_media: {
+                    workout_media: '',
+                    uri: '',
+                },
+                workout_reps: 0,
+                workout_sets: 0,
+                workout_tags: [],
+                workout_uid: '',
+                workout_cue: '',
+            },
+            menuVisible: false,
+            mediaCaptureType: 'VIDEO',
+            addDescriptionModalIsVisible: false,
+            addCueModalModalIsVisible: false,
+            addedExercisePreviewModal: false,
         }
 
        this.RBSheet = React.createRef();
@@ -383,9 +627,21 @@ class BuildWorkout extends React.Component {
     }
 
     handleWorkoutOnPress = (section, workout) => {
-
         this.setState({ currPressedPopulatedWorkout: workout, currWorkoutPressedSection: section })
         this.RBSheet.current.open()
+    }
+
+    handleWorkoutOnLongPress = (section, workout) => {
+        this.setState({ currPressedPopulatedWorkout: workout, currWorkoutPressedSection: section })
+        this.showAddedExercisePreviewModal()
+    }
+
+    showAddedExercisePreviewModal = () => {
+        this.setState({ addedExercisePreviewModal: true })
+    }
+
+    closeAddedExercisePreviewModal = () => {
+        this.setState({ addedExercisePreviewModal: false })
     }
 
     handleCaptureNewMediaURI = async (uri, mediaType) => {
@@ -480,9 +736,14 @@ class BuildWorkout extends React.Component {
         this.setState({ showCamera: false })
     }
 
-    handleTakePictureOrVideo = () => {
+    handleTakePicture = () => {
         this.RBSheet.current.close();
-        this.setState({ showCamera: true })
+        this.setState({ showCamera: true, mediaCaptureType: 'IMAGE' })
+    }
+
+    handleTakeVideo= () => {
+        this.RBSheet.current.close();
+        this.setState({ showCamera: true, mediaCaptureType: 'VIDEO' })
     }
 
     showChangeWorkoutSchemeModal = () => {
@@ -699,6 +960,213 @@ class BuildWorkout extends React.Component {
         }
     }
 
+    addWorkoutMedia = () => {
+        if (typeof(currPressedPopulatedWorkout) == 'undefined')
+        {
+            return;
+        }
+        // Open Image Library
+        ImagePicker.launchImageLibrary({}, async (response) => {
+            if (response.didCancel) {
+                LOG_ERROR('BuildWorkout.js', 'User cancelled image picker in addWorkoutMedia()', 'true');
+              } else if (response.error) {
+                  LOG_ERROR('BuildWorkout.js', 'Caught exception in image picker in addWorkoutMedia()', response.error);
+              } else {
+                const source = { uri: response.uri };
+                const workoutMediaURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.state.currPressedPopulatedWorkout, this.state.currProgramUUID, 'IMAGE', source.uri)
+                this.handleCaptureNewMediaURI(workoutMediaURI, 'IMAGE');
+            }
+        });
+    }
+
+    showAddDescriptionModal = () => {
+        this.setState({ addDescriptionModalIsVisible: true })
+    }
+
+    closeAddDescriptionModal = () => {
+        this.setState({ addDescriptionModalIsVisible: false })
+    }
+
+    handleCaptureDescription = async (description) => {
+        const currPressedWorkout = this.state.currWorkoutPressed;
+        const currWorkoutPressedSection = this.state.currWorkoutPressedSection
+
+        if (typeof(currPressedWorkout) == 'undefined' || typeof(currWorkoutPressedSection) == 'undefined' || description == "")
+        {
+            return;
+        }
+
+        let updatedState = this.state.data;
+
+        switch(currWorkoutPressedSection)
+        {
+            case "Warm Up":
+                for (let i = 0; i < updatedState[0].workouts.length; i++)
+                {
+                    let workout = updatedState[0].workouts[i];
+                    if (updatedState[0].workouts[i].workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_description = description;
+                        break;
+                    }
+                }
+            break;
+            case "Primary":
+                for (let i = 0; i < updatedState[1].workouts.length; i++)
+                {
+                    let workout = updatedState[1].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_description = description;
+                        break;
+                    }
+                }
+            break;
+            case "Break":
+                for (let i = 0; i < updatedState[2].workouts.length; i++)
+                {
+                    let workout = updatedState[2].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_description = description;
+                        break;
+                    }
+                }
+            break;
+            case "Secondary":
+                for (let i = 0; i < updatedState[3].workouts.length; i++)
+                {
+                    let workout = updatedState[3].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_description = description;
+                        break;
+                    }
+                }
+            break;
+            case "Cooldown":
+                for (let i = 0; i < updatedState[4].workouts.length; i++)
+                {
+                    let workout = updatedState[4].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_description = description;
+                        break;
+                    }
+                }
+            break;
+            case "Homework":
+                for (let i = 0; i < updatedState[5].workouts.length; i++)
+                {
+                    let workout = updatedState[5].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_description = description;
+                        break;
+                    }
+                }
+            break;
+            default:
+        }
+
+        await this.setState({ data: updatedState })
+        this.closeAddDescriptionModal();
+    }
+
+    showAddCueModal = () => {
+        this.setState({ addCueModalModalIsVisible: true })
+    }
+
+    closeAddCueModal = () => {
+        this.setState({ addCueModalModalIsVisible: false })
+    }
+
+    handleCaptureCue = async (cue) => {
+        const currPressedWorkout = this.state.currWorkoutPressed;
+        const currWorkoutPressedSection = this.state.currWorkoutPressedSection
+
+        if (typeof(currPressedWorkout) == 'undefined' || typeof(currWorkoutPressedSection) == 'undefined' || cue == "")
+        {
+            return;
+        }
+
+        let updatedState = this.state.data;
+
+        switch(currWorkoutPressedSection)
+        {
+            case "Warm Up":
+                for (let i = 0; i < updatedState[0].workouts.length; i++)
+                {
+                    let workout = updatedState[0].workouts[i];
+                    if (updatedState[0].workouts[i].workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_cue = cue;
+                        break;
+                    }
+                }
+            break;
+            case "Primary":
+                for (let i = 0; i < updatedState[1].workouts.length; i++)
+                {
+                    let workout = updatedState[1].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_cue = cue;
+                        break;
+                    }
+                }
+            break;
+            case "Break":
+                for (let i = 0; i < updatedState[2].workouts.length; i++)
+                {
+                    let workout = updatedState[2].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_cue = cue;
+                        break;
+                    }
+                }
+            break;
+            case "Secondary":
+                for (let i = 0; i < updatedState[3].workouts.length; i++)
+                {
+                    let workout = updatedState[3].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_cue = cue;
+                        break;
+                    }
+                }
+            break;
+            case "Cooldown":
+                for (let i = 0; i < updatedState[4].workouts.length; i++)
+                {
+                    let workout = updatedState[4].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_cue = cue;
+                        break;
+                    }
+                }
+            break;
+            case "Homework":
+                for (let i = 0; i < updatedState[5].workouts.length; i++)
+                {
+                    let workout = updatedState[5].workouts[i];
+                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
+                    {
+                        updatedState[0].workouts[i].workout_cue = cue;
+                        break;
+                    }
+                }
+            break;
+            default:
+        }
+
+        await this.setState({ data: updatedState })
+        this.closeAddCueModal();
+    }
+
     render() {
         return (
             <View ref={this.firstView} style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }}>
@@ -743,7 +1211,7 @@ class BuildWorkout extends React.Component {
                                             {
                                                 rowData.workouts.map(obj => {
                                                     return (
-                                                        <TouchableWithoutFeedback key={obj.workout_uid} onPress={() => this.handleWorkoutOnPress(rowData.title, obj)}>
+                                                        <TouchableWithoutFeedback key={obj.workout_uid} onPress={() => this.handleWorkoutOnPress(rowData.title, obj)} onLongPress={() => this.handleWorkoutOnLongPress(rowData.title, obj)}>
                                                                                                                     <View style={{alignItems: 'center'}}>
                         <Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
                                                             {
@@ -829,7 +1297,7 @@ class BuildWorkout extends React.Component {
 
                   <RBSheet
           ref={this.RBSheet}
-          height={350}
+          height={Dimensions.get('window').height / 1.2}
           openDuration={250}
           customStyles={{
             container: {
@@ -846,51 +1314,149 @@ class BuildWorkout extends React.Component {
                </Text>
                
                <View style={{flex: 1, justifyContent: 'space-evenly'}}>
-            <TouchableOpacity onPress={() => this.handleTakePictureOrVideo()}>
-            <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <TouchableOpacity onPress={() => this.handleTakeVideo()}>
+            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <ThinFeatherIcon
+name="video"
+size={18}
+color="#000000"
+thin={false}
+style={styles.exerciseOptionIcon}
+/>
+<View style={{paddingVertical: 1.5}}>
+<Text style={styles.exerciseOptionHeaderText}>
+                    Record a video
+                </Text>
+                <Caption>
+                    Take a video to use as the exercise media
+                </Caption>
+</View>
+            </View>
+            </TouchableOpacity>
+            <Divider />
+            <TouchableOpacity onPress={() => this.handleTakePicture()}>
+            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="camera"
 size={18}
 color="#000000"
 thin={false}
-style={{margin: 5}}
+style={styles.exerciseOptionIcon}
 />
-                <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-                    Record a Video
+<View style={{paddingVertical: 1.5}}>
+<Text style={styles.exerciseOptionHeaderText}>
+                    Take a picture
                 </Text>
+                <Caption>
+                    Take a picture to use as the exercise media
+                </Caption>
+</View>
             </View>
             </TouchableOpacity>
             <Divider />
-            <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <TouchableOpacity onPress={() => this.addWorkoutMedia()}>
+            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
-name="trash"
+name="film"
 size={18}
 color="#000000"
 thin={false}
-style={{margin: 5}}
+style={styles.exerciseOptionIcon}
 />
-                <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-                   Edit Set/Rep Scheme
+<View style={{paddingVertical: 1.5, width: '95%'}}>
+<Text style={styles.exerciseOptionHeaderText}>
+                Upload media
                 </Text>
+                <Caption>
+                    Use a picture or video from your camera roll to use as the exercise media
+                </Caption>
+</View>
             </View>
+            </TouchableOpacity>
+            <Divider />
+            <TouchableOpacity onPress={this.showAddDescriptionModal}>
+            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <ThinFeatherIcon
+name="edit"
+size={18}
+color="#000000"
+thin={false}
+style={styles.exerciseOptionIcon}
+/>
+<View style={{paddingVertical: 1.5}}>
+<Text style={styles.exerciseOptionHeaderText}>
+                    Add a description
+                </Text>
+                <Caption>
+                   Write a brief description of what this exercise will accomplish
+                </Caption>
+</View>
+            </View>
+            </TouchableOpacity>
+            <Divider />
+            <TouchableOpacity onPress={this.showAddCueModal}>
+            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <ThinFeatherIcon
+name="edit"
+size={18}
+color="#000000"
+thin={false}
+style={styles.exerciseOptionIcon}
+/>
+<View style={{paddingVertical: 1.5}}>
+<Text style={styles.exerciseOptionHeaderText}>
+                    Add a cue
+                </Text>
+                <Caption>
+                    Use cues to as special instructions during an exercise
+                </Caption>
+</View>
+            </View>
+            </TouchableOpacity>
+            <Divider />
+            <TouchableOpacity onPress={this.showChangeWorkoutSchemeModal}>
+            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <ThinFeatherIcon
+name="clipboard"
+size={18}
+color="#000000"
+thin={false}
+style={styles.exerciseOptionIcon}
+/>
+<View style={{paddingVertical: 1.5}}>
+<Text style={styles.exerciseOptionHeaderText}>
+                    Edit Set/Rep Scheme
+                </Text>
+                <Caption>
+                    Specify a specific number of sets or reps for this exercise
+                </Caption>
+</View>
+            </View>
+            </TouchableOpacity>
             <Divider />
             <TouchableOpacity onPress={this.removePopulatedWorkoutFromProgram}>
-            <View style={{padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
+            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="trash"
 size={18}
 color="#000000"
 thin={false}
-style={{margin: 5}}
+style={styles.exerciseOptionIcon}
 />
-                <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-                   Delete Workout
+<View style={{paddingVertical: 1.5}}>
+<Text style={[styles.exerciseOptionHeaderText, { color: 'rgba(229,57,53 ,1)' }]}>
+                    Delete exercise
                 </Text>
+                <Caption style={{color: 'rgba(229,57,53 ,1)'}}>
+                    Remove this exercise from the program
+                </Caption>
+</View>
             </View>
             </TouchableOpacity>
                </View>
             
            </View>
+           <SafeAreaView />
        </RBSheet>
         
                 
@@ -902,9 +1468,13 @@ style={{margin: 5}}
             currWorkoutPressed={this.state.currPressedPopulatedWorkout} 
             currProgramUUID={this.state.currProgramUUID} 
             handleCaptureNewMediaURI={(uri, type) => this.handleCaptureNewMediaURI(uri, type)}
+            mediaCaptureType={this.state.mediaCaptureType}
             closeModalMethod={this.closeModalMethod}
             />
 
+            <AddDescriptionModal isVisible={this.state.addDescriptionModalIsVisible} closeDialogMethod={this.closeAddDescriptionModal} captureData={description => this.handleCaptureDescription(description)} />
+            <AddCueModal isVisible={this.state.addCueModalModalIsVisible} closeDialogMethod={this.closeAddCueModal} captureData={cue => this.handleCaptureCue(cue)} />
+            <AddedExercisePreviewModal exerciseData={this.state.currPressedPopulatedWorkout} isVisible={this.state.addedExercisePreviewModal} closeModalMethod={this.closeAddedExercisePreviewModal} />
             <SafeAreaView />
             </View>
         )
@@ -973,6 +1543,13 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 50,
       },
+      exerciseOptionHeaderText: {
+        fontSize: 15, 
+        fontFamily: 'HelveticaNeueMedium'
+      },
+      exerciseOptionIcon: {
+          marginHorizontal: 10,
+      }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(BuildWorkout);

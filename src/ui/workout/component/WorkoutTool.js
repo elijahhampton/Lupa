@@ -561,11 +561,11 @@ class WorkoutTool extends React.Component {
                             null
                             :
                             <ScrollView shouldRasterizeIOS={true} contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between'}}>
-                                <Text style={{ fontFamily: 'HelveticaNeueMedium',fontWeight: "500", fontSize: 40, paddingTop: 20, paddingLeft: 20, color: "#212121" }}>
+                                <Text style={{ fontFamily: 'HelveticaNeueMedium',fontWeight: "500", fontSize: 40, paddingTop: 20, paddingLeft: 10, color: "#212121" }}>
                                     It looks like you're ready to get started.
                         </Text>
 
-                        <Text style={{ fontFamily: 'ARSMaquettePro-Regular',fontSize: 18, paddingTop: 20, paddingLeft: 20, color: "#212121" }}>
+                        <Text style={{ fontFamily: 'ARSMaquettePro-Regular',fontSize: 18, paddingTop: 20, paddingLeft: 10, color: "#212121" }}>
                                    Use our tool to pick from over 70 workouts and variations to create your own workout program.  Add up to four workouts to each section.  Save your programs and return to them later.
                         </Text>
 

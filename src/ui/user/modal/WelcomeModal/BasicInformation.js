@@ -93,7 +93,7 @@ class BasicInformation extends React.Component {
     }
 
     _handleDisplayNameOnChangeText = text => {
-        this.setState({ displayName: updatedDisplayName })
+        this.setState({ displayName: text })
     }
 
     _handleDisplayNameEndEditing = async () => {
