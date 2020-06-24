@@ -37,6 +37,7 @@ import {
     Caption,
     Badge,
     Appbar,
+    Searchbar,
     Divider,
     Avatar,
     FAB,
@@ -460,24 +461,27 @@ class LupaHome extends React.Component {
                         containerStyle={{backgroundColor: "transparent"}}
         value={this.state.searchValue}/> */}
 
-        <Appbar.Action icon={() => <FeatherIcon name="book" size={25} />} onPress={() => this.props.navigation.navigate('Programs')}/>
+        <Appbar.Action icon={() => <FeatherIcon name="book-open" size={25} />} onPress={() => this.props.navigation.navigate('Programs')}/>
        
                 </Appbar.Header>
 
                 {
                     this.state.searchValue != "" ?
                     <View style={{flex: 1}}>
-                           <Input 
-
-rightIconContainerStyle={{position: 'absolute', right: 20}} 
-rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
-placeholder="Looking for a trainer?" placeholderTextColor="#212121" 
-style={{}} 
-containerStyle={{width: Dimensions.get('screen').width, padding: 0, marginLeft: 10}} 
-inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
-value={this.state.searchValue}
-onChangeText={text => this._performSearch(text)}
-/>
+           <Searchbar 
+       style={{marginVertical: 5, borderRadius: 10, width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
+       placeholder="Search workout programs, fitness professionals" 
+       placeholderTextColor="rgb(99, 99, 102)" 
+       icon={() => <FeatherIcon name="search" size={20} /> }
+       inputStyle={{width: '100%', fontWeight: '300', fontSize: 15, padding: 0, margin: 0, width: '100%'}}
+       theme={{
+           colors: {
+               primary: '#1089ff',
+           }
+       }}
+       onChangeText={text => this._performSearch(text)}
+       value={this.state.searchValue}
+       />
                         <ScrollView>
                       
                         </ScrollView>
@@ -487,7 +491,7 @@ onChangeText={text => this._performSearch(text)}
                <View style={{flex: 1}}>
 <ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2}}>
 <View style={{width: Dimensions.get('window').width}}>
-        <Input 
+       {/* <Input 
 
         rightIconContainerStyle={{position: 'absolute', right: 20}} 
         rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
@@ -497,20 +501,31 @@ onChangeText={text => this._performSearch(text)}
         inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
         value={this.state.searchValue}
         onChangeText={text => this._performSearch(text)}
-        />
+       />*/}
+
+       <Searchbar 
+       style={{marginVertical: 5, borderRadius: 10, width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
+       placeholder="Search workout programs, fitness professionals" 
+       placeholderTextColor="rgb(99, 99, 102)" 
+       icon={() => <FeatherIcon name="search" size={20} /> }
+       inputStyle={{width: '100%', fontWeight: '300', fontSize: 15, padding: 0, margin: 0, width: '100%'}}
+       theme={{
+           colors: {
+               primary: '#1089ff',
+           }
+       }}
+       onChangeText={text => this._performSearch(text)}
+       value={this.state.searchValue}
+       />
         </View>
 
-<View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}
-                    onMoveShouldSetResponder={evt => {
-                        console.log('disable swipe');
-                        return true;
-                    }}
-                    onTouchEnd={() => console.log('enable swipe')}>
+<View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}>
                     
                     <View style={{padding: 5, width: '80%'}}>
                     <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 10 }}>
-                       Find fitness professionals
+                       Start training with...
                     </Text>
+                    <View style={{marginLeft: 10, width: 30, height: 3, backgroundColor: 'black', borderBottomEndRadius: 0}} />
                     </View>
 
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -529,8 +544,8 @@ onChangeText={text => this._performSearch(text)}
                             It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
                         </Text>
                         </View>
-                        <Button mode="contained" color="#212121" style={{marginLeft: 20, width: 'auto'}} theme={{
-                            roundness: 8
+                        <Button mode="contained" color="#1089ff" style={{marginLeft: 20, width: 'auto', elevation: 6}} theme={{
+                            roundness: 3
                         }} onPress={() => this.setState({ customizedInviteFriendsModalIsOpen: true})}>
                             <Text>
                                 Invite Friends
@@ -538,18 +553,15 @@ onChangeText={text => this._performSearch(text)}
                         </Button>
                     </View>
 
+
                 <View
-                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}
-                    onMoveShouldSetResponder={evt => {
-                        console.log('disable swipe');
-                        return true;
-                    }}
-                    onTouchEnd={() => console.log('enable swipe')}>
+                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}>
                     
                     <View style={{padding: 5, width: '80%'}}>
                     <Text style={{fontSize: RFValue(15), fontWeight: '600', paddingVertical: 10, paddingLeft: 10 }}>
-                        Curated by us, for you
+                        Curated fitness programs
                     </Text>
+                    <View style={{marginLeft: 10, width: 30, height: 3, backgroundColor: 'black', borderBottomEndRadius: 0}} />
                     </View>
 
 
@@ -566,7 +578,6 @@ onChangeText={text => this._performSearch(text)}
 
                         </View>
 
-
                         <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, height: 300, backgroundColor: 'black', marginVertical: 10}}>
                         <View>
                         <Text style={{paddingLeft: 10, color: 'white', fontSize: 20, marginVertical: 5}}>
@@ -577,8 +588,8 @@ onChangeText={text => this._performSearch(text)}
                         </Text>
                         </View>
 
-                        <Button mode="contained" color="white" style={{marginLeft: 20, alignItems: 'center', justifyContent: 'center', width: '30%'}} theme={{
-                            roundness: 8
+                        <Button mode="contained" color="#1089ff" style={{elevation: 8, marginLeft: 20, alignItems: 'center', justifyContent: 'center', width: '30%'}} theme={{
+                            roundness: 3
                         }} >
                             <Text>
                                 Log it
@@ -586,19 +597,13 @@ onChangeText={text => this._performSearch(text)}
                         </Button>
                         </View>
 
-            
-
                 <View
-                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}
-                    onMoveShouldSetResponder={evt => {
-                        console.log('disable swipe');
-                        return true;
-                    }}
-                    onTouchEnd={() => console.log('enable swipe')}>
+                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                     <View style={{padding: 5}}>
                     <Text style={{fontSize: RFValue(15), fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
                         Top picks
                         </Text>
+                        <View style={{marginLeft: 10, width: 30, height: 3, backgroundColor: 'black', borderBottomEndRadius: 0}} />
                     </View>
                     <ScrollView onScroll={(event) => {
                     }} contentContainerStyle={{}} scrollEnabled={this.state.featuredPrograms.length > 1 ? true : false} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
