@@ -45,13 +45,13 @@ import {
 } from 'react-native-paper';
 
 import {
-    Left
+    Left, Switch
 } from 'native-base';
 
 import InviteFriendsModal from './user/modal/InviteFriendsModal'
 import CustomizedInviteFriendsModal from './user/modal/InviteFriendsModal'
 
-import { Icon, SearchBar } from 'react-native-elements';
+import { Input} from 'react-native-elements';
 
 import { withNavigation } from 'react-navigation'
 
@@ -450,20 +450,34 @@ class LupaHome extends React.Component {
         return (
             <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                 
-                <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 2}}>
-                <SearchBar placeholder="Look for trainers or workout programs"
+                <Appbar.Header statusBarHeight style={{ marginBottom: 30, paddingVertical: 5, backgroundColor: '#FFFFFF', elevation: 0}}>
+                {/*<SearchBar placeholder="Look for trainers or workout programs"
                         inputStyle={{fontSize: 16, fontWeight: '300', fontFamily: 'HelveticaNeueLight'}}
                         placeholderTextColor="rgb(99, 99, 102)"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" />}
                         containerStyle={{backgroundColor: "transparent"}}
-                        value={this.state.searchValue}/>
+        value={this.state.searchValue}/> */}
+
+        <Appbar.Action icon={() => <FeatherIcon name="book" size={25} />} onPress={() => this.props.navigation.navigate('Programs')}/>
+       
                 </Appbar.Header>
 
                 {
                     this.state.searchValue != "" ?
                     <View style={{flex: 1}}>
+                           <Input 
+
+rightIconContainerStyle={{position: 'absolute', right: 20}} 
+rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
+placeholder="Looking for a trainer?" placeholderTextColor="#212121" 
+style={{}} 
+containerStyle={{width: Dimensions.get('screen').width, padding: 0, marginLeft: 10}} 
+inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
+value={this.state.searchValue}
+onChangeText={text => this._performSearch(text)}
+/>
                         <ScrollView>
                       
                         </ScrollView>
@@ -471,10 +485,22 @@ class LupaHome extends React.Component {
                     </View>
                     :
                <View style={{flex: 1}}>
-<ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
+<ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2}}>
+<View style={{width: Dimensions.get('window').width}}>
+        <Input 
 
-<View
-                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}
+        rightIconContainerStyle={{position: 'absolute', right: 20}} 
+        rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
+        placeholder="Looking for a trainer?" placeholderTextColor="#212121" 
+        style={{}} 
+        containerStyle={{width: Dimensions.get('screen').width, padding: 0, marginLeft: 10}} 
+        inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
+        value={this.state.searchValue}
+        onChangeText={text => this._performSearch(text)}
+        />
+        </View>
+
+<View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}
                     onMoveShouldSetResponder={evt => {
                         console.log('disable swipe');
                         return true;
@@ -483,7 +509,7 @@ class LupaHome extends React.Component {
                     
                     <View style={{padding: 5, width: '80%'}}>
                     <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 10 }}>
-                       Find fitness trainers
+                       Find fitness professionals
                     </Text>
                     </View>
 
@@ -521,7 +547,7 @@ class LupaHome extends React.Component {
                     onTouchEnd={() => console.log('enable swipe')}>
                     
                     <View style={{padding: 5, width: '80%'}}>
-                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 10 }}>
+                    <Text style={{fontSize: RFValue(15), fontWeight: '600', paddingVertical: 10, paddingLeft: 10 }}>
                         Curated by us, for you
                     </Text>
                     </View>
@@ -570,7 +596,7 @@ class LupaHome extends React.Component {
                     }}
                     onTouchEnd={() => console.log('enable swipe')}>
                     <View style={{padding: 5}}>
-                    <Text style={{fontSize: RFValue(15), fontWeight: '300', paddingVertical: 10, paddingLeft: 10 }}>
+                    <Text style={{fontSize: RFValue(15), fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
                         Top picks
                         </Text>
                     </View>
@@ -586,16 +612,6 @@ class LupaHome extends React.Component {
 
                     </ScrollView>
                 </View>
-
-                    <View style={{marginVertical: 10, width: Dimensions.get('window').width}}>
-                    <View style={{width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                    <Button mode="contained" color="#212121" onPress={() => this.props.navigation.navigate('Programs')} style={{height: 40, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 100, borderRadius: 10}}>
-                        <Text style={{fontFamily: 'HelveticaNeueMedium', fontSize: 15, padding: 0, margin: 0, color: '#FFFFFF'}}>
-                            Explore More
-                        </Text>
-                    </Button>
-                    </View>
-                    </View> 
     
                     </ScrollView>
                     </View>
