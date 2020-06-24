@@ -77,8 +77,6 @@ class SingleWorkout extends React.Component {
         
     }
 
-   static currWorkoutPressed;
-
     async componentWillUpdate(nextProps, nextState) {
         if (nextProps.warmUpListTopY != this.state.warmUpListTopY) {
         

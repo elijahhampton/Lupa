@@ -542,7 +542,7 @@ function ProgramInformation(props) {
                                 Make your program discoverable
                                 </Text>
                 
-                <TouchableHighlight onPress={() => showAddTagsModal()}>
+                <TouchableHighlight onPress={showAddTagsModal}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <MaterialIcon name="add" size={15}  color='#2196F3'/>
                 <Caption style={{color: '#2196F3'}}>
@@ -582,7 +582,7 @@ function ProgramInformation(props) {
            />*/}
 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
 <Button title="Cancel" onPress={() => props.handleCancelOnPress()} />
-<Button title="Design Program" onPress={() => handleSaveProgramInformation()} />
+<Button title="Design Program" onPress={handleSaveProgramInformation} />
 </View>
 
 <Snackbar

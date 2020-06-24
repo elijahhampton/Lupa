@@ -726,7 +726,7 @@ const SignUp = props => {
   const { navigation } = props
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(244, 247, 252)'}}>
     <KeyboardAvoidingView 
     behavior="padding"
     keyboardVerticalOffset={50}

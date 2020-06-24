@@ -173,7 +173,7 @@ function AddDescriptionModal(props) {
     }
 
     return (
-                    <Dialog visible={props.isVisible} style={{position: 'absolute', top: Dimensions.get('window').height / 4, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
+                    <Dialog visible={false} style={{position: 'absolute', top: Dimensions.get('window').height / 4, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
                         colors: {
                             primary: '#23374d'
                         }
@@ -218,7 +218,7 @@ function AddCueModal(props) {
     }
 
     return (
-                    <Dialog visible={props.isVisible} style={{position: 'absolute', top: Dimensions.get('window').height / 4.3, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
+                    <Dialog visible={false} style={{position: 'absolute', top: Dimensions.get('window').height / 4.3, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
                         colors: {
                             primary: '#23374d'
                         }
@@ -479,31 +479,6 @@ class BuildWorkout extends React.Component {
 
     }
 
-    componentDidMount = async () => {
-           
-    }
-
-     deleteProgram = async () => {
-        await this.LUPA_INSTANCE_CONTROLLER.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.currProgramUUID);
-
-        await this.props.deleteProgram(this.state.currProgramUUID);
-    }
-
-    handleCancelBuildAWorkout = () => {
-        //reset workout program
-        this.resetWorkoutProgram();
-
-        //delete program
-        this.deleteProgram()
-
-        //reset current program uuid and exit build a workout
-        this.setState({ currProgramUUID: ""  });
-    }
-
-    resetWorkoutProgram = () => {
-
-    }
-
     captureWorkout = (sectionName, workoutObject) => {
         let currState = this.state.data;
 
@@ -519,40 +494,6 @@ class BuildWorkout extends React.Component {
 
         this.setState({ data: currState })
     }
-
-
-
-    componentWillMount() {
-        this._val = { x:0, y:0 }
-        this.state.pan.addListener((value) => this._val = value);
-    
-        this.panResponder = PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
-              this.state.pan.setOffset(this.state.pan.__getValue());
-              this.state.pan.setValue({ x: 0, y: 0 });
-            },
-            onPanResponderMove: Animated.event([
-              null, {
-                dx: this.state.pan.x,
-                dy: this.state.pan.y
-              }
-            ], {
-                listener: event => {
-                    this.animatedViewRef.measure( (fx, fy, width, height, px, py) => {
-                       
-                    })
-                }
-            }),
-            onPanResponderRelease: () => {
-                Animated.spring(this.state.pan, {
-                    toValue: { x: 0, y: 0 },
-                    friction: 5
-                  }).start();
-            }
-          });
-      }
-      
 
     updateWorkoutData = async (state) => {
         await this.setState({

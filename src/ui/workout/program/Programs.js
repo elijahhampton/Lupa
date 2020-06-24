@@ -58,7 +58,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import ProgramsFilter from './components/ProgramsFilter';
 
-import { RFPercentage } from 'react-native-responsive-fontsize'
+import { RFValue } from 'react-native-responsive-fontsize'
 
 import { Button as ElementsButton } from 'react-native-elements';
 import UserSearchResult from '../../user/profile/component/UserSearchResult'
@@ -318,7 +318,7 @@ class Programs extends React.Component {
     getBookmarkedProgramsView = () => {
         return this.state.bookmarkedPrograms.length == 0 ?
         <View>
-            <Text style={{fontFamily: 'HelveticaNeueMedium', paddingLeft: 12, margin: 5,}}>
+            <Text style={{fontFamily: 'HelveticaNeueMedium', paddingLeft: 20}}>
                 You haven't bookmarked any programs.
             </Text>
         </View>
@@ -807,11 +807,16 @@ class Programs extends React.Component {
        value={this.state.searchValue}
        />
         </View>
-                        <View style={{flex: 1}}>
-                        <Text style={styles.headerText}>
+                        <View style={{flex: 1, marginVertical: 20}}>
+                            <View style={{marginHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <Text style={styles.headerText}>
                         Popular
                     </Text>
-                    <Text style={{paddingLeft: 12, margin: 5}}>
+                    <Text style={{color: 'rgba(33,150,243 ,1)'}} onPress={() => console.log('')}> 
+                            See all
+                        </Text>
+                            </View>
+                    <Text style={{paddingLeft: 20}}>
                         Popular programs this week
                     </Text>
                     <View style={{}}>
@@ -831,26 +836,36 @@ class Programs extends React.Component {
                     </View>
                         </View>
 
-                        <View>
+                        <View style={{marginVertical: 20}}>
                             <View>
-                            <Text style={styles.headerText}>
+                                <View style={{marginHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <Text style={styles.headerText}>
                         Subscriptions
                     </Text>
-                    <Text style={{paddingLeft: 12, margin: 5}}>
+                        <Text style={{color: 'rgba(33,150,243 ,1)'}} onPress={() => console.log('')}> 
+                            See all
+                        </Text>
+                                </View>
+                    <Text style={{paddingLeft: 20}}>
                         Program updates from trainers you are subscribed to
                     </Text>
                             </View>
 
-                            <Text style={{fontFamily: 'HelveticaNeueMedium', paddingLeft: 12, margin: 5, }}>
+                            <Text style={{fontFamily: 'HelveticaNeueMedium', paddingLeft: 20}}>
                                 You haven't subscribed to any trainers.
                             </Text>
                         </View>
 
-                        <View>
-                        <Text style={styles.headerText}>
+                        <View style={{marginVertical: 20 }}>
+                            <View style={{marginHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <Text style={styles.headerText}>
                         Saved
                     </Text>
-                    <Text style={{paddingLeft: 12, margin: 5}}>
+                    <Text style={{color: 'rgba(33,150,243 ,1)'}} onPress={() => console.log('')}> 
+                            See all
+                        </Text>
+                            </View>
+                    <Text style={{paddingLeft: 20}}>
                         Bookmarked programs saved for later
                     </Text>
                     {this.getBookmarkedProgramsView()}
@@ -896,10 +911,9 @@ class Programs extends React.Component {
 
 const styles = StyleSheet.create({
     headerText: {
-        fontFamily: 'ARSMaquettePro-Medium', 
-        fontSize: 35, 
-        paddingLeft: 12,
-        margin: 5,
+        fontSize: RFValue(15), 
+        fontWeight: '400', 
+        paddingVertical: 10, 
     },
     filterText: {
         color: '#FFFFFF',

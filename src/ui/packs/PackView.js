@@ -81,6 +81,7 @@ import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 import { Constants } from 'react-native-unimodules';
 import CreatePackDialog from './dialog/CreatePackDialog';
 import GestureRecognizer from 'react-native-swipe-gestures';
+import { RFValue } from 'react-native-responsive-fontsize'
 
 const TAB_BUTTONS = [
     "Community",
@@ -366,7 +367,7 @@ Animated.timing(
         try {
             return this.state.nonParticipatingPacks.map(pack => {
                 return (
-                 <Card style={{marginVertical: 20, margin: 10, width: Dimensions.get('window').width - 100, borderRadius: 20}}>
+                 <Card style={{marginVertical: 20, margin: 10, width: Dimensions.get('window').width / 1.5, borderRadius: 0}}>
                  <Card.Cover source={{uri: pack.pack_image}} />
                  <Card.Content style={{padding: 0, margin: 0}}>
                      <Text style={{color: 'rgb(44, 44, 46)', width: '100%', paddingVertical: 8, fontFamily: 'HelveticaNeueLight', fontSize: 18, }}>
@@ -473,9 +474,10 @@ Animated.timing(
                     theme={{
                         roundness: 7,
                     }}
+                    onPress={() => this.props.navigation.navigate('LupaHome')}
                     >
                         <Text>
-                            Discover Trainers
+                            Discover people to follow
                         </Text>
                     </Button>
                 </View>
@@ -484,6 +486,12 @@ Animated.timing(
                                 <View style={styles.containerSection}>
                             <Divider style={{marginVertical: 20, width: '90%', alignSelf: 'center'}} />
                     <View style={styles.sectionContent}>
+                    <View style={{padding: 5, width: '80%'}}>
+                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 10 }}>
+                       Learn more about packs
+                    </Text>
+                    <View style={{marginLeft: 10, width: 30, height: 3, backgroundColor: 'black', borderBottomEndRadius: 0}} />
+                    </View>
                         <ScrollView contentContainerStyle={{justifyContent: 'center'}} horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
                             {
                                this.mapNonParticipatingPacks()
@@ -569,7 +577,7 @@ Animated.timing(
                
 
 </Animated.View>
-          <FAB icon={this.state.searching === true ? 'close' : 'search'} color="rgba(255,255,255 ,1)" onPress={this.state.searching == true ? this.closeSearch : this.showSearch} style={{ transform: [{rotate: this.spin}], backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
+         {/* <FAB icon={this.state.searching === true ? 'close' : 'search'} color="rgba(255,255,255 ,1)" onPress={this.state.searching == true ? this.closeSearch : this.showSearch} style={{ transform: [{rotate: this.spin}], backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} /> */}
             
            <CreatePackDialog isVisible={this.state.createPackModalIsOpen} closeDialogMethod={this.closeCreatePackModal} /> 
             </View>

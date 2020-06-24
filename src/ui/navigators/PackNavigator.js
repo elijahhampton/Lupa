@@ -32,7 +32,7 @@ const PackNavigator = createStackNavigator(
             })
         },
         PackModal: {
-            screen: (props) => <PackModal {...props} />,
+            screen: PackModal,
             navigationOptions: ({ navigation }) => ({
                 title: 'PackModal',
                 header: null,
@@ -40,10 +40,7 @@ const PackNavigator = createStackNavigator(
             })
         },
         ProfileView: {
-            screen: (props) => <ProfileView />,
-            initialParams: {
-                navFrom : '',
-            },
+            screen: ProfileView,
             navigationOptions: ({ navigation }) => ({
                 title: 'ProfileView',
                 header: null,
