@@ -65,8 +65,6 @@ class CreateProgram extends React.Component {
     }
 
     async componentDidMount() {
-        console.log('disable swipe');
-
             const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
             this.setState({ currProgramUUID: programPayload.program_structure_uuid })
             this.setState({ programData: programPayload})

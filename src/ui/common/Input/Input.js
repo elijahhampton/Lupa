@@ -84,6 +84,7 @@ const Input = props => {
         value={inputState.value}
         onChangeText={textChangeHandler}
         onBlur={lostFocusHandler}
+        
       />
       {!inputState.isValid && <Text>{props.errorText}</Text>}
     </View>
@@ -104,27 +105,31 @@ const styles = StyleSheet.create({
         width: '90%',
         marginHorizontal: 20,
         alignSelf: 'center',
-        borderWidth: 1,
+        borderWidth: 2,
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderTopColor: 'transparent',
+        fontWeight: '500', 
+        fontSize: 15,
         borderRadius: 0,
         height: 40,
         paddingHorizontal: 10,
-        borderColor: 'rgb(142, 142, 147)'
+        borderColor: 'rgb(209, 209, 214)'
       },
       focusedInput: {
         width: '90%',
         marginHorizontal: 20,
         alignSelf: 'center',
-        borderWidth: 1,
+        borderWidth: 2,
         borderLeftColor: 'transparent',
         borderRightColor: 'transparent',
         borderTopColor: 'transparent',
+        fontWeight: '500', 
+        fontSize: 15,
         borderRadius: 0,
         height: 40,
         paddingHorizontal: 10,
-        borderColor: 'rgba(13,71,161 ,1)'
+        borderColor: 'rgb(209, 209, 214)'
       }
   });
 

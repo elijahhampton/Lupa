@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-import {decode, encode} from 'base-64'
+/*import {decode, encode} from 'base-64'
 if (!global.btoa) {  global.btoa = encode }
-if (!global.atob) { global.atob = decode }
+if (!global.atob) { global.atob = decode }*/
 
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider as StoreProvider} from 'react-redux';
