@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useReducer, useCallback} from 'react';
 
 import {
     View,
@@ -6,8 +6,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     ScrollView,
-    Dimensions,
     Modal,
+    Dimensions,
     KeyboardAvoidingView,
 } from 'react-native';
 
@@ -20,11 +20,13 @@ import {
 import SafeAreaView from 'react-native-safe-area-view';
 
 import { 
-    Input,
     CheckBox,
     Button as ElementsButton,
  } from 'react-native-elements';
 
+ import { Constants } from 'react-native-unimodules';
+
+ import * as authActions from '../../../controller/lupa/auth/auth'
  import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
  import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -35,8 +37,10 @@ import { UserAuthenticationHandler } from '../../../controller/firebase/firebase
 import LupaController from '../../../controller/lupa/LupaController';
 
 import { getLupaAssessmentStructure } from '../../../controller/firebase/collection_structures'
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
+import Input from '../../common/Input/Input'
+/*
 mapStateToProps = (state) => {
     return { 
       lupa_data: state
@@ -154,11 +158,6 @@ class SignupModal extends React.Component {
         }
     }
 
-  /**
-   * Introduce the application
-   * Finish any last minute things here before showing the application to the user.
-   * This really isn't the place to be doing this, but any small last minute changes can go here.
-   */
   _introduceApp = async () => {
     await this._setupRedux();
     this.props.navigation.navigate('App');
@@ -605,7 +604,7 @@ class SignupModal extends React.Component {
                     
         );
     }
-}
+} 
 
 const styles = StyleSheet.create({
     modalContainer: {
@@ -664,3 +663,186 @@ const styles = StyleSheet.create({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignupModal);
+*/
+
+const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
+
+const formReducer = (state, action) => {
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues
+    };
+  }
+  return state;
+};
+
+const SignUp = props => {
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  
+  const dispatch = useDispatch();
+
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      email: '',
+      password: '',
+    },
+    inputValidies: {
+      email: false,
+      password: false,
+    },
+    formIsValid: false,
+  })
+
+  const signupHandler = async () => {
+    dispatch(authActions.signup(formState.inputValues.email, formState.inputValues.password));
+  }
+
+  const inputChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
+    dispatchFormState({
+      type: FORM_INPUT_UPDATE,
+      value: inputValue,
+      isValid: inputValidity,
+      input: inputIdentifier
+    })
+  },
+  [dispatchFormState]
+  );
+
+  const { navigation } = props
+
+  return (
+    <SafeAreaView style={{flex: 1}}>
+    <KeyboardAvoidingView 
+    behavior="padding"
+    keyboardVerticalOffset={50}
+    style={styles.keyboardAvoidingView}>
+      <View style={{flex: 1}}>
+          <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
+          <View style={{marginTop: Constants.statusBarHeight, width: "100%"}}>
+          <View style={styles.headerText}>
+                    <Text style={{fontSize: 28, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular' }}>
+            Create an account
+                        </Text>
+                        <View style={{flexDirection: 'row', marginTop: 5}}>
+        <Text style={{fontSize: 13, fontWeight: '500', color: 'rgb(142, 142, 147)'}}>
+          Already have an account?
+        </Text>
+        <Text>
+          {" "}
+        </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={{fontSize: 13, fontWeight: '500', color: '#1565C0'}}>
+            Sign In
+          </Text>
+        </TouchableOpacity>
+        </View>
+        </View>
+        </View>
+
+            <Input 
+              id="email" 
+              label="E-Mail" 
+              keyboardType="email-address" 
+              required 
+              email 
+              autoCapitalize={false} 
+              errorMessage="Please enter a valid email address" 
+              onInputChange={inputChangeHandler}
+              initialValue='' />
+            <Input 
+              id="username" 
+              label="Username" 
+              keyboardType="default" 
+              required 
+              minLength={5} 
+              autoCapitalize={false} 
+              errorMessage="Please enter a valid username" 
+              onInputChange={inputChangeHandler}
+              initialValue='' />
+            <Input 
+              id="password" 
+              label="Password" 
+              keyboardType="default" 
+              secureTextEntry 
+              required 
+              minLength={5} 
+              autoCapitalize={false} 
+              errorMessage="Please enter a valid password." 
+              onInputChange={inputChangeHandler}
+              initialValue='' />
+            
+            <Input i
+              d="confirm-password" 
+              label="Confirm Password" 
+              keyboardType="default" 
+              secureTextEntry 
+              required 
+              minLength={5} 
+              autoCapitalize={false} 
+              errorMessage="The passwords do not match!" 
+              onInputChange={inputChangeHandler}
+              initialValue='' />
+
+
+<View style={{margin: 10}}>
+                        <CheckBox
+                                center
+                                title='I agree to the Terms of Service and Privacy Policy.'
+                                iconRight
+                                iconType='material'
+                                checkedIcon='done'
+                                uncheckedIcon='check-box-outline-blank'
+                                checkedColor='check-box'
+                                containerStyle={{backgroundColor: 'transparent', padding: 15, borderColor: 'transparent'}}
+                                checked={agreedToTerms}
+                                onPress={() => setAgreedToTerms(!agreedToTerms)}
+                            />
+  
+                        </View>  
+          
+            <View style={{marginTop: 15, justifyContent: 'flex-end', width: '90%', alignSelf: 'center'}}>
+                        <ElementsButton
+  title="Create Account"
+  type="solid"
+  raised
+  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 12}}
+  buttonStyle={{backgroundColor: 'transparent'}}
+  containerStyle={{borderRadius: 12}}
+  onPress={signupHandler}
+  disabled={false}
+/>
+                        </View>
+          </ScrollView>
+      </View>
+    </KeyboardAvoidingView>
+    </SafeAreaView>
+  )
+}
+
+const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1
+  },
+  headerText: {
+    marginTop: 15,
+    padding: 10,
+    alignItems: 'center'
+},
+})
+
+export default SignUp;
