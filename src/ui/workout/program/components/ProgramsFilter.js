@@ -74,11 +74,11 @@ class ProgramsFilter extends React.Component {
     }
 
     componentDidMount() {
-        this.props.disableSwipe();
+        console.log('disable swipe');
     }
 
     componentWillUnmount() {
-        this.props.enableSwipe();
+        console.log('enable swipe');
     }
 
     render() {

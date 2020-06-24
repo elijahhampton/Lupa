@@ -1108,6 +1108,23 @@ getCommunityPacksBasedOnLocation = async (location) => {
 getSubScriptionBasedPacksBasedOnLocation = async location => {
 
 }
+
+getPacksWithoutParticipatingUUID = async (uuid) => {
+  let retVal = [];
+
+  try {
+    await PACKS_COLLECTION.where('pack_isSubscription', '==', false).limit(6).get().then(docs => {
+      docs.forEach(snapshot => {
+        let data = snapshot.data();
+        retVal.push(data);
+      })
+    })
+  } catch(error) {
+    retVal = []
+  }
+
+  return Promise.resolve(retVal);
+}
 }
 /******************************************************************************************/
 

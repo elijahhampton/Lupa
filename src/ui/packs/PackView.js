@@ -12,6 +12,7 @@ import {
     Animated,
     Image,
     Easing,
+    TabBarIOS,
 } from 'react-native';
 
 import {
@@ -31,6 +32,7 @@ import {
     IconButton,
     Dialog,
     Title,
+    Card,
     Surface,
     Button,
     Appbar,
@@ -85,7 +87,15 @@ import { LOG_ERROR } from '../../common/Logger';
 import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 import { Constants } from 'react-native-unimodules';
 import CreatePackDialog from './dialog/CreatePackDialog';
+import GestureRecognizer from 'react-native-swipe-gestures';
 
+const TAB_BUTTONS = [
+    "Community",
+    "Explore",
+  //  "Snippets",
+  //  "Daily Body",
+  //  "Tutorial",
+]
 
 const mapStateToProps = (state, action) => {
     return {
@@ -114,6 +124,8 @@ class PackView extends React.Component {
             searchViewWidth: new Animated.Value(0),
             searching: false,
             fabSpinValue: new Animated.Value(0),
+            currentTab: 'Community',
+            nonParticipatingPacks: [],
         }
 
         this.renders = 0;
@@ -188,7 +200,7 @@ Animated.timing(
     }
 
     componentDidMount = async () => {
-        await this.setupExplorePage()
+        await this.setupComponent()
      } 
 
      refreshCurrentUserPacks = async () => {
@@ -271,11 +283,11 @@ Animated.timing(
 
      _handleOnRefreshPackData = async () => {
         await this.refreshCurrentUserPacks();
-        await this.setupExplorePage();
+        await this.setupComponent();
      }
      
-     setupExplorePage = async () => {
-         let defaultPacksIn, explorePagePacksIn, communityPagePacksIn, nearYouIn = []
+     setupComponent = async () => {
+         let defaultPacksIn = [], explorePagePacksIn = [], nonParticipatingPacksIn = [], nearYouIn = []
          try {
              await this.LUPA_CONTROLLER_INSTANCE.getUsersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
                  nearYouIn = result;
@@ -297,13 +309,21 @@ Animated.timing(
             });
          } catch(err)
          {
+            defaultPacksIn = []
+         }
 
+         try {
+            await this.LUPA_CONTROLLER_INSTANCE.getPacksWithoutParticipatingUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
+                nonParticipatingPacksIn = result;
+            });
+         } catch(error) {
+            nonParticipatingPacksIn = []
          }
  
          //set component state
         await this.setState({
             activePacks: explorePagePacksIn,
-
+            nonParticipatingPacks: nonParticipatingPacksIn,
             defaultPacks: defaultPacksIn,
             usersNearYou: nearYouIn,
         })
@@ -340,12 +360,35 @@ Animated.timing(
          try {
             return this.state.defaultPacks.map(pack => {
                 return (
-                    <DefaultPack packUUID={pack.id} pack_title={pack.pack_title}/>
+                    <DefaultPack packUUID={pack.id} pack={pack} pack_title={pack.pack_title}/>
                 )
             })
          } catch(err)
          {
              return null;
+         }
+     }
+
+     mapNonParticipatingPacks = () => {
+        try {
+            return this.state.nonParticipatingPacks.map(pack => {
+                return (
+                 <Card style={{marginVertical: 20, margin: 10, width: Dimensions.get('window').width - 100, borderRadius: 20}}>
+                 <Card.Cover source={{uri: pack.pack_image}} />
+                 <Card.Content style={{padding: 0, margin: 0}}>
+                     <Text style={{color: 'rgb(44, 44, 46)', width: '100%', paddingVertical: 8, fontFamily: 'HelveticaNeueLight', fontSize: 18, }}>
+                         Find out more about the {pack.pack_title} pack
+                     </Text>
+                     <Text style={{fontFamily: 'HelveticaNeueLight'}}>
+                         {pack.pack_description}
+                     </Text>
+                 </Card.Content>
+             </Card>
+                )
+            })
+         } catch(err)
+         {
+             return null
          }
      }
 
@@ -377,6 +420,8 @@ Animated.timing(
         this.setState({ createPackModalIsOpen: false });
     }
 
+
+
     render() {
         return (
             <View style={styles.root}>
@@ -384,34 +429,12 @@ Animated.timing(
                     elevation: 0,
                 }} statusBarHeight>
                     <View style={{flexDirection: 'row'}}>
-                    <Appbar.Content title="Community" titleStyle={{fontFamily: 'HelveticaNeueMedium',fontSize: 25, alignSelf: 'flex-start', fontWeight: "600", color: "#212121"}} />
+                    <Appbar.Content title="Community" titleStyle={{fontSize: 25, alignSelf: 'flex-start', color: "#212121", marginTop: 15,}} />
                     <Appbar.Action icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#212121" />
                     </View>
                    
                 
                 </Appbar.Header>
-                <View style={{width: Dimensions.get('window').width}}>
-                    <ScrollView horizontal contentContainerStyle={{padding: 5}}>
-            <Button mode="text" compact color="#212121">
-                <Text>
-                    Snippets
-                </Text>
-            </Button>
-            <Button mode="text" compact color="#212121">
-                <Text>
-                    Daily Body
-                </Text>
-            </Button>
-
-            <Button mode="text" compact color="#212121">
-                <Text>
-                   Tutorial
-                </Text>
-            </Button>
-                    </ScrollView>
-                    <Divider />
-               
-                </View>
 
                 {
                     this.state.searchValue != "" ?
@@ -436,10 +459,7 @@ Animated.timing(
      <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerText}>
-                        Near you
-                    </Text>
-                    <Text style={styles.headerDescriptionText}>
-                        Users near you
+                        Users located near you
                     </Text>
                     </View>
                     <View style={styles.sectionContent}>
@@ -451,14 +471,43 @@ Animated.timing(
                     </View>
                 </View>
 
+                <View>
+                    <Button 
+                    key={'discover-trainers-button'} 
+                    color="#23374d" 
+                    mode="contained" 
+                    style={{elevation: 0, width: 'auto', marginLeft: 20, alignSelf: 'flex-start', marginVertical: 20, alignItems: 'center', justifyContent: 'center'}} 
+                    theme={{
+                        roundness: 10,
+                    }}
+                    >
+                        <Text>
+                            Discover Trainers
+                        </Text>
+                    </Button>
+                </View>
+
+                                {/* Find out more */}
+                                <View style={styles.containerSection}>
+                            <Divider style={{marginVertical: 20, width: '90%', alignSelf: 'center'}} />
+                    <View style={styles.sectionContent}>
+                        <ScrollView contentContainerStyle={{justifyContent: 'center'}} horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
+                            {
+                               this.mapNonParticipatingPacks()
+                            }
+                        </ScrollView>
+                    </View>
+
+                    <Divider style={{marginVertical: 20, width: '90%', alignSelf: 'center'}} />
+
+                </View>
+
+
                                 {/* Default Packs */}
                                 <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerText}>
-                        Default Packs
-                    </Text>
-                    <Text style={styles.headerDescriptionText}>
-                        Default Lupa packs based on your account
+                        Default Packs based on your account
                     </Text>
                     </View>
 
@@ -522,7 +571,6 @@ Animated.timing(
           <FAB icon={this.state.searching === true ? 'close' : 'search'} color="rgba(255,255,255 ,1)" onPress={this.state.searching == true ? this.closeSearch : this.showSearch} style={{ transform: [{rotate: this.spin}], backgroundColor: '#23374d', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
             
            <CreatePackDialog isVisible={this.state.createPackModalIsOpen} closeDialogMethod={this.closeCreatePackModal} /> 
-            <SafeAreaView />
             </View>
         );
     }
@@ -548,13 +596,12 @@ const styles = StyleSheet.create({
     containerSection: {
         flexDirection: 'column',
         width: Dimensions.get('window').width,
-        margin: 8,
     },
     headerText: {
-        fontSize: 20,
-        padding: 3,
+        fontSize: 18,
+        paddingLeft: 10,
+        paddingVertical: 8,
         color: '#212121',
-        fontWeight: '300'
     },
     sectionTextContainer: {
         flexDirection: 'column',
@@ -567,7 +614,7 @@ const styles = StyleSheet.create({
     },
     headerDescriptionText: {
         fontSize: 15,
-        padding: 3,
+        paddingLeft: 10,
         color: '#212121',
         fontFamily: 'HelveticaNeueLight',
     },

@@ -36,7 +36,7 @@ const LupaDrawerNavigator = createDrawerNavigator(
     {
     //Drawer Optons and indexing
       Dashboard: {
-        screen: (props) => <DashboardView {...props}  disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe}/>
+        screen: (props) => <DashboardView {...props} />
       },
       Profile: {
         screen: ProfileNavigator
@@ -45,15 +45,15 @@ const LupaDrawerNavigator = createDrawerNavigator(
       screen: TrainerInformation
     },
     Notifications: {
-      screen: (props) => <NotificationsView {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      screen: (props) => <NotificationsView {...props} />,
     },
     Messages: {
-      screen: (props) => <MessagesView {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />
+      screen: (props) => <MessagesView {...props}  />
     },
     },
     {
       initialRouteName: 'Dashboard',
-      contentComponent: (props) => <DrawerMenu {...props} logoutMethod={props.screenProps.logoutMethod}/>
+      contentComponent: (props) => <DrawerMenu {...props} />
     }
   );
 

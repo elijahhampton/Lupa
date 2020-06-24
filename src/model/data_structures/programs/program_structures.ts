@@ -41,7 +41,12 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     },
     program_image: "",
     program_tags: [],
-    program_owner: "",
+    program_owner: {
+        uuid: '',
+        displayName: '',
+        certificaton: '',
+        photo_url: '',
+    }
     program_participants: [],
 }
 
@@ -60,7 +65,12 @@ export const getLupaProgramInformationStructure = (
     allowWaitlist=false, 
     program_image="",
     tags: [],
-    programOwner="",
+    programOwner={
+        uuid: '',
+        certification: '',
+        displayName: '',
+        photo_url: '',
+    },
     program_participants=[],
     ) => {
         

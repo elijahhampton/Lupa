@@ -16,7 +16,7 @@ import ProfileView from '../user/profile/ProfileView';
 const PackNavigator = createStackNavigator(
     {
         PackView: {
-            screen: PackView,
+            screen: (props) =>  <PackView  {...props} />,
             navigationOptions: ({ navigation }) => ({
                 title: 'PackView',
                 header: null,
@@ -32,7 +32,7 @@ const PackNavigator = createStackNavigator(
             })
         },
         PackModal: {
-            screen: (props) => <PackModal {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+            screen: (props) => <PackModal {...props} />,
             navigationOptions: ({ navigation }) => ({
                 title: 'PackModal',
                 header: null,

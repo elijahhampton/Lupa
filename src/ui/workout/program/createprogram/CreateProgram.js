@@ -65,31 +65,21 @@ class CreateProgram extends React.Component {
     }
 
     async componentDidMount() {
-        this.props.disableSwipe();
+        console.log('disable swipe');
 
-        if (this.props.navigation.state.params.mode == "CREATE")
-        {
             const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
             this.setState({ currProgramUUID: programPayload.program_structure_uuid })
             this.setState({ programData: programPayload})
-        }
-        else if (this.props.navigation.state.params.mode == "EDIT")
-        {
-                this.setState({ programComplete: true })
-                this.setState({ currProgramUUID: this.props.navigation.state.params.programData.program_structure_uuid })
-                this.setState({ programData: this.props.navigation.state.params.programData})
-
-            }
     }
 
     async componentWillUnmount() {
-        this.props.enableSwipe();
+        console.log('enable swipe');
         if (this.state.programComplete == false)
         {
             //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
             
-            if (typeof(this.state.currProgramUUID) != 'undefined')
+            if (typeof(this.state.currProgramUUID) != 'undefined' || this.state.currProgramUUID != '')
             {
                 //delete from redux
                 this.props.deleteProgram(this.state.currProgramUUID)
@@ -185,7 +175,7 @@ class CreateProgram extends React.Component {
             //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
             
-            if (typeof(this.state.currProgramUUID) != 'undefined')
+            if (typeof(this.state.currProgramUUID) != 'undefined' || this.state.currProgramUUID != '')
             {
                             //delete from redux
             this.props.deleteProgram(this.state.currProgramUUID)

@@ -23,7 +23,7 @@ import ProgramInformationPreview from '../ProgramInformationPreview';
 function ProgramSearchResultCard(props) {
     const result = props.programData;
 
-    let [programModalVisible, setProgramModalVisible] = useState(false);
+    const [programModalVisible, setProgramModalVisible] = useState(false);
 
     const currUserData= useSelector(state => {
         return state.Users.currUserData;
@@ -101,7 +101,7 @@ function ProgramSearchResultCard(props) {
             <View style={{flex: 1, bottom: 0,width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <View style={{flex: 1,justifyContent: 'flex-end'}}>
                 <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 10, color: '#212121'}}>
-                {result.program_duration} sessions per week
+                 {result.program_duration} sessions per week
                 </Text>
             </View>
             <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
@@ -118,7 +118,7 @@ function ProgramSearchResultCard(props) {
       </Surface>
       </TouchableOpacity>
 
-      <ProgramInformationPreview isVisible={programModalVisible} programData={result} closeModalMethod={() => setProgramModalVisible(false)} />
+      <ProgramInformationPreview isVisible={programModalVisible} programData={props.programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
       </View>
     )
 }

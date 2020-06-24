@@ -43,24 +43,6 @@ class DefaultPack extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
 
-    componentDidMount = async () => {
-        await this.setupComponent();
-    }
-
-    setupComponent = async () => {
-        let packProfileImageIn;
-
-        await this.LUPA_CONTROLLER_INSTANCE.getPackImageFromUUID(this.state.packUUID).then(result => {
-            packProfileImageIn = result;
-        })
-
-
-        await this.setState({
-            packProfileImage: packProfileImageIn,
-            ready: true,
-        });
-    }
-
     _setShowPack = () => {
         this.props.navigation.navigate('PackModal', {
             navigation: this.props.navigation,
@@ -71,8 +53,8 @@ class DefaultPack extends React.Component {
     render() {
         return (
             <TouchableOpacity onPress={() => this._setShowPack()}>
-                        <Surface style={{margin: 35, alignSelf: 'center', width: Dimensions.get('screen').width - 80, marginHorizontal: 20,  height: 350, elevation: 15, borderRadius: 15}}>
-                        <ImageBackground style={{flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 15,}} imageStyle={{borderRadius: 15}} source={{uri: this.state.packProfileImage}}>
+                        <Surface style={{margin: 35, alignSelf: 'center', width: Dimensions.get('screen').width - 80, marginHorizontal: 20,  height: 250, elevation: 1, borderRadius: 15}}>
+                        <ImageBackground style={{flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 15,}} imageStyle={{borderRadius: 15}} source={{uri: this.props.pack.pack_image}}>
                     <Headline style={{color: 'white', fontWeight: 'bold'}}>
                         {this.props.pack_title}
                     </Headline>

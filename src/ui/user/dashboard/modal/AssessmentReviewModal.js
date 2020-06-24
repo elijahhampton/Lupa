@@ -209,13 +209,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        paddingLeft: 20,
+        paddingLeft: 10,
         alignItems: 'center'
     },
     safeareaview: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        paddingLeft: 20,
+        paddingLeft: 10,
         alignItems: 'center'
     }
 })

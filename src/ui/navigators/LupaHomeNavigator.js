@@ -22,7 +22,7 @@ import CardFormScreen from '../src/scenes/CardFormScreen';
 const LupaHomeNavigator =  createStackNavigator(
     {
     LupaHome: {
-        screen: (props) => <LupaHome setScreen={screen => props.screenProps.setCurrentScreen(screen)} goToIndex={index => props.screenProps.goToIndex(index)} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+        screen: (props) => <LupaHome />,
         navigationOptions: ({navigation}) => ({
             title: "SearchView",
             header: null,
@@ -30,7 +30,7 @@ const LupaHomeNavigator =  createStackNavigator(
         })
     },
     NotificationsView: {
-      screen: (props) => <NotificationsView disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      screen: (props) => <NotificationsView />,
         navigationOptions: ({navigation}) => ({
             title: "NotificationsView",
             header: null,
@@ -46,7 +46,7 @@ const LupaHomeNavigator =  createStackNavigator(
         })
     },
     BuildAWorkout: {
-      screen: (props) => <BuildAWorkout {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      screen: (props) => <BuildAWorkout {...props} />,
       navigationOptions:   ({navigation}) => ({
           title: "Build a Workout",
           header: null,
@@ -54,7 +54,7 @@ const LupaHomeNavigator =  createStackNavigator(
       })
     },
     LiveWorkout: {
-      screen: (props) => <LiveWorkout {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      screen: (props) => <LiveWorkout {...props} />,
       navigationOptions:   ({navigation}) => ({
           title: "LiveWorkout",
           header: null,
@@ -62,7 +62,7 @@ const LupaHomeNavigator =  createStackNavigator(
       })
     },
     LiveWorkoutPreview: {
-      screen: (props) =>  <LiveWorkoutPreview {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      screen: (props) =>  <LiveWorkoutPreview {...props} />,
       navigationOptions:   ({navigation}) => ({
         title: "LiveWorkout",
         header: null,
@@ -70,7 +70,7 @@ const LupaHomeNavigator =  createStackNavigator(
     })
     },
     CreateProgram: {
-      screen: (props) => <CreateProgram {...props} disableSwipe={props.screenProps.disableSwipe} enableSwipe={props.screenProps.enableSwipe} />,
+      screen: (props) => <CreateProgram {...props} />,
       navigationOptions: ({navigation}) => ({
         title: "CreateProgram",
         header: null,
@@ -86,7 +86,7 @@ const LupaHomeNavigator =  createStackNavigator(
         })
       },
       Programs: {
-        screen: (props) => <Programs {...props} enableSwipe={props.screenProps.enableSwipe} disableSwipe={props.screenProps.disableSwipe} />,
+        screen: (props) => <Programs {...props} />,
         navigationOptions:   ({navigation}) => ({
             title: "Programs",
             header: null,
