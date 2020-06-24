@@ -48,9 +48,10 @@ import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux'
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
+import IonIcons from 'react-native-vector-icons/Ionicons'
 
 import Carousel from 'react-native-snap-carousel';
-import { SearchBar, Divider } from 'react-native-elements';
+import { Input, Divider } from 'react-native-elements';
 
 import ProgramListComponent from '../component/ProgramListComponent';
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -781,23 +782,31 @@ class Programs extends React.Component {
         return (
             <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
 
-<Header hasTabs style={{backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
-<Appbar.BackAction onPress={() => this.props.navigation.goBack()} color="#212121" />
-                    <Appbar.Content title="Lupa Programs"   titleStyle={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 15, fontWeight: '600', alignSelf: 'center'}} />
-                   <Appbar.Action icon={() => <FeatherIcon name="activity" size={20} />} onPress={() => this.mainRBSheet.current.open()} color="#212121" />
-                   
-</Header>
-        <Tabs tabContainerStyle={{backgroundColor: '#FFFFFF'}} renderTabBar={()=> <ScrollableTab ref={this.scrollableTab} tabsContainerStyle={{backgroundColor: '#FFFFFF'}} />}>
-          <Tab heading="Explore" tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}>
-              <View style={{backgroundColor: '#FFFFFF', flex: 1}}>
-              <SearchBar placeholder="Search"
-                        onChangeText={text => console.log(text)} 
-                        platform="ios"
-                        searchIcon={<FeatherIcon name="search" />}
-                        containerStyle={{backgroundColor: "transparent"}}
-                        value={this.state.searchValue}/>
+    <Appbar.Header statusBarHeight style={{ marginBottom: 30, paddingVertical: 5, backgroundColor: '#FFFFFF', elevation: 0, justifyContent: 'space-between'}}>
+        <Appbar.Action icon={() => <FeatherIcon name="zap" size={25} />} onPress={() => this.props.navigation.goBack()}/>
+        <Appbar.Action icon={() => <FeatherIcon name="activity" size={25} />} onPress={() => this.mainRBSheet.current.open()}/>
+    </Appbar.Header>
 
-                    <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF'}} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.featuredIsRefreshing} onRefresh={() => this.handleOnRefresh()}/>}>
+              <View style={{backgroundColor: '#FFFFFF', flex: 1}}>
+                    {
+                        this.state.searchValue == '' ?
+                        <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF'}} shouldRasterizeIOS={true} refreshControl={<RefreshControl refreshing={this.state.featuredIsRefreshing} onRefresh={() => this.handleOnRefresh()}/>}>
+                    <View style={{width: Dimensions.get('window').width}}>
+        <Input 
+        rightIconContainerStyle={{position: 'absolute', right: 20}} 
+        rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
+        placeholder="Try fitness programs for running" 
+        placeholderTextColor="#212121"  
+        style={{}} 
+        containerStyle={{width: Dimensions.get('screen').width, padding: 0, marginLeft: 10}} 
+        inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
+        value={this.state.searchValue}
+        keyboardType="default"
+        returnKeyLabel="done"
+        returnKeyType="done"
+        onChangeText={text => this._performSearch(text)}
+        />
+        </View>
                         <View style={{flex: 1}}>
                         <Text style={styles.headerText}>
                         Popular
@@ -847,19 +856,36 @@ class Programs extends React.Component {
                     {this.getBookmarkedProgramsView()}
                         </View>
                     </ScrollView>
-                    </View>
+                    :
+                    <View style={{flex: 1}}>
+                        <View>
+                        <View style={{width: Dimensions.get('window').width}}>
+        <Input 
+        rightIconContainerStyle={{position: 'absolute', right: 20}} 
+        rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
+        placeholder="Try fitness programs for running" 
+        placeholderTextColor="#212121"  
+        style={{}} 
+        containerStyle={{width: Dimensions.get('screen').width, padding: 0, marginLeft: 10}} 
+        inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
+        value={this.state.searchValue}
+        keyboardType="default"
+        returnKeyLabel="done"
+        returnKeyType="done"
+        onChangeText={text => this._performSearch(text)}
+        />
+        </View>
+                        </View>
+                        <View style={{flex: 1}}>
+                            <ScrollView>
 
-          </Tab>
-          <Tab heading="My Programs" tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}>
-                            <ScrollView centerContent={this.state.currUserPrograms.length == 0 || this.state.currUserPrograms == undefined ? true : false} contentContainerStyle={{flex: 1, backgroundColor: '#FFFFFF'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.setState({ currUserPrograms: getCurrentStoreState().Programs.currUserProgramsData })} />}>
-                                {
-                                    this.mapPrograms()
-                                }
                             </ScrollView>
-                            {this.getRBSheet()}
-          </Tab>
+                        </View>
+                    </View>
+                    }
+                </View>
+
           
-        </Tabs>
 
        {this.getMainRBSheet()}
         <ProgramsFilter filterHeight={this.state.filterHeight} handleApplyFilterOnPress={this.handleApplyFilterOnPress} handleCancelButtonOnPress={this.handleCancelButtonOnPress} disableSwipe={this.props.disableSwipe} enableSwipe={this.props.enableSwipe} />

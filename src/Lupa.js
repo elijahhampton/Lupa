@@ -283,7 +283,7 @@ searchNavigatorProps = {
   render() {
     return (
       <>
-      <StatusBar backgroundColor="blue" barStyle="dark-content" networkActivityIndicatorVisible={true} />
+      <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
       <LupaBottomTabNavigator />
       <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/> 
       </>
@@ -305,6 +305,7 @@ const config = {
   },
   adaptive: true,
   showIcon: true,
+  showLabel: false,
   lazy: true
 }
 
