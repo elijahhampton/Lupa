@@ -200,7 +200,6 @@ const styles = StyleSheet.create({
         fontSize: 15,
         textAlignVertical: "center",
         textAlign: "left",
-        fontFamily: 'HelveticaNeueLight'
     },
     contentDriverTextView: {
         width: "80%"
@@ -222,11 +221,10 @@ const styles = StyleSheet.create({
     },
     contentDriverHeaderText: {
         fontSize: 15,
-        fontFamily: 'HelveticaNeueLight',
     },
     contentDriverDescriptionText: {
         fontSize: 12, 
-        fontFamily: 'HelveticaNeueMedium',
+        fontFamily: 'ARSMaquettePro-Medium',
     },
     displayedContentTitle: {
         color: '#212121',

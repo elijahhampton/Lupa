@@ -58,25 +58,15 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Lupa to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Lupa to access your device's accelerometer</string>
+	<string>Allow Lupa to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Give Lupa periences permission to save photos</string>
+	<string>Give Lupa permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give Lupa periences permission to access your photos</string>
+	<string>Give Lupa permission to access your photos</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Allow Lupa to access your reminders</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>HelveticaNeueMed.ttf</string>
-		<string>HelveticaNeueLt.ttf</string>
-		<string>HelveticaNeueHv.ttf</string>
-		<string>HelveticaNeueBd.ttf</string>
-		<string>HelveticaNeue.ttf</string>
-		<string>HelveticaNeue Thin.ttf</string>
-		<string>HelveticaNeue Medium.ttf</string>
-		<string>HelveticaNeueLight.ttf</string>
-		<string>HelveticaNeue BlackCond.ttf</string>
-		<string>Helvetica Neu Bold.ttf</string>
 		<string>ARSMaquettePro-Regular.ttf</string>
 		<string>ARSMaquettePro-Medium.ttf</string>
 		<string>ARSMaquettePro-Light.ttf</string>

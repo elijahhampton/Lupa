@@ -39,7 +39,7 @@ export default class PrivateChat extends React.Component{
         let privateChatUUID;
 
         //check for shared chat uuid between users
-        await this.LUPA_CONTROLLER_INSTANCE.getPrivateChatUUID(this.props.navigation.state.params.currUserUUID, this.props.navigation.state.params.otherUserUUID).then(result => {
+        await this.LUPA_CONTROLLER_INSTANCE.getPrivateChatUUID( this.props.navigation.state.params.currUserUUID,  this.props.navigation.state.params.otherUserUUID).then(result => {
             privateChatUUID = result;
         })
 

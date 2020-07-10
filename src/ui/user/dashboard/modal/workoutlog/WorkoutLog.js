@@ -52,12 +52,12 @@ function WorkoutLog(props) {
         <TouchableWithoutFeedback onPress={surfaceIsOpen == false ? openTab : closeTab}>
                             <View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={{paddingVertical: 3, fontSize: 20, fontFamily: 'HelveticaNeueLight'}}>
+                <Text style={{paddingVertical: 3, fontSize: 20 }}>
                     Workout Log
                 </Text>
                 <FeatherIcon name={surfaceIsOpen == true ? "chevron-up" : "chevron-down"} size={20}/>
                 </View>
-                <Text style={{paddingVertical: 3, fontSize: 12, fontFamily: 'HelveticaNeueLight'}}>
+                <Text style={{paddingVertical: 3, fontSize: 12 }}>
                    Keep track of your previous workouts on or off the Lupa app
                 </Text>
                 </View>
@@ -67,19 +67,19 @@ function WorkoutLog(props) {
                         return (
                             <Surface style={{padding: 10, marginVertical: 10, borderRadius: 10, width: '100%', backgroundColor: 'rgb(242,242,247)'}}>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                    <Text style={{padding: 3, fontFamily: 'HelveticaNeueLight'}}>
+                                    <Text style={{padding: 3 }}>
                                         {logItem.workoutName}
                                     </Text>
 
-                                    <Text style={{fontFamily: 'HelveticaNeueMedium'}}>
+                                    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
                                         {new Date(logItem.date).toLocaleDateString()}
                                     </Text>
                                 </View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                    <Text style={{marginHorizontal: 3, fontFamily: 'HelveticaNeueMedium'}}>
+                                    <Text style={{marginHorizontal: 3, fontFamily: 'ARSMaquettePro-Medium'}}>
                                         Sets: {logItem.sets}
                                     </Text>
-                                    <Text style={{marginHorizontal: 3, fontFamily: 'HelveticaNeueMedium'}}>
+                                    <Text style={{marginHorizontal: 3, fontFamily: 'ARSMaquettePro-Medium'}}>
                                         Reps: {logItem.reps}
                                     </Text>
                                 </View>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     dialogSectionLabelText: {
-        fontFamily: 'HelveticaNeueMedium',
+        fontFamily: 'ARSMaquettePro-Medium',
         fontSize: 20
     },  
     chipStyle: {
@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     chipTextStyle: {
-        fontFamily: 'HelveticaNeueLight'
     },
     footerComponentContainer: {
         width: Dimensions.get('window').width, 
@@ -124,7 +123,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF'
     },
     headerText: {
-        color: '#212121', fontFamily: 'HelveticaNeueLight', 
+        color: '#212121' , 
         fontSize: 18, 
         paddingVertical: 5, 
         textAlign: 'center'

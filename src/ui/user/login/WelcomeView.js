@@ -46,10 +46,10 @@ class WelcomeView extends React.Component {
     return (
       <View style={styles.root}>
           <View style={{flex: 1, alignItems: 'center', flexDirection: 'column', marginTop: 10, padding: 10}}>
-                <Text style={{fontFamily: 'ARSMaquettePro-Black', fontSize: 25, fontWeight: '700', color: '#212121', margin: 5, }}>
+                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 25, fontWeight: '700', color: '#212121', margin: 5, }}>
                 Welcome to Lupa,
                 </Text>
-                <Text style={{fontFamily: 'ARSMaquettePro-Black', fontSize: 20, fontWeight: '700', color: '#1565C0', margin: 5, }}>
+                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 20, fontWeight: '700', color: '#1565C0', margin: 5, }}>
                 the fitness app for preventative healthcare
                 </Text>
           </View>

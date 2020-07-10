@@ -27,7 +27,6 @@ import {
 } from "react-native-elements";
 
 import { connect } from 'react-redux';
-import { withNavigation } from 'react-navigation';
 
 import LupaController from '../../../controller/lupa/LupaController';
 import { UserAuthenticationHandler } from "../../../controller/firebase/firebase";
@@ -372,4 +371,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(LoginView));
+export default connect(mapStateToProps, mapDispatchToProps)(LoginView);

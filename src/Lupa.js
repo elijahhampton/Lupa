@@ -16,16 +16,14 @@ import {
   Dimensions,
 } from "react-native";
 
-
-import Swiper from 'react-native-swiper';
-
 import Dashboard from './ui/navigators/LupaDrawerNavigator';
 
 import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal';
 
 import LupaController from './controller/lupa/LupaController';
 import PackNavigator from './ui/navigators/PackNavigator'
-import { createAppContainer } from 'react-navigation';
+import ProfileNavigator from './ui/navigators/ProfileNavigator'
+import CreateProgram from './ui/workout/program/createprogram/CreateProgram'
 
 import {
   logoutUser,
@@ -34,61 +32,11 @@ import {
 import PushNotification from 'react-native-push-notification'
 import { connect } from 'react-redux';
 import { generateMessagingToken } from "./controller/firebase/firebase";
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LupaHomeNavigator from "./ui/navigators/LupaHomeNavigator";
 
-import { createBottomTabNavigator } from 'react-navigation-tabs'
 import FeatherIcon from "react-native-vector-icons/Feather";
-
-/**
- * 
- */
-mapStateToProps = (state, action) => {
-  return {
-    lupa_data: state
-  }
-}
-
-/**
- * 
- */
-mapDispatchToProps = dispatch => {
-  return {
-    updateUser: (currUserData) => {
-      dispatch({
-        type: 'UPDATE_CURRENT_USER',
-        payload: currUserData
-      })
-    },
-    updatePacks: (currUserPacksData) => {
-      dispatch({
-        type: 'UPDATE_CURRENT_USER_PACKS',
-        payload: currUserPacksData,
-      })
-    },
-    updateUserPrograms: (currUserProgramsData) => {
-      dispatch({
-        type: 'UPDATE_CURRENT_USER_PROGRAMS',
-        payload: currUserProgramsData,
-      })
-    },
-    updateLupaWorkouts: (lupaWorkoutsData) => {
-      dispatch({
-        type: 'UPDATE_LUPA_WORKOUTS',
-        payload: lupaWorkoutsData,
-      })
-    },
-    updateLupaAssessments: (lupaAssessmentData) => {
-      dispatch({
-        type: 'UPDATE_LUPA_ASSESSMENTS',
-        payload: lupaAssessmentData
-      })
-    }
-  }
-}
-
-const LUPA_SCREENS = ['Programs']
 
 class Lupa extends React.Component {
   constructor(props) {
@@ -104,7 +52,6 @@ class Lupa extends React.Component {
       ready: false,
       swipeable: true,
       permissions: null,
-      currScreen: ''
     }
 
     this._showWelcomeModal = this._showWelcomeModal.bind(this);
@@ -128,86 +75,6 @@ class Lupa extends React.Component {
     await generateMessagingToken();
   }
 
-    /**
-   * 
-   */
-  _updateUserInRedux = (userObject) => {
-    this.props.updateUser(userObject);
-  }
-
-  /**
-   * 
-   */
-  _updatePacksInRedux = (packsData) => {
-    this.props.updatePacks(packsData);
-  }
-
-  /**
-   * 
-   */
-  _updateUserHealthDataInRedux = (healthData) => {
-    this.props.updateHealthData(healthData);
-  }
-
-  /**
-   * 
-   */
-  _updateUserProgramsDataInRedux = (programsData) => {
-    this.props.updateUserPrograms(programsData);
-  }
-
-  /**
-   * 
-   */
-  _updateLupaWorkoutsDataInRedux = (lupaWorkoutsData) => {
-    this.props.updateLupaWorkouts(lupaWorkoutsData);
-  }
-
-  /**
-   * 
-   */
-   /**
-   * 
-   */
-  _updateLupaAssessmentDataInRedux = (lupaAssessmentData) => {
-    this.props.updateLupaAssessments(lupaAssessmentData);
-  }
-
-    /**
-   * 
-   */
-  _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData = {}, currUserPrograms, lupaWorkouts  =[], lupaAssessments=[];
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
-      currUserData = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-      currUserPacks = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-      currUserPrograms = result;
-    })
-
-    lupaWorkouts = await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts()
-
-    lupaAssessments = await this.LUPA_CONTROLLER_INSTANCE.loadAssessments()
-
-
-    let userPayload = {
-      userData: currUserData,
-      healthData: currUserHealthData,
-    }
-
-
-    await this._updatePacksInRedux(currUserPacks);
-    await this._updateUserInRedux(userPayload);
-    await this._updateUserProgramsDataInRedux(currUserPrograms);
-    await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
-    await this._updateLupaAssessmentDataInRedux(lupaAssessments);
-  }
-
   _showWelcomeModal = async () => {
     let _isNewUser;
     await AsyncStorage.getItem(`${this.currUserUUID}_` + 'isNewUser').then(result => {
@@ -219,10 +86,6 @@ class Lupa extends React.Component {
       await this.setState({
         isNewUser: true
       })
-    }
-    else
-    {
-      await this._setupRedux();
     }
 
 }
@@ -236,50 +99,6 @@ _navigateToAuth = async () => {
   await logoutUser();
   this.props.navigation.navigate('Auth');
 }
-
-disableSwipe = () => {
-  this.setState({ swipeable: false })
-}
-
-enableSwipe = () => {
-  this.setState({ swipeable: true })
-}
-
-goToIndex = (index) => {
-  this.setState({ currIndex: index})
-}
-
-setScreen = (screen) => {
-  this.setState({ currScreen: screen})
-}
-
-dashboardNavigatorProps = {
-  disableSwipe: this.disableSwipe,
-  enableSwipe: this.enableSwipe,
-  logoutMethod: this._navigateToAuth,
-  goToIndex: index => this.goToIndex(index)
-}
-
-workoutNavigatorProps = {
-  disableSwipe: this.disableSwipe,
-  enableSwipe: this.enableSwipe,
-  goToIndex: index => this.goToIndex(index)
-}
-
-packNavigatorProps = {
-  disableSwipe: this.disableSwipe,
-  enableSwipe: this.enableSwipe,
-  goToIndex: index => this.goToIndex(index)
-}
-
-searchNavigatorProps = {
-  enableSwipe: this.enableSwipe,
-  disableSwipe: this.disableSwipe,
-  goToIndex: index => this.goToIndex(index),
-  setCurrentScreen: screen => this.setScreen(screen)
-}
-
-
   render() {
     return (
       <>
@@ -303,7 +122,7 @@ const config = {
     },
     labelPosition: 'below icon',
     showIcon: true,
-    showLabel: false,
+    showLabel: true,
   },
   adaptive: true,
   lazy: true
@@ -316,46 +135,52 @@ const styles = StyleSheet.create({
   }
 });
 
+const Tab = createBottomTabNavigator();
 
-class LupaBottomTabNavigator extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+const PlaceHolder = () => {
+  return (
+    <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
 
-  render() {
-    return (
-      <Navigator />
-    )
-  }
+    </View>
+  )
 }
 
-const BottomTabNavigator = createBottomTabNavigator({
- Dashboard: {
-    screen: Dashboard,
-    navigationOptions: {
-      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"}) => <FeatherIcon thin={false} name="clipboard" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'} />,
-    }
-  },
-  Train:  {
-    screen: LupaHomeNavigator,
-    navigationOptions: {
-      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"})  => <FeatherIcon thin={false} name="activity" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'}/>
-    }
-  },
-  Community: {
-    screen: PackNavigator,
-    navigationOptions: {
-      tabBarIcon: ({focused, horizontal, tintColor="#1089ff"})  => <FeatherIcon thin={false} name="globe" size={20} color={focused ? tintColor : 'rgb(58, 58, 60)'}/>
-    }
-  }
-}, {
-  order: ['Dashboard', 'Train', 'Community'],
-  initialRouteName: 'Train',
-  ...config
-})
+function LupaBottomTabNavigator() {
+  return (
+    <Tab.Navigator 
+      initialRouteName="Train"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-const Navigator = createAppContainer(BottomTabNavigator)
+          switch (route.name)
+          {
+            case 'Dashboard':
+              return <FeatherIcon name='clipboard' size={20} color="#212121" />;
+            case 'Train':
+              return <FeatherIcon name='activity' size={20} color="#212121" />;
+            case 'Create':
+              return <FeatherIcon name='plus-circle' size={20} color="#212121"/>;
+            case 'Community':
+              return <FeatherIcon name='globe' size={20} color="#212121" />;
+            case 'Profile':
+              return <FeatherIcon name='user' size={20} color='#212121' />;
+          }
 
-//createAppContainer(TabNavigator);
+        },
+      })} >
+      <Tab.Screen name="Dashboard" component={Dashboard} />
+      <Tab.Screen name="Train" component={LupaHomeNavigator} />
+      <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
+          tabPress: event => {
+            event.preventDefault()
+            navigation.navigate('CreateProgram')
+          }
+        })}  />
+      <Tab.Screen name="Community" component={PackNavigator} />
+      <Tab.Screen name="Profile" component={ProfileNavigator} />
+    </Tab.Navigator>
+  );
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Lupa);
+export default Lupa;

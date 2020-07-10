@@ -7,21 +7,21 @@ import {
     Button,
     Dimensions,
     SafeAreaView,
-    TouchableNativeFeedbackBase
+    TouchableNativeFeedbackBase,
+    Modal
 } from 'react-native';
 
 import { connect } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 
-import { withNavigation } from 'react-navigation';
 import Swiper from 'react-native-swiper';
-import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 import { ProgressBar } from 'react-native-paper';
 
 import ProgramInformation from './component/ProgramInformation'
 import BuildAWorkout from './BuildWorkout';
 import ProgramPreview from './component/ProgramPreview';
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
+import CreateWorkoutIntroduction from './CreateWorkoutIntroduction';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -74,6 +74,7 @@ class CreateProgram extends React.Component {
         console.log('enable swipe');
         if (this.state.programComplete == false)
         {
+            alert('deleting')
             //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
             
@@ -85,7 +86,7 @@ class CreateProgram extends React.Component {
         }
     }
 
-    captureImage = (img) => {
+    captureProgramImage = (img) => {
         this.setState({
             programImage: img
         })
@@ -105,6 +106,7 @@ class CreateProgram extends React.Component {
         allowWaitlist,
         programImage,
         programTags,
+        programAutomatedMessage,
     ) => {
        let updatedProgramData = this.state.programData;
 
@@ -129,6 +131,7 @@ class CreateProgram extends React.Component {
             photo_url:  this.props.lupa_data.Users.currUserData.photo_url,
             certification:  this.props.lupa_data.Users.currUserData.certification
         }
+        updatedProgramData.program_automated_message = programAutomatedMessage
         await this.setState({
             programData: updatedProgramData
         })
@@ -160,10 +163,21 @@ class CreateProgram extends React.Component {
         this.exit();
     }
 
-    nextIndex = () => {
+    prevIndex = () => {
+        this.setState({
+            currIndex: this.state.currIndex - 1
+        })
+    }
 
+    nextIndex = () => {
         this.setState({
             currIndex: this.state.currIndex + 1
+        })
+    }
+
+    goToIndex = (index) => {
+        this.setState({
+            currIndex: index
         })
     }
 
@@ -183,36 +197,49 @@ class CreateProgram extends React.Component {
         this.props.navigation.goBack();
     }
 
+    getViewDisplay = () => {
+        switch(this.state.currIndex) {
+            case 0:
+                return <CreateWorkoutIntroduction goToIndex={this.goToIndex} />
+            case 1:
+                return (
+                    <ProgramInformation captureImage={img => this.captureProgramImage(img)} handleCancelOnPress={this.exit} goToIndex={this.nextIndex} saveProgramInformation={(programName,
+                        programDescription,
+                        numProgramSpots,
+                        programStartDate,
+                        programEndDate,
+                        programDuration,
+                        programTime,
+                        programPrice,
+                        programLocationData,
+                        programType,
+                        allowWaitlist) => this.saveProgramInformation(programName,
+                            programDescription,
+                            numProgramSpots,
+                            programStartDate,
+                            programEndDate,
+                            programDuration,
+                            programTime,
+                            programPrice,
+                            programLocationData,
+                            programType,
+                            allowWaitlist)} />
+                )
+            case 2:
+                return <BuildAWorkout goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} />
+            case 3:
+                return <ProgramPreview goBackToEditWorkout={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgram={this.saveProgram} handleExit={this.exit} programData={this.state.programData} />
+            default:
+        }
+    }
+
+
     render() {
         return (
             <View style={styles.root}>
-                <Swiper index={this.state.currIndex} showsPagination={false} scrollEnabled={false}>
-                    <ProgramInformation captureImage={img => this.captureImage(img)} handleCancelOnPress={this.exit} goToIndex={this.nextIndex} saveProgramInformation={(programName,
-        programDescription,
-        numProgramSpots,
-        programStartDate,
-        programEndDate,
-        programDuration,
-        programTime,
-        programPrice,
-        programLocationData,
-        programType,
-        allowWaitlist) => this.saveProgramInformation(programName,
-            programDescription,
-            numProgramSpots,
-            programStartDate,
-            programEndDate,
-            programDuration,
-            programTime,
-            programPrice,
-            programLocationData,
-            programType,
-            allowWaitlist)} />
-
-
-                    <BuildAWorkout goToIndex={() => this.setState({currIndex: this.state.currIndex + 1})} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} />
-                    <ProgramPreview goToIndex={() => this.setState({currIndex: this.state.currIndex + 1})} goBackToEditWorkout={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgram={this.saveProgram} handleExit={this.exit} programData={this.state.programData} />
-                </Swiper>
+                 {
+                     this.getViewDisplay()
+                 }
             </View>
         )
     }
@@ -221,8 +248,8 @@ class CreateProgram extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: '#F2F2F2'
+        backgroundColor: '#FFFFFF'
     }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(CreateProgram));
+export default connect(mapStateToProps, mapDispatchToProps)(CreateProgram);

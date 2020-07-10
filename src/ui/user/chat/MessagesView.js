@@ -24,8 +24,6 @@ import { Fire } from '../../../controller/firebase/firebase';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
-import { withNavigation } from 'react-navigation'
-
 const ProfilePicture = require('../../images/profile_picture1.jpeg')
 
 import { connect } from 'react-redux';
@@ -172,7 +170,7 @@ class MessagesView extends React.Component {
                     }
                 }}>
                     <Appbar.BackAction onPress={() => this.props.navigation.goBack()} />
-                    <Appbar.Content title="Messages" titleStyle={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}} />
+                    <Appbar.Content title="Messages" titleStyle={{fontFamily: 'ARSMaquettePro-Medium', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}} />
                     <Appbar.Action onPress={() => alert('ap')} icon="delete" disabled={!this.state.viewReady && this.state.currMessagesIndex == undefined} color={!this.state.viewReady ? "black" : "grey"} />
                     <Appbar.Action onPress={() => alert('message')} icon="send" disabled={this.state.viewReady} color={this.state.viewReady ? "black" : "grey"} />
 
@@ -223,4 +221,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(withNavigation(MessagesView));
+export default connect(mapStateToProps)(MessagesView);

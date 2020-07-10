@@ -57,7 +57,7 @@ import {
 import ImagePicker from 'react-native-image-picker';
 
 import { connect, useDispatch} from 'react-redux';
-import { withNavigation, NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 
 import ServicedComponent from '../../../controller/lupa/interface/ServicedComponent';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -69,6 +69,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import MyPacksCard from './component/MyPacksCard';
 import ProgramProfileComponent from '../../workout/program/createprogram/component/ProgramProfileComponent';
+import ProgramListComponent from '../../workout/component/ProgramListComponent'
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
 import { Constants } from 'react-native-unimodules';
@@ -212,9 +213,16 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      */
     _getId() {
         let id = false;
-        if (this.props.navigation.state.params) {
-            id = this.props.navigation.state.params.userUUID;
+        try {
+            if (this.props.route.params.userUUID) {
+                id =  this.props.route.params.userUUID;
+        } else {
+            id =  this.props.lupa_data.Users.currUserData.user_uuid
         }
+        } catch(error) {
+            return this.props.lupa_data.Users.currUserData.user_uuid
+        }
+
         return id;
     }
 
@@ -494,15 +502,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      * @return IconButton arrow-back Navigates back
      */
     getHeaderLeft = () => {
-        if (this.props.navigation.state.params.navFrom) {
-            switch (this.props.navigation.state.params.navFrom) {
-                case 'Drawer':
-                    return <IconButton icon="menu" size={20} onPress={() => this.props.navigation.openDrawer()} />
-                default:
-                    return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
-
-
-            }
+        if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
+            return;
         }
 
         return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
@@ -519,18 +520,11 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      * @return FeatherIcon plus-circle  Opens action sheet
      */
     getHeaderRight = () => {
-        if (this.props.navigation.state.params.navFrom) {
-            switch (this.props.navigation.state.params.navFrom) {
-                case 'Drawer':
-                    return ( 
-                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                                <FeatherIcon name="settings" size={20} onPress={() => this._navigateToSettings()}/>
-                        </View>
-                    )
-                default:
-                    return <FeatherIcon name="more-vertical" size={20} onPress={() => this._showActionSheet()} />
-            }
+        if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
+            return <FeatherIcon name="settings" size={20} onPress={() => this._navigateToSettings()}/>
         }
+        
+        return <FeatherIcon name="more-vertical" size={20} onPress={() => this._showActionSheet()} />
     }
 
     /**
@@ -548,12 +542,12 @@ NavigationActions.navigate({
     routeName: 'PrivateChat',
     params: {
         currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-        otherUserUUID: this.props.navigation.state.params.userUUID
+        otherUserUUID:  this.props.navigation.getParam('userUUID')
     },
     action: NavigationActions.navigate({
         routeName: 'PrivateChat', params: {
             currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-            otherUserUUID: this.props.navigation.state.params.userUUID
+            otherUserUUID:  this.props.navigation.getParam('userUUID')
         }
     })
 })
@@ -797,9 +791,9 @@ NavigationActions.navigate({
                     }
                     else
                     {
-                        return this.props.lupa_data.Programs.currUserProgramsData.map(program => {
+                        return this.props.lupa_data.Programs.currUserProgramsData.map((program, index, arr) => {
                             return (
-                                <ProgramSearchResultCard programData={program} />
+                                <ProgramListComponent programData={program} key={index} index={index} />
                             )
                         })
                     }
@@ -914,7 +908,7 @@ NavigationActions.navigate({
                     <Body>
                     <Text style={{ fontSize: 15, color: "#212121", fontWeight: '600', padding: 1 }}>
                                     {this.state.userData.username}
-                                </Text>
+                    </Text>
                     </Body>
 
                     <Right>
@@ -966,17 +960,10 @@ NavigationActions.navigate({
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        {
-                            this.renderFollowButton()
-                        }
-
-                        {
-                            this.renderMessageButton()
-                        }
                             </View>
                             
-                            <View style={{flex: 3, alignItems: 'flex-start'}}>
-                                <View style={{justifyContent: 'flex-start'}}>
+                            <View style={{flex: 3, alignItems: 'center'}}>
+                                <View style={{marginVertical: 10, justifyContent: 'center', alignItems: 'center'}}>
                                 <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
                                     {this.state.userData.display_name}
                                 </Text>
@@ -984,18 +971,29 @@ NavigationActions.navigate({
                                     this.getLocation()
                                 }
                                 </View>
-                                <View style={{flex: 1, alignItems: 'flex-start', width: '100%'}}>
-                                                                            <Paragraph style={{paddingVertical: 10, padding: 5, fontSize: 10, fontWeight: '500'}}>
+
+                                <View style={{width: '100%'}}>
+                                    {
+                                this.renderFollowButton()
+                        }
+
+                        {
+                            this.renderMessageButton()
+                        }
+                                </View>
+                            </View>
+                            </View>
+
+                            <View style={{flex: 1, width: '100%'}}>
+                                <Text style={{paddingVertical: 5, padding: 5, fontSize: 10, fontWeight: '500'}}>
                          {
                              this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
                              this.props.lupa_data.Users.currUserData.bio
                              :
                              this.state.userData.bio
                          }
-                                </Paragraph>
+                                </Text>
                                 </View>
-                            </View>
-                            </View>
                             
                             {
                                 this.state.userData.isTrainer == true ?
@@ -1025,15 +1023,6 @@ NavigationActions.navigate({
                             null
                             }
 
-<Button mode="contained" 
-                style={{backgroundColor: '#23374d', height: 40, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: Dimensions.get('window').width - 20}}
-                theme={{roundness: 10}}
-                >
-                            <Text>
-                                Subscribe
-                            </Text>
-                        </Button>
-
                         </View>
 
                         <Divider style={{marginVertical: 10, marginHorizontal: 10, backgroundColor: 'rgb(209, 209, 214)'}} />
@@ -1045,7 +1034,7 @@ NavigationActions.navigate({
                         centerContent
                         snapToAlignment={'center'}
                         decelerationRate={0} 
-                        snapToInterval={Dimensions.get('window').width  / 1.3}
+                        snapToInterval={Dimensions.get('window').width}
                         pagingEnabled={true}>
                             {
                                 this.mapTrainerPrograms()
@@ -1057,7 +1046,7 @@ NavigationActions.navigate({
                         <SafeAreaView />
                 </ScrollView>
                 
-                <InviteToPackDialog userToInvite={this.props.navigation.state.params.userUUID} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} />
+               {/* <InviteToPackDialog userToInvite={this.props.navigation.getParam('userUUID')} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} /> */}
                         
             </SafeAreaView>
         );
@@ -1091,4 +1080,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default connect(mapStateToProps)(withNavigation(ProfileView));
+export default connect(mapStateToProps)(ProfileView);

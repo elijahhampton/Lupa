@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import ProgramInformationPreview from '../ProgramInformationPreview';
-import { withNavigation } from 'react-navigation';
 
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
@@ -17,10 +16,11 @@ import {
 import { useSelector } from 'react-redux';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import LupaController from '../../../../controller/lupa/LupaController';
-import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
-import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
+
+import { useNavigation } from '@react-navigation/native'
 
 function FeaturedProgramCard(props) {
+    const navigation = useNavigation()
     let [programModalVisible, setProgramModalVisible] = useState(false);
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -32,11 +32,11 @@ function FeaturedProgramCard(props) {
    const handleCardOnPress = (programData) => {
         if (programData.program_participants.includes(currUserData.user_uuid))
         {
-          /*props.navigation.push('LiveWorkoutPreview', {
+         /* navigation.push('LiveWorkout', {
                 programData: programData,
-            });*/
+            }); */
 
-            setProgramModalVisible(true)
+          setProgramModalVisible(true)
         }
         else
         {
@@ -73,24 +73,25 @@ const getProgramLocation = () => {
         <Card.Cover resizeMode='contain' defaultSource={require('../../../images/programs/sample_photo_two.jpg')} source={{uri: currProgram.program_image}} style={{ height: '65%' }} />
         <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
             <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
-                <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Text style={{ fontFamily: 'avenir-roman', fontSize: RFValue(12),  }} numberOfLines={1}>
+                <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                   <View>
+                   <Text style={{ fontFamily: 'avenir-roman', fontSize: RFValue(12),  }} numberOfLines={1}>
                         {getProgramName()}
 </Text>
+                   <Text style={{fontSize: RFValue(12)}}>
+                ({getProgramLocation().name})
+                </Text>
+                   </View>
 <Text style={{ fontSize: RFValue(12), fontWeight: '500', color: '#1089ff' }}>
                         Emily Loefstedt
 </Text>
                 </View>
 
 
-                <View style={{ width: '100%' }}>
-                <Text style={{fontSize: RFValue(12)}}>
-                ({getProgramLocation().name})
-                </Text>
+                <View style={{ width: '100%'}}>
                 <Text style={{ fontSize: RFValue(12), fontWeight: '400',  flexWrap: 'nowrap'}} numberOfLines={1}>
                         {getProgramLocation().address}
 </Text>
-
 
                 </View>
             </View>
@@ -101,4 +102,4 @@ const getProgramLocation = () => {
     )
 }
 
-export default withNavigation(FeaturedProgramCard)
+export default FeaturedProgramCard

@@ -1,9 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 
-
-import ImagePicker from 'react-native-image-picker'
-
 import {
     View,
     Text,
@@ -12,7 +9,7 @@ import {
     Image,
     Dimensions,
     Slider,
-    Button,
+    TextInput,
     TouchableOpacity,
     TouchableHighlight,
     Picker,
@@ -25,11 +22,12 @@ import {
     Surface,
     Modal as PaperModal,
     Caption,
-    Button as PaperButton,
+    Button,
     IconButton,
     Chip,
-    TextInput,
+    TextInput as PaperTextInput,
     Snackbar,
+    ProgressBar,
     Divider,
 } from 'react-native-paper';
 
@@ -44,6 +42,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import ProgramListComponent from '../../../component/ProgramListComponent'
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import SelectProgramImage from './SelectProgramImage'
 import { Input, CheckBox, Button as ElementsButton } from 'react-native-elements';
 import LupaMapView from '../../../../user/modal/LupaMapView'
 import { getLupaProgramInformationStructure } from '../../../../../controller/firebase/collection_structures';
@@ -55,8 +54,9 @@ const months = ["January", "February", "March", "April",
 
 const numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+const { width } = Dimensions.get('window')
 const TimePicker = (props) => {
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
@@ -98,7 +98,8 @@ function AddTagsModal(props) {
       return;
     }
 
-    const newTags = tags;
+    let newTags = []
+    newTags = newTags.concat(tags)
     newTags.push(inputValue);
     setTags(newTags);
   }
@@ -151,16 +152,16 @@ function AddTagsModal(props) {
            />
 
           <View style={{alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row'}}>
-          <PaperButton mode="text" color="#e53935" onPress={handleCancel}>
+          <Button mode="text" color="#e53935" onPress={handleCancel}>
             <Text>
             Cancel
             </Text>
-          </PaperButton>
-          <PaperButton mode="text" color="#1E88E5" onPress={() => handleFinish()}>
+          </Button>
+          <Button mode="text" color="#1E88E5" onPress={() => handleFinish()}>
             <Text>
               Done
             </Text>
-          </PaperButton>
+          </Button>
           </View>
 
         </View>
@@ -209,29 +210,14 @@ function ProgramInformation(props) {
     let [allowWaitlist, setAllowWaitlist] = useState(false);
     let [programTags, setProgramTags] = useState([]);
     let [addTagsModalIsOpen, setAddTagsModalIsOpen] = useState(false)
+    const [programDays, setProgramDays] = useState([])
+    const [automatedMessageText, setAutomatedMessageText] = useState("")
 
     //visibility modifiers
     let [mapViewVisible, setMapViewVisibility] = useState(false);
     let [timePickerVisible, setTimePickerVisible] = useState(false);
 
-    //methods
-    /**
-     * 
-     * @param {*} locationInformation 
-     */
-
-    const _chooseImageFromCameraRoll = async () => {
-      
-      ImagePicker.showImagePicker({}, async (response) => {
-        if (!response.didCancel)
-        {
-          await props.captureImage(response.uri)
-          await setProgramImage(response.uri)
-          await setIsPromiseImageSet(true)
-        }
-    });
-
-  }
+    const [currIndex, setCurrIndex] = useState(0)
 
    checkInputs = () => {
     if (programName.length < MIN_TITLE_LENGTH || programName.length > MAX_TITLE_LENGTH)
@@ -296,10 +282,11 @@ function ProgramInformation(props) {
           allowWaitlist,
           imgV,
           programTags,
+          automatedMessageText
          )
 
          //move to next page
-        props.goToIndex()
+        props.goToIndex(2)
      }
 
     /**
@@ -375,44 +362,68 @@ function ProgramInformation(props) {
       setProgramTags(tags);
     }
 
-    return (
-        <View style={styles.root}>
-            <SafeAreaView />
-        <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between'}}>
-                            <View style={{padding: 10}}>
-                    <Text style={{fontSize: 15, padding: 10, fontFamily: 'ARSMaquettePro-Medium', color: '#BDBDBD'}}>
-                        Name your program and select a program image, type, price, location
-                    </Text>
-                </View>
+    const addProgramDay = (day) => {
+      let newProgramDayArr = []
+      newProgramDayArr = newProgramDayArr.concat(programDays)
+      newProgramDayArr.push(day)
 
-                <Surface style={{margin: 10, elevation: 10, borderRadius: 10, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width/ 1.5, height: 300}}>
-                    {
-                      isProgramImageSet == true ?
-                      <Image source={{uri: programImage }} style={{width: '100%', height: '100%', borderRadius: 10}} />
-                      :
-                      <FeatherIcon name="plus-circle" size={60} color="rgb(174,174,178)" onPress={_chooseImageFromCameraRoll} />
-                    }
-                </Surface>
-            
-            <View style={{width: '100%', height: 'auto', marginLeft: 5, padding: 10}} >
-                <TextInput  value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" mode="outlined"  style={{margin: 3, width: '90%', alignSelf: 'center'}} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" theme={{colors: { primary: 'rgb(30,136,229)'}}} />
-                <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description"  mode="flat" multiline style={{height: 100, margin: 3, width: '90%', alignSelf: 'center', }} enablesReturnKeyAutomatically={true} returnKeyLabel="done" keyboardType="default" theme={{colors: { primary: 'rgb(30,136,229)'}}} />
+      setProgramDays(newProgramDayArr)
+    }
+
+    const getViewDisplay = () => {
+      switch(currIndex) {
+        case 0:
+          return (
+            <>
+            <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between'}}>  
+                            <View>
+            <View style={{width: '100%', height: 'auto', marginLeft: 5, marginVertical: 50, padding: 10}} >
+                <View>
+                <Text style={styles.questionText}>
+                    1. Give your program a title and description
+            </Text>
+            <Caption style={{color: '#152230'}}>
+              Choose the days of which your program will require work.
+            </Caption>
+                </View>
+                <TextInput  value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title"  placeholderTextColor="#212121" style={styles.textInput} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" theme={{colors: { primary: 'rgb(30,136,229)'}}} />
+                <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={styles.textInput}  enablesReturnKeyAutomatically={true} returnKeyLabel="done" keyboardType="default" theme={{colors: { primary: 'rgb(30,136,229)'}}} />
                {/* <TextInput value={numProgramSpots} onChangeText={text => setNumProgramSpots(text)} label="Spots" placeholder="# Spots"  mode="outlined" style={{margin: 3, width: 80, alignSelf: 'flex-start', }} keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" /> */}
             </View>
+                            </View>
 
 
-          {/*  <View style={{padding: 10, marginVertical: 15}}>
-            <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>Select a start and end date</Text>
-                <LupaCalendar setProgramStartDate={startDate => setProgramStartDate(startDate)} setProgramEndDate={endDate => setProgramEndDate(endDate)} />
+                            <Divider style={styles.divider} />
+
+<View style={{marginHorizontal: 20, marginVertical: 15, marginVertical: 60}}>
+            <Text style={styles.questionText}>
+            2. Which days of the week will your program take place?
+            </Text>
+            <Caption style={{color: '#152230'}}>
+              Choose the days of which your program will require work.
+            </Caption>
+            
+            <View style={{alignSelf: 'center', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-evenly'}}>
+                {
+                  days.map(day => {
+                    return (
+                      <Chip key={day} mode="outlined" style={{elevation: programDays.includes(day) ? 3 : 0, margin: 5, backgroundColor: programDays.includes(day) ? '#1089ff' : '#FFFFFF', }} textStyle={{color: programDays.includes(day) ? 'white' : 'black'}} onPress={() => addProgramDay(day)}>
+                          {day}
+                      </Chip>
+                    )
+                  })
+                }
             </View>
-    */}
+         </View>
 
-<Divider style={styles.divider} />
+         <Divider style={styles.divider} />
 
-            <View style={{padding: 10, marginVertical: 15}}>
-            <Text style={{fontFamily: "avenir-roman", fontSize: 20}}> How many sessions per week? </Text>
-            <Caption>
-              Use the slider to indicate the optimal amount of times your program should be performed per week.
+         <View style={{marginHorizontal: 20, marginVertical: 15, marginVertical: 60}}>
+            <Text style={styles.questionText}>
+              3. How many weeks will your program last?
+            </Text>
+            <Caption style={{color: '#152230'}}>
+              Choose the days of which your program will require work.
             </Caption>
             <Slider step={1} value={programDuration} onValueChange={val => setProgramDuration(val)} thumbTintColor="#2196F3" minimumValue={1} maximumValue={15} value={programDuration} />
             <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontFamily: "ARSMaquettePro-Medium", fontSize: 15}}>
@@ -420,24 +431,13 @@ function ProgramInformation(props) {
                                 </Text>
          </View>
 
-         {
-             /* show days to of the week to have it */
-         }
-
-         {/*
-
-                      <View style={{padding: 10, marginVertical: 15}}>
-        <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>{programTime == '' ? 'Select a time' : 'Use selected time'}</Text>
-                <Button title={setProgramTimeIsSet == true ? programTime.toString() : 'Set a time'} onPress={() => refRBSheet.current.open()} />
-            </View>
-
-         */}
-
-<View style={{padding: 10, marginVertical: 15}}>
-<Text style={{fontFamily: "avenir-roman", fontSize: 20}}>
-                                Set a price 
+         <Divider style={styles.divider} />
+         
+<View style={{marginHorizontal: 20, marginVertical: 15, marginVertical: 60}}>
+<Text style={styles.questionText}>
+                                4. How much do you want to charge for this program?
                                 </Text>
-                                <Caption>
+                                <Caption style={{color: '#152230'}}>
                                   Set a price for your program. <Text style={{color: 'rgb(229,57,53)'}}>
                                     You can change this later.
                                   </Text>
@@ -457,43 +457,62 @@ function ProgramInformation(props) {
 
 <Divider style={styles.divider} />
 
-<View style={{padding: 10, marginVertical: 15}}>
+<View style={{padding: 10, marginVertical: 60}}>
 <View>
                                
-                            <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>
-                                Set a location
-                                </Text>
-                                <Caption>
+                            <Text style={styles.questionText}>
+                                5. Set a location for your sessions
+                            </Text>
+                                <Caption style={{color: '#152230'}}>
                                   Where will your program sessions take place?
                                 </Caption>
                             </View>
-                         
-                         {/*
-
-                         <TouchableOpacity onPress={openMapView}>
-                            <Surface style={{alignSelf: "center", margin: 10, elevation: 8, width: "85%", height: "auto", padding: 15, borderRadius: 15, alignItems: "center", justifyContent: "center", flexDirection: "row"}}>
-                                <View>
-                                <Text style={{fontFamily: "avenir-roman", fontSize: 18}}>
-                                    {programLocation}
-                                </Text>
-                                {
-                                    programLocationData == '' ?
-                                    null
-                                    :
-                                                                    <Text style={{fontFamily: "avenir-roman", fontSize: 15}}>
-                                                                    {programLocationData.address}
-                                                                </Text>
-                                }
-                                </View>
-                            </Surface>
-                            </TouchableOpacity>
-                         
-                         */}
-
-                         <ElementsButton type="solid" title={programLocation} containerStyle={{width: '90%', alignSelf: 'center', margin: 5}}  onPress={() => openMapView()}/>
+                        
+                         <Button mode="outlined" color="#23374d" title={programLocation} containerStyle={{backgroundColor: '#23374d', width: '90%', alignSelf: 'center', margin: 5}}  onPress={() => openMapView()}>
+                           <Text>
+                             {programLocation}
+                           </Text>
+                         </Button>
 </View>
 
-            <View style={{marginVertical: 15, width: Dimensions.get('window').width, height: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+<Divider style={styles.divider} />
+
+            <View style={{padding: 10, marginVertical: 60}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <Text style={styles.questionText}>
+                                6. Make your program discoverable
+                                </Text>
+                
+              </View>
+
+              <View style={{width: '100%', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableHighlight onPress={showAddTagsModal}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <MaterialIcon name="add" size={15}  color='#2196F3'/>
+                <Caption style={{color: '#2196F3'}}>
+                  Add Tag
+                </Caption>
+                </View> 
+                </TouchableHighlight>
+                {
+                  
+                  programTags.length == 0 ? 
+                    null
+                  :
+                  programTags.map(tag => {
+                    return (
+                      <Chip style={{margin: 3, width: 'auto', backgroundColor: '#2196F3'}} textStyle={{color: '#FFFFFF'}} mode="flat" color='#2196F3'>
+                        {tag}
+                      </Chip>
+                    )
+                  })
+                }
+              </View>
+            </View>
+
+            <Divider style={styles.divider} />
+
+            <View style={{marginVertical: 60, width: Dimensions.get('window').width, height: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                 <TouchableHighlight onPress={() => setProgramType('Single')} style={{margin: 10, borderRadius: 5, alignSelf: 'center'}}>
                 <Surface style={[{borderRadius: 5, padding: 5, width: Dimensions.get('window').width / 2.5, height: 160, elevation: 3, alignItems: 'center', justifyContent: 'space-evenly'}, programType == 'Single' ? styles.selectedType : styles.unselectedType]}>
                 <Icon
@@ -513,77 +532,34 @@ function ProgramInformation(props) {
                     </View>
                 </Surface>
                 </TouchableHighlight>
-                {/*
-                <TouchableHighlight onPress={() => setProgramType('Group')} style={{margin: 10, borderRadius: 5}}>
-                <Surface style={[{borderRadius: 5, padding: 5, width: Dimensions.get('window').width / 2.5, height: 160, elevation: 3,alignItems: 'center', justifyContent: 'space-evenly'}, programType == 'Group' ? styles.selectedType : styles.unselectedType]}>
-                <Icon
-  name="users"
-  size={50}
-  color="#757575"
-  thin={true}
-/>
-
-                    <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-                            Group
-                        </Text>
-                        <Caption style={{textAlign:'center'}}>
-                            Offer sessions to multiple Lupa users per subscription.
-                        </Caption>
-                    </View>
-                </Surface>
-                </TouchableHighlight>
-                */}
             </View>
 
-            <View style={{padding: 10, marginVertical: 15}}>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-              <Text style={{fontFamily: "avenir-roman", fontSize: 20}}>
-                                Make your program discoverable
+          
+          <View>
+          <Caption style={{alignSelf: 'center', color: '#152230'}}>
+         Note: After a client buys your program they will receive an automatic message from you.  It is up to you to set session times with your client.
+        </Caption>
+        <View>
+              <Text style={[styles.questionText, {fontSize: 15, paddingLeft: 10, paddingVertical: 5}]}>
+                               Automated message upon Purchase:
                                 </Text>
+
+                                <PaperTextInput theme={{
+                                  colors: {
+                                    primary: '#374e66'
+                                  }
+                                }} 
+                                mode="flat" 
+                                multiline 
+                                value={automatedMessageText} 
+                                onChangeText={text => setAutomatedMessageText(text)} 
+                                keyboardType="default" 
+                                returnKeyType="done"
+                                style={{width: width - 20, alignSelf: 'center'}}
+                                />
                 
-                <TouchableHighlight onPress={showAddTagsModal}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <MaterialIcon name="add" size={15}  color='#2196F3'/>
-                <Caption style={{color: '#2196F3'}}>
-                  Add Tag
-                </Caption>
-                </View> 
-                </TouchableHighlight>
               </View>
-
-              <View style={{width: '100%', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center'}}>
-                {
-                  programTags.length == 0 ? <Caption>
-                    Add a tag
-                  </Caption>
-                  :
-                  programTags.map(tag => {
-                    return (
-                      <Chip style={{margin: 3, width: 'auto', backgroundColor: '#2196F3'}} textStyle={{color: '#FFFFFF'}} mode="flat" color='#2196F3'>
-                        {tag}
-                      </Chip>
-                    )
-                  })
-                }
-              </View>
-            </View>
-
-            <Divider style={styles.divider} />
-
-
-           {/* <CheckBox
-  title='Allow users to join a waitlist until all spots are filled'
-  checkedIcon='dot-circle-o'
-  uncheckedIcon='circle-o'
-  checked={allowWaitlist}
-  containerStyle={{backgroundColor: '#F2F2F2'}}
-  onPress={() => setAllowWaitlist(!allowWaitlist)}
-           />*/}
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-<Button title="Cancel" onPress={() => props.handleCancelOnPress()} />
-<Button title="Design Program" onPress={handleSaveProgramInformation} />
-</View>
+          </View>
 
 <Snackbar
           visible={snackBarVisible}
@@ -608,11 +584,45 @@ function ProgramInformation(props) {
                             isVisible={mapViewVisible}
                         />
 
+<SafeAreaView />
 
-                        <SafeAreaView />
 
+<AddTagsModal isVisible={addTagsModalIsOpen} closeModalMethod={closeAddTagsModal} captureTags={(tags) => captureTags(tags)} />
 
-      <AddTagsModal isVisible={addTagsModalIsOpen} closeModalMethod={closeAddTagsModal} captureTags={(tags) => captureTags(tags)} />
+            </>
+          )
+        case 1:
+          return <SelectProgramImage captureImage={props.captureImage} />
+      }
+    }
+
+    return (
+        <View style={styles.root}>
+            <SafeAreaView />
+            <ProgressBar progress={currIndex == 0 ? 1 : 0.5} color="#23374d" />
+            { 
+            getViewDisplay()
+            }
+
+<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 10}}>
+<Button color="#23374d" onPress={() => props.handleCancelOnPress()}>
+  <Text>
+    Cancel
+  </Text>
+</Button>
+<Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={currIndex == 0 ? () => setCurrIndex(2) : handleSaveProgramInformation} mode="contained">
+  {
+    currIndex == 0 ?
+    <Text>
+    Next
+  </Text>
+  :
+  <Text>
+  Add workouts
+</Text>
+  }
+</Button>
+</View>
         </View>
     )
 }
@@ -620,7 +630,8 @@ function ProgramInformation(props) {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: '#F2F2F2',
+        backgroundColor: '#FFFFFF',
+        paddingHorizontal: 2
     },
     topView: {
         flex: 2,
@@ -630,12 +641,13 @@ const styles = StyleSheet.create({
     },
     bottomView: {
         flex: 1,
-        backgroundColor: '#F2F2F2',
+        backgroundColor: '#FFFFFF',
         alignItems: 'center',
         justifyContent: 'center'
     },
     divider: {
-        margin: 8
+      width: Dimensions.get('window').width - 150, 
+      alignSelf: 'center'
     },
     container: {
         width: "100%",
@@ -656,6 +668,21 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF', 
         borderColor: 'transparent', 
         borderWidth: 0
+      },
+      textInput: {
+        margin: 3, 
+        width: '90%', 
+        alignSelf: 'flex-start', 
+        marginVertical: 10, 
+        borderBottomColor: '#212121', 
+        borderBottomWidth: 1, 
+        paddingVertical: 15
+      },
+      questionText: {
+        fontFamily: "avenir-roman", 
+        fontSize: 20, 
+        fontWeight: 'bold', 
+        color: '#374e66'
       }
 })
 

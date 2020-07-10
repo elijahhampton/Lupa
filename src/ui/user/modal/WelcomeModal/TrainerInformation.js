@@ -28,7 +28,7 @@ const VerificationModal = (props) => {
     return (
         <Modal visible={props.isVisible} presentationStyle="fullScreen" animated={true} animationType="slide" style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', flex: 1, margin: 0}}>
             <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{width: '90%', fontWeight: '500', fontFamily: 'ARSMaquettePro-Black', fontSize: 15}}>
+            <Text style={{width: '90%', fontWeight: '500', fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
                 Thanks for submitting your information!  We will verify your credentials and update your account if everything checks out.  Please wait up to 24 hours for your account to be updated.
             </Text>
 
@@ -112,9 +112,9 @@ export default class TrainerInformation extends React.Component {
 
     getHeader = () => {
         try {
-            if (this.props.navigation.state.params.navFrom)
+            if ( this.props.navigation.state.params.navFrom)
             {
-                if (this.props.navigation.state.params.navFrom == 'Drawer')
+                if ( this.props.navigation.state.params.navFrom == 'Drawer')
                 {
                     return (
                         <Appbar.Header style={{elevation: 0}} theme={{

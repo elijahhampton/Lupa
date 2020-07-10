@@ -15,7 +15,6 @@ import {
 
 
 
-import { withNavigation } from 'react-navigation';
 import LupaController from '../../../controller/lupa/LupaController';
 import { connect } from 'react-redux';
 
@@ -183,4 +182,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default connect(mapStateToProps)(withNavigation(ModalProfileView));
+export default connect(mapStateToProps)(ModalProfileView);

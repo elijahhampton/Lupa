@@ -16,7 +16,6 @@ import {
     Surface,
 } from 'react-native-paper';
 
-import { withNavigation } from 'react-navigation'
 import ProgramInformationPreview from '../ProgramInformationPreview';
 
 
@@ -123,4 +122,4 @@ function ProgramSearchResultCard(props) {
     )
 }
 
-export default withNavigation(ProgramSearchResultCard);
+export default ProgramSearchResultCard;

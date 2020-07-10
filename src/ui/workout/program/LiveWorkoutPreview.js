@@ -27,7 +27,6 @@ import {
     Body,
 } from 'native-base';
 
-import { withNavigation } from 'react-navigation';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
  
 import { connect} from 'react-redux';
@@ -60,9 +59,9 @@ class LiveWorkoutPreview extends React.Component {
     getWorkoutsPreview = () => {
         let workouts = new Array(8);
 
-        for (let i = 0; i < this.props.navigation.state.params.programData.program_workout_structure.warmup.length; i++)
+        for (let i = 0; i <  this.props.navigation.state.params.programData.program_workout_structure.warmup.length; i++)
         {
-            workouts.push(this.props.navigation.state.params.programData.program_workout_structure.warmup[i])
+            workouts.push( this.props.navigation.state.params.programData.program_workout_structure.warmup[i])
         }
 
         if (workouts.length == 8)
@@ -74,9 +73,9 @@ class LiveWorkoutPreview extends React.Component {
             return;
         }
 
-        for (let i = 0; i < this.props.navigation.state.params.programData.program_workout_structure.primary.length; i++)
+        for (let i = 0; i <  this.props.navigation.state.params.programData.program_workout_structure.primary.length; i++)
         {
-            workouts.push(this.props.navigation.state.params.programData.program_workout_structure.primary[i])
+            workouts.push( this.props.navigation.state.params.programData.program_workout_structure.primary[i])
         }
 
         if (workouts.length == 8)
@@ -135,7 +134,7 @@ class LiveWorkoutPreview extends React.Component {
 
     getUserAvatar = () => {
         try {
-            return  <Avatar.Image style={{margin: 10, alignSelf: 'flex-end'}} source={{uri: this.props.navigation.state.params.programData.program_owner.photo_url}} size={30} />
+            return  <Avatar.Image style={{margin: 10, alignSelf: 'flex-end'}} source={{uri:  this.props.navigation.state.params.programData.program_owner.photo_url}} size={30} />
         }  catch(error) {
             LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getUserAvatar', error)
             return  <Avatar.Icon icon="search" size={40} color="#212121" style={{margin: 10, alignSelf: 'flex-end'}} />
@@ -144,7 +143,7 @@ class LiveWorkoutPreview extends React.Component {
 
     getDisplayName = () => {
         try {
-            return this.props.navigation.state.params.programData.program_owner.displayName
+            return  this.props.navigation.state.params.programData.program_owner.displayName
         } catch(err) {
             LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getDisplayName()', error)
             return '';
@@ -153,7 +152,7 @@ class LiveWorkoutPreview extends React.Component {
 
     getCertification = () => {
         try {
-            return this.props.navigation.state.params.programData.program_owner.certification
+            return  this.props.navigation.state.params.programData.program_owner.certification
         }
         catch(error) {
             LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getCertification()', error)
@@ -164,7 +163,7 @@ class LiveWorkoutPreview extends React.Component {
 
     getProgramName = () => {
         try {
-            return this.props.navigation.state.params.programData.program_name
+            return  this.props.navigation.state.params.programData.program_name
         }
         catch(error) {
             LOG_ERROR('LiveWorkoutPreview.js', 'Unhandled exception in getProgramName()', error)
@@ -174,7 +173,7 @@ class LiveWorkoutPreview extends React.Component {
     }
 
     render() {
-        const programData = this.props.navigation.state.params.programData;
+        const programData =  this.props.navigation.state.params.programData;
         return (
             <View style={{flex: 1}}>
                 <Header style={{backgroundColor: 'transparent'}} span={false} transparent>
@@ -182,7 +181,7 @@ class LiveWorkoutPreview extends React.Component {
                         <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
                     </Left>
                     <Body>
-                        <Text style={{fontFamily: 'HelveticaNeueMedium', fontSize: RFPercentage(2)}}>
+                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: RFPercentage(2)}}>
                             {this.getProgramName()}
                         </Text>
                     </Body>
@@ -247,8 +246,8 @@ class LiveWorkoutPreview extends React.Component {
 
                 <View style={{flex: 1, justifyContent: 'space-between',  backgroundColor: '#F2F2F2'}}>
                     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                    <Paragraph  style={{fontSize: RFPercentage(1.5) ,padding: 10, fontFamily: 'HelveticaNeueLight', textAlign: 'left', textAlignVertical: 'center', lineHeight: 15}}>
-                    {this.props.navigation.state.params.programData.program_description}
+                    <Paragraph  style={{fontSize: RFPercentage(1.5) ,padding: 10 , textAlign: 'left', textAlignVertical: 'center', lineHeight: 15}}>
+                    { this.props.navigation.state.params.programData.program_description}
                     </Paragraph>
                     </View>
 
@@ -387,12 +386,11 @@ const styles = StyleSheet.create({
     titleText: {
         color: '#FFFFFF',
         fontSize: 12,
-        fontFamily: 'HelveticaNeueBold'
     },
     contentText: {
         color: '#FFFFFF',
         fontSize: 16,
-        fontFamily: 'HelveticaNeueMedium'
+        fontFamily: 'ARSMaquettePro-Medium'
     },
     textContainer: {
         alignItems: 'center',
@@ -400,4 +398,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(withNavigation(LiveWorkoutPreview));
+export default connect(mapStateToProps)(LiveWorkoutPreview);

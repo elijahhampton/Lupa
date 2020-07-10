@@ -50,6 +50,7 @@ import LupaController from '../../../../controller/lupa/LupaController';
 import ThinFeatherIcon from "react-native-feather1s";
 
 import FeatherIcon from "react-native-vector-icons/Feather"
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import { LinearGradient } from 'expo-linear-gradient';
 import SingleWorkout from '../../component/SingleWorkout';
 import LupaCamera from './component/LupaCamera'
@@ -58,6 +59,8 @@ import {fromString} from 'uuidv4';
 
 import ImagePicker from 'react-native-image-picker';
 import { LOG_ERROR } from '../../../../common/Logger';
+
+import {Picker} from '@react-native-community/picker';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -97,7 +100,7 @@ function WorkoutSchemeModal(props) {
     let [repSliderValue, setRepSliderValue] = useState(0);
     let [setSliderValue, setSetSliderValue] = useState(0);
     return (
-        <PaperModal visible={false} contentContainerStyle={{borderRadius: 10, alignSelf: 'center', width: Dimensions.get('window').width - 50, height: Dimensions.get('window').height / 2, backgroundColor: '#FFFFFF'}}>
+        <PaperModal visible={props.isVisible} contentContainerStyle={{borderRadius: 10, alignSelf: 'center', width: Dimensions.get('window').width - 50, height: Dimensions.get('window').height / 2, backgroundColor: '#FFFFFF'}}>
             <View style={{flex: 1, padding: 5}}>
                 <View style={{flex: 1}}>
                     <View style={{padding: 5}}>
@@ -173,7 +176,7 @@ function AddDescriptionModal(props) {
     }
 
     return (
-                    <Dialog visible={false} style={{position: 'absolute', top: Dimensions.get('window').height / 4, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
+                    <Dialog visible={props.isVisible} style={{position: 'absolute', top: Dimensions.get('window').height / 4, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
                         colors: {
                             primary: '#23374d'
                         }
@@ -218,7 +221,7 @@ function AddCueModal(props) {
     }
 
     return (
-                    <Dialog visible={false} style={{position: 'absolute', top: Dimensions.get('window').height / 4.3, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
+                    <Dialog visible={props.isVisible} style={{position: 'absolute', top: Dimensions.get('window').height / 4.3, alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto'}} theme={{
                         colors: {
                             primary: '#23374d'
                         }
@@ -277,10 +280,11 @@ function AddedExercisePreviewModal(props) {
         {
             return (
                 <Text>
-                     {" "}
+                     Description not found
                 </Text>
             )
         }
+
         try {
             return (
                 <Text>
@@ -291,7 +295,7 @@ function AddedExercisePreviewModal(props) {
             LOG_ERROR('BuildWorkout.js', 'Caught exception in AddedExercisePreviewModal trying to display workout image.', error)
                 return (
                     <Text>
-                         {" "}
+                         Descrription not found
                     </Text>
                 )
         }
@@ -302,7 +306,7 @@ function AddedExercisePreviewModal(props) {
         {
             return (
                 <Text>
-                     {" "}
+                     Cue not found
                 </Text>
             )
         }
@@ -316,13 +320,13 @@ function AddedExercisePreviewModal(props) {
             LOG_ERROR('BuildWorkout.js', 'Caught exception in AddedExercisePreviewModal trying to display workout image.', error)
                 return (
                     <Text>
-                         {" "}
+                         Cue not found
                     </Text>
                 )
         }
     }
 
-    const getWorkoutSets= () => {
+    const getWorkoutSets = () => {
         if (typeof(exerciseData) == 'undefined')
         {
             return (
@@ -404,6 +408,16 @@ function AddedExercisePreviewModal(props) {
     )
 }
 
+const DAYS_OF_THE_WEEK = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+]
+
 class BuildWorkout extends React.Component {
     constructor(props) {
         super(props);
@@ -429,83 +443,395 @@ class BuildWorkout extends React.Component {
             buildAWorkout: true,
             logAWorkout: false,
             searchValue: "",
-            data: [
-                { title: "Warm Up", description: "Prepare for physical exertion or a performance by exercising or practicing gently beforehand", workouts: [] },
-                { title: "Primary", description: "Prime workouts to begin the program",  workouts: [] },
-                { title: "Break", description: "A space to add custom workout components for your programs ",  workouts: [] },
-                { title: "Secondary", description: "Secondary prime workouts",  workouts: [] },
-                { title: "Cooldown", description: "Workout components to bring the program to an end",  workouts: [] },
-                { title: "Homework", description: "End your program with custom workout components as post task",  workouts: [] },
-            ],
-            pan: new Animated.ValueXY(),
-            warmUpListTopY: 50,
-            warmUpListBottomY: 50, 
-            primaryListTopY: 0,
-            breakListTopY: 0,
-            secondaryListTopY: 0,
-            cooldownListTopY: 0,
-            homeworkListTopY: 0,
-            totalSurfaceHeight: 595.7,
+            workoutDays: {
+                Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: []
+            },
             showCamera: false,
             showWorkoutSchemeModal: false,
-            flatlistValues: [],
-            currPressedNonPopulatedWorkout: "",
-            currPressedPopulatedWorkout: {
-                workout_name: '',
-                workout_description: '',
-                workout_media: {
-                    workout_media: '',
-                    uri: '',
-                },
-                workout_reps: 0,
-                workout_sets: 0,
-                workout_tags: [],
-                workout_uid: '',
-                workout_cue: '',
-            },
             menuVisible: false,
             mediaCaptureType: 'VIDEO',
             addDescriptionModalIsVisible: false,
             addCueModalModalIsVisible: false,
             addedExercisePreviewModal: false,
+            currSectionIndex: 0,
+            currDayIndex: 0,
         }
 
-       this.RBSheet = React.createRef();
+        this.RBSheet = React.createRef();
+        this.sectionPickerRBSheet = React.createRef()
 
-        this.animatedViewRef = React.createRef()
-        this.firstView = React.createRef()
-        this.timelineScrollview = React.createRef()
-        this.title = React.createRef()
+        this.animatedViewRef = React.createRef();
+        this.firstView = React.createRef();
+        this.timelineScrollview = React.createRef();
+        this.title = React.createRef();
 
     }
 
-    captureWorkout = (sectionName, workoutObject) => {
-        let currState = this.state.data;
-
-
-        for(let i = 0; i < currState.length; i++)
-        {
-            if (currState[i].title == sectionName)
+    getCurrentDayContent = () => {
+        const currDay = this.getCurrentDay()
+        const workoutDays = this.state.workoutDays;
+        try {
+            switch (currDay)
             {
-                currState[i].workouts.push(workoutObject);
-                break;
+                case 'Monday':
+                    return workoutDays.Monday.map(workout => {
+                        return (
+                            <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
+                            <View style={{alignItems: 'center'}}>
+<Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+{
+this.getWorkoutSurfaceContent(workout)
+}
+</Surface>
+<Text style={{fontSize: 10}}>
+{workout.workout_name}
+</Text>
+</View>
+</TouchableWithoutFeedback>
+                        )
+                    })
+                case 'Tuesday':
+                    return workoutDays.Tuesday.map(workout => {
+                        return (
+                            <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
+                            <View style={{alignItems: 'center'}}>
+<Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+{
+this.getWorkoutSurfaceContent(workout)
+}
+</Surface>
+<Text style={{fontSize: 10}}>
+{workout.workout_name}
+</Text>
+</View>
+</TouchableWithoutFeedback>
+                        )
+                    })
+                case 'Wednesday':
+                    return workoutDays.Wednesday.map(workout => {
+                        return (
+                            <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
+                            <View style={{alignItems: 'center'}}>
+<Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+{
+this.getWorkoutSurfaceContent(workout)
+}
+</Surface>
+<Text style={{fontSize: 10}}>
+{workout.workout_name}
+</Text>
+</View>
+</TouchableWithoutFeedback>
+                        )
+                    })
+                case 'Thursday':
+                    return workoutDays.Thursday.map(workout => {
+                        return (
+                            <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
+                            <View style={{alignItems: 'center'}}>
+<Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+{
+this.getWorkoutSurfaceContent(workout)
+}
+</Surface>
+<Text style={{fontSize: 10}}>
+{workout.workout_name}
+</Text>
+</View>
+</TouchableWithoutFeedback>
+                        )
+                    })
+                case 'Friday':
+                    return workoutDays.Friday.map(workout => {
+                        return (
+                            <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
+                            <View style={{alignItems: 'center'}}>
+<Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+{
+this.getWorkoutSurfaceContent(workout)
+}
+</Surface>
+<Text style={{fontSize: 10}}>
+{workout.workout_name}
+</Text>
+</View>
+</TouchableWithoutFeedback>
+                        )
+                    })
+                case 'Saturday':
+                    return workoutDays.Saturday.map(workout => {
+                        return (
+                            <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
+                            <View style={{alignItems: 'center'}}>
+<Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+{
+this.getWorkoutSurfaceContent(workout)
+}
+</Surface>
+<Text style={{fontSize: 10}}>
+{workout.workout_name}
+</Text>
+</View>
+</TouchableWithoutFeedback>
+                        )
+                    })
+                case 'Sunday':
+                    return workoutDays.Sunday.map(workout => {
+                        return (
+                            <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
+                            <View style={{alignItems: 'center'}}>
+<Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+{
+this.getWorkoutSurfaceContent(workout)
+}
+</Surface>
+<Text style={{fontSize: 10}}>
+{workout.workout_name}
+</Text>
+</View>
+</TouchableWithoutFeedback>
+                        )
+                    })
+                default:
+    
             }
+        } catch(error) {
+            return []
         }
-
-        this.setState({ data: currState })
     }
 
-    updateWorkoutData = async (state) => {
-        await this.setState({
-            data: [
-                { title: "Warm Up", description: "A short description about this section", workouts: state.warmup },
-                { title: "Primary", description: "A short description about this section",  workouts: state.primary },
-                { title: "Break", description: "A short description about this section",  workouts: state.break },
-                { title: "Secondary", description: "A short description about this section",  workouts: state.secondary },
-                { title: "Cooldown", description: "A short description about this section",  workouts: state.cooldown },
-                { title: "Homework", description: "A short description about this section",  workouts: state.homework },
-            ]
+    getCurrentDay = () => {
+        const currIndex = this.state.currDayIndex;
+        return DAYS_OF_THE_WEEK[currIndex]
+    }
+
+    getPreviousDay = () => {
+        if (this.state.currDayIndex == 0)
+        {
+            console.log('meee')
+            return DAYS_OF_THE_WEEK[DAYS_OF_THE_WEEK.length - 1]
+        }
+
+        console.log('heeee')
+        const currIndex = this.state.currDayIndex - 1
+        return DAYS_OF_THE_WEEK[currIndex]
+    }
+
+    getNextDay = () => {
+        const currIndex = this.state.currDayIndex + 1;
+        return DAYS_OF_THE_WEEK[currIndex]
+    }
+
+    goNextDay = () => {
+        if (this.state.currDayIndex == DAYS_OF_THE_WEEK.length) {
+            this.setState({
+                currDayIndex: 0
+            })
+
+            console.log(this.state.currDayIndex)
+
+            return;
+        }
+
+        this.setState({
+            currDayIndex: this.state.currDayIndex + 1
         })
+
+        console.log(this.state.currDayIndex)
+    }
+
+    goPrevDay = () => {
+        if (this.state.currDayIndex == 0)
+        {
+            this.setState({
+                currDayIndex: DAYS_OF_THE_WEEK.length
+            })
+
+            return;
+        }
+
+        this.setState({
+            currDayIndex: this.state.currDayIndex - 1
+        })
+    }
+
+    renderSectionPickerRBSheet = () => {
+        return (
+            <RBSheet
+            ref={this.sectionPickerRBSheet}
+            height={Dimensions.get('window').height / 4}
+            openDuration={250}
+            customStyles={{
+              container: {
+                justifyContent: "center",
+                alignItems: "center",
+                borderTopRightRadius: 35,
+                  borderTopLeftRadius: 35,
+              }
+            }}
+         >
+             <View style={{flex: 1}}>
+             <Picker
+  selectedValue={this.state.currentSectionIndex}
+  style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height / 4}}
+  onValueChange={(itemValue, itemIndex) => {
+    console.log(itemIndex)
+    this.setState({currentSectionIndex: itemIndex})
+  }
+  }>
+      {
+          DAYS_OF_THE_WEEK.map((day, index, arr) => {
+            return (
+                <Picker.Item key={day} label={day} value={day} />
+            )
+          })
+      }
+</Picker>
+             <SafeAreaView />
+               </View>
+         </RBSheet>
+        )
+    }
+
+    getWorkoutDataByDay = (obj) => {
+        
+    }
+
+    captureWorkout = (workoutObject) => {
+        const workoutDay = this.getCurrentDay()
+
+        //We assign the workout a new UUID so the workouts are not the same
+        let updatedWorkout = {
+            workout_name: workoutObject.workout_name,
+            workout_description: workoutObject.workout_description,
+            workout_media: {
+                uri: "",
+                media_type: ""
+            },
+            workout_steps: workoutObject.workout_steps,
+            workout_tags: workoutObject.workout_tags,
+            workout_uid: fromString(Math.random().toString()),
+            workout_day: workoutDay //add the section so it is easy to delete
+        }
+
+
+        let updatedWorkoutData = [], newWorkoutData = {}
+        switch (workoutDay)
+        {
+            case 'Monday':
+                updatedWorkoutData = this.state.workoutDays.Monday
+                updatedWorkoutData.push(updatedWorkout)
+
+                newWorkoutData = {
+                    Monday: updatedWorkoutData,
+                    ...this.state.workoutDays,
+                }
+
+                this.setState({
+                    workoutData: newWorkoutData,
+
+                })
+                break;
+            case 'Tuesday':
+                updatedWorkoutData = this.state.workoutDays.Tuesday
+                updatedWorkoutData.push(updatedWorkout)
+
+                newWorkoutData = {
+                    Tuesday: updatedWorkoutData,
+                    ...this.state.workoutDays,
+                }
+
+                console.log(newWorkoutData)
+
+                this.setState({
+                    workoutData: newWorkoutData,
+                })
+                break;
+            case 'Wednesday':
+                updatedWorkoutData = this.state.workoutDays.Wednesday
+                updatedWorkoutData.push(updatedWorkout)
+
+                newWorkoutData = {
+                    Wednesday: updatedWorkoutData,
+                    ...this.state.workoutDays,
+                }
+
+                this.setState({
+                    workoutData: newWorkoutData,
+                })
+                break;
+            case 'Thursday':
+                updatedWorkoutData = this.state.workoutDays.Thursday
+                updatedWorkoutData.push(updatedWorkout)
+
+                newWorkoutData = {
+                    Thursday: updatedWorkoutData,
+                    ...this.state.workoutDays,
+                }
+
+                this.setState({
+                    workoutData: newWorkoutData,
+                })
+                break;
+            case 'Friday':
+                updatedWorkoutData = this.state.workoutDays.Friday
+                updatedWorkoutData.push(updatedWorkout)
+
+                newWorkoutData = {
+                    Friday: updatedWorkoutData,
+                    ...this.state.workoutDays,
+                }
+
+                this.setState({
+                    workoutData: newWorkoutData,
+                })
+                break;
+            case 'Saturday':
+                updatedWorkoutData = this.state.workoutDays.Saturday
+                updatedWorkoutData.push(updatedWorkout)
+
+                newWorkoutData = {
+                    Saturday: updatedWorkoutData,
+                    ...this.state.workoutDays,
+                }
+
+                this.setState({
+                    workoutData: newWorkoutData,
+                })
+                break;
+            case 'Sunday':
+                updatedWorkoutData = this.state.workoutDays.Sunday
+                updatedWorkoutData.push(updatedWorkout)
+
+                newWorkoutData = {
+                    Sunday: updatedWorkoutData,
+                    ...this.state.workoutDays,
+                }
+
+                this.setState({
+                    workoutData: newWorkoutData,
+                })
+                break;
+            default:
+                updatedWorkoutData = this.state.workoutDays.Monday
+
+                updatedWorkoutData.push(updatedWorkout)
+
+                cnewWorkoutData = {
+                    Monday: updatedWorkoutData,
+                    ...this.state.workoutDays,
+                }
+
+                this.setState({
+                    workoutData: newWorkoutData,
+                })
+        }
     }
 
     setProgramUUID = (id) => {
@@ -522,18 +848,11 @@ class BuildWorkout extends React.Component {
      */
     saveProgram = async () => {
 
-            const workouts = {
-                warmup: this.state.data[0].workouts,
-                primary: this.state.data[1].workouts,
-                break:this.state.data[2].workouts,
-                secondary: this.state.data[3].workouts,
-                cooldown: this.state.data[4].workouts,
-                homework: this.state.data[5].workouts,
-            }
+        const workoutData = this.state.workoutDays;
 
-            await this.props.saveProgramWorkoutData(workouts);
+        await this.props.saveProgramWorkoutData(workoutData);
 
-        this.props.goToIndex();
+        this.props.goToIndex(0);
     }
 
     handleExitBuildAWorkout = async () => {
@@ -567,13 +886,13 @@ class BuildWorkout extends React.Component {
         //this.props.goToIndex(0)
     }
 
-    handleWorkoutOnPress = (section, workout) => {
-        this.setState({ currPressedPopulatedWorkout: workout, currWorkoutPressedSection: section })
+    handleWorkoutOnPress = async (workout) => {
+        await this.setState({ currPressedPopulatedWorkout: workout})
         this.RBSheet.current.open()
     }
 
-    handleWorkoutOnLongPress = (section, workout) => {
-        this.setState({ currPressedPopulatedWorkout: workout, currWorkoutPressedSection: section })
+    handleWorkoutOnLongPress = async (workout) => {
+        await this.setState({ currPressedPopulatedWorkout: workout })
         this.showAddedExercisePreviewModal()
     }
 
@@ -588,89 +907,161 @@ class BuildWorkout extends React.Component {
     handleCaptureNewMediaURI = async (uri, mediaType) => {
         if (this.state.currPressedPopulatedWorkout == undefined)
         {
-          
             return;
         }
-        let updatedState = this.state.data;
-        switch(this.state.currWorkoutPressedSection)
+
+        let newWorkoutData = {}, updatedWorkoutData = {}
+        const currDay = this.getCurrentDay()
+        const workout = this.state.currPressedPopulatedWorkout
+        switch(currDay)
         {
-            case "Warm Up":
-                for (let i = 0; i < updatedState[0].workouts.length; i++)
+            case 'Monday':
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
                 {
-                    let workout = updatedState[0].workouts[i];
                     if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
                     {                       
 
-                        updatedState[0].workouts[i].workout_media.uri = uri;
-                        updatedState[0].workouts[i].workout_media.media_type = mediaType;
+                        this.state.workoutDays.Monday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Monday[i].workout_media.media_type = mediaType;
+
+                        newWorkoutData = {
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
+                        }
+
                         break;
                     }
                 }
             break;
-            case "Primary":
-                for (let i = 0; i < updatedState[1].workouts.length; i++)
+            case "Tuesday":
+                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++)
                 {
-                    let workout = updatedState[1].workouts[i];
                     if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
-                    {
-                        updatedState[1].workouts[i].workout_media.uri = uri;
-                        updatedState[1].workouts[i].workout_media.media_type = mediaType;
+                    {                       
+
+                        this.state.workoutDays.Tuesday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Tuesday[i].workout_media.media_type = mediaType;
+                        
+                        newWorkoutData = {
+                            Tuesday: this.state.workoutDays.Tuesday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Break":
-                for (let i = 0; i < updatedState[2].workouts.length; i++)
+            case "Wednesday":
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++)
                 {
-                    let workout = updatedState[2].workouts[i];
                     if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
-                    {
-                        updatedState[2].workouts[i].workout_media.uri = uri;
-                        updatedState[2].workouts[i].workout_media.media_type = mediaType;
+                    {                       
+
+                        this.state.workoutDays.Wednesday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Wednesday[i].workout_media.media_type = mediaType;
+                        
+                        newWorkoutData = {
+                            Wednesday: this.state.workoutDays.Wednesday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Secondary":
-                for (let i = 0; i < updatedState[3].workouts.length; i++)
+            case "Thursday":
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++)
                 {
-                    let workout = updatedState[3].workouts[i];
                     if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
-                    {
-                        updatedState[3].workouts[i].workout_media.uri = uri;
-                        updatedState[3].workouts[i].workout_media.media_type = mediaType;
+                    {                       
+
+                        this.state.workoutDays.Thursday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Thursday[i].workout_media.media_type = mediaType;
+                        
+                        newWorkoutData = {
+                            Thursday: this.state.workoutDays.Thursday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Cooldown":
-                for (let i = 0; i < updatedState[4].workouts.length; i++)
+            case "Friday":
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++)
                 {
-                    let workout = updatedState[4].workouts[i];
                     if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
-                    {
-                        updatedState[4].workouts[i].workout_media.uri = uri;
-                        updatedState[4].workouts[i].workout_media.media_type = mediaType;
+                    {                       
+
+                        this.state.workoutDays.Friday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Friday[i].workout_media.media_type = mediaType;
+                        
+                        newWorkoutData = {
+                            Friday: this.state.workoutDays.Friday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Homework":
-                for (let i = 0; i < updatedState[5].workouts.length; i++)
+            case "Saturday":
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++)
                 {
-                    let workout = updatedState[5].workouts[i];
                     if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
-                    {
-                        updatedState[5].workouts[i].workout_media.uri = uri;
-                        updatedState[5].workouts[i].workout_media.media_type = mediaType;
+                    {                       
+
+                        this.state.workoutDays.Saturday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Saturday[i].workout_media.media_type = mediaType;
+                        
+                        newWorkoutData = {
+                            Saturday: this.state.workoutDays.Saturday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
+            break;
+            case "Sunday":
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Sunday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Sunday[i].workout_media.media_type = mediaType;
+                        
+                        newWorkoutData = {
+                            Sunday: this.state.workoutDays.Sunday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
             default:
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Monday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Monday[i].workout_media.media_type = mediaType;
+
+                        newWorkoutData = {
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
+                        }
+
+                        break;
+                    }
+                }
+                break;
         }
 
-        await this.setState({ data: updatedState, currPressedPopulatedWorkout: undefined, })
+        await this.setState({ workoutDays: newWorkoutData, currPressedPopulatedWorkout: undefined, })
     }
 
     closeModalMethod = () => {
@@ -691,6 +1082,7 @@ class BuildWorkout extends React.Component {
         this.setState({
             showWorkoutSchemeModal: true
         })
+        this.RBSheet.current.close()
     }
 
     closeChangeWorkoutSchemeModal = () => {
@@ -700,159 +1092,164 @@ class BuildWorkout extends React.Component {
     }
 
     captureSetAndRepValues = async (sets, reps) => {
-        const currPressedWorkout = this.state.currWorkoutPressed;
-        const currWorkoutPressedSection = this.state.currWorkoutPressedSection
-
-        let updatedState = this.state.data;
-
-        switch(currWorkoutPressedSection)
-        {
-            case "Warm Up":
-                for (let i = 0; i < updatedState[0].workouts.length; i++)
-                {
-                    let workout = updatedState[0].workouts[i];
-                    if (updatedState[0].workouts[i].workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_sets = sets;
-                        updatedState[0].workouts[i].workout_reps = reps;
-                        break;
-                    }
-                }
-            break;
-            case "Primary":
-                for (let i = 0; i < updatedState[1].workouts.length; i++)
-                {
-                    let workout = updatedState[1].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_sets = sets;
-                        updatedState[0].workouts[i].workout_reps = reps;
-                        break;
-                    }
-                }
-            break;
-            case "Break":
-                for (let i = 0; i < updatedState[2].workouts.length; i++)
-                {
-                    let workout = updatedState[2].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_sets = sets;
-                        updatedState[0].workouts[i].workout_reps = reps;
-                        break;
-                    }
-                }
-            break;
-            case "Secondary":
-                for (let i = 0; i < updatedState[3].workouts.length; i++)
-                {
-                    let workout = updatedState[3].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_sets = sets;
-                        updatedState[0].workouts[i].workout_reps = reps;
-                        break;
-                    }
-                }
-            break;
-            case "Cooldown":
-                for (let i = 0; i < updatedState[4].workouts.length; i++)
-                {
-                    let workout = updatedState[4].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_sets = sets;
-                        updatedState[0].workouts[i].workout_reps = reps;
-                        break;
-                    }
-                }
-            break;
-            case "Homework":
-                for (let i = 0; i < updatedState[5].workouts.length; i++)
-                {
-                    let workout = updatedState[5].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_sets = sets;
-                        updatedState[0].workouts[i].workout_reps = reps;
-                        break;
-                    }
-                }
-            break;
-            default:
-        }
-
-        await this.setState({ data: updatedState })
-        this.closeChangeWorkoutSchemeModal()
-    }
-
-    captureValues = async (value) => {
-        const updatedState = await this.state.flatlistValues;
-        await updatedState.push(value);
-
-        await this.setState({
-            flatlistValues: updatedState
-        })
-    }
-
-    captureNonPopulatedWorkout = async (obj) => {
-     
-        this.setState({
-            currPressedNonPopulatedWorkout: obj
-        })
-    }
-
-    addNonPopulatedToState = async (section) => {
-        
-
-        if (this.state.currPressedNonPopulatedWorkout == undefined 
-            || this.state.currPressedNonPopulatedWorkout.workout_name  == "" 
-            || this.state.currPressedNonPopulatedWorkout.workout_name == undefined)
+        if (typeof(this.state.currPressedPopulatedWorkout) == 'undefined' || sets === 0 || reps === 0)
         {
             return;
         }
 
-
-
-        //We assign the workout a new UUID so the workouts are not the same
-       const updatedWorkout = {
-           workout_name: this.state.currPressedNonPopulatedWorkout.workout_name,
-           workout_description: this.state.currPressedNonPopulatedWorkout.workout_description,
-           workout_media: {
-               uri: "",
-               media_type: ""
-           },
-           workout_steps: this.state.currPressedNonPopulatedWorkout.workout_steps,
-           workout_tags: this.state.currPressedNonPopulatedWorkout.workout_tags,
-           workout_uid: fromString(Math.random().toString()),
-           workout_section: section //add the section so it is easy to delete
-       }
-
-        let updatedState = this.state.data;
-        switch(section)
+        let newWorkoutData = {}, updatedWorkoutData = {}
+        const currDay = this.getCurrentDay()
+        const workout = this.state.currPressedPopulatedWorkout
+        switch(currDay)
         {
-            case "Warm Up":
-                    updatedState[0].workouts.push(updatedWorkout)
+            case 'Monday':
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Monday[i].workout_sets = sets
+                        this.state.workoutDays.Monday[i].workout_reps = reps
+
+                        newWorkoutData = {
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
+                        }
+
+                        break;
+                    }
+                }
             break;
-            case "Primary":
-                updatedState[1].workouts.push(updatedWorkout)
+            case "Tuesday":
+                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Tuesday[i].workout_sets = sets
+                        this.state.workoutDays.Tuesday[i].workout_reps = reps
+                        
+                        newWorkoutData = {
+                            Tuesday: this.state.workoutDays.Tuesday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
             break;
-            case "Break":
-                updatedState[2].workouts.push(updatedWorkout)
+            case "Wednesday":
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Wednesday[i].workout_sets = sets
+                        this.state.workoutDays.Wednesday[i].workout_reps = reps
+                        
+                        newWorkoutData = {
+                            Wednesday: this.state.workoutDays.Wednesday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
             break;
-            case "Secondary":
-                updatedState[3].workouts.push(updatedWorkout)
+            case "Thursday":
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Thursday[i].workout_sets = sets
+                        this.state.workoutDays.Thursday[i].workout_reps = reps
+                        
+                        newWorkoutData = {
+                            Thursday: this.state.workoutDays.Thursday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
             break;
-            case "Cooldown":
-                updatedState[4].workouts.push(updatedWorkout)
+            case "Friday":
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Friday[i].workout_sets = sets
+                        this.state.workoutDays.Friday[i].workout_reps = reps
+                        
+                        newWorkoutData = {
+                            Friday: this.state.workoutDays.Friday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
             break;
-            case "Homework":
-                updatedState[5].workouts.push(updatedWorkout)
+            case "Saturday":
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Saturday[i].workout_sets = sets
+                        this.state.workoutDays.Saturday[i].workout_reps = reps
+                        
+                        newWorkoutData = {
+                            Saturday: this.state.workoutDays.Saturday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
+            break;
+            case "Sunday":
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Sunday[i].workout_sets = sets
+                        this.state.workoutDays.Sunday[i].workout_reps = reps
+                        
+                        newWorkoutData = {
+                            Sunday: this.state.workoutDays.Sunday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
             break;
             default:
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Monday[i].workout_sets = sets
+                        this.state.workoutDays.Monday[i].workout_reps = reps
+
+                        newWorkoutData = {
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
+                        }
+
+                        break;
+                    }
+                }
+                break;
         }
 
-        await this.setState({ data: updatedState, currPressedNonPopulatedWorkout: undefined })
+        await this.setState({ workoutDays: newWorkoutData, currPressedPopulatedWorkout: undefined})
+        this.closeChangeWorkoutSchemeModal()
     }
 
     removePopulatedWorkoutFromProgram = () => {
@@ -869,8 +1266,9 @@ class BuildWorkout extends React.Component {
 
     getWorkoutSurfaceContent = (workout) => {
         try{
-            if (workout.workout_media.uri != undefined)
+            if (workout.workout_media.uri != undefined || workout.workout_media.uri != "")
             {
+                console.log('here dog')
                 return (
                     workout.workout_media.media_type == "VIDEO" ?
                     <Video key={workout.workout_uid} source={{ uri: workout.workout_media.uri }}
@@ -890,38 +1288,52 @@ class BuildWorkout extends React.Component {
             }
             else
             {
+               console.log('here bro')
                return (
+
                 <View style={{flex: 1, backgroundColor: '#212121'}}>
     
                 </View>
                ) 
             }
         } catch(err) {
-        
+            console.log(err)
+            return (
+                <View style={{flex: 1, backgroundColor: '#212121'}}>
+    
+                </View>
+               ) 
         }
     }
 
     addWorkoutMedia = () => {
+        this.RBSheet.current.close()
+        console.log('close')
         if (typeof(currPressedPopulatedWorkout) == 'undefined')
         {
+            console.log('we returned man')
             return;
         }
+
+        console.log('should open here')
         // Open Image Library
         ImagePicker.launchImageLibrary({}, async (response) => {
             if (response.didCancel) {
                 LOG_ERROR('BuildWorkout.js', 'User cancelled image picker in addWorkoutMedia()', 'true');
               } else if (response.error) {
+                  console.log('error...')
                   LOG_ERROR('BuildWorkout.js', 'Caught exception in image picker in addWorkoutMedia()', response.error);
               } else {
-                const source = { uri: response.uri };
-                const workoutMediaURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.state.currPressedPopulatedWorkout, this.state.currProgramUUID, 'IMAGE', source.uri)
-                this.handleCaptureNewMediaURI(workoutMediaURI, 'IMAGE');
+                const source = await response.uri
+                const workoutMediaURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.state.currPressedPopulatedWorkout, this.state.currProgramUUID, 'IMAGE', source)
+                await this.handleCaptureNewMediaURI(workoutMediaURI, 'IMAGE');
             }
         });
     }
 
     showAddDescriptionModal = () => {
         this.setState({ addDescriptionModalIsVisible: true })
+        this.RBSheet.current.close()
     }
 
     closeAddDescriptionModal = () => {
@@ -929,93 +1341,161 @@ class BuildWorkout extends React.Component {
     }
 
     handleCaptureDescription = async (description) => {
-        const currPressedWorkout = this.state.currWorkoutPressed;
-        const currWorkoutPressedSection = this.state.currWorkoutPressedSection
-
-        if (typeof(currPressedWorkout) == 'undefined' || typeof(currWorkoutPressedSection) == 'undefined' || description == "")
+        if (typeof(this.state.currPressedPopulatedWorkout) == 'undefined' || description == '')
         {
             return;
         }
 
-        let updatedState = this.state.data;
-
-        switch(currWorkoutPressedSection)
+        let newWorkoutData = {}, updatedWorkoutData = {}
+        const currDay = this.getCurrentDay()
+        const workout = this.state.currPressedPopulatedWorkout
+        switch(currDay)
         {
-            case "Warm Up":
-                for (let i = 0; i < updatedState[0].workouts.length; i++)
+            case 'Monday':
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
                 {
-                    let workout = updatedState[0].workouts[i];
-                    if (updatedState[0].workouts[i].workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_description = description;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Monday[i].workout_description = description
+
+                        newWorkoutData = {
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
+                        }
+
                         break;
                     }
                 }
             break;
-            case "Primary":
-                for (let i = 0; i < updatedState[1].workouts.length; i++)
+            case "Tuesday":
+                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++)
                 {
-                    let workout = updatedState[1].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_description = description;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Tuesday[i].workout_description = description
+                        
+                        newWorkoutData = {
+                            Tuesday: this.state.workoutDays.Tuesday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Break":
-                for (let i = 0; i < updatedState[2].workouts.length; i++)
+            case "Wednesday":
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++)
                 {
-                    let workout = updatedState[2].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_description = description;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Wednesday[i].workout_media.workout_description = description
+                        
+                        newWorkoutData = {
+                            Wednesday: this.state.workoutDays.Wednesday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Secondary":
-                for (let i = 0; i < updatedState[3].workouts.length; i++)
+            case "Thursday":
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++)
                 {
-                    let workout = updatedState[3].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_description = description;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Thursday[i].workout_description = description
+                        
+                        newWorkoutData = {
+                            Thursday: this.state.workoutDays.Thursday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Cooldown":
-                for (let i = 0; i < updatedState[4].workouts.length; i++)
+            case "Friday":
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++)
                 {
-                    let workout = updatedState[4].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_description = description;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Friday[i].workout_description = description
+                        
+                        newWorkoutData = {
+                            Friday: this.state.workoutDays.Friday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Homework":
-                for (let i = 0; i < updatedState[5].workouts.length; i++)
+            case "Saturday":
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++)
                 {
-                    let workout = updatedState[5].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_description = description;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Saturday[i].workout_description = description
+                        
+                        newWorkoutData = {
+                            Saturday: this.state.workoutDays.Saturday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
+            break;
+            case "Sunday":
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Sunday[i].workout_description = description
+                        
+                        newWorkoutData = {
+                            Sunday: this.state.workoutDays.Sunday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
             default:
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Monday[i].workout_description = description
+
+                        newWorkoutData = {
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
+                        }
+
+                        break;
+                    }
+                }
+                break;
         }
 
-        await this.setState({ data: updatedState })
+        await this.setState({ workoutDays: newWorkoutData, currPressedPopulatedWorkout: undefined})
         this.closeAddDescriptionModal();
     }
 
     showAddCueModal = () => {
         this.setState({ addCueModalModalIsVisible: true })
+        this.RBSheet.current.close()
     }
 
     closeAddCueModal = () => {
@@ -1023,88 +1503,155 @@ class BuildWorkout extends React.Component {
     }
 
     handleCaptureCue = async (cue) => {
-        const currPressedWorkout = this.state.currWorkoutPressed;
-        const currWorkoutPressedSection = this.state.currWorkoutPressedSection
-
-        if (typeof(currPressedWorkout) == 'undefined' || typeof(currWorkoutPressedSection) == 'undefined' || cue == "")
+        if (typeof(this.state.currPressedPopulatedWorkout) == 'undefined' || cue == '')
         {
             return;
         }
 
-        let updatedState = this.state.data;
-
-        switch(currWorkoutPressedSection)
+        let newWorkoutData = {}, updatedWorkoutData = {}
+        const currDay = this.getCurrentDay()
+        const workout = this.state.currPressedPopulatedWorkout
+        switch(currDay)
         {
-            case "Warm Up":
-                for (let i = 0; i < updatedState[0].workouts.length; i++)
+            case 'Monday':
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
                 {
-                    let workout = updatedState[0].workouts[i];
-                    if (updatedState[0].workouts[i].workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_cue = cue;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Monday[i].workout_cue = cue
+
+                        newWorkoutData = {
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
+                        }
+
                         break;
                     }
                 }
             break;
-            case "Primary":
-                for (let i = 0; i < updatedState[1].workouts.length; i++)
+            case "Tuesday":
+                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++)
                 {
-                    let workout = updatedState[1].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_cue = cue;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Tuesday[i].workout_cue = cue
+                        
+                        newWorkoutData = {
+                            Tuesday: this.state.workoutDays.Tuesday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Break":
-                for (let i = 0; i < updatedState[2].workouts.length; i++)
+            case "Wednesday":
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++)
                 {
-                    let workout = updatedState[2].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_cue = cue;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Wednesday[i].workout_media.workout_cue = cue
+                        
+                        newWorkoutData = {
+                            Wednesday: this.state.workoutDays.Wednesday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Secondary":
-                for (let i = 0; i < updatedState[3].workouts.length; i++)
+            case "Thursday":
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++)
                 {
-                    let workout = updatedState[3].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_cue = cue;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Thursday[i].workout_cue = cue
+                        
+                        newWorkoutData = {
+                            Thursday: this.state.workoutDays.Thursday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Cooldown":
-                for (let i = 0; i < updatedState[4].workouts.length; i++)
+            case "Friday":
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++)
                 {
-                    let workout = updatedState[4].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_cue = cue;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Friday[i].workout_cue = cue
+                        
+                        newWorkoutData = {
+                            Friday: this.state.workoutDays.Friday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
-            case "Homework":
-                for (let i = 0; i < updatedState[5].workouts.length; i++)
+            case "Saturday":
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++)
                 {
-                    let workout = updatedState[5].workouts[i];
-                    if (workout.workout_uid == this.state.currWorkoutPressed.workout_uid)
-                    {
-                        updatedState[0].workouts[i].workout_cue = cue;
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Saturday[i].workout_cue = cue
+                        
+                        newWorkoutData = {
+                            Saturday: this.state.workoutDays.Saturday,
+                            ...this.state.workoutDays
+                        }
+                        
+                        break;
+                    }
+                }
+            break;
+            case "Sunday":
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Sunday[i].workout_cue = cue
+                        
+                        newWorkoutData = {
+                            Sunday: this.state.workoutDays.Sunday,
+                            ...this.state.workoutDays
+                        }
+                        
                         break;
                     }
                 }
             break;
             default:
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
+                {
+                    if (workout.workout_uid == this.state.currPressedPopulatedWorkout.workout_uid)
+                    {                       
+
+                        this.state.workoutDays.Monday[i].workout_cue = cue
+
+                        newWorkoutData = {
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
+                        }
+
+                        break;
+                    }
+                }
+                break;
         }
 
-        await this.setState({ data: updatedState })
+        await this.setState({ workoutDays: newWorkoutData, currPressedPopulatedWorkout: undefined})
         this.closeAddCueModal();
     }
 
@@ -1112,101 +1659,27 @@ class BuildWorkout extends React.Component {
         return (
             <View ref={this.firstView} style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }}>
                    <SafeAreaView style={{backgroundColor: '#FFFFFF'}} />
-                   <Surface style={styles.contentContainer} onLayout={event => this.setState({ totalSurfaceHeight: event.nativeEvent.layout.height})}>
-                       <Button style={{alignSelf: 'flex-end'}} theme={{
-                           colors: {
-                               primary: 'rgb(30,136,229)'
-                           }
-                       }} onPress={() => this.props.goBackToEditInformation()}>
-                            Edit Program Information
-                       </Button>
-                       <View style={{flex: 1}} >
-
-                       <TimeLine
-                       onEventPress={(rowData) => this.addNonPopulatedToState(rowData.title)}
-                            captureValues={this.captureValues}
-                            listViewStyle={{ height: '100%'}}
-                            data={this.state.data}
-                            position="left"
-                            separator={true}
-                            showTime={false}
-                            titleStyle={{ alignSelf: "flex-start" }}
-                            dotColor="#2196F3"
-                            circleColor="#2196F3"
-                            lineColor="#2196F3"
-                            renderDetail={(rowData, sectionID, rowID) => {
-                                return (
-                                    <View>
-                                        <Text style={{ fontFamily: "avenir-roman", fontSize: 20, alignSelf: "flex-start" }}>
-                                            {rowData.title}
-                                        </Text>
-                                        <Text style={{fontSize: 15, fontFamily: 'avenir-light'}}>
-                                            {rowData.description}
-                                        </Text>
-                                        <ScrollView 
-                                        key={rowData.title} 
-                                        ref={this.timelineScrollview} 
-                                        horizontal 
-                                        shouldRasterizeIOS={true} 
-                                        showsHorizontalScrollIndicator={false}>
-                                            {
-                                                rowData.workouts.map(obj => {
-                                                    return (
-                                                        <TouchableWithoutFeedback key={obj.workout_uid} onPress={() => this.handleWorkoutOnPress(rowData.title, obj)} onLongPress={() => this.handleWorkoutOnLongPress(rowData.title, obj)}>
-                                                                                                                    <View style={{alignItems: 'center'}}>
-                        <Surface style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, margin: 2, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
-                                                            {
-                                                                this.getWorkoutSurfaceContent(obj)
-                                                            }
-                                                        </Surface>
-                                                        <Text style={{fontSize: 10}}>
-                                                           {obj.workout_name}
-                                                        </Text>
-                                                        </View>
-                                                        </TouchableWithoutFeedback>
-                                                    )
-                                                })
-                                            }
-                                        </ScrollView>
-                                    </View>
-                                )
-                            }}
-                        />
-                       </View>
-
-                        <FAB 
-                            icon="done" 
-                            color="#FFFFFF" 
-                            style={{position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: "#2196F3"}}
-                            onPress={() => this.saveProgram()}
-                            />
+                   <Surface style={{flex: 1}}>
+                       <TouchableOpacity onPress={() => this.sectionPickerRBSheet.current.open()}>
+                       <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                        <Text style={{fontWeight: '300'}}>
+                           {this.getCurrentDay()}
+                       </Text>
+                        </View>
+                       </TouchableOpacity>
+                       <ScrollView horizontal contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}>
+                            {this.getCurrentDayContent()}
+                       </ScrollView>
                     </Surface>
-                    <View style={{flex: 1.2}}>
-
-                    <Menu
-            visible={this.state.menuVisible}
-            onDismiss={() => this.setState({ menuVisible: false })}
-            
-            anchor={
-                <Button mode="text" compact color="#FFFFFF" onPress={() => this.setState({ menuVisible: true })}>
-                <Text>
-                    All Workouts
-                </Text>
-                <FeatherIcon name="chevron-down" />
-            </Button>
-            }
-          >
-            <Menu.Item onPress={() => {}} title="Workout Category 1" />
-            <Menu.Item onPress={() => {}} title="Workout Category 2" />
-            <Menu.Item onPress={() => {}} title="Workout Category 3" />
-            <Menu.Item onPress={() => {}} title="Workout Category 4" />
-            <Divider />
-            <Menu.Item onPress={() => this.setState({ menuVisible: false })} title="Cancel" />
-          </Menu>
-
-
-
-                    <ScrollView contentContainerStyle={{flexWrap: 'wrap', justifyContent: 'center', width: Dimensions.get('window').width,  flexDirection: 'row', padding: 5, backgroundColor: "#212121"}}>
+                    <View style={{flex: 4}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                        <Text style={{fontWeight: '300', color: '#1089ff'}}>
+                           Calisthenics
+                       </Text>
+                       <MaterialIcon name="keyboard-arrow-down" size={20} color="#1089ff" />
+                        </View>
+                    <ScrollView contentContainerStyle={{flexWrap: 'wrap', justifyContent: 'center', width: Dimensions.get('window').width, 
+                    flexDirection: 'row', padding: 5}}>
                     {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.map((workout, index, arr)=> {
                             if (workout.workout_name == "" || workout.workout_name == undefined)
@@ -1214,25 +1687,42 @@ class BuildWorkout extends React.Component {
                                 return
                             }
 
-                            const layoutValues = this.state.flatlistValues;
-                            layoutValues.sort()
                             workout.workout_uid = fromString(workout.workout_name + (Math.random() * index).toString)
                             return (
-                                                                    <SingleWorkout 
+                                <SingleWorkout 
                                 workoutData={workout}
-                                warmUpListTopY={layoutValues[1]} 
-                                primaryListTopY={layoutValues[2]}
-                                breakListTopY={layoutValues[3]}
-                                secondaryListTopY={layoutValues[4]}
-                                cooldownListTopY={layoutValues[5]}
-                                homeworkListTopY={layoutValues[5 + 100]}
-                                captureWorkout={(section, workoutObj) => this.captureWorkout(section, workoutObj)} 
-                                captureNonPopulatedWorkout={(obj) => this.captureNonPopulatedWorkout(obj)}
+                                captureWorkout={(obj) => this.captureWorkout(obj)}
                                 />
                             )
                         })
                     }
                     </ScrollView>
+                    </View>
+
+                    <View style={{flex: 0.5, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 10}}>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                        <Button onPress={this.goPrevDay} color="#23374d" mode='text' style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <FeatherIcon name="arrow-left" />
+                                <Text>
+                                    {this.getPreviousDay()}
+                                </Text>
+                        </Button>
+
+                        <Button onPress={this.goNextDay} color="#23374d" mode='text' style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                        <Text>
+                                    {this.getNextDay()}
+                                </Text>
+                        <FeatherIcon name="arrow-right" />
+                        </Button>
+                        </View>
+
+                        <View>
+                        <Button onPress={() => this.saveProgram()} color="#23374d" mode='contained' style={{alignItems: 'center', justifyContent: 'center'}}>
+                        <Text>
+                                    Complete
+                                </Text>
+                        </Button>
+                        </View>
                     </View>
 
 
@@ -1295,7 +1785,7 @@ style={styles.exerciseOptionIcon}
             </View>
             </TouchableOpacity>
             <Divider />
-            <TouchableOpacity onPress={() => this.addWorkoutMedia()}>
+            <TouchableOpacity onPress={this.addWorkoutMedia}>
             <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="film"
@@ -1402,7 +1892,6 @@ style={styles.exerciseOptionIcon}
         
                 
                 
-              {/*  <WorkoutTool setProgramUUID={uuid => this.setProgramUUID(uuid)} updateWorkoutData={state => this.updateWorkoutData(state)} /> */}
               <WorkoutSchemeModal isVisible={this.state.showWorkoutSchemeModal} workout={this.state.currWorkoutPressed} captureValues={(sets, reps) => this.captureSetAndRepValues(sets, reps)} />
             <LupaCamera 
             isVisible={this.state.showCamera} 
@@ -1416,6 +1905,7 @@ style={styles.exerciseOptionIcon}
             <AddDescriptionModal isVisible={this.state.addDescriptionModalIsVisible} closeDialogMethod={this.closeAddDescriptionModal} captureData={description => this.handleCaptureDescription(description)} />
             <AddCueModal isVisible={this.state.addCueModalModalIsVisible} closeDialogMethod={this.closeAddCueModal} captureData={cue => this.handleCaptureCue(cue)} />
             <AddedExercisePreviewModal exerciseData={this.state.currPressedPopulatedWorkout} isVisible={this.state.addedExercisePreviewModal} closeModalMethod={this.closeAddedExercisePreviewModal} />
+            {this.renderSectionPickerRBSheet()}
             <SafeAreaView />
             </View>
         )
@@ -1425,7 +1915,6 @@ style={styles.exerciseOptionIcon}
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#212121",
     },
     contentContainer: {
         //marginTop: Dimensions.get("screen").height / 4,
@@ -1466,7 +1955,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: '#212121',
       },
       preview: {
         flex: 1,
@@ -1486,7 +1974,7 @@ const styles = StyleSheet.create({
       },
       exerciseOptionHeaderText: {
         fontSize: 15, 
-        fontFamily: 'HelveticaNeueMedium'
+        fontFamily: 'ARSMaquettePro-Medium'
       },
       exerciseOptionIcon: {
           marginHorizontal: 10,

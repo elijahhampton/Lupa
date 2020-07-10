@@ -1,15 +1,5 @@
 import { LupaProgramInformationStructure } from "./common/types";
 
-export enum PROGRAM_SECTIONS {
-    OVERVIEW="overview",
-    WARM_UP="warmup",
-    PRIMARY="primary",
-    BREAK="break",
-    SECONDARY="secondary",
-    COOLDOWN="cooldown",
-    HOMEWORK="homework"
-}
-
 var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_uuid: "",
     program_name: "",
@@ -32,12 +22,13 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_allow_waitlist: false,
     program_structure_uuid: "",
     program_workout_data: {
-        warmup: [],
-        primary: [],
-        break: [],
-        secondary: [],
-        cooldown: [],
-        homework: []
+        Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: []
     },
     program_image: "",
     program_tags: [],
@@ -48,6 +39,7 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
         photo_url: '',
     }
     program_participants: [],
+    program_automated_message: "",
 }
 
 export const getLupaProgramInformationStructure = (
@@ -72,6 +64,7 @@ export const getLupaProgramInformationStructure = (
         photo_url: '',
     },
     program_participants=[],
+    programAutomatedMessage="",
     ) => {
         
     lupa_program_information_structure.program_structure_uuid = uuid;
@@ -86,18 +79,20 @@ export const getLupaProgramInformationStructure = (
     lupa_program_information_structure.program_location = locationData;
     lupa_program_information_structure.program_type = type;
     lupa_program_information_structure.program_allow_waitlist = allowWaitlist;
-    lupa_program_information_structure.program_workout_data =  {
-        warmup: [],
-        primary: [],
-        break: [],
-        secondary: [],
-        cooldown: [],
-        homework: [],
-};
-lupa_program_information_structure.program_image = program_image;
-lupa_program_information_structure.program_tags = tags;
-lupa_program_information_structure.program_owner = programOwner;
-lupa_program_information_structure.program_participants = program_participants;
+    lupa_program_information_structure.program_image = program_image;
+    lupa_program_information_structure.program_tags = tags;
+    lupa_program_information_structure.program_owner = programOwner;
+    lupa_program_information_structure.program_participants = program_participants;
+    lupa_program_information_structure.program_automated_message = programAutomatedMessage;
+    lupa_program_information_structure.program_workout_data = {
+        Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: []
+    }
 
     return lupa_program_information_structure;
 }

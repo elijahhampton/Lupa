@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from 'react-native-paper';
-import { withNavigation } from 'react-navigation';
 
 function LogoutButton(props) {
     return (
@@ -10,4 +9,4 @@ function LogoutButton(props) {
     )
 }
 
-export default withNavigation(LogoutButton);
+export default LogoutButton;

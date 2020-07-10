@@ -56,7 +56,6 @@ import { Constants } from 'react-native-unimodules';
 import LupaController from '../../../controller/lupa/LupaController';
 import { connect } from 'react-redux';
 import LupaJournal from './component/LupaJournal/LupaJournal'
-import { withNavigation } from 'react-navigation';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ThinFeatherIcon from "react-native-feather1s";
@@ -280,13 +279,13 @@ class TrainerDashboardView extends React.Component {
 
                                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: Dimensions.get('window').width}}>
                                         <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                                         <Text style={{paddingLeft: 15, fontFamily: 'HelveticaNeueBold', fontSize: 20}}>
+                                         <Text style={{paddingLeft: 15, fontSize: 20}}>
                                              Welcome,
                                          </Text>
                                          <Text>
                                              {" "}
                                          </Text>
-                                         <Text style={{color: '#1089ff', fontFamily: 'HelveticaNeueBold', fontSize: 20}}>
+                                         <Text style={{color: '#1089ff', fontSize: 20}}>
                                             {this.props.lupa_data.Users.currUserData.display_name}
                                          </Text>
                                          </View>
@@ -344,7 +343,7 @@ const styles = StyleSheet.create({
         height: "auto",
     },
     headerText: {
-        fontFamily: 'HelveticaNeueMedium', 
+        fontFamily: 'ARSMaquettePro-Medium', 
         fontSize: 30,
         color: 'white', 
         alignSelf: "center",
@@ -378,9 +377,8 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end'
     },
     chipTextStyle: {
-        fontFamily: 'HelveticaNeueLight',
         fontSize: 15,
     },
 });
 
-export default connect(mapStateToProps)(withNavigation(TrainerDashboardView));
+export default connect(mapStateToProps)(TrainerDashboardView);

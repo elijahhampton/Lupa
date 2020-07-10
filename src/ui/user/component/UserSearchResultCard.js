@@ -16,8 +16,6 @@ import {
 } from 'react-native-paper';
 
 
-import { withNavigation, NavigationActions } from 'react-navigation';
-
 import LupaController from '../../../controller/lupa/LupaController';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -160,4 +158,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default withNavigation(UserSearchResultCard);
+export default UserSearchResultCard;

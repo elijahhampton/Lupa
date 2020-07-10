@@ -47,12 +47,12 @@ function AssessmentView(props) {
                 <TouchableWithoutFeedback onPress={surfaceIsOpen == false ? openTab : closeTab}>
                                 <View>
                                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}> 
-                                    <Text style={{paddingVertical: 3, fontSize: 20, fontFamily: 'HelveticaNeueLight'}}>
+                                    <Text style={{paddingVertical: 3, fontSize: 20 }}>
                     Assessments
                 </Text>
                 <FeatherIcon name={surfaceIsOpen == true ? "chevron-up" : "chevron-down"} size={20} />
                                     </View>
-                <Text style={{paddingVertical: 3, fontSize: 12, fontFamily: 'HelveticaNeueLight'}}>
+                <Text style={{paddingVertical: 3, fontSize: 12 }}>
                     We use assessments to customize and enhance your experience while using Lupa
                 </Text>
                 </View>

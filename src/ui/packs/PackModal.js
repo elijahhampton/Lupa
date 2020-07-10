@@ -45,7 +45,6 @@ import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 import LupaController from '../../controller/lupa/LupaController';
 import CreateEvent from './modal/CreateEvent';
 
-import { withNavigation, NavigationActions } from 'react-navigation';
 import UserDisplayCard from '../user/component/UserDisplayCard';
 
 import { Badge } from 'react-native-elements';
@@ -226,7 +225,7 @@ class PackEventCard extends React.Component {
            // <TouchableOpacity onPress={() => this.handlePackEventModalOpen()}>
            <Surface style={{padding: 15, borderRadius: 30, margin: 10, width: Dimensions.get('window').width - 40, height: 'auto', backgroundColor: "#f2f2f2"}}>
                        <View>
-                       <Title style={{fontFamily: 'ARSMaquettePro-Black'}} >
+                       <Title style={{fontFamily: 'ARSMaquettePro-Medium'}} >
                             {this.state.packEventObject.pack_event_title}
                         </Title>
                         <Text style={{fontFamily: 'avenir-book', fontSize: 15}}>
@@ -290,7 +289,7 @@ class PackModal extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            packUUID: this.props.navigation.state.params.packUUID,
+            packUUID:  this.props.navigation.state.params.packUUID,
             packInformation: {},
             packEvents: [],
             currPackEventImage: "",
@@ -321,14 +320,14 @@ class PackModal extends React.Component {
     }
 
     _navigateToPackChat = () => {
-       const UUID = this.props.navigation.state.params.packUUID;
+       const UUID =  this.props.navigation.state.params.packUUID;
         this.props.navigation.navigate('PackChat', {
             packUUID: UUID
         })
     }
 
     setupPackModal = async () => {
-       // await this.setState({ packUUID: this.props.navigation.state.params.packUUID}) //PROBLEM
+       // await this.setState({ packUUID:  this.props.navigation.state.params.packUUID}) //PROBLEM
         let packInformationIn, packEventsIn, isAttendingCurrEventIn
 
         await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(this.state.packUUID).then(result => {
@@ -414,7 +413,7 @@ class PackModal extends React.Component {
         await this.LUPA_CONTROLLER_INSTANCE.removeUserFromPackByUUID(this.state.packUUID, this.props.lupa_data.Users.currUserData.user_uuid);
         await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser("packs", [this.state.packUUID], "remove");
         await this.LUPA_CONTROLLER_INSTANCE.updatePack(this.state.packUUID, "pack_members", this.props.lupa_data.Users.currUserData.user_uuid, ["remove"]);
-        await this.props.navigation.state.params.refreshPackViewMethod();
+        await  this.props.navigation.state.params.refreshPackViewMethod();
         this.props.navigation.goBack(null);
     }
 
@@ -624,4 +623,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(PackModal));
+export default connect(mapStateToProps, mapDispatchToProps)(PackModal);

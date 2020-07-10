@@ -2,122 +2,32 @@ import React from 'react';
 
 import FollowerView from '../user/profile/modal/FollowerModal';
 import ProfileView from '../user/profile/ProfileView';
-
-import PackModal from '../packs/PackModal';
-
 import PrivateChat from '../user/chat/PrivateChat';
-
 import MessagesView from '../user/chat/MessagesView'
-
-//import { NavigationContainer } from '@react-navigation/native';
-//import { createStackNavigator } from '@react-navigation/stack';
-
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
 import SettingsModal from '../user/profile/component/SettingsModal';
 import LiveWorkout from '../workout/modal/LiveWorkout';
-import Programs from '../workout/program/Programs';
-import CardFormScreen from '../src/scenes/CardFormScreen'
-import CreateProgram from '../workout/program/createprogram/CreateProgram';
-import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 
+import { createStackNavigator } from '@react-navigation/stack';
+import { useSelector } from 'react-redux';
 
-const ProfileNavigator = createStackNavigator(
-    {
-    Profile: {
-        screen: ProfileView,
-        initialParams: {
-            userUUID: 566
-        },
-        navigationOptions: ({ navigation }) => ({
-            title: 'ProfileView',
-            header: null,
-            gesturesEnabled: false,
-        })
-    },
-    FollowerView: {
-        screen: FollowerView,
-        navigationOptions: ({ navigation }) => ({
-            title: 'FollowerView',
-            header: null,
-            gesturesEnabled: false,
-        })
-    },
-    PrivateChat: {
-        screen: PrivateChat,
-        navigationOptions: ({navigation}) => ({
-            title: "PrivateChat",
-            header: null,
-            gesturesEnabled: false,
-        }),
-    },
-    PackModal: {
-        screen: PackModal,
-        navigationOptions: ({ navigation }) => ({
-            title: 'PackModal',
-            header: null,
-            gesturesEnabled: false,
-        })
-    },
-    UserSettingsView: {
-      screen: SettingsModal,
-      navigationOptions: ({navigation}) => ({
-          title: "UserSettings",
-          header: null,
-          gesturesEnabled: false,
-      }),
-  },
-    MessagesView: {
-        screen: MessagesView,
-        navigationOptions:   ({navigation}) => ({
-            title: "MessagesView",
-            header: null,
-            gesturesEnabled: false,
-        })
-      },
-      LiveWorkout: {
-        screen: (props) => <LiveWorkout {...props}  />,
-        navigationOptions:   ({navigation}) => ({
-            title: "LiveWorkout",
-            header: null,
-            gesturesEnabled: false,
-        })
-      },
-      Programs: {
-        screen: (props) => <Programs {...props} />,
-        navigationOptions:   ({navigation}) => ({
-            title: "Programs",
-            header: null,
-            gesturesEnabled: false,
-        })
-      },
-      CardFormScreen: {
-        screen: CardFormScreen,
-        navigationOptions:   ({navigation}) => ({
-            title: "Card Form",
-            header: null,
-            gesturesEnabled: false,
-        })
-      },
-      CreateProgram: {
-        screen: (props) => <CreateProgram  {...props} />,
-        initialParams: {
-            mode: "CREATE",
-            currProgramUUID: "",
-            programData: getLupaProgramInformationStructure()
-        },
-        mode: "modal",
-        navigationOptions: ({navigation}) => ({
-          title: "CreateProgram",
-          header: null,
-          gesturesEnabled: false,
-        })
-      },
-    },
-    
-    {
-    initialRouteName: 'Profile',
-    }
-);
+import LupaController from '../../controller/lupa/LupaController'
+const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
-export default createAppContainer(ProfileNavigator);
+const UUID = LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid
+
+const Stack = createStackNavigator();
+
+function ProfileNavigator() {
+  return (
+    <Stack.Navigator initialRouteName="SettingsView" screenOptions={{ gestureEnabled: false }} headerMode='none'>
+     <Stack.Screen name="Profile" component={ProfileView} initialParams={{userUUID: UUID, navFrom: 'BottomTabNavigator'}} />
+      <Stack.Screen name="FollowerView" component={FollowerView} />
+      <Stack.Screen name="PrivateChat" component={PrivateChat} />
+      <Stack.Screen name="UserSettingsView" component={SettingsModal} />
+      <Stack.Screen name="MessagesView" component={MessagesView} />
+      <Stack.Screen name="LiveWorkout" component={LiveWorkout} />
+    </Stack.Navigator>
+  );
+}
+
+export default ProfileNavigator;

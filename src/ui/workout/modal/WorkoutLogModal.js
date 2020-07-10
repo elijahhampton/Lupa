@@ -94,11 +94,11 @@ function WorkoutLogModal(props) {
                                 <View>
                                     <View style={{marginHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                     <FeatherIcon name="x" size={20} onPress={() => props.closeModalMethod()} />
-                                    <Text style={{padding: 10, fontSize: 22, fontFamily: 'HelveticaNeueMedium'}}>
+                                    <Text style={{padding: 10, fontSize: 22, fontFamily: 'ARSMaquettePro-Medium'}}>
                 Log a workout
             </Text>
                                     </View>
-            <Text style={{padding: 10, fontSize: 15, fontFamily: 'HelveticaNeueLight'}}>
+            <Text style={{padding: 10, fontSize: 15 }}>
                 Keep track of your workouts and help trainers learn more about your routine
             </Text>
                                 </View>
