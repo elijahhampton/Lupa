@@ -37,6 +37,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LupaHomeNavigator from "./ui/navigators/LupaHomeNavigator";
 
 import FeatherIcon from "react-native-vector-icons/Feather";
+import DashboardNavigator from "./ui/navigators/DashboardNavigator";
+import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 
 class Lupa extends React.Component {
   constructor(props) {
@@ -103,7 +105,7 @@ _navigateToAuth = async () => {
     return (
       <>
       <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-      <LupaBottomTabNavigator />
+      <LupaDrawerNavigator />
       <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/> 
       </>
     );
@@ -135,52 +137,5 @@ const styles = StyleSheet.create({
   }
 });
 
-const Tab = createBottomTabNavigator();
-
-const PlaceHolder = () => {
-  return (
-    <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-
-    </View>
-  )
-}
-
-function LupaBottomTabNavigator() {
-  return (
-    <Tab.Navigator 
-      initialRouteName="Train"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          switch (route.name)
-          {
-            case 'Dashboard':
-              return <FeatherIcon name='clipboard' size={20} color="#212121" />;
-            case 'Train':
-              return <FeatherIcon name='activity' size={20} color="#212121" />;
-            case 'Create':
-              return <FeatherIcon name='plus-circle' size={20} color="#212121"/>;
-            case 'Community':
-              return <FeatherIcon name='globe' size={20} color="#212121" />;
-            case 'Profile':
-              return <FeatherIcon name='user' size={20} color='#212121' />;
-          }
-
-        },
-      })} >
-      <Tab.Screen name="Dashboard" component={Dashboard} />
-      <Tab.Screen name="Train" component={LupaHomeNavigator} />
-      <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
-          tabPress: event => {
-            event.preventDefault()
-            navigation.navigate('CreateProgram')
-          }
-        })}  />
-      <Tab.Screen name="Community" component={PackNavigator} />
-      <Tab.Screen name="Profile" component={ProfileNavigator} />
-    </Tab.Navigator>
-  );
-}
 
 export default Lupa;
