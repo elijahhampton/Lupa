@@ -37,7 +37,7 @@ export default class PackChatModal extends React.Component{
       }
 
       setupFire = async () => {
-        await Fire.shared.init(this.props.navigation.state.params.packUUID);
+        await Fire.shared.init( this.props.navigation.state.params.packUUID);
 
         await Fire.shared.on(message =>
           this.setState(previousState => ({

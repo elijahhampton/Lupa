@@ -34,34 +34,50 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaController from '../../../../../controller/lupa/LupaController';
 import { Constants } from 'react-native-unimodules';
 
-function VideoPreview(props) {
-  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-  const { mediaCaptureType } = props;
-  const saveVideo = async () => {
-    const newURI = await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(props.currWorkoutPressed, props.currProgramUUID, 'VIDEO', props.videoSrcProps)
-    await props.captureURI(newURI, "VIDEO")
-    await  props.closeVideoPreview()
-   await  props.closeMainModal()
+class VideoPreview extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+
+    this.state = {
+
+    }
   }
 
-  const saveImage = async () => {
-    const newURI = await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(props.currWorkoutPressed, props.currProgramUUID, 'IMAGE', props.videoSrcProps)
-    await props.captureURI(newURI, "IMAGE")
-    await  props.closeVideoPreview()
-   await  props.closeMainModal()
+  saveVideo = async () => {
+    const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
+      this.props.currProgramUUID, 'VIDEO', this.props.videoSrcProps)
+    await this.props.captureURI(newURI, "VIDEO")
+    await this.props.closeVideoPreview()
+    await this.props.closeMainModal()
   }
 
+  saveImage = async () => {
+    try {
+      const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
+        this.props.currProgramUUID, 'IMAGE', this.props.videoSrcProps)
+      await this.props.captureURI(newURI, "IMAGE")
+      alert('here')
+      await this.props.closeVideoPreview()
+      await this.props.closeMainModal()
+    } catch(error) {
+      alert(err)
+    }
+  }
+
+  render() {
     return (
-        <NativeModal visible={props.isVisible} 
+      <NativeModal visible={this.props.isVisible} 
         presentationStyle="fullScreen" 
         style={{flex: 1}}
         animated={true}
         animationType="slide">
                           <View style={{flex: 1, backgroundColor: 'transparent'}}>
                             {
-                              props.mediaCaptureType  == 'VIDEO' ?
+                              this.props.mediaCaptureType  == 'VIDEO' ?
                               <Video
-                              source={{ uri: props.videoSrcProps }}
+                              source={{ uri: this.props.videoSrcProps }}
                               rate={1.0}
                               volume={10}
                               isMuted={false}
@@ -72,23 +88,31 @@ function VideoPreview(props) {
                               
                           />
                           :
-                          <ImageBackground style={{flex: 1}} source={{uri: props.videoSrcProps }} />
+                          <ImageBackground style={{flex: 1}} source={{uri: this.props.videoSrcProps }} />
                             }
 
 <View style={{padding: 15, flexDirection: 'row', alignItems: 'center', backgroundColor: 'black', width: Dimensions.get('window').width, height: 'auto', justifyContent: 'space-evenly'}}>
 
-<Button color="#FFFFFF" mode="text" onPress={props.closeVideoPreview} style={{margin: 15}}>
+<Button color="#FFFFFF" mode="text" onPress={() => this.props.closeVideoPreview()} style={{margin: 15}}>
       Retry
 </Button>
 
-<Button color="#FFFFFF" mode="text" onPress={mediaCaptureType == 'VIDEO' ? saveVideo : saveImage} style={{margin: 15}}>
+{
+  this.props.mediaCaptureType == 'VIDEO' ?
+  <Button color="#FFFFFF" mode="text" onPress={this.saveVideo} style={{margin: 15}}>
+      Save V
+</Button>
+:
+<Button color="#FFFFFF" mode="text" onPress={this.saveImage} style={{margin: 15}}>
       Save
 </Button>
+}
 
 </View>
                           </View>
         </NativeModal>
     )
+  }
 }
 
 const flashModeOrder = {
@@ -389,6 +413,14 @@ export default class CameraScreen extends React.Component {
     this.setState({ showVideoPrev: true })
   };
 
+  showVideoPrev = () => {
+    this.setState({ showVideoPrev: true})
+  }
+
+  closeVideoPrev = () => {
+    this.setState({ showVideoPrev: false })
+  }
+
   renderCamera() {
     const { canDetectFaces, canDetectText, canDetectBarcode } = this.state;
 
@@ -625,7 +657,7 @@ export default class CameraScreen extends React.Component {
         <VideoPreview 
         isVisible={this.state.showVideoPrev} 
         videoSrcProps={this.state.currVideo} 
-        closeVideoPreview={() => this.setState({ showVideoPrev: false})} 
+        closeVideoPreview={() => this.setState({ showVideoPrev: false })} 
         currWorkoutPressed={this.props.currWorkoutPressed}
         currProgramUUID={this.props.currProgramUUID}
         closeMainModal={this.props.closeModalMethod}

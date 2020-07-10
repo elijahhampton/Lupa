@@ -90,11 +90,11 @@ function InviteFriendsModal(props) {
         <Modal visible={props.isVisible} animated={true} presentationStyle="fullScreen" style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <SafeAreaView style={{flex: 1, backgroundColor: 'transparent'}}>
                <View style={{flex: 0.5, padding: 10, alignItems: 'center', justifyContent: 'space-evenly'}}>
-               <Text style={{fontFamily: 'HelveticaNeueMedium', fontSize: RFValue(15), fontWeight: '300'}}>
+               <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: RFValue(15), fontWeight: '300'}}>
                     Invite your contacts
                 </Text>
 
-                <Text style={{color: 'rgb(28, 28, 30)', fontFamily: 'HelveticaNeueLight', fontSize: RFValue(12)}}>
+                <Text style={{color: 'rgb(28, 28, 30)' , fontSize: RFValue(12)}}>
                     Gather partners to start your fitness journey or managing your client list?  Let us help you get started.
                 </Text>
                </View>
@@ -142,7 +142,7 @@ function InviteFriendsModal(props) {
                                        </ScrollView>
                                        :
                                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20}}>
-                                            <Text style={{fontSize: 15, fontFamily: 'HelveticaNeueLight'}}>
+                                            <Text style={{fontSize: 15 }}>
                                                 Oops! It looks like your contact permissions are disabled.  Please visit your settings and enable them to
                                                 invite your contacts
                                             </Text>
@@ -162,7 +162,7 @@ function InviteFriendsModal(props) {
                         props.showGettingStarted == true ?
                          <View style={{flex: 1.5}}>
                          <View>
-                         <Text style={{padding: 12, fontFamily: 'HelveticaNeueMedium', alignSelf: 'center', fontSize: RFValue(15), fontWeight: '300'}}>
+                         <Text style={{padding: 12, fontFamily: 'ARSMaquettePro-Medium', alignSelf: 'center', fontSize: RFValue(15), fontWeight: '300'}}>
                               Getting started checklist
                           </Text>
                          </View>

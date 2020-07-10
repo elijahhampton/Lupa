@@ -498,26 +498,43 @@ export default class UserController {
     }
 
     getUserInformationByUUID = async uuid => {
-        let userResult, programsResult = [], servicesResult = [];
+        console.log('1')
+        let userResult = {}, programsResult = [], servicesResult = [], docData = getLupaProgramInformationStructure, userPrograms = []
         try {
             await USER_COLLECTION.doc(uuid).get().then(result => {
                 userResult = result.data();
             });
+
+            console.log('2')
+
+            if (userResult.programs.length > 0)
+            {
+                console.log('3')
+                for (let i = 0; i < userResult.programs.length; i++) {
+                    docData = getLupaProgramInformationStructure()
+                    await LUPA_DB.collection('programs').doc(userResult.programs[i]).get().then(snapshot => {
+                        docData = snapshot.data()
+                    })
+
+                    console.log('aaaaaa')
+                    
+                    if (typeof(docData) != 'undefined') {
+                        userPrograms.push(docData)
+                    }
+                }
+                console.log('4')
+            }
         } catch(error) {
             LOG_ERROR('UserController.ts', 'Caught exception in getUserInformationByUUID', error)
             return {}
         }
 
-        await USER_COLLECTION.doc(uuid).collection('programs').get().then(docs => {
-            docs.forEach(doc => {
-                let snapshot = doc.data();
-                programsResult.push(snapshot);
-            })
-        });
-
-
-        userResult.programs = programsResult;
-
+        Object.defineProperty(userResult, 'programs', {
+            value: userPrograms,
+            writable: false
+        })
+        
+        console.log('heeere thee')
         return Promise.resolve(userResult);
     }
 
@@ -1030,17 +1047,16 @@ export default class UserController {
      * Used for deleting programs that were in the process of creation
      */
     deleteProgram = async (user_uuid, programUUID) => {
-        let tempData;
-        let updatedProgramList;
+        let tempData = {}
+        let updatedProgramList = []
 
         try {
-                    //delete program from curr user's program list (DELETES ALL PROGRAMS? FIX!)
         await USER_COLLECTION.doc(user_uuid).get().then(snapshot => {
-            tempData = snapshot.data();
+            tempData = snapshot.data()
         })
 
-        updatedProgramList = this.arrayRemove(tempData.programs, programUUID);
-
+        updatedProgramList = tempData.programs
+        updatedProgramList.pop()
         await USER_COLLECTION.doc(user_uuid).update({
             programs: updatedProgramList
         })

@@ -27,23 +27,13 @@
 		527E61746158406CBA6161D0 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CDF8F404C5804C859AFA0923 /* EvilIcons.ttf */; };
 		52B64906091142C4ACC66FC3 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85A6E8FD5E0B4C7E82D291E0 /* Entypo.ttf */; };
 		5B82E9E1A862424B86A92EE1 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E48A508B0DEE4012A358676B /* Ionicons.ttf */; };
+		781B883F24B3DD4300762E3D /* ARSMaquettePro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5829245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf */; };
+		781B884024B3DD4300762E3D /* ARSMaquettePro-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5827245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf */; };
+		781B884124B3DD4300762E3D /* ARSMaquettePro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5823245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf */; };
 		782E4B252447D6040005F03A /* TPSStripe in Resources */ = {isa = PBXBuildFile; fileRef = 782E4B242447D6040005F03A /* TPSStripe */; };
 		7875A55824548CF100C15E04 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 7875A55724548CF100C15E04 /* Fonts */; };
-		78C1577624A04F8A0071FD65 /* Helvetica Neu Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 32D7F7E7C17E4A31988B188C /* Helvetica Neu Bold.ttf */; };
-		78C1577724A04F8A0071FD65 /* HelveticaNeue BlackCond.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 880ECA2E11844AC6A48FA1FF /* HelveticaNeue BlackCond.ttf */; };
-		78C1577824A04F8A0071FD65 /* HelveticaNeue Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2FB3D6E5FE4F48009E4FAD7B /* HelveticaNeue Light.ttf */; };
-		78C1577924A04F8A0071FD65 /* HelveticaNeue Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 30836AC5A0E14412BB8F885C /* HelveticaNeue Medium.ttf */; };
-		78C1577A24A04F8A0071FD65 /* HelveticaNeue Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1476A7C0EE6D45728FF3B8D5 /* HelveticaNeue Thin.ttf */; };
-		78C1577B24A04F8A0071FD65 /* HelveticaNeue.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 920C78C23808492582984ADA /* HelveticaNeue.ttf */; };
-		78C1577C24A04F8A0071FD65 /* HelveticaNeueBd.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35C5B02CEAAD49E68427380F /* HelveticaNeueBd.ttf */; };
-		78C1577D24A04F8A0071FD65 /* HelveticaNeueHv.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6873BA1484754233AD7958C4 /* HelveticaNeueHv.ttf */; };
-		78C1577E24A04F8A0071FD65 /* HelveticaNeueLt.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F60C8ED1BCA439FB1ECD03B /* HelveticaNeueLt.ttf */; };
-		78C1577F24A04F8A0071FD65 /* HelveticaNeueMed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FBE1B31A61DD4546B2CDDB32 /* HelveticaNeueMed.ttf */; };
 		78D64B80244544B3007C6E72 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78D64B7F244544B3007C6E72 /* MapKit.framework */; };
-		78DC5824245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5823245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf */; };
 		78DC5826245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5825245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf */; };
-		78DC5828245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5827245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf */; };
-		78DC582A245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78DC5829245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf */; };
 		78E385D424829D1A00CA4937 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 78E385D324829D1A00CA4937 /* GoogleService-Info.plist */; };
 		7AC0A355F67240EFBB50AD72 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2F33CFC2633F4E4391DA131B /* Ionicons.ttf */; };
 		7B5E504EB33B490DB897A8CE /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D8A366CCAB57422A80CE329E /* MaterialIcons.ttf */; };
@@ -102,18 +92,7 @@
 		782E4B242447D6040005F03A /* TPSStripe */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TPSStripe; path = "../node_modules/tipsi-stripe/ios/TPSStripe"; sourceTree = "<group>"; };
 		78325C4C244F89840099D7AF /* lupa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = lupa.entitlements; path = Lupa/lupa.entitlements; sourceTree = "<group>"; };
 		7875A55724548CF100C15E04 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
-		78C1578A24A07B3A0071FD65 /* HelveticaNeue Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "HelveticaNeue Thin.ttf"; path = "../src/ui/common/Font/helveticaneue/HelveticaNeue Thin.ttf"; sourceTree = "<group>"; };
-		78C1578B24A07B3A0071FD65 /* HelveticaNeueMed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = HelveticaNeueMed.ttf; path = ../src/ui/common/Font/helveticaneue/HelveticaNeueMed.ttf; sourceTree = "<group>"; };
-		78C1578C24A07B3A0071FD65 /* HelveticaNeue Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "HelveticaNeue Medium.ttf"; path = "../src/ui/common/Font/helveticaneue/HelveticaNeue Medium.ttf"; sourceTree = "<group>"; };
-		78C1578D24A07B3A0071FD65 /* HelveticaNeueLt.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = HelveticaNeueLt.ttf; path = ../src/ui/common/Font/helveticaneue/HelveticaNeueLt.ttf; sourceTree = "<group>"; };
-		78C1578E24A07B3A0071FD65 /* HelveticaNeueBd.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = HelveticaNeueBd.ttf; path = ../src/ui/common/Font/helveticaneue/HelveticaNeueBd.ttf; sourceTree = "<group>"; };
-		78C1578F24A07B3A0071FD65 /* HelveticaNeue.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = HelveticaNeue.ttf; path = ../src/ui/common/Font/helveticaneue/HelveticaNeue.ttf; sourceTree = "<group>"; };
-		78C1579024A07B3A0071FD65 /* Helvetica Neu Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Helvetica Neu Bold.ttf"; path = "../src/ui/common/Font/helveticaneue/Helvetica Neu Bold.ttf"; sourceTree = "<group>"; };
-		78C1579124A07B3A0071FD65 /* HelveticaNeue Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "HelveticaNeue Light.ttf"; path = "../src/ui/common/Font/helveticaneue/HelveticaNeue Light.ttf"; sourceTree = "<group>"; };
-		78C1579224A07B3A0071FD65 /* HelveticaNeueIt.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = HelveticaNeueIt.ttf; path = ../src/ui/common/Font/helveticaneue/HelveticaNeueIt.ttf; sourceTree = "<group>"; };
-		78C1579324A07B3A0071FD65 /* HelveticaNeue BlackCond.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "HelveticaNeue BlackCond.ttf"; path = "../src/ui/common/Font/helveticaneue/HelveticaNeue BlackCond.ttf"; sourceTree = "<group>"; };
-		78C1579424A07B3B0071FD65 /* helveticaneue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = helveticaneue.png; path = ../src/ui/common/Font/helveticaneue/helveticaneue.png; sourceTree = "<group>"; };
-		78C1579524A07B3B0071FD65 /* HelveticaNeueHv.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = HelveticaNeueHv.ttf; path = ../src/ui/common/Font/helveticaneue/HelveticaNeueHv.ttf; sourceTree = "<group>"; };
+		78C4477B24B1150E00FB21BE /* libYoga.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libYoga.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		78D64B7F244544B3007C6E72 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		78DC5823245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Black.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Black.ttf"; sourceTree = "<group>"; };
 		78DC5825245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Regular.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Regular.ttf"; sourceTree = "<group>"; };
@@ -184,6 +163,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				78C4477B24B1150E00FB21BE /* libYoga.a */,
 				78D64B7F244544B3007C6E72 /* MapKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
@@ -212,18 +192,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				78C1579024A07B3A0071FD65 /* Helvetica Neu Bold.ttf */,
-				78C1579324A07B3A0071FD65 /* HelveticaNeue BlackCond.ttf */,
-				78C1579124A07B3A0071FD65 /* HelveticaNeue Light.ttf */,
-				78C1578C24A07B3A0071FD65 /* HelveticaNeue Medium.ttf */,
-				78C1578A24A07B3A0071FD65 /* HelveticaNeue Thin.ttf */,
-				78C1579424A07B3B0071FD65 /* helveticaneue.png */,
-				78C1578F24A07B3A0071FD65 /* HelveticaNeue.ttf */,
-				78C1578E24A07B3A0071FD65 /* HelveticaNeueBd.ttf */,
-				78C1579524A07B3B0071FD65 /* HelveticaNeueHv.ttf */,
-				78C1579224A07B3A0071FD65 /* HelveticaNeueIt.ttf */,
-				78C1578D24A07B3A0071FD65 /* HelveticaNeueLt.ttf */,
-				78C1578B24A07B3A0071FD65 /* HelveticaNeueMed.ttf */,
 				78DC5829245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf */,
 				78DC5827245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf */,
 				78DC5825245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf */,
@@ -367,24 +335,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78C1577624A04F8A0071FD65 /* Helvetica Neu Bold.ttf in Resources */,
-				78C1577724A04F8A0071FD65 /* HelveticaNeue BlackCond.ttf in Resources */,
-				78C1577824A04F8A0071FD65 /* HelveticaNeue Light.ttf in Resources */,
-				78C1577924A04F8A0071FD65 /* HelveticaNeue Medium.ttf in Resources */,
-				78C1577A24A04F8A0071FD65 /* HelveticaNeue Thin.ttf in Resources */,
-				78C1577B24A04F8A0071FD65 /* HelveticaNeue.ttf in Resources */,
-				78C1577C24A04F8A0071FD65 /* HelveticaNeueBd.ttf in Resources */,
-				78C1577D24A04F8A0071FD65 /* HelveticaNeueHv.ttf in Resources */,
-				78C1577E24A04F8A0071FD65 /* HelveticaNeueLt.ttf in Resources */,
-				78C1577F24A04F8A0071FD65 /* HelveticaNeueMed.ttf in Resources */,
-				78DC582A245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf in Resources */,
+				781B883F24B3DD4300762E3D /* ARSMaquettePro-Bold.ttf in Resources */,
+				781B884024B3DD4300762E3D /* ARSMaquettePro-Medium.ttf in Resources */,
+				781B884124B3DD4300762E3D /* ARSMaquettePro-Black.ttf in Resources */,
 				78E385D424829D1A00CA4937 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				78DC5828245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf in Resources */,
 				782E4B252447D6040005F03A /* TPSStripe in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				F74B6102C9584E48BA3B0E5F /* AntDesign.ttf in Resources */,
-				78DC5824245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf in Resources */,
 				52B64906091142C4ACC66FC3 /* Entypo.ttf in Resources */,
 				8551C51A6E4E4484BAEF89F3 /* EvilIcons.ttf in Resources */,
 				0B16ADB9319C429F9DFFD665 /* Feather.ttf in Resources */,
@@ -469,17 +427,6 @@
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Helvetica Neu Bold.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeue BlackCond.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeue Light.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeue Medium.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeue Thin.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeue.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeueBd.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeueHv.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeueIt.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeueLt.ttf",
-				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/HelveticaNeueMed.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
@@ -501,17 +448,6 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Helvetica Neu Bold.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeue BlackCond.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeue Light.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeue Medium.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeue Thin.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeue.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeueBd.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeueHv.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeueIt.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeueLt.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/HelveticaNeueMed.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
@@ -606,7 +542,7 @@
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				INFOPLIST_FILE = Lupa/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.6;
 				OTHER_LDFLAGS = (
@@ -632,7 +568,7 @@
 				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				INFOPLIST_FILE = Lupa/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.6;
 				OTHER_LDFLAGS = (
@@ -693,7 +629,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lupa.lupa;
@@ -742,7 +678,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lupa.lupa;
 				PRODUCT_NAME = lupa;

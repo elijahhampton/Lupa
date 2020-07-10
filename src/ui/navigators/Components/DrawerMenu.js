@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { NavigationActions, withNavigation } from 'react-navigation';
 import DrawerIcon from "react-native-vector-icons/Feather"
 
 import { 
@@ -26,6 +25,7 @@ import {
 import { Constants } from 'react-native-unimodules';
 import TrainerInsights from '../../user/trainer/TrainerInsights';
 import WorkoutLogModal from '../../workout/modal/WorkoutLogModal';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 
 const ICON_SIZE = 20;
 
@@ -35,6 +35,7 @@ const ICON_SIZE = 20;
  * @param {Object} props Properties that this component receives.
  */
 function DrawerMenu(props) {
+  const navigation = useNavigation()
   const [trainerInsightsModalIsOpen, setTrainerInsightsModalOpen] = useState(false)
   const [workoutLogModalIsOpen, setWorkoutLogIsOpen] = useState(false)
 
@@ -48,22 +49,21 @@ function DrawerMenu(props) {
    * @param navFrom String Location navigating from
    */
   const navigateToProfile = () => {
-    props.navigation.dispatch(
+    navigation.dispatch(
 
-NavigationActions.navigate({
-routeName: 'Profile',
-params: {userUUID: currUserData.user_uuid, navFrom: 'Drawer'},
-action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: currUserData.user_uuid, navFrom: 'Drawer'}})
-})
-        )
+      CommonActions.navigate({
+        name: 'Profile',
+        params: {userUUID: currUserData.user_uuid, navFrom: 'Drawer'},
+      })
+      )
   }
 
   const navigateToDashboard = () => {
-   props.navigation.navigate('Dashboard')
+   navigation.navigate('Dashboard')
   }
 
   const navigateToTrainerInformation = () => {
-    props.navigation.navigate('TrainerInformation', {
+    navigation.navigate('TrainerInformation', {
       navFrom: 'Drawer'
     })
   }
@@ -165,7 +165,7 @@ action: NavigationActions.navigate({ routeName: 'Profile', params: {userUUID: cu
   )
 }
 
-export default withNavigation(DrawerMenu);
+export default DrawerMenu;
 
   const styles = StyleSheet.create({
     container: {

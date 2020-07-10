@@ -34,32 +34,6 @@ import {
     Divider,
 } from 'react-native-paper';
 
-import Svg, {
-    Circle,
-    Ellipse,
-    G,
-    Text as SVGTest,
-    TSpan,
-    TextPath,
-    Path,
-    Polygon,
-    Polyline,
-    Line,
-    Rect,
-    Use,
-    Symbol,
-    Defs,
-    RadialGradient,
-    Stop,
-    ClipPath,
-    Pattern,
-    Mask,
-  } from 'react-native-svg';
-
-  import { LinearGradient } from 'expo-linear-gradient'
-
-import { withNavigation, NavigationActions } from 'react-navigation';
-
 import FeatherIcon from "react-native-vector-icons/Feather"
 
 import PackSearchResultCard from './component/PackSearchResultCard';
@@ -82,6 +56,7 @@ import { Constants } from 'react-native-unimodules';
 import CreatePackDialog from './dialog/CreatePackDialog';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { RFValue } from 'react-native-responsive-fontsize'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const TAB_BUTTONS = [
     "Community",
@@ -363,6 +338,19 @@ Animated.timing(
          }
      }
 
+     mapRecommendedGroups = () => {
+        try {
+            return this.state.communityPacks.map(pack => {
+                return (
+                <SmallPackCard pack={pack} />
+                )
+            })
+         } catch(err)
+         {
+             return null
+         }
+     }
+
      mapNonParticipatingPacks = () => {
         try {
             return this.state.nonParticipatingPacks.map(pack => {
@@ -370,10 +358,10 @@ Animated.timing(
                  <Card style={{marginVertical: 20, margin: 10, width: Dimensions.get('window').width / 1.5, borderRadius: 0}}>
                  <Card.Cover source={{uri: pack.pack_image}} />
                  <Card.Content style={{padding: 0, margin: 0}}>
-                     <Text style={{color: 'rgb(44, 44, 46)', width: '100%', paddingVertical: 8, fontFamily: 'HelveticaNeueLight', fontSize: 18, }}>
+                     <Text style={{color: 'rgb(44, 44, 46)', width: '100%', paddingVertical: 8 , fontSize: 18, }}>
                          Find out more about the {pack.pack_title} pack
                      </Text>
-                     <Text style={{fontFamily: 'HelveticaNeueLight'}}>
+                     <Text>
                          {pack.pack_description}
                      </Text>
                  </Card.Content>
@@ -419,13 +407,11 @@ Animated.timing(
     render() {
         return (
             <View style={styles.root}>
-                <Appbar.Header style={styles.header} theme={{
+                <Appbar.Header style={[styles.header, {height: 'auto', elevation: 0}]} theme={{
                     elevation: 0,
-                }} statusBarHeight>
-                    <View style={{flexDirection: 'row'}}>
-                    <Appbar.Content title="Community" titleStyle={{fontSize: 25, alignSelf: 'flex-start', color: "#212121", marginTop: 15,}} />
-                    <Appbar.Action icon="more-vert" size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#212121" />
-                    </View>
+                }}>
+                    <Appbar.Content title="Community" titleStyle={{alignSelf: 'center', color: "#212121"}} />
+                    <Appbar.Action icon={() => <FeatherIcon name="search" size={20} /> } size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#212121" />
                    
                 
                 </Appbar.Header>
@@ -450,36 +436,30 @@ Animated.timing(
      :
          <>
      <ScrollView shouldRasterizeIOS={true} showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between', flexDirection: 'column'}} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._handleOnRefresh}/>}>
-     <View style={styles.containerSection}>
+
+                <View style={styles.containerSection}>
                     <View style={styles.sectionTextContainer}>
                     <Text style={styles.headerText}>
-                        Users located near you
+                        Recommended Groups
                     </Text>
+
+                    <View>
+                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text onPress={() => this.props.navigation.navigate('LupaHome')} style={{color: '#1089ff'}}>
+                           See all
+                        </Text>
+                        <FeatherIcon name="arrow-right" color="#1089ff" />
+                        </TouchableOpacity>
+                </View>
                     </View>
+
                     <View style={styles.sectionContent}>
-                        <ScrollView horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
+                        <ScrollView contentContainerStyle={{justifyContent: 'center'}} horizontal shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
                             {
-                                this.renderNearbyUsers()
+                                this.mapRecommendedGroups()
                             }
                         </ScrollView>
                     </View>
-                </View>
-
-                <View>
-                    <Button 
-                    key={'discover-trainers-button'} 
-                    color="#1089ff" 
-                    mode="contained" 
-                    style={{elevation: 6, width: 'auto', marginLeft: 20, alignSelf: 'flex-start', marginVertical: 20, alignItems: 'center', justifyContent: 'center'}} 
-                    theme={{
-                        roundness: 7,
-                    }}
-                    onPress={() => this.props.navigation.navigate('LupaHome')}
-                    >
-                        <Text>
-                            Discover people to follow
-                        </Text>
-                    </Button>
                 </View>
 
                                 {/* Find out more */}
@@ -498,6 +478,23 @@ Animated.timing(
                             }
                         </ScrollView>
                     </View>
+
+                    <View>
+                    <Button 
+                    key={'discover-trainers-button'} 
+                    color="#1089ff" 
+                    mode="contained" 
+                    style={{elevation: 6, width: 'auto', marginLeft: 20, alignSelf: 'flex-start', marginVertical: 20, alignItems: 'center', justifyContent: 'center'}} 
+                    theme={{
+                        roundness: 7,
+                    }}
+                    onPress={() => this.props.navigation.navigate('LupaHome')}
+                    >
+                        <Text>
+                            Discover people to follow
+                        </Text>
+                    </Button>
+                </View>
 
                     <Divider style={{marginVertical: 20, width: '90%', alignSelf: 'center'}} />
 
@@ -563,7 +560,7 @@ Animated.timing(
                     {
                         this.state.searchValue == "" ?
                         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                            <Text style={{color: 'rgb(199, 199, 204)', fontFamily: 'HelveticaNeueLight', fontSize: 20, padding: 10}}>
+                            <Text style={{color: 'rgb(199, 199, 204)' , fontSize: 20, padding: 10}}>
                                 Your fitness directory.  In your pocket.
                             </Text>
                         </View>
@@ -594,10 +591,7 @@ const styles = StyleSheet.create({
         fontFamily: 'ars-maquette-pro-bold',fontSize: 25, fontWeight: "600", color: "black"
     },
     header: {
-        justifyContent: 'space-between',
-        elevation: 0,
-        backgroundColor: 'transparent',
-        flexDirection: 'column'
+       backgroundColor: 'white',
     },
     headerItems: {
         alignSelf: 'flex-start'
@@ -613,7 +607,10 @@ const styles = StyleSheet.create({
         color: '#212121',
     },
     sectionTextContainer: {
-        flexDirection: 'column',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginHorizontal: 5,
     },
     searchHeader: {
         fontFamily: 'ARSMaquettePro-Medium', 
@@ -625,11 +622,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
         paddingLeft: 10,
         color: '#212121',
-        fontFamily: 'HelveticaNeueLight',
     },
     sectionContent: {
 
     }
 });
 
-export default connect(mapStateToProps)(withNavigation(PackView));
+export default connect(mapStateToProps)(PackView);

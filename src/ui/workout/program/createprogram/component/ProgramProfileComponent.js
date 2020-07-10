@@ -18,7 +18,6 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import ProgramInformationPreview from '../../ProgramInformationPreview';
 import { useSelector, useDispatch } from 'react-redux';
-import { withNavigation } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getUpdateCurrentUserProgramAttributeActionPayload } from '../../../../../controller/redux/payload_utility';
 import { getLupaProgramInformationStructure } from '../../../../../model/data_structures/programs/program_structures'
@@ -164,4 +163,4 @@ class ProgramProfileComponent extends React.PureComponent {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(ProgramProfileComponent));
+export default connect(mapStateToProps, mapDispatchToProps)(ProgramProfileComponent);

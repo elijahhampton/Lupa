@@ -38,7 +38,6 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED } from '../../../modules/payments/stripe/index'
 const { fromString } = require('uuidv4')
-import { withNavigation } from 'react-navigation'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -101,7 +100,7 @@ function ProgramInformationPreview(props) {
      }
 
     useEffect(() => {
-        async function fetchData() {
+       /* async function fetchData() {
             let result = {}, userData = {}
             await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.programData.program_structure_uuid).then(data => {
                 result = data;
@@ -113,9 +112,9 @@ function ProgramInformationPreview(props) {
 
             await setProgramData(result);
             await setProgramOwnerData(userData)
-        }
+        }*/
 
-        fetchData();
+       // fetchData();
     }, [])
 
     /**
@@ -324,7 +323,7 @@ function ProgramInformationPreview(props) {
 
     return (
         <Modal presentationStyle="fullScreen" visible={props.isVisible} style={{ flex: 1 }} animated={true} animationType="slide">
-               <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+              <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
                    <SafeAreaView />
                    <IconButton icon={() => <FeatherIcon name="x" size={25} onPress={() => props.closeModalMethod()}/>} />
                    <ScrollView contentContainerStyle={{}}>
@@ -414,7 +413,7 @@ function ProgramInformationPreview(props) {
 
                    </ScrollView>
                    <View style={{padding: 10, borderTopWidth: 0.5, borderTopColor: 'rgb(174, 174, 178)', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
-                    <Text style={{fontSize: 30, color: '#212121', fontFamily: 'HelveticaNeueBold'}}>
+                    <Text style={{fontSize: 30, color: '#212121'}}>
                         ${getProgramPrice()}
                     </Text>
 
@@ -428,9 +427,9 @@ function ProgramInformationPreview(props) {
                     </Button>
                    </View>
                    </View>
-               <SafeAreaView />
+                <SafeAreaView /> 
             </Modal>
     )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(ProgramInformationPreview));
+export default connect(mapStateToProps, mapDispatchToProps)(ProgramInformationPreview);

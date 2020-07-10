@@ -35,7 +35,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import { useDispatch } from 'react-redux';
 
 
-import { withNavigation, NavigationActions, StackActions } from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 import { logoutUser } from '../../../../controller/lupa/auth/auth';
 
@@ -84,7 +84,7 @@ function EditBioModal(props) {
        <SafeAreaView style={{flex: 1}}>
         <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center'}}>
             <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
-            <Appbar.Content title="Biography" titleStyle={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}/>
+            <Appbar.Content title="Biography" titleStyle={{fontFamily: 'ARSMaquettePro-Medium', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}/>
             <Button theme={{colors: {
                 primary: 'rgb(33,150,243)'
             }}}
@@ -362,7 +362,7 @@ class SettingsModal extends React.Component {
                         <Body />
 
                         <Right>
-                            <Text style={{fontFamily: 'ARSMaquettePro-Black', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}>
+                            <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}>
                                 Settings
                             </Text>
                         </Right>

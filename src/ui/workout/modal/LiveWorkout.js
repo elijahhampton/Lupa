@@ -8,20 +8,23 @@ import {
     Image,
     SafeAreaView,
     TouchableHighlight,
-    Button,
 } from 'react-native';
 
 import {
     Surface,
     ActivityIndicator,
     Appbar,
+    Button,
     IconButton,
     Avatar
 } from 'react-native-paper';
 
+import { Icon } from 'react-native-elements'
+
 import ToggleSwitch from 'toggle-switch-react-native'
 import { Video } from 'expo-av'
 import FeatherIcon from "react-native-vector-icons/Feather"
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 import StepIndicator from 'react-native-step-indicator';
@@ -54,8 +57,8 @@ const customStyles = {
     stepStrokeWidth: 3,
     stepStrokeFinishedColor: '#fe7013',
     stepStrokeUnFinishedColor: 'rgb(58,58,60)',
-    separatorFinishedColor: '#fe7013',
-    separatorUnFinishedColor: '#212121',
+    separatorFinishedColor: '#1089ff',
+    separatorUnFinishedColor: 'white',
     stepIndicatorFinishedColor: '#fe7013',
     stepIndicatorUnFinishedColor: '#ffffff',
     stepIndicatorCurrentColor: '#ffffff',
@@ -66,7 +69,7 @@ const customStyles = {
     stepIndicatorLabelUnFinishedColor: '#212121',
     labelColor: '#212121',
     labelSize: 10,
-    currentStepLabelColor: '#2196F3'
+    currentStepLabelColor: 'white'
 }
 
 const PROGRAM_SECTIONS = [
@@ -102,8 +105,8 @@ class LiveWorkout extends React.Component {
             programTitle: "",
             loadingNextWorkout: false,
             programDescription: "",
-            programData: this.props.navigation.state.params.programData,
-            workoutData: this.props.navigation.state.params.programData.program_workout_structure,
+            programData:  this.props.route.params.programData,
+            workoutData:  this.props.route.params.programData.program_workout_structure,
             currentStage: "",
             currentStageIndex: 0,
             currentStageData: [],
@@ -127,22 +130,10 @@ class LiveWorkout extends React.Component {
 
     async componentDidMount() {
        await this.setupLiveWorkout()
-
-       if (this.props.navigation.state.params.setPageIsPrograms)
-       {
-        this.props.navigation.state.params.setPageIsPrograms();
-       }
-    }
-
-    componentWillUnmount = () => {
-        if (this.props.navigation.state.params.setPageIsNotPrograms)
-        {
-            this.props.navigation.state.params.setPageIsNotPrograms();
-        }
     }
 
     setupLiveWorkout = async () => {
-       let nextWorkoutIn, nextStageDataIn, currentStageIndexIn, currentWorkoutIndexIn, stagesScheduledIn = [];
+      /* let nextWorkoutIn, nextStageDataIn, currentStageIndexIn, currentWorkoutIndexIn, stagesScheduledIn = [];
 
         //Retrieve all stages that have workouts
         let result;
@@ -182,7 +173,7 @@ class LiveWorkout extends React.Component {
                 programFinished: false,
             })
         }
-
+        */
     }
 
     stageHasWorkouts = (stage) => {
@@ -266,7 +257,7 @@ class LiveWorkout extends React.Component {
 
     handleCloseLiveWorkout = () => {
        // this.props.closeModalMethod();
-        this.setupLiveWorkout();
+       // this.setupLiveWorkout();
     }
 
     startWorkout = () => {
@@ -450,141 +441,69 @@ class LiveWorkout extends React.Component {
         return (
             <View style={{flex: 1}}>
                 <Swiper loop={false} scrollEnabled={true} showsVerticalScrollIndicator={false} showsButtons={false} showsPagination={false} horizontal={false} index={this.state.currSwiperIndex}>
-                    {/*
-                        View 2
-                    */}
-                    <View style={{ flex: 1, backgroundColor: "white" }}>
-                        <Appbar.Header style={{elevation: 0, justifyContent: 'space-between'}} theme={{
-                            colors: {
-                                primary: '#FFFFFF'
-                            }
-                        }}>
-                            <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
-
-                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-                            <IconButton icon="play-arrow" />
-                            <IconButton icon="pause" />
-                            <IconButton icon="stop" />
-                            </View>
-                        </Appbar.Header>
-                        <View style={{flex: 1, flexDirection: 'row'}}>
-                            <Surface style={{alignItems: 'center', justifyContent: 'center', elevation: 15, flex: 1, borderTopRightRadius: 30, borderBottomRightRadius: 30, backgroundColor: '#212121'}}>
-                                {
-                                    this.getWorkoutMedia()
-                                }
-                                {
-
-                            this.getVideoIcon()
-                        }
-
-                            </Surface>
-                            
-                            <View style={{ flex: 1, alignItems: "center", justifyContent: "space-evenly"}}>
-                                <Text style={{ fontFamily: 'HelveticaNeueMedium', fontSize: 12, padding: 2 }}>
-                                    Lorem ipum dolor sit amet, consectetur adipiscing
-                            </Text>
-
-                            </View>
-                        </View>
-
-
-                        <View style={{ flex: 1,}}>
-                            <View style={{ flex: 2, flexDirection: 'row', justifyContent: 'space-evenly' }}>
-
-                                <View style={{padding: 10, flex: 1, alignItems: 'flex-start', justifyContent: 'space-around'}}>
-<View>
-<Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
-    Workout Logistics
-</Text>
-<Text>
-    {this.state.currentWorkout.workout_name}
-</Text>
-</View>
-
-<View>
-<Text>
-      <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-          Sets: { " "}
-      </Text>
-      <Text style={{fontSize: 15}}>
-          10
-      </Text>
-  </Text>
-
-  <Text> 
-      <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-          Reps:{ " "}
-      </Text>
-      <Text style={{fontSize: 15}}>
-          10
-      </Text>
-  </Text>
-</View>
-
-<View>
-    <View style={{paddingBottom: 8}}>
-    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
-    Adjust the tempo
-</Text>
-<Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-    4 * 0 * 2
-</Text>
-    </View>
-<ToggleSwitch
-  isOn={this.state.switchEnabled}
-  onColor="green"
-  offColor="#212121"
-  label={`Tempo ${this.state.switchEnabled == true ? '(On)' : '(Off)'}`}
-  labelStyle={{ color: "black", fontFamily: 'ARSMaquettePro-Regular'}}
-  size="small"
-  onToggle={isOn => console.log("changed to : ", isOn)}
-/>
-</View>
-
-
-  
+                    
+                        <View style={{flex: 1}}>
+                            <SafeAreaView style={{backgroundColor: '#212121'}} />
+                            <View style={{flex: 3, backgroundColor: '#212121'}}>
+                            <MaterialIcon onPress={() => this.props.navigation.goBack(null)} name="close" color="white" size={26} style={{position: 'absolute', top: 0, left: 0, margin: 16}} />
+                                <View style={{flex: 4}}>
 
                                 </View>
+                                <View style={{flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: '#212121'}}>
 
-                                <View style={{flex: 1}}>
-                                    <View style={{flex: 1, padding: 10, }}>
-                                        <Text style={{padding: 10, fontFamily: 'ARSMaquettePro-Medium'}}>
-                                            Participants
-                                        </Text>
+                                <Icon
+  reverse
+  name='fullscreen'
+  type='material'
+  color='#1089ff'
+  size={15}
+  style={{elevation: 10}}
+/>
 
-                                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                                                <Surface style={{elevation: 15, width: 50, height: 50, borderRadius: 50}}>
-                                                  {this.getCurrentUserAvatar()}
-                                                </Surface>
-                                        </View>
-                                    </View>
+                                <Icon
+  reverse
+  name='info'
+  type='material'
+  color='#1089ff'
+  size={15}
+  style={{elevation: 10}}
+/>
 
-                                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                                        <TouchableHighlight style={{margin: 10, borderRadius: 10}} onPress={this.changeWorkout}>
-                                        <Surface style={{width: '100%', flexDirection: 'row', alignItems: 'center', height: 50, elevation: 15, borderRadius: 10, alignItems: 'center', backgroundColor: '#212121'}}>
-                                            <View style={{flex: 3, alignItems: 'center', justifyContent: 'center'}}>
-                                            <Text style={{color: 'white', fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
-                                                Next Workout
-                                            </Text>
-                                            </View>
-                                            <View style={{backgroundColor: 'black', flex: 1, height: 50, alignItems: 'center', justifyContent: 'center', borderTopRightRadius: 10, borderBottomRightRadius: 10}}>
-                                            <FeatherIcon name="arrow-right" size={30} color="#FFFFFF" />
-                                            </View>
-                                        </Surface>
-                                        </TouchableHighlight>
-                                    </View> 
-                                    </View>
+<Icon
+  reverse
+  name='bookmark'
+  type='material'
+  color='#1089ff'
+  size={15}
+  style={{elevation: 10}}
+/>
+
+<Icon
+  reverse
+  name='vibration'
+  type='material'
+  color='#23374d'
+  size={15}
+  style={{elevation: 10}}
+/>
+
+<Icon
+  reverse
+  name='navigate-next'
+  type='material'
+  color='#1089ff'
+  size={15}
+  style={{elevation: 10}}
+/>
+                                </View>
                             </View>
-                        </View>
-
-                        <View style={{flex: 0.5, justifyContent: "center"}}>
-                        <StepIndicator
-                            direction="horizontal"
-                            customStyles={customStyles}
-                            currentPosition={this.state.currentStageIndex}
-                            labels={PROGRAM_SECTIONS}
-                            stepCount={PROGRAM_SECTIONS.length}
-                        />
+                        <View style={{flex: 0.3, justifyContent: "center", backgroundColor: '#212121'}}>
+                            <Button mode="text" color="#FFFFFF" style={{alignItems: 'center', justifyContent: 'center', flexDirection: 'row'}}>
+                            <MaterialIcon name="arrow-drop-down" size={20}/>
+                                <Text>
+                                    Monday
+                                </Text>
+                            </Button>
                         </View>
 
                         <SafeAreaView />

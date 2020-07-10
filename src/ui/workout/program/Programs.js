@@ -43,8 +43,6 @@ import {
     ScrollableTab,
 } from 'native-base';
 
-import { withNavigation } from 'react-navigation';
-
 import { connect } from 'react-redux'
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
@@ -318,7 +316,7 @@ class Programs extends React.Component {
     getBookmarkedProgramsView = () => {
         return this.state.bookmarkedPrograms.length == 0 ?
         <View>
-            <Text style={{fontFamily: 'HelveticaNeueMedium', paddingLeft: 20}}>
+            <Text style={{fontFamily: 'ARSMaquettePro-Medium', paddingLeft: 20}}>
                 You haven't bookmarked any programs.
             </Text>
         </View>
@@ -455,7 +453,7 @@ class Programs extends React.Component {
             <View style={{flex: 1}}>
                                 <Surface style={{alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 8, margin: 5, flex: 1}}>
                                     <Image resizeMode="cover" source={item} style={{width: '100%', height: '100%', borderRadius: 15}} />
-                                    <Text style={{fontFamily: 'ARSMaquettePro-Black', position: 'absolute', alignSelf: 'center', fontWeight: 'bold', fontSize: 35, color: 'white'}}>
+                                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', position: 'absolute', alignSelf: 'center', fontWeight: 'bold', fontSize: 35, color: 'white'}}>
                                         Coming Soon
                                     </Text>
                                     <Chip style={{position: 'absolute', top: 0, right: 0, margin: 5, backgroundColor: '#2196F3'}}>
@@ -463,7 +461,7 @@ class Programs extends React.Component {
                                     </Chip>
                                 </Surface>
 
-                                <Text style={{alignSelf: 'center', fontFamily: 'ARSMaquettePro-Black', color: '#212121'}}>
+                                <Text style={{alignSelf: 'center', fontFamily: 'ARSMaquettePro-Medium', color: '#212121'}}>
                                     Aura Program
                                 </Text>
 
@@ -516,7 +514,7 @@ class Programs extends React.Component {
                         <Text style={{fontSize: 18, fontWeight: '300', paddingVertical: 2.5}}>
                             Launch Program
                         </Text>
-                        <Text style={{fontFamily: 'HelveticaNeueLight', color: 'rgb(72, 72, 74)'}}>
+                        <Text style={{color: 'rgb(72, 72, 74)'}}>
                             Launch this workout
                         </Text>
                         </View>
@@ -530,7 +528,7 @@ class Programs extends React.Component {
                         <Text style={{fontSize: 18, fontWeight: '300', paddingVertical: 2.5}}>
                             Share Program
                         </Text>
-                        <Text style={{fontFamily: 'HelveticaNeueLight', color: 'rgb(72, 72, 74)'}}>
+                        <Text style={{color: 'rgb(72, 72, 74)'}}>
                             Send to a friend
                         </Text>
                         </View>
@@ -571,7 +569,7 @@ class Programs extends React.Component {
                         <Text style={{fontSize: 18, fontWeight: '300', paddingVertical: 2.5}}>
                             Design a Program
                         </Text>
-                        <Text style={{fontFamily: 'HelveticaNeueLight', color: 'rgb(72, 72, 74)'}}>
+                        <Text style={{color: 'rgb(72, 72, 74)'}}>
                             Design a complete workout program
                         </Text>
                         </View>
@@ -851,7 +849,7 @@ class Programs extends React.Component {
                     </Text>
                             </View>
 
-                            <Text style={{fontFamily: 'HelveticaNeueMedium', paddingLeft: 20}}>
+                            <Text style={{fontFamily: 'ARSMaquettePro-Medium', paddingLeft: 20}}>
                                 You haven't subscribed to any trainers.
                             </Text>
                         </View>
@@ -922,4 +920,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(Programs));
+export default connect(mapStateToProps, mapDispatchToProps)(Programs);

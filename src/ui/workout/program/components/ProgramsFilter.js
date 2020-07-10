@@ -31,8 +31,6 @@ import {
     Tabs,
 } from 'native-base';
 
-import { withNavigation } from 'react-navigation';
-
 import { connect } from 'react-redux'
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
@@ -221,7 +219,7 @@ key="female"
 
 const styles = StyleSheet.create({
     headerText: {
-        fontFamily: 'ARSMaquettePro-Black', 
+        fontFamily: 'ARSMaquettePro-Medium', 
         margin: 5, 
         padding: 5, 
         alignSelf: 'flex-start', 

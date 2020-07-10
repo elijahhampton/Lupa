@@ -14,7 +14,6 @@ import {
 } from 'react-native-paper';
 
 import { connect } from 'react-redux';
-import { withNavigation } from 'react-navigation'
 import ReceivedProgramNotification from './component/ReceivedProgramNotification';
 import LupaController from '../../../controller/lupa/LupaController';
 import LiveWorkout from '../../workout/modal/LiveWorkout';
@@ -114,4 +113,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(withNavigation(NotificationsView))
+export default connect(mapStateToProps)(NotificationsView)

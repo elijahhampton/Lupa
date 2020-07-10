@@ -23,12 +23,12 @@ import {
 import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 
-import { withNavigation, NavigationActions } from 'react-navigation';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 
 import PackInformationModal from '../../modal/PackInformationModal';
 import { LOG_ERROR } from '../../../../common/Logger';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 class DefaultPack extends React.Component {
     constructor(props) {
@@ -65,7 +65,7 @@ class DefaultPack extends React.Component {
     }
 }
 
-export default withNavigation(DefaultPack);
+export default DefaultPack;
 
 
 class SmPackCard extends React.Component {
@@ -73,22 +73,11 @@ class SmPackCard extends React.Component {
         super(props);
 
         this.state = {
-            packUUID: this.props.packUUID,
-            packImage: this.props.packImage,
             showPack: false,
-            packImage: "",
             packInformationModalVisible: false,
         }
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    }
-
-    componentDidMount = async () => {
-        await this.setupComponent();
-    }
-
-    setupComponent = async () => {
-      
     }
 
     _setShowPack = () => {
@@ -108,16 +97,14 @@ class SmPackCard extends React.Component {
         if (this.state.packImage == "" || this.state.packImage == undefined)
         {
             return (
-                <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}} />
+                <View style={[{flex: 1, borderWidth: 1, borderColor: 'rgb(199, 199, 204)'}, styles.recommendedPackCard]} />
             )
         }
 
         try {
             return (
-                <View style={{flex: 1,  borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: 'black'}}>
+                <View style={[{flex: 1, borderWidth: 1, borderColor: 'rgb(199, 199, 204)', borderRadius: 8}, styles.recommendedPackCard]}>
 <ImageBackground 
-imageStyle={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}} 
-style={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20}} 
 resizeMode={ImageResizeMode.cover} 
 source={{uri: this.state.packImage}} />
 </View>
@@ -133,24 +120,19 @@ source={{uri: this.state.packImage}} />
 
     render() {
         return (
-            <Surface style={styles.packCards}>
+            <View>
+            <Surface style={styles.recommendedPackCard}>
                 {
                     this.getImageBackground()
                 }
-    
-                <Divider />
-    
-                <View style={{flex: 1, padding: 10, justifyContent: 'center', alignItems: 'center'}}>
-                    <Text numberOfLines={9}>
-                   {this.props.packDescription}
-                    </Text>
-                </View>
-    
-                <Caption style={{alignSelf: 'center'}}>
-                    {this.props.packCity + "," + this.props.packState}
-                </Caption>
-                <FAB onPress={() => this._setShowPack()} icon="menu" color="#FFFFFF" small style={{backgroundColor: "#2196F3",position: 'absolute', top: 10, right: 10, }} /> 
             </Surface>
+            <View style={{paddingLeft: 20, flexDirection: 'row', alignItems: 'center'}}>
+                <FeatherIcon color="rgb(142, 142, 147)" name="users" size={15} style={{marginHorizontal: 5}} />
+            <Text style={{color: 'rgb(142, 142, 147)', fontWeight: '500', fontSize: 15}}>
+                   20 members
+                    </Text>
+            </View>
+                    </View>
         );
     }
 }
@@ -241,8 +223,8 @@ export const UserFlatCard = (props) => {
     );
 }
 
-const TrainerCard = withNavigation(TrainerFlatCard);
-const SmallPackCard = withNavigation(SmPackCard);
+const TrainerCard = TrainerFlatCard;
+const SmallPackCard = SmPackCard;
 export {
     SmallPackCard,
     TrainerCard,
@@ -258,6 +240,12 @@ const styles = StyleSheet.create({
         margin: 5,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
+    },
+    recommendedPackCard: {
+        margin: 5,
+        width: 150, 
+        height: 90,
+        borderRadius: 15,
     },
     offerCards: {
         elevation: 1,

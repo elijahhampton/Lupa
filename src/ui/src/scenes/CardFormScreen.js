@@ -6,7 +6,6 @@ import testID from '../utils/testID'
 import { initStripe } from '../../../modules/payments/stripe/index'
 import axios from 'axios'
 
-import { withNavigation } from 'react-navigation';
 class CardFormScreen extends PureComponent {
   static title = 'Card Form'
 
@@ -55,8 +54,8 @@ class CardFormScreen extends PureComponent {
 
   render() {
     const { loading, token } = this.state
-    const amount = this.props.navigation.state.params.amount;
-    const currency = this.props.navigation.state.params.currency;
+    const amount =  this.props.navigation.state.params.amount;
+    const currency =  this.props.navigation.state.params.currency;
     return (
       <View style={styles.container}>
         {
@@ -67,7 +66,7 @@ class CardFormScreen extends PureComponent {
   }
 }
 
-export default withNavigation(CardFormScreen)
+export default CardFormScreen
 
 const styles = StyleSheet.create({
   container: {

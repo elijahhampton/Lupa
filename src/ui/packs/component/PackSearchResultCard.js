@@ -13,9 +13,6 @@ import {
     Avatar
 } from 'react-native-paper';
 
-
-import { withNavigation, NavigationActions } from 'react-navigation';
-
 import LupaController from '../../../controller/lupa/LupaController';
 
 import PackInformationModal from '../modal/PackInformationModal';
@@ -190,4 +187,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps)(withNavigation(PackSearchResultCard));
+export default connect(mapStateToProps)(PackSearchResultCard);

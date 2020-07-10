@@ -13,8 +13,6 @@ import {
 } from 'react-native-paper';
 import LiveWorkout from '../../../workout/modal/LiveWorkout';
 
-import { withNavigation } from 'react-navigation';
-
 import ProgramInformationPreview from '../../../workout/program/ProgramInformationPreview';
 
 
@@ -77,4 +75,4 @@ function ReceivedProgramNotification(props) {
     )
 }
 
-export default withNavigation(ReceivedProgramNotification);
+export default ReceivedProgramNotification;

@@ -1,14 +1,4 @@
-/*export type Program = {
-    program_structure: {
-        warmup: any,
-        primary: any,
-        break: any,
-        secondary: any,
-        cooldown: any,
-        homework: any,
-    }
-}
-*/
+
 export type LupaProgramInformationStructure = {
     program_name: String,
     program_description: String,
