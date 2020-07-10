@@ -1,44 +1,74 @@
 
 import React from 'react';
 
-import DashboardView from '../user/dashboard/TrainerDashboardView';
-import { NavigationContainer } from '@react-navigation/native'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import DrawerMenu from './Components/DrawerMenu';
 import ProfileNavigator from './ProfileNavigator';
-import TrainerInformation from '../user/modal/WelcomeModal/TrainerInformation';
-import NotificationsView from '../user/notifications/NotificationsView'
-import MessagesView from '../user/chat/MessagesView'
-import { createStackNavigator } from '@react-navigation/stack';
+import FeatherIcon from 'react-native-vector-icons/Feather'
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import DashboardNavigator from './DashboardNavigator';
+import LupaHomeNavigator from './LupaHomeNavigator';
+import PackNavigator from './PackNavigator';
+
 
 const Drawer = createDrawerNavigator();
-const Stack = createStackNavigator()
 
 function LupaDrawerNavigator() {
   return (
-  /*  <NavigationContainer independent={true}>
-          <Drawer.Navigator initialRouteName="Dashboard" drawerPosition="left" drawerContent={(props) => <DrawerMenu {...props}  />}>
-     <Drawer.Screen name="Dashboard" component={DashboardView} />
-      <Drawer.Screen name="Profile" component={ProfileNavigator} />
-      <Drawer.Screen name="TrainerInformation" component={TrainerInformation} />
-            <Drawer.Screen name="Notifications" component={NotificationsView} />
-                  <Drawer.Screen name="Messages" component={MessagesView} />
+          <Drawer.Navigator initialRouteName="Lupa" drawerPosition="left" drawerContent={(props) => <DrawerMenu {...props}  />}>
+      <Drawer.Screen name="Lupa" component={LupaBottomTabNavigator}/>
     </Drawer.Navigator>
-    </NavigationContainer>*/
-
-    <Stack.Navigator
-      initialRouteName="Dashboard"
-      screenOptions={{ gestureEnabled: false }}
-      headerMode='none'
-      mode='card'
-    >
-      <Stack.Screen
-        name="Dashboard"
-        component={DashboardView}
-      />
-    </Stack.Navigator>
   )
+}
+
+const Tab = createBottomTabNavigator();
+
+const PlaceHolder = () => {
+  return (
+    <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+
+    </View>
+  )
+}
+
+function LupaBottomTabNavigator() {
+  return (
+    <Tab.Navigator 
+      initialRouteName="Train"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          switch (route.name)
+          {
+            case 'Dashboard':
+              return <FeatherIcon name='clipboard' size={20} color="#212121" />;
+            case 'Train':
+              return <FeatherIcon name='activity' size={20} color="#212121" />;
+            case 'Create':
+              return <FeatherIcon name='plus-circle' size={20} color="#212121"/>;
+            case 'Community':
+              return <FeatherIcon name='globe' size={20} color="#212121" />;
+            case 'Profile':
+              return <FeatherIcon name='user' size={20} color='#212121' />;
+          }
+
+        },
+      })} >
+      <Tab.Screen name="Dashboard" component={DashboardNavigator} />
+      <Tab.Screen name="Train" component={LupaHomeNavigator} />
+      <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
+          tabPress: event => {
+            event.preventDefault()
+            navigation.navigate('CreateProgram')
+          }
+        })}  />
+      <Tab.Screen name="Community" component={PackNavigator} />
+      <Tab.Screen name="Profile" component={ProfileNavigator} />
+    </Tab.Navigator>
+  );
 }
 
 export default LupaDrawerNavigator;

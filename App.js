@@ -18,6 +18,7 @@ import { LUPA_AUTH } from './src/controller/firebase/firebase';
 import { getLupaUserStructure, getLupaPackStructure } from './src/controller/firebase/collection_structures';
 import { getLupaProgramInformationStructure } from './src/model/data_structures/programs/program_structures';
 import CreateProgram from './src/ui/workout/program/createprogram/CreateProgram';
+import LupaDrawerNavigator from './src/ui/navigators/LupaDrawerNavigator'
 
 class App extends React.Component {
   constructor(props) {

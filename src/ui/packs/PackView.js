@@ -57,6 +57,7 @@ import CreatePackDialog from './dialog/CreatePackDialog';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { RFValue } from 'react-native-responsive-fontsize'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { MenuIcon } from '../icons';
 
 const TAB_BUTTONS = [
     "Community",
@@ -410,6 +411,7 @@ Animated.timing(
                 <Appbar.Header style={[styles.header, {height: 'auto', elevation: 0}]} theme={{
                     elevation: 0,
                 }}>
+                     <MenuIcon customStyle={{margin:10}} onPress={() => this.props.navigation.openDrawer()} />
                     <Appbar.Content title="Community" titleStyle={{alignSelf: 'center', color: "#212121"}} />
                     <Appbar.Action icon={() => <FeatherIcon name="search" size={20} /> } size={20} onPress={this._showActionSheet} style={styles.headerItems} color="#212121" />
                    

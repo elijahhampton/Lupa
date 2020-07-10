@@ -60,6 +60,7 @@ import {Picker} from '@react-native-community/picker';
 
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import CircularUserCard from './user/component/CircularUserCard';
+import { MenuIcon } from './icons';
 
 const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
 const SamplePhotoOne = require('./images/programs/sample_photo_one.jpg')
@@ -439,15 +440,8 @@ class LupaHome extends React.Component {
         return (
             <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                 
-                <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, height: 0}}>
-                {/*<SearchBar placeholder="Look for trainers or workout programs"
-                        inputStyle={{fontSize: 16, fontWeight: '300' }}
-                        placeholderTextColor="rgb(99, 99, 102)"
-                        onChangeText={text => this._performSearch(text)} 
-                        platform="ios"
-                        searchIcon={<FeatherIcon name="search" />}
-                        containerStyle={{backgroundColor: "transparent"}}
-        value={this.state.searchValue}/> */}
+                <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0}}>
+                <MenuIcon customStyle={{margin: 10}} onPress={() => this.props.navigation.openDrawer()} />
                 </Appbar.Header>
 
                 {
@@ -553,7 +547,7 @@ class LupaHome extends React.Component {
                             It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
                         </Text>
                         </View>
-                        <Button mode="contained" color="#1089ff" style={{marginLeft: 20, width: 'auto', elevation: 6}} theme={{
+                        <Button mode="contained" color="#1089ff" style={{marginLeft: 10, width: 'auto', elevation: 6}} theme={{
                             roundness: 3
                         }} onPress={() => this.setState({ customizedInviteFriendsModalIsOpen: true})}>
                             <Text>

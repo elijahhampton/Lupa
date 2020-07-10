@@ -66,6 +66,7 @@ import TrainerInsights from '../trainer/TrainerInsights.js';
 import InviteFriendsModal from '../../user/modal/InviteFriendsModal';
 import WorkoutLogModal from '../../workout/modal/WorkoutLogModal'
 import { RFValue } from 'react-native-responsive-fontsize';
+import { MenuIcon } from '../../icons/index.js';
 
 const data = [
 
@@ -269,7 +270,7 @@ class TrainerDashboardView extends React.Component {
                 <View style={{marginTop: Constants.statusBarHeight}}>
                 <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
                                          <Left>
-                                         <Appbar.Action icon="menu" style={{}} onPress={() => this.props.navigation.openDrawer()} />
+                                             <MenuIcon customStyle={{marginVertical: 10}} onPress={() => this.props.navigation.openDrawer()} />
                                          </Left>
                                         
                                         <Body />
@@ -279,7 +280,7 @@ class TrainerDashboardView extends React.Component {
 
                                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: Dimensions.get('window').width}}>
                                         <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                                         <Text style={{paddingLeft: 15, fontSize: 20}}>
+                                         <Text style={{fontSize: 20}}>
                                              Welcome,
                                          </Text>
                                          <Text>
@@ -335,6 +336,7 @@ const styles = StyleSheet.create({
     safeareaview: {
         flex: 1,
         backgroundColor: "#FFFFFF",
+        padding: 10
     },
     header: {
         flexDirection: 'row', 
