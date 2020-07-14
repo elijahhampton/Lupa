@@ -50,7 +50,7 @@
     "firebase-functions": "^3.6.0",
     "firestore": "^1.1.6",
     "fs": "0.0.1-security",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jsdom": "^15.1.1",
     "native-base": "2.13.8",
     "net": "^1.0.2",
