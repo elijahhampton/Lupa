@@ -54,8 +54,8 @@ class CardFormScreen extends PureComponent {
 
   render() {
     const { loading, token } = this.state
-    const amount =  this.props.navigation.state.params.amount;
-    const currency =  this.props.navigation.state.params.currency;
+    const amount =  this.props.route.params.amount;
+    const currency =  this.props.route.currency;
     return (
       <View style={styles.container}>
         {

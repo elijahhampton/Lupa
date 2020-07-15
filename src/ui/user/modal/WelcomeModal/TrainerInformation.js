@@ -112,9 +112,9 @@ export default class TrainerInformation extends React.Component {
 
     getHeader = () => {
         try {
-            if ( this.props.navigation.state.params.navFrom)
+            if ( this.props.route.params.navFrom)
             {
-                if ( this.props.navigation.state.params.navFrom == 'Drawer')
+                if ( this.props.route.navFrom == 'Drawer')
                 {
                     return (
                         <Appbar.Header style={{elevation: 0}} theme={{
