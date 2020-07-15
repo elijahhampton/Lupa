@@ -307,7 +307,7 @@ class TrainerDashboardView extends React.Component {
                         onRefresh={this._onRefresh}
                     />}>
 
-<Surface style={{padding: 10, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 10, alignSelf: 'center'}}>
+<Surface style={{padding: 5, elevation: 5, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
   <Text style={{fontSize: 20, color: '#E5E5E5', padding: 5}}> Sessions </Text>
   <LineChart
     data={{
