@@ -657,16 +657,16 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         {
                                             this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
                                             <TouchableHighlight style={{borderRadius: 8}}>
-                                                                    <View style={{backgroundColor: '#2196F3', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: 110, height: 30}}>
-                        <Text>
+                                                                    <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: 110, height: 30}}>
+                        <Text style={{color: 'white', fontWeight: '500'}}>
                             Unfollow
                         </Text>
                     </View>
                                             </TouchableHighlight>
                                             :
                                             <TouchableHighlight>
-                                            <View style={{backgroundColor: '#F2F2F2', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
-<Text>
+                                            <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+<Text style={{color: 'white', fontWeight: '500'}}>
     Follow
 </Text>
 </View>
@@ -690,8 +690,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 return (
                     <View style={{width: '100%', margin: 5}}>
                                             <TouchableHighlight>
-                                            <View style={{backgroundColor: '#F2F2F2', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
-<Text>
+                                            <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+<Text style={{color: 'white', fontWeight: '500'}}>
     Message
 </Text>
 </View>
