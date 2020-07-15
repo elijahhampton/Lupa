@@ -57,7 +57,6 @@ import {
 import ImagePicker from 'react-native-image-picker';
 
 import { connect, useDispatch} from 'react-redux';
-import { NavigationActions } from 'react-navigation';
 
 import ServicedComponent from '../../../controller/lupa/interface/ServicedComponent';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -357,7 +356,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         //if current user viewing profile
         if (this.state.userUUID == this.props.lupa_data.Users.currUserData.user_uuid) {
             return (
-                <Text allowFontScaling={true} allowsEditing={false} style={{fontFamily: 'ARSMaquettePro-Bold', width: '100%', fontSize: 13,}}>
+                <Text allowFontScaling={true} allowsEditing={false} style={{  width: '100%', fontSize: 13,}}>
                 {this.state.bio}
             </Text>
             )
@@ -536,24 +535,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             null
             :
             <View style={{ width: Dimensions.get('window').width, margin: 10, padding: 10,alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                        <Button onPress={ () => this.props.navigation.dispatch(
-
-NavigationActions.navigate({
-    routeName: 'PrivateChat',
-    params: {
-        currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-        otherUserUUID:  this.props.navigation.getParam('userUUID')
-    },
-    action: NavigationActions.navigate({
-        routeName: 'PrivateChat', params: {
-            currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
-            otherUserUUID:  this.props.navigation.getParam('userUUID')
-        }
-    })
-})
-)
-
-} mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 2 }} theme={{
+                        <Button mode="contained" style={{padding: 3, margin: 10, width: "50%", elevation: 2 }} theme={{
                             roundness: 8,
                             colors: {
                                 primary: 'white',
@@ -925,8 +907,8 @@ NavigationActions.navigate({
                     {
                         this.state.userData.isTrainer == true ?
                                         <View style={{alignSelf: 'center', marginBottom: 30, alignItems: 'center' }}>
-                                        <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Bold'}}> National Academy of Sports Medicine </Text>
-                                        <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Regular'}}> Lupa Tier 1 </Text>
+                                        <Text style={{color: '#212121', fontWeight: 'bold'}}> National Academy of Sports Medicine </Text>
+                                        <Text style={{color: '#212121',  }}> Lupa Tier 1 </Text>
                                     </View>
                                     :
                                     null
@@ -1000,12 +982,12 @@ NavigationActions.navigate({
 
                             <View style={{width: '100%', alignSelf: 'center', padding: 10}}>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <Text style={{color: 'rgb(99, 99, 102)', fontFamily: 'ARSMaquettePro-Medium', padding: 10, alignSelf: 'center'}}>
+                                <Text style={{color: 'rgb(99, 99, 102)',   padding: 10, alignSelf: 'center'}}>
                                     Program Reviews
                                 </Text>
 
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Text style={{color: '#212121', fontFamily: 'ARSMaquettePro-Regular'}}>
+                                    <Text style={{color: '#212121',  }}>
                                         See all
                                     </Text>
                                     <MaterialIcons name="arrow-forward" size={15} color="#212121" />

@@ -316,7 +316,7 @@ class Programs extends React.Component {
     getBookmarkedProgramsView = () => {
         return this.state.bookmarkedPrograms.length == 0 ?
         <View>
-            <Text style={{fontFamily: 'ARSMaquettePro-Medium', paddingLeft: 20}}>
+            <Text style={{  paddingLeft: 20}}>
                 You haven't bookmarked any programs.
             </Text>
         </View>
@@ -453,7 +453,7 @@ class Programs extends React.Component {
             <View style={{flex: 1}}>
                                 <Surface style={{alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 8, margin: 5, flex: 1}}>
                                     <Image resizeMode="cover" source={item} style={{width: '100%', height: '100%', borderRadius: 15}} />
-                                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', position: 'absolute', alignSelf: 'center', fontWeight: 'bold', fontSize: 35, color: 'white'}}>
+                                    <Text style={{  position: 'absolute', alignSelf: 'center', fontWeight: 'bold', fontSize: 35, color: 'white'}}>
                                         Coming Soon
                                     </Text>
                                     <Chip style={{position: 'absolute', top: 0, right: 0, margin: 5, backgroundColor: '#2196F3'}}>
@@ -461,7 +461,7 @@ class Programs extends React.Component {
                                     </Chip>
                                 </Surface>
 
-                                <Text style={{alignSelf: 'center', fontFamily: 'ARSMaquettePro-Medium', color: '#212121'}}>
+                                <Text style={{alignSelf: 'center',   color: '#212121'}}>
                                     Aura Program
                                 </Text>
 
@@ -645,7 +645,7 @@ class Programs extends React.Component {
          <Card.Cover source={{ uri: program.program_image }} />
          <Card.Actions style={{backgroundColor: '#FFFFFF',width: '100%', justifyContent: 'space-between', padding: 10}}>
              
-             <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+             <Text style={{  fontSize: 15}}>
                  {program.program_name}
              </Text>
              <View style={{flexDirection: 'row'}}>
@@ -686,7 +686,7 @@ class Programs extends React.Component {
                     return (
                         <View style={{flex: 1, backgroundColor: 'transparent',  justifyContent: 'center'}}>
                         <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{padding: 10,fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+                        <Text style={{padding: 10,  fontSize: 15}}>
                            How will you get started?
                         </Text>
 
@@ -849,7 +849,7 @@ class Programs extends React.Component {
                     </Text>
                             </View>
 
-                            <Text style={{fontFamily: 'ARSMaquettePro-Medium', paddingLeft: 20}}>
+                            <Text style={{  paddingLeft: 20}}>
                                 You haven't subscribed to any trainers.
                             </Text>
                         </View>
@@ -915,7 +915,7 @@ const styles = StyleSheet.create({
     },
     filterText: {
         color: '#FFFFFF',
-        fontFamily: 'ARSMaquettePro-Regular',
+         
         fontSize: 15
     }
 })

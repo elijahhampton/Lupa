@@ -1,7 +1,3 @@
-/* Please do not remove this line as it prevents the Cannot Find Variable: Buffer error */
-//global.Buffer = global.Buffer || require('buffer').Buffer
-
-
 import UserController from './UserController';
 import PacksController from './PacksController';
 import SessionController from './SessionController';
@@ -27,10 +23,10 @@ export default class LupaController {
     private static _instance : LupaController;
 
     private constructor() {
-      USER_CONTROLLER_INSTANCE = UserController.getInstance();
+       USER_CONTROLLER_INSTANCE = UserController.getInstance();
       PACKS_CONTROLLER_INSTANCE = PacksController.getInstance();
-      SESSION_CONTROLLER_INSTANCE = SessionController.getInstance();
-      PROGRAMS_CONTROLLER_INSTANCE = ProgramController.getInstance();
+       SESSION_CONTROLLER_INSTANCE = SessionController.getInstance();
+       PROGRAMS_CONTROLLER_INSTANCE = ProgramController.getInstance();
     }
 
     public static getInstance() {
@@ -41,9 +37,8 @@ export default class LupaController {
       }
 
       return LupaController._instance;
+      return new LupaController()
     }
-
-    private static notifications = [];
 
     isUserLoggedIn = async () => {
       let result;

@@ -23,6 +23,7 @@ import {
     ImageBackground,
     TouchableHighlight,
     StatusBar,
+    ViewPagerAndroidBase,
 } from 'react-native';
 
 import {
@@ -258,18 +259,19 @@ class LupaHome extends React.Component {
 
     _renderItem = ({item, index}) => {
         return (
-            <>
+            <View>
                                 <Surface style={{height: 200, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 3, margin: 5}}>
                                     <Image resizeMode="cover" source={item} style={{width: '100%', height: '100%', borderRadius: 15}} />
-                                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', position: 'absolute', fontWeight: '500', fontSize: 15, color: 'white', bottom: 0, right: 0, margin: 16}}>
+                                </Surface>
+                                <View style={{margin: 15}}>
+                                <Text style={{fontWeight: '500', fontSize: 15, color: '#212121'}}>
                                         by Emily Loefstedt
                                     </Text>
-                                </Surface>
-
-                                <Text style={{alignSelf: 'center', fontSize: 15, fontFamily: 'ARSMaquettePro-Medium', color: '#212121'}}>
+                                <Text style={{fontSize: 15,   color: '#212121'}}>
                                     Resistance - Circuit Training
                                 </Text>
-                                </>
+                                </View>
+                                </View>
         );
     }
 
@@ -285,31 +287,31 @@ class LupaHome extends React.Component {
         {
             case 0: //city
                 return(
-                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: '#212121'}}>
+                    <Text style={{  color: '#212121'}}>
                         {this.state.citySearchFilterVal}
                 </Text>
                 )
             case 1: //state
                 return(
-                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: "#212121"}}>
+                    <Text style={{  color: "#212121"}}>
                     {this.state.stateSearchFilterVal}
                 </Text>
                 )
             case 2: //body type
                 return(
-                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: "#212121"}}>
+                    <Text style={{  color: "#212121"}}>
                         {this.state.bodyTypeSearchFilterVal}
                 </Text>
                 )
             case 3: //certification
                 return(
-                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: "#212121"}}>
+                    <Text style={{  color: "#212121"}}>
                         {this.state.certificationSearchFilterVal}
                 </Text>
                 )
             case 4: //price
                 return(
-                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: "#212121"}}>
+                    <Text style={{  color: "#212121"}}>
                         {this.state.priceSearchFilterVal}
                 </Text>
                 )
@@ -618,13 +620,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#212121",
     },
     mainGraphicText: {
-        fontFamily: 'ARSMaquettePro-Bold',
+         
         color: '#FFFFFF',
         fontSize: 25,
         alignSelf: 'flex-start'
     },
     subGraphicText: {
-        fontFamily: 'ARSMaquettePro-Medium',
+         
         color: '#FFFFFF',
         alignSelf: 'flex-start',
         textAlign: 'left',
@@ -641,7 +643,7 @@ const styles = StyleSheet.create({
     },
     chipText: {
         color: 'white',
-        fontFamily: 'ARSMaquettePro-Regular'
+         
     },
     chip: {
         position: 'absolute',

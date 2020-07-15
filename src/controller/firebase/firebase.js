@@ -1,16 +1,10 @@
 import * as firebase from 'firebase';
 import reactfirebase from '@react-native-firebase/app';
 import reactfirebaseauth from '@react-native-firebase/auth';
-import reactfirebasemessaging from '@react-native-firebase/messaging';
-import reactfirebaseremoteconfig from '@react-native-firebase/remote-config'
-import reactfirebaseanalytics from '@react-native-firebase/analytics'
-import reactfirebaseperformance from '@react-native-firebase/perf';
-import reactfirebaseiid from '@react-native-firebase/iid';
 import reactfirestore from '@react-native-firebase/firestore';
+import '@react-native-firebase/database';
 import reactfirebasestorage from '@react-native-firebase/storage';
-import reactfirebasedatabase from '@react-native-firebase/database';
 import axios from 'axios';
-import { sendLocalPushNotification } from '../../modules/push-notifications';
 import { getLupaUserStructure } from './collection_structures';
 
 import * as EmailValidator from 'email-validator'
@@ -38,64 +32,6 @@ const LUPA_AUTH = reactfirebaseauth()
 
 var CURRENT_USER_DOC_REF = undefined;
 var CURRENT_USER_DOC_DATA_REF = undefined;
-
-const LUPA_MESSAGING = reactfirebasemessaging();
-//LUPA_MESSAGING.usePublicVapidKey("BGW5xIJ27nU0IJws4pE-yQe-DRG_v3E1pd3-kEZyNqCnKFy-vrroiqu7LVyv0hudcyJ0Uj8M5nc2gGKgPLlfTic");
-
-async function saveTokenToDatabase(token) {
-  // Assume user is already signed in
-  const userId = await reactfirebaseauth().currentUser.uid;
-
-  let tokenObject;
-  await reactfirestore()
-  .collection('users')
-  .doc(userId)
-  .get()
-  .then(snapshot => {
-    tokenObject = snapshot.data().tokens;
-  });
-
-  tokenObject.fb_messaging_token = token;
-
-  // Add the token to the users datastore
-  await reactfirestore()
-    .collection('users')
-    .doc(userId)
-    .update({
-      tokens: tokenObject
-    });
-}
-
-export function generateMessagingToken() {
-  reactfirebasemessaging()
-      .getToken()
-      .then(token => {
-        return saveTokenToDatabase(token);
-      });
-}
-
-//LUPA_MESSAGING.registerDeviceForRemoteMessages(); apparently auto handled? Can remove when notifications are working without it
-//LUPA_MESSAGING.registerForRemoteNotifications(); deprecated
-
-LUPA_MESSAGING.onMessage(async remoteMessage => {
-  sendLocalPushNotification(remoteMessage.data.title, remoteMessage.data.body, remoteMessage.data.time)
-});
-
-LUPA_MESSAGING.setBackgroundMessageHandler(async remoteMessage => {
-  sendLocalPushNotification(remoteMessage.data.title, remoteMessage.data.body, remoteMessage.data.time)
-});
-
-async function requestNotificationPermission() {
-  const settings = await LUPA_MESSAGING.requestPermission();
-
-  if (settings == 'granted') {
-    generateMessagingToken();
-  }
-  else
-  {
-
-  }
-}
 
 export async function sendNotificationToCurrentUsersDevice() {
 
@@ -125,16 +61,6 @@ export async function sendNotificationToCurrentUsersDevice() {
       
     })
 }
-
-// Callback fired if Instance ID token is updated.
-LUPA_MESSAGING.onTokenRefresh(() => {
-  LUPA_MESSAGING.getToken().then((refreshedToken) => {
-    saveTokenToDatabase(refreshedToken);
-    // ...
-  }).catch((err) => {
-
-  });
-});
 
 const LUPA_STORAGE_BUCKET = reactfirebasestorage()
 const LUPA_USER_PROFILE_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('profile_images');
@@ -529,5 +455,4 @@ export {
   LUPA_AUTH,
   LUPA_DB_FIREBASE,
   reactfirestore as FIRESTORE_INSTANCE,
-  requestNotificationPermission,
 };

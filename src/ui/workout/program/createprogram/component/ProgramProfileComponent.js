@@ -149,10 +149,10 @@ class ProgramProfileComponent extends React.PureComponent {
         </Surface>
             </TouchableOpacity>
             <View style={{paddingLeft: 10, width: Dimensions.get('screen').width /1.3-10, alignItems: 'flex-start', justifyContent: 'center' }}>
-               <Text style={{color: '#000000', fontSize: 20,fontFamily: 'ARSMaquettePro-Medium' }}>
+               <Text style={{color: '#000000', fontSize: 20,  }}>
                     {this.getProgramName()}
                     </Text>
-                    <Text  numberOfLines={3} style={{ color: '#000000', fontSize: 12, fontFamily: 'ARSMaquettePro-Regular'}}>
+                    <Text  numberOfLines={3} style={{ color: '#000000', fontSize: 12,  }}>
                     {this.getProgramDescription()}
                     </Text>
                </View>

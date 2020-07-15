@@ -1,16 +1,5 @@
-/* Please do not remove this line as it prevents the Cannot Find Variable: Buffer error */
-//global.Buffer = global.Buffer || require('buffer').Buffer
-
-//default
-//global
-//subscription
-//
-
-import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket, LUPA_PACK_IMAGE_STORAGE_REF} from '../firebase/firebase.js';
-
-const PACKS_COLLECTION = LUPA_DB.collection('packs');
-const PACKS_EVENT_COLLECTION = LUPA_DB.collection('pack_events');
-const USERS_COLLECTION = LUPA_DB.collection('users');
+import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
+import reactfirestore from '@react-native-firebase/firestore';
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
 const algoliasearch = require('algoliasearch/reactnative.js');
@@ -20,24 +9,26 @@ const tmpIndex = algoliaIndex.initIndex("tmpDev_PACKS");
 
 import UserController from './UserController';
 import { getLupaPackStructure, getLupaPackEventStructure } from '../firebase/collection_structures';
-import { rejects } from 'assert';
-let USER_CONTROLLER_INSTANCE;
 
 class PacksController {
-  private static instance : PacksController;
+  private static _instance : PacksController;
   private fbStorage = new FirebaseStorageBucket();
+  private PACKS_COLLECTION = reactfirestore().collection('packs')
+  private PACKS_EVENT_COLLECTION = reactfirestore().collection('pack_events');
+  private  USERS_COLLECTION = reactfirestore().collection('users');
 
   private constructor() {
-    USER_CONTROLLER_INSTANCE = UserController.getInstance();
+
   }
 
-  static getInstance() {
-      if (!PacksController.instance) {
-          PacksController.instance = new PacksController();
-          //One time initializaitons here..
+  public static getInstance() {
+      if (!PacksController._instance)
+      {
+        PacksController._instance = new PacksController();
+        return PacksController._instance;
       }
 
-      return PacksController.instance;
+return PacksController._instance;
   }
 
   inviteUserToPacks = async (arrOfUUIDS, userUUID) => {
@@ -45,8 +36,8 @@ class PacksController {
     let packDocument;
     for (let i = 0; i < arrOfUUIDS.length; i++)
     {
-      packDocument = await PACKS_COLLECTION.doc(arrOfUUIDS[i]);
-      await PACKS_COLLECTION.doc(arrOfUUIDS[i]).get().then(result => {
+      packDocument = await this.PACKS_COLLECTION.doc(arrOfUUIDS[i]);
+      await this.PACKS_COLLECTION.doc(arrOfUUIDS[i]).get().then(result => {
         packDocumentData = result.data();
       })
       let updatedInvitedMembers = await packDocumentData.pack_invited_members;
@@ -125,7 +116,7 @@ class PacksController {
   indexPacksIntoAlgolia = async () => {
     let records = [];
 
-    await PACKS_COLLECTION.get().then(docs => {
+    await this.PACKS_COLLECTION.get().then(docs => {
       docs.forEach(doc => {
               //Load pack from document
       let pack = doc.data();
@@ -185,13 +176,13 @@ class PacksController {
   }
 
   acceptPackInviteByPackUUID = async (packUUID, userUUID) => {
-    let packDocumentData = [], userDocumentData = [];
-    let packDocument = PACKS_COLLECTION.doc(packUUID);
-    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+    let packDocumentData = {}, userDocumentData = {};
+    let packDocument = this.PACKS_COLLECTION.doc(packUUID);
+    await this.PACKS_COLLECTION.doc(packUUID).get().then(result => {
       packDocumentData = result.data();
     });
-    let userDocument = USERS_COLLECTION.doc(userUUID);
-    await USERS_COLLECTION.doc(userUUID).get().then(result => {
+    let userDocument = this.USERS_COLLECTION.doc(userUUID);
+    await this.USERS_COLLECTION.doc(userUUID).get().then(result => {
       userDocumentData = result.data();
     })
 
@@ -235,8 +226,8 @@ class PacksController {
 
   declinePackInviteByPackUUID = async (packUUID, userUUID) => {
     let packDocumentData;
-    let packDocument = PACKS_COLLECTION.doc(packUUID);
-    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+    let packDocument = this.PACKS_COLLECTION.doc(packUUID);
+    await this.PACKS_COLLECTION.doc(packUUID).get().then(result => {
       packDocumentData = result.data();
     });
 
@@ -267,8 +258,8 @@ class PacksController {
   {
     let currentPackDocData; 
 
-        let currentPackDoc = await PACKS_COLLECTION.doc(packID);
-        await PACKS_COLLECTION.doc(packID).get().then(snapshot => {
+        let currentPackDoc = await this.PACKS_COLLECTION.doc(packID);
+        await this.PACKS_COLLECTION.doc(packID).get().then(snapshot => {
             currentPackDocData = snapshot.data();
         });
 
@@ -318,8 +309,8 @@ class PacksController {
   {
     let currentPackEventDocData; 
 
-        let currentPackEventDoc = await PACKS_EVENT_COLLECTION.doc(eventUUID);
-        await PACKS_EVENT_COLLECTION.doc(eventUUID).get().then(snapshot => {
+        let currentPackEventDoc = await this.PACKS_EVENT_COLLECTION.doc(eventUUID);
+        await this.PACKS_EVENT_COLLECTION.doc(eventUUID).get().then(snapshot => {
             currentPackEventDocData = snapshot.data();
         });
 
@@ -335,8 +326,8 @@ class PacksController {
 
   requestToJoinPack = async (userUUID, packUUID) => {
     let packData;
-    let packDocument = PACKS_COLLECTION.doc(packUUID);
-    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+    let packDocument = this.PACKS_COLLECTION.doc(packUUID);
+    await this.PACKS_COLLECTION.doc(packUUID).get().then(result => {
       packData = result.data();
     });
 
@@ -354,8 +345,8 @@ class PacksController {
 
   acceptJoinPackRequest = async (userUUID, packUUID) => {
     let packData;
-    let packDocument = PACKS_COLLECTION.doc(packUUID);
-    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+    let packDocument = this.PACKS_COLLECTION.doc(packUUID);
+    await this.PACKS_COLLECTION.doc(packUUID).get().then(result => {
       packData = result.data();
     });
 
@@ -376,8 +367,8 @@ class PacksController {
 
   declineJoinPackRequest = async (userUUID, packUUID) => {
     let packData;
-    let packDocument = PACKS_COLLECTION.doc(packUUID);
-    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+    let packDocument = this.PACKS_COLLECTION.doc(packUUID);
+    await this.PACKS_COLLECTION.doc(packUUID).get().then(result => {
       packData = result.data();
     });
 
@@ -395,7 +386,7 @@ class PacksController {
 
   getPackInvitesFromUUID = async (uuid) => {
     let packs = [];
-    await PACKS_COLLECTION.where('pack_invited_members', 'array-contains', uuid).get().then(docs => {
+    await this.PACKS_COLLECTION.where('pack_invited_members', 'array-contains', uuid).get().then(docs => {
       docs.forEach(doc => {
         let packData = doc.data();
         packData.id = doc.id;
@@ -412,7 +403,7 @@ class PacksController {
 
   async getDefaultPacks() {
     let defaultPacks = [];
-    await PACKS_COLLECTION.where('pack_isDefault', '==', true).get().then(querySnapshot => {
+    await this.PACKS_COLLECTION.where('pack_isDefault', '==', true).get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         let snapshot = doc.data();
         let snapshotID = doc.id;
@@ -426,7 +417,7 @@ class PacksController {
 
   async getCurrentUserDefaultPacks() {
     let defaultPacks = [];
-    await PACKS_COLLECTION.where('pack_isDefault', '==', true).where('pack_members', 'array-contains', LUPA_AUTH.currentUser.uid).get().then(querySnapshot => {
+    await this.PACKS_COLLECTION.where('pack_isDefault', '==', true).where('pack_members', 'array-contains', LUPA_AUTH.currentUser.uid).get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         let snapshot = doc.data();
         let snapshotID = doc.id;
@@ -443,7 +434,7 @@ class PacksController {
    */
   getSubscriptionBasedPacks = async () => {
     let subscriptionPacks = [];
-    await PACKS_COLLECTION.where('pack_isSubscription', '==', true).where('pack_isDefault', '==', false).get().then(querySnapshot => {
+    await this.PACKS_COLLECTION.where('pack_isSubscription', '==', true).where('pack_isDefault', '==', false).get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         let snapshot = doc.data();
         let snapshotID = doc.id;
@@ -458,7 +449,7 @@ class PacksController {
   getExplorePagePacks = async () => {
     let explorePagePacks = [];
 
-    await PACKS_COLLECTION.where('pack_isDefault', '==', false).get().then(querySnapshot => {
+    await this.PACKS_COLLECTION.where('pack_isDefault', '==', false).get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
         let snapshot = doc.data();
         let snapshotID = doc.id;
@@ -484,7 +475,7 @@ class PacksController {
           for (let i = 0; i < packsData.length; i++)
           {
             let pack = packsData[i];
-              await PACKS_COLLECTION.doc(pack).get().then(snapshot => {
+              await this.PACKS_COLLECTION.doc(pack).get().then(snapshot => {
                 let data = snapshot.data();
                 data.pack_uuid = snapshot.id;
                 currentUserPacks.push(data);
@@ -493,7 +484,7 @@ class PacksController {
         } catch(err) {
           //if we have an error at least we will get the data for the default announcements pack and give it to the user
           let announcementsPackData;
-          await PACKS_COLLECTION.doc('xezOnF9aQzyCgH1ohGrR').get().then(snapshot => {
+          await this.PACKS_COLLECTION.doc('xezOnF9aQzyCgH1ohGrR').get().then(snapshot => {
             announcementsPackData = snapshot.data();
             announcementsPackData.pack_uuid = snapshot.id;
             currentUserPacks.push(announcementsPackData);
@@ -506,7 +497,7 @@ class PacksController {
 
   getPackInformationByUserUUID = async (uuid) => {
     let currUserPacks = [];
-    await  PACKS_COLLECTION.where('pack_members', 'array-contains', uuid).get().then(async querySnapshot => {
+    await  this.PACKS_COLLECTION.where('pack_members', 'array-contains', uuid).get().then(async querySnapshot => {
      querySnapshot.forEach(userPackDoc => {
         let snapshotID = userPackDoc.id;
         let snapshot = userPackDoc.data();
@@ -521,7 +512,7 @@ class PacksController {
   getPackInformationByUUID = async (uuid) => {
     let packInformation;
     try {
-      await PACKS_COLLECTION.doc(uuid).get().then(result => {
+      await this.PACKS_COLLECTION.doc(uuid).get().then(result => {
         packInformation = result.data();
         packInformation.pack_uuid = result.id;
       });
@@ -534,11 +525,11 @@ class PacksController {
 
   getPackEventsByUUID = async (packID) => {
     let events = [];
-    let result;
+    let result = {}
     if (packID != undefined)
     {
 
-      await PACKS_EVENT_COLLECTION.where('pack_uuid', '==', packID).get().then(docs => {
+      await this.PACKS_EVENT_COLLECTION.where('pack_uuid', '==', packID).get().then(docs => {
         docs.forEach(doc => {
           result = doc.data();
 
@@ -639,11 +630,11 @@ class PacksController {
   updatePackEventField = async (eventUUID, fieldToUpdate, value, optionalData="") =>
   {
     let currentDocumentData;
-    await PACKS_EVENT_COLLECTION.doc(eventUUID).get().then(result => {
+    await this.PACKS_EVENT_COLLECTION.doc(eventUUID).get().then(result => {
       currentDocumentData = result.data();
     })
 
-    let currentDocument = await PACKS_EVENT_COLLECTION.doc(eventUUID);
+    let currentDocument = await this.PACKS_EVENT_COLLECTION.doc(eventUUID);
 
     switch(fieldToUpdate)
     {
@@ -663,7 +654,7 @@ class PacksController {
 
     for (let i = 0; i < arr.length; ++i)
     {
-      await PACKS_EVENT_COLLECTION.doc(arr[i]).get().then(doc => {
+      await this.PACKS_EVENT_COLLECTION.doc(arr[i]).get().then(doc => {
         if (doc.exists) {
           let snapshot = doc.data();
           snapshot.events.forEach(event => {
@@ -682,7 +673,7 @@ class PacksController {
     const lupaPackStructure = getLupaPackStructure(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, type, packVisibility);
     let packRef;
     let packData;
-    await PACKS_COLLECTION.add(lupaPackStructure).then(ref => {
+    await this.PACKS_COLLECTION.add(lupaPackStructure).then(ref => {
       packRef = ref.id;
     });
 
@@ -780,7 +771,7 @@ class PacksController {
     newPackEvent.pack_uuid = packUUID; //Consider moving this into the parameters later..
    
     let eventUUID, eventData, imageURL;
-    await PACKS_EVENT_COLLECTION.add(newPackEvent).then(ref => {
+    await this.PACKS_EVENT_COLLECTION.add(newPackEvent).then(ref => {
       eventUUID = ref.id;
     })
 
@@ -808,7 +799,7 @@ class PacksController {
 
   getPackEventInformationByUUID = async (uuid) => {
     let eventData;
-    await PACKS_EVENT_COLLECTION.doc(uuid).get().then(snapshot => {
+    await this.PACKS_EVENT_COLLECTION.doc(uuid).get().then(snapshot => {
       eventData = snapshot.data();
       eventData.pack_event_uuid = snapshot.id;
     });
@@ -818,7 +809,7 @@ class PacksController {
 
   removeUserFromPackByUUID  = async (packUUID, userUUID) => {
     let snapshot;
-    await PACKS_COLLECTION.doc(packUUID).get().then(result => {
+    await this.PACKS_COLLECTION.doc(packUUID).get().then(result => {
       snapshot = result.data();
     });
 
@@ -829,7 +820,7 @@ class PacksController {
       return uuids != userUUID;
     });
 
-    await PACKS_COLLECTION.doc(packUUID).set(
+    await this.PACKS_COLLECTION.doc(packUUID).set(
       {
         pack_members: updatedPackMemberList
       }, 
@@ -842,9 +833,9 @@ class PacksController {
   attendPackEvent = async (packEventUUID, packEventTitle, userUUID) => {
     let packEventData;
     let updatedPackEventAttendees;
-    let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
+    let currentDocument = this.PACKS_EVENT_COLLECTION.doc(packEventUUID);
 
-   await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
+   await this.PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
       packEventData = result.data();
     })
 
@@ -860,9 +851,9 @@ class PacksController {
   unattendPackEvent = async  (packEventUUID, packEventTitle, userUUID) => {
     let packEventData;
     let updatedPackEventAttendees;
-    let currentDocument = PACKS_EVENT_COLLECTION.doc(packEventUUID);
+    let currentDocument = this.PACKS_EVENT_COLLECTION.doc(packEventUUID);
 
-    await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
+    await this.PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
       packEventData = result.data();
     })
 
@@ -880,7 +871,7 @@ class PacksController {
     let packEventData;
     let isAttending = false;
 
-   await PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
+   await this.PACKS_EVENT_COLLECTION.doc(packEventUUID).get().then(result => {
       packEventData = result.data();
     });
 
@@ -1013,7 +1004,6 @@ getActivePacksBasedOnLocation = async (location) => {
   });
 }
 
-//No subscription packs
 getCommunityPacksBasedOnLocation = async (location) => {
   let fallbackQuery;
   let resultArray = [];
@@ -1024,7 +1014,7 @@ getCommunityPacksBasedOnLocation = async (location) => {
       query: location.city,
       attributesToHighlight: ['pack_location'],
     }, async (err, {hits}) => {
-      if (err) throw rejects(err);
+      
   
   
   
@@ -1113,7 +1103,7 @@ getPacksWithoutParticipatingUUID = async (uuid) => {
   let retVal = [];
 
   try {
-    await PACKS_COLLECTION.where('pack_isSubscription', '==', false).limit(6).get().then(docs => {
+    await this.PACKS_COLLECTION.where('pack_isSubscription', '==', false).limit(6).get().then(docs => {
       docs.forEach(snapshot => {
         let data = snapshot.data();
         retVal.push(data);

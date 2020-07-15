@@ -77,7 +77,7 @@ function ProgramSearchResultCard(props) {
                 <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: result.program_image}} />
             </Surface>
             <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                <Text style={{alignSelf: 'flex-end', fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
+                <Text style={{alignSelf: 'flex-end',   fontSize: 12}}>
                     One on One 
                 </Text>
             </View>
@@ -85,7 +85,7 @@ function ProgramSearchResultCard(props) {
 
         <View style={{flex: 3, height: '100%', justifyContent: 'center'}}>
             <View style={{}}>
-                <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, color: '#212121'}}>
+                <Text style={{  fontSize: 15, color: '#212121'}}>
                     {result.program_name}
                 </Text>
             </View>
@@ -99,7 +99,7 @@ function ProgramSearchResultCard(props) {
 
             <View style={{flex: 1, bottom: 0,width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
             <View style={{flex: 1,justifyContent: 'flex-end'}}>
-                <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 10, color: '#212121'}}>
+                <Text style={{  fontSize: 10, color: '#212121'}}>
                  {result.program_duration} sessions per week
                 </Text>
             </View>

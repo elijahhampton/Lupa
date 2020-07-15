@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     subtitleText: {
         fontWeight: '200',
         fontSize: 13,
-        fontFamily: 'ARSMaquettePro-Regular',
+         
         color: 'grey'
     },
     chipIndicator: {

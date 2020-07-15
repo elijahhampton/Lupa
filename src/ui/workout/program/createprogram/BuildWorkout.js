@@ -104,7 +104,7 @@ function WorkoutSchemeModal(props) {
             <View style={{flex: 1, padding: 5}}>
                 <View style={{flex: 1}}>
                     <View style={{padding: 5}}>
-                    <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 20}}>
+                    <Text style={{  fontSize: 20}}>
                        Change workout sets and reps
                     </Text>
                     <Caption>
@@ -121,13 +121,13 @@ function WorkoutSchemeModal(props) {
                     </Text>
                     <View style={{flex: 1, justifyContent: 'center'}}>
                         <Text>
-                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+                        <Text style={{  fontSize: 15}}>
                             Reps:
                         </Text>
                         <Text>
                             {" "}
                         </Text>
-                        <Text  style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Medium', color: '#2196F3'}}>
+                        <Text  style={{fontSize: 20,   color: '#2196F3'}}>
                             {repSliderValue}
                         </Text>
                         </Text>
@@ -137,13 +137,13 @@ function WorkoutSchemeModal(props) {
 
                     <View style={{flex: 1, justifyContent: 'center'}}>
                     <Text>
-                        <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 15}}>
+                        <Text style={{  fontSize: 15}}>
                             Sets:
                         </Text>
                         <Text>
                             {" "}
                         </Text>
-                        <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Medium', color: '#2196F3'}}>
+                        <Text style={{fontSize: 20,   color: '#2196F3'}}>
                             {setSliderValue}
                         </Text>
                         </Text>
@@ -852,7 +852,7 @@ this.getWorkoutSurfaceContent(workout)
 
         await this.props.saveProgramWorkoutData(workoutData);
 
-        this.props.goToIndex(0);
+        this.props.goToIndex(2);
     }
 
     handleExitBuildAWorkout = async () => {
@@ -1740,7 +1740,7 @@ this.getWorkoutSurfaceContent(workout)
           }}
        >
            <View style={{flex: 1}}>
-               <Text style={{alignSelf: 'center', fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, padding: 10}}>
+               <Text style={{alignSelf: 'center',   fontSize: 15, padding: 10}}>
                    Workout Options
                </Text>
                
@@ -1974,7 +1974,7 @@ const styles = StyleSheet.create({
       },
       exerciseOptionHeaderText: {
         fontSize: 15, 
-        fontFamily: 'ARSMaquettePro-Medium'
+         
       },
       exerciseOptionIcon: {
           marginHorizontal: 10,

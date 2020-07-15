@@ -118,7 +118,7 @@ function AddTagsModal(props) {
           <KeyboardAvoidingView style={{flex: 1}}>
       <View style={{flex: 1}}>
         <View style={{flex: 1}}>
-          <Text style={{padding: 10, fontSize: 20, fontFamily: 'ARSMaquettePro-Bold'}}>
+          <Text style={{padding: 10, fontSize: 20, fontWeight: 'bold'}}>
             Add your own tags
           </Text>
         </View>
@@ -286,7 +286,7 @@ function ProgramInformation(props) {
          )
 
          //move to next page
-        props.goToIndex(2)
+        props.goToIndex(1)
      }
 
     /**
@@ -426,7 +426,7 @@ function ProgramInformation(props) {
               Choose the days of which your program will require work.
             </Caption>
             <Slider step={1} value={programDuration} onValueChange={val => setProgramDuration(val)} thumbTintColor="#2196F3" minimumValue={1} maximumValue={15} value={programDuration} />
-            <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontFamily: "ARSMaquettePro-Medium", fontSize: 15}}>
+            <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontSize: 15}}>
                                 {programDuration} / week
                                 </Text>
          </View>
@@ -442,12 +442,12 @@ function ProgramInformation(props) {
                                     You can change this later.
                                   </Text>
                                 </Caption>
-                               {/* <Text style={{padding: 3, color: '#0076d4', fontFamily: "ARSMaquettePro-Medium", fontSize: 16}}>
+                               {/* <Text style={{padding: 3, color: '#0076d4', fontSize: 16}}>
                                 $0 - $10.99
         </Text>*/}
 
     <Slider step={1} value={programPrice} onValueChange={val => setProgramPrice(val)} thumbTintColor="#2196F3" minimumValue={0} maximumValue={25}/>
-    <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontFamily: "ARSMaquettePro-Medium", fontSize: 15}}>
+    <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontSize: 15}}>
                                 Current: ${programPrice}
                                 </Text>
     <View>
@@ -523,7 +523,7 @@ function ProgramInformation(props) {
 />
 
                     <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+                        <Text style={{ }}>
                             One on One
                         </Text>
                         <Caption style={{textAlign:'center'}}>
@@ -596,6 +596,21 @@ function ProgramInformation(props) {
       }
     }
 
+    getOptionsButton = () => {
+      switch(currIndex) {
+        case 0:
+          return (
+            <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={currIndex == 0 ? () => setCurrIndex(2) : handleSaveProgramInformation} mode="contained">
+              <Text>
+                Next
+              </Text>
+            </Button>
+          )
+        case 1:
+          return 
+      }
+    }
+
     return (
         <View style={styles.root}>
             <SafeAreaView />
@@ -610,18 +625,20 @@ function ProgramInformation(props) {
     Cancel
   </Text>
 </Button>
-<Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={currIndex == 0 ? () => setCurrIndex(2) : handleSaveProgramInformation} mode="contained">
   {
-    currIndex == 0 ?
+        currIndex == 0 ?
+    <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={() => setCurrIndex(2)} mode="contained">
     <Text>
     Next
   </Text>
+  </Button>
   :
-  <Text>
-  Add workouts
-</Text>
+  <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={handleSaveProgramInformation} mode="contained">
+    <Text>
+    Add workouts
+  </Text>
+  </Button>
   }
-</Button>
 </View>
         </View>
     )

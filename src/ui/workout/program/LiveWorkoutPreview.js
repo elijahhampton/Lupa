@@ -181,7 +181,7 @@ class LiveWorkoutPreview extends React.Component {
                         <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
                     </Left>
                     <Body>
-                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: RFPercentage(2)}}>
+                        <Text style={{  fontSize: RFPercentage(2)}}>
                             {this.getProgramName()}
                         </Text>
                     </Body>
@@ -193,7 +193,7 @@ class LiveWorkoutPreview extends React.Component {
                     <View style={styles.viewOverlay} />
                    {this.getUserAvatar()}
                     <View style={{flex: 1, justifyContent: 'center'}}>
-                        <Text style={{color: '#FFFFFF', fontFamily: 'ARSMaquettePro-Medium', fontSize: 20, paddingLeft: 12 }}>
+                        <Text style={{color: '#FFFFFF',   fontSize: 20, paddingLeft: 12 }}>
                             Look ahead
                         </Text>
                         <View >
@@ -284,7 +284,7 @@ class LiveWorkoutPreview extends React.Component {
                                             {
                                                 this.getUserAvatar()
                                             }
-                                            <Text style={{padding: 3, color: '#FFFFFF', fontSize: 15, fontWeight: '500', fontFamily: 'ARSMaquettePro-Regular'}}>
+                                            <Text style={{padding: 3, color: '#FFFFFF', fontSize: 15, fontWeight: '500',  }}>
                                                 {
                                                     this.getDisplayName()
                                                 }
@@ -297,7 +297,7 @@ class LiveWorkoutPreview extends React.Component {
                                                 thin={false}
                                                 style={{padding: 5}}
                                                         /> 
-                                            <Text style={{padding: 5, color: '#FFFFFF', fontSize: 15, fontWeight: '500', fontFamily: 'ARSMaquettePro-Regular'}}>
+                                            <Text style={{padding: 5, color: '#FFFFFF', fontSize: 15, fontWeight: '500',  }}>
                                            {this.getCertification()}
                                             </Text>
                                         </View>
@@ -332,7 +332,7 @@ class LiveWorkoutPreview extends React.Component {
                         </View>
 
                         <View style={{flex: 1,}}>
-                            <Text style={{color: '#FFFFFF', padding: 5, fontFamily: 'ARSMaquettePro-Regular', fontSize: 20}}>
+                            <Text style={{color: '#FFFFFF', padding: 5,   fontSize: 20}}>
                                 Workouts Preview
                             </Text>
                             <View style={{flex: 1}}>
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     contentText: {
         color: '#FFFFFF',
         fontSize: 16,
-        fontFamily: 'ARSMaquettePro-Medium'
+         
     },
     textContainer: {
         alignItems: 'center',

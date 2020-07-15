@@ -13,8 +13,6 @@ import {
     Surface, FAB
 } from 'react-native-paper';
 
-import { Dropdown } from 'react-native-material-dropdown';
-
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LupaCalendar from '../../calendar/LupaCalendar';
 

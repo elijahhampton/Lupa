@@ -12,32 +12,17 @@ import {
   StyleSheet,
   AsyncStorage,
   StatusBar,
-  View,
-  Dimensions,
-} from "react-native";
 
-import Dashboard from './ui/navigators/LupaDrawerNavigator';
+} from "react-native";
 
 import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal';
 
 import LupaController from './controller/lupa/LupaController';
-import PackNavigator from './ui/navigators/PackNavigator'
-import ProfileNavigator from './ui/navigators/ProfileNavigator'
-import CreateProgram from './ui/workout/program/createprogram/CreateProgram'
 
 import {
   logoutUser,
 } from './controller/lupa/auth/auth'
 
-import PushNotification from 'react-native-push-notification'
-import { connect } from 'react-redux';
-import { generateMessagingToken } from "./controller/firebase/firebase";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import LupaHomeNavigator from "./ui/navigators/LupaHomeNavigator";
-
-import FeatherIcon from "react-native-vector-icons/Feather";
-import DashboardNavigator from "./ui/navigators/DashboardNavigator";
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 
 class Lupa extends React.Component {
@@ -58,23 +43,10 @@ class Lupa extends React.Component {
 
     this._showWelcomeModal = this._showWelcomeModal.bind(this);
     this._showWelcomeModal();
-
-    PushNotification.configure({
-      // (required) Called when a remote or local notification is opened or received
-      onNotification: function(notification) {
-
-        console.log('LOCAL NOTIFICATION ==>', notification)
-      },
-    popInitialNotification: true,
-      requestPermissions: false,
-    })
-
-    generateMessagingToken(); //Remove this if it generates the tokens .. keep for now
   }
 
   componentDidMount = async () => {
     this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-    await generateMessagingToken();
   }
 
   _showWelcomeModal = async () => {

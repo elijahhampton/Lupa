@@ -354,10 +354,10 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   welcomeBackText: {
-    fontSize: 28, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular'
+    fontSize: 28, fontWeight: '700', color: 'black',  
   },
   signInText: {
-    fontSize: 28, fontWeight: '700', color: '#1565C0', fontFamily: 'ARSMaquettePro-Regular'
+    fontSize: 28, fontWeight: '700', color: '#1565C0',  
   },
   noAccountTextContainer: {
     flexDirection: 'row', marginTop: 5

@@ -90,7 +90,7 @@ function InviteFriendsModal(props) {
         <Modal visible={props.isVisible} animated={true} presentationStyle="fullScreen" style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <SafeAreaView style={{flex: 1, backgroundColor: 'transparent'}}>
                <View style={{flex: 0.5, padding: 10, alignItems: 'center', justifyContent: 'space-evenly'}}>
-               <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: RFValue(15), fontWeight: '300'}}>
+               <Text style={{  fontSize: RFValue(15), fontWeight: '300'}}>
                     Invite your contacts
                 </Text>
 
@@ -162,7 +162,7 @@ function InviteFriendsModal(props) {
                         props.showGettingStarted == true ?
                          <View style={{flex: 1.5}}>
                          <View>
-                         <Text style={{padding: 12, fontFamily: 'ARSMaquettePro-Medium', alignSelf: 'center', fontSize: RFValue(15), fontWeight: '300'}}>
+                         <Text style={{padding: 12,   alignSelf: 'center', fontSize: RFValue(15), fontWeight: '300'}}>
                               Getting started checklist
                           </Text>
                          </View>

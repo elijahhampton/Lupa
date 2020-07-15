@@ -590,7 +590,7 @@ export default class CameraScreen extends React.Component {
       </RNCamera>
 </Surface>
 <View style={{flex: 0.15, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-  <Text style={{color: 'white', fontSize: 16, fontFamily: 'ARSMaquettePro-Medium'}}>
+  <Text style={{color: 'white', fontSize: 16,  }}>
       Perform your best two reps.  For the best capture include your entire body.
   </Text>
   </View>

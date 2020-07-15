@@ -6,7 +6,6 @@ import {
 
 import {request, PERMISSIONS, RESULTS, check} from 'react-native-permissions';
 import Contacts from 'react-native-contacts'; 
-import { requestNotificationPermission } from '../../firebase/firebase';
 
 /**
 PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL;
@@ -190,6 +189,4 @@ export default _requestPermissionsAsync = () => {
             //denied
         }
       })
-
-  requestNotificationPermission();
 }

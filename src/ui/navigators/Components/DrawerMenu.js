@@ -63,7 +63,7 @@ function DrawerMenu(props) {
   }
 
   const navigateToTrainerInformation = () => {
-    navigation.navigate('TrainerInformation', {
+    navigation.navigate('RegisterAsTrainer', {
       navFrom: 'Drawer'
     })
   }
@@ -201,7 +201,7 @@ export default DrawerMenu;
     },
     drawerHeaderText: { 
       fontSize: 15,
-      fontFamily: 'ARSMaquettePro-Regular'
+       
     },
     iconMargin: {
       marginHorizontal: 8
