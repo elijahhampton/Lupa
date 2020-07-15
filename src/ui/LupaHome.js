@@ -22,6 +22,7 @@ import {
     Animated,
     ImageBackground,
     TouchableHighlight,
+    TextInput,
     StatusBar,
     ViewPagerAndroidBase,
 } from 'react-native';
@@ -62,6 +63,8 @@ import {Picker} from '@react-native-community/picker';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import CircularUserCard from './user/component/CircularUserCard';
 import { MenuIcon } from './icons';
+import App from '../../App';
+import { SearchBar } from 'react-native-elements';
 
 const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
 const SamplePhotoOne = require('./images/programs/sample_photo_one.jpg')
@@ -259,9 +262,9 @@ class LupaHome extends React.Component {
 
     _renderItem = ({item, index}) => {
         return (
-            <View>
+            <TouchableOpacity>
                                 <Surface style={{height: 200, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 3, margin: 5}}>
-                                    <Image resizeMode="cover" source={item} style={{width: '100%', height: '100%', borderRadius: 15}} />
+                                    <Image resizeMode="cover" source={{uri: item.program_image}} style={{width: '100%', height: '100%', borderRadius: 15}} />
                                 </Surface>
                                 <View style={{margin: 15}}>
                                 <Text style={{fontWeight: '500', fontSize: 15, color: '#212121'}}>
@@ -271,7 +274,7 @@ class LupaHome extends React.Component {
                                     Resistance - Circuit Training
                                 </Text>
                                 </View>
-                                </View>
+                                </TouchableOpacity>
         );
     }
 
@@ -440,10 +443,18 @@ class LupaHome extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+            <View style={styles.root}>
                 
-                <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0}}>
+                <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                 <MenuIcon customStyle={{margin: 10}} onPress={() => this.props.navigation.openDrawer()} />
+                <SearchBar placeholder="Search fitness programs"
+                        onChangeText={text => this._performSearch(text)} 
+                        platform="ios"
+                        searchIcon={<FeatherIcon name="search" size={15} />}
+                        containerStyle={{backgroundColor: "transparent", width: '90%'}}
+                        inputContainerStyle={{backgroundColor: 'rgb(242, 242, 247))'}}
+                        inputStyle={{fontSize: 15}}
+                        value={this.state.searchValue}/>
                 </Appbar.Header>
 
                 {
@@ -471,34 +482,6 @@ class LupaHome extends React.Component {
                     :
                <View style={{flex: 1}}>
 <ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2}}>
-<View style={{width: Dimensions.get('window').width}}>
-       {/* <Input 
-
-        rightIconContainerStyle={{position: 'absolute', right: 20}} 
-        rightIcon={() => <FeatherIcon name="arrow-right" size={15} />} 
-        placeholder="Looking for a trainer?" placeholderTextColor="#212121" 
-        style={{}} 
-        containerStyle={{width: Dimensions.get('screen').width, padding: 0, marginLeft: 10}} 
-        inputStyle={{borderColor: 'black', borderBottomWidth: 1.5, borderBottomEndRadius: 0}} 
-        value={this.state.searchValue}
-        onChangeText={text => this._performSearch(text)}
-       />*/}
-
-       <Searchbar 
-       style={{marginVertical: 5, marginTop: 15, borderRadius: 10, width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
-       placeholder="Search workout programs, fitness professionals" 
-       placeholderTextColor="rgb(99, 99, 102)" 
-       icon={() => <FeatherIcon name="search" size={20} /> }
-       inputStyle={{width: '100%', fontWeight: '300', fontSize: 12, padding: 0, margin: 0, width: '100%'}}
-       theme={{
-           colors: {
-               primary: '#1089ff',
-           }
-       }}
-       onChangeText={text => this._performSearch(text)}
-       value={this.state.searchValue}
-       />
-        </View>
 
         <View
                     style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}>
@@ -512,7 +495,7 @@ class LupaHome extends React.Component {
 
 
                     <Carousel 
-                        data={this.state.samplePhotoData}
+                        data={this.state.featuredPrograms}
                         itemWidth={Dimensions.get('window').width - 100}
                         sliderWidth={Dimensions.get('window').width}
                         scrollEnabled={true}
@@ -522,18 +505,19 @@ class LupaHome extends React.Component {
                         contentContainerCustomStyle={{alignItems: 'center', justifyContent: 'center'}}
                         />
 
+                        <Divider style={{marginHorizontal: 20}} />
+
                         </View>
 
 <View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}>
                     
                     <View style={{padding: 5, width: '80%'}}>
-                    <Text style={{fontSize: RFValue(15), fontWeight: '400', paddingVertical: 10, paddingLeft: 10 }}>
+                    <Text style={{fontSize: RFValue(15), fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
                        Start training with...
                     </Text>
-                    <View style={{marginLeft: 10, width: 30, height: 3, backgroundColor: 'black', borderBottomEndRadius: 0}} />
                     </View>
 
-                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                    <ScrollView pagingEnabled={true} horizontal={true} showsHorizontalScrollIndicator={false}>
                             {
                                 this.renderNearbyUsers()
                             }
@@ -542,10 +526,10 @@ class LupaHome extends React.Component {
 
 <View style={{padding: 20, height: 250, alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
                         <View>
-                        <Text style={{fontWeight: '400', paddingLeft: 10,  fontSize: 20, marginVertical: 5}}>
+                        <Text style={{fontWeight: '400', marginHorizontal: 10, fontSize: 20, marginVertical: 5}}>
                             Starting and continuing a journey of a lifetime
                         </Text>
-                        <Text style={{paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                        <Text style={{marginHorizontal: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
                             It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
                         </Text>
                         </View>
@@ -564,7 +548,6 @@ class LupaHome extends React.Component {
                     <Text style={{fontSize: RFValue(15), fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
                         Top picks
                         </Text>
-                        <View style={{marginLeft: 10, width: 30, height: 3, backgroundColor: 'black', borderBottomEndRadius: 0}} />
                     </View>
                     <ScrollView onScroll={(event) => {
                     }} contentContainerStyle={{}} scrollEnabled={this.state.featuredPrograms.length > 1 ? true : false} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
@@ -617,7 +600,7 @@ class LupaHome extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#212121",
+        backgroundColor: "#FFFFFF",
     },
     mainGraphicText: {
          
