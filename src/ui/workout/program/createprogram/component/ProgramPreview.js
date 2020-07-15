@@ -42,7 +42,7 @@ function ProgramPreview(props) {
         <SafeAreaView style={{flex: 1, backgroundColor: '#F2F2F2'}}>
             <View style={{flex: 1}}>
                                         <View style={{padding: 10}}>
-                    <Text style={{fontSize: 15, padding: 10, fontFamily: 'ARSMaquettePro-Medium', color: '#BDBDBD'}}>
+                    <Text style={{fontSize: 15, padding: 10,   color: '#BDBDBD'}}>
                        Review your program
                     </Text>
                 </View>
@@ -116,7 +116,7 @@ function ProgramPreview(props) {
                 </Surface>
 
                 <View style={{flex: 1}}>
-                    <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular', padding: 3}}>
+                    <Text style={{fontSize: 20,   padding: 3}}>
                         Program Preview
                     </Text>
                 <ScrollView horizontal 
@@ -169,10 +169,10 @@ function ProgramPreview(props) {
 }
 
 const styles = StyleSheet.create({
-    identifierText: {textAlign: 'center', fontFamily: 'ARSMaquettePro-Medium', fontSize: 12, color: 'rgb(44, 44, 46)'},
-    identifierValueText: {textAlign: 'center', color: '#212121', fontFamily: 'ARSMaquettePro-Regular', fontSize: 12},
+    identifierText: {textAlign: 'center',   fontSize: 12, color: 'rgb(44, 44, 46)'},
+    identifierValueText: {textAlign: 'center', color: '#212121',   fontSize: 12},
     previewText: {
-        fontFamily: 'ARSMaquettePro-Medium',
+         
         padding: 10,
         fontSize: 16,
         color: 'rgb(142, 142, 147)'

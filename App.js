@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, View, Text } from 'react-native';
+  import { ActivityIndicator, View, Text, Button, SafeAreaView } from 'react-native';
 
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider as StoreProvider, useDispatch} from 'react-redux';
@@ -13,26 +13,19 @@ import Lupa from './src/Lupa';
 import { connect } from 'react-redux';
 import LupaStore from './src/controller/redux/index';
 
-import LupaController from './src/controller/lupa/LupaController';
+ import LupaController from './src/controller/lupa/LupaController';
 import { LUPA_AUTH } from './src/controller/firebase/firebase';
 import { getLupaUserStructure, getLupaPackStructure } from './src/controller/firebase/collection_structures';
 import { getLupaProgramInformationStructure } from './src/model/data_structures/programs/program_structures';
 import CreateProgram from './src/ui/workout/program/createprogram/CreateProgram';
 import LupaDrawerNavigator from './src/ui/navigators/LupaDrawerNavigator'
+import TrainerInformation from './src/ui/user/modal/WelcomeModal/TrainerInformation';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-  }
-
-  componentDidMount = async () => {
-    await this.setupApp();
-  }
-  
-  setupApp = async () => {
-    await this.LUPA_CONTROLLER_INSTANCE.runAppSetup();
+   this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
   }
 
   render() {
@@ -136,9 +129,10 @@ function AppNavigator() {
     <StackApp.Screen name='Auth' component={AuthenticationNavigator}/>
     <StackApp.Screen name='App' component={Lupa}/>
     <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{animationEnabled: true}}/>
+    <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{animationEnabled: true}}/>
   </StackApp.Navigator>
   )
 
 
 }
-export default App;
+ export default App;

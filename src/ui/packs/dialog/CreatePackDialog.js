@@ -18,7 +18,6 @@ import {
     HelperText,
 } from 'react-native-paper';
 
-import { Dropdown } from 'react-native-material-dropdown';
 import { useSelector, useDispatch } from 'react-redux';
 import LupaController from '../../../controller/lupa/LupaController';
 
@@ -124,18 +123,7 @@ function CreatePackDialog(props) {
                 }
             }}/>
             <View>
-            <Dropdown
-            onChangeText={text => setPackVisibility(text)}
-        value={packVisibility}
-        label='Visibility'
-        data={[
-             {
-      value: 'Public',
-    }, {
-      value: 'Hidden',
-    }]}
-        containerStyle={{width: '95%', alignSelf: 'center'}}
-      />
+
 
       {getHelperText(packVisibility)}
             </View>

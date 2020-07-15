@@ -225,7 +225,7 @@ class PackEventCard extends React.Component {
            // <TouchableOpacity onPress={() => this.handlePackEventModalOpen()}>
            <Surface style={{padding: 15, borderRadius: 30, margin: 10, width: Dimensions.get('window').width - 40, height: 'auto', backgroundColor: "#f2f2f2"}}>
                        <View>
-                       <Title style={{fontFamily: 'ARSMaquettePro-Medium'}} >
+                       <Title style={{ }} >
                             {this.state.packEventObject.pack_event_title}
                         </Title>
                         <Text style={{fontFamily: 'avenir-book', fontSize: 15}}>
@@ -508,7 +508,7 @@ class PackModal extends React.Component {
                                 <Image style={{width: 100, height: 100, borderRadius: 100}} source={{uri: this.state.packInformation.pack_image}}/>
                             </Surface>
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <Text style={{fontSize: 12, fontFamily: 'ARSMaquettePro-Bold'}}>
+                                <Text style={{fontSize: 12}}>
                                 {this.state.packInformation.pack_title}
                                 </Text>
                                 <Text>

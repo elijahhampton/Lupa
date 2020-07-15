@@ -219,7 +219,6 @@ key="female"
 
 const styles = StyleSheet.create({
     headerText: {
-        fontFamily: 'ARSMaquettePro-Medium', 
         margin: 5, 
         padding: 5, 
         alignSelf: 'flex-start', 
@@ -229,7 +228,7 @@ const styles = StyleSheet.create({
     },
     filterText: {
         color: '#212121',
-        fontFamily: 'ARSMaquettePro-Regular',
+         
         fontSize: 15
     }
 })

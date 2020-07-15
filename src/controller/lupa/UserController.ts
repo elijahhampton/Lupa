@@ -529,10 +529,10 @@ export default class UserController {
             return {}
         }
 
-        Object.defineProperty(userResult, 'programs', {
+       /* Object.defineProperty(userResult, 'programs', {
             value: userPrograms,
             writable: false
-        })
+        })*/
         
         console.log('heeere thee')
         return Promise.resolve(userResult);
@@ -1433,7 +1433,7 @@ export default class UserController {
           await PROGRAMS_COLLECTION.where('program_type', '==', 'Single').limit(5).get().then(docs => {
               docs.forEach(doc => {
                   let snapshot = doc.data();
-                if (typeof(snapshot.program_owner) != 'object' || typeof(snapshot) == 'undefined' || snapshot.program_name.length == 0 || typeof(snapshot.program_name) == 'undefined')
+                if (typeof(snapshot) == 'undefined' || snapshot.program_name.length == 0 || typeof(snapshot.program_name) == 'undefined')
                 {
 
                 }

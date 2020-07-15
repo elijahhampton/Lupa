@@ -71,14 +71,14 @@ class ProgramListComponent extends React.Component {
         
         try {
             return (
-                <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: 'black'}}>
+                <Text style={{  color: 'black'}}>
                         {this.props.programData.program_name}
                     </Text>
             )
         } catch(error) {
             LOG_ERROR('ProgramListComponent.js', 'Caught exception in getProgramName()', error)
             return (
-                <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: 'black'}}>
+                <Text style={{  color: 'black'}}>
                     Unable to load program name
                     </Text>
             )

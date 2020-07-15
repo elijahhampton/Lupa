@@ -71,15 +71,15 @@ function WorkoutLog(props) {
                                         {logItem.workoutName}
                                     </Text>
 
-                                    <Text style={{fontFamily: 'ARSMaquettePro-Medium'}}>
+                                    <Text style={{ }}>
                                         {new Date(logItem.date).toLocaleDateString()}
                                     </Text>
                                 </View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                                    <Text style={{marginHorizontal: 3, fontFamily: 'ARSMaquettePro-Medium'}}>
+                                    <Text style={{marginHorizontal: 3,  }}>
                                         Sets: {logItem.sets}
                                     </Text>
-                                    <Text style={{marginHorizontal: 3, fontFamily: 'ARSMaquettePro-Medium'}}>
+                                    <Text style={{marginHorizontal: 3,  }}>
                                         Reps: {logItem.reps}
                                     </Text>
                                 </View>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     dialogSectionLabelText: {
-        fontFamily: 'ARSMaquettePro-Medium',
+         
         fontSize: 20
     },  
     chipStyle: {

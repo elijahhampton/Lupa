@@ -200,8 +200,6 @@ class CreateProgram extends React.Component {
     getViewDisplay = () => {
         switch(this.state.currIndex) {
             case 0:
-                return <CreateWorkoutIntroduction goToIndex={this.goToIndex} />
-            case 1:
                 return (
                     <ProgramInformation captureImage={img => this.captureProgramImage(img)} handleCancelOnPress={this.exit} goToIndex={this.nextIndex} saveProgramInformation={(programName,
                         programDescription,
@@ -225,9 +223,9 @@ class CreateProgram extends React.Component {
                             programType,
                             allowWaitlist)} />
                 )
-            case 2:
+            case 1:
                 return <BuildAWorkout goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} />
-            case 3:
+            case 2:
                 return <ProgramPreview goBackToEditWorkout={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgram={this.saveProgram} handleExit={this.exit} programData={this.state.programData} />
             default:
         }

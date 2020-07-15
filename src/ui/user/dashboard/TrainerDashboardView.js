@@ -292,7 +292,6 @@ class TrainerDashboardView extends React.Component {
                                          </View>
 
                                          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                         <ThinFeatherIcon name="bell" thin={true} size={25} style={{marginRight: 20}} onPress={() => this.props.navigation.navigate('Notifications')} />
                                          <ThinFeatherIcon name="mail" thin={true} size={25} style={{marginRight: 20}} onPress={() => this.props.navigation.navigate('Messages')} />
                                          </View>
                                         </View>
@@ -306,10 +305,7 @@ class TrainerDashboardView extends React.Component {
                         onRefresh={this._onRefresh}
                     />}>
 
-                    <AssessmentView />
-                    <Divider style={{width: '100%'}} />
-                    <WorkoutLog workoutLogModalRef={this.workoutLogModalRef} />
-                    <Divider style={{width: '100%'}} />
+                    
 
                 </ScrollView>
 
@@ -345,7 +341,7 @@ const styles = StyleSheet.create({
         height: "auto",
     },
     headerText: {
-        fontFamily: 'ARSMaquettePro-Medium', 
+          
         fontSize: 30,
         color: 'white', 
         alignSelf: "center",
@@ -362,7 +358,7 @@ const styles = StyleSheet.create({
     sectionHeaderText: {
         fontSize: 18, 
         color: '#212121',
-        fontFamily: 'ARSMaquettePro-Medium'
+         
     },
     divider: {
         margin: 10

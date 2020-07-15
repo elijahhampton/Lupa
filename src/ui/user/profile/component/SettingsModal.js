@@ -35,8 +35,6 @@ import SafeAreaView from 'react-native-safe-area-view';
 import { useDispatch } from 'react-redux';
 
 
-import { NavigationActions, StackActions } from 'react-navigation';
-
 import { logoutUser } from '../../../../controller/lupa/auth/auth';
 
 import Color from '../../../common/Color'
@@ -84,7 +82,7 @@ function EditBioModal(props) {
        <SafeAreaView style={{flex: 1}}>
         <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center'}}>
             <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
-            <Appbar.Content title="Biography" titleStyle={{fontFamily: 'ARSMaquettePro-Medium', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}/>
+            <Appbar.Content title="Biography" titleStyle={{  color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}/>
             <Button theme={{colors: {
                 primary: 'rgb(33,150,243)'
             }}}
@@ -95,7 +93,7 @@ function EditBioModal(props) {
             </Button>
         </Appbar.Header>
        <View style={{padding: 10}}>
-       <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 17}}>
+       <Text style={{  fontSize: 17}}>
             Write a biography
         </Text>
         <Caption>
@@ -307,13 +305,7 @@ class SettingsModal extends React.Component {
     }
     
     _handleUserLogout = async () => {
-        await logoutUser();
-        const resetAction = StackActions.reset({
-            index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'Auth' })],
-        });
 
-        this.props.navigation.dispatch(resetAction); 
       }
 
       handleListItemOnPress = (key) => {
@@ -362,7 +354,7 @@ class SettingsModal extends React.Component {
                         <Body />
 
                         <Right>
-                            <Text style={{fontFamily: 'ARSMaquettePro-Medium', color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}>
+                            <Text style={{  color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}>
                                 Settings
                             </Text>
                         </Right>
@@ -454,7 +446,7 @@ const styles = StyleSheet.create({
     titleStyle: {
         fontSize: 13, 
         fontWeight: '100', 
-        fontFamily: 'ARSMaquettePro-Regular'
+         
     }
 });
 

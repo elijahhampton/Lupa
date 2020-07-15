@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         width: '100%'
       },
       label: {
-        fontFamily: 'ARSMaquettePro-Medium',
+         
         color: 'rgb(142, 142, 147)',
         marginVertical: 8,
         marginLeft: 20,

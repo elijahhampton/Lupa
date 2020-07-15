@@ -125,7 +125,7 @@ Request to join {" "}
 <Text style={{fontFamily: 'ARSMaquettePro-Regular'}}>
 Request to join {" "}
 </Text>
-        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15, padding: 5}}>
+        <Text style={{  fontSize: 15, padding: 5}}>
             {this.state.packInformation.pack_title}
             </Text>
 </>

@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     },
     contentDriverDescriptionText: {
         fontSize: 12, 
-        fontFamily: 'ARSMaquettePro-Medium',
+         
     },
     displayedContentTitle: {
         color: '#212121',

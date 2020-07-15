@@ -107,7 +107,7 @@ mapStateToProps = (state) => {
       <Modal visible={isLoading} presentationStyle="fullScreen" style={{backgroundColor: '#FFFFFF'}}>
         <View style={{flex: 1, backgroundColor: '#F2F2F2'}}>
            <View style={{backgroundColor: '#F2F2F2', alignItems: 'center', justifyContent: 'space-evenly', height: '80%', width: '100%'}}>
-           <Text style={{fontSize: 20, fontFamily: 'ARSMaquettePro-Regular'}}>
+           <Text style={{fontSize: 20,  }}>
               Setting up your account...
            </Text>
            <ActivityIndicator color="#1565C0" animating={true} size='large' />
@@ -385,7 +385,7 @@ class SignupModal extends React.Component {
             
           <View style={{width: "100%", height: Dimensions.get('window').height}}>
           <View style={styles.headerText}>
-                    <Text style={{fontSize: 28, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular' }}>
+                    <Text style={{fontSize: 28, fontWeight: '700', color: 'black',   }}>
             Create an account
                         </Text>
                         <View style={{flexDirection: 'row', marginTop: 5}}>
@@ -735,7 +735,7 @@ const SignUp = props => {
           <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
           <View style={{marginTop: Constants.statusBarHeight, width: "100%"}}>
           <View style={styles.headerText}>
-                    <Text style={{fontSize: 28, fontWeight: '700', color: 'black', fontFamily: 'ARSMaquettePro-Regular' }}>
+                    <Text style={{fontSize: 28, fontWeight: '700', color: 'black',   }}>
             Create an account
                         </Text>
                         <View style={{flexDirection: 'row', marginTop: 5}}>

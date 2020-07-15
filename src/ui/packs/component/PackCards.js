@@ -58,11 +58,11 @@ class MyPacksCard extends React.Component {
                 </Surface>
 
                 <View style={{flex: 1, height: 120, justifyContent: 'space-evenly', width: '100%'}}>
-                    <Text style={{color: 'rgba(28, 28, 30, 0.8)', fontSize: 15, fontFamily: 'ARSMaquettePro-Medium'}}>
+                    <Text style={{color: 'rgba(28, 28, 30, 0.8)', fontSize: 15,  }}>
                         {this.props.title} (Community)
                     </Text>
                     <View>
-                    <Text style={{color: 'rgba(28, 28, 30, 0.4)', fontSize: 15, fontFamily: 'ARSMaquettePro-Medium'}}>
+                    <Text style={{color: 'rgba(28, 28, 30, 0.4)', fontSize: 15,  }}>
                        {this.props.pack.pack_location.city}, {this.props.pack.pack_location.state} 
                     </Text>
 

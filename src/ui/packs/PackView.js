@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     searchHeader: {
-        fontFamily: 'ARSMaquettePro-Medium', 
+          
         fontSize: 35, 
         paddingLeft: 12,
         marginTop: Constants.statusBarHeight,

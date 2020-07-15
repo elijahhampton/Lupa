@@ -47,14 +47,14 @@ function ReceivedProgramNotification(props) {
                        <View style={{width: '60%', flexDirection: 'row', alignItems: 'center'}}>
                        <Avatar.Image source={{uri: props.avatarSrc }} size={40} label="EH" style={{margin: 10}} />
                            <Text style={{flexWrap: 'wrap', width: '100%'}}>
-                               <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 12}}>
+                               <Text style={{  fontSize: 12}}>
                                {fromData.display_name }
                                </Text>
                                 <Text>
                                 {' '}
                                 </Text>
-                               <Text style={{fontFamily: 'ARSMaquettePro-Regular', fontSize: 12}}>
-                               has invited you to try out the program <Text style={{fontFamily: 'ARSMaquettePro-Bold', fontWeight: '600'}}>
+                               <Text style={{  fontSize: 12}}>
+                               has invited you to try out the program <Text style={{  fontWeight: '600'}}>
                                    {notificationData.data.program_name}</Text>
                                </Text>
                            </Text>

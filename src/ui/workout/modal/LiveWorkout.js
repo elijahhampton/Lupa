@@ -760,7 +760,7 @@ class LiveWorkout extends React.Component {
   iconStyle={{margin: 5, elevation: 15}}
   size={20}
 />
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                        <Text style={{  fontSize: 15}}>
                                             Time Spent: 120bpm
                                         </Text>
                                     </View>
@@ -774,7 +774,7 @@ class LiveWorkout extends React.Component {
   iconStyle={{margin: 5, elevation: 15}}
   size={20}
 />
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                        <Text style={{  fontSize: 15}}>
                                             Time Left: 120bpm
                                         </Text>
                                     </View>
@@ -791,7 +791,7 @@ class LiveWorkout extends React.Component {
   iconStyle={{margin: 5, elevation: 15}}
   size={20}
 />
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                        <Text style={{  fontSize: 15}}>
                                             Cardio: 120bpm
                                         </Text>
                                     </View>
@@ -805,7 +805,7 @@ class LiveWorkout extends React.Component {
   iconStyle={{margin: 5, elevation: 15}}
   size={20}
 />
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                        <Text style={{  fontSize: 15}}>
                                            Weight Pushed: 120bpm
                                         </Text>
                                     </View>
@@ -822,7 +822,7 @@ class LiveWorkout extends React.Component {
   iconStyle={{margin: 5, elevation: 15}}
   size={20}
 />
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                        <Text style={{  fontSize: 15}}>
                                             Calories Burned: 120bpm
                                         </Text>
                                     </View>
@@ -836,7 +836,7 @@ class LiveWorkout extends React.Component {
   iconStyle={{margin: 5, elevation: 15}}
   size={20}
 />
-                                        <Text style={{fontFamily: 'ARSMaquettePro-Medium', fontSize: 15}}>
+                                        <Text style={{  fontSize: 15}}>
                                             Cardio: 120bpm
                                         </Text>
                                     </View>
