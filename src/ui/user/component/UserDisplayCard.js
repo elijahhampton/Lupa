@@ -27,19 +27,6 @@ export default class UserDisplayCard extends React.Component {
             userDisplayName: '',
         }
     }
-
-    componentDidMount = async () => {
-      let userImageIn;
-      
-        await this.LUPA_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(this.state.userUUID).then(result => {
-            userImageIn = result;
-        })
-
-        await this.setState({
-            userImage: userImageIn,
-        })
-    }
-
     
     handleCloseUserModal = () => {
         this.setState({ showUserProfileModal: false })

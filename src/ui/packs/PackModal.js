@@ -289,7 +289,7 @@ class PackModal extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            packUUID:  this.props.navigation.state.params.packUUID,
+            packUUID:  this.props.route.params.packUUID,
             packInformation: {},
             packEvents: [],
             currPackEventImage: "",
@@ -315,7 +315,7 @@ class PackModal extends React.Component {
     }
 
     _navigateToPackChat = () => {
-       const UUID =  this.props.navigation.state.params.packUUID;
+       const UUID =  this.props.route.params.packUUID;
         this.props.navigation.navigate('PackChat', {
             packUUID: UUID
         })
@@ -347,7 +347,6 @@ class PackModal extends React.Component {
             packRequestsLength: packInformationIn.pack_requests.length, 
             membersLength: packInformationIn.pack_members.length,
             packRequests: packInformationIn.pack_requests,
-            packProfileImage: packProfileImageIn,
         })
 
        this.currentUserUUID = this.props.lupa_data.Users.currUserData.user_uuid;
@@ -408,7 +407,7 @@ class PackModal extends React.Component {
         await this.LUPA_CONTROLLER_INSTANCE.removeUserFromPackByUUID(this.state.packUUID, this.props.lupa_data.Users.currUserData.user_uuid);
         await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser("packs", [this.state.packUUID], "remove");
         await this.LUPA_CONTROLLER_INSTANCE.updatePack(this.state.packUUID, "pack_members", this.props.lupa_data.Users.currUserData.user_uuid, ["remove"]);
-        await  this.props.navigation.state.params.refreshPackViewMethod();
+        await  this.props.route.params.refreshPackViewMethod();
         this.props.navigation.goBack(null);
     }
 
