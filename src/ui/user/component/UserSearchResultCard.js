@@ -19,30 +19,23 @@ import {
 import LupaController from '../../../controller/lupa/LupaController';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
-class UserSearchResultCard extends React.Component {
-    constructor(props) {
-        super(props);
+function UserSearchResultCard(props) {
+    const navigation = useNavigation()
 
-        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-        this.state = {
-            uuid: this.props.uuid,
-            profilePicture: this.props.avatar
-
-        }
-    }
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     _handleViewProfile = () => {
-        this.props.navigation.navigate('Profile', {
-            userUUID: this.props.uuid,
+        navigation.navigate('Profile', {
+            userUUID: props.uuid,
             navFrom: 'SearchView',
         });
     }
 
     returnUserAvatar = () => {
             try {
-                return <Avatar.Image source={{uri: this.props.user.photo_url }} size={45} style={{margin: 8}} />
+                return <Avatar.Image source={{uri: props.user.photo_url }} size={45} style={{margin: 8}} />
             } catch(err)
             {
                 return <Avatar.Icon icon={() => <FeatherIcon name="help-circle" size={45} color="#212121" />} size={45} style={{margin: 8}} />
@@ -53,7 +46,7 @@ class UserSearchResultCard extends React.Component {
         try {
             return (
                 <Text style={styles.titleText}>
-                                {this.props.user.username}
+                                {props.user.username}
                             </Text>
             )
         } catch(error) {
@@ -69,7 +62,7 @@ class UserSearchResultCard extends React.Component {
         try {
             return (
                 <Text style={styles.subtitleText}>
-                                {this.props.user.display_name}
+                                {props.user.display_name}
                             </Text>
             )
         } catch(error) {
@@ -80,23 +73,22 @@ class UserSearchResultCard extends React.Component {
             )
         }
     }
-
-    render() {
+    
         return (
             <>
-                <TouchableOpacity onPress={() => this._handleViewProfile()} style={styles.touchableOpacity}>
+                <TouchableOpacity onPress={_handleViewProfile} style={styles.touchableOpacity}>
                 <View style={[styles.cardContainer]}>
                     <View style={styles.cardContent}>
                         <View style={styles.userInfoContent}>
                             {
-                               this.renderUserAvatar()
+                               renderUserAvatar()
                             }
                         <View style={{flexDirection: 'column'}}>
                         <Text style={styles.titleText}>
-                             {this.renderUsername()}
+                             {renderUsername()}
                             </Text>
                             <Text style={styles.subtitleText}>
-                                {this.renderDisplayName()}
+                                {renderDisplayName()}
                             </Text>
     
                         </View>
@@ -106,7 +98,6 @@ class UserSearchResultCard extends React.Component {
                     </TouchableOpacity>
                 </>
         );
-    }
 }
 
 const styles = StyleSheet.create({

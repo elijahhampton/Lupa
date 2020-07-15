@@ -311,12 +311,7 @@ class PackModal extends React.Component {
     }
 
     componentDidMount = async () => {
-        console.log('disable swipe');
        await this.setupPackModal();
-    }
-
-    componentWillUnmount() {
-        console.log('enable swipe');
     }
 
     _navigateToPackChat = () => {

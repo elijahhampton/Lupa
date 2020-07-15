@@ -20,61 +20,49 @@ import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
 
 import LupaController from '../../../controller/lupa/LupaController';
 import { getCurrentStoreState } from '../../../controller/redux';
+import { useNavigation } from '@react-navigation/native';
 
-class MyPacksCard extends React.Component {
-    constructor(props) {
-        super(props);
+function MyPacksCard(props) {
+    const navigation = useNavigation()
 
-        this.state = {
-            packUUID: this.props.packUUID,
-            showPack: false,
-            packProfileImage: '',
-        }
-
-        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    }
-
-    handleShowPack = (uuid) => {
-            this.props.navigation.navigate('PackModal', {
-                navigation: this.props.navigation,
+    const handleShowPack = (uuid) => {
+            navigation.navigate('PackModal', {
+                navigation: navigation,
                 packUUID: uuid,
-                refreshPackViewMethod: this.refreshPackView.bind(this)
+                refreshPackViewMethod: refreshPackView
             })
     }
 
-    refreshPackView = async () => {
-        await this.props.refreshPackViewMethod();
+    const refreshPackView = async () => {
+        await props.refreshPackViewMethod();
     }
 
-    render() {
         return (
-            <TouchableOpacity onPress={() => this.handleShowPack(this.state.packUUID)} style={{marginVertical: 15}}>
+            <TouchableOpacity onPress={() => handleShowPack(props.packUUID)} style={{marginVertical: 15}}>
                             <View style={{margin: 5, height: 120, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
                 <Surface style={{borderRadius: 12, margin: 5, marginRight: 20, width: 100, height: 100, backgroundColor: '#FFFFFF', elevation: 2, borderRadius: 5}}>
                 <Image style={styles.image} 
                                     resizeMode={ImageResizeMode.cover} 
-                                    source={{uri: this.props.pack.pack_image}} />
+                                    source={{uri: props.pack.pack_image}} />
                 </Surface>
 
                 <View style={{flex: 1, height: 120, justifyContent: 'space-evenly', width: '100%'}}>
                     <Text style={{color: 'rgba(28, 28, 30, 0.8)', fontSize: 15,  }}>
-                        {this.props.title} (Community)
+                        {props.title} (Community)
                     </Text>
                     <View>
                     <Text style={{color: 'rgba(28, 28, 30, 0.4)', fontSize: 15,  }}>
-                       {this.props.pack.pack_location.city}, {this.props.pack.pack_location.state} 
+                       {props.pack.pack_location.city}, {props.pack.pack_location.state} 
                     </Text>
 
                         <Text numberOfLines={2} style={{color: 'rgba(25,118,210 ,1)', fontSize: 12 }}>
-                            {this.props.pack.pack_description}
+                            {props.pack.pack_description}
                         </Text>
                     </View>
                 </View>
             </View>
             </TouchableOpacity>
         )
-    }
 }
 
 const styles = StyleSheet.create({

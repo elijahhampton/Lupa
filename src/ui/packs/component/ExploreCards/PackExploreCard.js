@@ -30,39 +30,29 @@ import PackInformationModal from '../../modal/PackInformationModal';
 import { LOG_ERROR } from '../../../../common/Logger';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
-class DefaultPack extends React.Component {
-    constructor(props) {
-        super(props);
+import { useNavigation } from '@react-navigation/native'
 
-        this.state = {
-            packUUID: this.props.packUUID,
-            packProfileImage: '',
-            ready: false,
-        }
+function DefaultPack(props) {
+    const navigation = useNavigation()
 
-        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    }
-
-    _setShowPack = () => {
-        this.props.navigation.navigate('PackModal', {
-            navigation: this.props.navigation,
-            packUUID: this.props.packUUID,
+    const _setShowPack = () => {
+        navigation.navigate('PackModal', {
+            navigation: navigation,
+            packUUID: props.packUUID,
         })
     }
 
-    render() {
         return (
-            <TouchableOpacity onPress={() => this._setShowPack()}>
+            <TouchableOpacity onPress={_setShowPack}>
                         <Surface style={{margin: 35, alignSelf: 'center', width: Dimensions.get('screen').width - 80, marginHorizontal: 20,  height: 250, elevation: 1, borderRadius: 15}}>
-                        <ImageBackground style={{flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 15,}} imageStyle={{borderRadius: 15}} source={{uri: this.props.pack.pack_image}}>
+                        <ImageBackground style={{flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 15,}} imageStyle={{borderRadius: 15}} source={{uri: props.pack.pack_image}}>
                     <Headline style={{color: 'white', fontWeight: 'bold'}}>
-                        {this.props.pack_title}
+                        {props.pack_title}
                     </Headline>
                 </ImageBackground>
             </Surface>
             </TouchableOpacity>
         )
-    }
 }
 
 export default DefaultPack;
