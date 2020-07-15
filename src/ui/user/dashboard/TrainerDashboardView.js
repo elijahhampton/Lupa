@@ -51,6 +51,8 @@ import {
     Body,
 } from 'native-base';
 
+import { LineChart } from 'react-native-chart-kit'
+
 import { PackEventNotificationContainer } from './component/SessionNotificationContainer.js';
 import { Constants } from 'react-native-unimodules';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -267,7 +269,7 @@ class TrainerDashboardView extends React.Component {
     render() {
         return (
             <View style={styles.safeareaview}>
-                <View style={{marginTop: Constants.statusBarHeight}}>
+                <View style={{marginTop: Constants.statusBarHeight, padding: 10}}>
                 <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
                                          <Left>
                                              <MenuIcon customStyle={{marginVertical: 10}} onPress={() => this.props.navigation.openDrawer()} />
@@ -305,7 +307,51 @@ class TrainerDashboardView extends React.Component {
                         onRefresh={this._onRefresh}
                     />}>
 
-                    
+<Surface style={{padding: 10, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 10, alignSelf: 'center'}}>
+  <Text style={{fontSize: 20, color: '#E5E5E5', padding: 5}}> Sessions </Text>
+  <LineChart
+    data={{
+      labels: ["January", "February", "March", "April", "May", "June"],
+      datasets: [
+        {
+          data: [
+            Math.random() * 100,
+            Math.random() * 100,
+            Math.random() * 100,
+            Math.random() * 100,
+            Math.random() * 100,
+            Math.random() * 100
+          ]
+        }
+      ]
+    }}
+    width={Dimensions.get("window").width - 20} // from react-native
+    height={160}
+    yAxisLabel="$"
+    yAxisSuffix="k"
+    yAxisInterval={1} // optional, defaults to 1
+    chartConfig={{
+      backgroundColor: "#1089ff",
+      backgroundGradientFrom: "#1089ff",
+      backgroundGradientTo: "#1089ff",
+      decimalPlaces: 2, // optional, defaults to 2dp
+      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+      labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+      style: {
+        borderRadius: 0
+      },
+      propsForDots: {
+        r: "6",
+        strokeWidth: "2",
+        stroke: "#ffa726"
+      }
+    }}
+    bezier
+    style={{
+      borderRadius: 0,
+    }}
+  />
+</Surface>
 
                 </ScrollView>
 
@@ -332,7 +378,6 @@ const styles = StyleSheet.create({
     safeareaview: {
         flex: 1,
         backgroundColor: "#FFFFFF",
-        padding: 10
     },
     header: {
         flexDirection: 'row', 
