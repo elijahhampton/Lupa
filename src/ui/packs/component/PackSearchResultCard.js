@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
     View,
@@ -17,58 +17,48 @@ import LupaController from '../../../controller/lupa/LupaController';
 
 import PackInformationModal from '../modal/PackInformationModal';
 
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { LOG_ERROR } from '../../../common/Logger';
+import { useNavigation } from '@react-navigation/native';
 
-const mapStateToProps = (state, action) => {
-    return {
-        lupa_data: state,
-    }
-}
+function PackSearchResultCard(props) {
+    const [packInformationModalIsOpen, setPackInformationModalOpen] = useState(false);
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData
+    })
+    const navigation = useNavigation()
 
-class PackSearchResultCard extends React.Component {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
-    constructor(props) {
-        super(props);
-
-        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-        this.state = {
-            packUUID: this.props.uuid,
-            packInformationModalIsOpen: false,
-            packImage: "",
-        }
-    }
-
-    _handleViewPack = async (uuid) => {
+    const _handleViewPack = async (uuid) => {
         let packInformation;
 
-        await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(uuid).then(result => {
+        await LUPA_CONTROLLER_INSTANCE.getPackInformationByUUID(uuid).then(result => {
             packInformation = result;
         });
 
 
         try {
-            if (packInformation.pack_members.includes(this.props.lupa_data.Users.currUserData.user_uuid))
+            if (packInformation.pack_members.includes(currUserData.user_uuid))
             {
-                this.props.navigation.navigate('PackModal', {
+                navigation.navigate('PackModal', {
                     packUUID: uuid,
                     navFrom: 'SearchView',
                 });
             }
             else
             {
-                this.setState({ packInformationModalIsOpen: true })
+                setPackInformationModalOpen(true)
             }
         } catch(error) {
             LOG_ERROR('PackSearchResultCard.js', 'Caught exception in _handleViewPack()', error)
-            this.setState({ packInformationModalIsOpen: true });
+            setPackInfofmationModalOpen(true)
         }
     }
 
-    renderPackAvatar = () => {
+    const renderPackAvatar = () => {
         try {
-            return <Avatar.Image size={45} source={{uri: this.props.pack.pack_image}} style={{margin: 5}} />
+            return <Avatar.Image size={45} source={{uri: props.pack.pack_image}} style={{margin: 5}} />
         } catch(err)
         {
             LOG_ERROR('PackSearchResultCard.js', 'Caught exception in renderPackAvatar()', error)
@@ -76,11 +66,11 @@ class PackSearchResultCard extends React.Component {
         }
     }
 
-    renderPackTitle = () => {
+    const renderPackTitle = () => {
             try {
                 return (
                     <Text style={styles.titleText}>
-                    {this.props.pack.pack_title}
+                    {props.pack.pack_title}
                 </Text>
                 )
         } catch(error) {
@@ -88,13 +78,13 @@ class PackSearchResultCard extends React.Component {
 
             return (
                 <Text style={styles.titleText}>
-                {this.props.pack.pack_title}
+                {props.pack.pack_title}
             </Text>
             )
         }
     }
 
-    renderPackLocation= () => {
+    const renderPackLocation = () => {
         try {
             return (
                 <Text style={styles.titleText}>
@@ -111,32 +101,29 @@ class PackSearchResultCard extends React.Component {
     }
 }
 
-    render() {
-        return (
-            <>
-                <TouchableOpacity onPress={() => this._handleViewPack(this.state.packUUID)} style={styles.touchableOpacity}>
-                <View style={[styles.cardContainer]}>
-                    <View style={styles.cardContent}>
-                        <View style={styles.userInfoContent}>
-                        {this.renderPackAvatar()}
-                        <View style={{flexDirection: 'column'}}>
-                        {
-                            this.renderPackTitle()
-                        }
-                            {
-                                this.renderPackLocation()
-                            }
-                        </View>
-    
-                            </View>
-                    </View>
+    return (
+        <>
+        <TouchableOpacity onPress={() => _handleViewPack(props.uuid)} style={styles.touchableOpacity}>
+        <View style={[styles.cardContainer]}>
+            <View style={styles.cardContent}>
+                <View style={styles.userInfoContent}>
+                {renderPackAvatar()}
+                <View style={{flexDirection: 'column'}}>
+                {
+                   renderPackTitle()
+                }
+                    {
+                        xrenderPackLocation()
+                    }
                 </View>
-                    </TouchableOpacity>
-                    <PackInformationModal isOpen={this.state.packInformationModalIsOpen} packUUID={this.props.uuid} />
-                    </>
-        );
-    }
-   
+
+                    </View>
+            </View>
+        </View>
+            </TouchableOpacity>
+            <PackInformationModal isOpen={packInformationModalIsOpen} packUUID={props.uuid} />
+            </>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -187,4 +174,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps)(PackSearchResultCard);
+export default (PackSearchResultCard);
