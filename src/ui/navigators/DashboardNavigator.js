@@ -2,6 +2,7 @@ import React from 'react'
 
 import { createStackNavigator } from '@react-navigation/stack'
 import TrainerDashboardView from '../user/dashboard/TrainerDashboardView'
+import MessagesView from '../user/chat/MessagesView'
 
 const Stack = createStackNavigator()
 
@@ -15,9 +16,7 @@ function DashboardNavigator() {
         name="Dashboard"
         component={TrainerDashboardView}
       />
-
-{/*<Drawer.Screen name="Notifications" component={NotificationsView} />
-                  <Drawer.Screen name="Messages" component={MessagesView} /> */}
+       <Stack.Screen name="Messages" component={MessagesView} /> 
     </Stack.Navigator>
     )
 }
