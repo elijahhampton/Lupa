@@ -37,7 +37,7 @@ export const _checkCameraAndPhotoLibraryPermissions = () => {
        request(PERMISSIONS.IOS.CAMERA).then((result) => {
         if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
         {
-          alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
+         // alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
         }
       });
         break;
@@ -46,13 +46,13 @@ export const _checkCameraAndPhotoLibraryPermissions = () => {
         break;
       case RESULTS.BLOCKED:
         // alert the user to change it from settings
-        alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
+      //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
         break;
     }
   })
   .catch((error) => {
     // …
-    alert('Oops.  It looks like there was an error while trying to anable the Camera permission.  You can enable it from the Lupa tab in the Settings app.')
+   // alert('Oops.  It looks like there was an error while trying to anable the Camera permission.  You can enable it from the Lupa tab in the Settings app.')
   });
 
   check(PERMISSIONS.IOS.PHOTO_LIBRARY)
@@ -66,7 +66,7 @@ export const _checkCameraAndPhotoLibraryPermissions = () => {
        request(PERMISSIONS.IOS.PHOTO_LIBRARY).then((result) => {
         if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
         {
-          alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
+     //     alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
         }
       });
         break;
@@ -75,13 +75,13 @@ export const _checkCameraAndPhotoLibraryPermissions = () => {
         break;
       case RESULTS.BLOCKED:
         // alert the user to change it from settings
-        alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
+      //  alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
         break;
     }
   })
   .catch((error) => {
     // …
-    alert('Oops.  It looks like there was an error while trying to anable the Photo Library permission.  You can enable it from the Lupa tab in the Settings app.')
+   // alert('Oops.  It looks like there was an error while trying to anable the Photo Library permission.  You can enable it from the Lupa tab in the Settings app.')
   });
 
 }
@@ -99,7 +99,7 @@ export default _requestPermissionsAsync = () => {
        request(PERMISSIONS.IOS.CAMERA).then((result) => {
         if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
         {
-          alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
+        //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
         }
       });
         break;
@@ -108,13 +108,13 @@ export default _requestPermissionsAsync = () => {
         break;
       case RESULTS.BLOCKED:
         // alert the user to change it from settings
-        alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
+      //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
         break;
     }
   })
   .catch((error) => {
     // …
-    alert('Oops.  It looks like there was an error while trying to anable the Camera permission.  You can enable it from the Lupa tab in the Settings app.')
+   // alert('Oops.  It looks like there was an error while trying to anable the Camera permission.  You can enable it from the Lupa tab in the Settings app.')
   });
   
   check(PERMISSIONS.IOS.PHOTO_LIBRARY)
@@ -128,7 +128,7 @@ export default _requestPermissionsAsync = () => {
        request(PERMISSIONS.IOS.PHOTO_LIBRARY).then((result) => {
         if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
         {
-          alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
+    //      alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
         }
       });
         break;
@@ -137,13 +137,13 @@ export default _requestPermissionsAsync = () => {
         break;
       case RESULTS.BLOCKED:
         // alert the user to change it from settings
-        alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
+    //    alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
         break;
     }
   })
   .catch((error) => {
     // …
-    alert('Oops.  It looks like there was an error while trying to anable the Photo Library permission.  You can enable it from the Lupa tab in the Settings app.')
+   // alert('Oops.  It looks like there was an error while trying to anable the Photo Library permission.  You can enable it from the Lupa tab in the Settings app.')
   });
   
   //TODO: Change to location in use and fix errors where is always denied or blocked
@@ -159,7 +159,7 @@ export default _requestPermissionsAsync = () => {
        request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((result) => {
         if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
         {
-          alert('The Location permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
+       //   alert('The Location permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
         }
       });
         break;
@@ -175,18 +175,6 @@ export default _requestPermissionsAsync = () => {
   })
   .catch((error) => {
     // …
-    alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+   // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
   });
-
-
-      Contacts.requestPermission((err, permission) => {
-        if (permission == 'authorized')
-        {
-            //granted
-        }
-        else
-        {
-            //denied
-        }
-      })
 }

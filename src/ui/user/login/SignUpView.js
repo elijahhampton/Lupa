@@ -36,10 +36,11 @@ import { UserAuthenticationHandler } from '../../../controller/firebase/firebase
 
 import LupaController from '../../../controller/lupa/LupaController';
 
-import { getLupaAssessmentStructure } from '../../../controller/firebase/collection_structures'
+import { getLupaAssessmentStructure, getLupaUserStructure, getLupaPackEventStructure, getLupaPackStructure } from '../../../controller/firebase/collection_structures'
 import { connect, useDispatch } from 'react-redux';
 
 import Input from '../../common/Input/Input'
+import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 /*
 mapStateToProps = (state) => {
     return { 
@@ -691,6 +692,7 @@ const formReducer = (state, action) => {
 };
 
 const SignUp = props => {
+
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
   const dispatch = useDispatch();
@@ -699,16 +701,64 @@ const SignUp = props => {
     inputValues: {
       email: '',
       password: '',
+      username: '',
     },
     inputValidies: {
       email: false,
       password: false,
+      username: '',
     },
     formIsValid: false,
   })
 
+  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+
+   /**
+   * Sets up redux by loading the current user's data, packs, and programs
+   * as well as Lupa application data (assessments, workouts);
+   */
+  const _setupRedux = async () => {
+    let currUserData = getLupaUserStructure(), currUserPacks = getLupaPackStructure(), currUserPrograms = getLupaProgramInformationStructure(), lupaAssessments = [], lupaWorkouts = [];
+    
+    await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+      currUserData = result;
+    })
+
+    console.log('b')
+    await LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
+      currUserPacks = result;
+    })
+
+
+    await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+      currUserPrograms = result;
+    })
+
+    console.log('c')
+
+    lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
+
+    lupaAssessments = await LUPA_CONTROLLER_INSTANCE.loadAssessments();
+
+    let userPayload = {
+      userData: currUserData,
+      healthData: {}
+    }
+
+    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload})
+    await dispatch({ type: 'UPDATE_CURRENT_USER_PACKS', payload: currUserPacks})
+    await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
+    await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
+    await dispatch({ type: 'UPDATE_LUPA_ASSESSMENTS', payload: lupaAssessments})
+    console.log(userPayload)
+    console.log('d')
+  }
+
   const signupHandler = async () => {
-    dispatch(authActions.signup(formState.inputValues.email, formState.inputValues.password));
+    console.log('BABY: ' + formState.inputValues.email)
+    dispatch(authActions.signup(formState.inputValues.username.trim(), formState.inputValues.email.trim(), formState.inputValues.password.trim()));
+    await _setupRedux()
+    navigation.navigate('App')
   }
 
   const inputChangeHandler = useCallback(
@@ -763,7 +813,9 @@ const SignUp = props => {
               autoCapitalize={false} 
               errorMessage="Please enter a valid email address" 
               onInputChange={inputChangeHandler}
-              initialValue='' />
+              initialValue=''
+            
+               />
             <Input 
               id="username" 
               label="Username" 

@@ -3,7 +3,8 @@ import React from 'react';
 import {
     View,
     StyleSheet,
-    Button
+    Button,
+    SafeAreaView,
 } from 'react-native';
 
 import { Input } from 'react-native-elements';
@@ -21,7 +22,6 @@ export default class PrivateChat extends React.Component{
 
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-        const thisUserUUID = this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
 
         this.state = {
             messages: [],
@@ -81,6 +81,7 @@ export default class PrivateChat extends React.Component{
                     <View style={{marginBottom: 5}}>
                     <Button title="Close" onPress={() => this.props.navigation.goBack()} />
                     </View>
+                    <SafeAreaView />
             </View>
         );
     }

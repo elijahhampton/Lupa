@@ -14,13 +14,19 @@ import { Fire } from '../../controller/firebase/firebase';
 
 import LupaController from '../../controller/lupa/LupaController';
 
+import { connect } from 'react-redux'
 
-export default class PackChatModal extends React.Component{
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
+
+class PackChatModal extends React.Component{
     constructor(props) {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-        const thisUserUUID = this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
 
         this.state = {
             packUUID: this.props.packUUID,
@@ -87,3 +93,5 @@ const styles = StyleSheet.create({
         margin: 0,
     },
 });
+
+export default connect(mapStateToProps)(PackChatModal)

@@ -20,12 +20,11 @@ const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
 const programsIndex = algoliaUsersIndex.initIndex("dev_Programs");
 const tmpProgramsIndex = algoliaUsersIndex.initIndex("tempDev_Programs");
 
-import { v4 as uuidv4 } from 'uuid';
-
 import { UserCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 
 import LOG, {LOG_ERROR} from '../../common/Logger';
+import { getLupaUserStructure } from '../firebase/collection_structures';
 
 export default class UserController {
     private static _instance: UserController;
@@ -174,10 +173,16 @@ export default class UserController {
 
     /************** *********************/
 
+    /**
+     * DEPRECATED - To be removed in version 0.8
+     */
     getCurrentUser = () => {
         return LUPA_AUTH.currentUser;
     }
 
+    /**
+     * DEPRECATED - To be removed in version 0.8
+     */
     getCurrentUserUUID = () => {
         return LUPA_AUTH.currentUser.uid;
     }
@@ -507,32 +512,36 @@ export default class UserController {
 
             console.log('2')
 
-            if (userResult.programs.length > 0)
+            if (typeof(userResult.programs) != 'object' || typeof(userResult.programs) == 'undefined')
             {
-                console.log('3')
-                for (let i = 0; i < userResult.programs.length; i++) {
-                    docData = getLupaProgramInformationStructure()
-                    await LUPA_DB.collection('programs').doc(userResult.programs[i]).get().then(snapshot => {
-                        docData = snapshot.data()
-                    })
-
-                    console.log('aaaaaa')
-                    
-                    if (typeof(docData) != 'undefined') {
-                        userPrograms.push(docData)
+                if (userResult.programs.length > 0)
+                {
+                    console.log('3')
+                    for (let i = 0; i < userResult.programs.length; i++) {
+                        docData = getLupaProgramInformationStructure()
+                        await LUPA_DB.collection('programs').doc(userResult.programs[i]).get().then(snapshot => {
+                            docData = snapshot.data()
+                        })
+    
+                        console.log('aaaaaa')
+                        
+                        if (typeof(docData) != 'undefined') {
+                            userPrograms.push(docData)
+                        }
                     }
+                    console.log('4')
                 }
-                console.log('4')
             }
             
         } catch(error) {
             LOG_ERROR('UserController.ts', 'Caught exception in getUserInformationByUUID', error)
-            return {}
+            const userData = getLupaUserStructure()
+            return Promise.resolve(userData)
         }
 
         Object.defineProperty(userResult, 'programs', {
             value: userPrograms,
-            writable: false
+            writable: true
         })
         
         console.log('heeere thee')
@@ -1056,8 +1065,8 @@ export default class UserController {
             tempData = snapshot.data()
         })
 
-        updatedProgramList = tempData.programs
-        updatedProgramList.pop()
+        updatedProgramList = await this.arrayRemove(tempData.programs, programUUID)
+
         await USER_COLLECTION.doc(user_uuid).update({
             programs: updatedProgramList
         })
@@ -1070,9 +1079,14 @@ export default class UserController {
     }
 
     loadCurrentUserPrograms = async () => {
-        let programUUIDS = [], programsData = [];
+      /*  let programUUIDS = [], programsData = [];
         let temp;
         let uuid = await this.getCurrentUser().uid;
+
+        if (typeof(uuid) == 'undefined') {
+            return Promise.resolve([])
+        }
+        
         try {
 
             await USER_COLLECTION.doc(uuid).get().then(snapshot => {
@@ -1106,12 +1120,12 @@ export default class UserController {
             LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
             programsData = [];
         }
-
-        return Promise.resolve(programsData);
+*/
+        return Promise.resolve([]);
     }
 
     deleteUserProgram = async (programUUID, userUUID) => {
-        let programData, programRef;
+       /* let programData, programRef;
             programRef = await PROGRAMS_COLLECTION.doc(programUUID);
 
             await programRef.get().then(snapshot => {
@@ -1160,7 +1174,9 @@ export default class UserController {
             } catch (error) {
                 LOG_ERROR('UserController.ts', 'Unhandled error in deleteUserProgram()', error)
             }
-        }
+        }*/
+
+        console.log('Deleting user program')
 }
 
     createService = async (serviceObject) => {

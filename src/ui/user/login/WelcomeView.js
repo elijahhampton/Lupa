@@ -20,29 +20,22 @@ import {
 } from 'react-native-paper';
 
 import { Constants } from "react-native-unimodules";
+import { useNavigation } from "@react-navigation/native";
 
 const AppLogo = require('../../images/applogo.png')
 
-class WelcomeView extends React.Component {
-  constructor(props) {
-    super(props);
+function WelcomeView(props) {
+  const navigation = useNavigation()
 
-  }
-
-  componentDidMount = async () => {
-
-  }
-
-  navigateToLogin = () => {
-      this.props.navigation.navigate('Login');
+  const navigateToLogin = () => {
+      navigation.navigate('Login');
   }
 
   
-  navigateToSignUp = () => {
-      this.props.navigation.navigate('SignUp');
+  const navigateToSignUp = () => {
+      navigation.navigate('SignUp');
   }
 
-  render() {
     return (
       <View style={styles.root}>
           <View style={{flex: 1, alignItems: 'center', flexDirection: 'column', marginTop: 10, padding: 10}}>
@@ -62,14 +55,14 @@ class WelcomeView extends React.Component {
 
                 <Button mode="contained" color="#1565C0" theme={{colors: {
                     text: 'white'
-                }}} style={{elevation: 8, padding: 5, color: "white", borderRadius: 20,margin: 20}} onPress={this.navigateToSignUp}>
+                }}} style={{elevation: 8, padding: 5, color: "white", borderRadius: 20,margin: 20}} onPress={navigateToSignUp}>
                     <Text>
                     Create an account
                     </Text>
                 </Button>
                 <Button mode="contained" theme={{colors: {
                     primary: "#212121"
-                }}} borderless style={{elevation: 8, padding: 5, color: "#212121", borderRadius: 20, margin: 20}} onPress={this.navigateToLogin}>
+                }}} borderless style={{elevation: 8, padding: 5, color: "#212121", borderRadius: 20, margin: 20}} onPress={navigateToLogin}>
                     <Text style={{color: 'white'}}>
                     I already have an account
                     </Text>
@@ -77,7 +70,6 @@ class WelcomeView extends React.Component {
           </View>
       </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({

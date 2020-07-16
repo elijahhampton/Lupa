@@ -80,11 +80,14 @@ function LupaPacksContent(props) {
 function BookATrainerContent(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [trainerData, setTrainerData] = useState([]);
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData
+    })
 
   useEffect(() => {
       let trainerDataIn, location;
     const fetchData = async () => {
-        const uuid = await LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        const uuid = currUserData.user_uuid
         try {
         await LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(uuid, 'location').then(res => {
             location = res;

@@ -73,6 +73,7 @@ import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
 import { Constants } from 'react-native-unimodules';
 import ProgramSearchResultCard from '../../workout/program/components/ProgramSearchResultCard';
+import { InformationIcon } from '../../icons/index.js';
 
 const InviteToPackDialog = props => {
     const [userToInvite, setUserToInvite] = useState(props.userToInvite);
@@ -231,7 +232,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     setupComponent = async () => {
         let userInfo, userPackData
         const uuid = await this._getId();
-        this.currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        this.currUserUUID = this.props.lupa_data.Users.currUserData.user_uuid
 
         try {
             await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
@@ -656,15 +657,15 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     <View style={{width: '100%', margin: 5}}>
                         {
                                             this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
-                                            <TouchableHighlight style={{borderRadius: 8}}>
-                                                                    <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: 110, height: 30}}>
+                                            <TouchableHighlight style={{borderRadius: 8}} onPress={() => this.LUPA_CONTROLLER_INSTANCE.unfollowUser(this.state.userData.user_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>
+                                                                    <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
                         <Text style={{color: 'white', fontWeight: '500'}}>
                             Unfollow
                         </Text>
                     </View>
                                             </TouchableHighlight>
                                             :
-                                            <TouchableHighlight>
+                                            <TouchableHighlight onPress={() => this.LUPA_CONTROLLER_INSTANCE.followUser(this.state.userData.user_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>
                                             <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
 <Text style={{color: 'white', fontWeight: '500'}}>
     Follow
@@ -689,7 +690,10 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             {
                 return (
                     <View style={{width: '100%', margin: 5}}>
-                                            <TouchableHighlight>
+                                            <TouchableHighlight onPress={() => this.props.navigation.navigate('PrivateChat', {
+                                                currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+                                                otherUserUUID: this.state.userData.user_uuid
+                                            })}>
                                             <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
 <Text style={{color: 'white', fontWeight: '500'}}>
     Message
@@ -845,17 +849,18 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         if (this.state.userData.isTrainer)
                         {
                             return (
-                           <Text>
-                               This user has not signed up for any programs.
+                                <View style={{marginVertical: 10, flexDirection: 'row', width: Dimensions.get('window').width, justifyContent: 'center', alignItems: 'center'}}>
+                                    <InformationIcon customStyle={{marginHorizontal: 10}} />
+                                                               <Text>
+                               This trainer has not created any programs.
                            </Text>
+                                </View>
                             )
                         }
                         else
                         {
                             return (
-                            <Text>
-                            This user has not signed up for any programs.
-                        </Text>
+                            null
                             )
                         }
                 
@@ -966,7 +971,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                             </View>
                             </View>
 
-                            <View style={{flex: 1, marginHorizontal: 10, width: '100%'}}>
+                            <View style={{flex: 1, marginHorizontal: 10, marginBottom: 10, width: '100%'}}>
                                 <Text style={{paddingVertical: 5, padding: 5, fontSize: 10, fontWeight: '500'}}>
                          {
                              this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?

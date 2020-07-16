@@ -58,7 +58,6 @@ class CreateProgram extends React.Component {
             programData: getLupaProgramInformationStructure(),
             programImage: "",
             programComplete: false,
-
         }
 
         this.nextIndex = this.nextIndex.bind(this);
@@ -74,7 +73,6 @@ class CreateProgram extends React.Component {
         console.log('enable swipe');
         if (this.state.programComplete == false)
         {
-            alert('deleting')
             //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
             
@@ -193,7 +191,6 @@ class CreateProgram extends React.Component {
             this.props.deleteProgram(this.state.currProgramUUID)
             }
         }
-      
         this.props.navigation.goBack();
     }
 

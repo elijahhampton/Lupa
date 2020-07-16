@@ -23,6 +23,7 @@ import {
 } from 'react-native-paper';
 
 import LupaController from '../../../../controller/lupa/LupaController';
+import { connect } from 'react-redux'
 
 const VerificationModal = (props) => {
     return (
@@ -45,7 +46,13 @@ certifications = [
     }
 ]
 
-export default class TrainerInformation extends React.Component {
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
+
+class TrainerInformation extends React.Component {
     constructor(props) {
         super(props);
 
@@ -100,7 +107,7 @@ export default class TrainerInformation extends React.Component {
     }
 
     sendCertificationNotice = async () => {
-        let currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
+        let currUserUUID = this.props.lupa_data.Users.currUserData.user_uuid
         await this.LUPA_CONTROLLER_INSTANCE.addLupaTrainerVerificationRequest(currUserUUID, this.state.certification, this.state.NASM_CERTIFICATE_NUMBER);
         await this.setState({ verificationSent: true  })
 
@@ -205,3 +212,5 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
 })
+
+export default connect(mapStateToProps)(TrainerInformation)

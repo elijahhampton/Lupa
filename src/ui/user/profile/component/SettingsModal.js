@@ -247,9 +247,10 @@ class SettingsModal extends React.Component {
     }
 
     setupSettings = async () => {
-        let userDataIn;
+        let userDataIn = {}
+        
 
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid).then(result => {
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.lupa_data.Users.currUserData.user_uuid).then(result => {
             userDataIn = result;
         });
 

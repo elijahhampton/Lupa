@@ -26,6 +26,7 @@ import { Constants } from 'react-native-unimodules';
 import TrainerInsights from '../../user/trainer/TrainerInsights';
 import WorkoutLogModal from '../../workout/modal/WorkoutLogModal';
 import { useNavigation, CommonActions } from '@react-navigation/native';
+import { LUPA_AUTH } from '../../../controller/firebase/firebase';
 
 const ICON_SIZE = 20;
 
@@ -72,7 +73,7 @@ function DrawerMenu(props) {
    * Logs the user out.
    */
   const _handleLogout = () => {
-    props.logoutMethod()
+    LUPA_AUTH.signOut()
   }
 
   return (
