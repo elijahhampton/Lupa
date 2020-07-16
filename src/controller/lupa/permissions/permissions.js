@@ -177,4 +177,30 @@ export default _requestPermissionsAsync = () => {
     // …
    // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
   });
+
+  check(PERMISSIONS.IOS.CONTACTS)
+  .then((result) => {
+    switch (result) {
+      case RESULTS.UNAVAILABLE:
+        //tell user it is not available on this device
+        
+        break;
+      case RESULTS.DENIED:
+       //request permission
+    
+        break;
+      case RESULTS.GRANTED:
+        // nothing to do
+        
+        break;
+      case RESULTS.BLOCKED:
+        // alert the user to change it from settings
+       //may need to handle the case here user says only while using?
+        break;
+    }
+  })
+  .catch((error) => {
+    // …
+   // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+  });
 }
