@@ -229,7 +229,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      * Loads any necessary data the component needs to render.
      */
     setupComponent = async () => {
-        let userInfo, userPackData, profileImageIn;
+        let userInfo, userPackData
         const uuid = await this._getId();
         this.currUserUUID = await this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
 
@@ -775,7 +775,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     {
                         return this.props.lupa_data.Programs.currUserProgramsData.map((program, index, arr) => {
                             return (
-                                <ProgramListComponent programData={program} key={index} index={index} />
+                                <ProgramSearchResultCard programData={program} />
                             )
                         })
                     }
@@ -869,7 +869,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                 return null
                             }
                             return (
-                                 <ProgramProfileComponent programData={program} />
+                                 <ProgramSearchResultCard programData={program} />
                             )
                         })
                     }
@@ -966,7 +966,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                             </View>
                             </View>
 
-                            <View style={{flex: 1, width: '100%'}}>
+                            <View style={{flex: 1, marginHorizontal: 10, width: '100%'}}>
                                 <Text style={{paddingVertical: 5, padding: 5, fontSize: 10, fontWeight: '500'}}>
                          {
                              this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
@@ -977,52 +977,41 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                 </Text>
                                 </View>
                             
-                            {
-                                this.state.userData.isTrainer == true ?
-
-                            <View style={{width: '100%', alignSelf: 'center', padding: 10}}>
-                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <Text style={{color: 'rgb(99, 99, 102)',   padding: 10, alignSelf: 'center'}}>
-                                    Program Reviews
-                                </Text>
-
-                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Text style={{color: '#212121',  }}>
-                                        See all
-                                    </Text>
-                                    <MaterialIcons name="arrow-forward" size={15} color="#212121" />
-                                </View>
-                                </View>
-                                <ScrollView horizontal contentContainerStyle={{padding: 10}} >
-                                    <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgb(199, 199, 204)', borderRadius: 12, width: 150, height: 45}}>
-                                        <Text style={{fontSize: 10}}>
-                                            This user has no reviews.
-                                        </Text>
-                                    </View>
-                                </ScrollView>
-                            </View>
-                            :
-                            null
-                            }
-
                         </View>
 
-                        <Divider style={{marginVertical: 10, marginHorizontal: 10, backgroundColor: 'rgb(209, 209, 214)'}} />
-
-                        <View style={styles.transparentBackground}>
-                        <ScrollView 
-                        horizontal 
-                        showsHorizontalScrollIndicator={false}
-                        centerContent
-                        snapToAlignment={'center'}
-                        decelerationRate={0} 
-                        snapToInterval={Dimensions.get('window').width}
-                        pagingEnabled={true}>
-                            {
-                                this.mapTrainerPrograms()
-                            }
-                        </ScrollView>
+                        <Divider />
                     </View>
+                    <View>
+                    {
+                                this.props.lupa_data.Users.currUserData.isTrainer ?
+                                <TouchableOpacity style={{}}>
+                                    <View style={{paddingVertical: 10}}>
+                                        <View style={{marginHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <Text style={{fontSize: 15, paddingVertical: 10}}>
+                                        Program Results
+                                    </Text>
+                                    <FeatherIcon name="chevron-down" />
+                                        </View>
+                               
+                                    <Caption style={{paddingLeft: 20}}>
+                                        This user has not received any results from their programs.
+                                    </Caption>
+                                    </View>
+                                    <Divider style={{backgroundColor: 'rgb(242, 242, 247)', height: 8}} />
+                                </TouchableOpacity>
+                                :
+                                null
+                            }
+                            
+                    </View>
+
+                    <View>
+                    {
+                                this.props.lupa_data.Users.currUserData.isTrainer ?
+                                this.mapTrainerPrograms()
+                                :
+                                null
+                            }
                     </View>
                         
                         <SafeAreaView />
