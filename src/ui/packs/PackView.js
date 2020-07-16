@@ -54,7 +54,6 @@ import { LOG_ERROR } from '../../common/Logger';
 import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 import { Constants } from 'react-native-unimodules';
 import CreatePackDialog from './dialog/CreatePackDialog';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import { RFValue } from 'react-native-responsive-fontsize'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MenuIcon } from '../icons';
