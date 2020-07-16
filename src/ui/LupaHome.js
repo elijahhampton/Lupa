@@ -585,12 +585,12 @@ class LupaHome extends React.Component {
                     </View>
     }
                     
-              <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
+             {/* <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
                 
               <CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} />
                 <Modalize ref={this.searchAttributePickerModalRef} modalHeight={Dimensions.get('window').height / 3}>
                     {this.getPicker(this.state.currSearchFilter)}
-                </Modalize>
+</Modalize> */}
         
             </View>
         );

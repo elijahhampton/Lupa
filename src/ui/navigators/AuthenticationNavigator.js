@@ -13,7 +13,7 @@ function AuthenticationNavigator() {
         <Stack.Navigator initialRouteName="WelcomeView" headerMode="none">
       <Stack.Screen name="WelcomeView" component={WelcomeView} />
       <Stack.Screen name="Login" component={LoginView} />
-      <Stack.Screen name="Signup" component={SignUpView} />
+      <Stack.Screen name="SignUp" component={SignUpView} />
     </Stack.Navigator>
     )
 }

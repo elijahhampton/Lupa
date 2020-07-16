@@ -100,21 +100,21 @@ function ProgramInformationPreview(props) {
      }
 
     useEffect(() => {
-       /* async function fetchData() {
+        async function fetchData() {
             let result = {}, userData = {}
             await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.programData.program_structure_uuid).then(data => {
                 result = data;
             })
 
-            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.programData.program_owner.uuid).then(data => {
+            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.programData.program_owner).then(data => {
                 userData = data
             })
 
             await setProgramData(result);
             await setProgramOwnerData(userData)
-        }*/
+        }
 
-       // fetchData();
+        fetchData();
     }, [])
 
     /**
@@ -210,17 +210,10 @@ function ProgramInformationPreview(props) {
     const getProgramTags = () => {
         try {
             return programData.program_tags.map((tag, index, arr) => {
-                if (index == arr.length - 1) {
-                    return (
-                        <Caption>
-                            {tag}
-                        </Caption>
-                    )
-                }
                 return (
-                    <Caption>
-                        {tag},{" "}
-                    </Caption>
+                    <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: 'rgb(160, 160, 160)'}} style={{backgroundColor: 'rgb(237, 237, 237)', borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
+                        {tag}
+                    </Chip>
 
                 )
             })
@@ -324,91 +317,87 @@ function ProgramInformationPreview(props) {
     return (
         <Modal presentationStyle="fullScreen" visible={props.isVisible} style={{ flex: 1 }} animated={true} animationType="slide">
               <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-                   <SafeAreaView />
-                   <IconButton icon={() => <FeatherIcon name="x" size={25} onPress={() => props.closeModalMethod()}/>} />
+                  <Appbar.Header style={{elevation: 0}} theme={{
+                      colors: {
+                          primary: '#FFFFFF'
+                      }
+                  }}>
+                      <Appbar.Action icon={() => <FeatherIcon name="x" size={25} onPress={() => props.closeModalMethod()}/>} />
+                    
+                  </Appbar.Header>
                    <ScrollView contentContainerStyle={{}}>
                    <View style={{alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width, height: 300}}>
                        <Image style={{width: '100%', height: '100%'}} source={{uri: getProgramImage()}} />
                    </View>
 
-                   <View style={{height: 200, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                   <View style={{marginHorizontal: 10, height: 150, justifyContent: 'space-evenly'}}>
+                       <Text>
+                           {getProgramName()}
+                       </Text>
+                       <Paragraph style={{color: 'rgb(180, 180, 180)', fontWeight: '600'}}>
+                           {getProgramDescription()}
+                       </Paragraph>
+                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                           {getProgramTags()}
+                       </View>
+                   </View>
+
+                   <View style={{alignItems: 'center', justifyContent: 'space-evenly'}}>
+                      
                        <View style={{width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                       <View>
+                               <Avatar.Image source={{uri: programOwnerData.photo_url}} label="EH" color="#FFFFFF" size={50} style={{backgroundColor: '#212121'}} />
+                           </View>
                            <View>
                                <Text style={{fontSize: 20, fontWeight: '300'}}>
                                  {programOwnerData.display_name}
                                </Text>
                                <Text style={{fontSize: 15, fontWeight: '300'}}>
-                                   {programOwnerData.certification}
+                                   National Association of Sports Medicine
                                </Text>
                            </View>
-
-                           <View>
-                               <Avatar.Text label="EH" color="#FFFFFF" size={50} style={{backgroundColor: '#212121'}} />
-                           </View>
-                       </View>
-
-                       <View style={{width: Dimensions.get('window').width - 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                           <TextInput placeholder="Send Elijah a message"  style={{textAlign: 'center', flex: 1, padding: 10, fontSize: 15, backgroundColor: 'rgb(229, 229, 234)', borderRadius: 15}} />
-                           <Button mode="contained" theme={{
-                               colors: {
-                                   primary: 'rgba(13,71,161 ,1)'
-                               }
-                           }} style={{elevation: 0, marginHorizontal: 10, borderRadius: 8}}>
-                                <Text>
-                                    Send
-                                </Text>
-                           </Button>
                        </View>
                    </View>
 
-                   <View style={{height: 150, alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                       <Divider style={{width: '100%'}} />
-                       <>
-                       <View style={{paddingVertical: 20}}>
-                       <View style={{paddingLeft: 10, width: '100%', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-                           {getProgramName()}
-                           <View style={{width: Dimensions.get('window').width, flexDirection: 'column', justifyContent: 'space-evenly'}}>
-                           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                            <Image source={require('../../images/thumbs-up-icon.png')} style={{width: 18, height: 18, margin: 3}} />
-                            <Text style={{color: 'rgb(142, 142, 147)'}}>
-                                One on One
-                            </Text>
-                           </View>
-                           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                           <Image source={require('../../images/thumbs-up-icon.png')} style={{width: 18, height: 18, margin: 3}} />
-                           <View style={{flexDirection: 'row', width: Dimensions.get('window').width}}>
-                              {getProgramTags()}
-                           </View>
-                           </View>
- 
-                           </View>
-                       </View>
-                       </View>
-                       </>
-                       <Divider style={{width: '100%'}} />
-                   </View>
-
-                   <View style={{paddingVertical: 20, height: 400}}>
-                       <View style={{marginTop: 10, width: '100%', height: 200, alignItems: 'center', justifyContent: 'center'}}>
-                            <View style={{borderWidth: 0.5, borderColor: 'rgb(142, 142, 147)', width: '80%', height: '100%', borderRadius: 15}}>
-                                <MapView style={{width: '100%', height: '100%', alignSelf: 'center', borderRadius: 15}}
+                   <View style={{marginVertical: 20}}>
+                       <View style={{marginTop: 10, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                                <MapView style={{width: Dimensions.get('window').width - 20, height: 180, alignSelf: 'center', borderRadius: 15}}
                     initialRegion={{
                         latitude: 0,
                         longitude: 0,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                       }} />
-                                <View style={{paddingVertical: 10, width: '100%', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                                <Text style={{fontSize: 15, fontWeight: '300'}}>
+                                <View style={{marginHorizontal: 20, paddingVertical: 10, width: '100%', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+                                <Text style={{paddingLeft: 20, fontSize: 15, fontWeight: '300'}}>
                            Mean's Gym House
                        </Text>
-                       <Text style={{fontSize: 15, fontWeight: '300'}}>
+                       <Text style={{paddingLeft: 20, fontSize: 15, fontWeight: '300'}}>
                        1234 Hydrag Lane
                        </Text>
                        </View>
-                            </View>
                        </View>
                    </View>
+                   
+
+                   <View style={{alignItems: 'center', justifyContent: 'center', marginHorizontal: 20}}>
+                       <Caption style={{textAlign: 'center'}}>
+                       Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?
+                       </Caption>
+                   </View>
+
+                   <View style={{marginVertical: 20, width: Dimensions.get('window').width - 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
+                           <Button mode="contained" theme={{
+                               colors: {
+                                   primary: '#1089ff'
+                               }
+                           }} style={{borderRadius: 8, width: Dimensions.get('window').width - 20}}>
+                               <FeatherIcon name="message-circle" size={15} />
+                                <Text>
+                                    Send Elijah a Message
+                                </Text>
+                           </Button>
+                       </View>
 
 
                    </ScrollView>
@@ -420,7 +409,7 @@ function ProgramInformationPreview(props) {
                     <Button mode="contained" style={{width: 'auto', elevation: 0}} theme={{
                         roundness: 8,
                         colors: {
-                            primary: 'rgba(13,71,161 ,1)'
+                            primary: '#23374d'
                         }
                     }}>
                         Purchase

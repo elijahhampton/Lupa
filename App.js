@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
   import { ActivityIndicator, View, Text, Button, SafeAreaView } from 'react-native';
 
 import { Provider as PaperProvider } from 'react-native-paper';
-import { Provider as StoreProvider, useDispatch} from 'react-redux';
+import { Provider as StoreProvider, useDispatch, useSelector} from 'react-redux';
 
 import { NavigationContainer, useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -20,6 +20,7 @@ import { getLupaProgramInformationStructure } from './src/model/data_structures/
 import CreateProgram from './src/ui/workout/program/createprogram/CreateProgram';
 import LupaDrawerNavigator from './src/ui/navigators/LupaDrawerNavigator'
 import TrainerInformation from './src/ui/user/modal/WelcomeModal/TrainerInformation';
+import PrivateChat from './src/ui/user/chat/PrivateChat';
 
 class App extends React.Component {
   constructor(props) {
@@ -48,12 +49,24 @@ const SwitchNavigator = () => {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async () => {
-    console.log('a')
-    //setup redux
-    await _setupRedux()
+    try {
+      console.log('a')
+      //setup redux
+      await _setupRedux()
 
-    //navigate to app
-    navigation.navigate('App')
+      const currUserData = useSelector(state => {
+        return state.Users.currUserData
+      })
+
+      if (typeof(currUserData.email) == 'undefined') {
+        showAuthentication()
+      }
+  
+      //navigate to app
+      navigation.navigate('App')
+    } catch(err) {
+      showAuthentication()
+    }
   }
 
   const showAuthentication = () => {
@@ -97,6 +110,7 @@ const SwitchNavigator = () => {
     await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
     await dispatch({ type: 'UPDATE_LUPA_ASSESSMENTS', payload: lupaAssessments})
+    console.log(userPayload)
     console.log('d')
   }
 
@@ -132,6 +146,7 @@ function AppNavigator() {
     <StackApp.Screen name='App' component={Lupa}/>
     <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{animationEnabled: true}}/>
     <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{animationEnabled: true}}/>
+    <StackApp.Screen name="PrivateChat" component={PrivateChat} />
   </StackApp.Navigator>
   )
 

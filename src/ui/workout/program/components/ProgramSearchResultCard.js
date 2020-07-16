@@ -18,21 +18,25 @@ import {
 
 import ProgramInformationPreview from '../ProgramInformationPreview';
 
+import { useNavigation } from '@react-navigation/native'
+
 
 function ProgramSearchResultCard(props) {
     const result = props.programData;
 
     const [programModalVisible, setProgramModalVisible] = useState(false);
 
-    const currUserData= useSelector(state => {
+    const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
+
+    const navigation = useNavigation()
 
     const handleOnPress = () => {
 
         if (result.program_participants.includes(currUserData.user_uuid))
         {
-            props.navigation.push('LiveWorkout', {
+            navigation.push('LiveWorkout', {
                 programData: result,
             });
         }
