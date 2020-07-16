@@ -499,7 +499,7 @@ export default class UserController {
 
     getUserInformationByUUID = async uuid => {
         console.log('1')
-        let userResult = {}, programsResult = [], servicesResult = [], docData = getLupaProgramInformationStructure, userPrograms = []
+        let userResult = {}, docData = getLupaProgramInformationStructure(), userPrograms = []
         try {
             await USER_COLLECTION.doc(uuid).get().then(result => {
                 userResult = result.data();
@@ -524,15 +524,16 @@ export default class UserController {
                 }
                 console.log('4')
             }
+            
         } catch(error) {
             LOG_ERROR('UserController.ts', 'Caught exception in getUserInformationByUUID', error)
             return {}
         }
 
-       /* Object.defineProperty(userResult, 'programs', {
+        Object.defineProperty(userResult, 'programs', {
             value: userPrograms,
             writable: false
-        })*/
+        })
         
         console.log('heeere thee')
         return Promise.resolve(userResult);

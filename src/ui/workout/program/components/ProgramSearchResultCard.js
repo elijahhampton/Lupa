@@ -67,10 +67,10 @@ function ProgramSearchResultCard(props) {
     }
 
     return (
-        <View>
+        <View style={{width: Dimensions.get('window').width}}>
 
         <TouchableOpacity onPress={() => handleOnPress()}>
-        <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 120, backgroundColor: 'transparent'}} >
+        <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, marginVertical: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 120, backgroundColor: 'transparent'}} >
                                 
         <View style={{flex: 1, padding: 10, alignItems: 'center', justifyContent: 'center' }}>
             <Surface style={{width: '80%', height: '70%', elevation: 15, borderRadius: 10}}>
