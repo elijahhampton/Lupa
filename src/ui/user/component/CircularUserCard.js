@@ -40,17 +40,21 @@ function CircularUserCard(props) {
                     {getAvatar()}
                 </View>
                 <View >
-                    <Text>
+                    <Text style={{fontWeight: '600', color: '#212121'}}>
                         Emily Loefstedt
                     </Text>
-                    <Caption>
-                        National Association of Sports
-                    </Caption>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text style={{fontWeight: '600', fontSize: 12}}>
+                            5 Programs
+                        </Text>
+                        <Text>
+                            /
+                        </Text>
+                        <Text style={{fontWeight: '300', fontSize: 12}}>
+                        National Association of Sports and Medicine
+                    </Text>
+                    </View>
                 </View>
-
-                <Chip mode="outlined" textStyle={{fontWeight: '400'}} style={{position: 'absolute', top: 0, right: 20, borderRadius: 8 }}>
-                    NASM
-                </Chip>
             </View>
         )
     }

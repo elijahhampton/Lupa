@@ -33,9 +33,18 @@ const PlaceHolder = () => {
   )
 }
 
+const tabBarOptions = {
+  showLabel: true,
+  labelStyle: {
+    fontWeight: '400',
+    fontFamily: 'avenir-roman',
+  }
+}
+
 function LupaBottomTabNavigator() {
   return (
     <Tab.Navigator 
+    tabBarOptions={tabBarOptions}
       initialRouteName="Train"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -44,15 +53,15 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Dashboard':
-              return <FeatherIcon name='clipboard' size={20} color="#212121" />;
+              return <FeatherIcon name='clipboard' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Train':
-              return <FeatherIcon name='activity' size={20} color="#212121" />;
+              return <FeatherIcon name='activity' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Create':
-              return <FeatherIcon name='plus-circle' size={20} color="#212121"/>;
+              return <FeatherIcon name='plus-circle' size={20} color={focused ? "#1089ff" : "#212121"}/>;
             case 'Community':
-              return <FeatherIcon name='globe' size={20} color="#212121" />;
+              return <FeatherIcon name='globe' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Profile':
-              return <FeatherIcon name='user' size={20} color='#212121' />;
+              return <FeatherIcon name='user' size={20} color={focused ? "#1089ff" : "#212121"} />;
           }
 
         },

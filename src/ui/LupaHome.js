@@ -156,7 +156,7 @@ class LupaHome extends React.Component {
     }
 
     setupComponent = async () => {
-        // this.setState({ inviteFriendsIsVisible: true })
+         this.setState({ inviteFriendsIsVisible: true })
         await this.loadFeaturedPrograms();
 
         let nearYouIn = []
@@ -266,13 +266,13 @@ class LupaHome extends React.Component {
                                 <Surface style={{height: 200, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 3, margin: 5}}>
                                     <Image resizeMode="cover" source={{uri: item.program_image}} style={{width: '100%', height: '100%', borderRadius: 15}} />
                                 </Surface>
-                                <View style={{margin: 15}}>
-                                <Text style={{fontWeight: '500', fontSize: 15, color: '#212121'}}>
+                                <View style={{marginLeft: 10}}>
+                                <Text style={{fontSize: 15,   color: '#212121', paddingVertical: 5 }}>
+                                    6 Week Resistance Training
+                                </Text>
+                                <Text style={{fontWeight: '300', fontSize: 12, color: '#212121'}}>
                                         by Emily Loefstedt
                                     </Text>
-                                <Text style={{fontSize: 15,   color: '#212121'}}>
-                                    Resistance - Circuit Training
-                                </Text>
                                 </View>
                                 </TouchableOpacity>
         );
@@ -450,10 +450,11 @@ class LupaHome extends React.Component {
                 <SearchBar placeholder="Search fitness programs"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
-                        searchIcon={<FeatherIcon name="search" size={15} />}
+                        searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
                         containerStyle={{backgroundColor: "transparent", width: '90%'}}
-                        inputContainerStyle={{backgroundColor: 'rgb(242, 242, 247))'}}
-                        inputStyle={{fontSize: 15}}
+                        inputContainerStyle={{backgroundColor: 'rgb(242, 242, 247))',}}
+                        inputStyle={{fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman'}}
+                        placeholderTextColor="#212121"
                         value={this.state.searchValue}/>
                 </Appbar.Header>
 
@@ -465,7 +466,7 @@ class LupaHome extends React.Component {
        placeholder="Search workout programs, fitness professionals" 
        placeholderTextColor="rgb(99, 99, 102)" 
        icon={() => <FeatherIcon name="search" size={20} /> }
-       inputStyle={{width: '100%', fontWeight: '300', fontSize: 12, padding: 0, margin: 0, width: '100%'}}
+       inputStyle={{width: '100%', color: 'black', fontWeight: '300', fontSize: 12, padding: 0, margin: 0, width: '100%'}}
        theme={{
            colors: {
                primary: '#1089ff',
@@ -484,17 +485,8 @@ class LupaHome extends React.Component {
 <ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2}}>
 
         <View
-                    style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}>
-                    
-                    <View style={{padding: 5, width: '80%'}}>
-                   {/* <Text style={{fontSize: RFValue(15), fontWeight: '600', paddingVertical: 10, paddingLeft: 10 }}>
-                        Curated fitness programs
-    </Text> 
-    <View style={{marginLeft: 10, width: 30, height: 3, backgroundColor: 'black', borderBottomEndRadius: 0}} /> */}
-    </View> 
-
-
-                    <Carousel 
+                    style={{justifyContent: 'center', justifyContent: 'center', }}>
+    <Carousel 
                         data={this.state.featuredPrograms}
                         itemWidth={Dimensions.get('window').width - 100}
                         sliderWidth={Dimensions.get('window').width}
@@ -505,31 +497,30 @@ class LupaHome extends React.Component {
                         contentContainerCustomStyle={{alignItems: 'center', justifyContent: 'center'}}
                         />
 
-                        <Divider style={{marginHorizontal: 20}} />
-
                         </View>
 
-<View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 20 }}>
+<View style={{justifyContent: 'center', justifyContent: 'center',  }}>
                     
                     <View style={{padding: 5, width: '80%'}}>
-                    <Text style={{fontSize: RFValue(15), fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
+                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
                        Start training with...
                     </Text>
                     </View>
 
-                    <ScrollView pagingEnabled={true} horizontal={true} showsHorizontalScrollIndicator={false}>
+                    <ScrollView pagingEnabled={true} horizontal={true} showsHorizontalScrollIndicator={false} >
                             {
                                 this.renderNearbyUsers()
                             }
                     </ScrollView>
+                    <Pagination activeDotIndex={0} inactiveDotColor="#1089ff" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} containerStyle={{justifyContent: 'flex-start'}} dotsLength={5} dotColor="#1089ff" />
 </View>
 
-<View style={{padding: 20, height: 250, alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
+<View style={{padding: 20, alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
                         <View>
-                        <Text style={{fontWeight: '400', marginHorizontal: 10, fontSize: 20, marginVertical: 5}}>
+                        <Text style={{fontFamily: 'avenir-roman', fontWeight: '400', marginHorizontal: 10, fontSize: 20, marginVertical: 5}}>
                             Starting and continuing a journey of a lifetime
                         </Text>
-                        <Text style={{marginHorizontal: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                        <Text style={{fontFamily: 'avenir-light', marginHorizontal: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
                             It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
                         </Text>
                         </View>
@@ -545,7 +536,7 @@ class LupaHome extends React.Component {
                     <View
                     style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                     <View style={{padding: 5}}>
-                    <Text style={{fontSize: RFValue(15), fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
+                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
                         Top picks
                         </Text>
                     </View>
@@ -564,10 +555,10 @@ class LupaHome extends React.Component {
 
                         <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, height: 300, backgroundColor: 'black', marginVertical: 10}}>
                         <View>
-                        <Text style={{paddingLeft: 10, color: 'white', fontSize: 20, marginVertical: 5}}>
+                        <Text style={{fontFamily: 'avenir-roman', paddingLeft: 10, color: 'white', fontSize: 20, marginVertical: 5}}>
                             Did you complete any type of exercise today?
                         </Text>
-                        <Text style={{color: 'white', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                        <Text style={{fontFamily: 'avenir-light', color: 'white', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
                            Every time you complete a physical activity you are one step closer to completing your goals.  Keep track of your progress by logging your workout or checking in for the day.
                         </Text>
                         </View>
@@ -585,12 +576,12 @@ class LupaHome extends React.Component {
                     </View>
     }
                     
-             {/* <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
+              <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
                 
               <CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} />
                 <Modalize ref={this.searchAttributePickerModalRef} modalHeight={Dimensions.get('window').height / 3}>
                     {this.getPicker(this.state.currSearchFilter)}
-</Modalize> */}
+</Modalize> 
         
             </View>
         );
