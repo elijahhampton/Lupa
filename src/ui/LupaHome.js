@@ -60,7 +60,6 @@ import FeaturedProgramCard from './workout/program/components/FeaturedProgramCar
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import {Picker} from '@react-native-community/picker';
 
-import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import CircularUserCard from './user/component/CircularUserCard';
 import { MenuIcon } from './icons';
 import App from '../../App';

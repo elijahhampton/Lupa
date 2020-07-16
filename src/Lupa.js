@@ -25,12 +25,19 @@ import {
 
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 
+import { connect } from 'react-redux'
+
+const mapStateToProps = (state, action) => {
+  return {
+    lupa_data: state
+  }
+}
+
 class Lupa extends React.Component {
   constructor(props) {
     super(props);
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    this.currUserUUID = this.LUPA_CONTROLLER_INSTANCE.getCurrentUser().uid;
     this.lupaSwiper = React.createRef();
 
     this.state = {
@@ -49,36 +56,17 @@ class Lupa extends React.Component {
     this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
   }
 
-  _showWelcomeModal = async () => {
-    let _isNewUser;
-    await AsyncStorage.getItem(`${this.currUserUUID}_` + 'isNewUser').then(result => {
-      _isNewUser = result;
-    });
-
-    if (_isNewUser != 'false')
-    {
-      await this.setState({
-        isNewUser: true
-      })
-    }
-
-}
-
-_handleWelcomeModalClose = async () => {
-  await this.setState({ isNewUser: false })
-  await AsyncStorage.setItem(`${this.currUserUUID}_` + 'isNewUser', 'false');
-}
   
 _navigateToAuth = async () => {
   await logoutUser();
   this.props.navigation.navigate('Auth');
 }
+
   render() {
     return (
       <>
       <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
       <LupaDrawerNavigator />
-      <WelcomeModal isVisible={this.state.isNewUser} closeModalMethod={this._handleWelcomeModalClose}/> 
       </>
     );
   }
@@ -110,4 +98,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Lupa;
+export default connect(mapStateToProps)(Lupa);

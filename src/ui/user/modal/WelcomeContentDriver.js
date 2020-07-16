@@ -19,6 +19,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LupaController from '../../../controller/lupa/LupaController';
 
 import { PackContentDriverCard, TrainerContentDriverCard } from './WelcomeModal/component/ContentDriverCards';
+import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux'
 
 const contentDriverContext = [
     {
@@ -126,6 +128,7 @@ function BookATrainerContent(props) {
 }
 
 export default function WelcomeContentDriver(props) {
+    const navigation = useNavigation()
     const [showContent, setShowContent] = useState(false);
     const [contentToShow, setContentToShow] = useState("");
 
@@ -151,7 +154,7 @@ export default function WelcomeContentDriver(props) {
                         return <BookATrainerContent toggleContentMethod={setShowContentWrapper} />
                         break;
                     case 'Design a Workout Program':
-                        props.closeModalMethod();
+                        navigation.navigate('App')
                     default:
                 }
     }
