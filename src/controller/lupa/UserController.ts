@@ -183,21 +183,38 @@ export default class UserController {
     /**
      * DEPRECATED - To be removed in version 0.8
      */
-    getCurrentUserUUID = () => {
-        return LUPA_AUTH.currentUser.uid;
+    getCurrentUserUUID = async () => {
+        return await LUPA_AUTH.currentUser.uid;
     }
 
-    getCurrentUserData = async () => {
-        let currentUserInformation;
-        let currentUserUUID = await this.getCurrentUserUUID();
-        await USER_COLLECTION.where('user_uuid', '==', currentUserUUID).limit(1).get().then(docs => {
-            docs.forEach(doc => {
-                currentUserInformation = doc.data();
-                return;
+    getCurrentUserData = async (uuid=0) => {
+        let data = {}
+        try {
+        let currentUserInformation = {}
+        if (uuid == 0) {
+            let currentUserUUID = await this.getCurrentUserUUID();
+            await USER_COLLECTION.where('user_uuid', '==', currentUserUUID).limit(1).get().then(docs => {
+                docs.forEach(doc => {
+                    currentUserInformation = doc.data();
+                    return;
+                })
             })
+
+            return Promise.resolve(currentUserInformation)
+        }
+
+        await USER_COLLECTION.doc(uuid).get().then(snapshot => {
+            data = snapshot.data()
         })
 
-        return Promise.resolve(currentUserInformation);
+        return Promise.resolve(data);
+
+    } catch(error) {
+        alert(error)
+        let errdata = getLupaUserStructure()
+        return Promise.resolve(errdata)
+    }
+
     }
 
     getCurrentUserHealthData = async () => {

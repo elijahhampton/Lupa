@@ -264,12 +264,12 @@ class Programs extends React.Component {
     }
 
     async componentDidMount() {
-        await console.log('disable swipe');
+
       await this.setupComponent()
     }
 
     componentWillUnmount() {
-        console.log('enable swipe');
+      
     }
 
     setupComponent = async () => {

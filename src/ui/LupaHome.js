@@ -58,17 +58,12 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
-import {Picker} from '@react-native-community/picker';
 
 import CircularUserCard from './user/component/CircularUserCard';
 import { MenuIcon } from './icons';
 import App from '../../App';
 import { SearchBar } from 'react-native-elements';
 
-const CreateProgramImage = require('./images/programs/sample_photo_three.jpg')
-const SamplePhotoOne = require('./images/programs/sample_photo_one.jpg')
-const SamplePhotoTwo = require('./images/programs/sample_photo_two.jpg')
-const SamplePhotoThree = require('./images/programs/sample_photo_three.jpg')
 
 const CITIES = [
     "",
@@ -126,22 +121,11 @@ class LupaHome extends React.Component {
                 {text: 'Certification', icon: 'map-pin', chipID: 3},
                 {text: 'Price', icon: 'map-pin', chipID: 4}
             ],
-            samplePhotoData: [
-                SamplePhotoOne,
-                SamplePhotoTwo,
-                SamplePhotoThree
-            ],
             searchValue: "",
             searching: false,
             featuredPrograms: [],
             programModalVisible: false,
             inviteFriendsIsVisible: false,
-            currSearchFilter: "",
-            stateSearchFilterVal: "State",
-            citySearchFilterVal: "City",
-            certificationSearchFilterVal: "Certification",
-            bodyTypeSearchFilterVal: "Body Type",
-            priceSearchFilterVal: "Price",
             height: new Animated.Value(80),
             customizedInviteFriendsModalIsOpen: false,
         }
@@ -155,7 +139,7 @@ class LupaHome extends React.Component {
     }
 
     setupComponent = async () => {
-         this.setState({ inviteFriendsIsVisible: true })
+         //this.setState({ inviteFriendsIsVisible: true })
         await this.loadFeaturedPrograms();
 
         let nearYouIn = []
@@ -175,10 +159,6 @@ class LupaHome extends React.Component {
        })
        
    }
-
-    componentWillUnmount() {
-    
-    }
 
     loadFeaturedPrograms = async () => {
         let featuredProgramsIn = []
@@ -277,148 +257,6 @@ class LupaHome extends React.Component {
         );
     }
 
-
-    handleFilerOnPress = async (chipID) => {
-        await this.setState({ currSearchFilter: chipID})
-        this.searchAttributePickerModalRef.current.open()
-    }
-
-    getChipText(chipID)
-    {
-        switch(chipID)
-        {
-            case 0: //city
-                return(
-                    <Text style={{  color: '#212121'}}>
-                        {this.state.citySearchFilterVal}
-                </Text>
-                )
-            case 1: //state
-                return(
-                    <Text style={{  color: "#212121"}}>
-                    {this.state.stateSearchFilterVal}
-                </Text>
-                )
-            case 2: //body type
-                return(
-                    <Text style={{  color: "#212121"}}>
-                        {this.state.bodyTypeSearchFilterVal}
-                </Text>
-                )
-            case 3: //certification
-                return(
-                    <Text style={{  color: "#212121"}}>
-                        {this.state.certificationSearchFilterVal}
-                </Text>
-                )
-            case 4: //price
-                return(
-                    <Text style={{  color: "#212121"}}>
-                        {this.state.priceSearchFilterVal}
-                </Text>
-                )
-            default:
-        }
-    }
-
-    getPicker = (currSearchFilter) => {
-        switch(currSearchFilter) {
-            case 0:
-                return (
-                    <Picker
-                    style={{flex: 1}}
-                    selectedValue={this.state.citySearchFilterVal}
-                    onValueChange={(itemValue, itemIndex) => {
-                        this.setState({ citySearchFilterVal: itemValue})
-                    }}>
-                        {
-                            this.getPickerValues(this.state.currSearchFilter).map(val => {
-                                return <Picker.Item label={val} value={val} key={val} />
-                            })
-                        }
-                  </Picker>
-                )
-            case 1:
-                return (
-                    <Picker
-                    style={{flex: 1}}
-                    selectedValue={this.state.stateSearchFilterVal}
-                    onValueChange={(itemValue, itemIndex) => {
-                        this.setState({ stateSearchFilterVal: itemValue})
-                    }}>
-                        {
-                            this.getPickerValues(this.state.currSearchFilter).map(val => {
-                                return <Picker.Item label={val} value={val} key={val}/>
-                            })
-                        }
-                  </Picker>
-                )
-                case 2:
-                    return (
-                        <Picker
-                        style={{flex: 1}}
-                        selectedValue={this.state.bodyTypeSearchFilterVal}
-                        onValueChange={(itemValue, itemIndex) => {
-                            this.setState({ bodyTypeSearchFilterVal: itemValue})
-                        }}>
-                            {
-                                this.getPickerValues(this.state.currSearchFilter).map(val => {
-                                    return <Picker.Item label={val} value={val} key={val}/>
-                                })
-                            }
-                      </Picker>
-                    )
-                    case 3:
-                        return (
-                            <Picker
-                            style={{flex: 1}}
-                            selectedValue={this.state.certificationSearchFilterVal}
-                            onValueChange={(itemValue, itemIndex) => {
-                                this.setState({ certificationSearchFilterVal: itemValue})
-                            }}>
-                                {
-                                    this.getPickerValues(this.state.currSearchFilter).map(val => {
-                                        return <Picker.Item label={val} value={val} key={val}/>
-                                    })
-                                }
-                          </Picker>
-                        )
-                        case 4:
-                            return (
-                                <Picker
-                                style={{flex: 1}}
-                                selectedValue={this.state.priceSearchFilterVal}
-                                onValueChange={(itemValue, itemIndex) => {
-                                    this.setState({ priceSearchFilterVal: itemValue})
-                                }}>
-                                    {
-                                        this.getPickerValues(this.state.currSearchFilter).map(val => {
-                                            return <Picker.Item label={val} value={val} key={val}/>
-                                        })
-                                    }
-                              </Picker>
-                            )
-        }
-    }
-
-    getPickerValues = (currSearchFilter) => {
-        switch(currSearchFilter)
-        {
-            case 0:
-                return CITIES
-            case 1:
-                return STATES
-            case 2:
-                return BODY_TYPES
-            case 3:
-                return CERTIFICATIONS
-            case 4:
-                return PRICES_RANGES
-            default:
-                return []
-        }
-    }
-
     onScroll = (event) => {
         var currentOffset = event.nativeEvent.contentOffset.y;
         var direction = currentOffset > this.offset ? this.showFilters() : this.hideFilters();
@@ -501,7 +339,7 @@ class LupaHome extends React.Component {
 <View style={{justifyContent: 'center', justifyContent: 'center',  }}>
                     
                     <View style={{padding: 5, width: '80%'}}>
-                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
+                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: '500', marginVertical: 20, paddingVertical: 10, paddingLeft: 10 }}>
                        Start training with...
                     </Text>
                     </View>
@@ -544,7 +382,7 @@ class LupaHome extends React.Component {
                         {
                             this.state.featuredPrograms.map((currProgram, index, arr) => {
                                 return (
-                                   <FeaturedProgramCard currProgram={currProgram} programOwnerUUID={currProgram.program_owner.uuid} key={index} />
+                                   <FeaturedProgramCard currProgram={currProgram} programOwnerUUID={currProgram.program_owner.uuid}/>
                                 )
                             })
                         }
@@ -575,12 +413,9 @@ class LupaHome extends React.Component {
                     </View>
     }
                     
-              <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
+            {/*  <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
                 
-              <CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} />
-                <Modalize ref={this.searchAttributePickerModalRef} modalHeight={Dimensions.get('window').height / 3}>
-                    {this.getPicker(this.state.currSearchFilter)}
-</Modalize> 
+<CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} /> */}
         
             </View>
         );

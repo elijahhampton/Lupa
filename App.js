@@ -49,23 +49,21 @@ const SwitchNavigator = () => {
 
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
-  const introduceApp = async () => {
+  const currUserData = useSelector(state => {
+    return state.Users.currUserData
+  })
+
+  const introduceApp = async (uuid) => {
     try {
       console.log('a')
+
       //setup redux
-      await _setupRedux()
-
-      const currUserData = useSelector(state => {
-        return state.Users.currUserData
-      })
-
-      if (typeof(currUserData.email) == 'undefined') {
-        showAuthentication()
-      }
+      await _setupRedux(uuid)
   
       //navigate to app
       navigation.navigate('App')
     } catch(err) {
+      alert(err)
       alert(err)
       showAuthentication()
     }
@@ -79,14 +77,13 @@ const SwitchNavigator = () => {
    * Sets up redux by loading the current user's data, packs, and programs
    * as well as Lupa application data (assessments, workouts);
    */
-  const _setupRedux = async () => {
-    let currUserData = getLupaUserStructure(), currUserPacks = getLupaPackStructure(), currUserPrograms = getLupaProgramInformationStructure(), lupaAssessments = [], lupaWorkouts = [];
+  const _setupRedux = async (uuid) => {
+    let currUserData = getLupaUserStructure(), currUserPacks = [], currUserPrograms = [], lupaAssessments = [], lupaWorkouts = [];
     
-    await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+    await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
     })
 
-    console.log('b')
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
       currUserPacks = result;
     })
@@ -95,8 +92,6 @@ const SwitchNavigator = () => {
     await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
     })
-
-    console.log('c')
 
     lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
 
@@ -112,16 +107,29 @@ const SwitchNavigator = () => {
     await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
     await dispatch({ type: 'UPDATE_LUPA_ASSESSMENTS', payload: lupaAssessments})
-    console.log(userPayload)
-    console.log('d')
   }
 
   useEffect(() => {
-      LUPA_AUTH.onAuthStateChanged(user => {
-          user ? introduceApp() : showAuthentication()
+      
+    /*  async function getUserAuthState() {
+        try {
+        await LUPA_AUTH.onAuthStateChanged(user => {
+          if (typeof(user.uid) == 'undefined') {
+            showAuthentication()
+          }
+          
+          introduceApp(user.uid)
       })
-    }, [])
+    } catch(err) {
+      showAuthentication()
+      alert(err)
+    }
+      }
 
+      getUserAuthState()*/
+
+      showAuthentication()
+    }, [])
 
   return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>

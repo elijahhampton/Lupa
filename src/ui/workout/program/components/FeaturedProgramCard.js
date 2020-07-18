@@ -32,11 +32,10 @@ function FeaturedProgramCard(props) {
    const handleCardOnPress = (programData) => {
         if (programData.program_participants.includes(currUserData.user_uuid))
         {
-         /* navigation.push('LiveWorkout', {
+          navigation.push('LiveWorkout', {
                 programData: programData,
-            }); */
+            });
 
-          setProgramModalVisible(true)
         }
         else
         {
@@ -66,10 +65,9 @@ const getProgramLocation = () => {
 }
 
     const { currProgram, programOwnerUUID } = props
-    const key = props.key;
     return (
         <>
-        <Card key={key} style={{borderRadius: 0,  elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 10 }} onPress={() => handleCardOnPress(currProgram)}>
+        <Card key={Math.random()} style={{borderRadius: 0,  elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 10 }} onPress={() => handleCardOnPress(currProgram)}>
         <Card.Cover resizeMode='contain' defaultSource={require('../../../images/programs/sample_photo_two.jpg')} source={{uri: currProgram.program_image}} style={{ height: '65%' }} />
         <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
             <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
