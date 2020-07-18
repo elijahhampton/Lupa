@@ -63,6 +63,7 @@ import CircularUserCard from './user/component/CircularUserCard';
 import { MenuIcon } from './icons';
 import App from '../../App';
 import { SearchBar } from 'react-native-elements';
+import Swiper from 'react-native-swiper';
 
 
 const CITIES = [
@@ -128,6 +129,7 @@ class LupaHome extends React.Component {
             inviteFriendsIsVisible: false,
             height: new Animated.Value(80),
             customizedInviteFriendsModalIsOpen: false,
+            trainWithSwiperIndex: 0 //approved
         }
 
         this.searchAttributePickerModalRef = React.createRef()
@@ -336,44 +338,81 @@ class LupaHome extends React.Component {
 
                         </View>
 
-<View style={{justifyContent: 'center', justifyContent: 'center',  }}>
+<View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                     
-                    <View style={{padding: 5, width: '80%'}}>
-                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: '500', marginVertical: 20, paddingVertical: 10, paddingLeft: 10 }}>
+                    <View style={{padding: 5, width: '80%', marginVertical: 10}}>
+                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold', paddingLeft: 10 }}>
                        Start training with...
                     </Text>
                     </View>
 
-                    <ScrollView pagingEnabled={true} horizontal={true} showsHorizontalScrollIndicator={false} >
+                    <View style={{height: 150}}>
+                    <Swiper onIndexChanged={index => this.setState({ index: index })} pagingEnabled={true} showsPagination={false} horizontal={true} showsHorizontalScrollIndicator={false} >
                             {
                                 this.renderNearbyUsers()
                             }
-                    </ScrollView>
-                    <Pagination activeDotIndex={0} inactiveDotColor="#1089ff" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} containerStyle={{justifyContent: 'flex-start'}} dotsLength={5} dotColor="#1089ff" />
+                    </Swiper>
+                                <Caption style={{position: 'absolute', top: 0, right: 10}}>
+                                    {this.state.trainWithSwiperIndex + 1} / {this.state.usersNearYou.length}
+                                </Caption>
+                    </View>
 </View>
 
-<View style={{padding: 20, alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
+<View style={{height: 300, alignItems: 'center', justifyContent: 'center'}}>
+    <Divider style={{width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5}} />
+    <Swiper horizontal={true} activeDotIndex={0} inactiveDotColor="#1089ff" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{alignItems: 'center', justifyContent: 'center'}}>    
+
+                        <>
+                        <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, backgroundColor: 'transparent', marginVertical: 10}}>
                         <View>
-                        <Text style={{fontFamily: 'avenir-roman', fontWeight: '400', marginHorizontal: 10, fontSize: 20, marginVertical: 5}}>
-                            Starting and continuing a journey of a lifetime
+                        <Text style={{fontFamily: 'avenir-roman', paddingLeft: 10, color: 'black', fontSize: 20, marginVertical: 5}}>
+                        Starting and continuing your journey
                         </Text>
-                        <Text style={{fontFamily: 'avenir-light', marginHorizontal: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
-                            It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
+                        <Text style={{fontFamily: 'avenir-light', color: 'black', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                        It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
                         </Text>
                         </View>
-                        <Button mode="contained" color="#1089ff" style={{marginLeft: 10, width: 'auto', elevation: 6}} theme={{
+
+                        <Button mode="contained" color="#1089ff" style={{elevation: 8, marginLeft: 10, alignItems: 'center', justifyContent: 'center', width: 'auto'}} theme={{
                             roundness: 3
-                        }} onPress={() => this.setState({ customizedInviteFriendsModalIsOpen: true})}>
+                        }} >
                             <Text>
-                                Invite Friends
+                               Invite Friends
                             </Text>
                         </Button>
+                        </View>
+                        </>
+
+                        <>
+                        <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, backgroundColor: 'transparent', marginVertical: 10}}>
+                        <View>
+                        <Text style={{fontFamily: 'avenir-roman', paddingLeft: 10, color: 'black', fontSize: 20, marginVertical: 5}}>
+                            Did you complete any type of exercise today?
+                        </Text>
+                        <Text style={{fontFamily: 'avenir-light', color: 'black', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
+                           Every time you complete a physical activity you are one step closer to completing your goals.  Keep track of your progress by logging your workout or checking in for the day.
+                        </Text>
+                        </View>
+
+                        <Button mode="contained" color="#1089ff" style={{elevation: 8,  marginLeft: 10, alignItems: 'center', justifyContent: 'center', width: 'auto'}} theme={{
+                            roundness: 3
+                        }} >
+                            <Text>
+                                Log a workout
+                            </Text>
+                        </Button>
+                        </View>
+                        </>
+                        
+                        </Swiper>
+                        <Divider style={{width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5}} />
                     </View>
+
 
                     <View
                     style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                     <View style={{padding: 5}}>
-                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: '500', paddingVertical: 10, paddingLeft: 10 }}>
+                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold', paddingVertical: 10, paddingLeft: 10 }}>
                         Top picks
                         </Text>
                     </View>
@@ -389,25 +428,6 @@ class LupaHome extends React.Component {
 
                     </ScrollView>
                 </View>
-
-                        <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, height: 300, backgroundColor: 'black', marginVertical: 10}}>
-                        <View>
-                        <Text style={{fontFamily: 'avenir-roman', paddingLeft: 10, color: 'white', fontSize: 20, marginVertical: 5}}>
-                            Did you complete any type of exercise today?
-                        </Text>
-                        <Text style={{fontFamily: 'avenir-light', color: 'white', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
-                           Every time you complete a physical activity you are one step closer to completing your goals.  Keep track of your progress by logging your workout or checking in for the day.
-                        </Text>
-                        </View>
-
-                        <Button mode="contained" color="#1089ff" style={{elevation: 8, marginLeft: 20, alignItems: 'center', justifyContent: 'center', width: '30%'}} theme={{
-                            roundness: 3
-                        }} >
-                            <Text>
-                                Log it
-                            </Text>
-                        </Button>
-                        </View>
     
                     </ScrollView>
                     </View>

@@ -158,6 +158,7 @@ interface IProfileState {
     city: String,
     state: String,
     refreshing: Boolean,
+    nearbyUsers: Array<Object>
 }
 
 
@@ -192,6 +193,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             city: '',
             state: '',
             refreshing: false,
+            nearbyUsers: [],
         }
     }
 
@@ -230,7 +232,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      * Loads any necessary data the component needs to render.
      */
     setupComponent = async () => {
-        let userInfo, userPackData
+        let userInfo = {}, userPackData = [], nearbyUsers = []
         const uuid = await this._getId();
         this.currUserUUID = this.props.lupa_data.Users.currUserData.user_uuid
 
@@ -248,28 +250,28 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         }
 
         try {
-            await this.LUPA_CONTROLLER_INSTANCE.getPackInformationByUserUUID(uuid).then(result => {
-                userPackData = result;
+            await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(res => {
+                nearbyUsers = res
             })
 
-            if (userPackData == "" || userPackData == undefined || typeof userPackData != "object") {
-                userPackData = []
+            if (typeof(nearbyUsers) == 'undefined') {
+                nearbyUsers = []
             }
-        }
-        catch (err) {
-            userPackData = this.props.lupa_data.Packs.currrUserPackData;
+
+        } catch(error) {
+
         }
 
         await this.setState({
             userData: userInfo,
             userUUID: uuid,
-            userPackData: userPackData,
             followers: userInfo.followers,
             following: userInfo.following,
             interest: userInfo.interest,
             bio: userInfo.bio,
             city: userInfo.city,
             state: userInfo.state,
+            nearbyUsers: nearbyUsers
         });
     }
 
@@ -727,50 +729,62 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         if (this.props.lupa_data.Users.currUserData.isTrainer)
                         {
                             return (
-                                <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
-                        <Text style={{fontSize: 15, fontWeight: '400'}}>
-                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
+                                                                    <Surface style={{alignItems: 'center', alignSelf: 'center', padding: 20, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width, }}>
+                        <Text style={{fontSize: 15, fontWeight: '300', textAlign: 'center'}}>
+                            After you create your first workout program it will appear here.
                         </Text>
-                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
+                        <Button mode="text" style={{marginTop: 15, width: '60%', elevation: 0}} theme={{
                                     colors: {
                                         primary: '#2196F3'
                                     },
-                                    roundness: 10,
+                                    roundness: 3,
         
                                 }} onPress={() => this.props.navigation.push('CreateProgram',{
                                     navFrom: 'Profile'
                                 })}>
-                                    <Text>
+                                    <Text style={{fontSize: 12}}>
                                         Create a Program
                                     </Text>
                                 </Button>
                             </Surface>
-                                </TouchableHighlight>
             
                             )
                         }
                         else
                         {
                             return (
-                                <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
-                        <Text style={{fontSize: 15, fontWeight: '400'}}>
-                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
-                        </Text>
-                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
-                                    colors: {
-                                        primary: '#2196F3'
-                                    },
-                                    roundness: 10,
-        
-                                }} onPress={() => this.props.navigation.navigate('Programs')}>
-                                    <Text>
-                                       Join a Program
-                                    </Text>
-                                </Button>
-                            </Surface>
-                                </TouchableHighlight>
+                                <View>
+                            <View>
+                                <ScrollView horizontal={true}>
+                                    {
+                                        this.state.nearbyUsers.map(trainer => {
+                                    
+                                            return (
+                                                <Surface style={{elevation: 3, justifyContent: 'space-evenly', margin: 10, backgroundColor: '#FFFFFF', borderRadius: 10, width: 140, height: 160}}>
+                                                    <View style={{alignItems: 'center', flex: 2, justifyContent: 'space-evenly'}}>
+                                                        <Avatar.Image source={{uri: trainer.photo_url}} size={60} />
+
+                                                        <Text>
+                                                            {trainer.display_name}
+                                                        </Text>
+                                                    </View>
+
+                                                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                                        <Button style={{width: '80%'}} color="#1089ff" mode="contained" theme={{
+                                                            
+                                                        }}>
+                                                           <Text style={{fontSize: 10}}>
+                                                               View Profile
+                                                           </Text>
+                                                        </Button>
+                                                    </View>
+                                                </Surface>
+                                            )
+                                        })
+                                    }
+                                </ScrollView>
+                            </View>
+                                </View>
             
                             )
                         }
@@ -789,56 +803,67 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 if (this.props.lupa_data.Users.currUserData.isTrainer)
                         {
                             return (
-                                <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
-                        <Text style={{fontSize: 15, fontWeight: '400'}}>
-                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
-                        </Text>
-                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
-                                    colors: {
-                                        primary: '#2196F3'
-                                    },
-                                    roundness: 10,
-        
-                                }} onPress={() => this.props.navigation.push('CreateProgram',{
-                                    navFrom: 'Profile'
-                                })}>
-                                    <Text>
-                                        Create a Program
-                                    </Text>
-                                </Button>
-                            </Surface>
-                                </TouchableHighlight>
+                                <Surface style={{alignSelf: 'center', padding: 20, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width, }}>
+                                <Text style={{fontSize: 15, fontWeight: '400'}}>
+                                    Try creating a program.
+                                </Text>
+                                <Button mode="contained" style={{marginTop: 15, width: '60%', elevation: 0}} theme={{
+                                            colors: {
+                                                primary: '#2196F3'
+                                            },
+                                            roundness: 10,
+                
+                                        }} onPress={() => this.props.navigation.push('CreateProgram',{
+                                            navFrom: 'Profile'
+                                        })}>
+                                            <Text>
+                                                Create a Program
+                                            </Text>
+                                        </Button>
+                                    </Surface>
             
                             )
                         }
                         else
                         {
                             return (
-                                <TouchableHighlight>
-                                <Surface style={{justifyContent: 'space-between', padding: 10, backgroundColor: '#F2F2F2', elevation: 0, width: Dimensions.get('screen').width /1.3, height: 120, borderRadius: 16, margin: 5}}>
-                        <Text style={{fontSize: 15, fontWeight: '400'}}>
-                            You haven't created any programs.  Try creating a program and sharing it with other users to acquire clients.
-                        </Text>
-                        <Button mode="contained" style={{width: '60%', elevation: 0}} theme={{
-                                    colors: {
-                                        primary: '#2196F3'
-                                    },
-                                    roundness: 10,
-        
-                                }} onPress={() => this.props.navigation.navigate('Programs')}>
-                                    <Text>
-                                       Join a Program
-                                    </Text>
-                                </Button>
-                            </Surface>
-                                </TouchableHighlight>
-            
+                                <View>
+                            <View>
+                                <ScrollView horizontal={true}>
+                                    {
+                                        this.state.nearbyUsers.map(trainer => {
+                                    
+                                            return (
+                                                <Surface style={{elevation: 3, justifyContent: 'space-evenly', margin: 10, backgroundColor: '#FFFFFF', borderRadius: 10, width: 140, height: 160}}>
+                                                    <View style={{alignItems: 'center', flex: 2, justifyContent: 'space-evenly'}}>
+                                                        <Avatar.Image source={{uri: trainer.photo_url}} size={60} />
+
+                                                        <Text>
+                                                            {trainer.display_name}
+                                                        </Text>
+                                                    </View>
+
+                                                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                                        <Button style={{width: '80%'}} color="#1089ff" mode="contained" theme={{
+                                                            
+                                                        }}>
+                                                           <Text style={{fontSize: 10}}>
+                                                               View Profile
+                                                           </Text>
+                                                        </Button>
+                                                    </View>
+                                                </Surface>
+                                            )
+                                        })
+                                    }
+                                </ScrollView>
+                            </View>
+                                </View>
                             )
                         }
                }
             }
-            else
+            else //if not looking at current users profile
             {
                      //if there are programs loaded for the user
                if (this.state.userData.programs.length != undefined)
@@ -849,18 +874,97 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         if (this.state.userData.isTrainer)
                         {
                             return (
-                                <View style={{marginVertical: 10, flexDirection: 'row', width: Dimensions.get('window').width, justifyContent: 'center', alignItems: 'center'}}>
-                                    <InformationIcon customStyle={{marginHorizontal: 10}} />
-                                                               <Text>
-                               This trainer has not created any programs.
+                                <View>
+                                                                    <View style={{padding: 20, backgroundColor: '#F2F2F2', width: Dimensions.get('window').width, justifyContent: 'center', alignItems: 'center'}}>
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                               <Text style={{fontSize: 15, fontWeight: '300', textAlign: 'center'}}>
+                               This trainer has not created any programs.  Explore trainers and fitness programs on the Train page.
                            </Text>
+                                    </View>
+                           <Button mode="text" style={{marginTop: 15, width: '60%', elevation: 0}} theme={{
+                                    colors: {
+                                        primary: '#2196F3'
+                                    },
+                                    roundness: 3,
+        
+                                }} onPress={() => this.props.navigation.push('CreateProgram',{
+                                    navFrom: 'Profile'
+                                })}>
+                                    <Text style={{fontSize: 12}}>
+                                        Create a Program
+                                    </Text>
+                                </Button>
+                         
+                                </View>
+
+                                <View>
+                                <ScrollView horizontal={true}>
+                                    {
+                                        this.state.nearbyUsers.map(trainer => {
+                                    
+                                            return (
+                                                <Surface style={{elevation: 3, justifyContent: 'space-evenly', margin: 10, backgroundColor: '#FFFFFF', borderRadius: 10, width: 140, height: 160}}>
+                                                    <View style={{alignItems: 'center', flex: 2, justifyContent: 'space-evenly'}}>
+                                                        <Avatar.Image source={{uri: trainer.photo_url}} size={60} />
+
+                                                        <Text>
+                                                            {trainer.display_name}
+                                                        </Text>
+                                                    </View>
+
+                                                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                                        <Button style={{width: '80%'}} color="#1089ff" mode="contained" theme={{
+                                                            
+                                                        }}>
+                                                           <Text style={{fontSize: 10}}>
+                                                               View Profile
+                                                           </Text>
+                                                        </Button>
+                                                    </View>
+                                                </Surface>
+                                            )
+                                        })
+                                    }
+                                </ScrollView>
+                                </View>
                                 </View>
                             )
                         }
                         else
                         {
                             return (
-                            null
+                                <View>                       
+<View>
+<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+{
+    this.state.nearbyUsers.map(trainer => {
+
+        return (
+            <Surface style={{elevation: 3, justifyContent: 'space-evenly', margin: 10, backgroundColor: '#FFFFFF', borderRadius: 10, width: 140, height: 160}}>
+                <View style={{alignItems: 'center', flex: 2, justifyContent: 'space-evenly'}}>
+                    <Avatar.Image source={{uri: trainer.photo_url}} size={60} />
+
+                    <Text>
+                        {trainer.display_name}
+                    </Text>
+                </View>
+
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Button style={{width: '80%'}} color="#1089ff" mode="contained" theme={{
+                        
+                    }}>
+                       <Text style={{fontSize: 10}}>
+                           View Profile
+                       </Text>
+                    </Button>
+                </View>
+            </Surface>
+        )
+    })
+}
+</ScrollView>
+</View>
+</View>
                             )
                         }
                 

@@ -8,6 +8,7 @@ LupaStore.subscribe(() => {
 });
 
 export function getCurrentStoreState() {
+    console.log(LupaStore.getState())
     return LupaStore.getState();
 }
 

@@ -25,13 +25,17 @@ function FeaturedProgramCard(props) {
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    const currUserData = useSelector(state => {
+    let currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
 
    const handleCardOnPress = (programData) => {
-        if (programData.program_participants.includes(currUserData.user_uuid))
+        if (currUserData.programs.includes(programData.program_structure_uuid))
         {
+            currUserData = useSelector(state => {
+                return state.Users.currUserData;
+            })
+            
           navigation.push('LiveWorkout', {
                 programData: programData,
             });
@@ -39,6 +43,7 @@ function FeaturedProgramCard(props) {
         }
         else
         {
+            console.log('Hisddd')
             setProgramModalVisible(true);
         }
 }
