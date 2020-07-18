@@ -17,6 +17,8 @@ import {
     Surface,
     Chip,
     Caption,
+    Button,
+    Paragraph,
 } from 'react-native-paper';
 
 import { useNavigation } from '@react-navigation/native';
@@ -35,25 +37,28 @@ function CircularUserCard(props) {
     
     const renderUserCard = () => {
         return (
-            <View style={{width: windowWidth, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                <View >
+            <View style={{width: windowWidth, alignItems: 'flex-start', justifyContent: 'flex-start', padding: 20}}>
+                <View style={{justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View >
                     {getAvatar()}
                 </View>
-                <View >
-                    <Text style={{fontWeight: '600', color: '#212121'}}>
+
+                <View style={{marginHorizontal: 10}}>
+                <Text style={{fontWeight: '600', color: '#212121'}}>
                         Emily Loefstedt
                     </Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={{fontWeight: '600', fontSize: 12}}>
-                            5 Programs
-                        </Text>
-                        <Text>
-                            /
-                        </Text>
-                        <Text style={{fontWeight: '300', fontSize: 12}}>
+                    <Text style={{fontWeight: '300', fontSize: 12}}>
                         National Association of Sports and Medicine
                     </Text>
+                </View>
                     </View>
+                </View>
+
+                <View style={{paddingTop: 20}}>
+                    <Paragraph style={{fontWeight: '400', fontSize: 13}} numberOfLines={3}>
+                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur
+                    </Paragraph>
                 </View>
             </View>
         )
@@ -61,7 +66,7 @@ function CircularUserCard(props) {
 
     const getAvatar = () => {
         try {
-            return <Avatar source={{uri: props.user.photo_url}} rounded size={45} containerStyle={{margin: 10}} avatarStyle={{borderRadius: 50}} />
+            return <Avatar source={{uri: props.user.photo_url}} rounded size={45} containerStyle={{}} avatarStyle={{borderRadius: 50}} />
         } catch(error) {
             return <PaperAvatar.Text label="UU" size={45} color="#212121"  />
         }

@@ -35,6 +35,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import ThinFeatherIcon from "react-native-feather1s";
 import { storeAsyncData, retrieveAsyncData } from "../../../controller/lupa/storage/async";
 import { LOG_ERROR } from "../../../common/Logger";
+import { getLupaUserStructure } from "../../../controller/firebase/collection_structures";
 /**
  * Maps the redux state to props.
  */
@@ -190,7 +191,7 @@ class LoginView extends React.PureComponent {
    * as well as Lupa application data (assessments, workouts);
    */
   _setupRedux = async () => {
-    let currUserData, currUserPacks, currUserHealthData, currUserPrograms, currUserServices, lupaAssessments = [], lupaWorkouts = [];
+    let currUserData = getLupaUserStructure(), currUserPacks = [], currUserPrograms = [], lupaAssessments = [], lupaWorkouts = [];
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -212,7 +213,6 @@ class LoginView extends React.PureComponent {
       userData: currUserData,
       healthData: {}
     }
-
 
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);

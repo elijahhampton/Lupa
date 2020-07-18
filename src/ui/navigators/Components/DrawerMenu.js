@@ -125,7 +125,16 @@ function DrawerMenu(props) {
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="book-open" size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={{fontSize: 16, fontWeight: '300'}}>
-           Log a Workout
+           Workout Log
+          </Text>
+        </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="book-open" size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={{fontSize: 16, fontWeight: '300'}}>
+         Assessments
           </Text>
         </View>
         </TouchableOpacity>
@@ -151,6 +160,13 @@ function DrawerMenu(props) {
           <DrawerIcon name="clipboard" size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={{fontSize: 16, fontWeight: '300'}}>
            Terms of Service and Privacy
+          </Text>
+        </View>
+
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="clipboard" size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={{fontSize: 16, fontWeight: '300'}}>
+           Settings
           </Text>
         </View>
 

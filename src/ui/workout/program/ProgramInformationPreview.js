@@ -168,8 +168,6 @@ function ProgramInformationPreview(props) {
              await setToken(token)
          } catch (error) {
              setLoading(false)
-             setPaymentComplete(true)
-             setPaymentSuccessful(false)
              return;
          }
  
@@ -180,8 +178,8 @@ function ProgramInformationPreview(props) {
          try {
              makePayment(generatedToken, amount)
          } catch (error) {
-             setPaymentComplete(true)
-             setPaymentSuccessful(true)
+             setPaymentComplete(false)
+             setPaymentSuccessful(false)
              return;
          }
          */
@@ -196,8 +194,10 @@ function ProgramInformationPreview(props) {
             //handle program in backend
             try {
                 const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData.user_uuid, programData);
+                console.log(updatedProgramData)
                 await dispatch({ type: "ADD_CURRENT_USER_PROGRAM" , ...updatedProgramData})
             } catch (err) {
+                alert(err)
                 //need to handle the case where there is an error when we add the program
                 props.closeModalMethod()
             }
@@ -406,7 +406,7 @@ function ProgramInformationPreview(props) {
                         ${getProgramPrice()}
                     </Text>
 
-                    <Button mode="contained" style={{width: 'auto', elevation: 0}} theme={{
+                    <Button onPress={() => handlePurchaseProgram(0)} mode="contained" style={{width: 'auto', elevation: 0}} theme={{
                         roundness: 8,
                         colors: {
                             primary: '#23374d'

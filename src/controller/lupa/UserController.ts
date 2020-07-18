@@ -529,8 +529,6 @@ export default class UserController {
 
             console.log('2')
 
-            if (typeof(userResult.programs) != 'object' || typeof(userResult.programs) == 'undefined')
-            {
                 if (userResult.programs.length > 0)
                 {
                     console.log('3')
@@ -539,16 +537,17 @@ export default class UserController {
                         await LUPA_DB.collection('programs').doc(userResult.programs[i]).get().then(snapshot => {
                             docData = snapshot.data()
                         })
-    
-                        console.log('aaaaaa')
                         
-                        if (typeof(docData) != 'undefined') {
+                        if (typeof(docData) == 'undefined' || docData.program_name == "") {
+                            
+                        }
+                        else
+                        {
                             userPrograms.push(docData)
                         }
                     }
                     console.log('4')
                 }
-            }
             
         } catch(error) {
             LOG_ERROR('UserController.ts', 'Caught exception in getUserInformationByUUID', error)
@@ -560,8 +559,10 @@ export default class UserController {
             value: userPrograms,
             writable: true
         })
+
+        console.log(userResult.programs.length[0])
         
-        console.log('heeere thee')
+        console.log('heeerkjhkhjhe thee')
         return Promise.resolve(userResult);
     }
 
@@ -669,14 +670,29 @@ export default class UserController {
 
     getTrainers = async () => {
         let trainers = []
-        await USER_COLLECTION.where('isTrainer', '==', true).get().then(docs => {
-            docs.forEach(querySnapshot => {
-                let snapshot = querySnapshot.data();
-                let snapshotID = querySnapshot.id;
-                snapshot.id = snapshotID;
-                trainers.push(snapshot);
+        try {
+            await USER_COLLECTION.where('isTrainer', '==', true).get().then(docs => {
+                docs.forEach(querySnapshot => {
+                    let snapshot = querySnapshot.data();
+                    console.log(snapshot)
+                    if (typeof(snapshot) == 'undefined' || snapshot.display_name == ""){
+                    
+                    }
+                    else
+                    {
+
+                    let snapshotID = querySnapshot.id;
+                    snapshot.id = snapshotID;
+                    trainers.push(snapshot);
+                    }
+                })
             })
-        })
+        } catch(error) {
+            alert(error)
+            trainers = []
+        }
+
+        alert('aaaa: ' + trainers.length)
 
         return Promise.resolve(trainers);
     }
@@ -1096,49 +1112,57 @@ export default class UserController {
     }
 
     loadCurrentUserPrograms = async () => {
-      /*  let programUUIDS = [], programsData = [];
+        let programUUIDS = [], programsData = [];
         let temp;
         let uuid = await this.getCurrentUser().uid;
 
         if (typeof(uuid) == 'undefined') {
+            alert('e')
             return Promise.resolve([])
         }
         
         try {
-
+            console.log('1')
             await USER_COLLECTION.doc(uuid).get().then(snapshot => {
                 temp = snapshot.data();
              });
      
              programUUIDS = temp.programs;
-     
+             console.log('2')
              for (let i = 0; i < programUUIDS.length; i++)
              {
                  await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
                      temp = snapshot.data();
                  })
 
+                 console.log('3')
                  try {
                      if (typeof(temp) != 'undefined')
                      {
                          if (temp.program_name != "")
                          {
+                        
                             await programsData.push(temp)
                          }
                      }
                 } catch(error) {
+                    alert(error)
                     LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
                     continue;
                 }
 
              }
-
+             console.log('4')
         } catch(error) {
+            alert(error)
             LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
             programsData = [];
         }
-*/
-        return Promise.resolve([]);
+        
+        console.log('9999')
+
+      //  return Promise.resolve(programsData);
+      return Promise.resolve([]);
     }
 
     deleteUserProgram = async (programUUID, userUUID) => {
@@ -1489,13 +1513,15 @@ export default class UserController {
         let updatedProgramSnapshot;
         let GENERATED_CHAT_UUID, chats;
 
-        const currUserUUID = await this.getCurrentUserUUID();
+        console.log('a')
+
+        const currUserUUID = await currUserData
         const programOwnerUUID = programData.program_owner;
 
         try {
         //add the program to users list
         await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
-
+        console.log('b')
         //add the user as one of the program participants
         let updatedParticipants;
         await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
@@ -1507,7 +1533,7 @@ export default class UserController {
         await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
             program_participants: updatedParticipants,
         });
-
+        console.log('c')
         //setup trainer and user chat channel
         if (currUserUUID.charAt(0) < programOwnerUUID.charAt(0)) {
             GENERATED_CHAT_UUID = currUserUUID + programOwnerUUID;
@@ -1523,7 +1549,7 @@ export default class UserController {
 
         let otherUserDocData;
         let otherUserDoc = USER_COLLECTION.doc(programOwnerUUID);
-
+        console.log('e')
         let chatID, chatExistUserOne = false;
         await chats.forEach(element => {
             if (element.user == programOwnerUUID) {
@@ -1547,7 +1573,7 @@ export default class UserController {
 
             let chatExistUserTwo;
             chatExistUserOne = false;
-
+            console.log('f')
             await otherUserChats.forEach(element => {
                 if (element.user == currUserUUID) {
                     chatExistUserTwo = true;
@@ -1562,7 +1588,7 @@ export default class UserController {
                     chatID: GENERATED_CHAT_UUID,
                 }
                 otherUserChats.push(chatField);
-
+                console.log('g')
                 await otherUserDoc.update({
                     chats: otherUserChats
                 })
@@ -1570,6 +1596,7 @@ export default class UserController {
       
 }
         } catch(err) {
+            alert(err)
             console.log(err)
         }   
 
@@ -1579,7 +1606,7 @@ export default class UserController {
         try {
                      //init Fire
         await Fire.shared.init(GENERATED_CHAT_UUID);
-
+        console.log('h')
         let currUserDisplayName = await this.getAttributeFromUUID(currUserUUID, 'display_name')
         const message = {
             _id: programOwnerUUID,
@@ -1593,10 +1620,10 @@ export default class UserController {
           }
 
         await Fire.shared.append(message)
-
+        console.log('j')
 
         } catch(err) {
-     
+            alert(err)
         }
 
 
@@ -1605,7 +1632,7 @@ export default class UserController {
 
 
 
-
+        console.log('l')
 
          /************/
 
@@ -1614,7 +1641,7 @@ export default class UserController {
                 await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
                     updatedProgramSnapshot = snapshot.data();
                 })
-        
+                console.log('me')
                 return Promise.resolve(updatedProgramSnapshot);
       }
 

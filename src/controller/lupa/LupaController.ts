@@ -629,7 +629,7 @@ export default class LupaController {
     }
     
     loadCurrentUserPrograms = async () => {
-      let programsData;
+      let programsData = []
 
       await USER_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
         programsData = result;
