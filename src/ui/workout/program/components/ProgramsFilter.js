@@ -71,14 +71,6 @@ class ProgramsFilter extends React.Component {
         }
     }
 
-    componentDidMount() {
-        console.log('disable swipe');
-    }
-
-    componentWillUnmount() {
-        console.log('enable swipe');
-    }
-
     render() {
         return (
             <Surface style={{position: 'absolute', backgroundColor: 'transparent', top: 0, width: Dimensions.get('window').width, height: this.props.filterHeight}}>

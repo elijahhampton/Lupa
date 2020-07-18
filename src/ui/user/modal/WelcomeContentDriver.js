@@ -154,7 +154,7 @@ export default function WelcomeContentDriver(props) {
                         return <BookATrainerContent toggleContentMethod={setShowContentWrapper} />
                         break;
                     case 'Design a Workout Program':
-                        navigation.navigate('App')
+                        
                     default:
                 }
     }

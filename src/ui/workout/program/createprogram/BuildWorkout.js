@@ -634,8 +634,6 @@ this.getWorkoutSurfaceContent(workout)
                 currDayIndex: 0
             })
 
-            console.log(this.state.currDayIndex)
-
             return;
         }
 
@@ -643,7 +641,6 @@ this.getWorkoutSurfaceContent(workout)
             currDayIndex: this.state.currDayIndex + 1
         })
 
-        console.log(this.state.currDayIndex)
     }
 
     goPrevDay = () => {
@@ -681,7 +678,6 @@ this.getWorkoutSurfaceContent(workout)
   selectedValue={this.state.currentSectionIndex}
   style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height / 4}}
   onValueChange={(itemValue, itemIndex) => {
-    console.log(itemIndex)
     this.setState({currentSectionIndex: itemIndex})
   }
   }>
@@ -1268,7 +1264,7 @@ this.getWorkoutSurfaceContent(workout)
         try{
             if (workout.workout_media.uri != undefined || workout.workout_media.uri != "")
             {
-                console.log('here dog')
+               
                 return (
                     workout.workout_media.media_type == "VIDEO" ?
                     <Video key={workout.workout_uid} source={{ uri: workout.workout_media.uri }}
@@ -1288,7 +1284,7 @@ this.getWorkoutSurfaceContent(workout)
             }
             else
             {
-               console.log('here bro')
+        
                return (
 
                 <View style={{flex: 1, backgroundColor: '#212121'}}>
@@ -1308,14 +1304,14 @@ this.getWorkoutSurfaceContent(workout)
 
     addWorkoutMedia = () => {
         this.RBSheet.current.close()
-        console.log('close')
+
         if (typeof(currPressedPopulatedWorkout) == 'undefined')
         {
-            console.log('we returned man')
+
             return;
         }
 
-        console.log('should open here')
+
         // Open Image Library
         ImagePicker.launchImageLibrary({}, async (response) => {
             if (response.didCancel) {

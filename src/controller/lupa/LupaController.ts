@@ -136,9 +136,9 @@ export default class LupaController {
       return currentUser;
     }
 
-    getCurrentUserData = async () => {
-      let userData;
-      await USER_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+    getCurrentUserData = async (uuid=0) => {
+      let userData = {}
+      await USER_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
         userData = result;
       });
 

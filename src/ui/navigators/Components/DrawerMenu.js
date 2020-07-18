@@ -74,6 +74,7 @@ function DrawerMenu(props) {
    */
   const _handleLogout = () => {
     LUPA_AUTH.signOut()
+    navigation.navigate('Auth')
   }
 
   return (

@@ -45,8 +45,6 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import SelectProgramImage from './SelectProgramImage'
 import { Input, CheckBox, Button as ElementsButton } from 'react-native-elements';
 import LupaMapView from '../../../../user/modal/LupaMapView'
-import { getLupaProgramInformationStructure } from '../../../../../controller/firebase/collection_structures';
-import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 
 const months = ["January", "February", "March", "April",
   "May", "June", "July", "August", "September", "October",

@@ -38,7 +38,6 @@ class Lupa extends React.Component {
     super(props);
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    this.lupaSwiper = React.createRef();
 
     this.state = {
       currIndex: 1,
@@ -47,20 +46,11 @@ class Lupa extends React.Component {
       swipeable: true,
       permissions: null,
     }
-
-    this._showWelcomeModal = this._showWelcomeModal.bind(this);
-    this._showWelcomeModal();
   }
 
   componentDidMount = async () => {
     this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
   }
-
-  
-_navigateToAuth = async () => {
-  await logoutUser();
-  this.props.navigation.navigate('Auth');
-}
 
   render() {
     return (
