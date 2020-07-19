@@ -18,7 +18,8 @@ import {
 } from "react-native";
 
 import {
-  Snackbar
+  Snackbar,
+  Divider
 } from 'react-native-paper';
 
 import {
@@ -36,6 +37,7 @@ import ThinFeatherIcon from "react-native-feather1s";
 import { storeAsyncData, retrieveAsyncData } from "../../../controller/lupa/storage/async";
 import { LOG_ERROR } from "../../../common/Logger";
 import { getLupaUserStructure } from "../../../controller/firebase/collection_structures";
+import { Constants } from "react-native-unimodules";
 /**
  * Maps the redux state to props.
  */
@@ -235,9 +237,9 @@ class LoginView extends React.PureComponent {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'rgb(244, 247, 252)', justifyContent: 'space-between' }}>
+      <View style={{ flex: 1, backgroundColor: '#FFFFFF', justifyContent: 'space-between' }}>
        <KeyboardAvoidingView behavior="padding" style={{flex: 1 ,backgroundColor: 'transparent'}}>
-        <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'space-between'}} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
+        <View style={{flex: 1, justifyContent: 'space-between'}} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
         <View style={styles.headerText}>
           <Text style={styles.welcomeBackText}>
             Welcome back,
@@ -261,7 +263,7 @@ class LoginView extends React.PureComponent {
 
         </View>
 
-        <View style={{ flex: 1, justifyContent: 'space-evenly', }}>
+        <View style={{ flex: 1, justifyContent: 'flex-start', marginVertical: 20 }}>
           <View style={{ width: '100%', margin: 5 }}>
               <Input 
               placeholder="Enter an email address" 
@@ -269,7 +271,7 @@ class LoginView extends React.PureComponent {
               autoCapitalize='none'
               inputStyle={styles.inputStyle} 
               inputContainerStyle={{ borderBottomColor: "rgb(209, 209, 214)", borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-              containerStyle={{ width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: 'transparent'  }} 
+              containerStyle={{ marginVertical: 20, width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: 'transparent'  }} 
               value={this.state.username} 
               editable={true}
               onChangeText={text => this.setState({username: text})}
@@ -289,7 +291,7 @@ class LoginView extends React.PureComponent {
              secureTextEntry={this.state.securePasswordEntry}
              inputStyle={styles.inputStyle} 
              inputContainerStyle={{ borderBottomColor: "rgb(209, 209, 214)", borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-             containerStyle={{ width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: 'transparent'  }} 
+             containerStyle={{ marginVertical: 30, width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: 'transparent'  }} 
              value={this.state.password} 
              editable={true}
              onChangeText={text => this.setState({password: text})}
@@ -303,22 +305,22 @@ class LoginView extends React.PureComponent {
           </View>
           </View>
 
-
-
-
-
-          <View style={{ alignSelf: 'center', width: '90%', flex: 1, justifyContent: 'center' }}>
+          <View style={{position: 'absolute', bottom: 0, alignSelf: 'center', width: '100%', flex: 1, justifyContent: 'center' }}>
           <ElementsButton
   title="Login"
   type="solid"
   raised
-  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 12}}
+  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 0}}
   buttonStyle={{backgroundColor: 'transparent'}}
   onPress={this.onLogin}
   containerStyle={{borderRadius: 12}}
 />
+<Divider />
+          </View>
 
-<Snackbar
+          </View>
+          </KeyboardAvoidingView>
+          <Snackbar
           style={{backgroundColor: '#212121'}}
           theme={{ colors: { accent: '#2196F3' }}}
           visible={this.state.showSnack}
@@ -330,10 +332,9 @@ class LoginView extends React.PureComponent {
         >
           {this.state.loginRejectReason}
         </Snackbar>
-          </View>
-          </ScrollView>
-          </KeyboardAvoidingView>
-      </SafeAreaView>
+        
+        <SafeAreaView style={{backgroundColor: '#1565C0'}} />
+      </View>
     );
   }
 }
@@ -350,8 +351,8 @@ const styles = StyleSheet.create({
   },
   headerText: {
     padding: 10,
-    flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: Constants.statusBarHeight
   },
   welcomeBackText: {
     fontSize: 28, fontWeight: '700', color: 'black',  
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', marginTop: 5
   },
   inputStyle: {
-    fontWeight: '500', fontSize: 15
+    fontWeight: '400', fontSize: 15
   },
   leftIconContainerStyle: {
     margin: 5, 

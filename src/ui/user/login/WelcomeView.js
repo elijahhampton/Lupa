@@ -75,7 +75,7 @@ function WelcomeView(props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "rgb(244, 247, 252)",
+    backgroundColor: "white",
     padding: 15,
     justifyContent: 'space-between',
     paddingTop: Constants.statusBarHeight,

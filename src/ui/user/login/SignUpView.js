@@ -15,6 +15,7 @@ import {
     Surface,
     Snackbar,
     ActivityIndicator,
+    Divider,
 } from 'react-native-paper';
 
 import SafeAreaView from 'react-native-safe-area-view';
@@ -148,7 +149,7 @@ const SignUp = props => {
   const { navigation } = props
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(244, 247, 252)'}}>
+    <View style={{flex: 1, backgroundColor: 'white', }}>
     <KeyboardAvoidingView 
     behavior="padding"
     keyboardVerticalOffset={50}
@@ -239,28 +240,30 @@ const SignUp = props => {
   
                         </View>  
           
-            <View style={{marginTop: 15, justifyContent: 'flex-end', width: '90%', alignSelf: 'center'}}>
+            <View style={{marginTop: 15, justifyContent: 'flex-end', width: '100%', alignSelf: 'center'}}>
                         <ElementsButton
   title="Create Account"
   type="solid"
   raised
-  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 12}}
+  style={{width: Dimensions.get('window').width, backgroundColor: "#1565C0", padding: 10, borderRadius: 0}}
   buttonStyle={{backgroundColor: 'transparent'}}
-  containerStyle={{borderRadius: 12}}
+  containerStyle={{borderRadius: 0}}
   onPress={signupHandler}
   disabled={false}
 />
                         </View>
           </ScrollView>
+          <Divider />
       </View>
-    </KeyboardAvoidingView>
-    </SafeAreaView>
+    </KeyboardAvoidingView>  
+    <SafeAreaView style={{backgroundColor: '#1565C0', height: Constants.statusBarHeight}} /> 
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   keyboardAvoidingView: {
-    flex: 1
+    flex: 1,
   },
   headerText: {
     marginTop: 15,
