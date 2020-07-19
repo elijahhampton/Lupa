@@ -25,6 +25,8 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 
 import LOG, {LOG_ERROR} from '../../common/Logger';
 import { getLupaUserStructure } from '../firebase/collection_structures';
+import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
+import {fromString} from 'uuidv4';
 
 export default class UserController {
     private static _instance: UserController;
@@ -521,7 +523,6 @@ export default class UserController {
     }
 
     getUserInformationByUUID = async uuid => {
-        console.log('1')
         let userResult = getLupaUserStructure(), docData = getLupaProgramInformationStructure(), userPrograms = []
 
         if (uuid == "" || typeof(uuid) == 'undefined') {
@@ -533,11 +534,9 @@ export default class UserController {
                 userResult = result.data();
             });
 
-            console.log('2')
             if (typeof(userResult.programs) == 'undefined') {
                 if (userResult.programs.length > 0)
                 {
-                    console.log('3')
                     for (let i = 0; i < userResult.programs.length; i++) {
                         docData = getLupaProgramInformationStructure()
                         await LUPA_DB.collection('programs').doc(userResult.programs[i]).get().then(snapshot => {
@@ -552,7 +551,6 @@ export default class UserController {
                             userPrograms.push(docData)
                         }
                     }
-                    console.log('4')
                 }
             }
             
@@ -567,9 +565,6 @@ export default class UserController {
             writable: true
         })
 
-        console.log(userResult.programs.length[0])
-        
-        console.log('heeerkjhkhjhe thee')
         return Promise.resolve(userResult);
     }
 
@@ -681,7 +676,7 @@ export default class UserController {
             await USER_COLLECTION.where('isTrainer', '==', true).get().then(docs => {
                 docs.forEach(querySnapshot => {
                     let snapshot = querySnapshot.data();
-                    console.log(snapshot)
+         
                     if (typeof(snapshot) == 'undefined' || snapshot.display_name == ""){
                     
                     }
@@ -933,7 +928,7 @@ export default class UserController {
                             data = doc.data();
                             if (data.user_uuid == undefined  || data.user_uuid == "" || data == undefined || typeof(data) != 'object')
                             {
-                                console.log('Found one baaaaaaaabyyyyy')
+                               
                                 return;
                             }
                             nearbyUsers.push(data);
@@ -1127,20 +1122,20 @@ export default class UserController {
         }
         
         try {
-            console.log('1')
+   
             await USER_COLLECTION.doc(uuid).get().then(snapshot => {
                 temp = snapshot.data();
              });
      
              programUUIDS = temp.programs;
-             console.log('2')
+       
              for (let i = 0; i < programUUIDS.length; i++)
              {
                  await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
                      temp = snapshot.data();
                  })
 
-                 console.log('3')
+     
                  try {
                      if (typeof(temp) != 'undefined')
                      {
@@ -1157,14 +1152,12 @@ export default class UserController {
                 }
 
              }
-             console.log('4')
         } catch(error) {
             alert(error)
             LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
             programsData = [];
         }
         
-        console.log('9999')
 
       return Promise.resolve(programsData);
       //return Promise.resolve([]);
@@ -1309,38 +1302,39 @@ export default class UserController {
          return Promise.resolve(payload);
         }
 
-    handleSendUserProgram = async (currUserUUID, currUserData, currUserDisplayName, userList, program) => {
+    handleSendUserProgram = async (currUserData, userList, program) => {
       
       try {
 
       let receivedProgramNotificationStructure = {
+            notification_uuid: fromString(Math.random().toString()),
             data: program,
-            from: currUserUUID,
-            fromData: currUserData,
+            from: currUserData.user_uuid,
             to: userList,
             read: false,
-            type: 'RECEIVED_PROGRAMS',
-            actions: ['Save', 'View', 'Delete'],
+            type: NOTIFICATION_TYPES.RECEIVED_NOTIFICATION,
+            actions: ['View', 'Delete'],
             timestamp: new Date().getTime()
         }
 
         let userNotifications = [];
+        if (userList.length == 0) {
+            return;
+        }
+
         for (let i = 0; i < userList.length; i++)
         {   
-    
            await USER_COLLECTION.doc(userList[i]).get().then(snapshot => {
                 userNotifications = snapshot.data().notifications;
             })
-
             await userNotifications.push(receivedProgramNotificationStructure);
-
             await USER_COLLECTION.doc(userList[i]).update({
                 notifications: userNotifications,
             })
         }
 
     } catch(err) {
-        
+        alert(err)
     }
         
     }
@@ -1478,17 +1472,18 @@ export default class UserController {
         })
     }
 
-    getUserNotificationsQueue = async () => {
-        let queue;
-        let uuid = await this.getCurrentUserUUID();
+    getUserNotificationsQueue = async (uuid) => {
+        let notificationsQueue = [];
 
-        await USER_COLLECTION.doc(uuid).get().then(snapshot => {
-            queue = snapshot.data()
-        })
+        try {
+            await USER_COLLECTION.doc(uuid).get().then(snapshot => {
+                notificationsQueue = snapshot.data().notifications;
+            })
+        } catch(err) {
+            return Promise.resolve([])
+        }
 
-        const res = queue.notifications;
-
-        return Promise.resolve(res);
+        return Promise.resolve(notificationsQueue);
       }
 
       getFeaturedPrograms = async () => {
@@ -1518,7 +1513,6 @@ export default class UserController {
         let updatedProgramSnapshot;
         let GENERATED_CHAT_UUID, chats;
 
-        console.log('a')
 
         const currUserUUID = await currUserData
         const programOwnerUUID = programData.program_owner;
@@ -1526,7 +1520,6 @@ export default class UserController {
         try {
         //add the program to users list
         await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
-        console.log('b')
         //add the user as one of the program participants
         let updatedParticipants;
         await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
@@ -1538,7 +1531,7 @@ export default class UserController {
         await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
             program_participants: updatedParticipants,
         });
-        console.log('c')
+ 
         //setup trainer and user chat channel
         if (currUserUUID.charAt(0) < programOwnerUUID.charAt(0)) {
             GENERATED_CHAT_UUID = currUserUUID + programOwnerUUID;
@@ -1554,7 +1547,7 @@ export default class UserController {
 
         let otherUserDocData;
         let otherUserDoc = USER_COLLECTION.doc(programOwnerUUID);
-        console.log('e')
+
         let chatID, chatExistUserOne = false;
         await chats.forEach(element => {
             if (element.user == programOwnerUUID) {
@@ -1578,7 +1571,7 @@ export default class UserController {
 
             let chatExistUserTwo;
             chatExistUserOne = false;
-            console.log('f')
+
             await otherUserChats.forEach(element => {
                 if (element.user == currUserUUID) {
                     chatExistUserTwo = true;
@@ -1593,7 +1586,7 @@ export default class UserController {
                     chatID: GENERATED_CHAT_UUID,
                 }
                 otherUserChats.push(chatField);
-                console.log('g')
+
                 await otherUserDoc.update({
                     chats: otherUserChats
                 })
@@ -1602,7 +1595,6 @@ export default class UserController {
 }
         } catch(err) {
             alert(err)
-            console.log(err)
         }   
 
         /** **************/
@@ -1611,12 +1603,12 @@ export default class UserController {
         try {
                      //init Fire
         await Fire.shared.init(GENERATED_CHAT_UUID);
-        console.log('h')
+
         let currUserDisplayName = await this.getAttributeFromUUID(currUserUUID, 'display_name')
         const message = {
             _id: programOwnerUUID,
             timestamp: new Date().getTime(),
-            text: `Hello ${currUserDisplayName}.  Thanks for buying my program - you can contact me here.`,
+            text: programData.program_automated_message,
             user: {
                 _id: programOwnerUUID,
                 name: await this.getAttributeFromUUID(programOwnerUUID, 'display_name'),
@@ -1625,19 +1617,11 @@ export default class UserController {
           }
 
         await Fire.shared.append(message)
-        console.log('j')
 
         } catch(err) {
             alert(err)
         }
 
-
-
-
-
-
-
-        console.log('l')
 
          /************/
 
@@ -1646,7 +1630,6 @@ export default class UserController {
                 await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
                     updatedProgramSnapshot = snapshot.data();
                 })
-                console.log('me')
                 return Promise.resolve(updatedProgramSnapshot);
       }
 

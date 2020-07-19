@@ -335,7 +335,6 @@ export default class LupaController {
      */
     searchPrograms = async searchQuery => {
       let retVal = []
-      console.log(searchQuery)
       await USER_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(result => {
         retVal = result;
       });
@@ -618,12 +617,12 @@ export default class LupaController {
       await USER_CONTROLLER_INSTANCE.deleteUserProgram(programUUID, userUUID);
     }
 
-    handleSendUserProgram = (currUserUUID, currUserData, currUserDisplayName, userList, program) => {
+    handleSendUserProgram = (currUserData, userList, program) => {
        
       try {
-        USER_CONTROLLER_INSTANCE.handleSendUserProgram(currUserUUID, currUserData, currUserDisplayName, userList, program);
+        USER_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, userList, program);
           } catch(err) {
-        
+            alert(err)
         }
     }
 
@@ -742,9 +741,14 @@ export default class LupaController {
           return Promise.resolve(newURI);
       }
 
-      getUserNotifications = async () => {
-        let queue;
-       await USER_CONTROLLER_INSTANCE.getUserNotificationsQueue().then(queueResults => {
+      getUserNotifications = async (uuid) => {
+        if (typeof(uuid) == 'undefined' || typeof(uuid) != 'string') {
+          return Promise.resolve([])
+        }
+
+       let queue = []
+
+       await USER_CONTROLLER_INSTANCE.getUserNotificationsQueue(uuid).then(queueResults => {
         queue = queueResults;
         })
 

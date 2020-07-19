@@ -125,7 +125,6 @@ const SignUp = props => {
     await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
     await dispatch({ type: 'UPDATE_LUPA_ASSESSMENTS', payload: lupaAssessments})
-    console.log(userPayload)
   }
 
   const signupHandler = async () => {

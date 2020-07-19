@@ -263,7 +263,6 @@ class LupaHome extends React.Component {
         var currentOffset = event.nativeEvent.contentOffset.y;
         var direction = currentOffset > this.offset ? this.showFilters() : this.hideFilters();
     this.offset = currentOffset;
-    console.log(direction);
     }
 
     showFilters = () => {

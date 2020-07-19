@@ -42,7 +42,7 @@ handleUserAttributeUpdate = (state, payload) => {
 handleProgramAttributeUpdate = (state, payload) => {
   let programToUpdate;
   let updatedState = state.currUserProgramsData;
-  console.log(updatedState)
+
   switch(payload.attribute)
   {
     case 'program_participants':

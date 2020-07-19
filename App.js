@@ -22,6 +22,7 @@ import LupaDrawerNavigator from './src/ui/navigators/LupaDrawerNavigator'
 import TrainerInformation from './src/ui/user/modal/WelcomeModal/TrainerInformation';
 import PrivateChat from './src/ui/user/chat/PrivateChat';
 import WelcomeModal from './src/ui/user/modal/WelcomeModal/WelcomeModal';
+import ShareProgramModal from './src/ui/workout/program/modal/ShareProgramModal';
 
 class App extends React.Component {
   constructor(props) {
@@ -149,7 +150,7 @@ const StackApp = createStackNavigator()
 function AppNavigator() {
   return (
     <StackApp.Navigator initialRouteName='Loading' headerMode='none' screenOptions={{
-  
+      gestureEnabled: false
     }}>
     <StackApp.Screen name='Loading' component={SwitchNavigator} />
     <StackApp.Screen name='Auth' component={AuthenticationNavigator}/>
@@ -158,6 +159,7 @@ function AppNavigator() {
     <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{animationEnabled: true}}/>
     <StackApp.Screen name="PrivateChat" component={PrivateChat} />
     <StackApp.Screen name="Onboarding" component={WelcomeModal}/>
+    <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
   </StackApp.Navigator>
   )
 

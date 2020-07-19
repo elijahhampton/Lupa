@@ -67,18 +67,8 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
     const handleDefaultOptionsOnPress = (optionTitle) => {
         closeModal()
 
-        switch (optionTitle) {
-            case 'View Profile':
-               //() => navigateToProfile()
-                break;
-            case 'Edit Profile':
-                break;
-            case 'Share Program':
-                //shareProgramOnPress()
-                break;
-            case 'Delete Program':
-                break;
-            default:
+        if (optionTitle == 'Share Program') {
+            shareProgramOnPress(program)
         }
     }
 
@@ -88,9 +78,11 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         })
     }
 
-    const shareProgramOnPress = () => {
-        closeModal()
-        setShareProgramModalIsVisible(true)
+    const shareProgramOnPress = (program) => {
+        navigation.push('ShareProgramModal', {
+            programData: program,
+            following: currUserData.following,
+        })
     }
     
     const renderProgramOwnerOptions = () => {
@@ -135,7 +127,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     }
                 }}>
                     <Appbar.BackAction onPress={closeModal} />
-                    <Appbar.Content title="Share Program" />
+                    <Appbar.Content title="Program Options" />
                 </Appbar.Header>
             <View style={styles.container}>
                 {
@@ -145,8 +137,6 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     renderProgramOwnerOptions()
                 }
             </View>
-
-            <ShareProgramModal isVisible={shareProgramModalIsVisible} closeModal={() => setShareProgramModalIsVisible(false)} program={program} following={currUserData.following} />
         </Modal>
     )
 }

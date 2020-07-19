@@ -88,7 +88,7 @@ class ShareProgramModal extends React.Component{
     componentDidMount = async () => {
         let results = [];
         
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.following).then(objs => {
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.route.params.following).then(objs => {
             results = objs;
         })
 
@@ -155,32 +155,34 @@ class ShareProgramModal extends React.Component{
     }
 
     handleCancel = () => {
-        this.props.closeModal()
+        this.props.navigation.pop()
     }
 
     handleApply = () => {
         try {
-            this.LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(this.props.currUserData.user_uuid, this.props.currUserData, this.props.currUserData.display_name, this.state.selectedUsers, this.props.program);
-            this.props.closeModal()
+            this.LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(this.props.lupa_data.Users.currUserData, this.state.selectedUsers, this.props.route.params.programData);
+            this.props.navigation.pop()
         } catch(err) {
-            
+            alert(err)
+            this.props.navigation.pop()
         }
     }
 
     render() {
+        const { navigation } = this.props
         return (
-                <Modal style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height, backgroundColor: '#FFFFFF'}} visible={this.props.isVisible}>
+                <View style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height, backgroundColor: '#FFFFFF'}}>
                                    <Appbar.Header style={{elevation: 0}} theme={{
                     colors: {
                         primary: '#FFFFFF'
                     }
                 }}>
-                    <Appbar.BackAction onPress={() => this.props.closeModal()} />
+                    <Appbar.BackAction onPress={() => navigation.pop()} />
                     <Appbar.Content title="Share Program" />
                 </Appbar.Header>
 
                 <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-                <ProgramSearchResultCard programData={this.props.program} />
+                <ProgramSearchResultCard programData={this.props.route.params.programData} />
                               <Divider />
                     <ScrollView shouldRasterizeIOS={true} contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
                     {
@@ -191,7 +193,7 @@ class ShareProgramModal extends React.Component{
                     </View>
 
                     <FAB  color="#FFFFFF" style={{position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#2196F3'}} icon="done" onPress={this.handleApply} />
-            </Modal>
+            </View>
         )
     }
 }

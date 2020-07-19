@@ -194,7 +194,6 @@ function ProgramInformationPreview(props) {
             //handle program in backend
             try {
                 const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData.user_uuid, programData);
-                console.log(updatedProgramData)
                 await dispatch({ type: "ADD_CURRENT_USER_PROGRAM" , ...updatedProgramData})
             } catch (err) {
                 alert(err)
