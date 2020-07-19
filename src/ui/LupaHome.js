@@ -141,7 +141,7 @@ class LupaHome extends React.Component {
     }
 
     setupComponent = async () => {
-         //this.setState({ inviteFriendsIsVisible: true })
+         this.setState({ inviteFriendsIsVisible: true })
         await this.loadFeaturedPrograms();
 
         let nearYouIn = []
@@ -373,7 +373,7 @@ class LupaHome extends React.Component {
                         </Text>
                         </View>
 
-                        <Button mode="contained" color="#1089ff" style={{elevation: 8, marginLeft: 10, alignItems: 'center', justifyContent: 'center', width: 'auto'}} theme={{
+                        <Button mode="contained" color="#1089ff" style={{elevation: 8, marginLeft: 10, marginTop: 10, alignItems: 'center', justifyContent: 'center', width: 'auto'}} theme={{
                             roundness: 3
                         }} >
                             <Text>
@@ -387,14 +387,14 @@ class LupaHome extends React.Component {
                         <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, backgroundColor: 'transparent', marginVertical: 10}}>
                         <View>
                         <Text style={{fontFamily: 'avenir-roman', paddingLeft: 10, color: 'black', fontSize: 20, marginVertical: 5}}>
-                            Did you complete any type of exercise today?
+                            Did you complete an exercise today?
                         </Text>
                         <Text style={{fontFamily: 'avenir-light', color: 'black', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5}}>
                            Every time you complete a physical activity you are one step closer to completing your goals.  Keep track of your progress by logging your workout or checking in for the day.
                         </Text>
                         </View>
 
-                        <Button mode="contained" color="#1089ff" style={{elevation: 8,  marginLeft: 10, alignItems: 'center', justifyContent: 'center', width: 'auto'}} theme={{
+                        <Button mode="contained" color="#1089ff" style={{elevation: 8,  marginLeft: 10, marginTop: 10, alignItems: 'center', justifyContent: 'center', width: 'auto'}} theme={{
                             roundness: 3
                         }} >
                             <Text>
@@ -433,9 +433,9 @@ class LupaHome extends React.Component {
                     </View>
     }
                     
-            {/*  <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
+             <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
                 
-<CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} /> */}
+<CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} /> 
         
             </View>
         );

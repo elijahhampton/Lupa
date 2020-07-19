@@ -699,8 +699,6 @@ export default class UserController {
             trainers = []
         }
 
-        alert('aaaa: ' + trainers.length)
-
         return Promise.resolve(trainers);
     }
 
