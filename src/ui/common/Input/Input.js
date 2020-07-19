@@ -97,8 +97,9 @@ const styles = StyleSheet.create({
       },
       label: {
          
-        color: 'rgb(142, 142, 147)',
+        color: '#212121',
         marginVertical: 8,
+        fontWeight: '500',
         marginLeft: 20,
       },
       input: {
@@ -106,15 +107,15 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         alignSelf: 'center',
         borderWidth: 2,
-        borderLeftColor: 'transparent',
-        borderRightColor: 'transparent',
-        borderTopColor: 'transparent',
-        fontWeight: '500', 
+        fontWeight: '400', 
         fontSize: 15,
         borderRadius: 0,
         height: 40,
         paddingHorizontal: 10,
-        borderColor: 'rgb(209, 209, 214)'
+        borderColor: 'black',
+        borderWidth: 0.5,
+        borderRadius: 5,
+        backgroundColor: 'white'
       },
       focusedInput: {
         width: '90%',
