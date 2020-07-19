@@ -25,17 +25,14 @@ function FeaturedProgramCard(props) {
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    let currUserData = useSelector(state => {
+    const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
 
    const handleCardOnPress = (programData) => {
         if (currUserData.programs.includes(programData.program_structure_uuid))
         {
-            currUserData = useSelector(state => {
-                return state.Users.currUserData;
-            })
-            
+
           navigation.push('LiveWorkout', {
                 programData: programData,
             });
