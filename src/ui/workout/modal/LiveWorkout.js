@@ -31,6 +31,7 @@ import StepIndicator from 'react-native-step-indicator';
 import LupaController from '../../../controller/lupa/LupaController';
 import ThinFeatherIcon from "react-native-feather1s";
 import { LOG_ERROR } from '../../../common/Logger';
+import { Constants } from 'react-native-unimodules';
 
   const chartConfig = {
     backgroundGradientFrom: "red",
@@ -445,7 +446,7 @@ class LiveWorkout extends React.Component {
                         <View style={{flex: 1}}>
                             <SafeAreaView style={{backgroundColor: '#212121'}} />
                             <View style={{flex: 3, backgroundColor: '#212121'}}>
-                            <MaterialIcon onPress={() => this.props.navigation.goBack(null)} name="close" color="white" size={26} style={{position: 'absolute', top: 0, left: 0, margin: 16}} />
+                          
                                 <View style={{flex: 4}}>
 
                                 </View>
@@ -505,7 +506,7 @@ class LiveWorkout extends React.Component {
                                 </Text>
                             </Button>
                         </View>
-
+                        <MaterialIcon onPress={() => this.props.navigation.pop()} name="close" color="white" size={26} style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, margin: 16}} />
                         <SafeAreaView />
                     </View>
                      {

@@ -1166,8 +1166,8 @@ export default class UserController {
         
         console.log('9999')
 
-      //  return Promise.resolve(programsData);
-      return Promise.resolve([]);
+      return Promise.resolve(programsData);
+      //return Promise.resolve([]);
     }
 
     deleteUserProgram = async (programUUID, userUUID) => {

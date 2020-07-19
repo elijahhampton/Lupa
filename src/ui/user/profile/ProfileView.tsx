@@ -74,6 +74,8 @@ import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/c
 import { Constants } from 'react-native-unimodules';
 import ProgramSearchResultCard from '../../workout/program/components/ProgramSearchResultCard';
 import { InformationIcon } from '../../icons/index.js';
+import ProgramOptionsModal from '../../workout/program/modal/ProgramOptionsModal';
+import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 
 const InviteToPackDialog = props => {
     const [userToInvite, setUserToInvite] = useState(props.userToInvite);
@@ -158,7 +160,9 @@ interface IProfileState {
     city: String,
     state: String,
     refreshing: Boolean,
-    nearbyUsers: Array<Object>
+    nearbyUsers: Array<Object>,
+    programOptionsModalIsOpen: Boolean,
+    programOptionsProgram: Object,
 }
 
 
@@ -194,6 +198,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             state: '',
             refreshing: false,
             nearbyUsers: [],
+            programOptionsModalIsOpen: false,
+            programOptionsProgram: getLupaProgramInformationStructure(),
         }
     }
 
@@ -710,6 +716,22 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     }
 
     /**
+     * 
+     */
+    handleProgramOptionsOnPress = (program) => {
+        this.setState({ programOptionsProgram: program}, () => {
+            this.setState({ programOptionsModalIsOpen: true})
+        })
+    }
+
+    /**
+     * 
+     */
+    closeProgramOptionsModal = () => {
+        this.setState({ programOptionsModalIsOpen: false })
+    }
+
+    /**
      * Renders this profiles programs.  Returns a ProfileProgramComponent is programs exist.  Otherwise returns a notice to join or create
      * a program depending on the account type.
      */
@@ -790,10 +812,17 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         }
                     }
                     else
-                    {
+                    { //Current user and current user is looking at profile
                         return this.props.lupa_data.Programs.currUserProgramsData.map((program, index, arr) => {
                             return (
-                                <ProgramSearchResultCard programData={program} />
+                                <>  
+                                   
+                                    <ProgramSearchResultCard programData={program} />
+                                    <View style={{position: 'absolute', top: 0, right: 0, margin: 10, justifyContent: 'flex-end'}}>
+                                        <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program.program_structure_uuid)} size={20} name="more-horizontal" style={{padding: 1}} />
+                                    </View>
+                                    <Divider />
+                                </>
                             )
                         })
                     }
@@ -1125,7 +1154,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         
                         <SafeAreaView />
                 </ScrollView>
-                
+                        
+                <ProgramOptionsModal program={this.state.programOptionsProgram} isVisible={this.state.programOptionsModalIsOpen} closeModal={this.closeProgramOptionsModal} />
                {/* <InviteToPackDialog userToInvite={this.props.navigation.getParam('userUUID')} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} /> */}
                         
             </SafeAreaView>
