@@ -46,6 +46,7 @@ function InviteFriendsModal(props) {
                 if (permission == 'authorized')
                 {
                     setContactPermissionsGranted(true)
+                    retrieveContacts()
                 }
                 else
                 {
@@ -55,6 +56,7 @@ function InviteFriendsModal(props) {
             }
             if (permission === 'authorized') {
               setContactPermissionsGranted(true);
+              retrieveContacts()
             }
             if (permission === 'denied') {
               setContactPermissionsGranted(false)
@@ -71,8 +73,6 @@ function InviteFriendsModal(props) {
                 setContactRecords(response);
             })
         }
-
-        retrieveContacts()
 
     }, [contactRecords.length])
 
