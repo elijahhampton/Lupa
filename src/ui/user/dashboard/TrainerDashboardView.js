@@ -69,8 +69,8 @@ class TrainerDashboardView extends React.Component {
         await this.setupComponent()
     }
 
-    setupComponent = () => {
-        this.loadNotifications(this.props.lupa_data.Users.currUserData.user_uuid)
+    setupComponent = async () => {
+        await this.loadNotifications(this.props.lupa_data.Users.currUserData.user_uuid)
     }
 
     loadNotifications = async (uuid) => {
