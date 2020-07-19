@@ -12,7 +12,7 @@ const Stack = createStackNavigator()
 
 function LupaHomeNavigator() {
     return (
-        <Stack.Navigator initialRouteName="LupaHome" headerMode='none'>
+        <Stack.Navigator initialRouteName="" headerMode='none'>
       <Stack.Screen name="LupaHome" component={LupaHome} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="LiveWorkout" component={LiveWorkout} />

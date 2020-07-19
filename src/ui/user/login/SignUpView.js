@@ -100,7 +100,6 @@ const SignUp = props => {
       currUserData = result;
     })
 
-    console.log('b')
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
       currUserPacks = result;
     })
@@ -110,7 +109,6 @@ const SignUp = props => {
       currUserPrograms = result;
     })
 
-    console.log('c')
 
     lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
 
@@ -127,7 +125,6 @@ const SignUp = props => {
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
     await dispatch({ type: 'UPDATE_LUPA_ASSESSMENTS', payload: lupaAssessments})
     console.log(userPayload)
-    console.log('d')
   }
 
   const signupHandler = async () => {

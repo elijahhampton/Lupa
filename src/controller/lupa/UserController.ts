@@ -272,13 +272,14 @@ export default class UserController {
 
         switch (fieldToUpdate) {
             case UserCollectionFields.PROGRAMS:
-                let programs = []
+                let programs = [], snapshot = {}
                 if (optionalData == 'add')
                 {
                     await currentUserDocument.get().then(result => {
-                        programs = result.data().programs;
+                       snapshot = result.data()
                     });
 
+                    programs = snapshot.programs
                     programs.push(value);
 
                     await currentUserDocument.update({
@@ -521,14 +522,19 @@ export default class UserController {
 
     getUserInformationByUUID = async uuid => {
         console.log('1')
-        let userResult = {}, docData = getLupaProgramInformationStructure(), userPrograms = []
+        let userResult = getLupaUserStructure(), docData = getLupaProgramInformationStructure(), userPrograms = []
+
+        if (uuid == "" || typeof(uuid) == 'undefined') {
+            return Promise.resolve(userResult)
+        }
+
         try {
             await USER_COLLECTION.doc(uuid).get().then(result => {
                 userResult = result.data();
             });
 
             console.log('2')
-
+            if (typeof(userResult.programs) == 'undefined') {
                 if (userResult.programs.length > 0)
                 {
                     console.log('3')
@@ -548,6 +554,7 @@ export default class UserController {
                     }
                     console.log('4')
                 }
+            }
             
         } catch(error) {
             LOG_ERROR('UserController.ts', 'Caught exception in getUserInformationByUUID', error)

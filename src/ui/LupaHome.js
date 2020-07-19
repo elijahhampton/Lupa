@@ -192,7 +192,7 @@ class LupaHome extends React.Component {
                
 
                return (
-                   
+
                    <CircularUserCard user={user} />
                )
 
@@ -323,8 +323,7 @@ class LupaHome extends React.Component {
                <View style={{flex: 1}}>
 <ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2}}>
 
-        <View
-                    style={{justifyContent: 'center', justifyContent: 'center', }}>
+        <View style={{justifyContent: 'center', justifyContent: 'center', }}>
     <Carousel 
                         data={this.state.featuredPrograms}
                         itemWidth={Dimensions.get('window').width - 100}
@@ -335,26 +334,27 @@ class LupaHome extends React.Component {
                         pagingEnabled={false}
                         contentContainerCustomStyle={{alignItems: 'center', justifyContent: 'center'}}
                         />
-
+                       
                         </View>
 
 <View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
-                    
-                    <View style={{padding: 5, width: '80%', marginVertical: 10}}>
-                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold', paddingLeft: 10 }}>
+<Divider style={{width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5}} />
+                    <View style={{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10, marginVertical: 10}}>
+                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold'}}>
                        Start training with...
                     </Text>
+                    <Caption>
+                                    { this.state.trainWithSwiperIndex + 1} / {this.state.usersNearYou.length}
+                                </Caption>
                     </View>
 
-                    <View style={{height: 150}}>
-                    <Swiper onIndexChanged={index => this.setState({ index: index })} pagingEnabled={true} showsPagination={false} horizontal={true} showsHorizontalScrollIndicator={false} >
+                    <View style={{height: 'auto'}}>
+                    <ScrollView onIndexChanged={index => this.setState({ index: index })} pagingEnabled={true} showsPagination={false} horizontal={true} showsHorizontalScrollIndicator={false} >
                             {
                                 this.renderNearbyUsers()
                             }
-                    </Swiper>
-                                <Caption style={{position: 'absolute', top: 0, right: 10}}>
-                                    {this.state.trainWithSwiperIndex + 1} / {this.state.usersNearYou.length}
-                                </Caption>
+                    </ScrollView>
+                         
                     </View>
 </View>
 

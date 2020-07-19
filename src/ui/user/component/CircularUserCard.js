@@ -37,28 +37,41 @@ function CircularUserCard(props) {
     
     const renderUserCard = () => {
         return (
-            <View style={{width: windowWidth, alignItems: 'flex-start', justifyContent: 'flex-start', padding: 20}}>
-                <View style={{justifyContent: 'space-between'}}>
+            <View style={{height: 200, width: windowWidth, justifyContent: 'space-evenly', padding: 20}}>
+                <View style={{marginVertical: 5, justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <View >
+                    <View>
                     {getAvatar()}
                 </View>
 
-                <View style={{marginHorizontal: 10}}>
-                <Text style={{fontWeight: '600', color: '#212121'}}>
-                        Emily Loefstedt
+                <View style={{marginHorizontal: 15}}>
+                <Text style={{fontWeight: '600', color: '#1089ff'}}>
+                        {props.user.display_name}
+                    </Text>
+                    <Text style={{fontWeight: '600', color: '#212121'}}>
+                        {props.user.location.city + ", " + props.user.location.state}
                     </Text>
                     <Text style={{fontWeight: '300', fontSize: 12}}>
-                        National Association of Sports and Medicine
+                        National Association of Sports Medicine
                     </Text>
                 </View>
                     </View>
                 </View>
 
-                <View style={{paddingTop: 20}}>
-                    <Paragraph style={{fontWeight: '400', fontSize: 13}} numberOfLines={3}>
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur
+                <View style={{marginVertical: 5}}>
+                    <Paragraph style={{fontWeight: '400', fontSize: 13}} ellipsizeMode="tail" numberOfLines={2}>
+                   {props.user.bio}
                     </Paragraph>
+                </View>
+
+                <View style={{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: '100%'}}>
+                <Text style={{color: '#404f5e'}}>
+                    5 Programs Available
+                </Text>
+
+                <Text style={{color: '#1089ff', fontWeight: '500'}}>
+                    See more
+                </Text>
                 </View>
             </View>
         )

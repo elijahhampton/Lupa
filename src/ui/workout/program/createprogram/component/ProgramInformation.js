@@ -55,36 +55,6 @@ const numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const { width } = Dimensions.get('window')
-const TimePicker = (props) => {
-    const [date, setDate] = useState(new Date());
-    const [mode, setMode] = useState('date');
-  
-    const onChange = (event, selectedDate) => {
-      const currentDate = selectedDate || date;
-      setDate(currentDate);
-    };
-
-    return (
-        <Modal visible={props.isVisible} presentationStyle="fullScreen" style={{alignItems: 'center', justifyContent: 'center'}}>
-          <View style={{flex: 1, justifyContent: 'space-evenly'}}>
-          <Text style={{alignSelf: 'center'}}>
-              Some text
-          </Text>
-          
-          <DateTimePicker
-            testID="dateTimePicker"
-            timeZoneOffsetInMinutes={0}
-            value={new Date()}
-            mode="time"
-            display="default"
-            onChange={onChange}
-          />
-
-          <Button title="Finish" onPress={() => props.closeModalMethod(date)} />
-          </View>
-      </Modal>
-    );
-  };
 
 function AddTagsModal(props) {
   let [tags, setTags] = useState([]);
@@ -247,9 +217,14 @@ function ProgramInformation(props) {
       return true;
     }
 
-    if (isProgramImageSet == false)
-    {
-      setRejectedReason("need to add na image")
+    if (programDays.length == 0) {
+      setRejectedReason('aaa')
+      setSnackBarVisibility(true)
+      return true;
+    }
+
+    if (automatedMessageText == "") {
+      setRejectedReason("You must add a message to send to your clients upon purchase.")
       setSnackBarVisibility(true)
       return true;
     }
@@ -258,13 +233,6 @@ function ProgramInformation(props) {
   }
 
      const handleSaveProgramInformation = async () => {
-          //check program values
-        /*  let retVal = checkInputs()
-          if (retVal)
-          {
-            return;
-          }*/
-
          const imgV = programImage;
          await props.saveProgramInformation(
           programName,
@@ -280,7 +248,8 @@ function ProgramInformation(props) {
           allowWaitlist,
           imgV,
           programTags,
-          automatedMessageText
+          automatedMessageText,
+          programDays,
          )
 
          //move to next page
@@ -316,35 +285,10 @@ function ProgramInformation(props) {
 
     /**
      * 
-     * @param {*} startDate 
-     */
-    const captureStartDate = (startDate) => {
-        setProgramStartDate(startDate);
-    }
-
-    /**
-     * 
-     * @param {*} endDate 
-     */
-    const captureEndDate = (endDate) => {
-        setProgramEndDate(endDate)
-    }
-
-    /**
-     * 
      * @param {*} time 
      */
     const captureTime = (time) => {
         setProgramTime(time);
-    }
-
-    /**
-     * 
-     * @param {*} time 
-     */
-    const handleCloseTimePicker = async (time) => {
-        captureTime(time);
-        await setTimePickerVisible(false);
     }
 
     const showAddTagsModal = () => {
@@ -368,12 +312,24 @@ function ProgramInformation(props) {
       setProgramDays(newProgramDayArr)
     }
 
+    const getNextView = () => {
+                //check program values
+              /*  let retVal = checkInputs()
+
+                if (retVal)
+                {
+                  return;
+                }*/
+
+                setCurrIndex(1)
+    }
+
     const getViewDisplay = () => {
       switch(currIndex) {
         case 0:
           return (
             <>
-            <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between'}}>  
+            <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between'}}> 
                             <View>
             <View style={{width: '100%', height: 'auto', marginLeft: 5, marginVertical: 50, padding: 10}} >
                 <View>
@@ -558,8 +514,23 @@ function ProgramInformation(props) {
                 
               </View>
           </View>
+        </ScrollView>
+
+        <LupaMapView 
+                            initialRegionLatitude={currUserState.location.latitude}
+                            initialRegionLongitude={currUserState.location.longitude}
+                            closeMapViewMethod={gymData => onMapViewClose(gymData)}
+                            isVisible={mapViewVisible}
+                        />
+
 
 <Snackbar
+          style={{position: 'absolute', bottom: 100}}
+          theme={{
+            colors: {
+              accent: '#1089ff'
+            }
+          }}
           visible={snackBarVisible}
           onDismiss={_onDismissSnackBar}
           action={{
@@ -573,15 +544,6 @@ function ProgramInformation(props) {
           {rejectedReason}
         </Snackbar>
 
-        </ScrollView>
-
-        <LupaMapView 
-                            initialRegionLatitude={currUserState.location.latitude}
-                            initialRegionLongitude={currUserState.location.longitude}
-                            closeMapViewMethod={gymData => onMapViewClose(gymData)}
-                            isVisible={mapViewVisible}
-                        />
-
 <SafeAreaView />
 
 
@@ -591,6 +553,12 @@ function ProgramInformation(props) {
           )
         case 1:
           return <SelectProgramImage captureImage={props.captureImage} />
+        default:
+          return <View>
+            <Text>
+              Hi
+            </Text>
+          </View>
       }
     }
 
@@ -598,14 +566,21 @@ function ProgramInformation(props) {
       switch(currIndex) {
         case 0:
           return (
-            <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={currIndex == 0 ? () => setCurrIndex(2) : handleSaveProgramInformation} mode="contained">
+            <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={getNextView} mode="contained">
               <Text>
                 Next
               </Text>
             </Button>
           )
         case 1:
-          return 
+
+          return (
+            <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={handleSaveProgramInformation} mode="contained">
+            <Text>
+              Add Workouts
+            </Text>
+          </Button>
+          )
       }
     }
 
@@ -624,20 +599,10 @@ function ProgramInformation(props) {
   </Text>
 </Button>
   {
-        currIndex == 0 ?
-    <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={() => setCurrIndex(2)} mode="contained">
-    <Text>
-    Next
-  </Text>
-  </Button>
-  :
-  <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={handleSaveProgramInformation} mode="contained">
-    <Text>
-    Add workouts
-  </Text>
-  </Button>
+       getOptionsButton()
   }
 </View>
+<SafeAreaView />
         </View>
     )
 }

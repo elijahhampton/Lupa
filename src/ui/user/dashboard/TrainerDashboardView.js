@@ -146,7 +146,6 @@ class TrainerDashboardView extends React.Component {
     }
 
     componentDidMount = async () => {
-        console.log('enable swipe')
         //await this.fetchPackEvents();
         //await this.fetchPackInvites();
     }

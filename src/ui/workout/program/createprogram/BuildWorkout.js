@@ -61,6 +61,7 @@ import ImagePicker from 'react-native-image-picker';
 import { LOG_ERROR } from '../../../../common/Logger';
 
 import {Picker} from '@react-native-community/picker';
+import { SearchBar } from 'react-native-elements';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -408,16 +409,6 @@ function AddedExercisePreviewModal(props) {
     )
 }
 
-const DAYS_OF_THE_WEEK = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-]
-
 class BuildWorkout extends React.Component {
     constructor(props) {
         super(props);
@@ -608,28 +599,26 @@ this.getWorkoutSurfaceContent(workout)
 
     getCurrentDay = () => {
         const currIndex = this.state.currDayIndex;
-        return DAYS_OF_THE_WEEK[currIndex]
+        return this.props.programData.program_workout_days[currIndex]
     }
 
     getPreviousDay = () => {
         if (this.state.currDayIndex == 0)
         {
-            console.log('meee')
-            return DAYS_OF_THE_WEEK[DAYS_OF_THE_WEEK.length - 1]
+            return this.props.programData.program_workout_days[this.props.programData.program_workout_days.length - 1]
         }
 
-        console.log('heeee')
         const currIndex = this.state.currDayIndex - 1
-        return DAYS_OF_THE_WEEK[currIndex]
+        return this.props.programData.program_workout_days[currIndex]
     }
 
     getNextDay = () => {
         const currIndex = this.state.currDayIndex + 1;
-        return DAYS_OF_THE_WEEK[currIndex]
+        return this.props.programData.program_workout_days[currIndex]
     }
 
     goNextDay = () => {
-        if (this.state.currDayIndex == DAYS_OF_THE_WEEK.length) {
+        if (this.state.currDayIndex == this.props.programData.program_workout_days.length) {
             this.setState({
                 currDayIndex: 0
             })
@@ -647,7 +636,7 @@ this.getWorkoutSurfaceContent(workout)
         if (this.state.currDayIndex == 0)
         {
             this.setState({
-                currDayIndex: DAYS_OF_THE_WEEK.length
+                currDayIndex: this.props.programData.program_workout_days.length
             })
 
             return;
@@ -682,7 +671,7 @@ this.getWorkoutSurfaceContent(workout)
   }
   }>
       {
-          DAYS_OF_THE_WEEK.map((day, index, arr) => {
+          this.props.programData.program_workout_days.map((day, index, arr) => {
             return (
                 <Picker.Item key={day} label={day} value={day} />
             )
@@ -1317,7 +1306,6 @@ this.getWorkoutSurfaceContent(workout)
             if (response.didCancel) {
                 LOG_ERROR('BuildWorkout.js', 'User cancelled image picker in addWorkoutMedia()', 'true');
               } else if (response.error) {
-                  console.log('error...')
                   LOG_ERROR('BuildWorkout.js', 'Caught exception in image picker in addWorkoutMedia()', response.error);
               } else {
                 const source = await response.uri
@@ -1658,7 +1646,7 @@ this.getWorkoutSurfaceContent(workout)
                    <Surface style={{flex: 1}}>
                        <TouchableOpacity onPress={() => this.sectionPickerRBSheet.current.open()}>
                        <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontWeight: '300'}}>
+                        <Text style={{fontWeight: '400', fontSize: 20}}>
                            {this.getCurrentDay()}
                        </Text>
                         </View>
@@ -1668,14 +1656,25 @@ this.getWorkoutSurfaceContent(workout)
                        </ScrollView>
                     </Surface>
                     <View style={{flex: 4}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontWeight: '300', color: '#1089ff'}}>
-                           Calisthenics
-                       </Text>
-                       <MaterialIcon name="keyboard-arrow-down" size={20} color="#1089ff" />
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <View style={{flex: 3}}>
+                            <SearchBar placeholder="Search specific workouts"
+                        onChangeText={text => console.log(text)} 
+                        platform="ios"
+                        searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
+                        containerStyle={{backgroundColor: "transparent", width: '100%'}}
+                        inputContainerStyle={{backgroundColor: 'rgb(242, 242, 247))',}}
+                        inputStyle={{fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman'}}
+                        placeholderTextColor="#212121"
+                        value={this.state.searchValue}/>
+                            </View>
+                        
+                        <View style={{flex: 0.5, flexDirection: 'row', alignItems: 'center'}}>
+                        <NativeButton title="All" />
+                        <FeatherIcon name="chevron-down" />
                         </View>
-                    <ScrollView contentContainerStyle={{flexWrap: 'wrap', justifyContent: 'center', width: Dimensions.get('window').width, 
-                    flexDirection: 'row', padding: 5}}>
+                        </View>
+                    <ScrollView>
                     {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.map((workout, index, arr)=> {
                             if (workout.workout_name == "" || workout.workout_name == undefined)

@@ -228,8 +228,6 @@ class Programs extends React.Component {
     constructor(props) {
         super(props);
 
-        console.log('disable swipe');
-
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
@@ -280,7 +278,6 @@ class Programs extends React.Component {
                 featuredProgramsIn = result;
             });
         } catch(error) {
-            alert('me')
             LOG_ERROR('Programs.js', 'Caught exception in setupComponent() trying ti load user featured programs', error);
             featuredProgramsIn = []
         }
@@ -290,7 +287,6 @@ class Programs extends React.Component {
                 bookmarkedData = result;
             });
         } catch(error) {
-            alert('he')
             LOG_ERROR('Programs.js', 'Caught exception in setupComponent() trying to load user bookmarked programs', error);
             bookmarkedData = []
         }
