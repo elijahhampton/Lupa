@@ -819,7 +819,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                    
                                     <ProgramSearchResultCard programData={program} />
                                     <View style={{position: 'absolute', top: 0, right: 0, margin: 10, justifyContent: 'flex-end'}}>
-                                        <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program.program_structure_uuid)} size={20} name="more-horizontal" style={{padding: 1}} />
+                                        <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program)} size={20} name="more-horizontal" style={{padding: 1}} />
                                     </View>
                                     <Divider />
                                 </>

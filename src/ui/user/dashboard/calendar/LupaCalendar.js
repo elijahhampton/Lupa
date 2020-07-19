@@ -83,7 +83,6 @@ export default class LupaCalendar extends React.Component {
 
     if (this.props.onPress)
     {
-      console.log(this.state.activeDate)
       this.props.onPress(this.state.activeDate);
     }
   };

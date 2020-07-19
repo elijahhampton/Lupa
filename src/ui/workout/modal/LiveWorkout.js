@@ -197,26 +197,21 @@ class LiveWorkout extends React.Component {
         switch (stage) {
             case "Warm Up":
                 nextStageDataIn = await this.getStageData(this.state.stagesScheduled[this.state.currentStageIndex + 2]);
-                // console.log(nextStageDataIn)
                 await this.setState({ currentStageData: this.state.workoutData.warmup, currentStage: stage, currentWorkout: this.state.workoutData.warmup[0], currentWorkoutIndex: 0, nextStageData: nextStageDataIn });
                 break;
             case "Primary":
                 nextStageDataIn = await this.getStageData(this.state.stagesScheduled[this.state.currentStageIndex + 2]);
-                //   console.log(nextStageDataIn)
                 await this.setState({ currentStageData: this.state.workoutData.primary, currentStage: stage, currenetWorkout: this.state.workoutData.primary[0], currentWorkoutIndex: 0, nextStageData: nextStageDataIn });
                 break;
             case "Break":
                 nextStageDataIn = await this.getStageData(this.state.stagesScheduled[this.state.currentStageIndex + 2]);
-                //    console.log(nextStageDataIn)
                 await this.setState({ currentStageData: this.state.workoutData.break, currentStage: stage, currentWorkout: this.state.workoutData.break[0], currentWorkoutIndex: 0, nextStageData: nextStageDataIn });
                 break;
             case "Secondary":
                 nextStageDataIn = await this.getStageData(this.state.stagesScheduled[this.state.currentStageIndex + 2]);
-                //    console.log(nextStageDataIn)
                 await this.setState({ currentStageData: this.state.workoutData.secondary, currentStage: stage, currentWorkout: this.state.workoutData.secondary[0], currentWorkoutIndex: 0, nextStageData: nextStageDataIn });
                 break;
             case "Cooldown":
-                nextStageDataIn = "DONE"
                 await this.setState({ currentStageData: this.state.workoutData.cooldown, currentStage: stage, currentWorkout: this.state.workoutData.cooldown[0], currentWorkoutIndex: 0, nextStageData: nextStageDataIn });
                 break;
         }

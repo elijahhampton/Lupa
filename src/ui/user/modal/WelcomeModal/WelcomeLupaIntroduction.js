@@ -159,7 +159,6 @@ class WelcomeLupaIntroduction extends React.Component {
               );
 
               await this.setState({ location: result })
-              console.log(this.state.location)
 
             if (this.state.location.hasOwnProperty('coords')) {
                 this.setState({ locationDataSet: true })

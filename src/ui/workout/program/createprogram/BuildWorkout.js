@@ -732,8 +732,6 @@ this.getWorkoutSurfaceContent(workout)
                     ...this.state.workoutDays,
                 }
 
-                console.log(newWorkoutData)
-
                 this.setState({
                     workoutData: newWorkoutData,
                 })
@@ -1282,7 +1280,7 @@ this.getWorkoutSurfaceContent(workout)
                ) 
             }
         } catch(err) {
-            console.log(err)
+            alert(err)
             return (
                 <View style={{flex: 1, backgroundColor: '#212121'}}>
     

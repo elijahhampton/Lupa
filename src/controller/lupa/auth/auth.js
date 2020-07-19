@@ -11,10 +11,6 @@ function signUpUser() {
 export const signup = (username, email, password) => {
     const authHandler = new UserAuthenticationHandler()
     let USER_UUID;
-
-    console.log(username)
-    console.log(email)
-    console.log(password)
     
     return async dispatch => {
              //Authenticate user in firebase

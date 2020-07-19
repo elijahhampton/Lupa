@@ -25,7 +25,6 @@ class CardFormScreen extends PureComponent {
 
       this.setState({ loading: false, token })
     } catch (error) {
-      console.log(Error);
    
       this.setState({ loading: false })
     }
@@ -44,7 +43,7 @@ class CardFormScreen extends PureComponent {
   })
     .then((response) => response.json())
     .then((responseJson) => {
-      console.log(responseJson);
+
     })
     .catch((error) => {
       console.error(error);
