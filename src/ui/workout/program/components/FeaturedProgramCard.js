@@ -43,7 +43,6 @@ function FeaturedProgramCard(props) {
         }
         else
         {
-            console.log('Hisddd')
             setProgramModalVisible(true);
         }
 }

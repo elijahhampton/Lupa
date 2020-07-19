@@ -30,14 +30,10 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
         Saturday: [],
         Sunday: []
     },
+    program_workout_days: [],
     program_image: "",
     program_tags: [],
-    program_owner: {
-        uuid: '',
-        displayName: '',
-        certificaton: '',
-        photo_url: '',
-    }
+    program_owner: "",
     program_participants: [],
     program_automated_message: "",
 }
@@ -52,17 +48,19 @@ export const getLupaProgramInformationStructure = (
     duration="", 
     time="", 
     price=0, 
-    locationData="", 
+    locationData = {
+        name: "",
+        address: "",
+        location: {
+            lat: 0,
+            long: 0,
+        }
+    },
     type="", 
     allowWaitlist=false, 
     program_image="",
     tags: [],
-    programOwner={
-        uuid: '',
-        certification: '',
-        displayName: '',
-        photo_url: '',
-    },
+    programOwner = "",
     program_participants=[],
     programAutomatedMessage="",
     ) => {

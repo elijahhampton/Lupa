@@ -5,6 +5,8 @@ import ProgramController from './ProgramController';
 
 import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 import WorkoutController from './WorkoutController';
+import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
+import { getLupaUserStructure } from '../firebase/collection_structures';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -306,7 +308,12 @@ export default class LupaController {
       return Promise.resolve(nearbyUsers);
     }
     getUserInformationByUUID = async (uuid) => {
-      let userResult;
+      let userResult = getLupaUserStructure()
+
+      if (typeof(uuid) == 'undefined') {
+        return Promise.resolve(userResult);
+      }
+
       await USER_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
         userResult = result;
       });
@@ -770,10 +777,10 @@ export default class LupaController {
      * @return Object representing a LupaProgramStructure
      */
     getProgramInformationFromUUID = async (uuid) => {
-      let retVal;
+      let retVal = getLupaProgramInformationStructure()
 
-      if (typeof uuid != 'string'){
-        return Promise.resolve({})
+      if (typeof uuid != 'string' || typeof(uuid) == 'undefined'){
+        return Promise.resolve(retVal)
       }
 
       await PROGRAMS_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(result => {

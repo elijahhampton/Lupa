@@ -58,7 +58,6 @@ class VideoPreview extends React.Component {
       const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
         this.props.currProgramUUID, 'IMAGE', this.props.videoSrcProps)
       await this.props.captureURI(newURI, "IMAGE")
-      alert('here')
       await this.props.closeVideoPreview()
       await this.props.closeMainModal()
     } catch(error) {

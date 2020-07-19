@@ -98,13 +98,19 @@ handleOnLongPress = () => {
     render() {
 return (
     <TouchableOpacity onPress={this.handleOnPress}>
-    <View style={[{alignItems: 'center'}]}>
-    <Surface style={[this.state.isPressed ? styles.pressed : styles.notPressed , styles.videoContainer]}>
+    <View style={[{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: Dimensions.get('window').width}]}>
+   <View style={{flexDirection: 'row', alignItems: 'center'}}>
+   <Surface style={[this.state.isPressed ? styles.pressed : styles.notPressed , styles.videoContainer]}>
           
-        </Surface>
-        <Text style={{fontSize: 10, color: '#212121'}}>
-            {this.props.workoutData.workout_name}
-        </Text>
+          </Surface>
+          <Text style={{marginHorizontal: 20, fontSize: 15, color: '#212121', fontWeight: '500'}}>
+              {this.props.workoutData.workout_name}
+          </Text>
+   </View>
+
+    <View style={{marginRight: 20}} >
+    <FeatherIcon name="heart" size={15} />
+    </View>
     </View>
 </TouchableOpacity>
 )

@@ -70,7 +70,6 @@ class CreateProgram extends React.Component {
     }
 
     async componentWillUnmount() {
-        console.log('enable swipe');
         if (this.state.programComplete == false)
         {
             //delete from database
@@ -90,22 +89,9 @@ class CreateProgram extends React.Component {
         })
     }
 
-    saveProgramInformation = async (
-        programName,
-        programDescription,
-        numProgramSpots,
-        programStartDate,
-        programEndDate,
-        programDuration,
-        programTime,
-        programPrice,
-        programLocationData,
-        programType,
-        allowWaitlist,
-        programImage,
-        programTags,
-        programAutomatedMessage,
-    ) => {
+    saveProgramInformation = async (programName, programDescription, numProgramSpots, programStartDate, 
+        programEndDate, programDuration, programTime, programPrice, programLocationData, programType,
+        allowWaitlist, programImage, programTags, programAutomatedMessage, programDays) => {
        let updatedProgramData = this.state.programData;
 
         updatedProgramData.program_structure_uuid = this.state.currProgramUUID;
@@ -114,8 +100,9 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_slots = numProgramSpots;
         updatedProgramData.program_start_date = programStartDate;
         updatedProgramData.program_end_date = programEndDate;
+        updatedProgramData.program_workout_days = programDays;
         updatedProgramData.program_duration = programDuration;
-        updatedProgramData.program_time =programTime;
+        updatedProgramData.program_time = programTime;
         updatedProgramData.program_price = programPrice;
         updatedProgramData.program_location = programLocationData;
         updatedProgramData.program_type = programType;
@@ -123,13 +110,9 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_image = this.state.programImage
         updatedProgramData.program_tags = programTags;
         updatedProgramData.program_participants = [this.props.lupa_data.Users.currUserData.user_uuid]
-        updatedProgramData.program_owner = {
-            uuid:  this.props.lupa_data.Users.currUserData.user_uuid,
-            displayName:  this.props.lupa_data.Users.currUserData.display_name,
-            photo_url:  this.props.lupa_data.Users.currUserData.photo_url,
-            certification:  this.props.lupa_data.Users.currUserData.certification
-        }
+        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
         updatedProgramData.program_automated_message = programAutomatedMessage
+
         await this.setState({
             programData: updatedProgramData
         })
@@ -191,6 +174,7 @@ class CreateProgram extends React.Component {
             this.props.deleteProgram(this.state.currProgramUUID)
             }
         }
+
         this.props.navigation.goBack();
     }
 
@@ -198,7 +182,8 @@ class CreateProgram extends React.Component {
         switch(this.state.currIndex) {
             case 0:
                 return (
-                    <ProgramInformation captureImage={img => this.captureProgramImage(img)} handleCancelOnPress={this.exit} goToIndex={this.nextIndex} saveProgramInformation={(programName,
+                    <ProgramInformation captureImage={img => this.captureProgramImage(img)} handleCancelOnPress={this.exit} goToIndex={this.nextIndex} saveProgramInformation={(
+                        programName,
                         programDescription,
                         numProgramSpots,
                         programStartDate,
@@ -208,7 +193,11 @@ class CreateProgram extends React.Component {
                         programPrice,
                         programLocationData,
                         programType,
-                        allowWaitlist) => this.saveProgramInformation(programName,
+                        allowWaitlist,
+                        programImage, 
+                        programTags, 
+                        programAutomatedMessage,
+                        programWorkoutDays) => this.saveProgramInformation(programName,
                             programDescription,
                             numProgramSpots,
                             programStartDate,
@@ -218,10 +207,15 @@ class CreateProgram extends React.Component {
                             programPrice,
                             programLocationData,
                             programType,
-                            allowWaitlist)} />
+                            allowWaitlist,
+                            programImage, 
+                            programTags, 
+                            programAutomatedMessage,
+                            programWorkoutDays
+                            )} />
                 )
             case 1:
-                return <BuildAWorkout goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} />
+                return <BuildAWorkout programData={this.state.programData} goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} />
             case 2:
                 return <ProgramPreview goBackToEditWorkout={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgram={this.saveProgram} handleExit={this.exit} programData={this.state.programData} />
             default:

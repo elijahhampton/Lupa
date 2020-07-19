@@ -8,7 +8,7 @@ export type LupaProgramInformationStructure = {
     program_duration: String,
     program_time: String,
     program_price: Number,
-    program_location: String,
+    program_location: Object,
     program_type: String,
     program_allow_waitlist: Boolean,
     program_structure_uuid: String,
@@ -17,4 +17,5 @@ export type LupaProgramInformationStructure = {
     program_tags: Array<String>,
     program_owner: String,
     program_participants: Array<String>,
+    program_workout_days: Array<String>
 }
