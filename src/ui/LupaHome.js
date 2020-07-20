@@ -64,6 +64,7 @@ import { MenuIcon } from './icons';
 import App from '../../App';
 import { SearchBar } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
+import { LOG_ERROR } from '../common/Logger';
 
 
 const CITIES = [
@@ -113,6 +114,7 @@ class LupaHome extends React.Component {
             trainerInsightsVisible: false,
             visible: false,
             usersNearYou: [],
+            featuredTrainers: [],
             currCardIndex: 0,
             cardData: [1,2,3,4,5,6],
             data: [ 
@@ -141,23 +143,23 @@ class LupaHome extends React.Component {
     }
 
     setupComponent = async () => {
-         this.setState({ inviteFriendsIsVisible: true })
+        // this.setState({ inviteFriendsIsVisible: true })
         await this.loadFeaturedPrograms();
 
-        let nearYouIn = []
+        let featuredTrainersIn = []
         try {
-            await this.LUPA_CONTROLLER_INSTANCE.getUsersBasedOnLocation(this.props.lupa_data.Users.currUserData.location).then(result => {
-                nearYouIn = result;
+            await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
+                featuredTrainersIn = result;
             })
         }
         catch(err) {
         
-            nearYouIn = [];
+            featuredTrainersIn = [];
         }
 
         //set component state
        await this.setState({
-           usersNearYou: nearYouIn,
+           featuredTrainers: featuredTrainersIn
        })
        
    }
@@ -181,7 +183,7 @@ class LupaHome extends React.Component {
 
     renderNearbyUsers = () => {
         try {
-           return this.state.usersNearYou.map(user => {
+           return this.state.featuredTrainers.map(user => {
                if (typeof(user) != 'object' 
                || user == undefined || user.user_uuid == undefined || 
                user.user_uuid == "" || typeof(user.user_uuid) != 'string')
@@ -198,8 +200,8 @@ class LupaHome extends React.Component {
 
 
            })
-        } catch(err) {
-            LOG_ERROR('PackView.js', 'Exception caught in renderNearbyUsers()', error);
+        } catch(erro) {
+
            return null;
         }
     }
@@ -322,7 +324,7 @@ class LupaHome extends React.Component {
                <View style={{flex: 1}}>
 <ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2}}>
 
-        <View style={{justifyContent: 'center', justifyContent: 'center', }}>
+        <View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10}}>
     <Carousel 
                         data={this.state.featuredPrograms}
                         itemWidth={Dimensions.get('window').width - 100}
@@ -336,19 +338,19 @@ class LupaHome extends React.Component {
                        
                         </View>
 
-<View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
+<View style={{hjustifyContent: 'center', justifyContent: 'center'}}>
 <Divider style={{width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5}} />
-                    <View style={{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10, marginVertical: 10}}>
-                    <Text style={{fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold'}}>
+                    <View style={{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10}}>
+                    <Text style={{marginVertical: 10, fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold'}}>
                        Start training with...
                     </Text>
                     <Caption>
-                                    { this.state.trainWithSwiperIndex + 1} / {this.state.usersNearYou.length}
+                                    { this.state.trainWithSwiperIndex + 1} / {this.state.featuredTrainers.length}
                                 </Caption>
                     </View>
 
-                    <View style={{height: 'auto'}}>
-                    <ScrollView onIndexChanged={index => this.setState({ index: index })} pagingEnabled={true} showsPagination={false} horizontal={true} showsHorizontalScrollIndicator={false} >
+                    <View style={{}}>
+                    <ScrollView contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}} centerContent onIndexChanged={index => this.setState({ index: index })} pagingEnabled={true} showsPagination={false} horizontal={true} showsHorizontalScrollIndicator={false} >
                             {
                                 this.renderNearbyUsers()
                             }
@@ -359,7 +361,7 @@ class LupaHome extends React.Component {
 
 <View style={{height: 300, alignItems: 'center', justifyContent: 'center'}}>
     <Divider style={{width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5}} />
-    <Swiper horizontal={true} activeDotIndex={0} inactiveDotColor="#1089ff" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{alignItems: 'center', justifyContent: 'center'}}>    
+    <Swiper horizontal={true} loop={false} activeDotIndex={0} inactiveDotColor="#1089ff" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{alignItems: 'center', justifyContent: 'center'}}>    
 
                         <>
                         <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, backgroundColor: 'transparent', marginVertical: 10}}>

@@ -29,6 +29,7 @@ function InviteFriendsModal(props) {
         return state.Assessments.generalAssessments
     })
 
+    /*
     const handleInviteContact = (mobileNumber) => {
         let updatedInvitedContacts = invitedList;
         updatedInvitedContacts.push(mobileNumber);
@@ -75,6 +76,7 @@ function InviteFriendsModal(props) {
         }
 
     }, [contactRecords.length])
+*/
 
     const getParQAssessment = () => {
         for (let i = 0; i < lupaAssessments.length; i++)
@@ -89,68 +91,17 @@ function InviteFriendsModal(props) {
     return (
         <Modal visible={props.isVisible} animated={true} presentationStyle="fullScreen" style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <SafeAreaView style={{flex: 1, backgroundColor: 'transparent'}}>
-               <View style={{flex: 0.5, padding: 10, alignItems: 'center', justifyContent: 'space-evenly'}}>
+               <View style={{padding: 20, alignItems: 'center', justifyContent: 'space-evenly'}}>
                <Text style={{  fontSize: RFValue(15), fontWeight: '300'}}>
-                    Invite your contacts
+                    Getting started
                 </Text>
 
                 <Text style={{color: 'rgb(28, 28, 30)' , fontSize: RFValue(12)}}>
-                    Gather partners to start your fitness journey or managing your client list?  Let us help you get started.
+                    Gathering partners to start your fitness journey or managing your client list?  Let us help you get started.
                 </Text>
                </View>
 
-               <Divider />
-
-               <View style={{flex: 4}}>
-                   <View style={{flex: 2}}>
-                       {
-                            contactPermissionsGranted == true ?
-                            <ScrollView>
-                    {
-                        contactRecords.map(contact => {
-                            return (
-                                <View style={{backgroundColor: invitedList.includes(contact.phoneNumbers[0].number) ? 'grey' : 'transparent', width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', margin: 10}}>
-                                    <View style={{flex: 2, flexDirection: 'row', alignItems: 'center'}}>
-                                        <Avatar.Icon icon="perm-identity" color="#212121" size={30} style={{backgroundColor: 'transparent', margin: 5}} />
-                                        <View>
-                                        <Text style={{fontSize: RFValue(15), fontWeight: '300'}}>
-                                           {contact.familyName + " " + contact.givenName}
-                                        </Text>
-                                        <Caption>
-                                            {contact.phoneNumbers[0].number}
-                                        </Caption>
-                                        </View>
-                                        </View>
-
-                                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                                        <Button key={contact.phoneNumbers[0].number} style={{elevation: 0}} theme={{colors: {
-                                            primary: 'rgb(33,150,243)'
-                                        },
-                                        roundness: 5
-                                        }}
-                                        mode="contained"
-                                        onPress={() => handleInviteContact(contact.phoneNumbers[0].number)}>
-                                            <Text>
-                                                Invite
-                                            </Text>
-                                        </Button>
-                                        </View>
-                                </View>
-                            )
-                        })
-                    }
-                                       </ScrollView>
-                                       :
-                                       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20}}>
-                                            <Text style={{fontSize: 15 }}>
-                                                Oops! It looks like your contact permissions are disabled.  Please visit your settings and enable them to
-                                                invite your contacts
-                                            </Text>
-                                       </View>
-
-                       }
-                   
-                   </View>
+               <View style={{flex: 1, marginHorizontal: 10}}>
                     {
                         props.showGettingStarted == true ?
                         <Divider style={{marginVertical: 10}}/>

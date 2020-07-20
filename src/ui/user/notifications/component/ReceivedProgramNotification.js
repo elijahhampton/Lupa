@@ -1,77 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
     View,
     Text,
     Dimensions,
+    TouchableWithoutFeedback,
 } from 'react-native';
 
 import {
     Avatar,
     Button,
     Appbar,
+    Caption,
+    Divider,
 } from 'react-native-paper';
 import LiveWorkout from '../../../workout/modal/LiveWorkout';
 
 import ProgramInformationPreview from '../../../workout/program/ProgramInformationPreview';
+import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
+import LupaController from '../../../../controller/lupa/LupaController';
+import { useNavigation } from '@react-navigation/native';
+
+const {windowWidth} = Dimensions.get('window').width
 
 
-function ReceivedProgramNotification(props) {
-    let [showLiveWorkout, setShowLiveWorkout] = useState(false);
-    let [programModalVisible, setProgramModalVisible] = useState(false);
+function ReceivedProgramNotification({ notificationData }) {
+    const [showLiveWorkout, setShowLiveWorkout] = useState(false);
+    const [programModalVisible, setProgramModalVisible] = useState(false);
+    const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+
+    const navigation = useNavigation()
+
+    useEffect(() => {
+        async function fetchData() {
+            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.data.program_owner).then(data => {
+                setSenderUserData(data)
+            })
+        }
+
+        fetchData()
+    }, [])
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
 
-    const fromData = props.fromData;
-    const notificationData = props.notification;
-
     const handleOnPress = () => {
-
         if (notificationData.data.program_participants.includes(currUserData.user_uuid))
         {
-           props.navigation.push('LiveWorkout', {
+            console.log('aa')
+           navigation.navigate('LiveWorkout', {
                            programData: notificationData.data,
                        })
 
         }
         else
         {
+            console.log('bb')
             setProgramModalVisible(true)
         }
     }
 
     return (
-        <View style={{paddingVertical: 10, backgroundColor: '#F2F2F2', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', height: 'auto', width: Dimensions.get('window').width}}>
-                       <View style={{width: '60%', flexDirection: 'row', alignItems: 'center'}}>
-                       <Avatar.Image source={{uri: props.avatarSrc }} size={40} label="EH" style={{margin: 10}} />
-                           <Text style={{flexWrap: 'wrap', width: '100%'}}>
-                               <Text style={{  fontSize: 12}}>
-                               {fromData.display_name }
+                   <>
+                   <TouchableWithoutFeedback style={{width: windowWidth, }} onPress={handleOnPress}>
+                   <View style={{width: windowWidth, marginVertical: 15}}>
+                       <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                           <Avatar.Text label="EH" size={45} style={{marginHorizontal: 10}} />
+                           <View>
+                               <Text>
+                               <Text style={{fontWeight: '500'}}>
+       {senderUserData.display_name}{" "}
+       </Text>
+       <Text>
+       sent you a program preview.
+       </Text>
                                </Text>
-                                <Text>
-                                {' '}
-                                </Text>
-                               <Text style={{  fontSize: 12}}>
-                               has invited you to try out the program <Text style={{  fontWeight: '600'}}>
-                                   {notificationData.data.program_name}</Text>
-                               </Text>
-                           </Text>
+       <Caption>
+           {notificationData.data.program_name}
+       </Caption>
+                           </View>
                        </View>
-                       <View style={{width: '20%', justifyContent: 'flex-end'}}>
-                       <Button mode="text" contentStyle={{width: '100%'}} theme={{
-                           colors: {
-                               primary: '#212121'
-                           }
-                       }} onPress={() => handleOnPress()}>
-                            <Text>
-                                View
-                            </Text>
-                       </Button>
-                       </View>
-                       <ProgramInformationPreview isVisible={programModalVisible} programData={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
                    </View>
+                  
+                   </TouchableWithoutFeedback>
+                   <ProgramInformationPreview isVisible={programModalVisible} programData={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
+                   <Divider />
+                   </>
     )
 }
 

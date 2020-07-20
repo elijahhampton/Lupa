@@ -37,7 +37,8 @@ function CircularUserCard(props) {
     
     const renderUserCard = () => {
         return (
-            <View style={{height: 200, width: windowWidth, justifyContent: 'space-evenly', padding: 20}}>
+            <View style={{width: windowWidth, justifyContent: 'space-between', marginHorizontal: 20, marginVertical: 10}}>
+                <View>
                 <View style={{marginVertical: 5, justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <View>
@@ -58,13 +59,14 @@ function CircularUserCard(props) {
                     </View>
                 </View>
 
-                <View style={{marginVertical: 5}}>
+               {/* <View style={{marginVertical: 5}}>
                     <Paragraph style={{fontWeight: '400', fontSize: 13}} ellipsizeMode="tail" numberOfLines={2}>
                    {props.user.bio}
                     </Paragraph>
+        </View> */}
                 </View>
 
-                <View style={{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: '100%'}}>
+                <View style={{marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: '100%'}}>
                 <Text style={{color: '#404f5e'}}>
                     5 Programs Available
                 </Text>

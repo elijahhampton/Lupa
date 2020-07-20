@@ -529,7 +529,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      */
     getHeaderRight = () => {
         if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
-            return <FeatherIcon name="settings" size={20} onPress={() => this._navigateToSettings()}/>
+            return null //<FeatherIcon name="settings" size={20} onPress={() => this._navigateToSettings()}/>
         }
         
         return <FeatherIcon name="more-vertical" size={20} onPress={() => this._showActionSheet()} />
