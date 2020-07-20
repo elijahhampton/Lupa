@@ -7,7 +7,8 @@ import {
     Text,
     Dimensions,
     Animated,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    SafeAreaView,
 } from 'react-native';
 import AssessmentComponent from '../component/AssessmentComponent';
 import { Constants } from 'react-native-unimodules'
@@ -41,7 +42,7 @@ function AssessmentView(props) {
     }
 
         return (
-            <Animated.View style={{height: 'auto', width: Dimensions.get('window').width}}>
+            <SafeAreaView style={{flex: 1, width: Dimensions.get('window').width}}>
             <Surface 
             style={{alignSelf: 'center', padding: 15, backgroundColor: "#FFFFFF", width: '100%', borderRadius: 25, elevation: 0}}>
                 <TouchableWithoutFeedback onPress={surfaceIsOpen == false ? openTab : closeTab}>
@@ -71,7 +72,7 @@ function AssessmentView(props) {
 }
 </ScrollView>
             </Surface>
-            </Animated.View>
+            </SafeAreaView>
         )
 }
 

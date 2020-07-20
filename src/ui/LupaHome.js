@@ -65,6 +65,7 @@ import App from '../../App';
 import { SearchBar } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 import { LOG_ERROR } from '../common/Logger';
+import AssessmentView from './user/dashboard/component/LupaJournal/Views/AssessmentView';
 
 
 const CITIES = [
@@ -283,7 +284,7 @@ class LupaHome extends React.Component {
 
     render() {
         return (
-            <View style={styles.root}>
+           /* <View style={styles.root}>
                 
                 <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                 <MenuIcon customStyle={{margin: 10}} onPress={() => this.props.navigation.openDrawer()} />
@@ -436,9 +437,9 @@ class LupaHome extends React.Component {
                     
              <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
                 
-<CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} /> 
-        
-            </View>
+<CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} /> */
+        <AssessmentView />
+          //  </View>
         );
     }
 }
