@@ -26,14 +26,14 @@ function UserSearchResultCard(props) {
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    _handleViewProfile = () => {
+   const _handleViewProfile = () => {
         navigation.navigate('Profile', {
-            userUUID: props.uuid,
+            userUUID: props.user.user_uuid,
             navFrom: 'SearchView',
         });
     }
 
-    returnUserAvatar = () => {
+    const renderUserAvatar = () => {
             try {
                 return <Avatar.Image source={{uri: props.user.photo_url }} size={45} style={{margin: 8}} />
             } catch(err)
@@ -42,7 +42,7 @@ function UserSearchResultCard(props) {
             }
     }
 
-    renderUsername = () => {
+    const renderUsername = () => {
         try {
             return (
                 <Text style={styles.titleText}>
@@ -58,7 +58,7 @@ function UserSearchResultCard(props) {
         }
     }
 
-    renderDisplayName = () => {
+    const renderDisplayName = () => {
         try {
             return (
                 <Text style={styles.subtitleText}>

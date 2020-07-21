@@ -14,12 +14,15 @@ import AssessmentComponent from '../component/AssessmentComponent';
 import { Constants } from 'react-native-unimodules'
 
 import { connect, useSelector } from 'react-redux';
-import { Paragraph, Caption, Divider, Surface } from 'react-native-paper';
+import { Paragraph, Caption, Divider, Surface, Appbar } from 'react-native-paper';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 function AssessmentView(props) {
     let [surfaceHeight, setSurfaceHeight] = useState(new Animated.Value(130))
     let [surfaceIsOpen, setSurfaceOpen] = useState(false)
+
+    const navigation = useNavigation()
 
     const lupaAssessments = useSelector(state => {
         return state.Assessments.generalAssessments
@@ -42,37 +45,35 @@ function AssessmentView(props) {
     }
 
         return (
-            <SafeAreaView style={{flex: 1, width: Dimensions.get('window').width}}>
-            <Surface 
-            style={{alignSelf: 'center', padding: 15, backgroundColor: "#FFFFFF", width: '100%', borderRadius: 25, elevation: 0}}>
-                <TouchableWithoutFeedback onPress={surfaceIsOpen == false ? openTab : closeTab}>
-                                <View>
-                                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}> 
-                                    <Text style={{paddingVertical: 3, fontSize: 20 }}>
-                    Assessments
-                </Text>
-                <FeatherIcon name={surfaceIsOpen == true ? "chevron-up" : "chevron-down"} size={20} />
-                                    </View>
-                <Text style={{paddingVertical: 3, fontSize: 12 }}>
+            <View style={{backgroundColor: 'white', flex: 1, width: Dimensions.get('window').width}}>
+                <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    <Appbar.BackAction onPress={() => navigation.pop()} />
+                    <Appbar.Content title="Assessments" />
+                </Appbar.Header>
+                <View style={{backgroundColor: 'white', alignItems: 'center'}}>
+                <Text style={{paddingHorizontal: 10, paddingVertical: 5, fontSize: 12 }}>
                     We use assessments to customize and enhance your experience while using Lupa
                 </Text>
                 </View>
-                                </TouchableWithoutFeedback>
-
-                                <ScrollView contentContainerStyle={{height: surfaceIsOpen == true ? 'auto' : 0}}>
+                <Divider />
+                <View style={{flex: 1}}>
+                <ScrollView contentContainerStyle={{}}>
 
 {
     lupaAssessments.map(assessment => {
         return (
+            <>
             <AssessmentComponent 
                 assessmentObjectIn={assessment}
                 />
+                <Divider />
+                </>
         )
     })
 }
 </ScrollView>
-            </Surface>
-            </SafeAreaView>
+                </View>
+            </View>
         )
 }
 

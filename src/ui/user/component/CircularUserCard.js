@@ -88,7 +88,7 @@ function CircularUserCard(props) {
     } 
 
     return (
-        <TouchableOpacity style={{width: Dimensions.get('window').width}} onPress={navigateToProfile}>
+        <TouchableOpacity style={{width: windowWidth}} onPress={navigateToProfile}>
         {renderUserCard()}
         </TouchableOpacity>
     )

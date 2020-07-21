@@ -235,13 +235,13 @@ export default class LupaController {
 
     /* Algolia */
     indexApplicationData = () => {
-      //USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+      USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
       //PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
-      //USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+      USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     indexUsers = async () => {
-      //await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+     // await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
     indexPacks = async () => {
@@ -339,6 +339,65 @@ export default class LupaController {
         retVal = result;
       });
       return Promise.resolve(retVal);
+    }
+
+    /**
+     * 
+     * @param searchQuery 
+     */
+    searchTrainersAndPrograms = (searchQuery) => {
+      const queries = [{
+        indexName: 'dev_USERS',
+        query: searchQuery,
+        params: {
+          hitsPerPage: 5
+        }
+      }, {
+        indexName: 'dev_Programs',
+        query: searchQuery,
+        params: {
+          hitsPerPage: 5,
+        }
+      }];
+
+      return new Promise((resolve, rejects) => {
+                // perform 3 queries in a single API
+                let finalResults = new Array();
+      //  - 1st query targets index `categories`
+      //  - 2nd and 3rd queries target index `products`
+
+      algoliaIndex.search(queries).then(({results}) => {
+        const userResults = results[0];
+        const programResults = results[1];
+
+        try {
+                  //add the results we want from each into our final results array
+        for (let i = 0; i < userResults.hits.length; ++i)
+        {
+           if (userResults.hits[i].isTrainer == true)
+           {
+            if (userResults.hits[i]._highlightResult.display_name.matchLevel == "full" 
+            || userResults.hits[u]._highlightResult.username.matchLevel == "full")
+            {
+              userResults.hits[i].resultType = "User"
+              finalResults.push(userResults.hits[i]);
+            }
+           }
+        }
+
+        for (let i = 0; i < programResults.hits.length; ++i)
+        {
+          programResults.hits[i].resultType = "Program"
+            finalResults.push(programResults.hits[i]);
+        }
+        } catch(err)
+        {
+          alert(err)
+        }
+
+        resolve(finalResults);
+      })
+      })
     }
 
     /**

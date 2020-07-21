@@ -23,6 +23,7 @@ import TrainerInformation from './src/ui/user/modal/WelcomeModal/TrainerInformat
 import PrivateChat from './src/ui/user/chat/PrivateChat';
 import WelcomeModal from './src/ui/user/modal/WelcomeModal/WelcomeModal';
 import ShareProgramModal from './src/ui/workout/program/modal/ShareProgramModal';
+import AssessmentView from './src/ui/user/dashboard/component/LupaJournal/Views/AssessmentView';
 
 class App extends React.Component {
   constructor(props) {
@@ -160,6 +161,7 @@ function AppNavigator() {
     <StackApp.Screen name="PrivateChat" component={PrivateChat} />
     <StackApp.Screen name="Onboarding" component={WelcomeModal}/>
     <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
+    <StackApp.Screen name="AssessmentView" component={AssessmentView} />
   </StackApp.Navigator>
   )
 

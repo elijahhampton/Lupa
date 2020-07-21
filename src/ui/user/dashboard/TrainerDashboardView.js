@@ -67,6 +67,7 @@ function TrainerDashboardView(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     useEffect(() => {
+        try {
             const currUserSubscription = LUPA_DB.collection('users').doc(currUserData.user_uuid).onSnapshot(documentSnapshot => {
                 let userData = documentSnapshot.data()
                 setUserNotifications(userData.notifications)
@@ -74,6 +75,10 @@ function TrainerDashboardView(props) {
 
 
             return () => currUserSubscription()
+        } catch(err) {
+            alert(err)
+            return
+        }
     }, [])
 
     const setupComponent = async () => {
