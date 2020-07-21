@@ -252,6 +252,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             }
         }
         catch (err) {
+            alert(err)
             userInfo = this.props.lupa_data.Users.currUserData;
         }
 
@@ -265,7 +266,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             }
 
         } catch(error) {
-
+            alert(error)
+            nearbyUsers = []
         }
 
         await this.setState({
@@ -816,7 +818,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         return this.props.lupa_data.Programs.currUserProgramsData.map((program, index, arr) => {
                             return (
                                 <>  
-                                   
                                     <ProgramSearchResultCard programData={program} />
                                     <View style={{position: 'absolute', top: 0, right: 0, margin: 10, justifyContent: 'flex-end'}}>
                                         <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program)} size={20} name="more-horizontal" style={{padding: 1}} />
@@ -1040,7 +1041,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 contentContainerStyle={{ flexGrow: 1 }} 
                 showsVerticalScrollIndicator={false} 
                 shouldRasterizeIOS={true} 
-                refreshControl={<RefreshControl refreshing={this.state.refreshing} 
+                refreshControl={
+                <RefreshControl refreshing={this.state.refreshing} 
                 onRefresh={this.handleOnRefresh} />}>
                     {
                         this.state.userData.isTrainer == true ?

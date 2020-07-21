@@ -708,7 +708,12 @@ export default class UserController {
                 //Load user data from document
                 program = doc.data();
 
-                records.push(program);
+                if (program.program_name == "" || typeof(program) == 'undefined') {
+                   
+                } else  {
+                    program.objectID = program.program_structure_uuid
+                    records.push(program);
+                }
             });
 
             algoliaUsersIndex.copyIndex(programsIndex.indexName, tmpProgramsIndex.indexName, [
@@ -735,7 +740,10 @@ export default class UserController {
                 //Load user data from document
                 let user = doc.data();
 
-                //Set object ID (although this may not be necessary)
+                if (user.display_name == "" || typeof(user) == 'undefined') {
+
+                } else {
+                                    //Set object ID (although this may not be necessary)
                 user.objectID = doc.id;
 
                 //Set necessary data for users
@@ -745,20 +753,17 @@ export default class UserController {
                     email: user.email,
                     email_verified: user.email_verified,
                     gender: user.gender,
-                    interest: user.interest,
                     isTrainer: user.isTrainer,
                     location: user.location,
                     packs: user.packs,
                     photo_url: user.photo_url,
-                    preferred_workout_times: user.preferred_workout_times,
                     time_created: user.time_created,
                     user_uuid: user.user_uuid,
                     username: user.username,
-                    rating: user.rating, //For now we give all users a rating whether they are a trainer or nto
-                    experience: user.experience
                 }
 
                 records.push(userData);
+                }
             });
 
             algoliaUsersIndex.copyIndex(usersIndex.indexName, tmpIndex.indexName, [

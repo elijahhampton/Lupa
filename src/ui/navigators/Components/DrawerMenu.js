@@ -130,7 +130,7 @@ function DrawerMenu(props) {
         </View>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('AssessmentView')}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="book-open" size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={{fontSize: 16, fontWeight: '300'}}>

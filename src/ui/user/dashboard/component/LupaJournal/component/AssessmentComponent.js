@@ -18,20 +18,12 @@ import AssessmentModal from '../../../modal/AssessmentReviewModal';
 import AssessmentReviewModal from '../../../modal/AssessmentReviewModal'
 
 function AssessmentComponent(props) {
-    let [reviewModalVisible, showReviewModal] = useState(false);
-
-    function showReviewModalWrapper() {
-        showReviewModal(true)
-    }
-
-    function closeReviewModalWrapper() {
-        showReviewModal(false)
-    }
+    const [reviewModalVisible, setShowReviewModal] = useState(false);
 
     const assessmentObject = props.assessmentObjectIn;
     
     return (
-        <TouchableOpacity onPress={showReviewModalWrapper} disabled={true/*!assessmentObject.assessment_available*/} style={{margin: 3}}>
+        <TouchableOpacity onPress={() => setShowReviewModal(true)} style={{margin: 5}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -61,7 +53,7 @@ function AssessmentComponent(props) {
            {assessmentObject.assessment_description}
         </Text>
         </View>
-        <AssessmentReviewModal isVisible={reviewModalVisible} closeModalMethod={closeReviewModalWrapper} assessmentObjectIn={assessmentObject}/>
+        <AssessmentReviewModal isVisible={reviewModalVisible} closeModalMethod={() => setShowReviewModal(false)} assessmentObjectIn={assessmentObject}/>
 </TouchableOpacity>
     )
 }

@@ -20,11 +20,6 @@ import {
     SafeAreaView,
     Button as NativeButton,
     Animated,
-    ImageBackground,
-    TouchableHighlight,
-    TextInput,
-    StatusBar,
-    ViewPagerAndroidBase,
 } from 'react-native';
 
 import {
@@ -65,7 +60,8 @@ import App from '../../App';
 import { SearchBar } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 import { LOG_ERROR } from '../common/Logger';
-import AssessmentView from './user/dashboard/component/LupaJournal/Views/AssessmentView';
+import ProgramSearchResultCard from './workout/program/components/ProgramSearchResultCard';
+import UserSearchResultCard from './user/component/UserSearchResultCard';
 
 
 const CITIES = [
@@ -126,6 +122,7 @@ class LupaHome extends React.Component {
                 {text: 'Price', icon: 'map-pin', chipID: 4}
             ],
             searchValue: "",
+            searchResults: [],
             searching: false,
             featuredPrograms: [],
             programModalVisible: false,
@@ -187,19 +184,15 @@ class LupaHome extends React.Component {
            return this.state.featuredTrainers.map(user => {
                if (typeof(user) != 'object' 
                || user == undefined || user.user_uuid == undefined || 
-               user.user_uuid == "" || typeof(user.user_uuid) != 'string')
+               user.user_uuid == "" || typeof(user.user_uuid) != 'string' || typeof(user.display_name) == 'undefined' || user.display_name == "")
                {
                    return null;
                }
-
-               
 
                return (
 
                    <CircularUserCard user={user} />
                )
-
-
            })
         } catch(erro) {
 
@@ -212,7 +205,7 @@ class LupaHome extends React.Component {
     }
 
         _performSearch = async searchQuery => {
-            let searchResultsIn;
+            let searchResultsIn = []
    
             //If no search query then set state and return
             if (searchQuery == "" || searchQuery == "")
@@ -235,13 +228,11 @@ class LupaHome extends React.Component {
                 searchValue: searchQuery,
             })
     
-           /* await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+            await this.LUPA_CONTROLLER_INSTANCE.searchTrainersAndPrograms(searchQuery).then(searchData => {
                 searchResultsIn = searchData;
-            })*/
+            })
    
             await this.setState({ searchResults: searchResultsIn, searching: false });
-   
-            await this.setState({ searchResults: [], searching :false });
         }
 
     _renderItem = ({item, index}) => {
@@ -260,6 +251,29 @@ class LupaHome extends React.Component {
                                 </View>
                                 </TouchableOpacity>
         );
+    }
+
+    _renderSearchResults = () => {
+        {
+            return this.state.searchResults.map(result => {
+                switch(result.resultType) {
+                    case "User":
+                        return (
+                            <>
+                            <UserSearchResultCard user={result}/>
+                            <Divider />
+                            </>
+                        )
+                    case "Program":
+                        return (
+                            <>
+                            <ProgramSearchResultCard programData={result} />
+                            <Divider />
+                            </>
+                        )
+                }
+            })
+        }
     }
 
     onScroll = (event) => {
@@ -284,7 +298,7 @@ class LupaHome extends React.Component {
 
     render() {
         return (
-           /* <View style={styles.root}>
+            <View style={styles.root}>
                 
                 <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                 <MenuIcon customStyle={{margin: 10}} onPress={() => this.props.navigation.openDrawer()} />
@@ -302,22 +316,8 @@ class LupaHome extends React.Component {
                 {
                     this.state.searchValue != "" ?
                     <View style={{flex: 1}}>
-           <Searchbar 
-       style={{marginVertical: 5, borderRadius: 10, width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
-       placeholder="Search workout programs, fitness professionals" 
-       placeholderTextColor="rgb(99, 99, 102)" 
-       icon={() => <FeatherIcon name="search" size={20} /> }
-       inputStyle={{width: '100%', color: 'black', fontWeight: '300', fontSize: 12, padding: 0, margin: 0, width: '100%'}}
-       theme={{
-           colors: {
-               primary: '#1089ff',
-           }
-       }}
-       onChangeText={text => this._performSearch(text)}
-       value={this.state.searchValue}
-       />
                         <ScrollView>
-                      
+                            {this._renderSearchResults()}
                         </ScrollView>
                         <FAB icon="filter-list" color="#FFFFFF" style={{backgroundColor: 'rgba(1,87,155 ,1)', position: 'absolute', bottom: 0, right: 0, margin: 15}} />
                     </View>
@@ -351,7 +351,7 @@ class LupaHome extends React.Component {
                     </View>
 
                     <View style={{}}>
-                    <ScrollView contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}} centerContent onIndexChanged={index => this.setState({ index: index })} pagingEnabled={true} showsPagination={false} horizontal={true} showsHorizontalScrollIndicator={false} >
+                    <ScrollView snapToAlignment={'center'} snapToInterval={Dimensions.get('window').width} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}} centerContent onIndexChanged={index => this.setState({ index: index })} pagingEnabled={true} showsPagination={false} horizontal={true} showsHorizontalScrollIndicator={false} >
                             {
                                 this.renderNearbyUsers()
                             }
@@ -362,7 +362,7 @@ class LupaHome extends React.Component {
 
 <View style={{height: 300, alignItems: 'center', justifyContent: 'center'}}>
     <Divider style={{width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5}} />
-    <Swiper horizontal={true} loop={false} activeDotIndex={0} inactiveDotColor="#1089ff" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{alignItems: 'center', justifyContent: 'center'}}>    
+    <Swiper horizontal={true} activeDotIndex={0} inactiveDotColor="#1089ff" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{alignItems: 'center', justifyContent: 'center'}}>    
 
                         <>
                         <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, backgroundColor: 'transparent', marginVertical: 10}}>
@@ -437,9 +437,9 @@ class LupaHome extends React.Component {
                     
              <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
                 
-<CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} /> */
-        <AssessmentView />
-          //  </View>
+<CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} /> 
+        
+            </View>
         );
     }
 }
