@@ -235,7 +235,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     }
 
     /**
-     * Loads any necessary data the component needs to render.
+     * Loads any neessary data the component needs to render.
      */
     setupComponent = async () => {
         let userInfo = {}, userPackData = [], nearbyUsers = []
@@ -248,8 +248,11 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             })
 
             if (userInfo == "" || userInfo == undefined || typeof userInfo != "object") {
+                alert('hihihi')
                 userInfo = this.props.lupa_data.Users.currUserData;
-            }
+            }       
+
+            console.log(userInfo)
         }
         catch (err) {
             alert(err)

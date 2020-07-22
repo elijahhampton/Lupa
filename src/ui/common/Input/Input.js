@@ -115,7 +115,8 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 0.5,
         borderRadius: 5,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        color: 'black'
       },
       focusedInput: {
         width: '90%',
@@ -130,7 +131,8 @@ const styles = StyleSheet.create({
         borderRadius: 0,
         height: 40,
         paddingHorizontal: 10,
-        borderColor: 'rgb(209, 209, 214)'
+        borderColor: 'rgb(209, 209, 214)',
+        color: 'black'
       }
   });
 

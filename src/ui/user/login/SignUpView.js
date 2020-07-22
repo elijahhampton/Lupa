@@ -182,7 +182,7 @@ const SignUp = props => {
               keyboardType="email-address" 
               required 
               email 
-              autoCapitalize={false} 
+              autoCapitalize="none"
               errorMessage="Please enter a valid email address" 
               onInputChange={inputChangeHandler}
               initialValue=''
@@ -194,7 +194,7 @@ const SignUp = props => {
               keyboardType="default" 
               required 
               minLength={5} 
-              autoCapitalize={false} 
+              autoCapitalize="none"
               errorMessage="Please enter a valid username" 
               onInputChange={inputChangeHandler}
               initialValue='' />
@@ -206,7 +206,7 @@ const SignUp = props => {
               secureTextEntry 
               required 
               minLength={5} 
-              autoCapitalize={false} 
+              autoCapitalize="none"
               errorMessage="Please enter a valid password." 
               onInputChange={inputChangeHandler}
               initialValue='' />
@@ -217,7 +217,7 @@ const SignUp = props => {
               secureTextEntry 
               required 
               minLength={5} 
-              autoCapitalize={false} 
+              autoCapitalize="none"
               errorMessage="The passwords do not match!" 
               onInputChange={inputChangeHandler}
               initialValue='' />

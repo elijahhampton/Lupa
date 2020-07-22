@@ -56,42 +56,11 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 import CircularUserCard from './user/component/CircularUserCard';
 import { MenuIcon } from './icons';
-import App from '../../App';
 import { SearchBar } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 import { LOG_ERROR } from '../common/Logger';
 import ProgramSearchResultCard from './workout/program/components/ProgramSearchResultCard';
 import UserSearchResultCard from './user/component/UserSearchResultCard';
-
-
-const CITIES = [
-    "",
-    "Auburn",
-]
-
-const STATES = [
-    "",
-   "Alabama",
-]
-
-const BODY_TYPES = [
-    "",
-    "Body Type",
-    "Body Type",
-    "Body Type",
-]
-
-const PRICES_RANGES = [
- "$0 - $7",
- "$7 - $15",
- "$15 - $25"
-]
-
-const CERTIFICATIONS = [
-    "",
-    "NASM"
-]
-
 
 const mapStateToProps = (state, action) => {
     return {
@@ -113,14 +82,6 @@ class LupaHome extends React.Component {
             usersNearYou: [],
             featuredTrainers: [],
             currCardIndex: 0,
-            cardData: [1,2,3,4,5,6],
-            data: [ 
-                {text: 'City', icon: 'activity', chipID: 0}, 
-                {text: 'State', icon: 'anchor', chipID: 1}, 
-                {text: 'Body Type', icon: 'map-pin', chipID: 2},
-                {text: 'Certification', icon: 'map-pin', chipID: 3},
-                {text: 'Price', icon: 'map-pin', chipID: 4}
-            ],
             searchValue: "",
             searchResults: [],
             searching: false,
@@ -142,23 +103,23 @@ class LupaHome extends React.Component {
 
     setupComponent = async () => {
         // this.setState({ inviteFriendsIsVisible: true })
-        await this.loadFeaturedPrograms();
+            await this.loadFeaturedPrograms();
 
-        let featuredTrainersIn = []
-        try {
-            await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
-                featuredTrainersIn = result;
-            })
-        }
-        catch(err) {
-        
-            featuredTrainersIn = [];
-        }
-
-        //set component state
-       await this.setState({
-           featuredTrainers: featuredTrainersIn
-       })
+            let featuredTrainersIn = []
+            try {
+                await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
+                    featuredTrainersIn = result;
+                })
+            }
+            catch(err) {
+                alert(err)
+                featuredTrainersIn = [];
+            }
+    
+            //set component state
+           await this.setState({
+               featuredTrainers: featuredTrainersIn
+           })
        
    }
 
@@ -171,6 +132,7 @@ class LupaHome extends React.Component {
             });
     
         } catch(error) {
+            alert(error)
             featuredProgramsIn = []
         } 
 
@@ -194,8 +156,8 @@ class LupaHome extends React.Component {
                    <CircularUserCard user={user} />
                )
            })
-        } catch(erro) {
-
+        } catch(error) {
+            alert(error)
            return null;
         }
     }
@@ -435,10 +397,8 @@ class LupaHome extends React.Component {
                     </View>
     }
                     
-             <InviteFriendsModal showGettingStarted={true} isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} />
-                
-<CustomizedInviteFriendsModal showGettingStarted={false} isVisible={this.state.customizedInviteFriendsModalIsOpen} closeModalMethod={() => this.setState({ customizedInviteFriendsModalIsOpen: false})} /> 
-        
+            {/* <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} /> */}
+            
             </View>
         );
     }
