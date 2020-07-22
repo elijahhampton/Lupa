@@ -37,7 +37,7 @@ function CircularUserCard(props) {
     
     const renderUserCard = () => {
         return (
-            <View style={{width: windowWidth, justifyContent: 'space-between', marginHorizontal: 20, marginVertical: 10}}>
+            <View style={{width: windowWidth , justifyContent: 'space-between', marginHorizontal: 20, marginVertical: 10}}>
                 <View>
                 <View style={{marginVertical: 5, justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>

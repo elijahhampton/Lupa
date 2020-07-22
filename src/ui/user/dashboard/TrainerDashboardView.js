@@ -76,6 +76,7 @@ function TrainerDashboardView(props) {
 
             return () => currUserSubscription()
         } catch(err) {
+            setUserNotifications([])
             alert(err)
             return
         }
