@@ -682,7 +682,6 @@ export default class UserController {
                     }
                     else
                     {
-
                     let snapshotID = querySnapshot.id;
                     snapshot.id = snapshotID;
                     trainers.push(snapshot);
@@ -995,6 +994,9 @@ export default class UserController {
     }
 
     getNearbyTrainers = async (location) => {
+        return new Promise((resolve, reject) => {
+            resolve([])
+        })
       /*  return new Promise((resolve, reject) => {
             let nearbyTrainers = new Array();
             usersIndex.search({

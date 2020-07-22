@@ -90,7 +90,8 @@ class LupaHome extends React.Component {
             inviteFriendsIsVisible: false,
             height: new Animated.Value(80),
             customizedInviteFriendsModalIsOpen: false,
-            trainWithSwiperIndex: 0 //approved
+            trainWithSwiperIndex: 0, //approved,
+            index: 0,
         }
 
         this.searchAttributePickerModalRef = React.createRef()
@@ -142,6 +143,7 @@ class LupaHome extends React.Component {
     }
 
     renderNearbyUsers = () => {
+        alert(this.state.featuredTrainers.length)
         try {
            return this.state.featuredTrainers.map(user => {
                if (typeof(user) != 'object' 
@@ -240,7 +242,7 @@ class LupaHome extends React.Component {
 
     onScroll = (event) => {
         var currentOffset = event.nativeEvent.contentOffset.y;
-        var direction = currentOffset > this.offset ? this.showFilters() : this.hideFilters();
+        var direction = currentOffset > this.offset ? true : false
     this.offset = currentOffset;
     }
 
@@ -312,11 +314,20 @@ class LupaHome extends React.Component {
                                 </Caption>
                     </View>
 
-                    <View style={{}}>
-                    <ScrollView snapToAlignment={'center'} snapToInterval={Dimensions.get('window').width} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}} centerContent onIndexChanged={index => this.setState({ index: index })} pagingEnabled={true} showsPagination={false} horizontal={true} showsHorizontalScrollIndicator={false} >
-                            {
-                                this.renderNearbyUsers()
-                            }
+                    <View style={{width: Dimensions.get('window').width}}>
+                    <ScrollView 
+                        snapToAlignment={'center'} 
+                        snapToInterval={Dimensions.get('window').width} 
+                        decelerationRate={0}
+                        contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}} 
+                        centerContent 
+                        onIndexChanged={index => this.setState({ index: index })} 
+                        pagingEnabled={true} 
+                        loop={false} 
+                        showsPagination={false} 
+                        horizontal={true} 
+                        showsHorizontalScrollIndicator={false} >
+                            {this.renderNearbyUsers()}
                     </ScrollView>
                          
                     </View>
