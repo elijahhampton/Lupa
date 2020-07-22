@@ -29,6 +29,7 @@ import { useNavigation, CommonActions } from '@react-navigation/native';
 import { LUPA_AUTH } from '../../../controller/firebase/firebase';
 
 const ICON_SIZE = 20;
+const ICON_COLOR = "#3d3d40"
 
 /**
  * This component render a drawer menu. The drawer menu contains all of the content for the
@@ -89,7 +90,7 @@ function DrawerMenu(props) {
               <Text style={styles.drawerHeaderText}>
                 {currUserData.display_name}
               </Text>
-              <Text style={styles.drawerHeaderText}>
+              <Text style={styles.drawerHeaderSubText}>
                 {currUserData.email}
               </Text>
             </View>
@@ -102,8 +103,8 @@ function DrawerMenu(props) {
 
         <TouchableOpacity onPress={navigateToDashboard}>
         <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="clipboard" size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={{fontSize: 16, fontWeight: '300'}}>
+          <DrawerIcon name="clipboard" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
            Dashboard
           </Text>
         </View>
@@ -112,8 +113,8 @@ function DrawerMenu(props) {
 
         <TouchableOpacity onPress={navigateToTrainerInformation}>
         <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="file-text" size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={{fontSize: 16, fontWeight: '300'}}>
+          <DrawerIcon name="file-text" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
            Register Trainer Account
           </Text>
         </View>
@@ -121,7 +122,7 @@ function DrawerMenu(props) {
 
         <Divider />
 
-        <TouchableOpacity onPress={() => setWorkoutLogIsOpen(true)}>
+       {/* <TouchableOpacity onPress={() => setWorkoutLogIsOpen(true)}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="book-open" size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={{fontSize: 16, fontWeight: '300'}}>
@@ -137,15 +138,15 @@ function DrawerMenu(props) {
          Assessments
           </Text>
         </View>
-        </TouchableOpacity>
+  </TouchableOpacity>*/}
 
 
         {
           currUserData.isTrainer === true ?
           <TouchableOpacity onPress={() => setTrainerInsightsModalOpen(true)}>
           <View style={styles.navigationButtonContaner}>
-            <DrawerIcon name="bar-chart" size={ICON_SIZE} style={styles.iconMargin}/>
-            <Text style={{fontSize: 16, fontWeight: '300'}}>
+            <DrawerIcon name="bar-chart" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+            <Text style={styles.buttonText}>
              Trainer Insights
             </Text>
           </View>
@@ -156,19 +157,29 @@ function DrawerMenu(props) {
         
         <Divider />
 
+        <TouchableOpacity onPress={() => navigation.navigate('AccountSettings')}>
         <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="clipboard" size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={{fontSize: 16, fontWeight: '300'}}>
-           Terms of Service and Privacy
-          </Text>
-        </View>
-
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="clipboard" size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={{fontSize: 16, fontWeight: '300'}}>
+          <DrawerIcon name="settings" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
            Settings
           </Text>
         </View>
+        </TouchableOpacity>
+        
+        <Divider />
+
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="help-circle" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           Support
+          </Text>
+        </View>
+
+        <Divider />
+        <Caption style={{padding: 10}}>
+          Version 0.7 (8)
+        </Caption>
+
 
         <View style={{position: 'absolute', bottom: 80, width: '100%'}}>
         <Button style={{alignSelf: 'center'}} mode="text" compact color="#1565C0" onPress={_handleLogout}>
@@ -218,8 +229,12 @@ export default DrawerMenu;
       width: '90%'
     },
     drawerHeaderText: { 
+      paddingVertical: 5,
       fontSize: 15,
        
+    },
+    drawerHeaderSubText: {
+      fontSize: 12
     },
     iconMargin: {
       marginHorizontal: 8
@@ -227,6 +242,12 @@ export default DrawerMenu;
     healthCareCaption: {
       alignSelf: 'center', 
       padding: 5
+    },
+    buttonText: {
+      color: '#000000',
+    marginHorizontal: 15, 
+        fontSize: 15, 
+        fontFamily: 'avenir-light',
     }
   });
 

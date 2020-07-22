@@ -143,7 +143,6 @@ class LupaHome extends React.Component {
     }
 
     renderNearbyUsers = () => {
-        alert(this.state.featuredTrainers.length)
         try {
            return this.state.featuredTrainers.map(user => {
                if (typeof(user) != 'object' 

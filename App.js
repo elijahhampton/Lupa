@@ -24,6 +24,7 @@ import PrivateChat from './src/ui/user/chat/PrivateChat';
 import WelcomeModal from './src/ui/user/modal/WelcomeModal/WelcomeModal';
 import ShareProgramModal from './src/ui/workout/program/modal/ShareProgramModal';
 import AssessmentView from './src/ui/user/dashboard/component/LupaJournal/Views/AssessmentView';
+import AccountSettings from './src/ui/user/profile/component/SettingsModal'
 
 class App extends React.Component {
   constructor(props) {
@@ -35,7 +36,7 @@ class App extends React.Component {
   render() {
     return (
       <NavigationContainer>
-              <StoreProvider store={LupaStore}>
+         <StoreProvider store={LupaStore}>
         <PaperProvider>
           <AppNavigator />
         </PaperProvider>
@@ -50,10 +51,6 @@ const SwitchNavigator = () => {
   const dispatch = useDispatch()
 
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
-
-  const currUserData = useSelector(state => {
-    return state.Users.currUserData
-  })
 
   const introduceApp = async (uuid) => {
     try {
@@ -161,7 +158,7 @@ function AppNavigator() {
     <StackApp.Screen name="PrivateChat" component={PrivateChat} />
     <StackApp.Screen name="Onboarding" component={WelcomeModal}/>
     <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
-    <StackApp.Screen name="AssessmentView" component={AssessmentView} />
+    <StackApp.Screen name="AccountSettings" component={AccountSettings} />
   </StackApp.Navigator>
   )
 

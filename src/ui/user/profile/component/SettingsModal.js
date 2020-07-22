@@ -347,19 +347,10 @@ class SettingsModal extends React.Component {
     render() {
         return (
                 <Container style={styles.root}>
-                    <Header>
-                        <Left>
-                            <IconButton icon="arrow-back" onPress={() => this.props.navigation.goBack(null)}/>
-                        </Left>
-
-                        <Body />
-
-                        <Right>
-                            <Text style={{  color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}>
-                                Settings
-                            </Text>
-                        </Right>
-                    </Header>
+                            <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
+                                <Appbar.Content title="Settings" />
+                </Appbar.Header>
                     <SafeAreaView style={{flex: 1}}>
                     <ScrollView>
                         <List.Section>
@@ -408,10 +399,6 @@ class SettingsModal extends React.Component {
                             })
                         }
                         </List.Section>
-        <Button mode="text" compact color="#2196F3" onPress={() => {this._handleUserLogout()}}>
-        Log out
-        </Button>
-
         <EditBioModal isVisible={this.state.editBioVisible} closeModalMethod={() => this.setState({ editBioVisible: false })} />
                 </ScrollView>
                 </SafeAreaView>
@@ -446,7 +433,7 @@ const styles = StyleSheet.create({
     },
     titleStyle: {
         fontSize: 13, 
-        fontWeight: '100', 
+        fontWeight: '400', 
          
     }
 });
