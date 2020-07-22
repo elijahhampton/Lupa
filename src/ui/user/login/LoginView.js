@@ -160,14 +160,19 @@ class LoginView extends React.PureComponent {
 
     const attemptedUsername = this.state.username;
     const attemptedPassword = this.state.password;
-    console.log(attemptedUsername +  "  " + attemptedPassword)
 
     let successfulLogin = false;
     await this.userAuthenticationHandler.loginUser(attemptedUsername, attemptedPassword).then(result => {
       successfulLogin = result;
     })
 
-    alert(successfulLogin)
+    if (typeof(successfulLogin) != 'boolean') {
+      this.setState({
+        loginRejectReason: 'Invalid Username or Password.  Try again.',
+        showSnack: true
+      })
+      return;
+    }
 
     if (successfulLogin) {
       this._introduceApp();

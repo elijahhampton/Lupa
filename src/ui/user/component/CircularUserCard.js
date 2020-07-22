@@ -5,7 +5,7 @@ import {
     Image,
     Dimensions,
     Text,
-    TouchableOpacity,
+    TouchableWithoutFeedback,
 } from 'react-native';
 
 import {
@@ -26,19 +26,20 @@ import { useNavigation } from '@react-navigation/native';
 const { windowWidth } = Dimensions.get('window').width
 
 function CircularUserCard(props) {
+    console.log(props.user)
+
     const navigation = useNavigation()
 
     const navigateToProfile = () => {
         navigation.push('Profile', {
-            navFrom: 'Packs',
             userUUID: props.user.user_uuid,
         })
     }
     
     const renderUserCard = () => {
         return (
-            <View style={{width: windowWidth , justifyContent: 'space-between', marginHorizontal: 20, marginVertical: 10}}>
-                <View>
+            <View style={{width: windowWidth, justifyContent: 'space-between', marginVertical: 10}}>
+                <View style={{marginHorizontal: 10}}>
                 <View style={{marginVertical: 5, justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <View>
@@ -66,7 +67,7 @@ function CircularUserCard(props) {
         </View> */}
                 </View>
 
-                <View style={{marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: '100%'}}>
+                <View style={{paddingHorizontal: 10, marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
                 <Text style={{color: '#404f5e'}}>
                     5 Programs Available
                 </Text>
@@ -88,9 +89,9 @@ function CircularUserCard(props) {
     } 
 
     return (
-        <TouchableOpacity style={{width: windowWidth}} onPress={navigateToProfile}>
+        <TouchableWithoutFeedback style={{width: windowWidth}} onPress={navigateToProfile}>
         {renderUserCard()}
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
     )
     
 }
