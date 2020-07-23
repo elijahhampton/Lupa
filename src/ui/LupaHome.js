@@ -441,7 +441,7 @@ class LupaHome extends React.Component {
                         {
                             this.state.featuredPrograms.map((currProgram, index, arr) => {
                                 return (
-                                   <FeaturedProgramCard currProgram={currProgram} programOwnerUUID={currProgram.program_owner.uuid}/>
+                                   <FeaturedProgramCard currProgram={currProgram} />
                                 )
                             })
                         }

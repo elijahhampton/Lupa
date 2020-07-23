@@ -316,7 +316,7 @@ function ProgramInformationPreview(props) {
 
 
     return (
-        <Modal presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
+        <Modal key={Math.random()} presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
               <View style={styles.container}>
                   <Appbar.Header style={styles.appbar} theme={{
                       colors: {

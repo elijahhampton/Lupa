@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ProgramInformationPreview from '../ProgramInformationPreview';
 
 import {
     View,
@@ -15,12 +14,15 @@ import { useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import { useNavigation } from '@react-navigation/native'
+import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
+import ProgramInformationPreview from '../ProgramInformationPreview';
 
-function FeaturedProgramCard(props) {
-    const navigation = useNavigation()
-    let [programModalVisible, setProgramModalVisible] = useState(false);
-
+function FeaturedProgramCard({ currProgram }) {
+    const [programModalVisible, setProgramModalVisible] = useState(false);
+    const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    const navigation = useNavigation()
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -41,7 +43,7 @@ function FeaturedProgramCard(props) {
 
     const getProgramName = () => {
         try {
-            return props.currProgram.program_name
+            return currProgram.program_name
         }
         catch (error) {
             LOG_ERROR('FeaturedProgramCard.js', 'Unhandled exception in getProgramName()', error)
@@ -52,7 +54,7 @@ function FeaturedProgramCard(props) {
 
     const getProgramLocation = () => {
         try {
-            return props.currProgram.program_location
+            return currProgram.program_location
         }
         catch (error) {
             LOG_ERROR('FeaturedProgramCard.js', 'Unhandled exception in getProgramLocation()', error)
@@ -60,7 +62,26 @@ function FeaturedProgramCard(props) {
         }
     }
 
-    const { currProgram, programOwnerUUID } = props
+    const getProgramOwnerName = () => {
+        try {
+            return programOwnerData.display_name
+        }
+        catch (error) {
+            LOG_ERROR('FeaturedProgramCard.js', 'Unhandled exception in getProgramOwnerData()', error)
+            return 'Unknown Location'
+        }
+    }
+
+    useSelector(() => {
+        async function fetchData() {
+            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(currProgram.program_owner).then(data => {
+                setProgramOwnerData(data)
+            })
+        }
+
+        fetchData()
+    }, [])
+
     return (
         <>
             <Card key={Math.random()} 
@@ -77,7 +98,7 @@ function FeaturedProgramCard(props) {
                                 </Text>
                             </>
                             <Text style={styles.programOwnerNameText} >
-                                Emily Loefstedt
+                                {getProgramOwnerName()}
                             </Text>
                         </View>
 
