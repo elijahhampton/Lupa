@@ -67,8 +67,8 @@ function CircularUserCard(props) {
         </View> */}
                 </View>
 
-                <View style={{paddingHorizontal: 10, marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
-                <Text style={{color: '#404f5e'}}>
+                <View style={{paddingHorizontal: 15, marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                <Text style={{color: '#404f5e', fontWeight: '600', fontFamily: 'avenir-roman'}}>
                     5 Programs Available
                 </Text>
 

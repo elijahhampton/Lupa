@@ -7,38 +7,24 @@ import {
     SafeAreaView,
     Dimensions,
     TouchableOpacity,
-    Modal,
-    Constants,
     TouchableWithoutFeedback,
-    PanResponder,
     TextInput as NativeTextInput,
     ScrollView,
     Image,
-    TouchableHighlight,
-    Animated,
     Button as NativeButton,
     Slider,
-    KeyboardAvoidingView,
 } from 'react-native';
 
 import {
-    FAB,
-    IconButton,
     Surface,
-    Menu,
     Modal as PaperModal,
     Dialog,
     Button,
-    Chip,
     TextInput,
     Divider,
-    Title,
     Caption,
 } from 'react-native-paper';
 
-import { RNCamera } from 'react-native-camera';
-
-import TimeLine from 'react-native-timeline-flatlist';
 import RBSheet from "react-native-raw-bottom-sheet";
 
 import { Video } from 'expo-av';
@@ -50,8 +36,6 @@ import LupaController from '../../../../controller/lupa/LupaController';
 import ThinFeatherIcon from "react-native-feather1s";
 
 import FeatherIcon from "react-native-vector-icons/Feather"
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
-import { LinearGradient } from 'expo-linear-gradient';
 import SingleWorkout from '../../component/SingleWorkout';
 import LupaCamera from './component/LupaCamera'
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';

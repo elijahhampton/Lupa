@@ -6,9 +6,7 @@ import {
     ScrollView,
     SafeAreaView,
     View,
-    Button,
     StyleSheet,
-    ImageBackground,
     Dimensions,
     Image,
     Text,
@@ -16,15 +14,9 @@ import {
 
 import {
     Avatar,
-    Surface,
+    Button as PaperButton,
     Paragraph,
-    Caption,
 } from 'react-native-paper'
-
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
-import ProgramListComponent from '../../../component/ProgramListComponent';
-import ProgramSearchResultCard from '../../components/ProgramSearchResultCard';
-import ProgramProfileComponent from './ProgramProfileComponent';
 
 import MapView from 'react-native-maps'
 
@@ -34,70 +26,76 @@ function ProgramPreview(props) {
         return state.Users.currUserData
     });
 
-        const handleCreateProgram = () => {
-            props.saveProgram()
-            props.handleExit();
+        const handleCreateProgram = async () => {
+            props.saveProgram().then(() => {
+                props.handleExit()
+            })
         }
         //get program structure from redux
 
         //save program structure to firebase
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: '#F2F2F2'}}>
-              <ScrollView contentContainerStyle={{}}>
-                   <View style={{alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width, height: 300}}>
-                       <Image style={{width: '100%', height: '100%'}} source={{uri: props.programData.program_image}} />
+        <SafeAreaView style={styles.container}>
+              <ScrollView>
+                   <View style={styles.imageContainer}>
+                       <Image style={styles.image} source={{uri: props.programData.program_image}} />
                    </View>
 
-                   <View style={{marginHorizontal: 10, height: 150, justifyContent: 'space-evenly'}}>
+                   <View style={styles.programInformationContainer}>
                        <Text>
                            {props.programData.program_name}
                        </Text>
-                       <Paragraph style={{color: 'rgb(180, 180, 180)', fontWeight: '600'}}>
+                       <Paragraph style={styles.programDescriptionText}>
                        {props.programData.program_description}
                        </Paragraph>
-                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                       
+                       <View style={styles.programTagsContainer}>
+                        {/* Program Tags */}
                        </View>
                    </View>
 
-                   <View style={{alignItems: 'center', justifyContent: 'space-evenly'}}>
+                   <View style={styles.programOwnerDetailsContainer}>
                       
-                       <View style={{width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                       <View style={styles.programOwnerDetailsSubContainer}>
                        <View>
-                               <Avatar.Image source={{uri: currUserData.photo_url}} label="EH" color="#FFFFFF" size={50} style={{backgroundColor: '#212121'}} />
+                               <Avatar.Image source={{uri: currUserData.photo_url}} label="EH" color="#FFFFFF" size={50} />
                            </View>
                            <View>
-                               <Text style={{fontSize: 20, fontWeight: '300'}}>
+                               <Text style={styles.programOwnerNameText}>
                                  {currUserData.display_name}
                                </Text>
-                               <Text style={{fontSize: 15, fontWeight: '300'}}>
+                               <Text style={styles.programOwnerCertificationText}>
                                    National Association of Sports Medicine
                                </Text>
                            </View>
                        </View>
                    </View>
 
-                   <View style={{marginVertical: 20}}>
-                       <View style={{marginTop: 10, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                                <MapView style={{width: Dimensions.get('window').width - 20, height: 180, alignSelf: 'center', borderRadius: 15}}
+                   <View style={styles.mapViewContainer}>
+                       <View style={styles.mapViewSubContainer}>
+                              <MapView style={styles.mapView}
                     initialRegion={{
-                        latitude: true && typeof(props.programData.program_location.location.lat) != 'undefined' ? props.programData.program_location.location.lat : null,
-                        longitude:  props.programData.program_location.location.long,
+                        latitude: currUserData.location.latitude,
+                        longitude:  currUserData.location.longitude,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                       }} />
-                                <View style={{paddingLeft: 20, marginHorizontal: 20, paddingVertical: 10, width: '100%', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                                <Text style={{marginVertical: 10, fontSize: 15, fontWeight: '300'}}>
+                                <View style={styles.mapViewTextContainer}>
+                                <Text style={styles.mapViewAddressText}>
                            {props.programData.program_location.address}
                        </Text>
-                       <Text style={{fontSize: 15, fontWeight: '300'}}>
+                       <Text style={styles.mapViewLocationNameText}>
                        {props.programData.program_location.name}
                        </Text>
                        </View>
                        </View>
                    </View>
 
+                      <PaperButton onPress={handleCreateProgram} color="#1089ff" mode="contained" style={styles.publishButton}>
+                        <Text>
+                            Publish
+                        </Text>
+                      </PaperButton>
 
                    </ScrollView>
         </SafeAreaView>
@@ -105,13 +103,60 @@ function ProgramPreview(props) {
 }
 
 const styles = StyleSheet.create({
-    identifierText: {textAlign: 'center',   fontSize: 12, color: 'rgb(44, 44, 46)'},
-    identifierValueText: {textAlign: 'center', color: '#212121',   fontSize: 12},
-    previewText: {
-         
-        padding: 10,
-        fontSize: 16,
-        color: 'rgb(142, 142, 147)'
+    container: {
+        flex: 1,
+        backgroundColor: '#FFFFFF'
+    },
+    imageContainer: {
+        alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width, height: 300
+    },
+    image: {
+        width: '100%',
+        height: '100%'
+    },
+    programInformationContainer: {
+        marginHorizontal: 10, height: 150, justifyContent: 'space-evenly'
+    },
+    programTagsContainer: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'
+    },
+    programDescriptionText: {
+        color: 'rgb(180, 180, 180)', fontWeight: '600'
+    },
+    programOwnerDetailsContainer: {
+        alignItems: 'center', justifyContent: 'space-evenly'
+    },
+    programOwnerDetailsSubContainer: {
+        width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'
+    },
+    programOwnerNameText: {
+        fontSize: 20,
+        fontWeight: '300'
+    },
+    programOwnerCertificationText: {
+        fontSize: 15,
+        fontWeight: '300'
+    },
+    mapViewContainer: {
+        marginVertical: 20
+    },
+    mapViewSubContainer: {
+        marginTop: 10, width: '100%', alignItems: 'center', justifyContent: 'center'
+    },
+    mapView: {
+        width: Dimensions.get('window').width - 20, height: 180, alignSelf: 'center', borderRadius: 15
+    },
+    mapViewTextContainer: {
+        paddingLeft: 20, marginHorizontal: 20, paddingVertical: 10, width: '100%', alignItems: 'flex-start', justifyContent: 'flex-start'
+    },
+    mapViewAddressText: {
+        marginVertical: 10, fontSize: 15, fontWeight: '300'
+    },
+    mapViewLocationNameText: {
+        fontSize: 15, fontWeight: '300'
+    },
+    publishButton: {
+        marginVertical: 10, elevation: 5, width: '80%', alignSelf: 'center', shadowColor: '#1089ff'
     }
 })
 

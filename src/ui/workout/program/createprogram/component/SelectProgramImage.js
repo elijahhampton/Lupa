@@ -35,10 +35,10 @@ function SelectProgramImage({ captureImage }) {
 
     return (
         <View style={styles.container}>
-                            <Surface style={{margin: 10, elevation: 10, borderRadius: 10, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, height: Dimensions.get('window').height - 500}}>
+                            <Surface style={styles.surface}>
                     {
                       isProgramImageSet == true ?
-                      <Image source={{uri: programImage }} style={{width: '100%', height: '100%', borderRadius: 10}} />
+                      <Image source={{uri: programImage }} style={styles.image} />
                       :
                       <FeatherIcon name="plus-circle" size={60} color="rgb(174,174,178)" onPress={_chooseImageFromCameraRoll} />
                     }
@@ -63,6 +63,21 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#374e66',
         fontWeight: 'bold'
+    },
+    image: {
+        width: '100%', 
+        height: '100%', 
+        borderRadius: 10
+    },
+    surface: {
+        margin: 10, 
+        elevation: 10, 
+        borderRadius: 10, 
+        alignSelf: 'center', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        width: Dimensions.get('window').width - 50, 
+        height: Dimensions.get('window').height - 500
     }
 })
 

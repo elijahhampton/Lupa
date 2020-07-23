@@ -42,6 +42,7 @@ import { connect, useDispatch } from 'react-redux';
 
 import Input from '../../common/Input/Input'
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
+import { storeAsyncData } from '../../../controller/lupa/storage/async';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
 

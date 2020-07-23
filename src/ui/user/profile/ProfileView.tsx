@@ -67,8 +67,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import MyPacksCard from './component/MyPacksCard';
-import ProgramProfileComponent from '../../workout/program/createprogram/component/ProgramProfileComponent';
-import ProgramListComponent from '../../workout/component/ProgramListComponent'
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
 import { Constants } from 'react-native-unimodules';
@@ -76,6 +74,7 @@ import ProgramSearchResultCard from '../../workout/program/components/ProgramSea
 import { InformationIcon } from '../../icons/index.js';
 import ProgramOptionsModal from '../../workout/program/modal/ProgramOptionsModal';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
+import { MenuIcon } from '../../icons/index'
 
 const InviteToPackDialog = props => {
     const [userToInvite, setUserToInvite] = useState(props.userToInvite);
@@ -512,7 +511,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      */
     getHeaderLeft = () => {
         if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
-            return;
+            return <MenuIcon customStyle={{margin: 10}} onPress={() => this.props.navigation.openDrawer()} />
         }
 
         return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
@@ -530,7 +529,10 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      */
     getHeaderRight = () => {
         if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
-            return null //<FeatherIcon name="settings" size={20} onPress={() => this._navigateToSettings()}/>
+            return (
+                    <FeatherIcon color="#212121" name="more-horizontal" size={20} />
+            )
+            
         }
         
         return <FeatherIcon name="more-vertical" size={20} onPress={() => this._showActionSheet()} />

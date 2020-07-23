@@ -1,7 +1,6 @@
 import { LupaProgramInformationStructure } from "./common/types";
 
 var lupa_program_information_structure : LupaProgramInformationStructure = {
-    program_uuid: "",
     program_name: "",
     program_description: "",
     program_slots: 0,
@@ -14,8 +13,8 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
         name: "",
         address: "",
         location: {
-            lng: "",
-            lat: ""
+            lng: 0,
+            lat: 0
         }
     },
     program_type: "",

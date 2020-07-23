@@ -1,37 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import {
     Modal,
     View,
     Text,
     StyleSheet,
-    SafeAreaView,
     Dimensions,
     TouchableWithoutFeedback
 } from 'react-native'
 
 import { Divider, Appbar } from 'react-native-paper'
 
-import {
-    Header,
-    Left,
-    Right,
-    Body,
-    Title,
-} from 'native-base'
-
 import { useSelector } from 'react-redux'
 
 import { useNavigation } from '@react-navigation/native'
 
-import FeatherIcon from 'react-native-vector-icons/Feather'
-
-import ShareProgramModal from '../modal/ShareProgramModal'
-
 const TRAINER_OPTIONS = [
-   /* {
-        optionTitle: 'Pause Program'
-    },*/
     {
         optionTitle: 'Edit Program',
     },
@@ -48,16 +32,18 @@ const TRAINER_OPTIONS = [
 ]
 
 const DEFAULT_OPTIONS = [
+    
+]
+
+const CURR_USER_OPTIONS = [
     {
         optionTitle: 'View Profile'
-    },
+    }
 ]
 
 const { windowWidth } = Dimensions.get('window').width
 
 function ProgramOptionsModal({ program, isVisible, closeModal }) {
-    const [shareProgramModalIsVisible, setShareProgramModalIsVisible] = useState(false)
-
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
@@ -69,6 +55,14 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 
         if (optionTitle == 'Share Program') {
             shareProgramOnPress(program)
+        }
+    }
+
+    const handleCurrUserOptions = (optionTitle) => {
+        closeModal()
+
+        if (optionTitle == 'View Profile') {
+            navigateToProfile()
         }
     }
 
@@ -119,9 +113,26 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
        })
     }
 
+    const renderCurrUserOptions = () => {
+        return CURR_USER_OPTIONS.map((option, index, arr) => {
+            return (
+                <>
+                <TouchableWithoutFeedback onPress={() => handleCurrUserOptions(option.optionTitle)}>
+                <View key={index} style={styles.optionContainerStyle}>
+                    <Text style={[styles.textStyle, option.customTextStyle]}>
+                        {option.optionTitle}
+                    </Text>
+                </View>
+                </TouchableWithoutFeedback>
+                <Divider />
+                </>
+        )
+   })
+}
+
     return (
         <Modal presentationStyle="fullScreen" animated={true} animationType="slide" style={styles.modal} visible={isVisible}>
-                                               <Appbar.Header style={{elevation: 0}} theme={{
+                                               <Appbar.Header style={styles.appBar} theme={{
                     colors: {
                         primary: '#FFFFFF'
                     }
@@ -132,6 +143,9 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
             <View style={styles.container}>
                 {
                     renderDefaultOptions()
+                }
+                {
+                    renderCurrUserOptions()
                 }
                 {
                     renderProgramOwnerOptions()
@@ -153,6 +167,9 @@ const styles = StyleSheet.create({
     },
     optionContainerStyle: {
         padding: 3
+    },
+    appBar: {
+        elevation: 0
     }
 })
 

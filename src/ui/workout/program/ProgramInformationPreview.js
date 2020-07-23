@@ -76,6 +76,8 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
+const { windowWidth } = Dimensions.get('window').width
+
 function ProgramInformationPreview(props) {
     const [programData, setProgramData] = useState(getLupaProgramInformationStructure());
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
@@ -314,64 +316,64 @@ function ProgramInformationPreview(props) {
 
 
     return (
-        <Modal presentationStyle="fullScreen" visible={props.isVisible} style={{ flex: 1 }} animated={true} animationType="slide">
-              <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-                  <Appbar.Header style={{elevation: 0}} theme={{
+        <Modal presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
+              <View style={styles.container}>
+                  <Appbar.Header style={styles.appbar} theme={{
                       colors: {
                           primary: '#FFFFFF'
-                      }
+                      },
                   }}>
                       <Appbar.Action icon={() => <FeatherIcon name="x" size={25} onPress={() => props.closeModalMethod()}/>} />
                     
                   </Appbar.Header>
-                   <ScrollView contentContainerStyle={{}}>
-                   <View style={{alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width, height: 300}}>
-                       <Image style={{width: '100%', height: '100%'}} source={{uri: getProgramImage()}} />
+                   <ScrollView>
+                   <View style={styles.programImageContainer}>
+                       <Image style={styles.image} source={{uri: getProgramImage()}} />
                    </View>
 
-                   <View style={{marginHorizontal: 10, height: 150, justifyContent: 'space-evenly'}}>
+                   <View style={styles.programInformationContainer}>
                        <Text>
                            {getProgramName()}
                        </Text>
-                       <Paragraph style={{color: 'rgb(180, 180, 180)', fontWeight: '600'}}>
+                       <Paragraph style={styles.programDescriptionText}>
                            {getProgramDescription()}
                        </Paragraph>
-                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                       <View style={[styles.programTags, styles.alignRowAndCenter]}>
                            {getProgramTags()}
                        </View>
                    </View>
 
-                   <View style={{alignItems: 'center', justifyContent: 'space-evenly'}}>
+                   <View style={styles.programOwnerDetailsContainer}>
                       
-                       <View style={{width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                       <View style={styles.programOwnerDetailsSubContainer}>
                        <View>
                                <Avatar.Image source={{uri: programOwnerData.photo_url}} label="EH" color="#FFFFFF" size={50} style={{backgroundColor: '#212121'}} />
                            </View>
                            <View>
-                               <Text style={{fontSize: 20, fontWeight: '300'}}>
+                               <Text style={styles.mapViewText}>
                                  {programOwnerData.display_name}
                                </Text>
-                               <Text style={{fontSize: 15, fontWeight: '300'}}>
+                               <Text style={styles.mapViewText}>
                                    National Association of Sports Medicine
                                </Text>
                            </View>
                        </View>
                    </View>
 
-                   <View style={{marginVertical: 20}}>
-                       <View style={{marginTop: 10, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                                <MapView style={{width: Dimensions.get('window').width - 20, height: 180, alignSelf: 'center', borderRadius: 15}}
+                   <View style={styles.mapViewContainer}>
+                       <View style={styles.mapViewSubContainer}>
+                                <MapView style={styles.mapView}
                     initialRegion={{
                         latitude: 0,
                         longitude: 0,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                       }} />
-                                <View style={{marginHorizontal: 20, paddingVertical: 10, width: '100%', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                                <Text style={{paddingLeft: 20, fontSize: 15, fontWeight: '300'}}>
+                                <View style={styles.mapViewTextContainer}>
+                                <Text style={styles.mapViewText}>
                            Mean's Gym House
                        </Text>
-                       <Text style={{paddingLeft: 20, fontSize: 15, fontWeight: '300'}}>
+                       <Text style={styles.mapViewText}>
                        1234 Hydrag Lane
                        </Text>
                        </View>
@@ -379,18 +381,21 @@ function ProgramInformationPreview(props) {
                    </View>
                    
 
-                   <View style={{alignItems: 'center', justifyContent: 'center', marginHorizontal: 20}}>
-                       <Caption style={{textAlign: 'center'}}>
+                   <View style={styles.programTermsContainer}>
+                       <Caption style={styles.textAlignCenter}>
                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?
                        </Caption>
                    </View>
 
-                   <View style={{marginVertical: 20, width: Dimensions.get('window').width - 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
-                           <Button mode="contained" theme={{
+                   <View style={styles.messageButtonContainer}>
+                           <Button 
+                           mode="contained" 
+                           theme={{
                                colors: {
                                    primary: '#1089ff'
                                }
-                           }} style={{borderRadius: 8, width: Dimensions.get('window').width - 20}}>
+                           }} 
+                           style={styles.messageButton}>
                                <FeatherIcon name="message-circle" size={15} />
                                 <Text>
                                     Send Elijah a Message
@@ -400,12 +405,15 @@ function ProgramInformationPreview(props) {
 
 
                    </ScrollView>
-                   <View style={{padding: 10, borderTopWidth: 0.5, borderTopColor: 'rgb(174, 174, 178)', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
-                    <Text style={{fontSize: 30, color: '#212121'}}>
+                   <View style={styles.purchaseContainer}>
+                    <Text style={styles.programPriceText}>
                         ${getProgramPrice()}
                     </Text>
 
-                    <Button onPress={() => handlePurchaseProgram(0)} mode="contained" style={{width: 'auto', elevation: 0}} theme={{
+                    <Button 
+                        onPress={() => handlePurchaseProgram(0)} 
+                        mode="contained"
+                        theme={{
                         roundness: 8,
                         colors: {
                             primary: '#23374d'
@@ -419,5 +427,110 @@ function ProgramInformationPreview(props) {
             </Modal>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#FFFFFF'
+    },
+    textAlignCenter: {
+        textAlign: 'center'
+    },
+    appbar: {
+        elevation: 0
+    },
+    mapViewContainer: {
+        marginVertical: 20
+    },
+    mapViewSubContainer: {
+        marginTop: 10, 
+        width: '100%', 
+        alignItems: 'center', 
+        justifyContent: 'center'
+    },
+    mapView: {
+        width: Dimensions.get('window').width - 20, 
+        height: 180, 
+        alignSelf: 'center', 
+        borderRadius: 15
+    },
+    mapViewTextContainer: {
+        marginHorizontal: 20, 
+        paddingVertical: 10, 
+        width: '100%', 
+        alignItems: 'flex-start', 
+        justifyContent: 'flex-start',
+        paddingLeft: 20
+    },
+    mapViewText: {
+        fontSize: 20, 
+        fontWeight: '300'
+    },
+    purchaseContainer: {
+        padding: 10, 
+        borderTopWidth: 0.5, 
+        borderTopColor: 'rgb(174, 174, 178)', 
+        flexDirection: 'row', 
+        justifyContent: 'space-evenly', 
+        alignItems: 'center'
+    },
+    programImageContainer: {
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        width: windowWidth,
+        height: 300
+    },
+    image: {
+        width: '100%', 
+        height: '100%'
+    },
+    programOwnerDetailsContainer: {
+        alignItems: 'center', justifyContent: 'space-evenly'
+    },
+    programOwnerDetailsSubContainer: {
+        width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'
+},
+    programInformationContainer: {
+        marginHorizontal: 10, 
+        height: 150, 
+        justifyContent: 'space-evenly'
+    },
+    programDescriptionText: {
+        color: 'rgb(180, 180, 180)', 
+        fontWeight: '600'
+    },
+    programPriceText: {
+        fontSize: 30, 
+        color: '#212121'
+    },
+    programTags: {
+        justifyContent: 'flex-start'
+    },
+    alignRowAndCenter: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    puchaseButton: {
+        width: 'auto', 
+        elevation: 0
+    },
+    messageButtonContainer: {
+        marginVertical: 20, 
+        width: Dimensions.get('window').width - 20, 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        alignSelf: 'center'
+    },
+    messageButton: {
+        borderRadius: 8, 
+        width: Dimensions.get('window').width - 20
+    },
+    programTermsContainer: {
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        marginHorizontal: 20
+    }
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProgramInformationPreview);

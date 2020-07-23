@@ -67,7 +67,7 @@ function ReceivedProgramNotification({ notificationData }) {
                    <TouchableWithoutFeedback style={{width: windowWidth, }} onPress={handleOnPress}>
                    <View style={{width: windowWidth, marginVertical: 15}}>
                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                           <Avatar.Text label="EH" size={45} style={{marginHorizontal: 10}} />
+                           <Avatar.Image source={{uri: senderUserData.photo_url}} size={45} style={{marginHorizontal: 10}} />
                            <View>
                                <Text>
                                <Text style={{fontWeight: '500'}}>

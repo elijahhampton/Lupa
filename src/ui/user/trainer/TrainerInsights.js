@@ -34,7 +34,7 @@ function TrainerInsights(props) {
                         <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between'}}>
 
                     <View style={{padding: 10, alignItems: 'center', justifyContent: 'center', flex: 2, alignSelf: 'center',}}>
-                            <Text style={{padding: 10, alignSelf: 'flex-start',   fontSize: 20}}>
+                            <Text style={{padding: 10, alignSelf: 'flex-start',   fontSize: 18}}>
                                 Activity
                             </Text>
 
@@ -95,12 +95,16 @@ function TrainerInsights(props) {
 
                         <View style={{flex: 2}}>
                             <View style={{padding: 10}}>
-                            <Text style={{  fontSize: 20}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <View style={{width: '50%'}}>
+                                <Text style={{  fontSize: 18}}>
                             Overview
                         </Text>
-                    <View style={{paddingTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                                </View>
+                                
+                                <View style={{width: '50%', paddingTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                     <Text>
-                        <Text style={{fontSize: 15}}>
+                        <Text style={{fontSize: 15,}}>
                             Gross:
                         </Text>
                         <Text style={{fontSize: 15}}>
@@ -117,12 +121,13 @@ function TrainerInsights(props) {
                         </Text>
                         </Text>
                     </View>
+                                </View>
   
                             </View>
 
                         <View style={{flex: 1}}>
                             <ScrollView horizontal contentContainerStyle={{alignItems: 'center'}}>
-                                <Surface style={{margin: 5, elevation: 0, width: 135, height: 160, borderRadius: 20, backgroundColor: 'rgb(229, 229, 234)'}}>
+                                <Surface style={{margin: 5, elevation: 0, width: 135, height: 130, borderRadius: 20, backgroundColor: 'rgb(229, 229, 234)'}}>
                                     <View style={{position: 'absolute', top: 0, left: 0, margin: 5, width: 45, height: 45, borderRadius: 80, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
                                         <FeatherIcon name="shopping-cart" color="rgb(33,150,243)" size={20} />
                                     </View> 
@@ -137,7 +142,7 @@ function TrainerInsights(props) {
                                     </View>
                                 </Surface>
 
-                                <Surface style={{margin: 5, elevation: 0, width: 135, height: 160, borderRadius: 20, backgroundColor: 'rgb(229, 229, 234)'}}>
+                                <Surface style={{margin: 5, elevation: 0, width: 135, height: 130, borderRadius: 20, backgroundColor: 'rgb(229, 229, 234)'}}>
                                     <View style={{position: 'absolute', top: 0, left: 0, margin: 5, width: 45, height: 45, borderRadius: 80, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
                                         <FeatherIcon name="share-2" color="rgb(33,150,243)" size={20} />
                                     </View> 
@@ -152,7 +157,7 @@ function TrainerInsights(props) {
                                     </View>
                                 </Surface>
 
-                                <Surface style={{margin: 5, elevation: 0, width: 135, height: 160, borderRadius: 20, backgroundColor: 'rgb(229, 229, 234)'}}>
+                                <Surface style={{margin: 5, elevation: 0, width: 135, height: 130, borderRadius: 20, backgroundColor: 'rgb(229, 229, 234)'}}>
                                     <View style={{position: 'absolute', top: 0, left: 0, margin: 5, width: 45, height: 45, borderRadius: 80, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
                                         <FeatherIcon name="eye" color="rgb(33,150,243)" size={20} />
                                     </View> 
@@ -172,7 +177,7 @@ function TrainerInsights(props) {
                         </View>
     
                         <View style={{flex: 1.5}}>
-                        <Text style={{padding: 10,   fontSize: 20}}>
+                        <Text style={{padding: 10,   fontSize: 18}}>
                            Purchases
                         </Text>
                         <DataTable>

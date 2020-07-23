@@ -1,6 +1,8 @@
 
 import React from 'react';
-
+import {
+  View
+} from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import DrawerMenu from './Components/DrawerMenu';
@@ -11,6 +13,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardNavigator from './DashboardNavigator';
 import LupaHomeNavigator from './LupaHomeNavigator';
 import PackNavigator from './PackNavigator';
+import { SafeAreaView, Dimensions } from 'react-native';
 
 
 const Drawer = createDrawerNavigator();
