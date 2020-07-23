@@ -334,11 +334,33 @@ export default class LupaController {
      * 
      */
     searchPrograms = async searchQuery => {
-      let retVal = []
-      await USER_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(result => {
-        retVal = result;
-      });
-      return Promise.resolve(retVal);
+      const queries = [{
+        indexName: 'dev_Programs',
+        query: searchQuery,
+        params: {
+          hitsPerPage: 5,
+        }
+      }];
+
+      return new Promise((resolve, rejects) => {
+                let finalResults = new Array();
+
+      algoliaIndex.search(queries).then(({results}) => {
+        const programResults = results[0];
+
+        try {
+        for (let i = 0; i < programResults.hits.length; ++i)
+        {
+            finalResults.push(programResults.hits[i]);
+        }
+        } catch(err)
+        {
+          alert(err)
+        }
+
+        resolve(finalResults);
+      })
+      })
     }
 
     /**

@@ -2,26 +2,16 @@ import React from 'react';
 
 import {
     View,
-    Text,
     StyleSheet,
-    Button,
-    Dimensions,
-    SafeAreaView,
-    TouchableNativeFeedbackBase,
-    Modal
 } from 'react-native';
 
 import { connect } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 
-import Swiper from 'react-native-swiper';
-import { ProgressBar } from 'react-native-paper';
-
 import ProgramInformation from './component/ProgramInformation'
 import BuildAWorkout from './BuildWorkout';
 import ProgramPreview from './component/ProgramPreview';
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
-import CreateWorkoutIntroduction from './CreateWorkoutIntroduction';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -64,19 +54,17 @@ class CreateProgram extends React.Component {
     }
 
     async componentDidMount() {
-            const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
-            this.setState({ currProgramUUID: programPayload.program_structure_uuid })
-            this.setState({ programData: programPayload})
+        const programPayload = await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(this.props.lupa_data.Users.currUserData.user_uuid);
+        this.setState({ currProgramUUID: programPayload.program_structure_uuid })
+        this.setState({ programData: programPayload })
     }
 
     async componentWillUnmount() {
-        if (this.state.programComplete == false)
-        {
+        if (this.state.programComplete == false) {
             //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
-            
-            if (typeof(this.state.currProgramUUID) != 'undefined' || this.state.currProgramUUID != '')
-            {
+
+            if (typeof (this.state.currProgramUUID) != 'undefined' || this.state.currProgramUUID != '') {
                 //delete from redux
                 this.props.deleteProgram(this.state.currProgramUUID)
             }
@@ -89,10 +77,10 @@ class CreateProgram extends React.Component {
         })
     }
 
-    saveProgramInformation = async (programName, programDescription, numProgramSpots, programStartDate, 
+    saveProgramInformation = async (programName, programDescription, numProgramSpots, programStartDate,
         programEndDate, programDuration, programTime, programPrice, programLocationData, programType,
         allowWaitlist, programImage, programTags, programAutomatedMessage, programDays) => {
-       let updatedProgramData = this.state.programData;
+        let updatedProgramData = this.state.programData;
 
         updatedProgramData.program_structure_uuid = this.state.currProgramUUID;
         updatedProgramData.program_name = programName;
@@ -134,14 +122,12 @@ class CreateProgram extends React.Component {
 
         try {
             const programPayload = await this.LUPA_CONTROLLER_INSTANCE.saveProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData);
-            await this.props.addProgram(programPayload);
-        } catch(err) {
-           await this.setState({
-               programComplete: false
-           })
+            this.props.addProgram(programPayload);
+        } catch (err) {
+            await this.setState({
+                programComplete: false
+            })
         }
-
-        this.exit();
     }
 
     prevIndex = () => {
@@ -163,23 +149,22 @@ class CreateProgram extends React.Component {
     }
 
     exit = () => {
-        if (this.state.programComplete == false)
-        {   
+        if (this.state.programComplete == false) {
+            alert(this.state.programComplete)
             //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_structure_uuid)
-            
-            if (typeof(this.state.currProgramUUID) != 'undefined' || this.state.currProgramUUID != '')
-            {
-                            //delete from redux
-            this.props.deleteProgram(this.state.currProgramUUID)
+
+            if (typeof (this.state.currProgramUUID) != 'undefined' || this.state.currProgramUUID != '') {
+                //delete from redux
+                this.props.deleteProgram(this.state.currProgramUUID)
             }
         }
 
-        this.props.navigation.goBack();
+        this.props.navigation.navigate('Train');
     }
 
     getViewDisplay = () => {
-        switch(this.state.currIndex) {
+        switch (this.state.currIndex) {
             case 0:
                 return (
                     <ProgramInformation captureImage={img => this.captureProgramImage(img)} handleCancelOnPress={this.exit} goToIndex={this.nextIndex} saveProgramInformation={(
@@ -194,8 +179,8 @@ class CreateProgram extends React.Component {
                         programLocationData,
                         programType,
                         allowWaitlist,
-                        programImage, 
-                        programTags, 
+                        programImage,
+                        programTags,
                         programAutomatedMessage,
                         programWorkoutDays) => this.saveProgramInformation(programName,
                             programDescription,
@@ -208,16 +193,16 @@ class CreateProgram extends React.Component {
                             programLocationData,
                             programType,
                             allowWaitlist,
-                            programImage, 
-                            programTags, 
+                            programImage,
+                            programTags,
                             programAutomatedMessage,
                             programWorkoutDays
-                            )} />
+                        )} />
                 )
             case 1:
-                return <BuildAWorkout programData={this.state.programData} goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} />
+                return <BuildAWorkout programData={this.state.programData} goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1 })} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} />
             case 2:
-                return <ProgramPreview goBackToEditWorkout={() => this.setState({ currIndex: this.state.currIndex - 1})} saveProgram={this.saveProgram} handleExit={this.exit} programData={this.state.programData} />
+                return <ProgramPreview goBackToEditWorkout={() => this.setState({ currIndex: this.state.currIndex - 1 })} saveProgram={this.saveProgram} handleExit={this.exit} programData={this.state.programData} />
             default:
         }
     }
@@ -226,9 +211,9 @@ class CreateProgram extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                 {
-                     this.getViewDisplay()
-                 }
+                {
+                    this.getViewDisplay()
+                }
             </View>
         )
     }

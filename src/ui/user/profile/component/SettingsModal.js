@@ -42,6 +42,7 @@ import { connect, useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { Constants } from 'react-native-unimodules';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 function EditBioModal(props) {
     //lupa controller instance
@@ -115,6 +116,10 @@ function EditBioModal(props) {
         </SafeAreaView>
     </Modal>
     )
+}
+
+function changePasswordModal(props) {
+
 }
 
 
@@ -229,16 +234,11 @@ class SettingsModal extends React.Component {
         
         this.state = {
             userData: {},
-            programsSwitchIsEnabled: false,
-            packEventsSwitchIsEnabled: false,
-            packChatSwitchIsEnabled: false,
-            messagesSwitchIsEnabled: false,
-            newFollowersSwitchIsEnabled: false,
             goalsModalIsOpen: false,
-            showChangeAccountPropertyModal: false,
             property: '',
             reload: false,
             editBioVisible: false,
+            isEditingDisplayName: false,
         }
     }
 
@@ -304,10 +304,7 @@ class SettingsModal extends React.Component {
             case 'NewFollowers':
         }
     }
-    
-    _handleUserLogout = async () => {
 
-      }
 
       handleListItemOnPress = (key) => {
         switch(key) {
@@ -344,6 +341,17 @@ class SettingsModal extends React.Component {
         }
     }
 
+    getIconName = (property) => {
+        switch(property)
+        {
+            case 'change_password':
+            case 'recover_password':
+                return 'lock'
+            default:
+                return ''
+        }
+    }
+
     render() {
         return (
                 <Container style={styles.root}>
@@ -358,7 +366,11 @@ class SettingsModal extends React.Component {
                         {
                             accountList.map(item => {
                                 return (
-                                    <List.Item titleStyle={styles.titleStyle} onPress={() => this.handleOpenChangePropertyModal(item.property)} style={styles.listItem} title={item.title} description={this.getAccountListDescription(item.property)} descriptionEllipsizeMode="tail"/>
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                         <List.Item titleStyle={styles.titleStyle} onPress={() => this.handleOpenChangePropertyModal(item.property)} style={styles.listItem} descriptionStyle={styles.descriptionStyle} title={item.title} description={this.getAccountListDescription(item.property)} descriptionEllipsizeMode="tail"/>
+                                         <Feather1s name={this.getIconName(item.property)} size={20} />
+                                    </View>
+                                   
                                 )
                             })
                         }
@@ -367,18 +379,7 @@ class SettingsModal extends React.Component {
                         <List.Section>
                         <List.Subheader style={styles.listSubheader}>Personal</List.Subheader>
                         {
-                             <List.Item titleStyle={styles.titleStyle} onPress={() => this.setState({ editBioVisible: true })} style={[styles.listItem, {height: 'auto'}]} title={'Biography'} description={this.props.lupa_data.Users.currUserData.bio == "" ? 'Edit your bio' : this.props.lupa_data.Users.currUserData.bio} descriptionEllipsizeMode="tail"/>
-                        }
-                        </List.Section>
-
-                        <List.Section>
-                        <List.Subheader style={styles.listSubheader}>Notifications</List.Subheader>
-                        {
-                            notificationsList.map((item, index) => {
-                               return (
-                                <List.Item titleStyle={styles.titleStyle} style={styles.listItem} key={item.key} title={item.title} right={() => this.renderNotificationSectionSwitches(item.key)}/>
-                               )
-                            })
+                             <List.Item on titleStyle={styles.titleStyle} onPress={() => this.setState({ editBioVisible: true })} style={[styles.listItem, {height: 'auto'}]} title={'Biography'} description={this.props.lupa_data.Users.currUserData.bio == "" ? 'Edit your bio' : this.props.lupa_data.Users.currUserData.bio} descriptionEllipsizeMode="tail"/>
                         }
                         </List.Section>
 
@@ -416,6 +417,7 @@ const styles = StyleSheet.create({
         color: '#2196F3'
     },
     listItem: {
+        width: '90%'
         //backgroundColor: 'white'
     },
     listAccordion: {
@@ -434,8 +436,11 @@ const styles = StyleSheet.create({
     titleStyle: {
         fontSize: 13, 
         fontWeight: '400', 
-         
-    }
+        color: '#8C8C8C',
+    },
+    descriptionStyle: {
+        color: '#212121'
+    },
 });
 
 export default connect(mapStateToProps)((SettingsModal));

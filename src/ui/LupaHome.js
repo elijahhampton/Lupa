@@ -12,6 +12,7 @@ import {
     StyleSheet,
     InteractionManager,
     ScrollView,
+    Switch,
     TouchableOpacity,
     Image,
     Text,
@@ -61,6 +62,8 @@ import Swiper from 'react-native-swiper';
 import { LOG_ERROR } from '../common/Logger';
 import ProgramSearchResultCard from './workout/program/components/ProgramSearchResultCard';
 import UserSearchResultCard from './user/component/UserSearchResultCard';
+import LargeProgramSearchResultCard from './workout/program/components/LargeProgramSearchResultCard';
+import ThinFeatherIcon from 'react-native-feather1s'
 
 const mapStateToProps = (state, action) => {
     return {
@@ -92,6 +95,7 @@ class LupaHome extends React.Component {
             customizedInviteFriendsModalIsOpen: false,
             trainWithSwiperIndex: 0, //approved,
             index: 0,
+            data: [0,1,2,3,4]
         }
 
         this.searchAttributePickerModalRef = React.createRef()
@@ -103,7 +107,6 @@ class LupaHome extends React.Component {
     }
 
     setupComponent = async () => {
-        // this.setState({ inviteFriendsIsVisible: true })
             await this.loadFeaturedPrograms();
 
             let featuredTrainersIn = []
@@ -163,6 +166,57 @@ class LupaHome extends React.Component {
         }
     }
 
+    renderRecentlyAddedPrograms = () => {
+        try {
+            return this.state.featuredPrograms.map((element, index, arr)=> {
+                if (index >= 4) {
+                    return;
+                }
+    
+                return (
+                    <TouchableOpacity style={{}}>
+                <View style={{margin: 5,  width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center'}}>
+    <Surface style={{margin: 10, borderRadius: 5, width: 150, height: 170, backgroundColor: '#FFFFFF', elevation: 0, borderRadius: 5}}>
+    <Image source={{ uri: element.program_image }} style={{width: '100%',
+    height: '100%',
+    borderRadius: 5}} 
+                        resizeMode='cover' 
+                    />
+    </Surface>
+    
+    <View style={{flex: 1, padding: 10, height: 150, justifyContent: 'space-evenly', alignSelf: 'flex-start'}}>
+        <Text style={{color: '#1089ff', fontSize: 12, fontWeight: '600'  }}>
+            Emily Loefstedt 
+        </Text>
+        <Text style={{color: '#212121',fontSize: 15, fontWeight: '700'  }}>
+           {element.program_name}
+        </Text>
+    
+            <Text style={{color: 'black', fontSize: 12, fontWeight: '300', fontFamily: 'avenir-roman'}}>
+                {element.program_description}
+            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {
+                element.program_tags.map(tag => {
+                    return (
+                        <Caption>
+                            {tag} {" "}
+                        </Caption>
+                    )
+                })
+            }
+            </View>
+        </View>
+    </View>
+    </TouchableOpacity>
+                )
+            })
+        } catch(err) {
+            return null
+            alert(err)
+        }
+    }
+
     closeTrainerInsightsModalMethod = () => {
         this.setState({ trainerInsightsVisible: false })
     }
@@ -191,7 +245,7 @@ class LupaHome extends React.Component {
                 searchValue: searchQuery,
             })
     
-            await this.LUPA_CONTROLLER_INSTANCE.searchTrainersAndPrograms(searchQuery).then(searchData => {
+            await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
                 searchResultsIn = searchData;
             })
    
@@ -200,41 +254,29 @@ class LupaHome extends React.Component {
 
     _renderItem = ({item, index}) => {
         return (
-            <TouchableOpacity>
                                 <Surface style={{height: 200, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 3, margin: 5}}>
                                     <Image resizeMode="cover" source={{uri: item.program_image}} style={{width: '100%', height: '100%', borderRadius: 15}} />
-                                </Surface>
-                                <View style={{marginLeft: 10}}>
-                                <Text style={{fontSize: 15,   color: '#212121', paddingVertical: 5 }}>
-                                    6 Week Resistance Training
-                                </Text>
-                                <Text style={{fontWeight: '300', fontSize: 12, color: '#212121'}}>
-                                        by Emily Loefstedt
+                                        
+                                <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF'}}>
+<ThinFeatherIcon thin={true} name="play" color="white" size={30} />
+</View>
+                                    <View style={{flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.1)', ...StyleSheet.absoluteFillObject, borderRadius: 15}} />
+                                    
+                                    <Chip style={{backgroundColor: '#1089ff', position: 'absolute', top: 0, right: 0, margin: 10, borderRadius: 3, padding: 0, height: 22, alignItems: 'center', justifyContent: 'center'}}>
+                                    <Text style={{fontSize: 12, fontWeight: '600', color: 'white'}}>
+                                        Recently Updated
                                     </Text>
-                                </View>
-                                </TouchableOpacity>
+                                </Chip>
+                                </Surface>
         );
     }
 
     _renderSearchResults = () => {
         {
             return this.state.searchResults.map(result => {
-                switch(result.resultType) {
-                    case "User":
                         return (
-                            <>
-                            <UserSearchResultCard user={result}/>
-                            <Divider />
-                            </>
+                           <LargeProgramSearchResultCard program={result} />
                         )
-                    case "Program":
-                        return (
-                            <>
-                            <ProgramSearchResultCard programData={result} />
-                            <Divider />
-                            </>
-                        )
-                }
             })
         }
     }
@@ -263,32 +305,35 @@ class LupaHome extends React.Component {
         return (
             <View style={styles.root}>
                 
-                <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+               <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                 <MenuIcon customStyle={{margin: 10}} onPress={() => this.props.navigation.openDrawer()} />
                 <SearchBar placeholder="Search fitness programs"
                         onChangeText={text => this._performSearch(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
                         containerStyle={{backgroundColor: "transparent", width: '90%'}}
-                        inputContainerStyle={{backgroundColor: 'rgb(242, 242, 247))',}}
+                        inputContainerStyle={{backgroundColor: '#eeeeee',}}
                         inputStyle={{fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman'}}
                         placeholderTextColor="#212121"
                         value={this.state.searchValue}/>
                 </Appbar.Header>
-
+            
                 {
                     this.state.searchValue != "" ?
                     <View style={{flex: 1}}>
                         <ScrollView>
                             {this._renderSearchResults()}
                         </ScrollView>
-                        <FAB icon="filter-list" color="#FFFFFF" style={{backgroundColor: 'rgba(1,87,155 ,1)', position: 'absolute', bottom: 0, right: 0, margin: 15}} />
                     </View>
                     :
                <View style={{flex: 1}}>
 <ScrollView onScroll={event => this.onScroll(event)} contentContainerStyle={{width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2}}>
-
         <View style={{justifyContent: 'center', justifyContent: 'center', marginVertical: 10}}>
+            <View>
+            <Text style={{paddingLeft: 10,marginVertical: 10, fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold'}}>
+                      Most Popular
+                    </Text>
+            </View>
     <Carousel 
                         data={this.state.featuredPrograms}
                         itemWidth={Dimensions.get('window').width - 100}
@@ -301,12 +346,13 @@ class LupaHome extends React.Component {
                         />
                        
                         </View>
+                                    
 
-<View style={{hjustifyContent: 'center', justifyContent: 'center'}}>
+<View style={{justifyContent: 'center', justifyContent: 'center'}}>
 <Divider style={{width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5}} />
                     <View style={{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10}}>
                     <Text style={{marginVertical: 10, fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold'}}>
-                       Start training with...
+                       Start training with
                     </Text>
                     <Caption>
                                     { this.state.trainWithSwiperIndex + 1} / {this.state.featuredTrainers.length}
@@ -334,7 +380,7 @@ class LupaHome extends React.Component {
 
 <View style={{height: 300, alignItems: 'center', justifyContent: 'center'}}>
     <Divider style={{width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5}} />
-    <Swiper horizontal={true} activeDotIndex={0} inactiveDotColor="#1089ff" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{alignItems: 'center', justifyContent: 'center'}}>    
+    <Swiper horizontal={true} activeDotIndex={0} inactiveDotColor="#212121" dotStyle={{width: 8, height: 8, backgroundColor: '#1089ff'}} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{alignItems: 'center', justifyContent: 'center'}}>    
 
                         <>
                         <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, backgroundColor: 'transparent', marginVertical: 10}}>
@@ -402,13 +448,22 @@ class LupaHome extends React.Component {
 
                     </ScrollView>
                 </View>
-    
+
+
+                <View style={{backgroundColor: '#eeeeee', justifyContent: 'center', justifyContent: 'center'}}>
+                    <View style={{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10}}>
+                    <Text style={{marginVertical: 10, fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold'}}>
+                       Recently created programs
+                    </Text>
+                    </View>
+                    {this.renderRecentlyAddedPrograms()}
+                    </View>
                     </ScrollView>
                     </View>
     }
                     
             {/* <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} /> */}
-            
+
             </View>
         );
     }

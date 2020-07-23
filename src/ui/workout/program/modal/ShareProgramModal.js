@@ -4,105 +4,48 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     StyleSheet,
-    Text,
-    TouchableOpacity,
     SafeAreaView,
     Dimensions,
-    ImageBackground,
-    Animated,
-    Image,
-    Button as NativeButton,
     ScrollView,
-    Modal,
-    RefreshControl,
 } from 'react-native';
 
 import {
     Appbar,
-    Title,
-    Button,
-    TextInput,
-    Surface,
-    Avatar as PaperAvatar,
-    Paragraph,
-    Snackbar,
-    Chip,
-    Modal as PaperModal,
-    Dialog,
-    Portal,
-    Provider,
-    Card,
     FAB,
-    Caption,
-    Searchbar,
+    Divider,
 } from 'react-native-paper';
 
-import {
-    Header,
-    Tab,
-    Tabs,
-    ScrollableTab,
-} from 'native-base';
-
-import { connect } from 'react-redux'
-
-import FeatherIcon from 'react-native-vector-icons/Feather'
-
-import { Input, Divider } from 'react-native-elements';
+import { useSelector } from 'react-redux'
 
 import LupaController from '../../../../controller/lupa/LupaController'
 
 import UserSearchResult from '../../../user/profile/component/UserSearchResult'
 import ProgramSearchResultCard from '../components/ProgramSearchResultCard';
 
-const mapStateToProps = (state, action) => {
-    return {
-        lupa_data: state,
-    }
-}
+const { windowWidth, windowHeight } = Dimensions.get('window')
 
-const mapDispatchToProps = (dispatchEvent) => {
-    return {
-        deleteProgram: (programUUID) => {
-            dispatchEvent({
-                type: "DELETE_CURRENT_USER_PROGRAM",
-                payload: programUUID
-            })
-        },
-    }
-}
+function ShareProgramModal({ navigation, route }) {
+    const [followingUserObjects, setFollowingUserObjects] = useState([])
+    const [selectedUsers, setSelectedUsers] = useState([])
 
-class ShareProgramModal extends React.Component{
-    constructor(props) {
-        super(props);
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData
+    })
 
-        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
-        this.state = {
-            followingUserObjects: [],
-            selectedUsers: [],
-
-        }
-    }
-
-    componentDidMount = async () => {
-        let results = [];
-        
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.route.params.following).then(objs => {
-            results = objs;
+    useEffect(() => {
+        LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(route.params.following).then(objs => {
+            setFollowingUserObjects(objs)
         })
+    }, [])
 
-        this.setState({ 
-            followingUserObjects: results,
-        })
-    }
-
-    handleAddToFollowList = (userObject) => {
-        const updatedList = this.state.selectedUsers;
+    const handleAddToFollowList = (userObject) => {
+        const updatedList = selectedUsers;
         var found = false;
-        for(let i = 0; i < this.state.selectedUsers.length; i++)
+        for(let i = 0; i < selectedUsers.length; i++)
         {
-            if (this.state.selectedUsers[i] == userObject.user_uuid)
+            if (selectedUsers[i] == userObject.user_uuid)
             {
 
               updatedList.splice(i, 1);
@@ -117,17 +60,13 @@ class ShareProgramModal extends React.Component{
             updatedList.push(userObject.user_uuid);
         }
 
-        this.setState({
-            selectedUsers: updatedList,
-        })
-
-
+        setSelectedUsers(updatedList)
     }
 
-    waitListIncludesUser = (userObject) => {
-        for(let i = 0; i < this.state.selectedUsers.length; i++)
+    const waitListIncludesUser = (userObject) => {
+        for(let i = 0; i < selectedUsers.length; i++)
         {
-            if (this.state.selectedUsers[i] == userObject.user_uuid)
+            if (selectedUsers[i] == userObject.user_uuid)
             {
                 return true;
             }
@@ -136,10 +75,10 @@ class ShareProgramModal extends React.Component{
         return false;
     }
 
-    mapFollowing = () => {
-        return this.state.followingUserObjects.map(user => {
+    const mapFollowing = () => {
+        return followingUserObjects.map(user => {
             return (
-                <View key={user.user_uuid} style={{backgroundColor: this.waitListIncludesUser(user) ? '#E0E0E0' : 'transparent'}}>
+                <View key={user.user_uuid} style={{backgroundColor: waitListIncludesUser(user) ? '#E0E0E0' : 'transparent'}}>
                     <UserSearchResult 
                         avatarSrc={user.photo_url} 
                         displayName={user.display_name} 
@@ -147,32 +86,26 @@ class ShareProgramModal extends React.Component{
                         isTrainer={user.isTrainer}
                         hasButton={true}
                         buttonTitle="Invite"
-                        buttonOnPress={() => this.handleAddToFollowList(user)}
+                        buttonOnPress={() => handleAddToFollowList(user)}
                         />
                 </View>
             );
         })
     }
 
-    handleCancel = () => {
-        this.props.navigation.pop()
-    }
-
-    handleApply = () => {
+    const handleApply = () => {
         try {
-            this.LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(this.props.lupa_data.Users.currUserData, this.state.selectedUsers, this.props.route.params.programData);
-            this.props.navigation.pop()
+            LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, selectedUsers, route.params.programData);
+            navigation.pop()
         } catch(err) {
             alert(err)
-            this.props.navigation.pop()
+            navigation.pop()
         }
     }
 
-    render() {
-        const { navigation } = this.props
-        return (
-                <View style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height, backgroundColor: '#FFFFFF'}}>
-                                   <Appbar.Header style={{elevation: 0}} theme={{
+    return (
+        <View style={styles.container}>
+                    <Appbar.Header style={styles.appbar} theme={{
                     colors: {
                         primary: '#FFFFFF'
                     }
@@ -181,21 +114,38 @@ class ShareProgramModal extends React.Component{
                     <Appbar.Content title="Share Program" />
                 </Appbar.Header>
 
-                <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-                <ProgramSearchResultCard programData={this.props.route.params.programData} />
+                <View style={styles.contentContainer}>
+                <ProgramSearchResultCard programData={route.params.programData} />
                               <Divider />
-                    <ScrollView shouldRasterizeIOS={true} contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
+                    <ScrollView shouldRasterizeIOS={true}>
                     {
-                        this.mapFollowing()
+                        mapFollowing()
                     }
                 </ScrollView>
                 <SafeAreaView />
                     </View>
 
-                    <FAB  color="#FFFFFF" style={{position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#2196F3'}} icon="done" onPress={this.handleApply} />
+                    <FAB  color="#FFFFFF" style={styles.fab} icon="done" onPress={handleApply} />
             </View>
-        )
-    }
+    )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShareProgramModal);
+const styles = StyleSheet.create({
+    container: {
+        width: windowWidth, 
+        height: windowHeight, 
+        backgroundColor: '#FFFFFF'
+    },
+    appbar: {
+        elevation: 0
+    },
+    fab: {
+        position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#2196F3'
+    },
+    contentContainer: {
+        flex: 1
+    }
+})
+
+
+export default ShareProgramModal;

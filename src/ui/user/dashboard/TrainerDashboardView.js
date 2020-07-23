@@ -152,7 +152,7 @@ function TrainerDashboardView(props) {
 
             </View>
             <View style={{flex: 1}}>
-            <Surface style={{padding: 5, marginVertical: 10, elevation: 3, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+            <Surface style={{marginVertical: 10, elevation: 3, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
 <Text style={{fontSize: 20, color: '#E5E5E5', padding: 5}}> Sessions </Text>
 <LineChart
 data={{
@@ -171,7 +171,7 @@ data={{
   ]
 }}
 width={Dimensions.get("window").width - 20} // from react-native
-height={160}
+height={90}
 yAxisLabel="$"
 yAxisSuffix="k"
 yAxisInterval={1} // optional, defaults to 1
@@ -183,7 +183,7 @@ chartConfig={{
   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
   labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
   style: {
-    borderRadius: 0,
+    borderRadius: 15,
   },
   propsForDots: {
     r: "6",
@@ -193,7 +193,7 @@ chartConfig={{
 }}
 bezier
 style={{
-  borderRadius: 0,
+  borderRadius: 15,
 }}
 />
 </Surface>
