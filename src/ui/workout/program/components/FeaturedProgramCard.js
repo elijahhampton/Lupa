@@ -106,11 +106,11 @@ function FeaturedProgramCard({ currProgram }) {
 
 
                         <View style={styles.actionBottomContent}>
-                            <Text style={styles.programAddressText} numberOfLines={1}>
+                            <Text style={styles.programLocationAddressText} numberOfLines={1}>
                                 {getProgramLocation().address}
                             </Text>
 
-                            <Text style={styles.programNameText}>
+                            <Text style={styles.programLocationNameText}>
                                 ({getProgramLocation().name})
                             </Text>
                         </View>
@@ -150,10 +150,10 @@ const styles = StyleSheet.create({
     actionBottomContent: {
         width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'
     },
-    programAddressText: {
+    programLocationAddressText: {
         fontSize: 10, fontWeight: '400', flexWrap: 'nowrap'
     },
-    programNameText: {
+    programLocationNameText: {
         fontSize: 10, fontWeight: '400', flexWrap: 'nowrap'
     }
 })

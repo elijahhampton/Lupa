@@ -49,7 +49,6 @@ function ReceivedProgramNotification({ notificationData }) {
     const handleOnPress = () => {
         if (notificationData.data.program_participants.includes(currUserData.user_uuid))
         {
-            console.log('aa')
            navigation.navigate('LiveWorkout', {
                            programData: notificationData.data,
                        })
@@ -57,7 +56,6 @@ function ReceivedProgramNotification({ notificationData }) {
         }
         else
         {
-            console.log('bb')
             setProgramModalVisible(true)
         }
     }

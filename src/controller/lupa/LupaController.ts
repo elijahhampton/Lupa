@@ -235,9 +235,9 @@ export default class LupaController {
 
     /* Algolia */
     indexApplicationData = () => {
-      USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+     // USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
       //PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
-      USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
+     // USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
     indexUsers = async () => {
