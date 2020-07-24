@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#1089ff'
     },
     chipTextStyle: {
-        color: '#FFFFFF'
+        color: '#FFFFFF',
+        fontWeight: 'bold'
     }
 })
 

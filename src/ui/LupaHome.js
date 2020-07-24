@@ -276,7 +276,7 @@ class LupaHome extends React.Component {
                                     </Text>
                         </Chip>
                     </Surface>
-                   {/*  <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} /> */}
+                    <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} /> 
                 </TouchableOpacity>
             </>
         );
