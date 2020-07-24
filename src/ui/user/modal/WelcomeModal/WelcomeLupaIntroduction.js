@@ -31,6 +31,7 @@ import _requestPermissionsAsync from '../../../../controller/lupa/permissions/pe
 
 import { connect } from 'react-redux';
 import { error } from 'react-native-gifted-chat/lib/utils';
+import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
 //Activity Indicator to show while fetching location data
 const ActivityIndicatorModal = (props) => {
     return (
@@ -71,7 +72,7 @@ class WelcomeLupaIntroduction extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            location: {},
+            location: getLupaUserStructure().location,
             locationText: '',
             locationDataSet: false,
             showLoadingIndicator: false,
@@ -113,73 +114,24 @@ class WelcomeLupaIntroduction extends React.Component {
      * behavior.
      */
     _getLocationAsync = async () => {
-        // try {
         let result;
-
-        //show loading indicator
         await this.setState({
             showLoadingIndicator: true,
         })
 
         try {
             await Geolocation.getCurrentPosition(
-                locationInfo => {
-                  const locationInfoObject = JSON.stringify(locationInfo);
-                  this.setState({ location: locationInfoObject})
-                },
-                async error => { 
-                    const errLocationData = {
-                        city: 'San Francisco',
-                        state: 'CA',
-                        country: 'USA',
-                        latitude: '37.7749',
-                        longitude: '122.4194',
-                    }
-        
-        
-                    //Update user location in database
-                    await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', errLocationData);
-        
-                    //udpate user in redux
-                    const payload = await getUpdateCurrentUserAttributeActionPayload('location', errLocationData, []);
-                    await this.props.updateCurrentUserAttribute(payload);
-        
-                await this.enableNext();
-        
-                await this.setState({
-                    showLoadingIndicator: false,
-                    locationDataSet: false,
-                })
-                },
-                {
-                    enableHighAccuracy: true, 
-                    timeout: 7000, //We will give the api 7 seconds to get the user's location
-                    //maximumAge: 1000 defaulting to INFINITY
-                },
-              );
-
-              await this.setState({ location: result })
-
-            if (this.state.location.hasOwnProperty('coords')) {
-                this.setState({ locationDataSet: true })
-                
-                const locationData = await getLocationFromCoordinates(this.state.location.coords.longitude, this.state.location.coords.latitude);
-
-                //Update user location in database
-                await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
-
+                async (locationInfo) => {
+               const locationData = await getLocationFromCoordinates(locationInfo.coords.longitude, locationInfo.coords.latitude);
+               await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
+               await this.setState({ locationDataSet: true })
                 //udpate user in redux
-                const payload = await getUpdateCurrentUserAttributeActionPayload('location', locationData, []);
-                await this.props.updateCurrentUserAttribute(payload);
-            }
-            else {
-
-                this.setState({ locationDataSet: false })
-                //we will throw an error here, set random location data and move on
-                throw "GEOLOCATION_ERROR";
-            }
-
-        } catch (error) {
+                 const payload = await getUpdateCurrentUserAttributeActionPayload('location', locationData, []);
+                 await this.props.updateCurrentUserAttribute(payload);
+                 alert('done')
+                },
+                async (error) => { 
+                    alert(error)
             const errLocationData = {
                 city: 'San Francisco',
                 state: 'CA',
@@ -196,6 +148,36 @@ class WelcomeLupaIntroduction extends React.Component {
             const payload = await getUpdateCurrentUserAttributeActionPayload('location', errLocationData, []);
             await this.props.updateCurrentUserAttribute(payload);
             await this.setState({ locationDataSet: true })
+            await this.enableNext();
+
+            await this.setState({
+                showLoadingIndicator: false,
+            })
+                },
+              );
+        } catch (error) {
+            alert(error)
+            const errLocationData = {
+                city: 'San Francisco',
+                state: 'CA',
+                country: 'USA',
+                latitude: '37.7749',
+                longitude: '122.4194',
+            }
+
+
+            //Update user location in database
+            await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', errLocationData);
+
+            //udpate user in redux
+            const payload = await getUpdateCurrentUserAttributeActionPayload('location', errLocationData, []);
+            await this.props.updateCurrentUserAttribute(payload);
+            await this.setState({ locationDataSet: true })
+            await this.enableNext();
+
+            await this.setState({
+                showLoadingIndicator: false,
+            })
         }
 
         await this.enableNext();

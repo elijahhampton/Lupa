@@ -335,7 +335,7 @@ class LupaHome extends React.Component {
                             <ScrollView contentContainerStyle={{ width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2 }}>
                                 <View style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                                     <View>
-                                        <Text style={{ paddingLeft: 10, marginVertical: 10, fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold' }}>
+                                        <Text style={{ paddingLeft: 10, marginVertical: 10, fontSize: RFValue(18), fontFamily: 'avenir-roman', fontWeight: 'bold' }}>
                                             Most Popular
                     </Text>
                                     </View>
@@ -356,7 +356,7 @@ class LupaHome extends React.Component {
                                 <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
                                     <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                        <Text style={{ marginVertical: 10, fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold' }}>
+                                        <Text style={{ marginVertical: 10, fontSize: RFValue(18), fontFamily: 'avenir-roman', fontWeight: 'bold' }}>
                                             Start training with
                     </Text>
                                         <Caption>
@@ -437,7 +437,7 @@ class LupaHome extends React.Component {
                                 <View
                                     style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                                     <View style={{ padding: 5 }}>
-                                        <Text style={{ fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold', paddingVertical: 10, paddingLeft: 10 }}>
+                                        <Text style={{ fontSize: RFValue(18), fontFamily: 'avenir-roman', fontWeight: 'bold', paddingVertical: 10, paddingLeft: 10 }}>
                                             Top picks
                         </Text>
                                     </View>
