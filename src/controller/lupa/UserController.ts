@@ -1221,8 +1221,6 @@ export default class UserController {
                 LOG_ERROR('UserController.ts', 'Unhandled error in deleteUserProgram()', error)
             }
         }*/
-
-        console.log('Deleting user program')
 }
 
     createService = async (serviceObject) => {

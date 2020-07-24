@@ -91,6 +91,7 @@ function ProgramInformationPreview(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     const dispatch = useDispatch()
+
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
@@ -103,17 +104,23 @@ function ProgramInformationPreview(props) {
 
     useEffect(() => {
         async function fetchData() {
-            let result = {}, userData = {}
-            await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.programData.program_structure_uuid).then(data => {
-                result = data;
-            })
+            try {
+                await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.programData.program_structure_uuid).then(data => {
+                    setProgramData(data)
+                })
+            } catch(err) {
+                alert(err)
+                setProgramData(getLupaProgramInformationStructure())
+            }
 
-            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.programData.program_owner).then(data => {
-                userData = data
-            })
-
-            await setProgramData(result);
-            await setProgramOwnerData(userData)
+            try {
+                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.programData.program_owner).then(data => {
+                    setProgramOwnerData(data)
+                })
+            } catch(err) {
+                alert(err)
+                setProgramOwnerData(getLupaProgramInformationStructure())
+            }
         }
 
         fetchData();
@@ -228,13 +235,13 @@ function ProgramInformationPreview(props) {
      * @return String progam owner's display name
      */
     const getOwnerDisplayName = () => {
-        if (typeof(programData) == 'undefined')
+        if (typeof(programOwnerData) == 'undefined')
         {
             return ''
         }
 
             try {
-            return programData.program_owner.displayName
+            return programOwnerData.display_name
             } catch(error) {
                 LOG_ERROR('ProgramInformationPreview.js', 'Unhandled exception in getOwnerDisplayName()', error)
                 return ''
@@ -317,7 +324,7 @@ function ProgramInformationPreview(props) {
 
     return (
         <Modal key={Math.random()} presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
-              <View style={styles.container}>
+              <SafeAreaView style={styles.container}>
                   <Appbar.Header style={styles.appbar} theme={{
                       colors: {
                           primary: '#FFFFFF'
@@ -398,7 +405,7 @@ function ProgramInformationPreview(props) {
                            style={styles.messageButton}>
                                <FeatherIcon name="message-circle" size={15} />
                                 <Text>
-                                    Send Elijah a Message
+                                    Send {programOwnerData.display_name} a Message
                                 </Text>
                            </Button>
                        </View>
@@ -422,8 +429,7 @@ function ProgramInformationPreview(props) {
                         Purchase
                     </Button>
                    </View>
-                   </View>
-                <SafeAreaView /> 
+                   </SafeAreaView>
             </Modal>
     )
 }

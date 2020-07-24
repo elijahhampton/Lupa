@@ -414,52 +414,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     }
 
     /**
-     * Renders user review data.
-     */
-   /* mapUserReviews = () => {
-        return this.state.sessionReviews.length == 0 ?
-        this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid ?
-        <Caption style={{marginLeft: 5, alignSelf: 'flex-start'}}>
-            You have no session reviews.
-        </Caption>
-        :
-        <Caption style={{marginLeft: 5, alignSelf: 'flex-start'}}>
-            This user has no session reviews.
-        </Caption>
-        :
-        this.state.sessionReviews.map(review => {
-            return (
-                <View style={{ margin: 10, width: Dimensions.get('window').width - 40, height: "auto", padding: 5, borderRadius: 15, flexDirection: "column", backgroundColor: "#ebebeb" }}>
-                <View style={{ width: "100%", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
-                    <View style={{ padding: 5, flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
-                        <Surface style={{ margin: 3, elevation: 10, width: 25, height: 25, borderRadius: 25 }}>
-                            <Image source={{uri: review.reviewByData.photo_url}} style={{ width: 25, height: 25, borderRadius: 25 }} />
-                        </Surface>
-
-                        <Text style={{ fontWeight: "bold" }}>
-                            {review.reviewByData.display_name}
-                </Text>
-                    </View>
-
-                    <>
-                        <Text style={{ fontWeight: "bold" }}>
-                            {review.reviewDate}
-            </Text>
-                    </>
-                </View>
-
-                <Text style={{ padding: 3, fontFamily: "avenir-roman" }} numberOfLines={10} ellipsizeMode="tail">
-                   {review.reviewText}
-            </Text>
-
-                <NativeButton title="See Review" onPress={() => console.log('User Review')}/>
-            </View>
-            )
-        })
-    }
-*/
-
-    /**
      * Navigates to the follower view.
      */
     _navigateToFollowers = () => {
@@ -558,20 +512,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     </Text>
                         </Button>
             </View>
-
-
     }
-
-
-    /**
-     * Shows invite to pack dialog.
-     */
-    _showDialog = () => this.setState({ dialogVisible: true });
-
-    /**
-     * Hides invite to pack dialog.
-     */
-    _hideDialog = () => this.setState({ dialogVisible: false });
 
     /**
      * Shows the profile view actoion sheet.
@@ -584,7 +525,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             }, (buttonIndex) => {
                 switch (buttonIndex) {
                     case 0:
-                        this._showDialog();
+                       
                         break;
                     case 1:
                         break;
@@ -639,7 +580,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      * @return Returns a view containing this user's city and state.
      */
     getLocation = () => {
-            return this.currUserUUID = this.props.lupa_data.Users.currUserData.user_uuid ?
+            return this.state.userData == this.props.lupa_data.Users.currUserData.user_uuid ?
                 <View style={{alignItems: 'center', flexDirection: 'row'}}>
                 <MaterialIcons name="place" />
                                                 <Text style={{ fontSize: 12, color: "#212121", fontWeight: "600", padding: 1 }}>
@@ -948,7 +889,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     
                     <Body>
                     <Text style={{ fontSize: 15, color: "#212121", fontWeight: '600', padding: 1 }}>
-                                    {this.state.userData.username}
+                        {this.state.userData.username}
                     </Text>
                     </Body>
 
@@ -1078,7 +1019,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 </ScrollView>
                         
                 <ProgramOptionsModal program={this.state.programOptionsProgram} isVisible={this.state.programOptionsModalIsOpen} closeModal={this.closeProgramOptionsModal} />
-               {/* <InviteToPackDialog userToInvite={this.props.navigation.getParam('userUUID')} userPacks={this.state.userPackData} isOpen={this.state.dialogVisible} closeModalMethod={this._hideDialog} /> */}
                         
             </SafeAreaView>
         );
