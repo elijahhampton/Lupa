@@ -2,10 +2,11 @@ import * as firebase from 'firebase';
 import reactfirebase from '@react-native-firebase/app';
 import reactfirebaseauth from '@react-native-firebase/auth';
 import reactfirestore from '@react-native-firebase/firestore';
+import reactfirebasemessaging from '@react-native-firebase/messaging';
 import '@react-native-firebase/database';
 import reactfirebasestorage from '@react-native-firebase/storage';
 import axios from 'axios';
-import { getLupaUserStructure } from './collection_structures';
+import { getLupaUserStructure, getLupaUserStructurePlaceholder } from './collection_structures';
 
 import * as EmailValidator from 'email-validator'
 
@@ -27,26 +28,34 @@ let fb_init_config = reactfirebase.initializeApp(firebaseConfig)
 
 const LUPA_DB = reactfirestore()
 const LUPA_DB_FIREBASE = reactfirebase.database()
-
 const LUPA_AUTH = reactfirebaseauth()
+const LUPA_MESSAGING = reactfirebasemessaging();
 
-var CURRENT_USER_DOC_REF = undefined;
-var CURRENT_USER_DOC_DATA_REF = undefined;
+LUPA_MESSAGING.onMessage(async remoteMessage => {
+  //sendLocalPushNotification(remoteMessage.data.title, remoteMessage.data.body, remoteMessage.data.time)
+});
+
+LUPA_MESSAGING.setBackgroundMessageHandler(async remoteMessage => {
+ // sendLocalPushNotification(remoteMessage.data.title, remoteMessage.data.body, remoteMessage.data.time)
+});
+
 
 export async function sendNotificationToCurrentUsersDevice() {
 
 
   const userId = LUPA_AUTH.currentUser.uid;
   let tokenObject, uuid;
-
+  let userData = getLupaUserStructurePlaceholder()
   await reactfirestore()
   .collection('users')
   .doc(userId)
   .get()
   .then(snapshot => {
-    uuid = snapshot.data().user_uuid;
-    tokenObject = snapshot.data().tokens;
+    userData = snapshot.data()
   });
+  
+  uuid = userData.user_uuid
+  tokenObject = userData.tokens
 
   const FIREBASE_API_KEY = "AIzaSyAphvoeqmIPNfeFeegmV8nNsfCMPyl0bvI";
 
@@ -61,6 +70,76 @@ export async function sendNotificationToCurrentUsersDevice() {
       
     })
 }
+
+
+async function saveTokenToDatabase(token, uuid) {
+  // Assume user is already signed in
+
+  if (typeof(uuid) == 'undefined' || typeof(uuid) != 'string') {
+    const userId = await reactfirebaseauth().currentUser.uid;
+    let tokenObject;
+  await reactfirestore()
+  .collection('users')
+  .doc(uuid)
+  .get()
+  .then(snapshot => {
+    tokenObject = snapshot.data().tokens;
+  });
+
+  tokenObject.fb_messaging_token = token;
+
+  // Add the token to the users datastore
+  await reactfirestore()
+    .collection('users')
+    .doc(userId)
+    .update({
+      tokens: tokenObject
+    });
+
+    return;
+  }
+
+  let tokenObject;
+  await reactfirestore()
+  .collection('users')
+  .doc(uuid)
+  .get()
+  .then(snapshot => {
+    tokenObject = snapshot.data().tokens;
+  });
+
+  tokenObject.fb_messaging_token = token;
+
+  // Add the token to the users datastore
+  await reactfirestore()
+    .collection('users')
+    .doc(uuid)
+    .update({
+      tokens: tokenObject
+    });
+}
+
+export function generateMessagingToken(uuid) {
+  reactfirebasemessaging()
+      .getToken()
+      .then(token => {
+        return saveTokenToDatabase(token, uuid);
+      });
+}
+
+  /**
+   * Callback fire is instand ID is changed.
+   * Update to the latest version of @react-native-firebase/messaging to use this method.  Causes
+   * crashes.
+   */
+/*LUPA_MESSAGING.onTokenRefresh(() => {
+  LUPA_MESSAGING.getToken().then((refreshedToken) => {
+    saveTokenToDatabase(refreshedToken);
+    // ...
+  }).catch((err) => {
+
+  });
+});*/
 
 const LUPA_STORAGE_BUCKET = reactfirebasestorage()
 const LUPA_USER_PROFILE_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('profile_images');

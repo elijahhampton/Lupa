@@ -152,7 +152,12 @@ function TrainerDashboardView(props) {
 
             </View>
             <View style={{flex: 1}}>
-            <Surface style={{marginVertical: 10, elevation: 3, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+            <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={_onRefresh}
+                />}>
+                                <Surface style={{marginVertical: 10, elevation: 3, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
 <Text style={{fontSize: 20, color: '#E5E5E5', padding: 5}}> Sessions </Text>
 <LineChart
 data={{
@@ -171,7 +176,7 @@ data={{
   ]
 }}
 width={Dimensions.get("window").width - 20} // from react-native
-height={90}
+height={120}
 yAxisLabel="$"
 yAxisSuffix="k"
 yAxisInterval={1} // optional, defaults to 1
@@ -197,11 +202,6 @@ style={{
 }}
 />
 </Surface>
-            <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={_onRefresh}
-                />}>
 
                 {renderNotifications()}
             </ScrollView>

@@ -323,7 +323,7 @@ function ProgramInformationPreview(props) {
 
 
     return (
-        <Modal key={Math.random()} presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
+        <Modal presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
               <SafeAreaView style={styles.container}>
                   <Appbar.Header style={styles.appbar} theme={{
                       colors: {

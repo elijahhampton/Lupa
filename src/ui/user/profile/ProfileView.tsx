@@ -989,13 +989,13 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                     <View style={{paddingVertical: 10}}>
                                         <View style={{marginHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                         <Text style={{fontSize: 15, paddingVertical: 10}}>
-                                        Program Results
+                                        Reviews
                                     </Text>
                                     <FeatherIcon name="chevron-down" />
                                         </View>
                                
                                     <Caption style={{paddingLeft: 20}}>
-                                        This user has not received any results from their programs.
+                                        This trainer has not received any reviews
                                     </Caption>
                                     </View>
                                     <Divider style={{backgroundColor: 'rgb(242, 242, 247)', height: 8}} />

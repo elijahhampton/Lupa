@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 
 import {
-    Headline
+    Headline,
+    TextInput,
 } from 'react-native-paper';
 
 import { Avatar, Input } from 'react-native-elements';
@@ -184,17 +185,23 @@ class BasicInformation extends React.Component {
                     <View style={[styles.flexFull, {alignItems: "center", justifyContent: 'space-evenly'}]}>
                     <View>
                     {   
-                       <Avatar showEditButton rounded size={100} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
+                       <Avatar containerStyle={{borderWidth: 1, borderColor: '#1089ff'}} showEditButton rounded size={100} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
                     }
                     </View>
                     </View>
 
                     <View style={styles.flexFull}>
-                    <Headline style={{padding: 5}}>
+                    <Text style={{ textAlign: 'left', fontFamily: 'avenir-roman', fontSize: 20, fontWeight: '500', marginVertical: 20 }}>
         What should we call you?
-    </Headline>
-    <Input 
-        placeholder="Enter your first and last name" 
+    </Text>
+    <TextInput 
+    mode='flat' 
+    theme={{ 
+        colors: {
+            primary: '#1089ff'
+        }
+    }}
+    placeholder="Ex. John Smith or Alice Walker" 
         onChangeText={text => this._handleDisplayNameOnChangeText(text)} 
         onSubmitEditing={text => this._handleDisplayNameEndEditing(text)}
         value={this.state.displayName}
@@ -203,7 +210,7 @@ class BasicInformation extends React.Component {
         keyboardType="default"
         keyboardAppearance="light"
         returnKeyLabel="done"
-        />
+    />
                     </View>
             </SafeAreaView>
         )
@@ -215,7 +222,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     flexFull: {
-        flex: 1
+        flex: 1,
+        marginHorizontal: 20,
     }
 })
 export default connect(mapStateToProps, mapDispatchToProps)(BasicInformation);

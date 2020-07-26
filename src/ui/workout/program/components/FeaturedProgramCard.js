@@ -84,7 +84,7 @@ function FeaturedProgramCard({ currProgram }) {
 
     return (
         <>
-            <Card key={Math.random()} 
+            <Card
             theme={{ roundness: 15 }} 
             style={styles.card} 
             onPress={() => handleCardOnPress(currProgram)}>

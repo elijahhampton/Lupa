@@ -1124,7 +1124,7 @@ export default class UserController {
         let uuid = await this.getCurrentUser().uid;
 
         if (typeof(uuid) == 'undefined') {
-            alert('e')
+     
             return Promise.resolve([])
         }
         
