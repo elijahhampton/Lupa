@@ -122,18 +122,17 @@ function ShareProgramModal({ navigation, route }) {
                         mapFollowing()
                     }
                 </ScrollView>
-                <SafeAreaView />
                     </View>
 
                     <FAB  color="#FFFFFF" style={styles.fab} icon="done" onPress={handleApply} />
+                    <SafeAreaView />
             </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: windowWidth, 
-        height: windowHeight, 
+        flex: 1, 
         backgroundColor: '#FFFFFF'
     },
     appbar: {

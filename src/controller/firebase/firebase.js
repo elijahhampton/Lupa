@@ -74,24 +74,27 @@ export async function sendNotificationToCurrentUsersDevice() {
 
 async function saveTokenToDatabase(token, uuid) {
   // Assume user is already signed in
+  alert(uuid)
 
   if (typeof(uuid) == 'undefined' || typeof(uuid) != 'string') {
     const userId = await reactfirebaseauth().currentUser.uid;
-    let tokenObject;
+
+    let userData = getLupaUserStructure(), tokenObject = {}
   await reactfirestore()
   .collection('users')
   .doc(uuid)
   .get()
   .then(snapshot => {
-    tokenObject = snapshot.data().tokens;
+    console.log(snapshot.data)
+    userData = snapshot.data()
   });
 
-  tokenObject.fb_messaging_token = token;
+  tokenObject.userData.tokens.fb_messaging_token = token;
 
   // Add the token to the users datastore
   await reactfirestore()
     .collection('users')
-    .doc(userId)
+    .doc(uuid)
     .update({
       tokens: tokenObject
     });
@@ -105,10 +108,10 @@ async function saveTokenToDatabase(token, uuid) {
   .doc(uuid)
   .get()
   .then(snapshot => {
-    tokenObject = snapshot.data().tokens;
+    userData = snapshot.data()
   });
 
-  tokenObject.fb_messaging_token = token;
+  tokenObject.userData.tokens.fb_messaging_token = token;
 
   // Add the token to the users datastore
   await reactfirestore()

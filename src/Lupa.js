@@ -5,7 +5,7 @@
  * 
  * Lupa App
  */
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   Text,
@@ -15,51 +15,30 @@ import {
 
 } from "react-native";
 
-import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal';
-
 import LupaController from './controller/lupa/LupaController';
-
-import {
-  logoutUser,
-} from './controller/lupa/auth/auth'
 
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
+import { generateMessagingToken } from "./controller/firebase/firebase";
 
-const mapStateToProps = (state, action) => {
-  return {
-    lupa_data: state
-  }
-}
+const Lupa = () => {
+  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+  const currUserData = useSelector(state => {
+    return state.Users.currUserData
+  })
 
-class Lupa extends React.Component {
-  constructor(props) {
-    super(props);
+  useEffect(() => {
+    generateMessagingToken(currUserData.user_uuid)
+    LUPA_CONTROLLER_INSTANCE.indexApplicationData()
+  }, [])
 
-    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    this.state = {
-      currIndex: 1,
-      isNewUser: false,
-      ready: false,
-      swipeable: true,
-      permissions: null,
-    }
-  }
-
-  componentDidMount = async () => {
-    this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-  }
-
-  render() {
-    return (
-      <>
-      <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-      <LupaDrawerNavigator />
-      </>
-    );
-  }
+  return (
+    <>
+    <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
+    <LupaDrawerNavigator />
+    </>
+  )
 }
 
 const config = {
@@ -88,4 +67,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default connect(mapStateToProps)(Lupa);
+export default Lupa;
