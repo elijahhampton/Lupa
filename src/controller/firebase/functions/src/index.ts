@@ -43,33 +43,34 @@ exports.receivedNotification = functions.firestore
 .onUpdate((change, context) => {
   const dataAfter = change.after.data();
   const dataBefore = change.before.data();
-
+  console.log('A')
   //Check to see if the size of the notification array has changed
   if (dataBefore.notifications.length < dataAfter.notifications.length)
   {
     //If the size of the array has grown
     let newNotification = dataAfter.notifications[dataAfter.notifications.length - 1];
-
+    console.log('B')
     //Find out which notification it is
     if (newNotification.type == "RECEIVED_PROGRAMS")
     {
       const payload = {
         data: {
           title: "New Program Invite",
-          body: `${newNotification.fromData.display_name} has invited you to try a program. Navigate to your notifications for more details.`,
+          body: `You received an invitation to preview a program. Navigate to your notifications for more details.`,
           time: new Date().getTime().toString()
         },
         notification: {
           title: "New Program Invite",
-          body: `${newNotification.fromData.display_name} has invited you to try a program. Navigate to your notifications for more details.`,
+          body: `You received an invitation to preview a program. Navigate to your notifications for more details.`,
           time: new Date().getTime().toString()
         },
       };
 
+      console.log('C')
       admin
         .messaging()
         .sendToDevice(
-            [dataBefore.tokens.fb_messaging_token], 
+            [dataAfter.tokens.fb_messaging_token], 
             payload,
             {
                 // Required for background/quit data-only messages on iOS
