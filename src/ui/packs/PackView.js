@@ -81,10 +81,7 @@ class PackView extends React.Component {
             refreshing: false,
             searching: false,
             currUserPacks: this.props.lupa_data.Packs.currUserPacksData,
-            searchViewHeight: new Animated.Value(0),
-            searchViewWidth: new Animated.Value(0),
             searching: false,
-            fabSpinValue: new Animated.Value(0),
             currentTab: 'Community',
             nonParticipatingPacks: [],
         }
@@ -92,72 +89,6 @@ class PackView extends React.Component {
         this.renders = 0;
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-        // Second interpolate beginning and end values (in this case 0 and 1)
-this.spin = this.state.fabSpinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg']
-  })
-    }
-
-    showSearch = () => {
-        this.setState({ searching: true })
-        // First set up animation 
-Animated.timing(
-    this.state.fabSpinValue,
-  {
-    toValue: 1,
-    duration: 500,
-    easing: Easing.linear,
-    useNativeDriver: true  // To make use of native driver for performance
-  }
-).start()
-
-        Animated.timing(this.state.searchViewWidth, {
-            duration: 300,
-            toValue: Dimensions.get('window').width,
-            useAnimatedDriver: false,
-            useNativeDriver: false,
-          //  easing: Easing.bounce
-        }).start()
-
-        Animated.timing(this.state.searchViewHeight, {
-            duration: 300,
-            toValue: Dimensions.get('window').height,
-            useAnimatedDriver: false,
-            useNativeDriver: false,
-           // easing: Easing.bounce
-        }).start()
-    }
-
-    closeSearch = () => {
-        this.setState({ searching: false })
-        // First set up animation 
-Animated.timing(
-    this.state.fabSpinValue,
-  {
-    toValue: 0,
-    duration: 500,
-    easing: Easing.linear,
-    useNativeDriver: true  // To make use of native driver for performance
-  }
-).start()
-
-        Animated.timing(this.state.searchViewWidth, {
-            duration: 300,
-            toValue: 0,
-            useAnimatedDriver: false,
-            useNativeDriver: false,
-          //  easing: Easing.bounce
-        }).start()
-
-        Animated.timing(this.state.searchViewHeight, {
-            duration: 300,
-            toValue: 0,
-            useAnimatedDriver: false,
-            useNativeDriver: false,
-           // easing: Easing.bounce
-        }).start()
     }
 
     componentDidMount = async () => {
@@ -531,42 +462,6 @@ Animated.timing(
                 </>
                 }
 
-               <Animated.View style={{backgroundColor: 'white', height: this.state.searchViewHeight, width: this.state.searchViewWidth, position: 'absolute', bottom: 0, right: 0, margin: 0}}>
-              
-                    <View style={{marginTop: Constants.statusBarHeight}}>
-                    <Searchbar 
-       style={{marginVertical: 5, borderRadius: 10, width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
-       placeholder="Search workout programs, fitness professionals" 
-       placeholderTextColor="rgb(99, 99, 102)" 
-       icon={() => <FeatherIcon name="search" size={20} /> }
-       inputStyle={{width: '100%', fontWeight: '300', fontSize: 15, padding: 0, margin: 0, width: '100%'}}
-       theme={{
-           colors: {
-               primary: '#1089ff',
-           }
-       }}
-       onChangeText={text => this._performSearch(text)}
-       value={this.state.searchValue}
-       />
-                    </View>
-
-                    {
-                        this.state.searchValue == "" ?
-                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                            <Text style={{color: 'rgb(199, 199, 204)' , fontSize: 20, padding: 10}}>
-                                Your fitness directory.  In your pocket.
-                            </Text>
-                        </View>
-                        :
-                        <ScrollView contentContainerStyle={{backgroundColor: 'white'}}>
-                        
-                        </ScrollView>
-                        //perform search
-                    }
-
-               
-
-</Animated.View>
          {/* <FAB icon={this.state.searching === true ? 'close' : 'search'} color="rgba(255,255,255 ,1)" onPress={this.state.searching == true ? this.closeSearch : this.showSearch} style={{ transform: [{rotate: this.spin}], backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} /> */}
             
            <CreatePackDialog isVisible={this.state.createPackModalIsOpen} closeDialogMethod={this.closeCreatePackModal} /> 

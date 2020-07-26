@@ -37,7 +37,7 @@ const PlaceHolder = () => {
 }
 
 const tabBarOptions = {
-  showLabel: true,
+  showLabel: false,
   labelStyle: {
     fontWeight: '400',
     fontFamily: 'avenir-roman',
@@ -56,9 +56,9 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Dashboard':
-              return <FeatherIcon name='clipboard' size={20} color={focused ? "#1089ff" : "#212121"} />;
+              return <FeatherIcon name='bell' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Train':
-              return <FeatherIcon name='activity' size={20} color={focused ? "#1089ff" : "#212121"} />;
+              return <FeatherIcon name='home' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Create':
               return <FeatherIcon name='plus-circle' size={20} color={focused ? "#1089ff" : "#212121"}/>;
             case 'Community':

@@ -48,7 +48,7 @@ function CircularUserCard(props) {
                 <Text style={{fontWeight: '600', color: '#1089ff'}}>
                         {props.user.display_name}
                     </Text>
-                    <Text style={{fontWeight: '600', color: '#212121'}}>
+                    <Text style={{fontWeight: '300', color: '#212121', fontSize: 12}}>
                         {props.user.location.city + ", " + props.user.location.state}
                     </Text>
                     <Text style={{fontWeight: '300', fontSize: 12}}>

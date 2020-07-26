@@ -88,7 +88,6 @@ class LupaHome extends React.Component {
             featuredPrograms: [],
             programModalVisible: false,
             inviteFriendsIsVisible: false,
-            height: new Animated.Value(80),
             customizedInviteFriendsModalIsOpen: false,
             trainWithSwiperIndex: 0, //approved,
             index: 0,
@@ -243,9 +242,9 @@ class LupaHome extends React.Component {
             searchValue: searchQuery,
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
-            searchResultsIn = searchData;
-        })
+        /*    await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
+                searchResultsIn = searchData;
+            })*/
 
         await this.setState({ searchResults: searchResultsIn, searching: false });
     }
@@ -261,22 +260,35 @@ class LupaHome extends React.Component {
     _renderItem = ({ item, index }) => {
         return (
             <>
-             <TouchableOpacity onPress={this.showLiveWorkoutPreview}>
-                    <Surface style={{margin: 5, height: 200, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', borderRadius: 15, elevation: 3 }}>
-                        <Image resizeMode="cover" source={{ uri: item.program_image }} style={{ width: '100%', height: '100%', borderRadius: 15 }} />
-
-                        <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
-                            <ThinFeatherIcon thin={true} name="play" color="white" size={30} />
-                        </View>
-                        <View style={{ flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.1)', ...StyleSheet.absoluteFillObject, borderRadius: 15 }} />
-
-                        <Chip style={{ backgroundColor: '#1089ff', position: 'absolute', top: 0, right: 0, margin: 10, borderRadius: 3, padding: 0, height: 22, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
-                                Recently Updated
+                <TouchableOpacity onPress={this.showLiveWorkoutPreview}>
+                    <Card style={{ borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 10 }}>
+                        <Card.Cover resizeMode='contain' style={{width: '100%', height: '100%', flex: 1}} source={{ uri: item.program_image }} />
+                        <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
+                                <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <Text style={{ fontFamily: 'avenir-roman', fontSize: RFValue(12), }} numberOfLines={1}>
+                                        {item.program_name}
                                     </Text>
-                        </Chip>
-                    </Surface>
-                    <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} /> 
+                                    <Text style={{ fontSize: RFValue(12), fontWeight: '500', color: '#1089ff' }}>
+                                        Emily Loefstedt
+</Text>
+                                </View>
+
+
+                                <View style={{ width: '100%' }}>
+                                    <Text style={{ fontSize: RFValue(12) }}>
+                                        {item.program_location.name}
+                                    </Text>
+                                    <Text style={{ fontSize: RFValue(12), fontWeight: '400', flexWrap: 'nowrap' }} numberOfLines={1}>
+                                        {item.program_location.address}
+                                    </Text>
+
+
+                                </View>
+                            </View>
+                        </Card.Actions>
+                    </Card>
+                    <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} />
                 </TouchableOpacity>
             </>
         );
@@ -292,25 +304,11 @@ class LupaHome extends React.Component {
         }
     }
 
-    showFilters = () => {
-        Animated.timing(this.state.height, {
-            toValue: 0,
-            duration: 100
-        }).start()
-    }
-
-    hideFilters = () => {
-        Animated.timing(this.state.height, {
-            toValue: 80,
-            duration: 100
-        }).start()
-    }
-
     render() {
         return (
             <View style={styles.root}>
 
-                <Appbar.Header statusBarHeight={false} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
                     <SearchBar placeholder="Search fitness programs"
                         onChangeText={text => this._performSearch(text)}
@@ -339,16 +337,34 @@ class LupaHome extends React.Component {
                                             Most Popular
                     </Text>
                                     </View>
-                                    <Carousel
-                                        data={this.state.featuredPrograms}
-                                        itemHeight={200}
-                                        itemWidth={Dimensions.get('window').width - 100}
-                                        sliderWidth={Dimensions.get('window').width}
-                                        scrollEnabled={true}
-                                        firstItem={1}
-                                        renderItem={item => this._renderItem(item)}
-                                        pagingEnabled={false}
-                                    />
+                                    <ScrollView
+                                    snapToAlignment={'center'}
+                                    snapToInterval={Dimensions.get('window').width / 1.2}
+                                    decelerationRate={0}
+                                    contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
+                                    centerContent
+                                    pagingEnabled={true}
+                                    loop={false}
+                                    showsPagination={false}
+                                    horizontal={true}
+                                    showsHorizontalScrollIndicator={false} 
+                                    >
+                                        {
+                                            this.state.featuredPrograms.map(item => {
+                                                return (
+                                                    <TouchableOpacity onPress={this.showLiveWorkoutPreview} style={{alignItems: 'center', justifyContent: 'center'}}>
+                                                        <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
+                                                            <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ with: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }} />
+                                                        </Card>
+                                                        <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
+                                                                <ThinFeatherIcon thin={true} name="play" color="white" size={30} style={{ alignSelf: 'center' }} />
+                                                            </View>
+                                                        <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} />
+                                                    </TouchableOpacity>
+                                                )
+                                            })
+                                        }
+                                    </ScrollView>
 
                                 </View>
 
@@ -381,9 +397,10 @@ class LupaHome extends React.Component {
                                         </ScrollView>
 
                                     </View>
+                                    <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                                 </View>
 
-                                <View style={{ height: 300, alignItems: 'center', justifyContent: 'center' }}>
+                             {/*   <View style={{ height: 300, alignItems: 'center', justifyContent: 'center' }}>
                                     <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                                     <Swiper horizontal={true} activeDotIndex={0} inactiveDotColor="#212121" dotStyle={{ width: 8, height: 8, backgroundColor: '#1089ff' }} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{ alignItems: 'center', justifyContent: 'center' }}>
 
@@ -431,7 +448,7 @@ class LupaHome extends React.Component {
 
                                     </Swiper>
                                     <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
-                                </View>
+                                            </View> */}
 
 
                                 <View

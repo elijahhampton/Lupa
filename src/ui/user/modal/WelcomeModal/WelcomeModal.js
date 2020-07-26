@@ -35,51 +35,37 @@ const getView = (viewNumber, toggleNext, closeModalMethod) => {
         case 1:
             return <BasicInformation setNextDisabled={toggleNext} />
         case 2:
-            return <TrainerInformation />
-        case 3:
             return <WelcomeContentDriver closeModalMethod={closeModalMethod} />
     }
 }
 
-export default function WelcomeModal(props) {
+const WelcomeModal = (props) => {
     const [viewNumber, setViewNumber] = useState(0);
     const [isNextEnabled, setIsNextEnabled] = useState(false);
 
     const navigation = useNavigation()
 
     return (
-            <SafeAreaView style={{flex: 1}}>
-                <LinearGradient
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    colors={['#FFFFFF', '#8AC5F3', '#0084EC']}
-                    style={styles.container}>
+            <SafeAreaView style={styles.container}>
                     {
-                        getView(viewNumber, setIsNextEnabled, props.closeModalMethod)
+                       getView(viewNumber, setIsNextEnabled, props.closeModalMethod)
                     }
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                         <Pagination dotsLength={3} activeDotIndex={viewNumber} />
                         {
-                            viewNumber != 3 ? <Button disabled={isNextEnabled} color="#0D47A1" mode="text" onPress={() => setViewNumber(viewNumber + 1)}> Next </Button> : <Button mode="contained" color="#0D47A1" onPress={() => navigation.navigate('App')}> <Text> Explore Lupa </Text> </Button>
+                            viewNumber != 2 ? <Button disabled={isNextEnabled} color="#212121" mode="text" onPress={() => setViewNumber(viewNumber + 1)}> Next </Button> : null
                         }
                     </View>
-                </LinearGradient>
             </SafeAreaView>
     );
 }
 
+export default WelcomeModal;
+
 const styles = StyleSheet.create({
     container: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        height: Dimensions.get('window').height,
-        padding: 10
-    },
-    modal: {
-        margin: 0,
-        backgroundColor: "black",
-        flex: 1,
-    },
+       flex: 1,
+       padding: 20,
+       backgroundColor: '#FFFFFF'
+    }
 })
