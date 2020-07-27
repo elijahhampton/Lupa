@@ -203,7 +203,6 @@ class WelcomeLupaIntroduction extends React.Component {
                     //udpate user in redux
                     const payload = await getUpdateCurrentUserAttributeActionPayload('location', locationData, []);
                     await this.props.updateCurrentUserAttribute(payload);
-                    alert('done')
                 },
                 async (error) => {
                     alert(error)

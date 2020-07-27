@@ -161,29 +161,29 @@ function ProgramInformation(props) {
     });
 
     //program structure variables
-    let [programImage, setProgramImage] = useState('');
-    let [isProgramImageSet, setIsPromiseImageSet] = useState(false);
-    let [programName, setProgramName] = useState('')
-    let [programStartDate, setProgramStartDate] = useState(new Date())
-    let [programEndDate, setProgramEndDate] = useState(new Date())
-    let [programTime, setProgramTime] = useState(new Date(1598051730000));
-    let [programTimeSet, setProgramTimeIsSet] = useState(false);
-    let [programDuration, setProgramDuration] = useState(1);
-    let [programDescription, setProgramDescription] = useState('')
-    let [programLocation, setProgramLocation] = useState('Launch Map');
-    let [programLocationData, setProgramLocationData] = useState('');
-    let [numProgramSpots, setNumProgramSpots] = useState('')
-    let [programPrice, setProgramPrice] = useState(7)
-    let [programType, setProgramType]  = useState('Single');
-    let [allowWaitlist, setAllowWaitlist] = useState(false);
-    let [programTags, setProgramTags] = useState([]);
-    let [addTagsModalIsOpen, setAddTagsModalIsOpen] = useState(false)
+    const [programImage, setProgramImage] = useState('');
+    const [isProgramImageSet, setIsPromiseImageSet] = useState(false);
+    const [programName, setProgramName] = useState('')
+    const [programStartDate, setProgramStartDate] = useState(new Date())
+    const [programEndDate, setProgramEndDate] = useState(new Date())
+    const [programTime, setProgramTime] = useState(new Date(1598051730000));
+    const [programTimeSet, setProgramTimeIsSet] = useState(false);
+    const [programDuration, setProgramDuration] = useState(1);
+    const [programDescription, setProgramDescription] = useState('')
+    const [programLocation, setProgramLocation] = useState('Launch Map');
+    const [programLocationData, setProgramLocationData] = useState('');
+    const [numProgramSpots, setNumProgramSpots] = useState('')
+    const [programPrice, setProgramPrice] = useState(7)
+    const [programType, setProgramType]  = useState('Single');
+    const [allowWaitlist, setAllowWaitlist] = useState(false);
+    const [programTags, setProgramTags] = useState([]);
+    const [addTagsModalIsOpen, setAddTagsModalIsOpen] = useState(false)
     const [programDays, setProgramDays] = useState([])
     const [automatedMessageText, setAutomatedMessageText] = useState("")
 
     //visibility modifiers
-    let [mapViewVisible, setMapViewVisibility] = useState(false);
-    let [timePickerVisible, setTimePickerVisible] = useState(false);
+    const [mapViewVisible, setMapViewVisibility] = useState(false);
+    const [timePickerVisible, setTimePickerVisible] = useState(false);
 
     const [currIndex, setCurrIndex] = useState(0)
 
@@ -234,6 +234,7 @@ function ProgramInformation(props) {
 
      const handleSaveProgramInformation = async () => {
          const imgV = programImage;
+
          await props.saveProgramInformation(
           programName,
           programDescription,
@@ -252,8 +253,9 @@ function ProgramInformation(props) {
           programDays,
          )
 
+
          //move to next page
-        props.goToIndex(1)
+        // props.goToIndex(1)
      }
 
     /**
@@ -562,7 +564,7 @@ function ProgramInformation(props) {
       }
     }
 
-    getOptionsButton = () => {
+    const getOptionsButton = () => {
       switch(currIndex) {
         case 0:
           return (

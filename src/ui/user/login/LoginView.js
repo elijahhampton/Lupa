@@ -158,8 +158,8 @@ class LoginView extends React.PureComponent {
   onLogin = async (e) => {
     e.preventDefault();
 
-    const attemptedUsername = this.state.username;
-    const attemptedPassword = this.state.password;
+    const attemptedUsername = this.state.username.trim()
+    const attemptedPassword = this.state.password.trim()
 
     let successfulLogin = false;
     await this.userAuthenticationHandler.loginUser(attemptedUsername, attemptedPassword).then(result => {
@@ -201,7 +201,7 @@ class LoginView extends React.PureComponent {
    * as well as Lupa application data (assessments, workouts);
    */
   _setupRedux = async () => {
-    let currUserData = getLupaUserStructure(), currUserPacks = [], currUserPrograms = [], lupaAssessments = [], lupaWorkouts = [];
+    let currUserData = getLupaUserStructure(), currUserPacks = [], currUserPrograms = [], lupaWorkouts = [];
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
@@ -215,9 +215,7 @@ class LoginView extends React.PureComponent {
       currUserPrograms = result;
     })
 
-    lupaWorkouts = await this.LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-
-    lupaAssessments = await this.LUPA_CONTROLLER_INSTANCE.loadAssessments();
+    lupaWorkouts =  this.LUPA_CONTROLLER_INSTANCE.loadWorkouts();
 
     let userPayload = {
       userData: currUserData,
@@ -227,8 +225,7 @@ class LoginView extends React.PureComponent {
     await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
-    await this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
-    await this._updateLupaAssessmentDataInRedux(lupaAssessments);
+    this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
 
   /**

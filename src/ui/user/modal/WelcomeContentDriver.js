@@ -21,7 +21,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
-import { PackContentDriverCard, TrainerContentDriverCard } from './WelcomeModal/component/ContentDriverCards';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux'
 

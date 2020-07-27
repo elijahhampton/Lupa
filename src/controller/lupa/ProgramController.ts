@@ -44,5 +44,17 @@ export default class ProgramController extends WorkoutController {
 
         return Promise.resolve(programData);
     }
+
+    updateProgramData = (programUUID, programData) => {
+        const docRef = PROGRAM_COLLECTION.doc(programUUID);
+        docRef.set(programData);
+    }
+
+    updateProgramWorkoutData = (programUUID, workoutData) => {
+        const docRef = PROGRAM_COLLECTION.doc(programUUID);
+        docRef.update({
+            program_workout_structure: workoutData
+        })
+    }
     
 }

@@ -312,6 +312,7 @@ loginUser = async (email, password) => {
   await LUPA_AUTH.signInWithEmailAndPassword(email, password).then(userCredential => {
       result = true;
   }).catch(err => {
+    alert(err)
       result = false;
   });
 
