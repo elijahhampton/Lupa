@@ -1625,7 +1625,7 @@ this.getWorkoutSurfaceContent(workout)
         return (
             <View ref={this.firstView} style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }}>
                    <SafeAreaView style={{backgroundColor: '#FFFFFF'}} />
-                   <Surface style={{flex: 1}}>
+                   <Surface style={{flex: 1, elevation: 0}}>
                        <TouchableOpacity onPress={() => this.sectionPickerRBSheet.current.open()}>
                        <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
                         <Text style={{fontWeight: '400', fontSize: 20}}>

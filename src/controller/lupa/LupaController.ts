@@ -176,6 +176,14 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE.updateCurrentUser(fieldToUpdate, value, optionalData);
     }
 
+    updateProgramData = (programUUID, programData) => {
+      PROGRAMS_CONTROLLER_INSTANCE.updateProgramData(programUUID, programData);
+    }
+
+    updateProgramWorkoutData = (programUUID, workoutData) => {
+      PROGRAMS_CONTROLLER_INSTANCE.updateProgramWorkoutData(programUUID, workoutData);
+    }
+
     getUserDisplayName = () => {
       return USER_CONTROLLER_INSTANCE.getUserDisplayName(true);
     }
@@ -676,18 +684,13 @@ export default class LupaController {
     }
 
     createNewProgram = async (uuid) => {
-      let programStructurePayload;
-      await USER_CONTROLLER_INSTANCE.createProgram(uuid).then(result => {
-        programStructurePayload = result;
-      });
-
-      return Promise.resolve(programStructurePayload);
+     USER_CONTROLLER_INSTANCE.createProgram(uuid)
     }
 
-    saveProgram = async (user_uuid, programUUID) => {
+    saveProgram = async (programUUID) => {
 
       let res;
-       await USER_CONTROLLER_INSTANCE.saveProgram(user_uuid, programUUID).then(result => {
+       await USER_CONTROLLER_INSTANCE.saveProgram(programUUID).then(result => {
         res = result;
        })
 

@@ -1069,22 +1069,9 @@ export default class UserController {
         return USER_COLLECTION.doc(user_uuid).collection("programs");
     }
 
-    createProgram = async (user_uuid) => {
-        let programUUID;
-
-        let program_structure_payload = await getLupaProgramInformationStructure();
-        //
-        await PROGRAMS_COLLECTION.add(program_structure_payload).then(ref => {
-            programUUID = ref.id;
-        });
-
-        //
-        await this.updateCurrentUser('programs', programUUID, 'add');
-
-        //
-        program_structure_payload.program_structure_uuid = programUUID;
-
-        return Promise.resolve(program_structure_payload);
+    createProgram = async (uuid) => {
+        PROGRAMS_COLLECTION.doc(uuid).set(getLupaProgramInformationStructure())
+        await this.updateCurrentUser('programs', uuid, 'add');
     }
 
     arrayRemove(arr, value) { 
@@ -1104,8 +1091,9 @@ export default class UserController {
         await USER_COLLECTION.doc(user_uuid).get().then(snapshot => {
             tempData = snapshot.data()
         })
-
+        console.log(tempData.programs)
         updatedProgramList = await this.arrayRemove(tempData.programs, programUUID)
+        console.log(updatedProgramList.length)
 
         await USER_COLLECTION.doc(user_uuid).update({
             programs: updatedProgramList
@@ -1114,7 +1102,7 @@ export default class UserController {
         //delete program from lupa programs
         await PROGRAMS_COLLECTION.doc(programUUID).delete();
     } catch(err) {
-   
+        alert(err)
     }
     }
 
@@ -1276,11 +1264,13 @@ export default class UserController {
         })
     }
 
-    saveProgram =  async (user_uuid, workoutData) => {
+    saveProgram =  async (workoutData) => {
         let imageURL;
         await this.saveProgramImage(workoutData.program_structure_uuid, workoutData.program_image).then(url => {
             imageURL = url;
         })
+
+        console.log('IMAGE: ' + imageURL)
 
         //update the program image in the structure
         workoutData.program_image = imageURL;
@@ -1303,6 +1293,8 @@ export default class UserController {
          await PROGRAMS_COLLECTION.doc(workoutData.program_structure_uuid).get().then(snapshot => {
              payload = snapshot.data();
          })
+
+         console.log('PAYLOAD: ' + payload + "AKFJOISDJFLKDSFJLDSKJ")
 
          return Promise.resolve(payload);
         }
@@ -1496,7 +1488,7 @@ export default class UserController {
           await PROGRAMS_COLLECTION.where('program_type', '==', 'Single').limit(5).get().then(docs => {
               docs.forEach(doc => {
                   let snapshot = doc.data();
-                if (typeof(snapshot) == 'undefined' || snapshot.program_name.length == 0 || typeof(snapshot.program_name) == 'undefined')
+                if (typeof(snapshot) == 'undefined' || snapshot.program_name.length == 0 || typeof(snapshot.program_name) == 'undefined' || snapshot.program_image == '')
                 {
 
                 }
