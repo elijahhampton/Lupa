@@ -61,7 +61,8 @@ import { LOG_ERROR } from '../common/Logger';
 import LargeProgramSearchResultCard from './workout/program/components/LargeProgramSearchResultCard';
 import LiveWorkoutPreview from './workout/program/modal/LiveWorkoutPreview';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-
+import InviteFriendsModal from './user/modal/InviteFriendsModal'
+import { retrieveAsyncData, storeAsyncData } from '../controller/lupa/storage/async';
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
@@ -100,6 +101,7 @@ class LupaHome extends React.Component {
     }
 
     async componentDidMount() {
+        await this.checkNewUser();
         await this.setupComponent();
     }
 
@@ -122,6 +124,22 @@ class LupaHome extends React.Component {
             featuredTrainers: featuredTrainersIn
         })
 
+    }
+
+    checkNewUser = async () => {
+        let showInviteFriendsModal
+        await retrieveAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email).then(value => {
+            showInviteFriendsModal = value
+        })
+
+        if (showInviteFriendsModal === 'false') {
+            storeAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email, 'true');this.setState({ inviteFriendsIsVisible: true })
+            return;
+        } else if( typeof(showInviteFriendsModal) != 'string') {
+            storeAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email, 'true');
+            this.setState({ inviteFriendsIsVisible: true })
+            return;
+        }
     }
 
     loadFeaturedPrograms = async () => {
@@ -262,7 +280,7 @@ class LupaHome extends React.Component {
             <>
                 <TouchableOpacity onPress={this.showLiveWorkoutPreview}>
                     <Card style={{ borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 10 }}>
-                        <Card.Cover resizeMode='contain' style={{width: '100%', height: '100%', flex: 1}} source={{ uri: item.program_image }} />
+                        <Card.Cover resizeMode='cover' resizeMethod="scale" style={{width: Dimensions.get('window').width / 1.2, height: 250}} source={{ uri: item.program_image }} />
                         <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
                             <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
                                 <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -308,7 +326,7 @@ class LupaHome extends React.Component {
         return (
             <View style={styles.root}>
 
-                <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
                     <SearchBar placeholder="Search fitness programs"
                         onChangeText={text => this._performSearch(text)}
@@ -338,14 +356,6 @@ class LupaHome extends React.Component {
                     </Text>
                                     </View>
                                     <ScrollView
-                                    snapToAlignment={'center'}
-                                    snapToInterval={Dimensions.get('window').width / 1.2}
-                                    decelerationRate={0}
-                                    contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
-                                    centerContent
-                                    pagingEnabled={true}
-                                    loop={false}
-                                    showsPagination={false}
                                     horizontal={true}
                                     showsHorizontalScrollIndicator={false} 
                                     >
@@ -400,57 +410,6 @@ class LupaHome extends React.Component {
                                     <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                                 </View>
 
-                             {/*   <View style={{ height: 300, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
-                                    <Swiper horizontal={true} activeDotIndex={0} inactiveDotColor="#212121" dotStyle={{ width: 8, height: 8, backgroundColor: '#1089ff' }} dotColor="#1089ff" showsPagination={true} showsHorizontalScrollIndicator={false} style={{ alignItems: 'center', justifyContent: 'center' }}>
-
-                                        <>
-                                            <View style={{ justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, backgroundColor: 'transparent', marginVertical: 10 }}>
-                                                <View>
-                                                    <Text style={{ fontFamily: 'avenir-roman', paddingLeft: 10, color: 'black', fontSize: 20, marginVertical: 5 }}>
-                                                        Starting and continuing your journey
-                        </Text>
-                                                    <Text style={{ fontFamily: 'avenir-light', color: 'black', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5 }}>
-                                                        It's important to us that you begin and stick with your fitness journey.  We believe most people continue with their journey with a partner or someone to hold them accountable.
-                        </Text>
-                                                </View>
-
-                                                <Button mode="contained" color="#1089ff" style={{ elevation: 8, marginLeft: 10, marginTop: 10, alignItems: 'center', justifyContent: 'center', width: 'auto' }} theme={{
-                                                    roundness: 3
-                                                }} >
-                                                    <Text>
-                                                        Invite Friends
-                            </Text>
-                                                </Button>
-                                            </View>
-                                        </>
-
-                                        <>
-                                            <View style={{ justifyContent: 'space-evenly', alignItems: 'flex-start', padding: 20, backgroundColor: 'transparent', marginVertical: 10 }}>
-                                                <View>
-                                                    <Text style={{ fontFamily: 'avenir-roman', paddingLeft: 10, color: 'black', fontSize: 20, marginVertical: 5 }}>
-                                                        Did you complete an exercise today?
-                        </Text>
-                                                    <Text style={{ fontFamily: 'avenir-light', color: 'black', paddingLeft: 10, fontWeight: '300', fontSize: 15, marginVertical: 5 }}>
-                                                        Every time you complete a physical activity you are one step closer to completing your goals.  Keep track of your progress by logging your workout or checking in for the day.
-                        </Text>
-                                                </View>
-
-                                                <Button mode="contained" color="#1089ff" style={{ elevation: 8, marginLeft: 10, marginTop: 10, alignItems: 'center', justifyContent: 'center', width: 'auto' }} theme={{
-                                                    roundness: 3
-                                                }} >
-                                                    <Text>
-                                                        Log a workout
-                            </Text>
-                                                </Button>
-                                            </View>
-                                        </>
-
-                                    </Swiper>
-                                    <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
-                                            </View> */}
-
-
                                 <View
                                     style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                                     <View style={{ padding: 5 }}>
@@ -462,7 +421,7 @@ class LupaHome extends React.Component {
                                         {
                                             this.state.featuredPrograms.map((currProgram, index, arr) => {
                                                 return (
-                                                    <FeaturedProgramCard currProgram={currProgram} />
+                                                    <FeaturedProgramCard currProgram={currProgram} keyProp={currProgram.program_name} />
                                                 )
                                             })
                                         }
@@ -483,8 +442,7 @@ class LupaHome extends React.Component {
                         </View>
                 }
 
-                {/* <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} /> */}
-
+                <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} /> 
             </View>
         );
     }

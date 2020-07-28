@@ -818,8 +818,6 @@ this.getWorkoutSurfaceContent(workout)
         const workoutData = this.state.workoutDays;
 
         await this.props.saveProgramWorkoutData(workoutData);
-
-        this.props.goToIndex(2);
     }
 
     handleExitBuildAWorkout = async () => {

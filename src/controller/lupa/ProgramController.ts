@@ -2,7 +2,7 @@
  * 
  */
 
-import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
 import WorkoutController from './WorkoutController';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures.js';
 
@@ -11,6 +11,7 @@ const USERS_COLLECTION = LUPA_DB.collection('users');
 
 export default class ProgramController extends WorkoutController {
     private static _instance: ProgramController;
+    private fbStorage = new FirebaseStorageBucket();
 
     private constructor() {
         super()
@@ -38,11 +39,53 @@ export default class ProgramController extends WorkoutController {
             await PROGRAM_COLLECTION.doc(uuid).get().then(snapshot => {
                 programData = snapshot.data();
             })
-        } catch(error) {
+        } catch (error) {
             return Promise.resolve(programData);
         }
 
         return Promise.resolve(programData);
+    }
+
+    saveProgramImage = async (programUUID, url) => {
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', url, true);
+            xhr.send(null);
+        });
+
+        let imageURL;
+        return new Promise((resolve, reject) => {
+            this.fbStorage.saveProgramImage(programUUID, blob).then(url => {
+                resolve(url);
+            })
+        })
+    }
+
+    publishProgram = async (uuid) => {
+        let programData = getLupaProgramInformationStructure()
+
+        await PROGRAM_COLLECTION.doc(uuid).get().then(documentSnapshot => {
+            programData = documentSnapshot.data()
+        })
+
+        let imageURL;
+
+        await this.saveProgramImage(uuid, programData.program_image).then(url => {
+            imageURL = url
+        })
+
+
+        await PROGRAM_COLLECTION.doc(uuid).update({
+            program_image: imageURL,
+            completedProgram: true
+        })
     }
 
     updateProgramData = (programUUID, programData) => {
@@ -56,5 +99,5 @@ export default class ProgramController extends WorkoutController {
             program_workout_structure: workoutData
         })
     }
-    
+
 }

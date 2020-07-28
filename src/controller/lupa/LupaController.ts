@@ -687,6 +687,10 @@ export default class LupaController {
      USER_CONTROLLER_INSTANCE.createProgram(uuid)
     }
 
+    publishProgram = (uuid) => {
+      PROGRAMS_CONTROLLER_INSTANCE.publishProgram(uuid);
+    }
+
     saveProgram = async (programUUID) => {
 
       let res;

@@ -2,33 +2,33 @@ import React, { useState, useRef, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
-    View,
-    Text,
-    StyleSheet,
-    ScrollView,
-    Image,
-    Dimensions,
-    Slider,
-    TextInput,
-    TouchableOpacity,
-    TouchableHighlight,
-    Picker,
-    SafeAreaView,
-    Modal,
-    KeyboardAvoidingView,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Dimensions,
+  Slider,
+  TextInput,
+  TouchableOpacity,
+  TouchableHighlight,
+  Picker,
+  SafeAreaView,
+  Modal,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import {
-    Surface,
-    Modal as PaperModal,
-    Caption,
-    Button,
-    IconButton,
-    Chip,
-    TextInput as PaperTextInput,
-    Snackbar,
-    ProgressBar,
-    Divider,
+  Surface,
+  Modal as PaperModal,
+  Caption,
+  Button,
+  IconButton,
+  Chip,
+  TextInput as PaperTextInput,
+  Snackbar,
+  ProgressBar,
+  Divider,
 } from 'react-native-paper';
 
 import Icon from "react-native-feather1s";
@@ -61,8 +61,7 @@ function AddTagsModal(props) {
   let [inputValue, setInputValue] = useState('');
 
   handleAddTags = () => {
-    if (tags.length == 10)
-    {
+    if (tags.length == 10) {
       return;
     }
 
@@ -82,136 +81,132 @@ function AddTagsModal(props) {
   }
   return (
 
-    <PaperModal contentContainerStyle={{borderRadius: 10, alignSelf: 'center', top: 120, position: 'absolute', backgroundColor: 'white', width: Dimensions.get('window').width - 30, height: 400}} visible={props.isVisible}>
-          <KeyboardAvoidingView style={{flex: 1}}>
-      <View style={{flex: 1}}>
-        <View style={{flex: 1}}>
-          <Text style={{padding: 10, fontSize: 20, fontWeight: 'bold'}}>
-            Add your own tags
+    <PaperModal contentContainerStyle={{ borderRadius: 10, alignSelf: 'center', top: 120, position: 'absolute', backgroundColor: 'white', width: Dimensions.get('window').width - 30, height: 400 }} visible={props.isVisible}>
+      <KeyboardAvoidingView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ padding: 10, fontSize: 20, fontWeight: 'bold' }}>
+              Add your own tags
           </Text>
-        </View>
-
-        <View style={{flex: 3, flexWrap: 'wrap', flexDirection: 'row', margin: 10}}>
-          {
-            tags.map(tag => {
-              return (
-                <Chip style={{margin: 5, borderRadius: 5, width: 'auto'}} textStyle={{fontSize: 15}} theme={{
-                  roundness: 0,
-                }}>
-                  {tag}
-                </Chip>
-              )
-            })
-          }
-        </View>
-
-        <View style={{justifyContent: 'center', borderRadius: 10, flex: 1.5, backgroundColor: '#E3F2FD'}}>
-          <Input 
-          placeholder='Try "cardio"'
-          value={inputValue}
-          inputStyle={{fontSize: 12, padding: 10,}}
-          inputContainerStyle={{backgroundColor: 'white', borderWidth: 1, borderBottomWidth: 1, borderColor: '#BBDEFB'}}
-          onSubmitEditing={() => handleAddTags()}
-          onChangeText={text => setInputValue(text)}
-          keyboardAppearance="light"
-          keyboardType="default"
-          returnKeyLabel="submit"
-          returnKeyType="done"
-           />
-
-          <View style={{alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row'}}>
-          <Button mode="text" color="#e53935" onPress={handleCancel}>
-            <Text>
-            Cancel
-            </Text>
-          </Button>
-          <Button mode="text" color="#1E88E5" onPress={() => handleFinish()}>
-            <Text>
-              Done
-            </Text>
-          </Button>
           </View>
 
+          <View style={{ flex: 3, flexWrap: 'wrap', flexDirection: 'row', margin: 10 }}>
+            {
+              tags.map(tag => {
+                return (
+                  <Chip style={{ margin: 5, borderRadius: 5, width: 'auto' }} textStyle={{ fontSize: 15 }} theme={{
+                    roundness: 0,
+                  }}>
+                    {tag}
+                  </Chip>
+                )
+              })
+            }
+          </View>
+
+          <View style={{ justifyContent: 'center', borderRadius: 10, flex: 1.5, backgroundColor: '#E3F2FD' }}>
+            <Input
+              placeholder='Try "cardio"'
+              value={inputValue}
+              inputStyle={{ fontSize: 12, padding: 10, }}
+              inputContainerStyle={{ backgroundColor: 'white', borderWidth: 1, borderBottomWidth: 1, borderColor: '#BBDEFB' }}
+              onSubmitEditing={() => handleAddTags()}
+              onChangeText={text => setInputValue(text)}
+              keyboardAppearance="light"
+              keyboardType="default"
+              returnKeyLabel="submit"
+              returnKeyType="done"
+            />
+
+            <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row' }}>
+              <Button mode="text" color="#e53935" onPress={handleCancel}>
+                <Text>
+                  Cancel
+            </Text>
+              </Button>
+              <Button mode="text" color="#1E88E5" onPress={() => handleFinish()}>
+                <Text>
+                  Done
+            </Text>
+              </Button>
+            </View>
+
+          </View>
         </View>
-      </View>
       </KeyboardAvoidingView>
     </PaperModal>
 
   )
 }
 
-const MIN_TITLE_LENGTH = 8
-const MAX_TITLE_LENGTH = 20
+const MIN_TITLE_LENGTH = 6
+const MAX_TITLE_LENGTH = 25
 
-const MIN_DESCRIPTION_LENGTH = 15
-const MAX_DESCRIPTION_LENGTH = 30
+const MIN_DESCRIPTION_LENGTH = 12
+const MAX_DESCRIPTION_LENGTH = 100
 
 function ProgramInformation(props) {
   let [snackBarVisible, setSnackBarVisibility] = useState(false);
   let [rejectedReason, setRejectedReason] = useState(" ")
 
-  
+
   const _onToggleSnackBar = () => setSnackBarVisibility(!snackBarVisible)
 
   const _onDismissSnackBar = () => setSnackBarVisibility(false)
 
   //redux useSelector hook
-    const currUserState = useSelector(state => {
-        return state.Users.currUserData
-    });
+  const currUserState = useSelector(state => {
+    return state.Users.currUserData
+  });
 
-    //program structure variables
-    const [programImage, setProgramImage] = useState('');
-    const [isProgramImageSet, setIsPromiseImageSet] = useState(false);
-    const [programName, setProgramName] = useState('')
-    const [programStartDate, setProgramStartDate] = useState(new Date())
-    const [programEndDate, setProgramEndDate] = useState(new Date())
-    const [programTime, setProgramTime] = useState(new Date(1598051730000));
-    const [programTimeSet, setProgramTimeIsSet] = useState(false);
-    const [programDuration, setProgramDuration] = useState(1);
-    const [programDescription, setProgramDescription] = useState('')
-    const [programLocation, setProgramLocation] = useState('Launch Map');
-    const [programLocationData, setProgramLocationData] = useState('');
-    const [numProgramSpots, setNumProgramSpots] = useState('')
-    const [programPrice, setProgramPrice] = useState(7)
-    const [programType, setProgramType]  = useState('Single');
-    const [allowWaitlist, setAllowWaitlist] = useState(false);
-    const [programTags, setProgramTags] = useState([]);
-    const [addTagsModalIsOpen, setAddTagsModalIsOpen] = useState(false)
-    const [programDays, setProgramDays] = useState([])
-    const [automatedMessageText, setAutomatedMessageText] = useState("")
+  //program structure variables
+  const [programImage, setProgramImage] = useState('');
+  const [isProgramImageSet, setIsPromiseImageSet] = useState(false);
+  const [programName, setProgramName] = useState('')
+  const [programStartDate, setProgramStartDate] = useState(new Date())
+  const [programEndDate, setProgramEndDate] = useState(new Date())
+  const [programTime, setProgramTime] = useState(new Date(1598051730000));
+  const [programTimeSet, setProgramTimeIsSet] = useState(false);
+  const [programDuration, setProgramDuration] = useState(1);
+  const [programDescription, setProgramDescription] = useState('')
+  const [programLocation, setProgramLocation] = useState('Launch Map');
+  const [programLocationData, setProgramLocationData] = useState('');
+  const [numProgramSpots, setNumProgramSpots] = useState('')
+  const [programPrice, setProgramPrice] = useState(7)
+  const [programType, setProgramType] = useState('Single');
+  const [allowWaitlist, setAllowWaitlist] = useState(false);
+  const [programTags, setProgramTags] = useState([]);
+  const [addTagsModalIsOpen, setAddTagsModalIsOpen] = useState(false)
+  const [programDays, setProgramDays] = useState([])
+  const [automatedMessageText, setAutomatedMessageText] = useState("")
 
-    //visibility modifiers
-    const [mapViewVisible, setMapViewVisibility] = useState(false);
-    const [timePickerVisible, setTimePickerVisible] = useState(false);
+  //visibility modifiers
+  const [mapViewVisible, setMapViewVisibility] = useState(false);
+  const [timePickerVisible, setTimePickerVisible] = useState(false);
 
-    const [currIndex, setCurrIndex] = useState(0)
+  const [currIndex, setCurrIndex] = useState(0)
 
-   checkInputs = () => {
-    if (programName.length < MIN_TITLE_LENGTH || programName.length > MAX_TITLE_LENGTH)
-    {
-      
+  checkInputs = () => {
+    if (programName.length < MIN_TITLE_LENGTH || programName.length > MAX_TITLE_LENGTH) {
+
       setRejectedReason("Program title elength")
       setSnackBarVisibility(true)
       return true;
     }
 
-    if (programDescription.length < MIN_DESCRIPTION_LENGTH || programDescription.length > MAX_DESCRIPTION_LENGTH)
-    {
+    if (programDescription.length < MIN_DESCRIPTION_LENGTH || programDescription.length > MAX_DESCRIPTION_LENGTH) {
       setRejectedReason("Program Deac")
       setSnackBarVisibility(true)
       return true;
     }
 
-    if (programLocation == "Launch Map")
-    {
+    if (programLocation == "Launch Map") {
       setRejectedReason("You must select a location for your program")
       setSnackBarVisibility(true)
       return true;
     }
 
-    if (programTags.length == 0)
-    {
+    if (programTags.length == 0) {
       setRejectedReason("Please add atleast one tag into your program")
       setSnackBarVisibility(true)
       return true;
@@ -232,440 +227,439 @@ function ProgramInformation(props) {
     return false;
   }
 
-     const handleSaveProgramInformation = async () => {
-         const imgV = programImage;
+  const handleSaveProgramInformation = async () => {
+    const imgV = programImage;
 
-         await props.saveProgramInformation(
-          programName,
-          programDescription,
-          numProgramSpots,
-          programStartDate,
-          programEndDate,
-          programDuration,
-          programTime,
-          programPrice,
-          programLocationData,
-          programType,
-          allowWaitlist,
-          imgV,
-          programTags,
-          automatedMessageText,
-          programDays,
-         )
+    await props.saveProgramInformation(
+      programName,
+      programDescription,
+      numProgramSpots,
+      programStartDate,
+      programEndDate,
+      programDuration,
+      programTime,
+      programPrice,
+      programLocationData,
+      programType,
+      allowWaitlist,
+      imgV,
+      programTags,
+      automatedMessageText,
+      programDays,
+    )
 
 
-         //move to next page
-        // props.goToIndex(1)
-     }
+    //move to next page
+    // props.goToIndex(1)
+  }
 
-    /**
-     * 
-     * @param {*} locationInformation 
-     */
-    const onMapViewClose = (locationInformation) => {
-        if (locationInformation == undefined) return;
+  /**
+   * 
+   * @param {*} locationInformation 
+   */
+  const onMapViewClose = (locationInformation) => {
+    if (locationInformation == undefined) return;
 
-        setProgramLocation(locationInformation.name);
-        setProgramLocationData(locationInformation);
+    setProgramLocation(locationInformation.name);
+    setProgramLocationData(locationInformation);
 
-        closeMapView()
+    closeMapView()
+  }
+
+  /**
+   * 
+   */
+  const openMapView = () => {
+    setMapViewVisibility(true)
+  }
+
+  /**
+   * 
+   */
+  const closeMapView = () => {
+    setMapViewVisibility(false)
+  }
+
+  /**
+   * 
+   * @param {*} time 
+   */
+  const captureTime = (time) => {
+    setProgramTime(time);
+  }
+
+  const showAddTagsModal = () => {
+    setAddTagsModalIsOpen(true);
+  }
+
+  const closeAddTagsModal = () => {
+    setAddTagsModalIsOpen(false)
+  }
+
+
+  const captureTags = (tags) => {
+    setProgramTags(tags);
+  }
+
+  const addProgramDay = (day) => {
+    let newProgramDayArr = []
+    newProgramDayArr = newProgramDayArr.concat(programDays)
+    newProgramDayArr.push(day)
+
+    setProgramDays(newProgramDayArr)
+  }
+
+  const getNextView = () => {
+    //check program values
+    let retVal = checkInputs()
+
+    if (retVal) {
+      return;
     }
 
-    /**
-     * 
-     */
-    const openMapView = () => {
-        setMapViewVisibility(true)
-    }
+    setCurrIndex(1)
+  }
 
-    /**
-     * 
-     */
-    const closeMapView = () => {
-        setMapViewVisibility(false)
-    }
-
-    /**
-     * 
-     * @param {*} time 
-     */
-    const captureTime = (time) => {
-        setProgramTime(time);
-    }
-
-    const showAddTagsModal = () => {
-      setAddTagsModalIsOpen(true);
-    }
-
-    const closeAddTagsModal = () => {
-      setAddTagsModalIsOpen(false)
-    }
-
-
-    const captureTags = (tags) => {
-      setProgramTags(tags);
-    }
-
-    const addProgramDay = (day) => {
-      let newProgramDayArr = []
-      newProgramDayArr = newProgramDayArr.concat(programDays)
-      newProgramDayArr.push(day)
-
-      setProgramDays(newProgramDayArr)
-    }
-
-    const getNextView = () => {
-                //check program values
-              /*  let retVal = checkInputs()
-
-                if (retVal)
-                {
-                  return;
-                }*/
-
-                setCurrIndex(1)
-    }
-
-    const getViewDisplay = () => {
-      switch(currIndex) {
-        case 0:
-          return (
-            <>
-            <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-between'}}> 
-                            <View>
-            <View style={{width: '100%', height: 'auto', marginLeft: 5, marginVertical: 50, padding: 10}} >
-                <View>
-                <Text style={styles.questionText}>
-                    1. Give your program a title and description
+  const getViewDisplay = () => {
+    switch (currIndex) {
+      case 0:
+        return (
+          <>
+            <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: 'space-between' }}>
+              <View>
+                <View style={{ width: '100%', height: 'auto', marginLeft: 5, marginVertical: 50, padding: 10 }} >
+                  <View>
+                    <Text style={styles.questionText}>
+                      1. Give your program a title and description
             </Text>
-            <Caption style={{color: '#152230'}}>
-              Choose the days of which your program will require work.
+                    <Caption style={{ color: '#152230' }}>
+                      Choose the days of which your program will require work.
             </Caption>
+                  </View>
+                  <TextInput value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" placeholderTextColor="#212121" style={styles.textInput} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
+                  <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={styles.textInput} enablesReturnKeyAutomatically={true} returnKeyLabel="done" keyboardType="default" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
+                  {/* <TextInput value={numProgramSpots} onChangeText={text => setNumProgramSpots(text)} label="Spots" placeholder="# Spots"  mode="outlined" style={{margin: 3, width: 80, alignSelf: 'flex-start', }} keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" /> */}
                 </View>
-                <TextInput  value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title"  placeholderTextColor="#212121" style={styles.textInput} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" theme={{colors: { primary: 'rgb(30,136,229)'}}} />
-                <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={styles.textInput}  enablesReturnKeyAutomatically={true} returnKeyLabel="done" keyboardType="default" theme={{colors: { primary: 'rgb(30,136,229)'}}} />
-               {/* <TextInput value={numProgramSpots} onChangeText={text => setNumProgramSpots(text)} label="Spots" placeholder="# Spots"  mode="outlined" style={{margin: 3, width: 80, alignSelf: 'flex-start', }} keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" /> */}
-            </View>
-                            </View>
+              </View>
 
 
-                            <Divider style={styles.divider} />
+              <Divider style={styles.divider} />
 
-<View style={{marginHorizontal: 20, marginVertical: 15, marginVertical: 60}}>
-            <Text style={styles.questionText}>
-            2. Which days of the week will your program take place?
+              <View style={{ marginHorizontal: 20, marginVertical: 15, marginVertical: 60 }}>
+                <Text style={styles.questionText}>
+                  2. Which days of the week will your program take place?
             </Text>
-            <Caption style={{color: '#152230'}}>
-              Choose the days of which your program will require work.
+                <Caption style={{ color: '#152230' }}>
+                  Choose the days of which your program will require work.
             </Caption>
-            
-            <View style={{alignSelf: 'center', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-evenly'}}>
-                {
-                  days.map(day => {
-                    return (
-                      <Chip key={day} mode="outlined" style={{elevation: programDays.includes(day) ? 3 : 0, margin: 5, backgroundColor: programDays.includes(day) ? '#1089ff' : '#FFFFFF', }} textStyle={{color: programDays.includes(day) ? 'white' : 'black'}} onPress={() => addProgramDay(day)}>
+
+                <View style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                  {
+                    days.map(day => {
+                      return (
+                        <Chip key={day} mode="outlined" style={{ elevation: programDays.includes(day) ? 3 : 0, margin: 5, backgroundColor: programDays.includes(day) ? '#1089ff' : '#FFFFFF', }} textStyle={{ color: programDays.includes(day) ? 'white' : 'black' }} onPress={() => addProgramDay(day)}>
                           {day}
-                      </Chip>
-                    )
-                  })
-                }
-            </View>
-         </View>
+                        </Chip>
+                      )
+                    })
+                  }
+                </View>
+              </View>
 
-         <Divider style={styles.divider} />
+              <Divider style={styles.divider} />
 
-         <View style={{marginHorizontal: 20, marginVertical: 15, marginVertical: 60}}>
-            <Text style={styles.questionText}>
-              3. How many weeks will your program last?
+              <View style={{ marginHorizontal: 20, marginVertical: 15, marginVertical: 60 }}>
+                <Text style={styles.questionText}>
+                  3. How many weeks will your program last?
             </Text>
-            <Caption style={{color: '#152230'}}>
-              Choose the days of which your program will require work.
+                <Caption style={{ color: '#152230' }}>
+                  Choose the days of which your program will require work.
             </Caption>
-            <Slider step={1} value={programDuration} onValueChange={val => setProgramDuration(val)} thumbTintColor="#2196F3" minimumValue={1} maximumValue={15} value={programDuration} />
-            <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontSize: 15}}>
-                                {programDuration} / week
+                <Slider step={1} value={programDuration} onValueChange={val => setProgramDuration(val)} thumbTintColor="#2196F3" minimumValue={1} maximumValue={15} value={programDuration} />
+                <Text style={{ alignSelf: 'center', padding: 3, color: '#BDBDBD', fontSize: 15 }}>
+                  {programDuration} / week
                                 </Text>
-         </View>
+              </View>
 
-         <Divider style={styles.divider} />
-         
-<View style={{marginHorizontal: 20, marginVertical: 15, marginVertical: 60}}>
-<Text style={styles.questionText}>
-                                4. How much do you want to charge for this program?
+              <Divider style={styles.divider} />
+
+              <View style={{ marginHorizontal: 20, marginVertical: 15, marginVertical: 60 }}>
+                <Text style={styles.questionText}>
+                  4. How much do you want to charge for this program?
                                 </Text>
-                                <Caption style={{color: '#152230'}}>
-                                  Set a price for your program. <Text style={{color: 'rgb(229,57,53)'}}>
-                                    You can change this later.
+                <Caption style={{ color: '#152230' }}>
+                  Set a price for your program. <Text style={{ color: 'rgb(229,57,53)' }}>
+                    You can change this later.
                                   </Text>
-                                </Caption>
-                               {/* <Text style={{padding: 3, color: '#0076d4', fontSize: 16}}>
+                </Caption>
+                {/* <Text style={{padding: 3, color: '#0076d4', fontSize: 16}}>
                                 $0 - $10.99
         </Text>*/}
 
-    <Slider step={1} value={programPrice} onValueChange={val => setProgramPrice(val)} thumbTintColor="#2196F3" minimumValue={0} maximumValue={25}/>
-    <Text style={{alignSelf: 'center', padding: 3,color: '#BDBDBD', fontSize: 15}}>
-                                Current: ${programPrice}
-                                </Text>
-    <View>
+                <Slider step={1} value={programPrice} onValueChange={val => setProgramPrice(val)} thumbTintColor="#2196F3" minimumValue={0} maximumValue={25} />
+                <Text style={{ alignSelf: 'center', padding: 3, color: '#BDBDBD', fontSize: 15 }}>
+                  Current: ${programPrice}
+                </Text>
+                <View>
 
-    </View>
-</View>
+                </View>
+              </View>
 
-<Divider style={styles.divider} />
+              <Divider style={styles.divider} />
 
-<View style={{padding: 10, marginVertical: 60}}>
-<View>
-                               
-                            <Text style={styles.questionText}>
-                                5. Set a location for your sessions
+              <View style={{ padding: 10, marginVertical: 60 }}>
+                <View>
+
+                  <Text style={styles.questionText}>
+                    5. Set a location for your sessions
                             </Text>
-                                <Caption style={{color: '#152230'}}>
-                                  Where will your program sessions take place?
+                  <Caption style={{ color: '#152230' }}>
+                    Where will your program sessions take place?
                                 </Caption>
-                            </View>
-                        
-                         <Button mode="outlined" color="#23374d" title={programLocation} containerStyle={{backgroundColor: '#23374d', width: '90%', alignSelf: 'center', margin: 5}}  onPress={() => openMapView()}>
-                           <Text>
-                             {programLocation}
-                           </Text>
-                         </Button>
-</View>
+                </View>
 
-<Divider style={styles.divider} />
+                <Button mode="outlined" color="#23374d" title={programLocation} containerStyle={{ backgroundColor: '#23374d', width: '90%', alignSelf: 'center', margin: 5 }} onPress={() => openMapView()}>
+                  <Text>
+                    {programLocation}
+                  </Text>
+                </Button>
+              </View>
 
-            <View style={{padding: 10, marginVertical: 60}}>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-              <Text style={styles.questionText}>
-                                6. Make your program discoverable
+              <Divider style={styles.divider} />
+
+              <View style={{ padding: 10, marginVertical: 60 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text style={styles.questionText}>
+                    6. Make your program discoverable
                                 </Text>
-                
-              </View>
 
-              <View style={{width: '100%', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center'}}>
-              <TouchableHighlight onPress={showAddTagsModal}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <MaterialIcon name="add" size={15}  color='#2196F3'/>
-                <Caption style={{color: '#2196F3'}}>
-                  Add Tag
+                </View>
+
+                <View style={{ width: '100%', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center' }}>
+                  <TouchableHighlight onPress={showAddTagsModal}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <MaterialIcon name="add" size={15} color='#2196F3' />
+                      <Caption style={{ color: '#2196F3' }}>
+                        Add Tag
                 </Caption>
-                </View> 
-                </TouchableHighlight>
-                {
-                  
-                  programTags.length == 0 ? 
-                    null
-                  :
-                  programTags.map(tag => {
-                    return (
-                      <Chip style={{margin: 3, width: 'auto', backgroundColor: '#2196F3'}} textStyle={{color: '#FFFFFF'}} mode="flat" color='#2196F3'>
-                        {tag}
-                      </Chip>
-                    )
-                  })
-                }
+                    </View>
+                  </TouchableHighlight>
+                  {
+
+                    programTags.length == 0 ?
+                      null
+                      :
+                      programTags.map(tag => {
+                        return (
+                          <Chip style={{ margin: 3, width: 'auto', backgroundColor: '#2196F3' }} textStyle={{ color: '#FFFFFF' }} mode="flat" color='#2196F3'>
+                            {tag}
+                          </Chip>
+                        )
+                      })
+                  }
+                </View>
               </View>
-            </View>
 
-            <Divider style={styles.divider} />
+              <Divider style={styles.divider} />
 
-            <View style={{marginVertical: 60, width: Dimensions.get('window').width, height: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                <TouchableHighlight onPress={() => setProgramType('Single')} style={{margin: 10, borderRadius: 5, alignSelf: 'center'}}>
-                <Surface style={[{borderRadius: 5, padding: 5, width: Dimensions.get('window').width / 2.5, height: 160, elevation: 3, alignItems: 'center', justifyContent: 'space-evenly'}, programType == 'Single' ? styles.selectedType : styles.unselectedType]}>
-                <Icon
-  name="user"
-  size={50}
-  color="#757575"
-  thin={true}
-/>
+              <View style={{ marginVertical: 60, width: Dimensions.get('window').width, height: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                <TouchableHighlight onPress={() => setProgramType('Single')} style={{ margin: 10, borderRadius: 5, alignSelf: 'center' }}>
+                  <Surface style={[{ borderRadius: 5, padding: 5, width: Dimensions.get('window').width / 2.5, height: 160, elevation: 3, alignItems: 'center', justifyContent: 'space-evenly' }, programType == 'Single' ? styles.selectedType : styles.unselectedType]}>
+                    <Icon
+                      name="user"
+                      size={50}
+                      color="#757575"
+                      thin={true}
+                    />
 
-                    <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{ }}>
-                            One on One
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{}}>
+                        One on One
                         </Text>
-                        <Caption style={{textAlign:'center'}}>
-                            Host solo sessions with one Lupa user per subscription.
+                      <Caption style={{ textAlign: 'center' }}>
+                        Host solo sessions with one Lupa user per subscription.
                         </Caption>
                     </View>
-                </Surface>
+                  </Surface>
                 </TouchableHighlight>
-            </View>
+              </View>
 
-          
-          <View>
-          <Caption style={{alignSelf: 'center', color: '#152230'}}>
-         Note: After a client buys your program they will receive an automatic message from you.  It is up to you to set session times with your client.
+
+              <View>
+                <Caption style={{ alignSelf: 'center', color: '#152230' }}>
+                  Note: After a client buys your program they will receive an automatic message from you.  It is up to you to set session times with your client.
         </Caption>
-        <View>
-              <Text style={[styles.questionText, {fontSize: 15, paddingLeft: 10, paddingVertical: 5}]}>
-                               Automated message upon Purchase:
+                <View>
+                  <Text style={[styles.questionText, { fontSize: 15, paddingLeft: 10, paddingVertical: 5 }]}>
+                    Automated message upon Purchase:
                                 </Text>
 
-                                <PaperTextInput theme={{
-                                  colors: {
-                                    primary: '#374e66'
-                                  }
-                                }} 
-                                mode="flat" 
-                                multiline 
-                                value={automatedMessageText} 
-                                onChangeText={text => setAutomatedMessageText(text)} 
-                                keyboardType="default" 
-                                returnKeyType="done"
-                                style={{width: width - 20, alignSelf: 'center'}}
-                                />
-                
+                  <PaperTextInput theme={{
+                    colors: {
+                      primary: '#374e66'
+                    }
+                  }}
+                    mode="flat"
+                    multiline
+                    value={automatedMessageText}
+                    onChangeText={text => setAutomatedMessageText(text)}
+                    keyboardType="default"
+                    returnKeyType="done"
+                    style={{ width: width - 20, alignSelf: 'center' }}
+                  />
+
+                </View>
               </View>
-          </View>
-        </ScrollView>
+            </ScrollView>
 
-        <LupaMapView 
-                            initialRegionLatitude={currUserState.location.latitude}
-                            initialRegionLongitude={currUserState.location.longitude}
-                            closeMapViewMethod={gymData => onMapViewClose(gymData)}
-                            isVisible={mapViewVisible}
-                        />
-
-
-<Snackbar
-          style={{position: 'absolute', bottom: 100}}
-          theme={{
-            colors: {
-              accent: '#1089ff'
-            }
-          }}
-          visible={snackBarVisible}
-          onDismiss={_onDismissSnackBar}
-          action={{
-            label: 'Okay',
-            onPress: () => {
-              setSnackBarVisibility(false)
-              setRejectedReason("")
-            },
-          }}
-        >
-          {rejectedReason}
-        </Snackbar>
-
-<SafeAreaView />
+            <LupaMapView
+              initialRegionLatitude={currUserState.location.latitude}
+              initialRegionLongitude={currUserState.location.longitude}
+              closeMapViewMethod={gymData => onMapViewClose(gymData)}
+              isVisible={mapViewVisible}
+            />
 
 
-<AddTagsModal isVisible={addTagsModalIsOpen} closeModalMethod={closeAddTagsModal} captureTags={(tags) => captureTags(tags)} />
+            <Snackbar
+              style={{ position: 'absolute', bottom: 100 }}
+              theme={{
+                colors: {
+                  accent: '#1089ff'
+                }
+              }}
+              visible={snackBarVisible}
+              onDismiss={_onDismissSnackBar}
+              action={{
+                label: 'Okay',
+                onPress: () => {
+                  setSnackBarVisibility(false)
+                  setRejectedReason("")
+                },
+              }}
+            >
+              {rejectedReason}
+            </Snackbar>
 
-            </>
-          )
-        case 1:
-          return <SelectProgramImage captureImage={props.captureImage} />
-        default:
-          return <View>
-            <Text>
-              Hi
+            <SafeAreaView />
+
+
+            <AddTagsModal isVisible={addTagsModalIsOpen} closeModalMethod={closeAddTagsModal} captureTags={(tags) => captureTags(tags)} />
+
+          </>
+        )
+      case 1:
+        return <SelectProgramImage captureImage={props.captureImage} />
+      default:
+        return <View>
+          <Text>
+            Hi
             </Text>
-          </View>
-      }
+        </View>
     }
+  }
 
-    const getOptionsButton = () => {
-      switch(currIndex) {
-        case 0:
-          return (
-            <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={getNextView} mode="contained">
-              <Text>
-                Next
+  const getOptionsButton = () => {
+    switch (currIndex) {
+      case 0:
+        return (
+          <Button color="#374e66" style={{ borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={getNextView} mode="contained">
+            <Text>
+              Next
               </Text>
-            </Button>
-          )
-        case 1:
+          </Button>
+        )
+      case 1:
 
-          return (
-            <Button color="#374e66" style={{borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center'}} onPress={handleSaveProgramInformation} mode="contained">
+        return (
+          <Button color="#374e66" style={{ borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
             <Text>
               Add Workouts
             </Text>
           </Button>
-          )
-      }
+        )
     }
-
-    return (
-        <View style={styles.root}>
-            <SafeAreaView />
-            <ProgressBar progress={currIndex == 0 ? 1 : 0.5} color="#23374d" />
-            { 
-            getViewDisplay()
-            }
-
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 10}}>
-<Button color="#23374d" onPress={() => props.handleCancelOnPress()}>
-  <Text>
-    Cancel
-  </Text>
-</Button>
-  {
-       getOptionsButton()
   }
-</View>
-<SafeAreaView />
-        </View>
-    )
+
+  return (
+    <View style={styles.root}>
+      <SafeAreaView />
+      <ProgressBar progress={currIndex == 0 ? 1 : 0.5} color="#23374d" />
+      {
+        getViewDisplay()
+      }
+
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 10 }}>
+        <Button color="#23374d" onPress={() => props.handleCancelOnPress()}>
+          <Text>
+            Cancel
+  </Text>
+        </Button>
+        {
+          getOptionsButton()
+        }
+      </View>
+      <SafeAreaView />
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
-    root: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-        paddingHorizontal: 2
-    },
-    topView: {
-        flex: 2,
-        backgroundColor: '#FFFFFF',
-        elevation: 15,
-        justifyContent: 'space-between'
-    },
-    bottomView: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    divider: {
-      width: Dimensions.get('window').width - 150, 
-      alignSelf: 'center'
-    },
-    container: {
-        width: "100%",
-        height: 320,
-        alignItems: "center",
-        justifyContent: "center",
-        alignSelf: "center",
-        color: 'white',
-        margin: 10,
-        backgroundColor: 'transparent'
-      },
-      selectedType: {
-        backgroundColor: '#d4e5ff', 
-        borderColor: '#BBDEFB', 
-        borderWidth: 0.5
-      },
-      unselectedType: {
-        backgroundColor: '#FFFFFF', 
-        borderColor: 'transparent', 
-        borderWidth: 0
-      },
-      textInput: {
-        margin: 3, 
-        width: '90%', 
-        alignSelf: 'flex-start', 
-        marginVertical: 10, 
-        borderBottomColor: '#212121', 
-        borderBottomWidth: 1, 
-        paddingVertical: 15
-      },
-      questionText: {
-        fontFamily: "avenir-roman", 
-        fontSize: 20, 
-        fontWeight: 'bold', 
-        color: '#374e66'
-      }
+  root: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 2
+  },
+  topView: {
+    flex: 2,
+    backgroundColor: '#FFFFFF',
+    elevation: 15,
+    justifyContent: 'space-between'
+  },
+  bottomView: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  divider: {
+    width: Dimensions.get('window').width - 150,
+    alignSelf: 'center'
+  },
+  container: {
+    width: "100%",
+    height: 320,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    color: 'white',
+    margin: 10,
+    backgroundColor: 'transparent'
+  },
+  selectedType: {
+    backgroundColor: '#d4e5ff',
+    borderColor: '#BBDEFB',
+    borderWidth: 0.5
+  },
+  unselectedType: {
+    backgroundColor: '#FFFFFF',
+    borderColor: 'transparent',
+    borderWidth: 0
+  },
+  textInput: {
+    margin: 3,
+    width: '90%',
+    alignSelf: 'flex-start',
+    marginVertical: 10,
+    borderBottomColor: '#212121',
+    borderBottomWidth: 1,
+    paddingVertical: 15
+  },
+  questionText: {
+    fontFamily: "avenir-roman",
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#374e66'
+  }
 })
 
 export default ProgramInformation;

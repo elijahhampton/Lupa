@@ -468,7 +468,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             return <MenuIcon customStyle={{margin: 10}} onPress={() => this.props.navigation.openDrawer()} />
         }
 
-        return <IconButton icon="arrow-back" size={20} onPress={() => this.props.navigation.goBack(null)} />
+        return <FeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.goBack(null)} />
     }
 
     /**
@@ -489,7 +489,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             
         }
         
-        return <FeatherIcon name="more-vertical" size={20} onPress={() => this._showActionSheet()} />
+        return <FeatherIcon name="more-horizontal" size={20} onPress={() => console.log('Hi')} />
     }
 
     /**
@@ -659,6 +659,48 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         }
     }
 
+    renderViewerInteractions = () => {
+        return (
+            <>
+            <View style={{width: '100%', margin: 5}}>
+                        {
+                                            this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
+                                            <TouchableHighlight style={{borderRadius: 8}} onPress={() => this.LUPA_CONTROLLER_INSTANCE.unfollowUser(this.state.userData.user_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>
+                                                                    <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+                        <Text style={{color: 'white', fontWeight: '500'}}>
+                            Unfollow
+                        </Text>
+                    </View>
+                                            </TouchableHighlight>
+                                            :
+                                            <TouchableHighlight onPress={() => this.LUPA_CONTROLLER_INSTANCE.followUser(this.state.userData.user_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>
+                                            <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+<Text style={{color: 'white', fontWeight: '500'}}>
+    Follow
+</Text>
+</View>
+                    
+                    </TouchableHighlight>
+                    }        
+                    </View> 
+
+                    <View style={{width: '100%', margin: 5}}>
+                                            <TouchableHighlight onPress={() => this.props.navigation.navigate('PrivateChat', {
+                                                currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
+                                                otherUserUUID: this.state.userData.user_uuid
+                                            })}>
+                                            <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+<Text style={{color: 'white', fontWeight: '500'}}>
+    Message
+</Text>
+</View>
+                    
+                    </TouchableHighlight>        
+                    </View>  
+                    </>  
+        )
+    }
+
     /**
      * 
      */
@@ -711,13 +753,10 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
 
                     return this.props.lupa_data.Programs.currUserProgramsData.map((program, index, arr) => {
                         return (
-                            <>  
+                            <View style={{marginVertical: 10}}>   
                                 <ProgramSearchResultCard programData={program} />
-                                <View style={{position: 'absolute', top: 0, right: 0, margin: 10, justifyContent: 'flex-end'}}>
-                                    <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program)} size={20} name="more-horizontal" style={{padding: 1}} />
-                                </View>
-                                <Divider />
-                            </>
+                                    <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program)} size={20} name="more-vertical" style={{position: 'absolute', top: 0, right: 0, margin: 5, }} />
+                            </View>
                         )
                     })
             }
@@ -773,22 +812,9 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                                                     <View style={{padding: 20, backgroundColor: '#F2F2F2', width: Dimensions.get('window').width, justifyContent: 'center', alignItems: 'center'}}>
                                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                                                <Text style={{fontSize: 13, fontWeight: '300', textAlign: 'center'}}>
-                               This trainer has not created any programs.  Explore trainers and fitness programs on the Train page.
+                               This trainer has not created any programs.  Explore trainers and fitness programs on from the Lupa Home page.
                            </Text>
                                     </View>
-                           <Button mode="text" style={{marginTop: 15, width: '60%', elevation: 0}} theme={{
-                                    colors: {
-                                        primary: '#2196F3'
-                                    },
-                                    roundness: 3,
-        
-                                }} onPress={() => this.props.navigation.push('CreateProgram',{
-                                    navFrom: 'Profile'
-                                })}>
-                                    <Text style={{fontSize: 13}}>
-                                        Create a Program
-                                    </Text>
-                                </Button>
                          
                                 </View>
 
@@ -828,13 +854,12 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
 
                 return this.state.userData.programs.map((program, index, arr) => {
                     return (
-                        <>  
+                        <View style={{marginVertical: 10}}>  
                             <ProgramSearchResultCard programData={program} />
                             <View style={{position: 'absolute', top: 0, right: 0, margin: 10, justifyContent: 'flex-end'}}>
                                 <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program)} size={20} name="more-horizontal" style={{padding: 1}} />
                             </View>
-                            <Divider />
-                        </>
+                        </View>
                     )
                 })
             }
@@ -882,7 +907,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         return (
             <SafeAreaView style={styles.container}>
                 <SafeAreaView />
-                <Appbar.Header style={{ backgroundColor: "transparent", margin: 10, elevation: 0 }}>
+                <Appbar.Header style={{ backgroundColor: 'white', margin: 10, elevation: 0 }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>
@@ -899,7 +924,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 </Appbar.Header>
 
                 <ScrollView 
-                contentContainerStyle={{ flexGrow: 1 }} 
+                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#F2F2F2' }} 
                 showsVerticalScrollIndicator={false} 
                 shouldRasterizeIOS={true} 
                 refreshControl={
@@ -907,7 +932,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 onRefresh={this.handleOnRefresh} />}>
                     {
                         this.state.userData.isTrainer == true ?
-                                        <View style={{alignSelf: 'center', marginBottom: 30, alignItems: 'center' }}>
+                                        <View style={{backgroundColor: '#FFFFFF', alignSelf: 'center', paddingVertical: 20, width: '100%', alignItems: 'center' }}>
                                         <Text style={{color: '#212121', fontWeight: 'bold'}}> National Academy of Sports Medicine </Text>
                                         <Text style={{color: '#212121',  }}> Lupa Tier 1 </Text>
                                     </View>
@@ -917,7 +942,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     
                     <View style={styles.user}>
                         <View style={styles.userInfoContainer}>
-                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+                            <View style={{backgroundColor: 'white',flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
                             <View style={{flex: 2, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start'}}>
                                 {this.getUserAvatar()}
                                 <View style={styles.userAttributesContainer}>
@@ -945,7 +970,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         </View>
                             </View>
                             
-                            <View style={{flex: 3, alignItems: 'center'}}>
+                            <View style={{flex: 3, justifyContent: 'space-evenly', alignItems: 'center'}}>
                                 <View style={{marginVertical: 10, justifyContent: 'center', alignItems: 'center'}}>
                                 <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
                                     {this.state.userData.display_name}
@@ -957,24 +982,46 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
 
                                 <View style={{width: '100%'}}>
                                     {
-                                this.renderFollowButton()
-                        }
-
-                        {
-                            this.renderMessageButton()
-                        }
+                                        this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid && this.props.lupa_data.Users.currUserData.isTrainer ?
+                                
+                                            <Text style={{fontSize: 12, fontWeight: '700', alignSelf: 'center', color: '#1089ff'}}>
+                                                Your hourly rate is $0
+                                            </Text>
+                                        
+                                        :
+                                            this.renderViewerInteractions()
+                                    
+                            
+                                    }
+                 
                                 </View>
                             </View>
                             </View>
 
-                            <View style={{flex: 1, marginHorizontal: 10, marginBottom: 10, width: '100%'}}>
-                                <Text style={{paddingVertical: 5, padding: 5, fontSize: 10, fontWeight: '500'}}>
+                            <View style={{flex: 1,  marginVertical: 25, marginBottom: 10, width: '100%'}}>
+                                <Text style={{paddingVertical: 5, paddingHorizontal: 10, padding: 5, fontSize: 10, fontWeight: '500'}}>
                          {
                              this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
                              this.props.lupa_data.Users.currUserData.bio
                              :
                              this.state.userData.bio
                          }
+                        
+                         {
+                             
+
+                             this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid && this.state.userData.isTrainer === true ?
+                             <>
+                              <Divider style={{width: Dimensions.get('window').width}} />
+                             <Text style={{paddingHorizontal: 10, fontSize: 10, fontWeight: '500',  color: '#1089ff'}}>
+                             {this.state.userData.display_name} has an hourly rate of $0
+                         </Text>
+                         </>
+                         :
+                         null
+                         }
+
+
                                 </Text>
                                 </View>
                             
@@ -986,19 +1033,18 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     {
                                 this.props.lupa_data.Users.currUserData.isTrainer ?
                                 <TouchableOpacity style={{}}>
-                                    <View style={{paddingVertical: 10}}>
-                                        <View style={{marginHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <View style={{paddingVertical: 10, backgroundColor: 'white'}}>
+                                        <View style={{paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                         <Text style={{fontSize: 15, paddingVertical: 10}}>
                                         Reviews
                                     </Text>
-                                    <FeatherIcon name="chevron-down" />
+                                    <FeatherIcon name="chevron-down" size={15} />
                                         </View>
                                
-                                    <Caption style={{paddingLeft: 20}}>
+                                    <Caption style={{paddingLeft: 10}}>
                                         This trainer has not received any reviews
                                     </Caption>
                                     </View>
-                                    <Divider style={{backgroundColor: 'rgb(242, 242, 247)', height: 8}} />
                                 </TouchableOpacity>
                                 :
                                 null
@@ -1006,7 +1052,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                             
                     </View>
 
-                    <View>
+                    <View style={{backgroundColor: '#F2F2F2'}}>
                     {
                                 this.props.lupa_data.Users.currUserData.isTrainer ?
                                 this.mapTrainerPrograms()
@@ -1031,7 +1077,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFFFFF",
     },
     transparentBackground: {
-        backgroundColor: "transparent",
+        backgroundColor: "white",
     },
     userAttributeText: {
         fontSize: 10,
@@ -1039,16 +1085,19 @@ const styles = StyleSheet.create({
     user: {
         flexDirection: "column",
         margin: 0,
-        backgroundColor: "transparent"
+        backgroundColor: "white"
     },
     userAttributesContainer: {
         width: '100%',
         flexDirection: "row", 
         alignItems: "center", 
-        justifyContent: "space-evenly", margin: 20
+        justifyContent: "space-evenly", 
+        backgroundColor: 'white',
+        margin: 20
     },
     userInfoContainer: {
         width: '100%',
+        backgroundColor: 'white'
     },
 });
 

@@ -146,10 +146,10 @@ function TrainerDashboardView(props) {
 
                                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                      <ThinFeatherIcon name="mail" thin={true} size={25} style={{marginRight: 20}} onPress={() => navigation.navigate('Messages')} />
+                                     <ThinFeatherIcon name="bar-chart" thin={true} size={25} style={{marginRight: 20}} onPress={() => navigation.navigate('Messages')} />
                                      </View>
                                     </View>
-                                     <Divider style={{marginTop: 15, alignSelf: 'center', width: Dimensions.get('window').width}} />
-
+                                 
             </View>
             <View style={{flex: 1}}>
             <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={

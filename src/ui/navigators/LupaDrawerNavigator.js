@@ -69,15 +69,14 @@ function LupaBottomTabNavigator() {
 
         },
       })} >
-      <Tab.Screen name="Dashboard" component={DashboardNavigator} />
-      <Tab.Screen name="Train" component={LupaHomeNavigator} />
-      <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
+              <Tab.Screen name="Dashboard" component={DashboardNavigator} />
+              <Tab.Screen name="Train" component={LupaHomeNavigator} />
+              <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
           tabPress: event => {
             event.preventDefault()
             navigation.navigate('CreateProgram')
           }
         })}  />
-      <Tab.Screen name="Community" component={PackNavigator} />
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );

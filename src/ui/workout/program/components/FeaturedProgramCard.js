@@ -17,7 +17,9 @@ import { useNavigation } from '@react-navigation/native'
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
 import ProgramInformationPreview from '../ProgramInformationPreview';
 
-function FeaturedProgramCard({ currProgram }) {
+import { RFValue } from 'react-native-responsive-fontsize'
+
+function FeaturedProgramCard({ currProgram, keyProp }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -31,9 +33,7 @@ function FeaturedProgramCard({ currProgram }) {
     const handleCardOnPress = (programData) => {
         if (currUserData.programs.includes(programData.program_structure_uuid)) {
 
-            navigation.push('LiveWorkout', {
-                programData: programData,
-            });
+           setProgramModalVisible(true)
 
         }
         else {
@@ -85,10 +85,11 @@ function FeaturedProgramCard({ currProgram }) {
     return (
         <>
             <Card
+            key={keyProp}
             theme={{ roundness: 15 }} 
             style={styles.card} 
             onPress={() => handleCardOnPress(currProgram)}>
-                <Card.Cover resizeMode='contain' defaultSource={require('../../../images/programs/sample_photo_two.jpg')} source={{ uri: currProgram.program_image }} style={styles.cardCover} />
+                <Card.Cover resizeMode='cover' source={{ uri: currProgram.program_image }} style={styles.cardCover} />
                 <Card.Actions style={styles.cardActions}>
                     <View style={styles.actionContent}>
                         <View style={styles.actionTopContent}>
@@ -106,13 +107,17 @@ function FeaturedProgramCard({ currProgram }) {
 
 
                         <View style={styles.actionBottomContent}>
+                            <View style={styles.programLocationAddressTextContainer}>
                             <Text style={styles.programLocationAddressText} numberOfLines={1}>
                                 {getProgramLocation().address}
                             </Text>
+                            </View>
 
+                            <View style={styles.programLocationNameTextContainer}>
                             <Text style={styles.programLocationNameText}>
                                 ({getProgramLocation().name})
                             </Text>
+                            </View>
                         </View>
                     </View>
                 </Card.Actions>
@@ -127,7 +132,8 @@ const styles = StyleSheet.create({
         borderRadius: 15, elevation: 10, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 5, marginBottom: 20, shadowOpacity: 0.1
     },
     cardCover: {
-        height: '65%'
+        height: '65%',
+        width: '100%',
     },
     cardActions: {
         width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center'
@@ -139,7 +145,7 @@ const styles = StyleSheet.create({
         width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'
     },
     programNameText: {
-        fontFamily: 'avenir-roman', fontSize: 15, fontWeight: '800' 
+        fontFamily: 'avenir-roman', fontSize: 15, fontWeight: '800',
     },
     programOwnerNameText: {
         fontSize: 12, fontWeight: '500', color: '#1089ff'
@@ -148,13 +154,22 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     actionBottomContent: {
-        width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'
+        width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'
+    },
+    programLocationAddressTextContainer: {
+        width: '60%',
+        justifyContent: 'flex-end'
     },
     programLocationAddressText: {
-        fontSize: 10, fontWeight: '400', flexWrap: 'nowrap'
+        fontSize: RFValue(10) ,fontWeight: '400', flexWrap: 'nowrap', width: '100%',alignSelf: 'flex-start'
+    },
+    programLocationNameTextContainer: {
+        width: '35%',
+        justifyContent: 'flex-start'
+        
     },
     programLocationNameText: {
-        fontSize: 10, fontWeight: '400', flexWrap: 'nowrap'
+        fontSize: RFValue(10), fontWeight: '400', flexWrap: 'nowrap',  flex: 1, width: '100%', alignSelf: 'flex-end'
     }
 })
 
