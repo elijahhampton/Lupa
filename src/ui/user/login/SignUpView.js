@@ -96,25 +96,17 @@ const SignUp = props => {
    * as well as Lupa application data (assessments, workouts);
    */
   const _setupRedux = async () => {
-    let currUserData = getLupaUserStructure(), currUserPacks = getLupaPackStructure(), currUserPrograms = getLupaProgramInformationStructure(), lupaAssessments = [], lupaWorkouts = [];
+    let currUserData = getLupaUserStructure(), currUserPrograms = getLupaProgramInformationStructure(), lupaWorkouts = [];
     
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
 
-    await LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-      currUserPacks = result;
-    })
-
-
     await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
     })
 
-
-    lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-
-    lupaAssessments = await LUPA_CONTROLLER_INSTANCE.loadAssessments();
+    lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
 
     let userPayload = {
       userData: currUserData,
@@ -122,10 +114,8 @@ const SignUp = props => {
     }
 
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload})
-    await dispatch({ type: 'UPDATE_CURRENT_USER_PACKS', payload: currUserPacks})
     await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
-    await dispatch({ type: 'UPDATE_LUPA_ASSESSMENTS', payload: lupaAssessments})
   }
 
   const signupHandler = async () => {
