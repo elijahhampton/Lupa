@@ -201,13 +201,9 @@ class LoginView extends React.PureComponent {
    * as well as Lupa application data (assessments, workouts);
    */
   _setupRedux = async () => {
-    let currUserData = getLupaUserStructure(), currUserPacks = [], currUserPrograms = [], lupaWorkouts = [];
+    let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = [];
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
-    })
-
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-      currUserPacks = result;
     })
 
 
@@ -222,7 +218,6 @@ class LoginView extends React.PureComponent {
       healthData: {}
     }
 
-    await this._updatePacksInRedux(currUserPacks);
     await this._updateUserInRedux(userPayload);
     await this._updateUserProgramsDataInRedux(currUserPrograms);
     this._updateLupaWorkoutsDataInRedux(lupaWorkouts);

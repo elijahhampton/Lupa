@@ -12,9 +12,6 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardNavigator from './DashboardNavigator';
 import LupaHomeNavigator from './LupaHomeNavigator';
-import PackNavigator from './PackNavigator';
-import { SafeAreaView, Dimensions } from 'react-native';
-
 
 const Drawer = createDrawerNavigator();
 

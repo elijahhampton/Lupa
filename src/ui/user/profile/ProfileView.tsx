@@ -66,7 +66,6 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import MyPacksCard from './component/MyPacksCard';
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
 import { Constants } from 'react-native-unimodules';
@@ -339,15 +338,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         //update in redux
         //await this.props.updateCurrentUsers()
     }
-
-    mapPacks = () => {
-        return this.state.userPackData.map(pack => {
-            return (
-                <MyPacksCard packUUID={pack.id} packTitle={pack.pack_title} />
-            )
-        })
-    }
-
 
     /**
      * Handles refreshing the profile view.  Re renders the view with fresh data from FB.
@@ -970,8 +960,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         </View>
                             </View>
                             
-                            <View style={{flex: 3, justifyContent: 'space-evenly', alignItems: 'center'}}>
-                                <View style={{marginVertical: 10, justifyContent: 'center', alignItems: 'center'}}>
+                            <View style={{flex: 3, justifyContent: 'space-evenly', alignItems: 'center', paddingHorizontal: 10}}>
+                                <View style={{marginVertical: 5, justifyContent: 'center', alignItems: 'center'}}>
                                 <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
                                     {this.state.userData.display_name}
                                 </Text>
@@ -985,7 +975,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                         this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid && this.props.lupa_data.Users.currUserData.isTrainer ?
                                 
                                             <Text style={{fontSize: 12, fontWeight: '700', alignSelf: 'center', color: '#1089ff'}}>
-                                                Your hourly rate is $0
+                                                Verified Trainer
                                             </Text>
                                         
                                         :
@@ -998,31 +988,29 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                             </View>
                             </View>
 
-                            <View style={{flex: 1,  marginVertical: 25, marginBottom: 10, width: '100%'}}>
-                                <Text style={{paddingVertical: 5, paddingHorizontal: 10, padding: 5, fontSize: 10, fontWeight: '500'}}>
+                            <View style={{flex: 1,  alignItems: 'flex-start', justifyContent: 'center', marginVertical: 15, marginBottom: 10, width: '100%'}}>
+                                <>
+                                <Text style={{ padding: 10, fontSize: 10, fontWeight: '500'}}>
                          {
+
                              this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
                              this.props.lupa_data.Users.currUserData.bio
                              :
-                             this.state.userData.bio
-                         }
+                            this.state.userData.bio
                         
-                         {
-                             
+                            
+                         }
+                    
+                                </Text>
+                                <Divider style={{width: Dimensions.get('window').width}} />
+                                </>
 
-                             this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid && this.state.userData.isTrainer === true ?
-                             <>
-                              <Divider style={{width: Dimensions.get('window').width}} />
-                             <Text style={{paddingHorizontal: 10, fontSize: 10, fontWeight: '500',  color: '#1089ff'}}>
+                                <>
+                             <Text style={{fontSize: 12, paddingHorizontal: 10, paddingTop: 10, fontWeight: '600',  color: '#1089ff'}}>
                              {this.state.userData.display_name} has an hourly rate of $0
                          </Text>
                          </>
-                         :
-                         null
-                         }
-
-
-                                </Text>
+  
                                 </View>
                             
                         </View>
