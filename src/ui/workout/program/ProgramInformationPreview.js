@@ -77,6 +77,7 @@ const mapDispatchToProps = dispatch => {
 }
 
 const { windowWidth } = Dimensions.get('window').width
+const VERTICAL_SEPARATION = 25
 
 function ProgramInformationPreview(props) {
     const [programData, setProgramData] = useState(getLupaProgramInformationStructure());
@@ -321,6 +322,58 @@ function ProgramInformationPreview(props) {
             }
     }
 
+    const getLocationLatitude = () => {
+        if (typeof(programData) == 'undefined' || programData == null)
+        {
+            return 0
+        }
+
+        try {
+            return programData.program_location.location.lat
+        } catch(error) {
+            return 0;
+        }
+    }
+
+    const getLocationLongitude = () => {
+        if (typeof(programData) == 'undefined' || programData == null)
+        {
+            return 0
+        }
+
+        try {
+            return programData.program_location.location.long;
+        } catch(error) {
+            return 0;
+        }
+    }
+
+    const renderProgramLocationName = () => {
+        if (typeof(programData) == 'undefined' || programData == null)
+        {
+            return "";
+        }
+
+        try {
+            return programData.program_location.name;
+        } catch(error) {
+            return "";
+        }
+    }
+
+    const renderProgramLocationAddress = () => {
+        if (typeof(programData) == 'undefined' || programData == null)
+        {
+            return "";
+        }
+
+        try {
+            return programData.program_location.address;
+        } catch(error) {
+            return "";
+        }
+    }
+
 
     return (
         <Modal presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
@@ -333,7 +386,7 @@ function ProgramInformationPreview(props) {
                       <Appbar.Action icon={() => <FeatherIcon name="x" size={25} onPress={() => props.closeModalMethod()}/>} />
                     
                   </Appbar.Header>
-                   <ScrollView>
+                   <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
                    <View style={styles.programImageContainer}>
                        <Image style={styles.image} source={{uri: getProgramImage()}} />
                    </View>
@@ -371,17 +424,17 @@ function ProgramInformationPreview(props) {
                        <View style={styles.mapViewSubContainer}>
                                 <MapView style={styles.mapView}
                     initialRegion={{
-                        latitude: 0,
-                        longitude: 0,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
+                        latitude: getLocationLatitude(),
+                        longitude: getLocationLongitude(),
+                        latitudeDelta: 0.05,
+                        longitudeDelta: 0.05,
                       }} />
                                 <View style={styles.mapViewTextContainer}>
                                 <Text style={styles.mapViewText}>
-                           Mean's Gym House
+                           {renderProgramLocationName()}
                        </Text>
                        <Text style={styles.mapViewText}>
-                       1234 Hydrag Lane
+                       {renderProgramLocationAddress()}
                        </Text>
                        </View>
                        </View>
@@ -446,7 +499,7 @@ const styles = StyleSheet.create({
         elevation: 0
     },
     mapViewContainer: {
-        marginVertical: 20
+        marginVertical: 25
     },
     mapViewSubContainer: {
         marginTop: 10, 
@@ -469,8 +522,9 @@ const styles = StyleSheet.create({
         paddingLeft: 20
     },
     mapViewText: {
-        fontSize: 20, 
-        fontWeight: '300'
+        fontSize: 15, 
+        fontWeight: '300',
+        margin: 3,
     },
     purchaseContainer: {
         padding: 10, 
@@ -484,14 +538,16 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center', 
         width: windowWidth,
-        height: 300
+        height: 300,
+        marginBottom: VERTICAL_SEPARATION
     },
     image: {
         width: '100%', 
         height: '100%'
     },
     programOwnerDetailsContainer: {
-        alignItems: 'center', justifyContent: 'space-evenly'
+        alignItems: 'center', justifyContent: 'space-evenly',
+        marginVertical: VERTICAL_SEPARATION
     },
     programOwnerDetailsSubContainer: {
         width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'
@@ -499,7 +555,8 @@ const styles = StyleSheet.create({
     programInformationContainer: {
         marginHorizontal: 10, 
         height: 150, 
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        marginVertical: VERTICAL_SEPARATION
     },
     programDescriptionText: {
         color: 'rgb(180, 180, 180)', 
@@ -526,7 +583,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginVertical: VERTICAL_SEPARATION
     },
     messageButton: {
         borderRadius: 8, 
@@ -535,7 +593,8 @@ const styles = StyleSheet.create({
     programTermsContainer: {
         alignItems: 'center', 
         justifyContent: 'center', 
-        marginHorizontal: 20
+        marginHorizontal: 20,
+        marginVertical: VERTICAL_SEPARATION
     }
 })
 

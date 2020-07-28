@@ -37,16 +37,26 @@ const WelcomeContentDriver = () => {
                                 <View>
                                 <ListItem
         title='Report'
-        titleStyle={{fontSize: 15, fontWeight: '600', color: 'rgb(72, 72, 74)'}}
-        subtitle='Remember to eport suspicious behavior.'
-        subtitleStyle={{fontSize: 15, fontWeight: '600'}}
+        titleStyle={{fontSize: 15, fontWeight: '400', color: 'rgb(72, 72, 74)'}}
+        subtitle='Remember to report suspicious behavior.'
+        subtitleStyle={{fontSize: 15, fontWeight: '500'}}
+        rightIcon={() => <FeatherIcon name="arrow-right" />}
         bottomDivider
       />
                                 <ListItem
         title='Train Safely'
-        titleStyle={{fontSize: 15, fontWeight: '600', color: 'rgb(72, 72, 74)'}}
+        titleStyle={{fontSize: 15, fontWeight: '400', color: 'rgb(72, 72, 74)'}}
         subtitle='Always meet trainers in a public area.'
-        subtitleStyle={{fontSize: 15, fontWeight: '600'}}
+        subtitleStyle={{fontSize: 15, fontWeight: '500'}}
+        rightIcon={() => <FeatherIcon name="arrow-right" />}
+        bottomDivider
+      />
+                             <ListItem
+        title='Terms of Service'
+        titleStyle={{fontSize: 15, fontWeight: '400', color: 'rgb(72, 72, 74)'}}
+        subtitle='Find the Lupa Terms of Service here.'
+        subtitleStyle={{fontSize: 15, fontWeight: '500'}}
+        rightIcon={() => <FeatherIcon name="arrow-right" />}
         bottomDivider
       />
       <ListItem

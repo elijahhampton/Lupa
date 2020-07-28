@@ -74,8 +74,6 @@ export async function sendNotificationToCurrentUsersDevice() {
 
 async function saveTokenToDatabase(token, uuid) {
   // Assume user is already signed in
-  alert(uuid)
-
   if (typeof(uuid) == 'undefined' || typeof(uuid) != 'string') {
     const userId = await reactfirebaseauth().currentUser.uid;
 

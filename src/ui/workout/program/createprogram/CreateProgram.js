@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     View,
     StyleSheet,
+    Text,
+    Dimensions,
+    Image,
+    SafeAreaView,
+    Modal,
+    ActivityIndicator,
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -13,6 +19,94 @@ import BuildAWorkout from './BuildWorkout';
 import ProgramPreview from './component/ProgramPreview';
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 import { fromString } from 'uuidv4';
+import FeatherIcon from 'react-native-vector-icons/Feather'
+import LUPA_DB from '../../../../controller/firebase/firebase';
+import { useNavigation } from '@react-navigation/native';
+
+import { Button, Caption } from 'react-native-paper'
+import { Constants } from 'react-native-unimodules';
+
+
+const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+
+    const [programData, setProgramData] = useState(getLupaProgramInformationStructure())
+    const [componentReady, setComponentReady] = useState(false)
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        async function fetchData() {
+            await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(data => {
+                setProgramData(data)
+            }).then(() => {
+                setComponentReady(true)
+            })
+
+            console.log(programData)
+        }
+
+        try {
+        fetchData()
+    } catch(err) {
+        alert(err)
+    }
+    }, [])
+
+    const handlePublishProgram =  async() => {
+        await LUPA_CONTROLLER_INSTANCE.publishProgram(uuid)
+        navigation.navigate('Train')
+        closeModal()
+    }
+
+    const close = () => {
+        closeModal()
+    }
+
+    const getComponentDisplay = () => {
+        if (componentReady) {
+            return (
+                <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
+                        <Button mode="text" color="white" onPress={closeModal} style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, margin: 20}}>
+                            Cancel
+                        </Button>
+                        
+                        <View style={{height: 300, justifyContent: 'space-evenly', marginVertical: 60, alignItems: 'center'}}>
+                        <Text style={{fontSize: 30, color: 'white', textAlign: 'center'}}>
+                            Your program has been published
+                        </Text>
+  
+                        </View>
+
+                        <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button color="#1089ff" mode="contained" style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 55, borderColor: 'white'}} onPress={handlePublishProgram}>
+                            Publish
+                        </Button>
+                        
+
+                        </View>
+    
+                </SafeAreaView>
+            )
+        } else {
+            return (
+                <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
+                    <ActivityIndicator animating={true} color="white" />
+                </SafeAreaView>
+            )
+        }
+    }
+    return (
+        <Modal 
+        animationType="fade"
+        transparent={true}
+        visible={isVisible}
+        >
+                {getComponentDisplay()}
+        </Modal>
+           
+    )
+}
 
 const mapStateToProps = (state, action) => {
     return {
@@ -49,6 +143,7 @@ class CreateProgram extends React.Component {
             programData: getLupaProgramInformationStructure(),
             programImage: "",
             programComplete: false,
+            creatingProgram: false,
         }
 
         this.nextIndex = this.nextIndex.bind(this);
@@ -56,8 +151,8 @@ class CreateProgram extends React.Component {
 
     async componentDidMount() {
         const UUID = fromString((Math.random() + this.props.lupa_data.Programs.currUserProgramsData.length).toString())
-        const programPayload = getLupaProgramInformationStructure(UUID, "", "" ,0, new Date(), new Date(), "", 0, 0, 0, {}, false, "", [], this.props.lupa_data.Users.currUserData.user_uuid, [this.props.lupa_data.Users.currUserData.user_uuid], "")
-        await this.setState({ currProgramUUID: UUID })
+        await this.setState({ currProgramUUID: UUID }) 
+        const programPayload = getLupaProgramInformationStructure(UUID, "", "" ,0, new Date(), new Date(), "", 0, 0, 0, {}, false, "", [], this.props.lupa_data.Users.currUserData.user_uuid, [this.props.lupa_data.Users.currUserData.user_uuid], "", false)
         await this.setState({ programData: programPayload })
         this.LUPA_CONTROLLER_INSTANCE.createNewProgram(UUID);
     }
@@ -103,6 +198,7 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_participants = [this.props.lupa_data.Users.currUserData.user_uuid]
         updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
         updatedProgramData.program_automated_message = programAutomatedMessage
+        updatedProgramData.completedProgram = false;
 
         await this.LUPA_CONTROLLER_INSTANCE.updateProgramData(this.state.currProgramUUID, updatedProgramData);
 
@@ -111,9 +207,12 @@ class CreateProgram extends React.Component {
 
     saveProgramWorkoutData = async (workoutData) => {
         await this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.currProgramUUID, workoutData)
+        this.setState({ programComplete: true, creatingProgram: true });
+    }
 
-        this.setState({ programComplete: true }, () => {
-            this.exit()
+    handleSuccessfulReset = () => {
+        this.setState({ 
+            creatingProgram: false,
         })
     }
 
@@ -152,7 +251,6 @@ class CreateProgram extends React.Component {
 
     exit = () => {
         if (this.state.programComplete == false) {
-            alert(this.state.programComplete)
             //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.currProgramUUID)
 
@@ -214,6 +312,7 @@ class CreateProgram extends React.Component {
                 {
                     this.getViewDisplay()
                 }
+                <CreatingProgramModal uuid={this.state.currProgramUUID} isVisible={this.state.creatingProgram} closeModal={this.handleSuccessfulReset} />
             </View>
         )
     }

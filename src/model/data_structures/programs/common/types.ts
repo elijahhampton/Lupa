@@ -19,4 +19,5 @@ export type LupaProgramInformationStructure = {
     program_participants: Array<String>,
     program_workout_days: Array<String>,
     program_automated_message: String,
+    completedProgram: Boolean,
 }

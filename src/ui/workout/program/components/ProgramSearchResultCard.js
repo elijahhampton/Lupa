@@ -14,8 +14,10 @@ import {
     Paragraph,
     Caption,
     Surface,
+    Button,
+    Divider,
 } from 'react-native-paper';
-
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import ProgramInformationPreview from '../ProgramInformationPreview';
 
 import { useNavigation } from '@react-navigation/native'
@@ -74,51 +76,27 @@ function ProgramSearchResultCard(props) {
         <View style={{width: Dimensions.get('window').width}}>
 
         <TouchableOpacity onPress={() => handleOnPress()}>
-        <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, marginVertical: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 120, backgroundColor: 'transparent'}} >
-                                
-        <View style={{flex: 1, padding: 10, alignItems: 'center', justifyContent: 'center' }}>
-            <Surface style={{width: '80%', height: '70%', elevation: 15, borderRadius: 10}}>
-                <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: result.program_image}} />
-            </Surface>
-            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
-                <Text style={{alignSelf: 'flex-end',   fontSize: 12}}>
-                    One on One 
-                </Text>
-            </View>
+        <Surface style={styles.container}>
+        <View style={styles.imageContainer}>
+        <Image source={{uri: props.programData.program_image}} style={styles.image} />
         </View>
+      
+        
+        <View style={styles.informationContentContainer}>
+            <View style={styles.programInformationContainer}>
 
-        <View style={{flex: 3, height: '100%', justifyContent: 'center'}}>
-            <View style={{}}>
-                <Text style={{  fontSize: 15, color: '#212121'}}>
-                    {result.program_name}
-                </Text>
+            <Text style={styles.programNameText}>
+            {props.programData.program_name}
+          </Text>
+
+          <Text numberOfLines={2} style={styles.programDescriptionText}>
+         {props.programData.program_description}
+          </Text>
             </View>
 
-        <View style={{flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <Text style={{fontSize: 10, width: '80%', flex: 1, flexWrap: 'wrap'}} numberOfLines={4}>
-                {result.program_description}
-                </Text>
-        </View>
+          </View>
+  </Surface>
 
-
-            <View style={{flex: 1, bottom: 0,width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <View style={{flex: 1,justifyContent: 'flex-end'}}>
-                <Text style={{  fontSize: 10, color: '#212121'}}>
-                 {result.program_duration} sessions per week
-                </Text>
-            </View>
-            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-                {
-                    getProgramTags()
-                }
-            </View>
-            </View>
-
-            
-        </View>
-
-
-      </Surface>
       </TouchableOpacity>
 
       <ProgramInformationPreview isVisible={programModalVisible} programData={props.programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
@@ -126,4 +104,36 @@ function ProgramSearchResultCard(props) {
     )
 }
 
+const styles = StyleSheet.create({
+    container: {
+        alignSelf: 'center', elevation: 10, shadowOpacity: 0.1,  borderRadius: 10, width: Dimensions.get('window').width - 70, height: 200, margin: 5, marginVertical: 15
+    },
+    image: {
+        width: '100%', height: '100%', borderTopLeftRadius: 10, borderTopRightRadius: 10,
+    },
+    imageContainer: {
+        flex: 4
+    },
+    informationContentContainer: {
+        flex: 2,
+    },
+    programInformationContainer: {
+        flex: 1, padding: 10, justifyContent: 'space-evenly'
+    },
+    programOwnerDisplayNameText: {
+        fontSize: 12, fontWeight: '600', color: '#1089ff'
+    },
+    programNameText: {
+        fontSize: 15, fontWeight: 'bold', fontFamily: 'avenir-roman'
+    },
+    programDescriptionText: {
+        fontFamily: 'avenir-roman', fontSize: 10, flexWrap: 'nowrap'
+    },
+    buttonContainer: {
+        flex: 0.5, alignItems: 'center', justifyContent: 'center'
+    },
+    buttonText: {
+        fontWeight: '400', fontFamily: 'avenir-roman', fontSize: 12
+    }
+})
 export default ProgramSearchResultCard;

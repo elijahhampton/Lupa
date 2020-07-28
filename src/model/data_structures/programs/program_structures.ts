@@ -35,6 +35,7 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_owner: "",
     program_participants: [],
     program_automated_message: "",
+    completedProgram: false,
 }
 
 export const getLupaProgramInformationStructure = (
@@ -62,6 +63,7 @@ export const getLupaProgramInformationStructure = (
     programOwner = "",
     program_participants=[],
     programAutomatedMessage="",
+    completedProgram=false,
     ) => {
         
     lupa_program_information_structure.program_structure_uuid = uuid;
@@ -90,6 +92,7 @@ export const getLupaProgramInformationStructure = (
         Saturday: [],
         Sunday: []
     }
+    lupa_program_information_structure.completedProgram = completedProgram
 
     return lupa_program_information_structure;
 }
