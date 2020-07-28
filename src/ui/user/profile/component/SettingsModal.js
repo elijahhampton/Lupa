@@ -30,9 +30,13 @@ import {
     Appbar,
 } from 'react-native-paper';
 
+import { ListItem } from 'react-native-elements'
+
 import SafeAreaView from 'react-native-safe-area-view';
 
 import { useDispatch } from 'react-redux';
+
+import FeatherIcon from 'react-native-vector-icons/Feather'
 
 
 import { logoutUser } from '../../../../controller/lupa/auth/auth';
@@ -125,34 +129,29 @@ function changePasswordModal(props) {
 
 accountList = [
     {
-        key: 'Name',
-        title: 'Name',
+        key: 'Account',
+        title: 'Account',
         description: '',
-        property: 'display_name'
     },
     {
-        key: 'Username',
-        title: 'Username',
+        key: 'Payments',
+        title: 'Payments',
         description: '',
-        property: 'username',
     },
     {
-        key: 'Email',
-        title: 'Email',
+        key: 'LupaTrainer',
+        title: 'Lupa Trainer',
         description: '',
-        property: 'email',
     },
     {
         key: 'ChangePassword',
         title: 'Change Password',
         description: 'Change Password',
-        property: 'change_password',
     },
     {
         key: 'RecoverPassword',
         title: 'Recover Password',
         description: 'Lupa will send you an email with a temporary password',
-        property: 'recover_password'
     },
 ]
 
@@ -356,50 +355,35 @@ class SettingsModal extends React.Component {
         return (
                 <Container style={styles.root}>
                             <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
+                                <Appbar.BackAction icon={() => <FeatherIcon name="arrow-left" size={20} />}  onPress={() => this.props.navigation.pop()} />
                                 <Appbar.Content title="Settings" />
                 </Appbar.Header>
                     <SafeAreaView style={{flex: 1}}>
                     <ScrollView>
-                        <List.Section>
-                        <List.Subheader style={styles.listSubheader}>Account</List.Subheader>
                         {
                             accountList.map(item => {
                                 return (
-                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                         <List.Item titleStyle={styles.titleStyle} onPress={() => this.handleOpenChangePropertyModal(item.property)} style={styles.listItem} descriptionStyle={styles.descriptionStyle} title={item.title} description={this.getAccountListDescription(item.property)} descriptionEllipsizeMode="tail"/>
-                                         <Feather1s name={this.getIconName(item.property)} size={20} />
-                                    </View>
-                                   
+                                    <ListItem title={item.title} titleStyle={styles.titleStyle} description={this.getAccountListDescription(item.property)} bottomDivider rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}/>
                                 )
                             })
                         }
-                        </List.Section>
 
-                        <List.Section>
-                        <List.Subheader style={styles.listSubheader}>Personal</List.Subheader>
-                        {
-                             <List.Item on titleStyle={styles.titleStyle} onPress={() => this.setState({ editBioVisible: true })} style={[styles.listItem, {height: 'auto'}]} title={'Biography'} description={this.props.lupa_data.Users.currUserData.bio == "" ? 'Edit your bio' : this.props.lupa_data.Users.currUserData.bio} descriptionEllipsizeMode="tail"/>
-                        }
-                        </List.Section>
+                        <View style={{padding: 10, marginVertical: 20}}>
+   
+                            <Text style={{paddingVertical: 15}}>
+                                <Text style={{fontSize: 20,  fontFamily: 'Helvetica-Light'}}>
+                                    Privacy Policy
+                                </Text>
+                                <FeatherIcon name="arrow-right" size={15} />
+                                </Text>
 
-                        <List.Section style={styles.listSection}>
-                        <List.Subheader style={styles.listSubheader}>Lupa Trainer</List.Subheader>
-                        {
-                                     <List.Item titleStyle={styles.titleStyle} style={styles.listItem} title={"Certification"} description={this.props.lupa_data.Users.currUserData.isTrainer ? this.state.userData.certification : 'This account is not registered as a certified trainer.'}/>
-                        }
-                        </List.Section>
-
-                        <List.Section>
-                        <List.Subheader style={styles.listSubheader}>Lupa</List.Subheader>
-                        {
-                            lupaList.map(item => {
-                                return (
-                                    <List.Item titleStyle={styles.titleStyle} style={styles.listItem} title={item.title} description={item.description} />
-                                )
-                            })
-                        }
-                        </List.Section>
+                                <Text>
+                                <Text style={{fontSize: 20,  fontFamily: 'Helvetica-Light'}}>
+                                    Terms and Conditions
+                                </Text>
+                                <FeatherIcon name="arrow-right" size={15} />
+                                </Text>
+                        </View>
         <EditBioModal isVisible={this.state.editBioVisible} closeModalMethod={() => this.setState({ editBioVisible: false })} />
                 </ScrollView>
                 </SafeAreaView>
@@ -436,7 +420,7 @@ const styles = StyleSheet.create({
     titleStyle: {
         fontSize: 13, 
         fontWeight: '400', 
-        color: '#8C8C8C',
+        color: '#212121',
     },
     descriptionStyle: {
         color: '#212121'

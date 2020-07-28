@@ -2,7 +2,7 @@ import React from 'react'
 
 import { createStackNavigator } from '@react-navigation/stack'
 import TrainerDashboardView from '../user/dashboard/TrainerDashboardView'
-import MessagesView from '../user/chat/MessagesView'
+import MyData from '../user/component/MyData'
 
 const Stack = createStackNavigator()
 
@@ -16,7 +16,10 @@ function DashboardNavigator() {
         name="Dashboard"
         component={TrainerDashboardView}
       />
-       <Stack.Screen name="Messages" component={MessagesView} /> 
+       <Stack.Screen 
+        name="MyData"
+        component={MyData}
+       />
     </Stack.Navigator>
     )
 }

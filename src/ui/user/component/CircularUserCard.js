@@ -52,7 +52,7 @@ function CircularUserCard(props) {
                         {props.user.location.city + ", " + props.user.location.state}
                     </Text>
                     <Text style={{fontWeight: '300', fontSize: 12}}>
-                        National Association of Sports Medicine
+                        National Academy of Sports Medicine
                     </Text>
                 </View>
                     </View>
@@ -87,7 +87,7 @@ function CircularUserCard(props) {
     } 
 
     return (
-        <TouchableWithoutFeedback style={{width: windowWidth}} onPress={navigateToProfile}>
+        <TouchableWithoutFeedback key={props.keyProp} style={{width: windowWidth}} onPress={navigateToProfile}>
         {renderUserCard()}
         </TouchableWithoutFeedback>
     )

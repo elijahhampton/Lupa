@@ -1495,9 +1495,6 @@ export default class UserController {
                 else
                 {
                     featuredProfiles.push(snapshot);
-                    featuredProfiles.push(snapshot);
-                    featuredProfiles.push(snapshot);
-                    featuredProfiles.push(snapshot);
                 }
 
               })

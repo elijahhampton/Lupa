@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
         width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'
     },
     programNameText: {
-        fontFamily: 'avenir-roman', fontSize: 15, fontWeight: '800',
+        fontFamily: 'Helvetica-Bold', fontSize: 15, fontWeight: '800',
     },
     programOwnerNameText: {
         fontSize: 12, fontWeight: '500', color: '#1089ff'
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end'
     },
     programLocationAddressText: {
-        fontSize: RFValue(10) ,fontWeight: '400', flexWrap: 'nowrap', width: '100%',alignSelf: 'flex-start'
+        fontSize: RFValue(10) ,fontWeight: '400', flexWrap: 'nowrap', width: '100%',alignSelf: 'flex-start', fontFamily: 'Helvetica-Light'
     },
     programLocationNameTextContainer: {
         width: '35%',
