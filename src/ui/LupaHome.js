@@ -21,6 +21,7 @@ import {
     SafeAreaView,
     Button as NativeButton,
     Animated,
+    RefreshControl,
 } from 'react-native';
 
 import {
@@ -51,7 +52,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
-
+import LUPA_DB from '../controller/firebase/firebase'
 import CircularUserCard from './user/component/CircularUserCard';
 import { MenuIcon } from './icons';
 import { SearchBar } from 'react-native-elements';
@@ -85,6 +86,7 @@ class LupaHome extends React.Component {
             currCardIndex: 0,
             searchValue: "",
             searchResults: [],
+            refreshing: false,
             searching: false,
             featuredPrograms: [],
             programModalVisible: false,
@@ -103,11 +105,24 @@ class LupaHome extends React.Component {
     async componentDidMount() {
         await this.checkNewUser();
         await this.setupComponent();
+
+        this.currExplorePageProgramsSubscription = LUPA_DB.collection('programs').onSnapshot((querySNapshot => {
+            this.setupComponent();
+        }))
+    }
+
+    componentWillUnmount = () => {
+        //this.currExplorePageProgramsSubscription.unsubscribe()
     }
 
     setupComponent = async () => {
         await this.loadFeaturedPrograms();
+        await this.loadFeaturedTrainers()
+        //await this.loadTopPicks()
+        //await this.loadRecentlyAddedPrograms
+    }
 
+    loadFeaturedTrainers = async () => {
         let featuredTrainersIn = []
         try {
             await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
@@ -123,7 +138,20 @@ class LupaHome extends React.Component {
         await this.setState({
             featuredTrainers: featuredTrainersIn
         })
+    }
 
+    loadTopPicks = () => {
+
+    }
+
+    loadRecentlyAddedPrograms = () => {
+
+    }
+
+    handleOnRefresh = async () => {
+        this.setState({ refreshing: true })
+        await this.setupComponent()
+        this.setState({ refreshing: false })
     }
 
     checkNewUser = async () => {
@@ -133,9 +161,9 @@ class LupaHome extends React.Component {
         })
 
         if (showInviteFriendsModal === 'false') {
-            storeAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email, 'true');this.setState({ inviteFriendsIsVisible: true })
+            storeAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email, 'true'); this.setState({ inviteFriendsIsVisible: true })
             return;
-        } else if( typeof(showInviteFriendsModal) != 'string') {
+        } else if (typeof (showInviteFriendsModal) != 'string') {
             storeAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email, 'true');
             this.setState({ inviteFriendsIsVisible: true })
             return;
@@ -171,7 +199,7 @@ class LupaHome extends React.Component {
 
                 return (
 
-                    <CircularUserCard user={user} />
+                    <CircularUserCard keyProp={user.user_uuid} user={user} />
                 )
             })
         } catch (error) {
@@ -280,7 +308,7 @@ class LupaHome extends React.Component {
             <>
                 <TouchableOpacity onPress={this.showLiveWorkoutPreview}>
                     <Card style={{ borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 10 }}>
-                        <Card.Cover resizeMode='cover' resizeMethod="scale" style={{width: Dimensions.get('window').width / 1.2, height: 250}} source={{ uri: item.program_image }} />
+                        <Card.Cover resizeMode='cover' resizeMethod="scale" style={{ width: Dimensions.get('window').width / 1.2, height: 250 }} source={{ uri: item.program_image }} />
                         <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
                             <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
                                 <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -312,146 +340,140 @@ class LupaHome extends React.Component {
         );
     }
 
-    _renderSearchResults = () => {
-        {
-            return this.state.searchResults.map(result => {
-                return (
-                    <LargeProgramSearchResultCard program={result} />
-                )
-            })
-        }
-    }
-
     render() {
         return (
             <View style={styles.root}>
 
                 <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
-                   {/* <SearchBar placeholder="Search fitness programs"
-                        onChangeText={text => this._performSearch(text)}
-                        platform="ios"
-                        searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
-                        containerStyle={{ backgroundColor: "transparent", width: '90%' }}
-                        inputContainerStyle={{ backgroundColor: '#eeeeee', }}
-                        inputStyle={{ fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman' }}
-                        placeholderTextColor="#212121"
-        value={this.state.searchValue} />*/}
-        <Appbar.Content title="Explore" />
 
-<ThinFeatherIcon name="search" thin={true} size={25} style={{marginRight: 10}} onPress={() => navigation.navigate('Search')} />
+                    <Appbar.Content title="Explore" titleStyle={{fontFamily: 'Helvetica', fontSize: 20}} />
+
+                    <ThinFeatherIcon name="mail" thin={true} size={25} style={{ marginRight: 10 }} onPress={() => this.props.navigation.navigate('MessagesView')} />
                 </Appbar.Header>
-
-                {
-                    this.state.searchValue != "" ?
-                        <View style={{ flex: 1 }}>
-                            <ScrollView>
-                                {this._renderSearchResults()}
-                            </ScrollView>
-                        </View>
-                        :
-                        <View style={{ flex: 1 }}>
-                            <ScrollView contentContainerStyle={{ width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2 }}>
-                                <View style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
-                                    <View>
-                                        <Text style={{ paddingLeft: 10, marginVertical: 10, fontSize: RFValue(18), fontFamily: 'avenir-roman', fontWeight: 'bold' }}>
-                                            Most Popular
+                <View style={{ flex: 1 }}>
+                    <ScrollView
+                        contentContainerStyle={{ width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2 }}
+                        refreshControl={() => <RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
+                    >
+                        <View style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
+                            <View>
+                                <Text style={{ paddingLeft: 10, marginVertical: 10, fontSize: RFValue(18), fontFamily: 'Avenir-Medium'}}>
+                                    Most Popular
                     </Text>
-                                    </View>
-                                    <ScrollView
+                            </View>
+                            <ScrollView
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}
+                            >
+                                {
+                                    this.state.featuredPrograms.map(item => {
+                                        return (
+                                            <TouchableOpacity key={item.program_name} onPress={this.showLiveWorkoutPreview} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                                <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
+                                                    <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ with: '100%', height: '100%', justifyContent: 'center' }} />
+                                                </Card>
+                                                <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
+                                                    <ThinFeatherIcon thin={true} name="play" color="white" size={30} style={{ alignSelf: 'center' }} />
+                                                </View>
+                                                <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} />
+                                            </TouchableOpacity>
+                                        )
+                                    })
+                                }
+                            </ScrollView>
+
+                        </View>
+
+
+                        <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
+                            <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
+                            <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
+                                <Text style={{ marginVertical: 10, fontSize: RFValue(18), fontFamily: 'Avenir-Medium' }}>
+                                    Start training with
+                    </Text>
+                                <Caption>
+                                    {this.state.trainWithSwiperIndex + 1} / {this.state.featuredTrainers.length}
+                                </Caption>
+                            </View>
+
+                            <View style={{ width: Dimensions.get('window').width }}>
+                                <ScrollView
+                                    snapToAlignment={'center'}
+                                    snapToInterval={Dimensions.get('window').width}
+                                    decelerationRate={0}
+                                    contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
+                                    centerContent
+                                    onIndexChanged={index => this.setState({ index: index })}
+                                    pagingEnabled={true}
+                                    loop={false}
+                                    showsPagination={false}
                                     horizontal={true}
-                                    showsHorizontalScrollIndicator={false} 
-                                    >
-                                        {
-                                            this.state.featuredPrograms.map(item => {
-                                                return (
-                                                    <TouchableOpacity onPress={this.showLiveWorkoutPreview} style={{alignItems: 'center', justifyContent: 'center'}}>
-                                                        <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
-                                                            <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ with: '100%', height: '100%', justifyContent: 'center' }} />
-                                                        </Card>
-                                                        <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
-                                                                <ThinFeatherIcon thin={true} name="play" color="white" size={30} style={{ alignSelf: 'center' }} />
-                                                            </View>
-                                                        <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} />
-                                                    </TouchableOpacity>
-                                                )
-                                            })
-                                        }
-                                    </ScrollView>
+                                    showsHorizontalScrollIndicator={false} >
+                                    {this.renderNearbyUsers()}
+                                </ScrollView>
 
-                                </View>
+                            </View>
+                            <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
+                        </View>
+
+                        <View style={{ height: 190, backgroundColor: 'rgb(242, 242, 247)', alignItems: 'center', justifyContent: 'space-evenly' }}>
+
+                            <View style={{ width: '66%', alignItems: 'center', justifyContent: 'center' }}>
+                                <Text style={{ fontFamily: 'Avenir-Roman', paddingVertical: 5, color: '#23374d', fontWeight: '600', fontSize: 15 }}>
+                                    Need a trainer now?
+                                    </Text>
+                                <Text style={{ textAlign: 'center', fontSize: 15, fontFamily: 'avenir-roman', fontWeight: '300' }}>
+                                    Click here and we'll recommend a program to you.
+                                    </Text>
+                            </View>
 
 
-                                <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
-                                    <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
-                                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                        <Text style={{ marginVertical: 10, fontSize: RFValue(18), fontFamily: 'avenir-roman', fontWeight: 'bold' }}>
-                                            Start training with
-                    </Text>
-                                        <Caption>
-                                            {this.state.trainWithSwiperIndex + 1} / {this.state.featuredTrainers.length}
-                                        </Caption>
-                                    </View>
-
-                                    <View style={{ width: Dimensions.get('window').width }}>
-                                        <ScrollView
-                                            snapToAlignment={'center'}
-                                            snapToInterval={Dimensions.get('window').width}
-                                            decelerationRate={0}
-                                            contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
-                                            centerContent
-                                            onIndexChanged={index => this.setState({ index: index })}
-                                            pagingEnabled={true}
-                                            loop={false}
-                                            showsPagination={false}
-                                            horizontal={true}
-                                            showsHorizontalScrollIndicator={false} >
-                                            {this.renderNearbyUsers()}
-                                        </ScrollView>
-
-                                    </View>
-                                    <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
-                                </View>
-
-                                <View
-                                    style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
-                                    <View style={{ padding: 5 }}>
-                                        <Text style={{ fontSize: RFValue(18), fontFamily: 'avenir-roman', fontWeight: 'bold', paddingVertical: 10, paddingLeft: 10 }}>
-                                            Top picks
-                        </Text>
-                                    </View>
-                                    <ScrollView scrollEnabled={this.state.featuredPrograms.length > 1 ? true : false} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
-                                        {
-                                            this.state.featuredPrograms.map((currProgram, index, arr) => {
-                                                return (
-                                                    <FeaturedProgramCard currProgram={currProgram} keyProp={currProgram.program_name} />
-                                                )
-                                            })
-                                        }
-
-                                    </ScrollView>
-                                </View>
-
-
-                                <View style={{ backgroundColor: '#eeeeee', justifyContent: 'center', justifyContent: 'center' }}>
-                                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                        <Text style={{ marginVertical: 10, fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: 'bold' }}>
-                                            Recently created programs
-                    </Text>
-                                    </View>
-                                    {this.renderRecentlyAddedPrograms()}
-                                    <View>
-                                        <Text style={{fontSize: 16, color: '#1089ff', paddingLeft: 10}}>
-                                            View more...
+                            <Button mode="contained" color="#1089ff" theme={{ roundness: 20 }} style={{ height: 45, alignItems: 'center', justifyContent: 'center', elevation: 3, width: '65%' }}>
+                                <Text style={{ fontSize: 15, fontFamily: 'Avenir-Black', fontWeight: '800' }}>
+                                    Find a Trainer
                                         </Text>
-                                    </View>
-                                </View>
+                            </Button>
+                        </View>
+
+                        <View
+                            style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
+                            <View style={{ padding: 5 }}>
+                                <Text style={{ fontSize: RFValue(18), fontFamily: 'Avenir-Medium', paddingVertical: 10, paddingLeft: 10 }}>
+                                    Top picks
+                        </Text>
+                            </View>
+                            <ScrollView scrollEnabled={this.state.featuredPrograms.length > 1 ? true : false} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
+                                {
+                                    this.state.featuredPrograms.map((currProgram, index, arr) => {
+                                        return (
+                                            <FeaturedProgramCard currProgram={currProgram} keyProp={currProgram.program_name} />
+                                        )
+                                    })
+                                }
 
                             </ScrollView>
                         </View>
-                }
 
-                <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false})} /> 
+
+                        <View style={{ backgroundColor: 'rgb(242, 242, 247)', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
+                            <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
+                                <Text style={{ marginVertical: 10, fontSize: RFValue(15), fontFamily: 'Avenir-Medium' }}>
+                                    Recently created programs
+                    </Text>
+                            </View>
+                            {this.renderRecentlyAddedPrograms()}
+                            <View>
+                                <Text style={{ fontSize: 15, color: '#1089ff', paddingLeft: 20 }}>
+                                    View more...
+                                        </Text>
+                            </View>
+                        </View>
+
+                    </ScrollView>
+                </View>
+
+                <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
             </View>
         );
     }

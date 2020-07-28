@@ -691,6 +691,43 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         )
     }
 
+    renderHourlyRate = () => {
+        if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid && this.state.userData.isTrainer) {
+            return (
+                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+                    <Text style={{fontSize: 12,paddingTop: 10, fontWeight: '600',  color: '#212121'}}>
+                             Your hourly rate is 0$.
+                         </Text>
+
+                        <Text style={{paddingTop: 10}}>
+                            <Text style={{fontSize: 12, fontWeight: '600',  color: '#1089ff'}}>
+                            Change Rate
+                            </Text>
+                             <FeatherIcon color='#1089ff' name="arrow-right" size={15} style={{paddingHorizontal: 10}} />
+                         </Text>
+                </View>
+                
+            )
+        } else if (this.props.lupa_data.Users.currUserData.user_uuid != this.state.userData.user_uuid && this.state.userData.isTrainer) {
+            return (
+                <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+                    <Text style={{fontSize: 12,paddingTop: 10, fontWeight: '600',  color: '#212121'}}>
+                    {this.state.userData.display_name} has an hourly rate of 0$
+                         </Text>
+
+                        <Text style={{paddingTop: 10}}>
+                            <Text style={{fontSize: 12, fontWeight: '600',  color: '#1089ff'}}>
+                            Book {this.state.userData.display_name}
+                            </Text>
+                             <FeatherIcon color='#1089ff' name="arrow-right" size={15} style={{paddingHorizontal: 10}} />
+                         </Text>
+                </View>
+            )
+        } else {
+            return null
+        }
+    }
+
     /**
      * 
      */
@@ -903,7 +940,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     </Left>
                     
                     <Body>
-                    <Text style={{ fontSize: 15, color: "#212121", fontWeight: '600', padding: 1 }}>
+                    <Text style={{ fontFamily: 'Helvetica', fontSize: 15, color: "#212121", fontWeight: '600', padding: 1 }}>
                         {this.state.userData.username}
                     </Text>
                     </Body>
@@ -923,8 +960,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     {
                         this.state.userData.isTrainer == true ?
                                         <View style={{backgroundColor: '#FFFFFF', alignSelf: 'center', paddingVertical: 20, width: '100%', alignItems: 'center' }}>
-                                        <Text style={{color: '#212121', fontWeight: 'bold'}}> National Academy of Sports Medicine </Text>
-                                        <Text style={{color: '#212121',  }}> Lupa Tier 1 </Text>
+                                        <Text style={{color: '#212121', fontWeight: 'bold', fontFamily: 'Helvetica'}}> National Academy of Sports Medicine </Text>
                                     </View>
                                     :
                                     null
@@ -1006,9 +1042,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                 </>
 
                                 <>
-                             <Text style={{fontSize: 12, paddingHorizontal: 10, paddingTop: 10, fontWeight: '600',  color: '#1089ff'}}>
-                             {this.state.userData.display_name} has an hourly rate of $0
-                         </Text>
+                                {this.renderHourlyRate()}
                          </>
   
                                 </View>
@@ -1024,7 +1058,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                     <View style={{paddingVertical: 10, backgroundColor: 'white'}}>
                                         <View style={{paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                         <Text style={{fontSize: 15, paddingVertical: 10}}>
-                                        Reviews
+                                        Reviews (0)
                                     </Text>
                                     <FeatherIcon name="chevron-down" size={15} />
                                         </View>

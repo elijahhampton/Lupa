@@ -12,6 +12,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardNavigator from './DashboardNavigator';
 import LupaHomeNavigator from './LupaHomeNavigator';
+import Search from '../search/Search';
 
 const Drawer = createDrawerNavigator();
 
@@ -58,22 +59,24 @@ function LupaBottomTabNavigator() {
               return <FeatherIcon name='home' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Create':
               return <FeatherIcon name='plus-circle' size={20} color={focused ? "#1089ff" : "#212121"}/>;
-            case 'Community':
-              return <FeatherIcon name='globe' size={20} color={focused ? "#1089ff" : "#212121"} />;
+            case 'Search':
+              return <FeatherIcon name='search' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Profile':
               return <FeatherIcon name='user' size={20} color={focused ? "#1089ff" : "#212121"} />;
           }
 
         },
       })} >
-              <Tab.Screen name="Dashboard" component={DashboardNavigator} />
+             
               <Tab.Screen name="Train" component={LupaHomeNavigator} />
+              <Tab.Screen name="Search" component={Search} />
               <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
           tabPress: event => {
             event.preventDefault()
             navigation.navigate('CreateProgram')
           }
         })}  />
+        <Tab.Screen name="Dashboard" component={DashboardNavigator} />
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );

@@ -122,24 +122,14 @@ function DrawerMenu(props) {
 
         <Divider />
 
-       {/* <TouchableOpacity onPress={() => setWorkoutLogIsOpen(true)}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="book-open" size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={{fontSize: 16, fontWeight: '300'}}>
-           Workout Log
-          </Text>
-        </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('AssessmentView')}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="book-open" size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={{fontSize: 16, fontWeight: '300'}}>
-         Assessments
-          </Text>
-        </View>
-  </TouchableOpacity>*/}
-
+        <TouchableOpacity onPress={() => navigation.navigate('MyData')}>
+          <View style={styles.navigationButtonContaner}>
+            <DrawerIcon name="bar-chart-2" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+            <Text style={styles.buttonText}>
+             My Data
+            </Text>
+          </View>
+          </TouchableOpacity>
 
         {
           currUserData.isTrainer === true ?
@@ -231,7 +221,6 @@ export default DrawerMenu;
     drawerHeaderText: { 
       paddingVertical: 5,
       fontSize: 15,
-       
     },
     drawerHeaderSubText: {
       fontSize: 12
@@ -247,7 +236,7 @@ export default DrawerMenu;
       color: '#000000',
     marginHorizontal: 15, 
         fontSize: 15, 
-        fontFamily: 'avenir-light',
+        fontFamily: 'Avenir-Roman',
     }
   });
 

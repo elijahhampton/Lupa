@@ -13,6 +13,7 @@ import {
     View,
     StyleSheet,
     ScrollView,
+    SafeAreaView,
     RefreshControl,
     Dimensions,
 } from 'react-native';
@@ -22,6 +23,7 @@ import {
     Surface,
     Avatar,
     Caption,
+    Appbar,
 } from 'react-native-paper';
 
 import {
@@ -119,99 +121,28 @@ function TrainerDashboardView(props) {
     }
 
     return (
-        <View style={styles.safeareaview}>
-            <View style={{marginTop: Constants.statusBarHeight, padding: 10}}>
-            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
-                                     <Left>
-                                         <MenuIcon customStyle={{marginVertical: 10}} onPress={() => navigation.openDrawer()} />
-                                     </Left>
-                                    
-                                    <Body />
-
-                                    <Right />
-                                     </View>
-
-                                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: Dimensions.get('window').width}}>
-                                    <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                                     <Text style={{fontSize: 20}}>
-                                         Welcome,
-                                     </Text>
-                                     <Text>
-                                         {" "}
-                                     </Text>
-                                     <Text style={{color: '#1089ff', fontSize: 20}}>
-                                        {currUserData.display_name}
-                                     </Text>
-                                     </View>
-
-                                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                     <ThinFeatherIcon name="mail" thin={true} size={25} style={{marginRight: 20}} onPress={() => navigation.navigate('Messages')} />
-                                     <ThinFeatherIcon name="bar-chart" thin={true} size={25} style={{marginRight: 20}} onPress={() => navigation.navigate('Messages')} />
-                                     </View>
-                                    </View>
-                                 
-            </View>
-            <View style={{flex: 1}}>
+        <SafeAreaView style={styles.safeareaview}>
+            <Appbar.Header style={styles.appbar}>
+                <Appbar.Content title="Dashboard" titleStyle={{fontFamily: 'Helvetica', fontSize: 20}} />
+            </Appbar.Header>
             <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl
                     refreshing={refreshing}
                     onRefresh={_onRefresh}
                 />}>
-                                <Surface style={{marginVertical: 10, elevation: 3, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
-<Text style={{fontSize: 20, color: '#E5E5E5', padding: 5}}> Sessions </Text>
-<LineChart
-data={{
-  labels: ["January", "February", "March", "April", "May", "June"],
-  datasets: [
-    {
-      data: [
-        Math.random() * 100,
-        Math.random() * 100,
-        Math.random() * 100,
-        Math.random() * 100,
-        Math.random() * 100,
-        Math.random() * 100
-      ]
-    }
-  ]
-}}
-width={Dimensions.get("window").width - 20} // from react-native
-height={120}
-yAxisLabel="$"
-yAxisSuffix="k"
-yAxisInterval={1} // optional, defaults to 1
-chartConfig={{
-  backgroundColor: "#1089ff",
-  backgroundGradientFrom: "#1089ff",
-  backgroundGradientTo: "#1089ff",
-  decimalPlaces: 2, // optional, defaults to 2dp
-  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-  style: {
-    borderRadius: 15,
-  },
-  propsForDots: {
-    r: "6",
-    strokeWidth: "2",
-    stroke: "#ffa726"
-  }
-}}
-bezier
-style={{
-  borderRadius: 15,
-}}
-/>
-</Surface>
+         
 
                 {renderNotifications()}
             </ScrollView>
-
-            </View>
-        </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    appbar: {
+        backgroundColor: '#FFFFFF',
+        elevation: 0
+    },
     scrollView: {
         flexGrow: 2,
         flexDirection: 'column',
