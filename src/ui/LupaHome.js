@@ -48,7 +48,6 @@ import LupaController from '../controller/lupa/LupaController';
 import { connect } from 'react-redux';
 import { Modalize } from 'react-native-modalize';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import ThinFeatherIcon from 'react-native-feather1s/src/Feather1s';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
@@ -63,6 +62,7 @@ import LiveWorkoutPreview from './workout/program/modal/LiveWorkoutPreview';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import InviteFriendsModal from './user/modal/InviteFriendsModal'
 import { retrieveAsyncData, storeAsyncData } from '../controller/lupa/storage/async';
+import ThinFeatherIcon from "react-native-feather1s";
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
@@ -208,7 +208,7 @@ class LupaHome extends React.Component {
                                     {element.program_name}
                                 </Text>
 
-                                <Text style={{ color: 'black', fontSize: 12, fontWeight: '300', fontFamily: 'avenir-roman' }}>
+                                <Text numberOfLines={3} style={{ color: 'black', fontSize: 12, fontWeight: '300', fontFamily: 'avenir-roman' }}>
                                     {element.program_description}
                                 </Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -326,9 +326,9 @@ class LupaHome extends React.Component {
         return (
             <View style={styles.root}>
 
-                <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
-                    <SearchBar placeholder="Search fitness programs"
+                   {/* <SearchBar placeholder="Search fitness programs"
                         onChangeText={text => this._performSearch(text)}
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
@@ -336,7 +336,10 @@ class LupaHome extends React.Component {
                         inputContainerStyle={{ backgroundColor: '#eeeeee', }}
                         inputStyle={{ fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman' }}
                         placeholderTextColor="#212121"
-                        value={this.state.searchValue} />
+        value={this.state.searchValue} />*/}
+        <Appbar.Content title="Explore" />
+
+<ThinFeatherIcon name="search" thin={true} size={25} style={{marginRight: 10}} onPress={() => navigation.navigate('Search')} />
                 </Appbar.Header>
 
                 {
@@ -364,7 +367,7 @@ class LupaHome extends React.Component {
                                                 return (
                                                     <TouchableOpacity onPress={this.showLiveWorkoutPreview} style={{alignItems: 'center', justifyContent: 'center'}}>
                                                         <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
-                                                            <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ with: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }} />
+                                                            <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ with: '100%', height: '100%', justifyContent: 'center' }} />
                                                         </Card>
                                                         <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
                                                                 <ThinFeatherIcon thin={true} name="play" color="white" size={30} style={{ alignSelf: 'center' }} />
@@ -437,7 +440,13 @@ class LupaHome extends React.Component {
                     </Text>
                                     </View>
                                     {this.renderRecentlyAddedPrograms()}
+                                    <View>
+                                        <Text style={{fontSize: 16, color: '#1089ff', paddingLeft: 10}}>
+                                            View more...
+                                        </Text>
+                                    </View>
                                 </View>
+
                             </ScrollView>
                         </View>
                 }
