@@ -21,6 +21,8 @@ import {
     Paragraph,
 } from 'react-native-paper';
 
+import FeatherIcon from 'react-native-vector-icons/Feather'
+
 import { useNavigation } from '@react-navigation/native';
 
 const { windowWidth } = Dimensions.get('window').width
@@ -70,9 +72,6 @@ function CircularUserCard(props) {
                     5 Programs Available
                 </Text>
 
-                <Text style={{color: '#1089ff', fontWeight: '500'}}>
-                    See more
-                </Text>
                 </View>
             </View>
         )

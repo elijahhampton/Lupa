@@ -383,7 +383,7 @@ function ProgramInformationPreview(props) {
                           primary: '#FFFFFF'
                       },
                   }}>
-                      <Appbar.Action icon={() => <FeatherIcon name="x" size={25} onPress={() => props.closeModalMethod()}/>} />
+                      <Appbar.Action onPress={() => props.closeModalMethod()} />
                     
                   </Appbar.Header>
                    <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>

@@ -20,11 +20,12 @@ import ProgramInformationPreview from '../ProgramInformationPreview'
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures'
 import LupaController from '../../../../controller/lupa/LupaController'
 import { useNavigation } from '@react-navigation/native'
+import ProgramOptionsModal from '../modal/ProgramOptionsModal'
 
 function LargeProgramSearchResultCard({ program }) {
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const [programModalVisible, setProgramModalVisible] = useState(false);
-
+    const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const LUPA_USER_CONTROLLER = LupaController.getInstance()
 
     const currUserData = useSelector(state => {
@@ -37,13 +38,14 @@ function LargeProgramSearchResultCard({ program }) {
 
         if (program.program_participants.includes(currUserData.user_uuid))
         {
-            navigation.push('LiveWorkout', {
+           /* navigation.push('LiveWorkout', {
                 programData: program
-            });
+            });*/
+            setProgramOptionsModalVisible(true);
         }
         else
         {
-            setProgramModalVisible(true)
+            setProgramModalVisible(true);
         }
     }
 
@@ -96,6 +98,7 @@ function LargeProgramSearchResultCard({ program }) {
          </View>
           </View>
           <ProgramInformationPreview isVisible={programModalVisible} programData={program} closeModalMethod={() => setProgramModalVisible(false)} /> 
+          <ProgramOptionsModal program={program} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
   </Surface>
     )
 }

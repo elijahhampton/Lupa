@@ -64,6 +64,8 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import InviteFriendsModal from './user/modal/InviteFriendsModal'
 import { retrieveAsyncData, storeAsyncData } from '../controller/lupa/storage/async';
 import ThinFeatherIcon from "react-native-feather1s";
+import LiveWorkout from './workout/modal/LiveWorkout'
+
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
@@ -216,6 +218,7 @@ class LupaHome extends React.Component {
                 }
 
                 return (
+                    <>
                     <TouchableOpacity style={{}}>
                         <View style={{ margin: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center' }}>
                             <Surface style={{ margin: 10, borderRadius: 5, width: 150, height: 170, backgroundColor: '#FFFFFF', elevation: 0, borderRadius: 5 }}>
@@ -253,11 +256,13 @@ class LupaHome extends React.Component {
                             </View>
                         </View>
                     </TouchableOpacity>
+                    <Divider />
+                    </>
                 )
             })
         } catch (err) {
-            return null
             alert(err)
+            return null
         }
     }
 
@@ -303,64 +308,33 @@ class LupaHome extends React.Component {
         this.setState({ showLiveWorkoutPreview: false })
     }
 
-    _renderItem = ({ item, index }) => {
-        return (
-            <>
-                <TouchableOpacity onPress={this.showLiveWorkoutPreview}>
-                    <Card style={{ borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 10 }}>
-                        <Card.Cover resizeMode='cover' resizeMethod="scale" style={{ width: Dimensions.get('window').width / 1.2, height: 250 }} source={{ uri: item.program_image }} />
-                        <Card.Actions style={{ width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-                            <View style={{ width: '100%', height: '100%', alignItems: 'flex-start', justifyContent: 'space-around' }}>
-                                <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <Text style={{ fontFamily: 'avenir-roman', fontSize: RFValue(12), }} numberOfLines={1}>
-                                        {item.program_name}
-                                    </Text>
-                                    <Text style={{ fontSize: RFValue(12), fontWeight: '500', color: '#1089ff' }}>
-                                        Emily Loefstedt
-</Text>
-                                </View>
-
-
-                                <View style={{ width: '100%' }}>
-                                    <Text style={{ fontSize: RFValue(12) }}>
-                                        {item.program_location.name}
-                                    </Text>
-                                    <Text style={{ fontSize: RFValue(12), fontWeight: '400', flexWrap: 'nowrap' }} numberOfLines={1}>
-                                        {item.program_location.address}
-                                    </Text>
-
-
-                                </View>
-                            </View>
-                        </Card.Actions>
-                    </Card>
-                    <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} />
-                </TouchableOpacity>
-            </>
-        );
-    }
-
     render() {
         return (
             <View style={styles.root}>
 
-                <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+               <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
 
                     <Appbar.Content title="Explore" titleStyle={{fontFamily: 'Helvetica', fontSize: 20}} />
 
                     <ThinFeatherIcon name="mail" thin={true} size={25} style={{ marginRight: 10 }} onPress={() => this.props.navigation.navigate('MessagesView')} />
                 </Appbar.Header>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                     <ScrollView
                         contentContainerStyle={{ width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2 }}
                         refreshControl={() => <RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
                     >
                         <View style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
-                            <View>
-                                <Text style={{ paddingLeft: 10, marginVertical: 10, fontSize: RFValue(18), fontFamily: 'Avenir-Medium'}}>
-                                    Most Popular
-                    </Text>
+                        <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Text style={{ fontSize: RFValue(20), fontWeight: '500', fontFamily: 'Avenir-Roman', paddingVertical: 10, paddingLeft: 10 }}>
+                                   Most Popular
+                        </Text>
+
+                        <Button uppercase={false} mode="text" style={{width: 'auto', flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
+                    Show all
+                </Text>
+                    </Button>
                             </View>
                             <ScrollView
                                 horizontal={true}
@@ -369,7 +343,11 @@ class LupaHome extends React.Component {
                                 {
                                     this.state.featuredPrograms.map(item => {
                                         return (
-                                            <TouchableOpacity key={item.program_name} onPress={this.showLiveWorkoutPreview} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                            <TouchableOpacity key={item.program_name} onPress={/*this.showLiveWorkoutPreview*/ () => {
+                                                this.props.navigation.push('LiveWorkout', {
+                                                    uuid: 'c47f8332-4d54-578a-a044-7a605b0c11a5'
+                                                })
+                                            }} style={{ alignItems: 'center', justifyContent: 'center' }}>
                                                 <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
                                                     <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ with: '100%', height: '100%', justifyContent: 'center' }} />
                                                 </Card>
@@ -389,7 +367,7 @@ class LupaHome extends React.Component {
                         <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
                             <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                <Text style={{ marginVertical: 10, fontSize: RFValue(18), fontFamily: 'Avenir-Medium' }}>
+                                <Text style={{ marginVertical: 10, fontWeight: '500', fontSize: RFValue(20), fontFamily: 'Avenir-Medium' }}>
                                     Start training with
                     </Text>
                                 <Caption>
@@ -412,36 +390,50 @@ class LupaHome extends React.Component {
                                     showsHorizontalScrollIndicator={false} >
                                     {this.renderNearbyUsers()}
                                 </ScrollView>
-
+                                
+                                <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
+                <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
+                    See more
+                </Text>
+                <FeatherIcon name="arrow-right" color='#1089ff' />
+                    </Button>
                             </View>
                             <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                         </View>
 
-                        <View style={{ height: 190, backgroundColor: 'rgb(242, 242, 247)', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                        <View style={{ height: 190, backgroundColor: 'white', alignItems: 'center', justifyContent: 'space-evenly' }}>
 
                             <View style={{ width: '66%', alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ fontFamily: 'Avenir-Roman', paddingVertical: 5, color: '#23374d', fontWeight: '600', fontSize: 15 }}>
+                                <Text style={{ fontFamily: 'Avenir-Roman', paddingVertical: 5, color: '#23374d', fontWeight: '600', fontSize: RFValue(18) }}>
                                     Need a trainer now?
                                     </Text>
-                                <Text style={{ textAlign: 'center', fontSize: 15, fontFamily: 'avenir-roman', fontWeight: '300' }}>
+                                <Text style={{ textAlign: 'center', fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: '300' }}>
                                     Click here and we'll recommend a program to you.
                                     </Text>
                             </View>
 
 
-                            <Button mode="contained" color="#1089ff" theme={{ roundness: 20 }} style={{ height: 45, alignItems: 'center', justifyContent: 'center', elevation: 3, width: '65%' }}>
-                                <Text style={{ fontSize: 15, fontFamily: 'Avenir-Black', fontWeight: '800' }}>
+                            <Button uppercase={false} mode="contained" color="#1089ff" theme={{ roundness: 20 }} style={{ height: 45, alignItems: 'center', justifyContent: 'center', elevation: 3, width: '65%' }}>
+                                <Text style={{ fontSize: 18, fontFamily: 'Avenir-Black', fontWeight: '800' }}>
                                     Find a Trainer
                                         </Text>
                             </Button>
                         </View>
 
+                        <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
+
                         <View
                             style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
-                            <View style={{ padding: 5 }}>
-                                <Text style={{ fontSize: RFValue(18), fontFamily: 'Avenir-Medium', paddingVertical: 10, paddingLeft: 10 }}>
+                            <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Text style={{ fontSize: RFValue(20), fontWeight: '500', fontFamily: 'Avenir-Medium', paddingVertical: 10, paddingLeft: 10 }}>
                                     Top picks
                         </Text>
+
+                        <Button uppercase={false} mode="text" style={{width: 'auto', flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
+                    Show all
+                </Text>
+                    </Button>
                             </View>
                             <ScrollView scrollEnabled={this.state.featuredPrograms.length > 1 ? true : false} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
                                 {
@@ -455,25 +447,21 @@ class LupaHome extends React.Component {
                             </ScrollView>
                         </View>
 
-
-                        <View style={{ backgroundColor: 'rgb(242, 242, 247)', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
+                        <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
+                        
+                        <View style={{ backgroundColor: 'white', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                <Text style={{ marginVertical: 10, fontSize: RFValue(15), fontFamily: 'Avenir-Medium' }}>
+                                <Text style={{ marginVertical: 10, fontSize: RFValue(20), fontFamily: 'Avenir-Medium' }}>
                                     Recently created programs
                     </Text>
                             </View>
                             {this.renderRecentlyAddedPrograms()}
-                            <View>
-                                <Text style={{ fontSize: 15, color: '#1089ff', paddingLeft: 20 }}>
-                                    View more...
-                                        </Text>
-                            </View>
                         </View>
 
                     </ScrollView>
                 </View>
 
-                <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
+                            <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
             </View>
         );
     }

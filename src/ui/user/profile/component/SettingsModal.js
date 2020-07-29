@@ -355,7 +355,7 @@ class SettingsModal extends React.Component {
         return (
                 <Container style={styles.root}>
                             <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                <Appbar.BackAction icon={() => <FeatherIcon name="arrow-left" size={20} />}  onPress={() => this.props.navigation.pop()} />
+                                <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
                                 <Appbar.Content title="Settings" />
                 </Appbar.Header>
                     <SafeAreaView style={{flex: 1}}>

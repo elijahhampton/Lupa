@@ -20,13 +20,14 @@ import ProgramInformationPreview from '../../../workout/program/ProgramInformati
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { useNavigation } from '@react-navigation/native';
+import ProgramOptionsModal from '../../../workout/program/modal/ProgramOptionsModal';
 
 const {windowWidth} = Dimensions.get('window').width
 
 
 function ReceivedProgramNotification({ notificationData }) {
-    const [showLiveWorkout, setShowLiveWorkout] = useState(false);
     const [programModalVisible, setProgramModalVisible] = useState(false);
+    const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
@@ -49,9 +50,10 @@ function ReceivedProgramNotification({ notificationData }) {
     const handleOnPress = () => {
         if (notificationData.data.program_participants.includes(currUserData.user_uuid))
         {
-           navigation.navigate('LiveWorkout', {
+           /*navigation.navigate('LiveWorkout', {
                            programData: notificationData.data,
-                       })
+                       })*/
+            setProgramOptionsModalVisible(true)
 
         }
         else
@@ -84,6 +86,7 @@ function ReceivedProgramNotification({ notificationData }) {
                   
                    </TouchableWithoutFeedback>
                    <ProgramInformationPreview isVisible={programModalVisible} programData={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
+                   <ProgramOptionsModal program={notificationData.data} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
                    <Divider />
                    </>
     )

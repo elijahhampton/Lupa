@@ -38,10 +38,10 @@ function Search(props) {
         await setIsSearching(true)
         await setSearchValue(searchQuery)
 
-        /*    await LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
-                setSearchResults(searchResultsIn)
-            })*/
-        
+        await LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
+            setSearchResults(searchResultsIn)
+        })
+
         await setIsSearching(false)
     }
 
@@ -58,18 +58,18 @@ function Search(props) {
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                 <SearchBar placeholder="Search fitness programs"
-                        onChangeText={text => performSearch(text)}
-                        platform="ios"
-                        searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
-                        containerStyle={styles.searchContainerStyle}
-                        inputContainerStyle={styles.inputContainerStyle}
-                        inputStyle={styles.inputStyle}
-                        placeholderTextColor="#212121"
-        value={searchValue} />
-        <View style={styles.iconContainer}>
-            <FeatherIcon name="sliders" size={20} color="#212121" />
-        </View>
+                <SearchBar placeholder="Search fitness programs"
+                    onChangeText={text => performSearch(text)}
+                    platform="ios"
+                    searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
+                    containerStyle={styles.searchContainerStyle}
+                    inputContainerStyle={styles.inputContainerStyle}
+                    inputStyle={styles.inputStyle}
+                    placeholderTextColor="#212121"
+                    value={searchValue} />
+                <View style={styles.iconContainer}>
+                    <FeatherIcon name="sliders" size={20} color="#212121" />
+                </View>
             </Appbar.Header>
             <ScrollView>
                 {renderSearchResults()}
@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
         width: '10%', alignItems: 'center', justifyContent: 'center'
     },
     appbar: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '#FFFFFF',
         elevation: 0,

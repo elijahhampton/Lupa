@@ -92,6 +92,7 @@ export const getLupaProgramInformationStructure = (
         Saturday: [],
         Sunday: []
     }
+    lupa_program_information_structure.program_workout_days = []
     lupa_program_information_structure.completedProgram = completedProgram
 
     return lupa_program_information_structure;
