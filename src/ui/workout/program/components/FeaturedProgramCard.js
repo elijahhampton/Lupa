@@ -18,10 +18,12 @@ import { getLupaUserStructure } from '../../../../controller/firebase/collection
 import ProgramInformationPreview from '../ProgramInformationPreview';
 
 import { RFValue } from 'react-native-responsive-fontsize'
+import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 
 function FeaturedProgramCard({ currProgram, keyProp }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
+    const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const navigation = useNavigation()
@@ -33,7 +35,7 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
     const handleCardOnPress = (programData) => {
         if (currUserData.programs.includes(programData.program_structure_uuid)) {
 
-           setProgramModalVisible(true)
+           setProgramOptionsModalVisible(true)
 
         }
         else {
@@ -123,6 +125,7 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
                 </Card.Actions>
             </Card>
             <ProgramInformationPreview isVisible={programModalVisible} programData={currProgram} closeModalMethod={() => setProgramModalVisible(false)} />
+            <ProgramOptionsModal program={currProgram} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
         </>
     )
 }

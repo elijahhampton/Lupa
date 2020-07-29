@@ -13,12 +13,11 @@ const Stack = createStackNavigator()
 
 function LupaHomeNavigator() {
     return (
-        <Stack.Navigator initialRouteName="" headerMode='none'>
+        <Stack.Navigator initialRouteName="LupaHome" headerMode='none' mode='modal'>
       <Stack.Screen name="LupaHome" component={LupaHome} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="MessagesView" component={MessagesView} />
       <Stack.Screen name="MyData" component={MyData} />
-      <Stack.Screen name="LiveWorkout" component={LiveWorkout} />
       <Stack.Screen name="CreateProgram" component={CreateProgram} />
     </Stack.Navigator>
     )

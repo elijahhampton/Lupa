@@ -16,7 +16,6 @@ import LupaController from '../../../../controller/lupa/LupaController';
 
 import ProgramInformation from './component/ProgramInformation'
 import BuildAWorkout from './BuildWorkout';
-import ProgramPreview from './component/ProgramPreview';
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 import { fromString } from 'uuidv4';
 import FeatherIcon from 'react-native-vector-icons/Feather'

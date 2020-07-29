@@ -782,7 +782,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         return (
                             <View style={{marginVertical: 10}}>   
                                 <ProgramSearchResultCard programData={program} />
-                                    <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program)} size={20} name="more-vertical" style={{position: 'absolute', top: 0, right: 0, margin: 5, }} />
                             </View>
                         )
                     })
@@ -883,9 +882,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     return (
                         <View style={{marginVertical: 10}}>  
                             <ProgramSearchResultCard programData={program} />
-                            <View style={{position: 'absolute', top: 0, right: 0, margin: 10, justifyContent: 'flex-end'}}>
-                                <FeatherIcon onPress={() => this.handleProgramOptionsOnPress(program)} size={20} name="more-horizontal" style={{padding: 1}} />
-                            </View>
                         </View>
                     )
                 })
@@ -957,14 +953,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 refreshControl={
                 <RefreshControl refreshing={this.state.refreshing} 
                 onRefresh={this.handleOnRefresh} />}>
-                    {
-                        this.state.userData.isTrainer == true ?
-                                        <View style={{backgroundColor: '#FFFFFF', alignSelf: 'center', paddingVertical: 20, width: '100%', alignItems: 'center' }}>
-                                        <Text style={{color: '#212121', fontWeight: 'bold', fontFamily: 'Helvetica'}}> National Academy of Sports Medicine </Text>
-                                    </View>
-                                    :
-                                    null
-                    }
                     
                     <View style={styles.user}>
                         <View style={styles.userInfoContainer}>
@@ -996,7 +984,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         </View>
                             </View>
                             
-                            <View style={{flex: 3, justifyContent: 'space-evenly', alignItems: 'center', paddingHorizontal: 10}}>
+                            <View style={{flex: 3, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10}}>
                                 <View style={{marginVertical: 5, justifyContent: 'center', alignItems: 'center'}}>
                                 <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
                                     {this.state.userData.display_name}

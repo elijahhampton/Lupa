@@ -11,7 +11,7 @@ function MyData(props) {
     return (
         <SafeAreaView style={styles.container}>
                     <Appbar.Header style={styles.appbar}>
-                    <Appbar.BackAction color="#212121" size={20} onPress={() => navigation.pop()} icon={() => <FeatherIcon name="arrow-left" color="#212121" />} />
+                    <Appbar.BackAction color="#212121" size={20} onPress={() => navigation.pop()} />
         <Appbar.Content title="My Data" />
 </Appbar.Header>
             <ScrollView>

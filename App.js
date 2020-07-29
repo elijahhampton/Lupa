@@ -23,8 +23,8 @@ import TrainerInformation from './src/ui/user/modal/WelcomeModal/TrainerInformat
 import PrivateChat from './src/ui/user/chat/PrivateChat';
 import WelcomeModal from './src/ui/user/modal/WelcomeModal/WelcomeModal';
 import ShareProgramModal from './src/ui/workout/program/modal/ShareProgramModal';
-import AssessmentView from './src/ui/user/dashboard/component/LupaJournal/Views/AssessmentView';
 import AccountSettings from './src/ui/user/profile/component/SettingsModal'
+import LiveWorkout from './src/ui/workout/modal/LiveWorkout'
 
 class App extends React.Component {
   constructor(props) {
@@ -54,18 +54,14 @@ const SwitchNavigator = () => {
 
   const introduceApp = async (uuid) => {
     try {
-      console.log('a')
-
       //setup redux
       await _setupRedux(uuid)
-  
-      //navigate to app
-      navigation.navigate('App')
     } catch(err) {
-      alert(err)
-      alert(err)
       showAuthentication()
     }
+
+    //navigate to app
+    navigation.navigate('App')
   }
 
   const showAuthentication = () => {
@@ -77,24 +73,17 @@ const SwitchNavigator = () => {
    * as well as Lupa application data (assessments, workouts);
    */
   const _setupRedux = async (uuid) => {
-    let currUserData = getLupaUserStructure(), currUserPacks = [], currUserPrograms = [], lupaAssessments = [], lupaWorkouts = [];
+    let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = [];
     
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
     })
 
-    await LUPA_CONTROLLER_INSTANCE.getCurrentUserPacks().then(result => {
-      currUserPacks = result;
-    })
-
-
     await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
     })
 
-    lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-
-    lupaAssessments = await LUPA_CONTROLLER_INSTANCE.loadAssessments();
+    lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
 
     let userPayload = {
       userData: currUserData,
@@ -102,18 +91,16 @@ const SwitchNavigator = () => {
     }
 
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload})
-    await dispatch({ type: 'UPDATE_CURRENT_USER_PACKS', payload: currUserPacks})
     await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
-    await dispatch({ type: 'UPDATE_LUPA_ASSESSMENTS', payload: lupaAssessments})
   }
 
   useEffect(() => {
       
-    /*  async function getUserAuthState() {
+      async function getUserAuthState() {
         try {
         await LUPA_AUTH.onAuthStateChanged(user => {
-          if (typeof(user.uid) == 'undefined') {
+          if (typeof(user) == 'undefined' || user == null) {
             showAuthentication()
           }
           
@@ -125,9 +112,9 @@ const SwitchNavigator = () => {
     }
       }
 
-      getUserAuthState()*/
+      getUserAuthState()
 
-      showAuthentication()
+     // showAuthentication()
     }, [])
 
   return (
@@ -159,6 +146,7 @@ function AppNavigator() {
     <StackApp.Screen name="Onboarding" component={WelcomeModal}/>
     <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
     <StackApp.Screen name="AccountSettings" component={AccountSettings} />
+    <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
   </StackApp.Navigator>
   )
 

@@ -37,7 +37,13 @@ const DEFAULT_OPTIONS = [
 
 const CURR_USER_OPTIONS = [
     {
-        optionTitle: 'View Profile'
+        optionTitle: 'View Trainer Profile',      
+    },
+    {
+        optionTitle: 'Launch Live Workout',
+    },
+    {
+        optionTitle: 'Show Program Preview',
     }
 ]
 
@@ -61,15 +67,17 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
     const handleCurrUserOptions = (optionTitle) => {
         closeModal()
 
-        if (optionTitle == 'View Profile') {
-            navigateToProfile()
+        if (optionTitle == 'View Trainer Profile') {
+            navigation.navigate('Profile', {
+                profileUUID: program.program_owner,
+            })
         }
-    }
 
-    const navigateToProfile = () => {
-        navigation.navigate('Profile', {
-            profileUUID: program.program_owner,
-        })
+        if (optionTitle == 'Launch Live Workout') {
+            navigation.navigate('LiveWorkout', {
+                uuid: program.program_structure_uuid
+            })
+        }
     }
 
     const shareProgramOnPress = (program) => {

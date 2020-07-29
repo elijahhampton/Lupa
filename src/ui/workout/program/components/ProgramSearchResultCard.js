@@ -6,8 +6,8 @@ import {
     Text,
     StyleSheet,
     Dimensions,
-    TouchableOpacity,
     Image,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import {
@@ -21,13 +21,14 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import ProgramInformationPreview from '../ProgramInformationPreview';
 
 import { useNavigation } from '@react-navigation/native'
+import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 
 
 function ProgramSearchResultCard(props) {
     const result = props.programData;
 
     const [programModalVisible, setProgramModalVisible] = useState(false);
-
+    const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
@@ -38,9 +39,10 @@ function ProgramSearchResultCard(props) {
 
         if (result.program_participants.includes(currUserData.user_uuid))
         {
-            navigation.push('LiveWorkout', {
+           /*navigation.push('LiveWorkout', {
                 programData: result,
-            });
+            });*/
+            setProgramOptionsModalVisible(true)
         }
         else
         {
@@ -75,7 +77,7 @@ function ProgramSearchResultCard(props) {
     return (
         <View style={{width: Dimensions.get('window').width}}>
 
-        <TouchableOpacity onPress={() => handleOnPress()}>
+        <TouchableWithoutFeedback onPress={() => handleOnPress()}>
         <Surface style={styles.container}>
         <View style={styles.imageContainer}>
         <Image source={{uri: props.programData.program_image}} style={styles.image} />
@@ -97,9 +99,10 @@ function ProgramSearchResultCard(props) {
           </View>
   </Surface>
 
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
 
       <ProgramInformationPreview isVisible={programModalVisible} programData={props.programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
+      <ProgramOptionsModal program={props.programData} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
       </View>
     )
 }
