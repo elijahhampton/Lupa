@@ -19,7 +19,6 @@ import { useSelector } from 'react-redux'
 import ProgramInformationPreview from '../ProgramInformationPreview'
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures'
 import LupaController from '../../../../controller/lupa/LupaController'
-import { useNavigation } from '@react-navigation/native'
 import ProgramOptionsModal from '../modal/ProgramOptionsModal'
 
 function LargeProgramSearchResultCard({ program }) {
@@ -32,15 +31,10 @@ function LargeProgramSearchResultCard({ program }) {
         return state.Users.currUserData;
     })
 
-    const navigation = useNavigation()
-
     const handleOnPress = () => {
 
         if (program.program_participants.includes(currUserData.user_uuid))
         {
-           /* navigation.push('LiveWorkout', {
-                programData: program
-            });*/
             setProgramOptionsModalVisible(true);
         }
         else

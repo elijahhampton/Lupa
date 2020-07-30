@@ -15,8 +15,6 @@ import {
     Surface,
 } from 'react-native-paper';
 import ProgramInformationPreview from '../ProgramInformationPreview';
-
-import { useNavigation } from '@react-navigation/native'
 import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 
 
@@ -29,15 +27,10 @@ function ProfileProgramCard(props) {
         return state.Users.currUserData;
     })
 
-    const navigation = useNavigation()
-
     const handleOnPress = () => {
 
         if (result.program_participants.includes(currUserData.user_uuid))
         {
-           /*navigation.push('LiveWorkout', {
-                programData: result,
-            });*/
             setProgramOptionsModalVisible(true)
         }
         else
