@@ -2,7 +2,7 @@
  * Lupa - Preventative Health Care
  * @author Elijah Hampton
  * @date August  23, 2019
- * 
+ *
  *  LupaHome
  */
 
@@ -345,7 +345,7 @@ class LupaHome extends React.Component {
                                         return (
                                             <TouchableOpacity key={item.program_name} onPress={/*this.showLiveWorkoutPreview*/ () => {
                                                 this.props.navigation.push('LiveWorkout', {
-                                                    uuid: 'c47f8332-4d54-578a-a044-7a605b0c11a5'
+                                                    uuid: 'df871187-16b2-58ae-9626-6537b5ac4866'
                                                 })
                                             }} style={{ alignItems: 'center', justifyContent: 'center' }}>
                                                 <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
@@ -390,7 +390,7 @@ class LupaHome extends React.Component {
                                     showsHorizontalScrollIndicator={false} >
                                     {this.renderNearbyUsers()}
                                 </ScrollView>
-                                
+
                                 <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
                 <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
                     See more
@@ -404,17 +404,17 @@ class LupaHome extends React.Component {
                         <View style={{ height: 190, backgroundColor: 'white', alignItems: 'center', justifyContent: 'space-evenly' }}>
 
                             <View style={{ width: '66%', alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ fontFamily: 'Avenir-Roman', paddingVertical: 5, color: '#23374d', fontWeight: '600', fontSize: RFValue(18) }}>
+                                <Text style={{ fontFamily: 'Avenir-Roman', paddingVertical: 5, color: '#23374d', fontWeight: '600', fontSize: RFValue(17) }}>
                                     Need a trainer now?
                                     </Text>
-                                <Text style={{ textAlign: 'center', fontSize: RFValue(15), fontFamily: 'avenir-roman', fontWeight: '300' }}>
+                                <Text style={{ textAlign: 'center', fontSize: RFValue(13), fontFamily: 'avenir-roman', fontWeight: '300' }}>
                                     Click here and we'll recommend a program to you.
                                     </Text>
                             </View>
 
 
-                            <Button uppercase={false} mode="contained" color="#1089ff" theme={{ roundness: 20 }} style={{ height: 45, alignItems: 'center', justifyContent: 'center', elevation: 3, width: '65%' }}>
-                                <Text style={{ fontSize: 18, fontFamily: 'Avenir-Black', fontWeight: '800' }}>
+                            <Button uppercase={false} mode="contained" color="#1089ff" theme={{ roundness: 7 }} style={{  alignItems: 'center', justifyContent: 'center', elevation: 0, width: '65%' }}>
+                                <Text style={{ fontSize: 15, fontFamily: 'Avenir-Black', fontWeight: '800' }}>
                                     Find a Trainer
                                         </Text>
                             </Button>
@@ -448,7 +448,7 @@ class LupaHome extends React.Component {
                         </View>
 
                         <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
-                        
+
                         <View style={{ backgroundColor: 'white', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
                                 <Text style={{ marginVertical: 10, fontSize: RFValue(20), fontFamily: 'Avenir-Medium' }}>
