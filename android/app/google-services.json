@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "413569093565",
+    "firebase_url": "https://lupa-cd0e3.firebaseio.com",
+    "project_id": "lupa-cd0e3",
+    "storage_bucket": "lupa-cd0e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413569093565:android:0d8f9737fbadc7e413ccd4",
+        "android_client_info": {
+          "package_name": "com.lupa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413569093565-un7dg2ne4eqf76m9724jkbim9hscvnb9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHrHFFkdDIkGhlcm3MOc_Z9AK2_hdUhvU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413569093565-un7dg2ne4eqf76m9724jkbim9hscvnb9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "413569093565-tkls46mtqdgq5tgaopdp4gkaronsjkqa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rheasilvia.Lupa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
