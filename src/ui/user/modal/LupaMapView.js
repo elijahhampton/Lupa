@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { View, Modal, StyleSheet } from 'react-native';
 
-import { Portal, Paragraph, Dialog, Button, Banner} from 'react-native-paper';
+import { Banner} from 'react-native-paper';
 
 import MapView, { Marker } from 'react-native-maps';
 
@@ -117,6 +117,8 @@ class LupaMapView extends React.Component {
     render() {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isVisible} animated={true} animationType="slide">
+                  <ConfirmHomeGymDialog isVisible={this.state.showGymConfirmationDialog} gymInformation={this.state.gymInformation} handleHomeGymConfirmation={gymInfo => this.handleHomeGymConfirmation(gymInfo)} closeDialogMethod={this.hideGymConfirmationDialog}/>
+                  
                 <MapView style={{flex: 1}}
                     initialRegion={{
                         latitude: this.props.initialRegionLatitude,
@@ -128,7 +130,6 @@ class LupaMapView extends React.Component {
                     {this.mapMarkers()}
                 </MapView>
 
-                <ConfirmHomeGymDialog isVisible={this.state.showGymConfirmationDialog} gymInformation={this.state.gymInformation} handleHomeGymConfirmation={gymInfo => this.handleHomeGymConfirmation(gymInfo)} closeDialogMethod={this.hideGymConfirmationDialog}/>
             </Modal>
         )
     }

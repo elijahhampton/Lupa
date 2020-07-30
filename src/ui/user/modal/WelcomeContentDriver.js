@@ -1,67 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { ListItem } from 'react-native-elements'
+import React from 'react';
+import { ListItem } from 'react-native-elements';
 import {
     Text,
     View,
     StyleSheet,
-    TouchableOpacity,
-    Dimensions,
-    ScrollView,
 } from 'react-native';
-
-import {
-    Button,
-    Surface,
-    Divider
-} from 'react-native-paper';
-
-import FeatherIcon from 'react-native-vector-icons/Feather'
-
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-import LupaController from '../../../controller/lupa/LupaController';
-
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux'
 
 const WelcomeContentDriver = () => {
     const navigation = useNavigation()
 
     return (
-        <View style={{flex: 1}}>
-                            <View style={{flex: 0.5, justifyContent: "space-evenly"}}>
-                                <Text style={{alignSelf: 'center', fontFamily: 'avenir-roman', fontSize: 20, color: 'rgb(58, 58, 60)', fontWeight: '700'}}>
+        <View style={styles.container}>
+                            <View style={styles.headerTextContainer}>
+                                <Text style={styles.headerText}>
                                    Thank you for joining Lupa.
                                 </Text>
                                 
                                 <View>
                                 <ListItem
         title='Report'
-        titleStyle={{fontSize: 15, fontWeight: '400', color: 'rgb(72, 72, 74)'}}
+        titleStyle={styles.titleStyle}
         subtitle='Remember to report suspicious behavior.'
-        subtitleStyle={{fontSize: 15, fontWeight: '500'}}
+        subtitleStyle={styles.subtitleStyle}
         rightIcon={() => <FeatherIcon name="arrow-right" />}
         bottomDivider
       />
                                 <ListItem
         title='Train Safely'
-        titleStyle={{fontSize: 15, fontWeight: '400', color: 'rgb(72, 72, 74)'}}
+        titleStyle={styles.titleStyle}
         subtitle='Always meet trainers in a public area.'
-        subtitleStyle={{fontSize: 15, fontWeight: '500'}}
+        subtitleStyle={stlye.subtitleStyle}
         rightIcon={() => <FeatherIcon name="arrow-right" />}
         bottomDivider
       />
                              <ListItem
         title='Terms of Service'
-        titleStyle={{fontSize: 15, fontWeight: '400', color: 'rgb(72, 72, 74)'}}
+        titleStyle={styles.titleStyle}
         subtitle='Find the Lupa Terms of Service here.'
-        subtitleStyle={{fontSize: 15, fontWeight: '500'}}
+        subtitleStyle={styles.subtitleStyle}
         rightIcon={() => <FeatherIcon name="arrow-right" />}
         bottomDivider
       />
       <ListItem
         title='Get started'
-        titleStyle={{color: '#1089ff', fontWeight: '500'}}
+        titleStyle={styles.highlightedTitleStyle}
 
         bottomDivider
         rightIcon={() => <FeatherIcon name="arrow-right" />}
@@ -78,39 +62,22 @@ const WelcomeContentDriver = () => {
 export default WelcomeContentDriver;
 
 const styles = StyleSheet.create({
-    topText: {
-        fontSize: 15,
-        textAlignVertical: "center",
-        textAlign: "left",
+    container: {
+        flex: 1,
     },
-    contentDriverTextView: {
-        width: "80%"
-    },  
-    contentDriverSurface: {
-        alignItems: "center",
-        justifyContent: "center",
-        elevation: 5,
-        borderRadius: 8,
-        width: 35,
-        height: 35,
-        margin: 10, 
+    titleStyle: {
+        fontSize: 15, fontWeight: '400', color: 'rgb(72, 72, 74)'
     },
-    contentDriverView: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%",
-        padding: 5
+    subtitleStyle: {
+        fontSize: 15, fontWeight: '500'
     },
-    contentDriverHeaderText: {
-        fontSize: 15,
+    headerText: {
+        alignSelf: 'center', fontFamily: 'avenir-roman', fontSize: 20, color: 'rgb(58, 58, 60)', fontWeight: '700'
     },
-    contentDriverDescriptionText: {
-        fontSize: 12, 
-         
+    headerTextContainer: {
+        flex: 0.5, justifyContent: "space-evenly"
     },
-    displayedContentTitle: {
-        color: '#212121',
-        opacity: 0.8,
-        alignSelf: "center"
+    highlightedTitleStyle: {
+        color: '#1089ff', fontWeight: '500'
     }
 })

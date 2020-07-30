@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { createStackNavigator } from '@react-navigation/stack'
-import TrainerDashboardView from '../user/dashboard/TrainerDashboardView'
+import Dashboard from '../user/dashboard/Dashboard'
 import MyData from '../user/component/MyData'
 
 const Stack = createStackNavigator()
@@ -14,7 +14,7 @@ function DashboardNavigator() {
     >
       <Stack.Screen
         name="Dashboard"
-        component={TrainerDashboardView}
+        component={Dashboard}
       />
        <Stack.Screen 
         name="MyData"

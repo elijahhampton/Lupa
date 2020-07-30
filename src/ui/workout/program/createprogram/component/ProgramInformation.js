@@ -33,17 +33,10 @@ import {
 
 import Icon from "react-native-feather1s";
 
-import DateTimePicker from '@react-native-community/datetimepicker';
-
-import RBSheet from 'react-native-raw-bottom-sheet';
-
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import ProgramListComponent from '../../../component/ProgramListComponent'
-
-import FeatherIcon from 'react-native-vector-icons/Feather';
 import SelectProgramImage from './SelectProgramImage'
-import { Input, CheckBox, Button as ElementsButton } from 'react-native-elements';
+import { Input} from 'react-native-elements';
 import LupaMapView from '../../../../user/modal/LupaMapView'
 
 const months = ["January", "February", "March", "April",

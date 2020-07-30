@@ -6,15 +6,11 @@ import {
     StyleSheet,
     TouchableOpacity,
     ScrollView,
-    Modal,
     Dimensions,
     KeyboardAvoidingView,
 } from 'react-native';
 
 import {
-    Surface,
-    Snackbar,
-    ActivityIndicator,
     Divider,
 } from 'react-native-paper';
 
@@ -28,21 +24,14 @@ import {
  import { Constants } from 'react-native-unimodules';
 
  import * as authActions from '../../../controller/lupa/auth/auth'
- import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
- import FeatherIcon from 'react-native-vector-icons/Feather';
- import ThinFeatherIcon from "react-native-feather1s";
-
-import { UserAuthenticationHandler } from '../../../controller/firebase/firebase'
 
 import LupaController from '../../../controller/lupa/LupaController';
 
-import { getLupaAssessmentStructure, getLupaUserStructure, getLupaPackEventStructure, getLupaPackStructure } from '../../../controller/firebase/collection_structures'
+import {getLupaUserStructure} from '../../../controller/firebase/collection_structures'
 import { connect, useDispatch } from 'react-redux';
 
 import Input from '../../common/Input/Input'
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
-import { storeAsyncData } from '../../../controller/lupa/storage/async';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
 
