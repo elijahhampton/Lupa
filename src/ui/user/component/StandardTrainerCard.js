@@ -59,12 +59,6 @@ function StandardTrainerCard(props) {
                 </View>
                     </View>
                 </View>
-
-               {/* <View style={{marginVertical: 5}}>
-                    <Paragraph style={{fontWeight: '400', fontSize: 13}} ellipsizeMode="tail" numberOfLines={2}>
-                   {props.user.bio}
-                    </Paragraph>
-        </View> */}
                 </View>
 
                 <View style={{paddingHorizontal: 15, marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
