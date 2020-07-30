@@ -938,7 +938,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     </Left>
                     
                     <Body>
-                    <Text style={{ fontFamily: 'Helvetica', fontSize: 15, color: "#212121", fontWeight: '600', padding: 1 }}>
+                    <Text style={{fontFamily: 'HelveticaNeue-Bold', fontSize: 15, fontWeight: '600'}}>
                         {this.state.userData.username}
                     </Text>
                     </Body>
