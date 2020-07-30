@@ -97,7 +97,6 @@ export type LupaUserStructure = {
     chats: any,
     session_reviews: [],
     trainer_tier: Number,
-    assessments: Array<LupaAssessmentStructure>,
     tokens: Object,
     waitlistedPrograms: Array<String>,
     notifications: Array<Object>,
@@ -105,13 +104,6 @@ export type LupaUserStructure = {
     services: Array<String>,
     workout_log: []
 };
-
-export type LupaAssessmentStructure = {
-    assessment_acronym: String,
-    data: Array<Object>,
-    complete: Boolean,
-};
-
 
 /* LupaWorkoutDataStructure */
 export type LupaWorkoutStructure = {};

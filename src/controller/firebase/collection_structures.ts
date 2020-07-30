@@ -4,7 +4,6 @@ import {
     LupaHealthDataStructure, 
     LupaWorkoutStructure,
     LupaUserStructure, 
-    LupaAssessmentStructure,
     SESSION_STATUS,
     LupaTrainerService,
 } from '../lupa/common/types';
@@ -115,7 +114,6 @@ var lupa_workout : LupaWorkoutStructure = {
 }
 
 var lupa_user : LupaUserStructure = {
-    assessments: [],
     user_uuid: "",
     display_name: "",
     username: "",
@@ -175,21 +173,8 @@ export const getLupaUserStructurePlaceholder = () => {
     return lupa_user;
 }
 
-var lupa_assessment : LupaAssessmentStructure = {
-    assessment_acronym: '',
-    data: [],
-    complete: false,
-}
-
-export const getLupaAssessmentStructure = (name, data) => {
-    lupa_assessment.assessment_acronym = name;
-    lupa_assessment.data = data;
-    return lupa_assessment;
-}
-
 export {
     lupa_user,
-    lupa_assessment,
     lupa_user_health_data,
     lupa_workout,
     lupa_pack,
