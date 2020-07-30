@@ -123,7 +123,9 @@ const Dashboard = () => {
 const styles = StyleSheet.create({
     appbar: {
         backgroundColor: '#FFFFFF',
-        elevation: 0
+        elevation: 0,
+        borderBottomColor: 'rgb(199, 199, 204)', 
+        borderBottomWidth: 0.8 
     },
     scrollView: {
         flexGrow: 2,

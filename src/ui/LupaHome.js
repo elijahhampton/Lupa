@@ -66,6 +66,7 @@ import { retrieveAsyncData, storeAsyncData } from '../controller/lupa/storage/as
 import ThinFeatherIcon from "react-native-feather1s";
 import LiveWorkout from './workout/modal/LiveWorkout'
 import CircularUserCard from './user/component/CircularUserCard';
+import { TemporaryDirectoryPath } from 'react-native-fs';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -312,7 +313,7 @@ class LupaHome extends React.Component {
         return (
             <View style={styles.root}>
 
-               <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+               <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
 
                     <Appbar.Content title="Explore" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
@@ -331,7 +332,7 @@ class LupaHome extends React.Component {
                         </Text>
 
                         <Button uppercase={false} mode="text" style={{width: 'auto', flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
+                <Text style={[styles.sectionHeaderText, {fontSize: RFValue(13), color: '#1089ff'}]}>
                     See more
                 </Text>
                     </Button>
@@ -349,33 +350,41 @@ class LupaHome extends React.Component {
                                 {
                                     this.state.featuredPrograms.map(item => {
                                         return (
+                                            <View>
                                             <TouchableOpacity key={item.program_name} onPress={/*this.showLiveWorkoutPreview*/ () => {
                                                 this.props.navigation.push('LiveWorkout', {
                                                     uuid: 'df871187-16b2-58ae-9626-6537b5ac4866'
                                                 })
                                             }} style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                                <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 0, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
-                                                    <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ with: '100%', height: '100%', justifyContent: 'center' }} />
+                                                <Card theme={{roundness: 5}} style={{ alignSelf: 'center', elevation: 0, margin: 10, width: Dimensions.get('window').width - 50, height: 220, marginVertical: 10 }}>
+                                                    <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ borderRadius: 5, with: '100%', height: '100%', justifyContent: 'center' }} />
                                                 </Card>
-                                                <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
+                                                <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 16, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
                                                     <ThinFeatherIcon thin={true} name="play" color="white" size={30} style={{ alignSelf: 'center' }} />
                                                 </View>
                                                 <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} />
                                             </TouchableOpacity>
+                                            <View style={{paddingLeft: 10}}>
+                                                <Text style={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15}}>
+                                                {
+                                                item.program_name.replace(/\w\S*/g, (txt) => {
+                                                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+                                                })
+                                                }
+                                    
+                                                </Text>
+                                                <Caption>
+                                                    Emily Loefstedt (0)
+                                                </Caption>
+                                                <Text style={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15}}>
+                                                    ${item.program_price}.00
+                                                </Text>
+                                            </View>
+                                            </View>
                                         )
                                     })
                                 }
                             </ScrollView>
-
-                            <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
-                                <View style={{width: '90%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 10}}>
-                <Text onPress={() => alert('Recommended')} style={{fontWeight: '400',color: '#212121', flexWrap: 'wrap'}}>
-                    Need a trainer now?  Let us recommend a program to you.
-                    <FeatherIcon name="arrow-right" color='#212121' size={15} style={{paddingLeft: 20}} />
-                </Text>
-               
-                                </View>
-                                <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                         </View>
 
 
@@ -459,7 +468,7 @@ class LupaHome extends React.Component {
                             </ScrollView>
                         </View>
 
-                         
+                         <Divider style={{width: '90%', alignSelf: 'center'}} />
 
                         <View style={{ backgroundColor: 'white', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
@@ -525,7 +534,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     sectionHeaderText: {
-        fontSize: RFValue(15), fontFamily: 'HelveticaNeue-Medium', paddingVertical: 10, paddingLeft: 10 
+        fontSize: RFValue(15), fontFamily: 'HelveticaNeue-Bold', paddingVertical: 10, paddingLeft: 10 
     }
 });
 

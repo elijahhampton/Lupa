@@ -103,6 +103,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor: '#FFFFFF',
         elevation: 0,
+        borderBottomColor: 'rgb(199, 199, 204)', 
+        borderBottomWidth: 0.8 
     }
 })
 

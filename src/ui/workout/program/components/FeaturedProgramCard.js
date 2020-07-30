@@ -132,7 +132,7 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
 
 const styles = StyleSheet.create({
     card: {
-        borderRadius: 15, elevation: 10, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 5, marginBottom: 20, shadowOpacity: 0.1
+        borderRadius: 15, elevation: 1, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 5, marginBottom: 20, shadowOpacity: 0.1
     },
     cardCover: {
         height: '65%',
