@@ -45,7 +45,7 @@ import axios from 'axios';
 import { LOG_ERROR } from '../../../common/Logger';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
-import ProgramSearchResultCard from './components/ProgramSearchResultCard';
+import ProfileProgramCard from './components/ProfileProgramCard';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Pagination } from 'react-native-snap-carousel';
 import { colors } from 'react-native-elements';

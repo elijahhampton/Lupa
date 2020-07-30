@@ -69,7 +69,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
 import { Constants } from 'react-native-unimodules';
-import ProgramSearchResultCard from '../../workout/program/components/ProgramSearchResultCard';
+import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
 import { InformationIcon } from '../../icons/index.js';
 import ProgramOptionsModal from '../../workout/program/modal/ProgramOptionsModal';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
@@ -781,7 +781,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     return this.props.lupa_data.Programs.currUserProgramsData.map((program, index, arr) => {
                         return (
                             <View style={{marginVertical: 10}}>   
-                                <ProgramSearchResultCard programData={program} />
+                                <ProfileProgramCard programData={program} />
                             </View>
                         )
                     })
@@ -881,7 +881,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 return this.state.userData.programs.map((program, index, arr) => {
                     return (
                         <View style={{marginVertical: 10}}>  
-                            <ProgramSearchResultCard programData={program} />
+                            <ProfileProgramCard programData={program} />
                         </View>
                     )
                 })

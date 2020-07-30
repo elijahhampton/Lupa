@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux'
 import LupaController from '../../../../controller/lupa/LupaController'
 
 import UserSearchResult from '../../../user/profile/component/UserSearchResult'
-import ProgramSearchResultCard from '../components/ProgramSearchResultCard';
+import ProfileProgramCard from '../components/ProfileProgramCard';
 
 const { windowWidth, windowHeight } = Dimensions.get('window')
 
@@ -115,7 +115,7 @@ function ShareProgramModal({ navigation, route }) {
                 </Appbar.Header>
 
                 <View style={styles.contentContainer}>
-                <ProgramSearchResultCard programData={route.params.programData} />
+                <ProfileProgramCard programData={route.params.programData} />
                               <Divider />
                     <ScrollView shouldRasterizeIOS={true}>
                     {
