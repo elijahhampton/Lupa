@@ -339,6 +339,12 @@ class LupaHome extends React.Component {
                             <ScrollView
                                 horizontal={true}
                                 showsHorizontalScrollIndicator={false}
+                                snapToAlignment='center'
+                                centerContent
+                                snapToInterval={Dimensions.get('window').width }
+                                decelerationRate={0}
+                                pagingEnabled={true}
+                                
                             >
                                 {
                                     this.state.featuredPrograms.map(item => {
@@ -348,7 +354,7 @@ class LupaHome extends React.Component {
                                                     uuid: 'df871187-16b2-58ae-9626-6537b5ac4866'
                                                 })
                                             }} style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                                <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 3, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
+                                                <Card style={{ alignSelf: 'center', borderRadius: 0, elevation: 0, margin: 10, width: Dimensions.get('window').width - 50, height: 180, marginVertical: 10 }}>
                                                     <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ with: '100%', height: '100%', justifyContent: 'center' }} />
                                                 </Card>
                                                 <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
@@ -361,6 +367,14 @@ class LupaHome extends React.Component {
                                 }
                             </ScrollView>
 
+                            <Divider  style={{marginVertical: 5, width: '90%', alignSelf: 'center'}} />
+                                <View style={{width: '90%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 10}}>
+                <Text onPress={() => alert('Recommended')} style={{fontWeight: '400',color: '#23374d', flexWrap: 'wrap'}}>
+                    Need a trainer now?  Let us recommend a program to you.
+                    <FeatherIcon name="arrow-right" color='#23374d' size={18} style={{paddingLeft: 20}} />
+                </Text>
+               
+                                </View>
                         </View>
 
 
@@ -401,7 +415,7 @@ class LupaHome extends React.Component {
                             <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                         </View>
 
-                        <View style={{ height: 190, backgroundColor: 'white', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                     {/*   <View style={{ height: 190, backgroundColor: 'white', alignItems: 'center', justifyContent: 'space-evenly' }}>
 
                             <View style={{ width: '66%', alignItems: 'center', justifyContent: 'center' }}>
                                 <Text style={{ fontFamily: 'Avenir-Roman', paddingVertical: 5, color: '#23374d', fontWeight: '600', fontSize: RFValue(17) }}>
@@ -421,7 +435,7 @@ class LupaHome extends React.Component {
                         </View>
 
                         <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
-
+                            */}
                         <View
                             style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                             <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
