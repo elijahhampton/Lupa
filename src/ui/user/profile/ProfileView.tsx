@@ -572,14 +572,13 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     getLocation = () => {
             return this.state.userData == this.props.lupa_data.Users.currUserData.user_uuid ?
                 <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                <MaterialIcons name="place" />
+
                                                 <Text style={{ fontSize: 12, color: "#212121", fontWeight: "600", padding: 1 }}>
                                    {this.props.lupa_data.Users.currUserData.location.city + ", " + this.props.lupa_data.Users.currUserData.location.state}
                                 </Text>
             </View>
             :
             <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                <MaterialIcons name="place" />
                                                 <Text style={{ fontSize: 12, color: "#212121", fontWeight: "600", padding: 1 }}>
                                    {this.state.userData.location.city+ ", " + this.state.userData.location.state}
                                 </Text>
@@ -932,7 +931,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         return (
             <SafeAreaView style={styles.container}>
                 <SafeAreaView />
-                <Appbar.Header style={{ backgroundColor: 'white', margin: 10, elevation: 0, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8  }}>
+                <Appbar.Header style={{ backgroundColor: 'white', elevation: 0, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8  }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>
@@ -949,7 +948,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 </Appbar.Header>
 
                 <ScrollView 
-                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#F2F2F2' }} 
+                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#F2F2F2', marginTop: 10 }} 
                 showsVerticalScrollIndicator={false} 
                 shouldRasterizeIOS={true} 
                 refreshControl={
@@ -987,8 +986,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                             </View>
                             
                             <View style={{flex: 3, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10}}>
-                                <View style={{marginVertical: 5, justifyContent: 'center', alignItems: 'center'}}>
-                                <Text style={{ fontSize: 15, color: "#212121", fontWeight: 'bold', padding: 1 }}>
+                                <View style={{marginVertical: 5, justifyContent: 'center', alignItems: 'flex-start'}}>
+                                <Text style={{ fontSize: 12, color: "#212121", fontWeight: 'bold', padding: 1 }}>
                                     {this.state.userData.display_name}
                                 </Text>
                                 {
