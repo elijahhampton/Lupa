@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { ADD_WORKOUT_TO_PROGRAM_ACTION, ADD_CURRENT_USER_SERVICE_ACTION, UPDATE_CURRENT_USER_SERVICES_ACTION, UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PROGRAMS_ACTION, UPDATE_LUPA_WORKOUTS_ACTION, UPDATE_LUPA_ASSESSMENTS_ACTION } from './actionTypes';
+import { ADD_WORKOUT_TO_PROGRAM_ACTION, ADD_CURRENT_USER_SERVICE_ACTION, UPDATE_CURRENT_USER_SERVICES_ACTION, UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PROGRAMS_ACTION, UPDATE_LUPA_WORKOUTS_ACTION } from './actionTypes';
 
 
 handleUserAttributeUpdate = (state, payload) => {
@@ -85,10 +85,6 @@ const initialProgramsReducerState = {
 
 const initialAppWorkoutsReducerState = {
   applicationWorkouts: {},
-}
-
-const initialAssessmentsReducerState = {
-  generalAssessments: {},
 }
 
 const initialState = {}
@@ -268,27 +264,11 @@ const workoutsReducer = (state = initialAppWorkoutsReducerState, action) => {
   }
 }
 
-//assessment reducer
-const assessmentsReducer = (state = initialAssessmentsReducerState, action) => {
-  const newState = {...state};
-
-  switch (action.type)
-  {
-    case UPDATE_LUPA_ASSESSMENTS_ACTION:
-      return Object.assign({}, state, {
-        generalAssessments: action.payload
-      })
-    default:
-      return newState;
-  }
-}
-
 const LupaReducer = combineReducers({
   Packs: packReducer,
   Programs: programsReducer,
   Users: userReducer,
   Application_Workouts: workoutsReducer,
-  Assessments: assessmentsReducer,
   FormReducer: formReducer,
 });
 

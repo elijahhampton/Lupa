@@ -259,10 +259,6 @@ export default class UserController {
         return false;
     }
 
-    addEntryToWorkoutLog = (entry) => {
-        this.updateCurrentUser('workout_log', entry, 'add', "")
-    }
-
     updateCurrentUser = async (fieldToUpdate, value, optionalData = "", optionalDataTwo = "") => {
         let currentUserHealthDocumentData;
 
@@ -1211,37 +1207,6 @@ export default class UserController {
         }*/
 }
 
-    createService = async (serviceObject) => {
-        let uuid = await this.getCurrentUser().uid;
-        USER_COLLECTION.doc(uuid).collection('services').add(serviceObject);
-    }
-
-    loadCurrentUserServices = async () => {
-        let services = [];
-        let uuid = await this.getCurrentUser().uid;
-        await USER_COLLECTION.doc(uuid).collection("services").get().then(docs => {
-            docs.forEach(doc => {
-                if (docs.length == 0)
-                {
-                    return Promise.resolve ([]);
-                }
-                let snapshot = doc.data();
-                if (snapshot.service_name != undefined || snapshot.service_name != "")
-                {
-                    snapshot.service_uuid = doc.id;
-                    services.push(snapshot);
-                }
-            });
-        });
-
-        if (services.length == 0 || !services.length)
-        {
-            return Promise.resolve([]);
-        }
-
-        return Promise.resolve(services);
-    }
-
     saveProgramImage = async (programUUID, url) => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -1417,34 +1382,6 @@ export default class UserController {
         return Promise.resolve(result);
     }
 
-    addAssessment = async (assessment_uuid) => {
-        let currUserUUID = await this.getCurrentUserUUID();
-        
-        let currUserAssessments = [];
-        await USER_COLLECTION.doc(currUserUUID).get().then(snapshot => {
-            currUserAssessments = snapshot.data().assessments;
-        })
-
-        if (currUserAssessments.includes(assessment_uuid))
-        {
-            currUserAssessments.splice(currUserAssessments.indexOf(assessment_uuid), 1);
-        }
-
-        currUserAssessments.push(assessment_uuid);
-
-        await USER_COLLECTION.doc(currUserUUID).update({
-            assessments: currUserAssessments
-        })
-    }
-
-    getUserAssessment = async (acronym, user_uuid) => {
-        let retVal;
-        await LUPA_DB.collection('assessments').doc(acronym + "_" + user_uuid).get().then(snapshot => {
-            retVal = snapshot.data();
-        });
-        
-        return Promise.resolve(retVal);
-    }
 
     /* designing programs */
     saveProgramWorkoutGraphic = async (workout, programUUID, graphicType, uri) => {
@@ -1626,56 +1563,6 @@ export default class UserController {
                 })
                 return Promise.resolve(updatedProgramSnapshot);
       }
-
-      addWorkoutLogEntry = (entry) => {
-        this.updateCurrentUser('workout_log', entry, 'add', "");
-    }
-
-    toggleProgramBookmark = (userUUID, programUUID) => {
-        this.updateCurrentUser('bookmarked_programs', programUUID, '', '')  
-    }
-
-    getBookmarkedPrograms = async () => {
-        let uuid = await this.getCurrentUserUUID();
-        let bookmarks = []
-
-        try {
-            await USER_COLLECTION.doc(uuid).get().then(snapshot => {
-                bookmarks = snapshot.data().bookmarked_programs;
-            });
-
-            if (bookmarks.length == 0)
-            {
-                return Promise.resolve([])
-            }
-        } catch(error) {
-            LOG_ERROR('UserController.js', 'Caught exception in getBookmarkedPrograms() trying to get program data from USERS_COLLECTION', error)
-            return Promise.resolve([])
-        }
-
-        let bookmarked_programs = []
-        try {
-            for (let i = 0; i < bookmarks.length; i++)
-            {
-                let data = undefined;
-                await PROGRAMS_COLLECTION.doc(bookmarks[i]).get().then(snapshot => {
-                    data = snapshot.data();
-                });
-
-                if (typeof(data) == 'undefined')
-                {
-                    continue;
-                }
-
-                bookmarked_programs.push(data);
-            }
-        } catch(error) {
-            LOG_ERROR('UserController.js', 'Caught exception in getBookmarkedPrograms() trying to get program data from PROGRAMS_COLLECTION', error)
-            return Promise.resolve(bookmarked_programs);
-        }
-
-        return Promise.resolve(bookmarked_programs);
-    }
     
     }
 

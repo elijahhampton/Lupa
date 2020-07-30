@@ -19,13 +19,13 @@ export const signup = (username, email, password) => {
 
     //Catch error on signup
 }).catch(error => {
-    throw new Error('Something went wrong: ' + error)
+   alert(error)
   });
   
   await authHandler.signUpUser(USER_UUID, username, email, password);
 
   //user is gined in now
   //LUPA_AUTH.currentUser.getTokenId()
-        dispatch(signUpUser());
+    dispatch(signUpUser());
     }
 }

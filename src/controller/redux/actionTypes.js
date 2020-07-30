@@ -25,6 +25,3 @@ export const ADD_CURRENT_USER_SERVICE_ACTION="ADD_CURRENT_USER_SERVICE";
 
 //Workouts reducer action types
 export const UPDATE_LUPA_WORKOUTS_ACTION="UPDATE_LUPA_WORKOUTS";
-
-//Assessment reducer action types
-export const UPDATE_LUPA_ASSESSMENTS_ACTION="UPDATE_LUPA_ASSESSMENTS"

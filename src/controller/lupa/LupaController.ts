@@ -674,15 +674,6 @@ export default class LupaController {
       return Promise.resolve(packEventsData);
     }
 
-    /** Goals **/
-    addGoalForCurrentUser = (goalUUID) => {
-      USER_CONTROLLER_INSTANCE.updateCurrentUser('goals', goalUUID, 'add');
-    }
-
-    removeGoalForCurrentUser = (goalUUID) => {
-      USER_CONTROLLER_INSTANCE.updateCurrentUser('goals', goalUUID, 'remove');
-    }
-
     createNewProgram = async (uuid) => {
      USER_CONTROLLER_INSTANCE.createProgram(uuid)
     }
@@ -717,10 +708,6 @@ export default class LupaController {
     deleteProgram = async (user_uuid, programUUID) => {
       await USER_CONTROLLER_INSTANCE.deleteProgram(user_uuid, programUUID);
     }
-
-    createService = (serviceObject) => {
-      USER_CONTROLLER_INSTANCE.createService(serviceObject);
-    }
     
     loadCurrentUserPrograms = async () => {
       let programsData = []
@@ -732,24 +719,9 @@ export default class LupaController {
       return Promise.resolve(programsData);
     }
 
-    loadCurrentUserServices = async () => {
-      let servicesData;
-
-      await USER_CONTROLLER_INSTANCE.loadCurrentUserServices().then(result => {
-        servicesData = result;
-      });
-
-      return Promise.resolve(servicesData);
-    }
-
     loadWorkouts = () => {
       let workoutData = PROGRAMS_CONTROLLER_INSTANCE.loadWorkouts();
       return workoutData;
-    }
-
-    loadAssessments = () => {
-      const ASSESSMENTS = require('../../model/data_structures/assessment/json/assessments.json')
-      return ASSESSMENTS.lupa_assessments;
     }
 
     getPrivateChatUUID = async (currUserUUID, userTwo) => {
@@ -787,36 +759,6 @@ export default class LupaController {
       });
 
       return Promise.resolve(upcomingSessions);
-    }
-
-    submitAssessment = async (assessmentObject) => {
-      if (typeof(assessmentObject) != "object")
-      {
-        return;
-      }
-
-      //assign assessment to current user
-      let currUser = await USER_CONTROLLER_INSTANCE.getCurrentUserUUID();
-
-      assessmentObject.user_uuid = currUser;
-      assessmentObject.complete = 'true'
-
-      const assessment_uuid = assessmentObject.assessment_acronym + "_" + currUser;
-
-      //add assessment to database and get assessment document ID
-      await LUPA_DB.collection('assessments').doc(assessment_uuid).set(assessmentObject);
-
-      //pass to user controller to add assessment id for user
-      await USER_CONTROLLER_INSTANCE.addAssessment(assessment_uuid);
-    }
-
-    getUserAssessment = async (acronym, user_uuid) => {
-      let assessment;
-      await USER_CONTROLLER_INSTANCE.getUserAssessment(acronym, user_uuid).then(result => {
-        assessment = result;
-      });
-
-      return Promise.resolve(assessment);
     }
 
         /* designing programs */
@@ -880,24 +822,6 @@ export default class LupaController {
       });
 
       return Promise.resolve(retVal);
-    }
-
-    addEntryToWorkoutLog = (entry) => {
-      USER_CONTROLLER_INSTANCE.addEntryToWorkoutLog(entry);
-    }
-
-    toggleProgramBookmark = (userUUID, programUUID) => {
-      USER_CONTROLLER_INSTANCE.toggleProgramBookmark(userUUID, programUUID)
-    }
-
-    getBookmarkedPrograms = async () => {
-      let data = []
-
-      await USER_CONTROLLER_INSTANCE.getBookmarkedPrograms().then(result => {
-        data = result;
-      });
-
-      return Promise.resolve(data);
     }
 
     getPacksWithoutParticipatingUUID = async (userUUID) => {
