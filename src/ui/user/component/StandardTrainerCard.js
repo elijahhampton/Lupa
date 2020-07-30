@@ -27,7 +27,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const { windowWidth } = Dimensions.get('window').width
 
-function CircularUserCard(props) {
+function StandardTrainerCard(props) {
     const navigation = useNavigation()
 
     const navigateToProfile = () => {
@@ -93,4 +93,4 @@ function CircularUserCard(props) {
     
 }
 
-export default CircularUserCard;
+export default StandardTrainerCard;

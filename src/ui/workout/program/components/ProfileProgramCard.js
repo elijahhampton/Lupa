@@ -11,20 +11,16 @@ import {
 } from 'react-native';
 
 import {
-    Paragraph,
     Caption,
     Surface,
-    Button,
-    Divider,
 } from 'react-native-paper';
-import FeatherIcon from 'react-native-vector-icons/Feather'
 import ProgramInformationPreview from '../ProgramInformationPreview';
 
 import { useNavigation } from '@react-navigation/native'
 import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 
 
-function ProgramSearchResultCard(props) {
+function ProfileProgramCard(props) {
     const result = props.programData;
 
     const [programModalVisible, setProgramModalVisible] = useState(false);
@@ -139,4 +135,4 @@ const styles = StyleSheet.create({
         fontWeight: '400', fontFamily: 'avenir-roman', fontSize: 12
     }
 })
-export default ProgramSearchResultCard;
+export default ProfileProgramCard;

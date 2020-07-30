@@ -53,7 +53,7 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import LUPA_DB from '../controller/firebase/firebase'
-import CircularUserCard from './user/component/CircularUserCard';
+import StandardTrainerCard from './user/component/StandardTrainerCard';
 import { MenuIcon } from './icons';
 import { SearchBar } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
@@ -201,7 +201,7 @@ class LupaHome extends React.Component {
 
                 return (
 
-                    <CircularUserCard keyProp={user.user_uuid} user={user} />
+                    <StandardTrainerCard keyProp={user.user_uuid} user={user} />
                 )
             })
         } catch (error) {
