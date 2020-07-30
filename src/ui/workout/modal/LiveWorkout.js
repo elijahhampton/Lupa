@@ -117,6 +117,7 @@ class LiveWorkout extends React.Component {
             currentDayIndex: 0,
             currentWorkoutIndex: 0,
             playVideo: false,
+            contentShowing: false,
             ready: false,
             programData: getLupaProgramInformationStructure(),
             dayMenuVisible: false,
@@ -130,7 +131,6 @@ class LiveWorkout extends React.Component {
     setupLiveWorkout = async () => {
         await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
             this.setState({ programData: data})
-            console.log(data)
         })
 
 
@@ -140,7 +140,7 @@ class LiveWorkout extends React.Component {
 
        await this.setState({ ready: true })
 
-       alert('TRUE')
+       alert('This alert makes the loading screen go away.  Fix it.')
     }
 
     loadWorkoutDays = () => {
@@ -311,7 +311,11 @@ class LiveWorkout extends React.Component {
                         </View>
 
                         {/* Overlay on first swiper view */}
-                        <View style={{ ...StyleSheet.absoluteFillObject, paddingTop: Constants.statusBarHeight, paddingVertical: 30, justifyContent: 'space-between', flex: 1 }}>
+                        {
+                            this.state.contentShowing === true ?
+                            null
+                            :
+                            <View style={{ ...StyleSheet.absoluteFillObject, paddingTop: Constants.statusBarHeight, paddingVertical: 30, justifyContent: 'space-between', flex: 1 }}>
                             {/* Top overlayed options */}
                             <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 10 }}>
                             <View>
@@ -366,6 +370,8 @@ class LiveWorkout extends React.Component {
                                 </View>
                             </View>
                         </View>
+                        }
+                        
                         <SafeAreaView />
                     </View>
                     {/* End First Swiper View */}

@@ -65,6 +65,7 @@ import InviteFriendsModal from './user/modal/InviteFriendsModal'
 import { retrieveAsyncData, storeAsyncData } from '../controller/lupa/storage/async';
 import ThinFeatherIcon from "react-native-feather1s";
 import LiveWorkout from './workout/modal/LiveWorkout'
+import CircularUserCard from './user/component/CircularUserCard';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -200,14 +201,7 @@ class LupaHome extends React.Component {
                 }
 
                 return (
-                    <View style={{alignItems: 'center', margin: 10}}>
-                          <Avatar.Image source={{uri: user.photo_url}} rounded size={65} containerStyle={{}} avatarStyle={{borderRadius: 50}} />
-                        <Text style={{fontSize: 12, paddingVertical: 5, fontFamily: 'Helvetica-Light', fontWeight: '400'}}>
-                            {user.display_name}
-                        </Text>
-                    </View>
-                  
-                    //<StandardTrainerCard keyProp={user.user_uuid} user={user} />
+                    <CircularUserCard user={user} />
                 )
             })
         } catch (error) {
@@ -321,7 +315,7 @@ class LupaHome extends React.Component {
                <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
 
-                    <Appbar.Content title="Explore" titleStyle={{fontFamily: 'Helvetica', fontSize: 20}} />
+                    <Appbar.Content title="Explore" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
 
                     <ThinFeatherIcon name="mail" thin={true} size={25} style={{ marginRight: 10 }} onPress={() => this.props.navigation.navigate('MessagesView')} />
                 </Appbar.Header>
@@ -332,13 +326,13 @@ class LupaHome extends React.Component {
                     >
                         <View style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                         <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Text style={{ fontSize: RFValue(15), fontWeight: '500', fontFamily: 'Helvetica', paddingVertical: 10, paddingLeft: 10 }}>
+                                <Text style={styles.sectionHeaderText}>
                                    Most Popular
                         </Text>
 
                         <Button uppercase={false} mode="text" style={{width: 'auto', flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
-                    Show all
+                    See more
                 </Text>
                     </Button>
                             </View>
@@ -375,9 +369,9 @@ class LupaHome extends React.Component {
 
                             <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                                 <View style={{width: '90%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 10}}>
-                <Text onPress={() => alert('Recommended')} style={{fontWeight: '400',color: '#23374d', flexWrap: 'wrap'}}>
+                <Text onPress={() => alert('Recommended')} style={{fontWeight: '400',color: '#212121', flexWrap: 'wrap'}}>
                     Need a trainer now?  Let us recommend a program to you.
-                    <FeatherIcon name="arrow-right" color='#23374d' size={18} style={{paddingLeft: 20}} />
+                    <FeatherIcon name="arrow-right" color='#212121' size={15} style={{paddingLeft: 20}} />
                 </Text>
                
                                 </View>
@@ -387,13 +381,15 @@ class LupaHome extends React.Component {
 
                         <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
                              
-                            <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                <Text style={{ marginVertical: 10, fontWeight: '500', fontSize:  RFValue(15), fontFamily: 'Helvetica' }}>
+                            <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%',}}>
+                                <Text style={styles.sectionHeaderText}>
                                     Start training with
                     </Text>
-                                <Caption>
-                                    {this.state.trainWithSwiperIndex + 1} / {this.state.featuredTrainers.length}
-                                </Caption>
+                    <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
+                <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
+                    See more
+                </Text>
+                    </Button>
                             </View>
 
                             <View style={{ width: Dimensions.get('window').width }}>
@@ -412,12 +408,7 @@ class LupaHome extends React.Component {
                                     {this.renderNearbyUsers()}
                                 </ScrollView>
 
-                                <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
-                <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
-                    See more
-                </Text>
-                <FeatherIcon name="arrow-right" color='#1089ff' />
-                    </Button>
+                               
                             </View>
                              
                         </View>
@@ -446,13 +437,13 @@ class LupaHome extends React.Component {
                         <View
                             style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                             <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Text style={{ fontSize:  RFValue(15), fontWeight: '500', fontFamily: 'Helvetica', paddingVertical: 10, paddingLeft: 10 }}>
+                                <Text style={styles.sectionHeaderText}>
                                     Top picks
                         </Text>
 
-                        <Button uppercase={false} mode="text" style={{width: 'auto', flexDirection: 'row', alignItems: 'center'}}>
+                        <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
                 <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
-                    Show all
+                    See more
                 </Text>
                     </Button>
                             </View>
@@ -472,7 +463,7 @@ class LupaHome extends React.Component {
 
                         <View style={{ backgroundColor: 'white', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                <Text style={{ marginVertical: 10, fontSize:  RFValue(15), fontFamily: 'Helvetica', fontWeight: '500' }}>
+                                <Text style={styles.sectionHeaderText}>
                                     Recently created programs
                     </Text>
                             </View>
@@ -533,6 +524,9 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'space-around',
     },
+    sectionHeaderText: {
+        fontSize: RFValue(15), fontFamily: 'HelveticaNeue-Medium', paddingVertical: 10, paddingLeft: 10 
+    }
 });
 
 export default connect(mapStateToProps)(LupaHome);
