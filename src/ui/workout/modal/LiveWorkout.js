@@ -121,6 +121,7 @@ class LiveWorkout extends React.Component {
             ready: false,
             programData: getLupaProgramInformationStructure(),
             dayMenuVisible: false,
+            currentDisplayedMediaURI: "",
         }
     }
 
@@ -175,28 +176,40 @@ class LiveWorkout extends React.Component {
       }
     }
 
-    handleOnChangeWorkout = () => {
-
+    handleOnChangeWorkout = async (workout) => {
+        await this.setState({ currentWorkout: workout, contentShowing: true })
     }
 
     openDayMenu = () => this.setState({ dayMenuVisible: true })
 
     closeDayMenu = () => this.setState({ dayMenuVisible: false })
 
-
-    getWorkoutMedia = () => {
-        if (this.state.ready && this.state.playVideo === false) {
-            return (
-                <Image style={{width: '100%', height: '100%'}} resizeMode="cover" source={{uri: this.state.programData.program_image}} />
-            )
+    renderContent = () => {
+        const workoutMediaType = this.state.currentWorkout.workout_media.media_type
+        switch(workoutMediaType) {
+            case 'IMAGE':
+                console.log('image')
+                return this.getWorkoutImageMedia(this.state.currentWorkout.workout_media.uri);
+            case 'VIDEO':
+                console.log('video')
+                return this.getWorkoutVideoMedia(this.state.currentWorkout.workout_media.uri);
+            default:
+                return (
+                    //In this case render information about the workout
+                    <View style={{width: '100%', height: '100%', backgroundColor: 'black'}}>
+                        
+                    </View>
+                )
         }
+    }
 
+    getWorkoutVideoMedia = (uri) => {
         try {
-            if (false /*this.state.currentWorkout.workout_media.media_type == "VIDEO"*/) {
+            console.log(uri)
                 return (
                     <>
                         <Video
-                            source={{ uri: this.state.programData.program_workout_data.Monday[0].workout_media.uri }}
+                            source={{ uri: uri}}
                             rate={1.0}
                             volume={0}
                             isMuted={true}
@@ -207,21 +220,25 @@ class LiveWorkout extends React.Component {
                                 flex: 1,
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                width: '100%',
+                                height: '100%',
                             }}
                         >
-
-
+                              
                         </Video>
 
+                     
+                        {this.getVideoIcon()}
                     </>
                 )
-            }
         } catch (err) {
             alert(err)
             return (
 
-                <View style={{ flex: 1, backgroundColor: '#212121' }}>
-
+                <View style={{ flex: 1, backgroundColor: '#212121', color: 'white', justifyContent: 'center', justifyContent: 'center' }}>
+                   <Text>
+                   Sorry it looks like something went wrong.  Try loading the workout again to get the video.
+                   </Text>
                 </View>
             )
         }
@@ -230,56 +247,40 @@ class LiveWorkout extends React.Component {
 
     getVideoIcon = () => {
         return this.state.playVideo == true ?
-            null
+        <View style={{...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center'}}>
+                    <ThinFeatherIcon
+        thin={true}
+        name="pause-circle"
+        size={65}
+        color="#FFFFFF"
+        onPress={() => this.setState({ playVideo: true })}
+        style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} />
+        </View>
             :
-            <ThinFeatherIcon
+            <View style={{...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center'}}>
+                               <ThinFeatherIcon
                 thin={true}
                 name="play-circle"
                 size={65}
                 color="#FFFFFF"
                 onPress={() => this.setState({ playVideo: true })}
-                style={{ alignSelf: 'center' }}
+                style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}
             />
-    }
-
-    renderWorkoutNames = () => {
-        console.log()
-        if (this.state.ready) {
-            try {
-                this.state.programData && true ?
-                this.state.programData.program_workout_data.Monday.map(workout => {
-                    return (
-                        <Text style={{fontFamily: 'Helvetica-Bold', alignSelf: 'center', width: Dimensions.get('window').width, color: 'white', fontSize: 20}}>
-                            {workout.workout_name}
-                        </Text>
-                    )
-                })
-                :
-                null
-            } catch(err) {
-                return null
-            }
-        }
-
-        return null
-    }
-
-    renderContent = () => {
-
+            </View>
     }
 
     renderComponentDisplay = () => {
         if (this.state.ready && typeof(this.state.programData) != 'undefined') {
             return (
-                <View style={{ flex: 1, backgroundColor: '#212121' }}>
+                <View style={{ flex: 1, backgroundColor: 'black' }}>
                 <Swiper loop={false} scrollEnabled={false} showsVerticalScrollIndicator={false} showsButtons={false} showsPagination={false} horizontal={false} index={0}>
 
                     {/* First Swiper View */}
                     <View style={{ flex: 1 }}>
-                        <SafeAreaView style={{ backgroundColor: '#212121' }} />
-                        {/* Content */}
-                        <View style={{ flex: 1, backgroundColor: '#212121', justifyContent: 'center', alignItems: 'center' }}>
 
+                        {/* Content */}
+                        <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
+                            {this.renderContent()}
                         </View>
 
 
@@ -299,10 +300,15 @@ class LiveWorkout extends React.Component {
                             {
                               this.state.currentWorkoutStructure.map((workout, index, arr) => {
                                 return (
-                                  <TouchableOpacity onPress={() => this.handleOnChangeWorkout(workout)}>
+                                  <TouchableOpacity onPress={() => this.handleOnChangeWorkout(workout)} style={{marginHorizontal: 10, }}>
+                                  <View style={{alignItems: 'center', justifyContent: 'center',}}>
                                   <Surface key={workout.workout_uid} style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, marginHorizontal: 10, marginVertical: 3, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
                                   
                                   </Surface>
+                                  <Text style={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '800', color: 'white', paddingVertical: 10}}>
+                                   {workout.workout_name}
+                                      </Text>
+                                  </View>
                                   </TouchableOpacity>
                                 )
                               })
@@ -311,17 +317,19 @@ class LiveWorkout extends React.Component {
                         </View>
 
                         {/* Overlay on first swiper view */}
-                        {
-                            this.state.contentShowing === true ?
-                            null
-                            :
                             <View style={{ ...StyleSheet.absoluteFillObject, paddingTop: Constants.statusBarHeight, paddingVertical: 30, justifyContent: 'space-between', flex: 1 }}>
-                            {/* Top overlayed options */}
+                          {/* Top overlayed options */}
                             <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 10 }}>
-                            <View>
-                            <Text style={{color: 'white'}}>
+                            {
+                                this.state.playVideo === true ?
+                                <Text style={{color: 'white'}}>
                                 0:00 / 4:30
                             </Text>
+                            :
+                            null
+                            }
+                            <View>
+                        
                         </View>
 
                             </View>
@@ -370,14 +378,13 @@ class LiveWorkout extends React.Component {
                                 </View>
                             </View>
                         </View>
-                        }
+                  
                         
                         <SafeAreaView />
                     </View>
                     {/* End First Swiper View */}
                     <LoadingNextWorkoutActivityIndicator isVisible={this.state.loadingNextWorkout} />
                 </Swiper>
-                <SafeAreaView style={{ backgroundColor: '#212121' }} />
             </View>
             )
         }

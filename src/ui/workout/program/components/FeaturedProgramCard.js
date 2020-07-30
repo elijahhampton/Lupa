@@ -88,7 +88,7 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
         <>
             <Card
             key={keyProp}
-            theme={{ roundness: 15 }} 
+            theme={{ roundness: 5 }} 
             style={styles.card} 
             onPress={() => handleCardOnPress(currProgram)}>
                 <Card.Cover resizeMode='cover' source={{ uri: currProgram.program_image }} style={styles.cardCover} />
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     cardCover: {
         height: '65%',
         width: '100%',
+        borderRadius: 5,
     },
     cardActions: {
         width: '100%', height: '35%', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center'

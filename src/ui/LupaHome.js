@@ -325,11 +325,18 @@ class LupaHome extends React.Component {
                         contentContainerStyle={{ width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2 }}
                         refreshControl={() => <RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
                     >
+
+
                         <View style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                         <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Text style={styles.sectionHeaderText}>
-                                   Most Popular
+                              <View style={{paddingHorizontal: 10}}>
+                              <Text style={styles.sectionHeaderText}>
+                                   Daily suggestions
                         </Text>
+                        <Caption>
+                            Based on your location (Auburn, AL)
+                        </Caption>
+                              </View>
 
                         <Button uppercase={false} mode="text" style={{width: 'auto', flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={[styles.sectionHeaderText, {fontSize: RFValue(13), color: '#1089ff'}]}>
@@ -359,7 +366,7 @@ class LupaHome extends React.Component {
                                                 <Card theme={{roundness: 5}} style={{ alignSelf: 'center', elevation: 0, margin: 10, width: Dimensions.get('window').width - 50, height: 220, marginVertical: 10 }}>
                                                     <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ borderRadius: 5, with: '100%', height: '100%', justifyContent: 'center' }} />
                                                 </Card>
-                                                <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 16, width: 80, height: 80, borderWidth: 1, borderColor: '#FFFFFF' }}>
+                                                <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 70, height: 70, borderWidth: 1, borderColor: '#FFFFFF' }}>
                                                     <ThinFeatherIcon thin={true} name="play" color="white" size={30} style={{ alignSelf: 'center' }} />
                                                 </View>
                                                 <LiveWorkoutPreview program={item} isVisible={this.state.showLiveWorkoutPreview} closeModal={this.hideLiveWorkoutPreview} />
@@ -390,12 +397,12 @@ class LupaHome extends React.Component {
 
                         <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
                              
-                            <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%',}}>
+                            <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, width: '100%',}}>
                                 <Text style={styles.sectionHeaderText}>
                                     Start training with
                     </Text>
                     <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
-                <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
+                <Text style={{color: '#1089ff', fontWeight: '500'}}>
                     See more
                 </Text>
                     </Button>
@@ -422,6 +429,7 @@ class LupaHome extends React.Component {
                              
                         </View>
 
+
                      {/*   <View style={{ height: 190, backgroundColor: 'white', alignItems: 'center', justifyContent: 'space-evenly' }}>
 
                             <View style={{ width: '66%', alignItems: 'center', justifyContent: 'center' }}>
@@ -445,13 +453,13 @@ class LupaHome extends React.Component {
                             */}
                         <View
                             style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
-                            <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Text style={styles.sectionHeaderText}>
                                     Top picks
                         </Text>
 
                         <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
-                <Text style={{color: '#1089ff', fontWeight: '500', paddingHorizontal: 5}}>
+                <Text style={{color: '#1089ff', fontWeight: '500'}}>
                     See more
                 </Text>
                     </Button>
@@ -471,10 +479,13 @@ class LupaHome extends React.Component {
                          <Divider style={{width: '90%', alignSelf: 'center'}} />
 
                         <View style={{ backgroundColor: 'white', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
-                            <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
+                            <View style={{ alignItems: 'flex-start', width: '100%', paddingHorizontal: 10 }}>
                                 <Text style={styles.sectionHeaderText}>
                                     Recently created programs
                     </Text>
+                    <Caption>
+                        Last updated 5 minutes ago
+                    </Caption>
                             </View>
                             {this.renderRecentlyAddedPrograms()}
                         </View>
@@ -534,7 +545,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     sectionHeaderText: {
-        fontSize: RFValue(15), fontFamily: 'HelveticaNeue-Bold', paddingVertical: 10, paddingLeft: 10 
+        fontSize: RFValue(15), fontFamily: 'HelveticaNeue-Bold'
     }
 });
 
