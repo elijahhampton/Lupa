@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -142,9 +143,10 @@ android {
 
 def jscFlavor = 'org.webkit:android-jsc:+'
 
-def enableHermes = project.ext.react.get("enableHermes", false);
+def enableHermes = project.ext.react.get("enableHermes", false)
 
 dependencies {
+    implementation 'com.google.firebase:firebase-analytics:17.2.2'
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-radial-gradient')
     implementation project(':tipsi-stripe')
@@ -154,7 +156,7 @@ dependencies {
     addUnimodulesDependencies()
 
     if (enableHermes) {
-        def hermesPath = "../../node_modules/hermes-engine/android/";
+        def hermesPath = "../../node_modules/hermes-engine/android/"
         debugImplementation files(hermesPath + "hermes-debug.aar")
         releaseImplementation files(hermesPath + "hermes-release.aar")
     } else {
@@ -169,5 +171,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
 applyNativeModulesAppBuildGradle(project)
