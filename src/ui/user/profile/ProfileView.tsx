@@ -932,7 +932,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         return (
             <SafeAreaView style={styles.container}>
                 <SafeAreaView />
-                <Appbar.Header style={{ backgroundColor: 'white', margin: 10, elevation: 0 }}>
+                <Appbar.Header style={{ backgroundColor: 'white', margin: 10, elevation: 0, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8  }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>

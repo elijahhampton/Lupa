@@ -40,6 +40,15 @@ function CircularUserCard({ user }) {
         }
     } 
 
+    const renderUserDisplayName = () => {
+        try {
+            let name = user.display_name.split()[0]
+            return name;
+        } catch(error) {
+            return user.display_name
+        }
+    }
+
     return (
         <TouchableWithoutFeedback key={user.user_uuid} style={{width: windowWidth}} onPress={navigateToProfile}>
             <View style={{alignItems: 'center', margin: 10}}>
