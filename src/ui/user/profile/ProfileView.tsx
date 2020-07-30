@@ -806,7 +806,9 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                         </View>
 
                                         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                                            <Button style={{width: '80%'}} color="#1089ff" mode="contained" theme={{
+                                            <Button onPress={() => this.props.navigation.push('Profile', {
+                                                userUUID: trainer.user_uuid
+                                            })} style={{width: '80%'}} color="#1089ff" mode="contained" theme={{
                                                 
                                             }}>
                                                <Text style={{fontSize: 10}}>

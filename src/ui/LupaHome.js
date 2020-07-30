@@ -200,8 +200,14 @@ class LupaHome extends React.Component {
                 }
 
                 return (
-
-                    <StandardTrainerCard keyProp={user.user_uuid} user={user} />
+                    <View style={{alignItems: 'center', margin: 10}}>
+                          <Avatar.Image source={{uri: user.photo_url}} rounded size={65} containerStyle={{}} avatarStyle={{borderRadius: 50}} />
+                        <Text style={{fontSize: 12, paddingVertical: 5, fontFamily: 'Helvetica-Light', fontWeight: '400'}}>
+                            {user.display_name}
+                        </Text>
+                    </View>
+                  
+                    //<StandardTrainerCard keyProp={user.user_uuid} user={user} />
                 )
             })
         } catch (error) {
@@ -326,7 +332,7 @@ class LupaHome extends React.Component {
                     >
                         <View style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                         <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Text style={{ fontSize: RFValue(20), fontWeight: '500', fontFamily: 'Avenir-Roman', paddingVertical: 10, paddingLeft: 10 }}>
+                                <Text style={{ fontSize: RFValue(15), fontWeight: '500', fontFamily: 'Helvetica', paddingVertical: 10, paddingLeft: 10 }}>
                                    Most Popular
                         </Text>
 
@@ -367,7 +373,7 @@ class LupaHome extends React.Component {
                                 }
                             </ScrollView>
 
-                            <Divider  style={{marginVertical: 5, width: '90%', alignSelf: 'center'}} />
+                            <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                                 <View style={{width: '90%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 10}}>
                 <Text onPress={() => alert('Recommended')} style={{fontWeight: '400',color: '#23374d', flexWrap: 'wrap'}}>
                     Need a trainer now?  Let us recommend a program to you.
@@ -375,13 +381,14 @@ class LupaHome extends React.Component {
                 </Text>
                
                                 </View>
+                                <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
                         </View>
 
 
                         <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
-                            <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
+                             
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                <Text style={{ marginVertical: 10, fontWeight: '500', fontSize: RFValue(20), fontFamily: 'Avenir-Medium' }}>
+                                <Text style={{ marginVertical: 10, fontWeight: '500', fontSize:  RFValue(15), fontFamily: 'Helvetica' }}>
                                     Start training with
                     </Text>
                                 <Caption>
@@ -412,7 +419,7 @@ class LupaHome extends React.Component {
                 <FeatherIcon name="arrow-right" color='#1089ff' />
                     </Button>
                             </View>
-                            <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
+                             
                         </View>
 
                      {/*   <View style={{ height: 190, backgroundColor: 'white', alignItems: 'center', justifyContent: 'space-evenly' }}>
@@ -434,12 +441,12 @@ class LupaHome extends React.Component {
                             </Button>
                         </View>
 
-                        <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
+                         
                             */}
                         <View
                             style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                             <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Text style={{ fontSize: RFValue(20), fontWeight: '500', fontFamily: 'Avenir-Medium', paddingVertical: 10, paddingLeft: 10 }}>
+                                <Text style={{ fontSize:  RFValue(15), fontWeight: '500', fontFamily: 'Helvetica', paddingVertical: 10, paddingLeft: 10 }}>
                                     Top picks
                         </Text>
 
@@ -461,11 +468,11 @@ class LupaHome extends React.Component {
                             </ScrollView>
                         </View>
 
-                        <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
+                         
 
                         <View style={{ backgroundColor: 'white', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', padding: 5, width: '100%', paddingHorizontal: 10 }}>
-                                <Text style={{ marginVertical: 10, fontSize: RFValue(20), fontFamily: 'Avenir-Medium' }}>
+                                <Text style={{ marginVertical: 10, fontSize:  RFValue(15), fontFamily: 'Helvetica', fontWeight: '500' }}>
                                     Recently created programs
                     </Text>
                             </View>
