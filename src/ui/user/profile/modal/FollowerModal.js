@@ -1,17 +1,13 @@
 import React from 'react';
 
 import {
-    View,
     Text,
     StyleSheet,
-    Modal,
-    ScrollView
 } from 'react-native';
 
 import {
     Left,
     Right,
-    Body,
     Container,
     Header,
     Tab,
@@ -19,14 +15,14 @@ import {
 } from 'native-base';
 
 import {
-    Button,
     IconButton
 } from 'react-native-paper';
 
 import FollowersTab from '../component/FollowersTab';
 import FollowingTab from '../component/FollowingTab';
 
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -34,31 +30,27 @@ const mapStateToProps = (state, action) => {
     }
 }
 
-class FollowerModal extends React.Component {
-    constructor(props) {
-        super(props);
+const FollowerModal = ({ activeTab }) => {
+    const navigation = useNavigation()
 
-        this.state  = {
-            userUUID: this.props.userUUID,
-            activeTab: this.props.activeTab,
-        }
-    }
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
 
-    render() {
-        return (
-                <Container style={styles.root}>
+    return (
+        <Container style={styles.root}>
                     <Header hasTabs>
                         <Left>
-                            <IconButton icon="arrow-back"  onPress={() => this.props.navigation.pop()}/>
+                            <IconButton icon="arrow-back"  onPress={() => navigation.pop()}/>
                         </Left>
                         <Right>
-                            <Text style={{fontSize: 18, fontWeight: 'bold'}}>
-                                {this.props.lupa_data.Users.currUserData.display_name}
+                            <Text style={styles.userDisplayName}>
+                                {currUserData.display_name}
                             </Text>
                         </Right>
                     </Header>
 
-                    <Tabs page={this.state.activeTab}>
+                    <Tabs page={activeTab}>
                             <Tab heading="Followers">
                                 <FollowersTab  />
                             </Tab>
@@ -67,14 +59,17 @@ class FollowerModal extends React.Component {
                             </Tab>
                         </Tabs>
                 </Container>
-        )
-    }
+    )
 }
 
 const styles = StyleSheet.create({
     root: {
         flex: 1,
         backgroundColor: "#FAFAFA",
+    },
+    userDisplayName: {
+        fontSize: 18, 
+        fontWeight: 'bold'
     }
 });
 

@@ -10,21 +10,21 @@ import React from "react";
 import {
   View,
   Text,
+  SafeAreaView,
   StyleSheet,
   Image,
-  StatusBar,
 } from "react-native";
 
 import {
   Button,
 } from 'react-native-paper';
 
-import { Constants } from "react-native-unimodules";
+//temporary
 import { useNavigation } from "@react-navigation/native";
 
 const AppLogo = require('../../images/applogo.png')
 
-function WelcomeView(props) {
+const WelcomeView = () => {
   const navigation = useNavigation()
 
   const navigateToLogin = () => {
@@ -37,7 +37,7 @@ function WelcomeView(props) {
   }
 
     return (
-      <View style={styles.root}>
+      <SafeAreaView style={styles.root}>
           <View style={{flex: 1, alignItems: 'center', flexDirection: 'column', marginTop: 10, padding: 10}}>
                 <Text style={{  fontSize: 25, fontWeight: '700', color: '#212121', margin: 5, }}>
                 Welcome to Lupa,
@@ -68,7 +68,7 @@ function WelcomeView(props) {
                     </Text>
                 </Button>
           </View>
-      </View>
+      </SafeAreaView>
     );
 }
 
@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 15,
     justifyContent: 'space-between',
-    paddingTop: Constants.statusBarHeight,
   },
   textLabel: {
     fontSize: 15,

@@ -24,7 +24,6 @@ import {
 
 import { Constants } from 'react-native-unimodules';
 import TrainerInsights from '../../user/trainer/TrainerInsights';
-import WorkoutLogModal from '../../workout/modal/WorkoutLogModal';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { LUPA_AUTH } from '../../../controller/firebase/firebase';
 
@@ -39,7 +38,6 @@ const ICON_COLOR = "#3d3d40"
 function DrawerMenu(props) {
   const navigation = useNavigation()
   const [trainerInsightsModalIsOpen, setTrainerInsightsModalOpen] = useState(false)
-  const [workoutLogModalIsOpen, setWorkoutLogIsOpen] = useState(false)
 
   const currUserData = useSelector(state => {
     return state.Users.currUserData;
@@ -178,7 +176,6 @@ function DrawerMenu(props) {
         </View> 
 
         <TrainerInsights isVisible={trainerInsightsModalIsOpen} closeModalMethod={() => setTrainerInsightsModalOpen(false)} />
-       <WorkoutLogModal isVisible={workoutLogModalIsOpen} closeModalMethod={() => setWorkoutLogIsOpen(false)} />
     </SafeAreaView>
   </View>
   )

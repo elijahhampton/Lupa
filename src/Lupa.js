@@ -2,11 +2,10 @@
  * Lupa - Preventative Health Care
  * @author Elijah Hampton
  * @date August  22, 2019
- * 
+ *
  * Lupa App
  */
 import React, { useEffect } from "react";
-
 import {
   Text,
   StyleSheet,
@@ -14,11 +13,8 @@ import {
   StatusBar,
 
 } from "react-native";
-
 import LupaController from './controller/lupa/LupaController';
-
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
-
 import { connect, useSelector } from 'react-redux'
 import { generateMessagingToken } from "./controller/firebase/firebase";
 

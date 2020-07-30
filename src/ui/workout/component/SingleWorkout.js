@@ -16,38 +16,9 @@ import {
 import {
     Surface,
 } from 'react-native-paper';
-import WorkoutPreview from './WorkoutPreview';
 
 import FeatherIcon from "react-native-vector-icons/Feather"
-import { TouchableHighlight } from 'react-native-gesture-handler';
 
-function getViewStyle(state) {
-    if (state)
-    {
-        return {
-            position: "absolute", alignItems: "center", justifyContent: "center", width: 80, height: 50, backgroundColor: "rgba(250,250,250 ,0.6)"
-        }
-    }
-    else
-    {
-        return {
-            position: "absolute", alignItems: "center", justifyContent: "center", width: 80, height: 50
-        }
-    }
-}
-
-function getIconStyle(state) {
-    if (state)
-    {
-        return "rgba(33,150,243 ,1)"
-    }
-    else
-    {
-        return "rgba(33,150,243 ,0)"
-    }
-}
-
-let i = 0;
 
 class SingleWorkout extends React.Component {
     constructor(props) {

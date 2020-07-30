@@ -19,32 +19,14 @@ import {
 } from 'react-native';
 
 import {
-    Divider,
-    Surface,
-    Avatar,
-    Caption,
     Appbar,
 } from 'react-native-paper';
 
-import {
-    Header,
-    Left,
-    Right,
-    Body,
-} from 'native-base';
-
 import { useNavigation } from '@react-navigation/native'
 
-import { LineChart } from 'react-native-chart-kit'
-
-import { Constants } from 'react-native-unimodules';
 import LupaController from '../../../controller/lupa/LupaController';
 import { connect, useSelector } from 'react-redux';
-import ThinFeatherIcon from "react-native-feather1s";
-import { MenuIcon } from '../../icons/index.js';
-import ServicedComponent from '../../../controller/lupa/interface/ServicedComponent'
 import LUPA_DB from '../../../controller/firebase/firebase';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import { NOTIFICATION_TYPES } from '../../../model/notifications/common/types'
 import ReceivedProgramNotification from '../notifications/component/ReceivedProgramNotification';
@@ -57,7 +39,7 @@ const mapStateToProps = (state, action) => {
     }
 }
 
-function TrainerDashboardView(props) {
+const Dashboard = () => {
     const [refreshing, setIsRefreshing] = useState(false)
     const [userNotifications, setUserNotifications] = useState([])
 
@@ -197,4 +179,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default connect(mapStateToProps)(TrainerDashboardView);
+export default connect(mapStateToProps)(Dashboard);

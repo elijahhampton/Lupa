@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from 'react'
-
-
-import Contacts from 'react-native-contacts';
+import React, { useState } from 'react'
 
 import {
-    Button as NativeButton, ScrollView, Dimensions, SafeAreaView, View, Text, Modal, Image
+    Button as NativeButton, 
+    SafeAreaView, 
+    View, 
+    Text, 
+    Modal, 
+    Image, 
+    StyleSheet,
 } from 'react-native';
 
 import { 
-    Avatar, Caption, Button, Divider
+Divider
 } from 'react-native-paper';
-import AssessmentReviewModal from '../dashboard/modal/AssessmentReviewModal';
-import { useSelector } from 'react-redux';
-import AssessmentModal from '../dashboard/modal/AssessmentModal';
 import EditBioModal from '../profile/settings/modal/EditBioModal';
-import WorkoutLogModal from '../../workout/modal/WorkoutLogModal';
 import { RFValue, RFPercentage } from 'react-native-responsive-fontsize'
 
 function InviteFriendsModal(props) {
