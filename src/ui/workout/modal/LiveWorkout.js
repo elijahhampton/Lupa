@@ -35,6 +35,7 @@ import ThinFeatherIcon from "react-native-feather1s";
 import { LOG_ERROR } from '../../../common/Logger';
 import { Constants } from 'react-native-unimodules';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const chartConfig = {
     backgroundGradientFrom: "red",
@@ -106,6 +107,7 @@ class LiveWorkout extends React.Component {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+        this.interactionsRBSheet = React.createRef()
 
         this.state = {
             workoutStructure: ['Workout Name', 'Workout Name', 'Workout Name'],
@@ -227,7 +229,7 @@ class LiveWorkout extends React.Component {
                         </Video>
 
                      
-                        {this.getVideoIcon()}
+                
                     </>
                 )
         } catch (err) {
@@ -246,34 +248,28 @@ class LiveWorkout extends React.Component {
 
     getVideoIcon = () => {
         return this.state.playVideo == true ?
-        <View style={{...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center'}}>
                     <ThinFeatherIcon
         thin={true}
         name="pause-circle"
-        size={65}
+        size={25}
         color="#FFFFFF"
         onPress={() => this.setState({ playVideo: true })}
         style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} />
-        </View>
             :
-            <View style={{...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center'}}>
                                <ThinFeatherIcon
                 thin={true}
                 name="play-circle"
-                size={65}
+                size={25}
                 color="#FFFFFF"
                 onPress={() => this.setState({ playVideo: true })}
                 style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}
             />
-            </View>
     }
 
     renderComponentDisplay = () => {
         if (this.state.ready && typeof(this.state.programData) != 'undefined') {
             return (
                 <View style={{ flex: 1, backgroundColor: 'black' }}>
-                <Swiper loop={false} scrollEnabled={false} showsVerticalScrollIndicator={false} showsButtons={false} showsPagination={false} horizontal={false} index={0}>
-
                     {/* First Swiper View */}
                     <View style={{ flex: 1 }}>
 
@@ -285,7 +281,7 @@ class LiveWorkout extends React.Component {
 
 
                         {/* Video slide Overlay */}
-                        <View style={{width: Dimensions.get('window').width, position: 'absolute', bottom: Constants.statusBarHeight + 80}}>
+                        <View style={{width: Dimensions.get('window').width, position: 'absolute', top: Dimensions.get('window').height / 2.6}}>
                           <ScrollView
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
@@ -299,9 +295,9 @@ class LiveWorkout extends React.Component {
                             {
                               this.state.currentWorkoutStructure.map((workout, index, arr) => {
                                 return (
-                                  <TouchableOpacity onPress={() => this.handleOnChangeWorkout(workout)} style={{marginHorizontal: 10, }}>
+                                  <TouchableOpacity key={workout.workout_uid} onPress={() => this.handleOnChangeWorkout(workout)} style={{marginHorizontal: 10, }}>
                                   <View style={{alignItems: 'center', justifyContent: 'center',}}>
-                                  <Surface key={workout.workout_uid} style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 5, height: 50, marginHorizontal: 10, marginVertical: 3, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+                                  <Surface key={workout.workout_uid} style={{ backgroundColor: '#212121', elevation: 3, width: Dimensions.get("window").width / 2, height: 100, marginHorizontal: 10, marginVertical: 3, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
                                   
                                   </Surface>
                                   <Text style={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '800', color: 'white', paddingVertical: 10}}>
@@ -344,7 +340,7 @@ class LiveWorkout extends React.Component {
                              visible={this.state.dayMenuVisible}
                              onDismiss={this.closeDayMenu}
                              anchor={
-                                 <Text  style={{color: 'white', fontWeight: '600', fontSize: 20, fontFamily: 'Avenir-Roman'}}>
+                                 <Text  style={{color: 'white', fontWeight: '600', fontSize: 15, fontFamily: 'Avenir-Roman'}}>
                                    {this.state.currentWorkoutDay}
                                  </Text>
                              }>
@@ -358,19 +354,20 @@ class LiveWorkout extends React.Component {
                            </Menu>
 
 
-                                <FeatherIcon name="chevron-down" size={20}  color="white"/>
+                                <FeatherIcon name="chevron-down" size={15}  color="white"/>
                                 </View>
                                 </TouchableOpacity>
 
 
-                                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: 130}}>
+                                    {this.getVideoIcon()}
 
 
                                     <FeatherIcon
                                         name="more-horizontal"
-                                        size={30}
+                                        size={25}
                                         color="white"
-                                        style={{ elevation: 10, paddingHorizontal: 20 }}
+                                        onPress={() => this.interactionsRBSheet.current.open()}
                                     />
 
                                     </View>
@@ -381,9 +378,7 @@ class LiveWorkout extends React.Component {
                         
                         <SafeAreaView />
                     </View>
-                    {/* End First Swiper View */}
                     <LoadingNextWorkoutActivityIndicator isVisible={this.state.loadingNextWorkout} />
-                </Swiper>
             </View>
             )
         }
@@ -395,10 +390,30 @@ class LiveWorkout extends React.Component {
         )
     }
 
+    renderInteractionsBottomSheet = () => {
+       return (
+        <RBSheet
+        ref={this.interactionsRBSheet}
+        height={200}
+        customStyles={{
+          wrapper: {
+            backgroundColor: "black",
+          },
+          draggableIcon: {
+            backgroundColor: "transparent"
+          }
+        }}
+      >
+    
+      </RBSheet>
+       )
+    }
+
     render() {
         return (
             <>
             {this.renderComponentDisplay()}
+            {this.renderInteractionsBottomSheet()}
             </>
         )
     }

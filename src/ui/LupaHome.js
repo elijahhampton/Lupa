@@ -100,6 +100,7 @@ class LupaHome extends React.Component {
             index: 0,
             data: [0, 1, 2, 3, 4],
             showLiveWorkoutPreview: false,
+            lastRefresh: new Date().getTime()
         }
 
         this.searchAttributePickerModalRef = React.createRef()
@@ -155,7 +156,8 @@ class LupaHome extends React.Component {
     handleOnRefresh = async () => {
         this.setState({ refreshing: true })
         await this.setupComponent()
-        this.setState({ refreshing: false })
+        this.setState({ refreshing: false, lastRefresh: new Date().getTime() })
+
     }
 
     checkNewUser = async () => {
@@ -316,7 +318,7 @@ class LupaHome extends React.Component {
                <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
 
-                    <Appbar.Content title="Explore" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
+                    <Appbar.Content title="Book trainers" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
 
                     <ThinFeatherIcon name="mail" thin={true} size={25} style={{ marginRight: 10 }} onPress={() => this.props.navigation.navigate('MessagesView')} />
                 </Appbar.Header>
@@ -338,11 +340,7 @@ class LupaHome extends React.Component {
                         </Caption>
                               </View>
 
-                        <Button uppercase={false} mode="text" style={{width: 'auto', flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={[styles.sectionHeaderText, {fontSize: RFValue(13), color: '#1089ff'}]}>
-                    See more
-                </Text>
-                    </Button>
+   
                             </View>
                             <ScrollView
                                 horizontal={true}
@@ -487,7 +485,7 @@ class LupaHome extends React.Component {
                                     Recently created programs
                     </Text>
                     <Caption>
-                        Last updated 5 minutes ago
+                        Last updated {(new Date().getTime() - this.state.lastRefresh).toString()} seconds ago
                     </Caption>
                             </View>
                             {this.renderRecentlyAddedPrograms()}
