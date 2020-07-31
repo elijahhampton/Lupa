@@ -485,7 +485,7 @@ export default class CameraScreen extends React.Component {
             backgroundColor: 'transparent',
             flexDirection: 'row',
             justifyContent: 'space-around',
-            marginTop: Constants.statusBarHeight,
+            margin: Constants.statusBarHeight,
           }}
         >
           <View
@@ -524,7 +524,7 @@ export default class CameraScreen extends React.Component {
             <Text style={[styles.flipText, {alignSelf: 'center' }]}>Zoom: {this.state.zoom}</Text>
           )}
             <Slider
-              style={{ width: 150, marginTop: 15, alignSelf: 'flex-end' }}
+              style={{ width: 150, margin: 15, alignSelf: 'flex-end' }}
               onValueChange={this.setFocusDepth.bind(this)}
               step={0.1}
               disabled={this.state.autoFocus === 'on'}
@@ -683,7 +683,7 @@ const styles = StyleSheet.create({
     height: 40,
     marginHorizontal: 2,
     marginBottom: 10,
-    marginTop: 10,
+    margin: 10,
     borderRadius: 8,
     borderColor: 'white',
     borderWidth: 1,

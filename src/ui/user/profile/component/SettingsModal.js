@@ -37,15 +37,11 @@ import { useDispatch } from 'react-redux';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 
-
-import { logoutUser } from '../../../../controller/lupa/auth/auth';
-
 import Color from '../../../common/Color'
 import { connect, useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { Constants } from 'react-native-unimodules';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
-import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 function EditBioModal(props) {
     //lupa controller instance

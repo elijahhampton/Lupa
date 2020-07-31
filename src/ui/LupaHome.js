@@ -313,7 +313,7 @@ class LupaHome extends React.Component {
         return (
             <View style={styles.root}>
 
-               <Appbar.Header statusBarHeight={true} style={{ backgroundColor: '#FFFFFF', elevation: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
+               <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
 
                     <Appbar.Content title="Explore" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
@@ -323,7 +323,7 @@ class LupaHome extends React.Component {
                 <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                     <ScrollView
                         contentContainerStyle={{ width: Dimensions.get('window').width, justifyContent: 'space-between', flexGrow: 2 }}
-                        refreshControl={() => <RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
+                        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
                     >
 
 

@@ -130,17 +130,17 @@ const SignUp = props => {
   return (
     <View style={{flex: 1, backgroundColor: 'white', }}>
     <KeyboardAvoidingView 
-    behavior="padding"
+    behavior={Platform.OS == "ios" ? "padding" : "height"}
     keyboardVerticalOffset={50}
     style={styles.keyboardAvoidingView}>
       <View style={{flex: 1}}>
           <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
-          <View style={{marginTop: Constants.statusBarHeight, width: "100%"}}>
+          <View style={{margin: Constants.statusBarHeight, width: "100%"}}>
           <View style={styles.headerText}>
                     <Text style={{fontSize: 28, fontWeight: '700', color: 'black',   }}>
             Create an account
                         </Text>
-                        <View style={{flexDirection: 'row', marginTop: 5}}>
+                        <View style={{flexDirection: 'row', margin: 5}}>
         <Text style={{fontSize: 13, fontWeight: '500', color: 'rgb(142, 142, 147)'}}>
           Already have an account?
         </Text>
@@ -219,13 +219,12 @@ const SignUp = props => {
   
                         </View>  
           
-            <View style={{marginTop: 15, justifyContent: 'flex-end', width: '100%', alignSelf: 'center'}}>
+            <View style={{margin: 15, justifyContent: 'flex-end', width: '100%', alignSelf: 'center'}}>
                         <ElementsButton
   title="Create Account"
   type="solid"
   raised
   style={{width: Dimensions.get('window').width, backgroundColor: "#1565C0", padding: 10, borderRadius: 0}}
-  buttonStyle={{backgroundColor: 'transparent'}}
   containerStyle={{borderRadius: 0}}
   onPress={signupHandler}
   disabled={false}
@@ -245,7 +244,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerText: {
-    marginTop: 15,
+    margin: 15,
     padding: 10,
     alignItems: 'center'
 },

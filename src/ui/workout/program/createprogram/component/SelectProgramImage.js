@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     text: {
-        marginTop: 50,
+        margin: 50,
         fontSize: 20,
         color: '#374e66',
         fontWeight: 'bold'

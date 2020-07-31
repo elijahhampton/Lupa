@@ -238,7 +238,7 @@ class LoginView extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: '#FFFFFF', justifyContent: 'space-between' }}>
-       <KeyboardAvoidingView behavior="padding" style={{flex: 1 ,backgroundColor: 'transparent'}}>
+       <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={{flex: 1 ,backgroundColor: 'transparent'}}>
         <View style={{flex: 1, justifyContent: 'space-between'}} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
         <View style={styles.headerText}>
           <Text style={styles.welcomeBackText}>
@@ -311,7 +311,6 @@ class LoginView extends React.PureComponent {
   type="solid"
   raised
   style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 0}}
-  buttonStyle={{backgroundColor: 'transparent'}}
   onPress={this.onLogin}
   containerStyle={{borderRadius: 12}}
 />
@@ -352,7 +351,7 @@ const styles = StyleSheet.create({
   headerText: {
     padding: 10,
     alignItems: 'center',
-    marginTop: Constants.statusBarHeight
+    margin: Constants.statusBarHeight
   },
   welcomeBackText: {
     fontSize: 28, fontWeight: '700', color: 'black',  
@@ -361,7 +360,7 @@ const styles = StyleSheet.create({
     fontSize: 28, fontWeight: '700', color: '#1565C0',  
   },
   noAccountTextContainer: {
-    flexDirection: 'row', marginTop: 5
+    flexDirection: 'row', margin: 5
   },
   inputStyle: {
     fontWeight: '400', fontSize: 15

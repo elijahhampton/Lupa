@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginHorizontal: 15,
         padding: 10,
-        marginTop: 5,
+        margin: 5,
         flex: 1,
         textAlign: 'center',
         width: '100%',

@@ -31,7 +31,7 @@ const WelcomeContentDriver = () => {
         title='Train Safely'
         titleStyle={styles.titleStyle}
         subtitle='Always meet trainers in a public area.'
-        subtitleStyle={stlye.subtitleStyle}
+        subtitleStyle={styles.subtitleStyle}
         rightIcon={() => <FeatherIcon name="arrow-right" />}
         bottomDivider
       />

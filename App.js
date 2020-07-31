@@ -116,7 +116,7 @@ const SwitchNavigator = () => {
 
       getUserAuthState()*/
 
-     // showAuthentication()
+      showAuthentication()
     }, [])
 
   return (

@@ -4,7 +4,6 @@ import {
     View,
     Text,
     StyleSheet,
-    Picker,
     Dimensions,
     Modal,
     SafeAreaView,

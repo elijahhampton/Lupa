@@ -11,7 +11,6 @@ import {
   Slider,
   TextInput,
   TouchableHighlight,
-  Picker,
   SafeAreaView,
   Modal,
   KeyboardAvoidingView,
