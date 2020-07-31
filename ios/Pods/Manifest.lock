@@ -165,6 +165,8 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.3):
     - BoringSSL-GRPC/Interface (= 0.0.3)
   - BoringSSL-GRPC/Interface (0.0.3)
+  - BVLinearGradient (2.5.6):
+    - React
   - DoubleConversion (1.1.6)
   - EXAppLoaderProvider (8.0.0)
   - EXAV (8.0.0):
@@ -732,6 +734,8 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
+  - SRSRadialGradient (1.0.0):
+    - React
   - Stripe (14.0.1)
   - tipsi-stripe (7.5.3):
     - React
@@ -756,6 +760,7 @@ PODS:
   - Yoga (1.14.0)
 
 DEPENDENCIES:
+  - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXAppLoaderProvider (from `../node_modules/expo-app-loader-provider/ios`)
   - EXAV (from `../node_modules/expo-av/ios`)
@@ -837,6 +842,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - SRSRadialGradient (from `../node_modules/react-native-radial-gradient/ios`)
   - Stripe (~> 14.0.1)
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
@@ -891,6 +897,8 @@ SPEC REPOS:
     - Stripe
 
 EXTERNAL SOURCES:
+  BVLinearGradient:
+    :path: "../node_modules/react-native-linear-gradient"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXAppLoaderProvider:
@@ -1053,6 +1061,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  SRSRadialGradient:
+    :path: "../node_modules/react-native-radial-gradient/ios"
   tipsi-stripe:
     :path: "../node_modules/tipsi-stripe"
   UMAppLoader:
@@ -1101,6 +1111,7 @@ SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
+  BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   EXAppLoaderProvider: f6aeb45ee81887811b34eee5c5f235a6111d58d0
   EXAV: bd1c889906adac7f5b9f59a5cb993219564e26f2
@@ -1205,6 +1216,7 @@ SPEC CHECKSUMS:
   RNScreens: 254da4b84f25971cbb30ed3ddc84131f23cac812
   RNSVG: f6177f8d7c095fada7cfee2e4bb7388ba426064c
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
+  SRSRadialGradient: c8ab040309de2b2c1fc3f5c4804f2436c2df1f1a
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: 41299d30e9b906413315eeb1b94607aaac9b6781
   UMAppLoader: 83885655be9ce3e5b3684d20f9973da67b78b3a9
