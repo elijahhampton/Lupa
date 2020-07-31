@@ -394,6 +394,7 @@ class LupaHome extends React.Component {
                             </ScrollView>
                         </View>
 
+                        <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
 
                         <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
                              
@@ -428,6 +429,8 @@ class LupaHome extends React.Component {
                             </View>
                              
                         </View>
+
+                        <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
 
 
                      {/*   <View style={{ height: 190, backgroundColor: 'white', alignItems: 'center', justifyContent: 'space-evenly' }}>
@@ -476,7 +479,7 @@ class LupaHome extends React.Component {
                             </ScrollView>
                         </View>
 
-                         <Divider style={{width: '90%', alignSelf: 'center'}} />
+                        <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
 
                         <View style={{ backgroundColor: 'white', justifyContent: 'center', justifyContent: 'center', paddingVertical: 20, }}>
                             <View style={{ alignItems: 'flex-start', width: '100%', paddingHorizontal: 10 }}>
