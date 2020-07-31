@@ -6,15 +6,13 @@ import {
     Text,
     Button,
     SafeAreaView,
+    TouchableOpacity,
     ScrollView
 } from 'react-native';
 
 import {
     Appbar, Divider, Avatar
 } from 'react-native-paper';
-
-import MessagePreview from './MessagePreview';
-
 
 import { Input } from 'react-native-elements';
 
@@ -24,12 +22,10 @@ import { Fire } from '../../../controller/firebase/firebase';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
-const ProfilePicture = require('../../images/profile_picture1.jpeg')
 
 import { connect } from 'react-redux';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
     }

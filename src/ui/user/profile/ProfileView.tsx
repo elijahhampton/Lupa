@@ -15,7 +15,6 @@ import {
     TouchableOpacity,
     ScrollView,
     TouchableHighlight,
-    TouchableWithoutFeedback,
     RefreshControl,
     Image,
     Button as NativeButton,

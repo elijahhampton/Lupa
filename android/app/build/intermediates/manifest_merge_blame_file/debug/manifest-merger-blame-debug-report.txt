@@ -115,11 +115,11 @@
 52-->[com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:28:9-32
 53
 54    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-54-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:15:5-98
-54-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:15:22-95
+54-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:15:5-98
+54-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:15:22-95
 55    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" /> <!-- for android -->
-55-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:16:5-94
-55-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:16:22-91
+55-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:16:5-94
+55-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:16:22-91
 56    <!-- <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/> -->
 57    <!-- <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS"/> -->
 58    <!-- <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" /> -->
@@ -332,27 +332,27 @@
 159        </provider>
 160
 161        <activity
-161-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:12:9-16:20
+161-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:12:9-16:20
 162            android:name="com.stripe.android.view.AddSourceActivity"
-162-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:13:13-69
+162-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:13:13-69
 163            android:theme="@style/StripeDefaultTheme"
-163-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:14:13-54
+163-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:14:13-54
 164            android:windowSoftInputMode="stateVisible" >
-164-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:15:13-55
+164-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:15:13-55
 165        </activity>
 166        <activity
-166-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:17:9-20:20
+166-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:17:9-20:20
 167            android:name="com.stripe.android.view.PaymentMethodsActivity"
-167-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:18:13-74
+167-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:18:13-74
 168            android:theme="@style/StripeDefaultTheme" >
-168-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:19:13-54
+168-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:19:13-54
 169        </activity>
 170        <activity
-170-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:21:9-24:20
+170-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:21:9-24:20
 171            android:name="com.stripe.android.view.PaymentFlowActivity"
-171-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:22:13-71
+171-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:22:13-71
 172            android:theme="@style/StripeDefaultTheme" >
-172-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b11c25884ad5486067fbd416cfd8940c/jetified-stripe-android-8.1.0/AndroidManifest.xml:23:13-54
+172-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:23:13-54
 173        </activity>
 174
 175        <provider
@@ -638,23 +638,23 @@
 326-->[com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:34:13-37
 327
 328        <service
-328-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:19:9-21:40
+328-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:19:9-21:40
 329            android:name="io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider$ActivityRecognitionService"
-329-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:20:13-132
+329-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:20:13-132
 330            android:exported="false" />
-330-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:21:13-37
+330-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:21:13-37
 331        <service
-331-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:22:9-24:40
+331-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:22:9-24:40
 332            android:name="io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider$GeofencingService"
-332-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:23:13-127
+332-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:23:13-127
 333            android:exported="false" />
-333-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:24:13-37
+333-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:24:13-37
 334        <service
-334-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:25:9-27:40
+334-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:25:9-27:40
 335            android:name="io.nlopez.smartlocation.geocoding.providers.AndroidGeocodingProvider$AndroidGeocodingService"
-335-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:26:13-120
+335-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:26:13-120
 336            android:exported="false" />
-336-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/52b003240029b4c480dadc22453f8350/jetified-library-3.2.11/AndroidManifest.xml:27:13-37
+336-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:27:13-37
 337    </application>
 338
 339</manifest>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import {
     View,
@@ -9,7 +9,6 @@ import {
     Image,
     SafeAreaView,
     Dimensions,
-    TouchableHighlight,
     TouchableOpacity,
 } from 'react-native';
 

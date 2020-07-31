@@ -1,4 +1,4 @@
-import * as firebase from 'firebase';
+//import * as firebase from 'firebase';
 import reactfirebase from '@react-native-firebase/app';
 import reactfirebaseauth from '@react-native-firebase/auth';
 import reactfirestore from '@react-native-firebase/firestore';
@@ -24,7 +24,12 @@ const firebaseConfig = {
 
 //reactfirebase.initializeApp(firebaseConfig);
 
-let fb_init_config = reactfirebase.initializeApp(firebaseConfig)
+let fb_init_config;
+
+if (!reactfirebase.apps.length || reactfirebase.apps.length == 0) {
+  fb_init_config = reactfirebase.initializeApp(firebaseConfig)
+}
+
 
 const LUPA_DB = reactfirestore()
 const LUPA_DB_FIREBASE = reactfirebase.database()
