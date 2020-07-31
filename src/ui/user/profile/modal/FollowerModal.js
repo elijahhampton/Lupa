@@ -24,12 +24,6 @@ import FollowingTab from '../component/FollowingTab';
 import { connect, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 
-const mapStateToProps = (state, action) => {
-    return {
-        lupa_data: state,
-    }
-}
-
 const FollowerModal = ({ activeTab }) => {
     const navigation = useNavigation()
 
@@ -73,4 +67,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps)(FollowerModal);
+export default FollowerModal;

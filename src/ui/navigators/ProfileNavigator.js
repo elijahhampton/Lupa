@@ -2,7 +2,6 @@ import React from 'react';
 
 import FollowerView from '../user/profile/modal/FollowerModal';
 import ProfileView from '../user/profile/ProfileView';
-import PrivateChat from '../user/chat/PrivateChat';
 import MessagesView from '../user/chat/MessagesView'
 import SettingsModal from '../user/profile/component/SettingsModal';
 import LiveWorkout from '../workout/modal/LiveWorkout';

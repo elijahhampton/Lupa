@@ -53,7 +53,7 @@ const SwitchNavigator = () => {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async (uuid) => {
-    try {
+   /* try {
       //setup redux
       await _setupRedux(uuid)
     } catch(err) {
@@ -61,7 +61,9 @@ const SwitchNavigator = () => {
     }
 
     //navigate to app
-    navigation.navigate('App')
+    navigation.navigate('App')*/
+
+    showAuthentication()
   }
 
   const showAuthentication = () => {
@@ -97,7 +99,7 @@ const SwitchNavigator = () => {
 
   useEffect(() => {
       
-      async function getUserAuthState() {
+     /* async function getUserAuthState() {
         try {
         await LUPA_AUTH.onAuthStateChanged(user => {
           if (typeof(user) == 'undefined' || user == null) {
@@ -112,7 +114,7 @@ const SwitchNavigator = () => {
     }
       }
 
-      getUserAuthState()
+      getUserAuthState()*/
 
      // showAuthentication()
     }, [])

@@ -9,12 +9,12 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
 
-export default class ProgramController extends WorkoutController {
+export default class ProgramController {
     private static _instance: ProgramController;
     private fbStorage = new FirebaseStorageBucket();
 
     private constructor() {
-        super()
+        
     }
 
     public static getInstance = () => {
@@ -24,6 +24,11 @@ export default class ProgramController extends WorkoutController {
         }
 
         return ProgramController._instance;
+    }
+
+    loadWorkouts = () => {
+        const WORKOUTS = require('../../model/data_structures/workout/json/workouts.json')
+        return WORKOUTS.lupa_workouts;
     }
 
     /**

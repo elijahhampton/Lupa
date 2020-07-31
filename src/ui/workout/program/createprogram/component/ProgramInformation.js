@@ -10,7 +10,6 @@ import {
   Dimensions,
   Slider,
   TextInput,
-  TouchableOpacity,
   TouchableHighlight,
   Picker,
   SafeAreaView,

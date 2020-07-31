@@ -7,12 +7,16 @@ import { initStripe } from '../../../modules/payments/stripe/index'
 import axios from 'axios'
 
 class CardFormScreen extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false,
+      token: null,
+    }
+  }
   static title = 'Card Form'
 
-  state = {
-    loading: false,
-    token: null,
-  }
 
   handleCardPayPress = async (amount, currency, token) => {
     initStripe()

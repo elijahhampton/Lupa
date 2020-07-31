@@ -10,6 +10,10 @@ import {
 import PropTypes from 'prop-types'
 
 export default class Button extends PureComponent {
+  constructor(props) {
+    super(props)
+  }
+
   static propTypes = {
     text: PropTypes.string.isRequired,
     disabledText: PropTypes.string,

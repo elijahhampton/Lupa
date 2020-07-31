@@ -133,37 +133,41 @@ const wbOrder = {
 const landmarkSize = 2;
 
 export default class CameraScreen extends React.Component {
-  state = {
-    flash: 'off',
-    zoom: 0,
-    autoFocus: 'on',
-    autoFocusPoint: {
-      normalized: { x: 0.5, y: 0.5 }, // normalized values required for autoFocusPointOfInterest
-      drawRectPosition: {
-        x: Dimensions.get('window').width * 0.5 - 32,
-        y: Dimensions.get('window').height * 0.5 - 32,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      flash: 'off',
+      zoom: 0,
+      autoFocus: 'on',
+      autoFocusPoint: {
+        normalized: { x: 0.5, y: 0.5 }, // normalized values required for autoFocusPointOfInterest
+        drawRectPosition: {
+          x: Dimensions.get('window').width * 0.5 - 32,
+          y: Dimensions.get('window').height * 0.5 - 32,
+        },
       },
-    },
-    depth: 0,
-    type: 'back',
-    whiteBalance: 'auto',
-    ratio: '16:9',
-    recordOptions: {
-      mute: true,
-     // maxDuration: 20,
-      quality: RNCamera.Constants.VideoQuality['288p'],
-      
-    },
-    isRecording: false,
-    canDetectFaces: false,
-    canDetectText: false,
-    canDetectBarcode: false,
-    faces: [],
-    textBlocks: [],
-    barcodes: [],
-    showVideoPrev: false,
-    currVideo: "",
-  };
+      depth: 0,
+      type: 'back',
+      whiteBalance: 'auto',
+      ratio: '16:9',
+      recordOptions: {
+        mute: true,
+       // maxDuration: 20,
+        quality: RNCamera.Constants.VideoQuality['288p'],
+        
+      },
+      isRecording: false,
+      canDetectFaces: false,
+      canDetectText: false,
+      canDetectBarcode: false,
+      faces: [],
+      textBlocks: [],
+      barcodes: [],
+      showVideoPrev: false,
+      currVideo: "",
+    };
+  }
 
   toggleFacing() {
     this.setState({

@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {
-    Platform, Alert
+    Platform, Alert,
+    PermissionsAndroid
 } from 'react-native';
 
 import {request, PERMISSIONS, RESULTS, check} from 'react-native-permissions';
@@ -24,6 +25,7 @@ PERMISSIONS.IOS.SIRI;
 PERMISSIONS.IOS.SPEECH_RECOGNITION;
 PERMISSIONS.IOS.STOREKIT;
  */
+
 
 export const _checkCameraAndPhotoLibraryPermissions = () => {
   check(PERMISSIONS.IOS.CAMERA)
@@ -88,6 +90,7 @@ export const _checkCameraAndPhotoLibraryPermissions = () => {
 
 export default _requestPermissionsAsync = () => {
   
+  if (Platform.OS == 'ios') {
   check(PERMISSIONS.IOS.CAMERA)
   .then((result) => {
     switch (result) {
@@ -203,4 +206,36 @@ export default _requestPermissionsAsync = () => {
     // …
    // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
   });
+}
+
+if (Platform.OS === 'android') {
+    PermissionsAndroid.requestMultiple(
+      [PermissionsAndroid.PERMISSIONS.CAMERA, 
+      PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      PermissionsAndroid.PERMISSIONS.LOCATION_WHEN_IN_USE,
+      PermissionsAndroid.PERMISSIONS.RECEIVE_WAP_PUSH]
+      ).then((result) => {
+        if (result['android.permission.ACCESS_COARSE_LOCATION']
+        && result['android.permission.CAMERA']
+        && result['android.permission.READ_CONTACTS']
+        && result['android.permission.ACCESS_FINE_LOCATION']
+        && result['android.permission.READ_EXTERNAL_STORAGE']
+        && result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted') {
+          this.setState({
+            permissionsGranted: true
+          });
+        } else if (result['android.permission.ACCESS_COARSE_LOCATION']
+        || result['android.permission.CAMERA']
+        || result['android.permission.READ_CONTACTS']
+        || result['android.permission.ACCESS_FINE_LOCATION']
+        || result['android.permission.READ_EXTERNAL_STORAGE']
+        || result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'never_ask_again') {
+          this.refs.toast.show('Please Go into Settings -> Applications -> APP_NAME -> Permissions and Allow permissions to continue');
+        }
+      });
+    }
 }

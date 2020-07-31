@@ -34,7 +34,6 @@ import _requestPermissionsAsync from '../../../../controller/lupa/permissions/pe
 
 import { connect } from 'react-redux';
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const OPTIONS = [
     {
         key: 0,

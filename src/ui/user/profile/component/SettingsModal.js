@@ -5,7 +5,6 @@ import {
     Text,
     View,
     StyleSheet,
-    TouchableHighlight,
     ScrollView,
     Dimensions
 } from 'react-native';
@@ -121,11 +120,6 @@ function EditBioModal(props) {
     </Modal>
     )
 }
-
-function changePasswordModal(props) {
-
-}
-
 
 accountList = [
     {
@@ -427,4 +421,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default connect(mapStateToProps)((SettingsModal));
+export default connect(mapStateToProps)(SettingsModal);
