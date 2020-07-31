@@ -38,7 +38,7 @@ const WelcomeView = () => {
 
     return (
       <SafeAreaView style={styles.root}>
-          <View style={{flex: 1, alignItems: 'center', flexDirection: 'column', marginTop: 10, padding: 10}}>
+          <View style={{flex: 1, alignItems: 'center', flexDirection: 'column', margin: 10, padding: 10}}>
                 <Text style={{  fontSize: 25, fontWeight: '700', color: '#212121', margin: 5, }}>
                 Welcome to Lupa,
                 </Text>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     margin: 5
   },
   headerText: {
-    marginTop: 15,
+    margin: 15,
     padding: 10,
   },
 });

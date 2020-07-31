@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   hintContainer: {
-    marginTop: 10,
+    margin: 10,
   },
   hint: {
     fontSize: 12,

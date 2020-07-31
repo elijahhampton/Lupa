@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
-INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
-INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
-INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
+INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
+INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
+INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
 MERGED from [:react-native-firebase_analytics] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/analytics/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-15:12
 MERGED from [:react-native-firebase_auth] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/auth/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-15:12
 MERGED from [:react-native-firebase_database] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/database/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-15:12
@@ -44,7 +44,7 @@ MERGED from [:react-native-svg] /Users/elijahhampton/Desktop/Lupa/node_modules/r
 MERGED from [:react-native-vector-icons] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-vector-icons/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
 MERGED from [com.facebook.react:react-native:0.62.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1dfe299e2b4cdae6d092e71e60c8feaa/jetified-react-native-0.62.2/AndroidManifest.xml:2:1-13:12
 MERGED from [:expo-permissions] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-permissions/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
-MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:2:1-27:12
+MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:2:1-27:12
 MERGED from [com.google.android.material:material:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8ae8712f6a7dad6ba76e97b323f5d42f/material-1.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.appcompat:appcompat:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5be5c841f53dae4cded7387368566b7e/appcompat-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [com.facebook.fresco:fresco:2.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f757e958760a1d96938a50106867f4c1/jetified-fresco-2.0.0/AndroidManifest.xml:2:1-9:12
@@ -83,8 +83,8 @@ MERGED from [com.google.android.gms:play-services-measurement:17.2.2] /Users/eli
 MERGED from [com.google.android.gms:play-services-measurement-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/51064a06482365b88e5ceb63d34456b4/jetified-play-services-measurement-api-17.2.2/AndroidManifest.xml:17:1-36:12
 MERGED from [com.google.android.gms:play-services-measurement-sdk:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/98f1a4489a34bb375e30292cd7827d33/jetified-play-services-measurement-sdk-17.2.2/AndroidManifest.xml:17:1-25:12
 MERGED from [androidx.legacy:legacy-support-v4:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1907e2a5baceb68e5140c849830cffd9/legacy-support-v4-1.0.0/AndroidManifest.xml:17:1-22:12
-MERGED from [com.google.android.gms:play-services-wallet:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/07fd521942b85adde4ee2c5885045a5e/jetified-play-services-wallet-11.8.0/AndroidManifest.xml:17:1-22:12
-MERGED from [com.github.tipsi:CreditCardEntry:1.5.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/bbc6d97a6977448333a438217c12ab1b/jetified-CreditCardEntry-1.5.1/AndroidManifest.xml:2:1-11:12
+MERGED from [com.google.android.gms:play-services-wallet:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b32c5c518b6cebdbe092bde41a052021/jetified-play-services-wallet-11.8.0/AndroidManifest.xml:17:1-22:12
+MERGED from [com.github.tipsi:CreditCardEntry:1.5.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b2ac943fe1c7669482040ae836f96915/jetified-CreditCardEntry-1.5.1/AndroidManifest.xml:2:1-11:12
 MERGED from [com.google.android.gms:play-services-gcm:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18a026114d3d6095d2c9ecf5216c56e4/jetified-play-services-gcm-17.0.0/AndroidManifest.xml:17:1-28:12
 MERGED from [com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:17:1-45:12
 MERGED from [com.google.android.gms:play-services-measurement-impl:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/3e8f27d926fa0faff33310a6fec9c8df/jetified-play-services-measurement-impl-17.2.2/AndroidManifest.xml:17:1-40:12
@@ -98,8 +98,8 @@ MERGED from [androidx.browser:browser:1.0.0] /Users/elijahhampton/.gradle/caches
 MERGED from [androidx.recyclerview:recyclerview:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b6fe9a480ae0adf294cc94015cc642d3/recyclerview-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/022515e56f5f47947b794db006c0d91e/legacy-support-core-ui-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/aa99d45a3c5f8121ddfca93dd47b6fa2/legacy-support-core-utils-1.0.0/AndroidManifest.xml:17:1-22:12
-MERGED from [com.google.android.exoplayer:extension-okhttp:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b216e5d633e34a71fa01499e7a2724f4/jetified-extension-okhttp-2.9.2/AndroidManifest.xml:17:1-24:12
-MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/80a2e005c51bdd0e4c421452f24f8c9d/jetified-blurview-1.6.3/AndroidManifest.xml:2:1-11:12
+MERGED from [com.google.android.exoplayer:extension-okhttp:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2dee3acf465761c2791211b197bbfe43/jetified-extension-okhttp-2.9.2/AndroidManifest.xml:17:1-24:12
+MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a6601b165dfeb75a2d973c9da26655c2/jetified-blurview-1.6.3/AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.exifinterface:exifinterface:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/833cd5db898cd91c2870c8ecaf9e223e/exifinterface-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.transition:transition:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/3ac295fdbbf6a411348a4164809a8bcf/transition-1.1.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1d76e4b4c71f17e5a0d18cd97f67315f/coordinatorlayout-1.0.0/AndroidManifest.xml:17:1-22:12
@@ -114,7 +114,7 @@ MERGED from [com.google.firebase:firebase-auth-interop:18.0.0] /Users/elijahhamp
 MERGED from [com.google.firebase:firebase-common:19.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/403d1fdad39cdec1050718a0a5ed2e89/jetified-firebase-common-19.3.0/AndroidManifest.xml:15:1-39:12
 MERGED from [com.google.firebase:firebase-components:16.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b499bad3faae3ea5fc07ce573c7d40b3/jetified-firebase-components-16.0.0/AndroidManifest.xml:15:1-23:12
 MERGED from [com.google.android.exoplayer:exoplayer:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/ad1b7efade0c510baa7b378126ec3198/jetified-exoplayer-2.9.2/AndroidManifest.xml:17:1-24:12
-MERGED from [com.google.android.exoplayer:exoplayer-ui:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/054ca1846dfee8dee434c63364934784/jetified-exoplayer-ui-2.9.2/AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.exoplayer:exoplayer-ui:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7ac92327806d7b9ad3212c00941f66e1/jetified-exoplayer-ui-2.9.2/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.media:media:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/abe6cbeb19c079b09f93597cdb10b399/media-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2e42b9ca4d805df895b9280214d2e438/documentfile-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:17:1-38:12
@@ -124,7 +124,7 @@ MERGED from [com.google.android.gms:play-services-measurement-sdk-api:17.2.2] /U
 MERGED from [com.google.android.gms:play-services-measurement-base:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/3fa7f79a5180db4c4f96b5b1e2d3772a/jetified-play-services-measurement-base-17.2.2/AndroidManifest.xml:2:1-9:12
 MERGED from [com.google.firebase:firebase-installations-interop:16.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/abb95d778f33c945c3149f0119c32230/jetified-firebase-installations-interop-16.0.0/AndroidManifest.xml:15:1-23:12
 MERGED from [com.google.android.gms:play-services-identity:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/54bf035bec4f7f468dcba92fa4d5a107/jetified-play-services-identity-11.8.0/AndroidManifest.xml:17:1-24:12
-MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f6825cec3e7770459b74c8f92cd9c729/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:2:1-9:12
+MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9e5eede9dbe21157d3744d56d8cef48e/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:2:1-9:12
 MERGED from [com.google.android.gms:play-services-clearcut:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e498c1faa3e9192994537d3981c70bcf/jetified-play-services-clearcut-17.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.gms:play-services-phenotype:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f72a3daf0f9f183d09d15ed4821580ec/jetified-play-services-phenotype-17.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.firebase:firebase-iid-interop:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/deb16ed0c1a6747f77dfb9ebd420f6bf/jetified-firebase-iid-interop-17.0.0/AndroidManifest.xml:2:1-10:12
@@ -139,10 +139,10 @@ MERGED from [androidx.fragment:fragment:1.1.0] /Users/elijahhampton/.gradle/cach
 MERGED from [androidx.loader:loader:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c346a4d4da444797209acda245ce5b51/loader-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/d50add1810d241019be4f907c7f8b73f/localbroadcastmanager-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.print:print:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/fee03f509b19924948e1608b643276ef/print-1.0.0/AndroidManifest.xml:17:1-22:12
-MERGED from [com.google.android.exoplayer:exoplayer-dash:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c4aba28563543e476eb220b258a72a16/jetified-exoplayer-dash-2.9.2/AndroidManifest.xml:17:1-24:12
-MERGED from [com.google.android.exoplayer:exoplayer-hls:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/ba9beaa4a4b11f67fd4ad65680d976da/jetified-exoplayer-hls-2.9.2/AndroidManifest.xml:17:1-24:12
-MERGED from [com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/698692b49cb56b197328a41e5324e2ff/jetified-exoplayer-smoothstreaming-2.9.2/AndroidManifest.xml:17:1-24:12
-MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7992a766565800af847e792afba32990/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:17:1-26:12
+MERGED from [com.google.android.exoplayer:exoplayer-dash:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/34b37356754944eca39004804fb1e921/jetified-exoplayer-dash-2.9.2/AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.exoplayer:exoplayer-hls:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a3101eae5a124d5d2da38a5a19c78c9d/jetified-exoplayer-hls-2.9.2/AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1fe3251d5de5be34264b315fc7fedd92/jetified-exoplayer-smoothstreaming-2.9.2/AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/76dedf1c1758673e4effbaf5dce64cdf/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:17:1-26:12
 MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/6436e2af9d8acdc18b77f56c893e902e/swiperefreshlayout-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.appcompat:appcompat-resources:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f1bbbe44a47205b8c44da8ea5af0f1a/jetified-appcompat-resources-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/17b88ceb9cd67efd3010837c6c00cbf6/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
@@ -168,9 +168,9 @@ MERGED from [androidx.lifecycle:lifecycle-runtime:2.1.0] /Users/elijahhampton/.g
 MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a6080a8208de2ae55af6960e78e720e5/lifecycle-viewmodel-2.1.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.savedstate:savedstate:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/43793b565196ceb843319da64abed77a/jetified-savedstate-1.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [io.grpc:grpc-android:1.21.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/075666512af3d5f6ec28b821c8977257/jetified-grpc-android-1.21.0/AndroidManifest.xml:2:1-13:12
-MERGED from [com.yqritc:android-scalablevideoview:1.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f36d7cdb5ed2ace6133a74fd2beb7f7e/jetified-android-scalablevideoview-1.0.1/AndroidManifest.xml:2:1-12:12
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:2:1-30:12
-MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7b5fe7df6b3a236e5e43a27d052a9022/jetified-android-maps-utils-0.5/AndroidManifest.xml:2:1-13:12
+MERGED from [com.yqritc:android-scalablevideoview:1.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f919c2bb6defe5e59fc4e554f2196795/jetified-android-scalablevideoview-1.0.1/AndroidManifest.xml:2:1-12:12
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:2:1-30:12
+MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a7df3a551c8d734bfa1b0d9245c1eea7/jetified-android-maps-utils-0.5/AndroidManifest.xml:2:1-13:12
 MERGED from [me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:2:1-52:12
 MERGED from [com.google.android.gms:play-services-wallet-license:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9836ed7455314f5c589d0bccd2881c6d/jetified-play-services-wallet-license-11.8.0/AndroidManifest.xml:2:1-6:12
 MERGED from [com.facebook.fresco:fbcore:2.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/207f9b6fe66aae8b507a365404004fd8/jetified-fbcore-2.0.0/AndroidManifest.xml:2:1-9:12
@@ -178,20 +178,20 @@ MERGED from [com.google.android.datatransport:transport-api:2.2.0] /Users/elijah
 MERGED from [com.google.android.gms:play-services-identity-license:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/3c851b2dae4d373a3b8c066c5556c5c0/jetified-play-services-identity-license-11.8.0/AndroidManifest.xml:2:1-6:12
 MERGED from [com.google.firebase:protolite-well-known-types:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8185be6ff7f998f1407ca6fd158553bb/jetified-protolite-well-known-types-17.0.0/AndroidManifest.xml:2:1-11:12
 MERGED from [com.google.firebase:firebase-database-collection:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a43a636739149688811ca515a6d3fa25/jetified-firebase-database-collection-17.0.0/AndroidManifest.xml:2:1-7:12
-INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
-INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
-INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
+INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
+INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
+INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
 	package
 		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:2:5-23
 		INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
 		INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
 		INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
 	android:versionCode
 		INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-53:12
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:1-55:12
 		INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:1:11-69
@@ -283,16 +283,16 @@ MERGED from [:react-native-maps] /Users/elijahhampton/Desktop/Lupa/node_modules/
 MERGED from [:react-native-maps] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-maps/lib/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:10:5-81
 MERGED from [:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-81
 MERGED from [:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-81
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:12:5-81
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:12:5-81
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:12:5-81
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:12:5-81
 	android:name
 		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:16:22-78
 uses-permission#android.permission.ACCESS_FINE_LOCATION
 ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:17:5-79
 MERGED from [:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:5-79
 MERGED from [:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:5-79
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:14:5-79
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:14:5-79
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:14:5-79
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:14:5-79
 	android:name
 		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:17:22-76
 uses-permission#android.permission.CAMERA
@@ -325,8 +325,16 @@ uses-permission#android.permission.RECORD_AUDIO
 ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:24:5-71
 	android:name
 		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:24:22-68
+uses-permission#android.permission.RECEIVE_WAP_PUSH
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:25:5-75
+	android:name
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:25:22-72
+uses-permission#android.permission.LOCATION_WHEN_IN_USE
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:26:9-83
+	android:name
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:26:26-80
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:25:5-81
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:27:5-81
 MERGED from [:react-native-firebase_storage] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:5-81
 MERGED from [:react-native-firebase_storage] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:5-81
 MERGED from [:react-native-fs] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-81
@@ -334,13 +342,13 @@ MERGED from [:react-native-fs] /Users/elijahhampton/Desktop/Lupa/node_modules/re
 MERGED from [:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:5-81
 MERGED from [:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:5-81
 	android:name
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:25:22-78
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:27:22-78
 uses-permission#android.permission.WRITE_SETTINGS
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:26:5-73
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:28:5-73
 	android:name
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:26:22-70
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:28:22-70
 application
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:29:5-51:19
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:31:5-53:19
 MERGED from [:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:5-43:19
 MERGED from [:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:5-43:19
 MERGED from [:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-31:19
@@ -355,8 +363,8 @@ MERGED from [:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_
 MERGED from [:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:9:5-19:19
 MERGED from [com.facebook.react:react-native:0.62.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1dfe299e2b4cdae6d092e71e60c8feaa/jetified-react-native-0.62.2/AndroidManifest.xml:11:5-20
 MERGED from [com.facebook.react:react-native:0.62.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1dfe299e2b4cdae6d092e71e60c8feaa/jetified-react-native-0.62.2/AndroidManifest.xml:11:5-20
-MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:11:5-25:19
-MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:11:5-25:19
+MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:11:5-25:19
+MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:11:5-25:19
 MERGED from [com.google.android.material:material:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8ae8712f6a7dad6ba76e97b323f5d42f/material-1.0.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8ae8712f6a7dad6ba76e97b323f5d42f/material-1.0.0/AndroidManifest.xml:22:5-20
 MERGED from [com.facebook.soloader:soloader:0.9.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5aecfb23ce82ce10d9315d0a17f61ce4/jetified-soloader-0.9.0/AndroidManifest.xml:11:5-20
@@ -389,8 +397,8 @@ MERGED from [com.google.android.gms:play-services-iid:17.0.0] /Users/elijahhampt
 MERGED from [com.google.android.gms:play-services-iid:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1c39dc52a8e0b4212b35d88ebe83e631/jetified-play-services-iid-17.0.0/AndroidManifest.xml:26:5-20
 MERGED from [com.google.android.gms:play-services-stats:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c2d2552fd3f40015d6392334524ae66f/jetified-play-services-stats-17.0.0/AndroidManifest.xml:7:5-20
 MERGED from [com.google.android.gms:play-services-stats:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c2d2552fd3f40015d6392334524ae66f/jetified-play-services-stats-17.0.0/AndroidManifest.xml:7:5-20
-MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/80a2e005c51bdd0e4c421452f24f8c9d/jetified-blurview-1.6.3/AndroidManifest.xml:9:5-20
-MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/80a2e005c51bdd0e4c421452f24f8c9d/jetified-blurview-1.6.3/AndroidManifest.xml:9:5-20
+MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a6601b165dfeb75a2d973c9da26655c2/jetified-blurview-1.6.3/AndroidManifest.xml:9:5-20
+MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a6601b165dfeb75a2d973c9da26655c2/jetified-blurview-1.6.3/AndroidManifest.xml:9:5-20
 MERGED from [com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:23:5-40:19
 MERGED from [com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:23:5-40:19
 MERGED from [com.google.firebase:firebase-storage:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2f4f6c3d6bb58d5d8a4d1de9ad2ec280/jetified-firebase-storage-19.1.0/AndroidManifest.xml:29:5-37:19
@@ -419,8 +427,8 @@ MERGED from [com.google.android.gms:play-services-measurement-base:17.2.2] /User
 MERGED from [com.google.android.gms:play-services-measurement-base:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/3fa7f79a5180db4c4f96b5b1e2d3772a/jetified-play-services-measurement-base-17.2.2/AndroidManifest.xml:7:5-20
 MERGED from [com.google.android.gms:play-services-identity:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/54bf035bec4f7f468dcba92fa4d5a107/jetified-play-services-identity-11.8.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.gms:play-services-identity:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/54bf035bec4f7f468dcba92fa4d5a107/jetified-play-services-identity-11.8.0/AndroidManifest.xml:22:5-20
-MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f6825cec3e7770459b74c8f92cd9c729/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:7:5-20
-MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f6825cec3e7770459b74c8f92cd9c729/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9e5eede9dbe21157d3744d56d8cef48e/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9e5eede9dbe21157d3744d56d8cef48e/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:7:5-20
 MERGED from [com.google.android.gms:play-services-clearcut:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e498c1faa3e9192994537d3981c70bcf/jetified-play-services-clearcut-17.0.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.gms:play-services-clearcut:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e498c1faa3e9192994537d3981c70bcf/jetified-play-services-clearcut-17.0.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.gms:play-services-phenotype:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f72a3daf0f9f183d09d15ed4821580ec/jetified-play-services-phenotype-17.0.0/AndroidManifest.xml:22:5-20
@@ -447,10 +455,10 @@ MERGED from [androidx.core:core:1.1.0] /Users/elijahhampton/.gradle/caches/trans
 MERGED from [androidx.core:core:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/6d32e09bde5b4b2ca6914d6e1f2d65d4/core-1.1.0/AndroidManifest.xml:24:5-89
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/54dfb3dbce3fe04f472d52b78a634be1/versionedparcelable-1.1.0/AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/54dfb3dbce3fe04f472d52b78a634be1/versionedparcelable-1.1.0/AndroidManifest.xml:24:5-25:19
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:18:5-28:19
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:18:5-28:19
-MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7b5fe7df6b3a236e5e43a27d052a9022/jetified-android-maps-utils-0.5/AndroidManifest.xml:7:5-11:19
-MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7b5fe7df6b3a236e5e43a27d052a9022/jetified-android-maps-utils-0.5/AndroidManifest.xml:7:5-11:19
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:18:5-28:19
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:18:5-28:19
+MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a7df3a551c8d734bfa1b0d9245c1eea7/jetified-android-maps-utils-0.5/AndroidManifest.xml:7:5-11:19
+MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a7df3a551c8d734bfa1b0d9245c1eea7/jetified-android-maps-utils-0.5/AndroidManifest.xml:7:5-11:19
 MERGED from [com.google.android.gms:play-services-wallet-license:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9836ed7455314f5c589d0bccd2881c6d/jetified-play-services-wallet-license-11.8.0/AndroidManifest.xml:5:5-20
 MERGED from [com.google.android.gms:play-services-wallet-license:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9836ed7455314f5c589d0bccd2881c6d/jetified-play-services-wallet-license-11.8.0/AndroidManifest.xml:5:5-20
 MERGED from [com.google.android.gms:play-services-identity-license:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/3c851b2dae4d373a3b8c066c5556c5c0/jetified-play-services-identity-license-11.8.0/AndroidManifest.xml:5:5-20
@@ -458,47 +466,47 @@ MERGED from [com.google.android.gms:play-services-identity-license:11.8.0] /User
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/6d32e09bde5b4b2ca6914d6e1f2d65d4/core-1.1.0/AndroidManifest.xml:24:18-86
 	android:label
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:31:7-39
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:33:7-39
 	android:roundIcon
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:33:7-52
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:35:7-52
 	android:icon
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:32:7-41
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:34:7-41
 	android:allowBackup
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:34:7-34
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:36:7-34
 	android:theme
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:35:7-38
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:37:7-38
 	android:name
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:30:7-38
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:32:7-38
 activity#com.lupa.MainActivity
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:36:7-45:18
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:38:7-47:18
 	android:label
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:38:9-41
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:40:9-41
 	android:windowSoftInputMode
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:40:9-51
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:42:9-51
 	android:configChanges
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:39:9-79
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:41:9-79
 	android:name
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:37:9-37
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:39:9-37
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:41:9-44:25
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:43:9-46:25
 action#android.intent.action.MAIN
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:42:13-65
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:44:13-65
 	android:name
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:42:21-62
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:44:21-62
 category#android.intent.category.LAUNCHER
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:43:13-73
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:45:13-73
 	android:name
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:43:23-70
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:45:23-70
 activity#com.facebook.react.devsupport.DevSettingsActivity
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:46:7-84
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:48:7-84
 	android:name
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:46:17-81
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:48:17-81
 activity#com.theartofdev.edmodo.cropper.CropImageActivity
-ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:47:7-50:12
+ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:49:7-52:12
 	android:theme
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:49:3-46
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:51:3-46
 	android:name
-		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:48:3-66
+		ADDED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:50:3-66
 uses-sdk
 INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
@@ -583,8 +591,8 @@ MERGED from [com.facebook.react:react-native:0.62.2] /Users/elijahhampton/.gradl
 MERGED from [com.facebook.react:react-native:0.62.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1dfe299e2b4cdae6d092e71e60c8feaa/jetified-react-native-0.62.2/AndroidManifest.xml:7:5-9:41
 MERGED from [:expo-permissions] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-permissions/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:expo-permissions] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-permissions/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
-MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:7:5-9:41
-MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:7:5-9:41
+MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:7:5-9:41
+MERGED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:7:5-9:41
 MERGED from [com.google.android.material:material:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8ae8712f6a7dad6ba76e97b323f5d42f/material-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.material:material:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8ae8712f6a7dad6ba76e97b323f5d42f/material-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5be5c841f53dae4cded7387368566b7e/appcompat-1.1.0/AndroidManifest.xml:20:5-22:41
@@ -661,10 +669,10 @@ MERGED from [com.google.android.gms:play-services-measurement-sdk:17.2.2] /Users
 MERGED from [com.google.android.gms:play-services-measurement-sdk:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/98f1a4489a34bb375e30292cd7827d33/jetified-play-services-measurement-sdk-17.2.2/AndroidManifest.xml:20:5-44
 MERGED from [androidx.legacy:legacy-support-v4:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1907e2a5baceb68e5140c849830cffd9/legacy-support-v4-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.legacy:legacy-support-v4:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1907e2a5baceb68e5140c849830cffd9/legacy-support-v4-1.0.0/AndroidManifest.xml:20:5-44
-MERGED from [com.google.android.gms:play-services-wallet:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/07fd521942b85adde4ee2c5885045a5e/jetified-play-services-wallet-11.8.0/AndroidManifest.xml:20:5-44
-MERGED from [com.google.android.gms:play-services-wallet:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/07fd521942b85adde4ee2c5885045a5e/jetified-play-services-wallet-11.8.0/AndroidManifest.xml:20:5-44
-MERGED from [com.github.tipsi:CreditCardEntry:1.5.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/bbc6d97a6977448333a438217c12ab1b/jetified-CreditCardEntry-1.5.1/AndroidManifest.xml:7:5-9:41
-MERGED from [com.github.tipsi:CreditCardEntry:1.5.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/bbc6d97a6977448333a438217c12ab1b/jetified-CreditCardEntry-1.5.1/AndroidManifest.xml:7:5-9:41
+MERGED from [com.google.android.gms:play-services-wallet:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b32c5c518b6cebdbe092bde41a052021/jetified-play-services-wallet-11.8.0/AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-wallet:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b32c5c518b6cebdbe092bde41a052021/jetified-play-services-wallet-11.8.0/AndroidManifest.xml:20:5-44
+MERGED from [com.github.tipsi:CreditCardEntry:1.5.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b2ac943fe1c7669482040ae836f96915/jetified-CreditCardEntry-1.5.1/AndroidManifest.xml:7:5-9:41
+MERGED from [com.github.tipsi:CreditCardEntry:1.5.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b2ac943fe1c7669482040ae836f96915/jetified-CreditCardEntry-1.5.1/AndroidManifest.xml:7:5-9:41
 MERGED from [com.google.android.gms:play-services-gcm:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18a026114d3d6095d2c9ecf5216c56e4/jetified-play-services-gcm-17.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.gms:play-services-gcm:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18a026114d3d6095d2c9ecf5216c56e4/jetified-play-services-gcm-17.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:20:5-44
@@ -691,10 +699,10 @@ MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] /Users/elijahhampton/
 MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/022515e56f5f47947b794db006c0d91e/legacy-support-core-ui-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/aa99d45a3c5f8121ddfca93dd47b6fa2/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/aa99d45a3c5f8121ddfca93dd47b6fa2/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
-MERGED from [com.google.android.exoplayer:extension-okhttp:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b216e5d633e34a71fa01499e7a2724f4/jetified-extension-okhttp-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:extension-okhttp:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b216e5d633e34a71fa01499e7a2724f4/jetified-extension-okhttp-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/80a2e005c51bdd0e4c421452f24f8c9d/jetified-blurview-1.6.3/AndroidManifest.xml:5:5-7:41
-MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/80a2e005c51bdd0e4c421452f24f8c9d/jetified-blurview-1.6.3/AndroidManifest.xml:5:5-7:41
+MERGED from [com.google.android.exoplayer:extension-okhttp:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2dee3acf465761c2791211b197bbfe43/jetified-extension-okhttp-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:extension-okhttp:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2dee3acf465761c2791211b197bbfe43/jetified-extension-okhttp-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a6601b165dfeb75a2d973c9da26655c2/jetified-blurview-1.6.3/AndroidManifest.xml:5:5-7:41
+MERGED from [com.eightbitlab:blurview:1.6.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a6601b165dfeb75a2d973c9da26655c2/jetified-blurview-1.6.3/AndroidManifest.xml:5:5-7:41
 MERGED from [androidx.exifinterface:exifinterface:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/833cd5db898cd91c2870c8ecaf9e223e/exifinterface-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.exifinterface:exifinterface:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/833cd5db898cd91c2870c8ecaf9e223e/exifinterface-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.transition:transition:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/3ac295fdbbf6a411348a4164809a8bcf/transition-1.1.0/AndroidManifest.xml:20:5-44
@@ -723,8 +731,8 @@ MERGED from [com.google.firebase:firebase-components:16.0.0] /Users/elijahhampto
 MERGED from [com.google.firebase:firebase-components:16.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/b499bad3faae3ea5fc07ce573c7d40b3/jetified-firebase-components-16.0.0/AndroidManifest.xml:19:5-21:41
 MERGED from [com.google.android.exoplayer:exoplayer:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/ad1b7efade0c510baa7b378126ec3198/jetified-exoplayer-2.9.2/AndroidManifest.xml:20:5-22:41
 MERGED from [com.google.android.exoplayer:exoplayer:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/ad1b7efade0c510baa7b378126ec3198/jetified-exoplayer-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-ui:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/054ca1846dfee8dee434c63364934784/jetified-exoplayer-ui-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-ui:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/054ca1846dfee8dee434c63364934784/jetified-exoplayer-ui-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-ui:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7ac92327806d7b9ad3212c00941f66e1/jetified-exoplayer-ui-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-ui:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7ac92327806d7b9ad3212c00941f66e1/jetified-exoplayer-ui-2.9.2/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.media:media:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/abe6cbeb19c079b09f93597cdb10b399/media-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.media:media:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/abe6cbeb19c079b09f93597cdb10b399/media-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2e42b9ca4d805df895b9280214d2e438/documentfile-1.0.0/AndroidManifest.xml:20:5-44
@@ -743,8 +751,8 @@ MERGED from [com.google.firebase:firebase-installations-interop:16.0.0] /Users/e
 MERGED from [com.google.firebase:firebase-installations-interop:16.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/abb95d778f33c945c3149f0119c32230/jetified-firebase-installations-interop-16.0.0/AndroidManifest.xml:19:5-21:41
 MERGED from [com.google.android.gms:play-services-identity:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/54bf035bec4f7f468dcba92fa4d5a107/jetified-play-services-identity-11.8.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.gms:play-services-identity:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/54bf035bec4f7f468dcba92fa4d5a107/jetified-play-services-identity-11.8.0/AndroidManifest.xml:20:5-44
-MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f6825cec3e7770459b74c8f92cd9c729/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:5:5-44
-MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f6825cec3e7770459b74c8f92cd9c729/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9e5eede9dbe21157d3744d56d8cef48e/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-vision-common:17.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9e5eede9dbe21157d3744d56d8cef48e/jetified-play-services-vision-common-17.0.2/AndroidManifest.xml:5:5-44
 MERGED from [com.google.android.gms:play-services-clearcut:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e498c1faa3e9192994537d3981c70bcf/jetified-play-services-clearcut-17.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.gms:play-services-clearcut:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e498c1faa3e9192994537d3981c70bcf/jetified-play-services-clearcut-17.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.gms:play-services-phenotype:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f72a3daf0f9f183d09d15ed4821580ec/jetified-play-services-phenotype-17.0.0/AndroidManifest.xml:20:5-44
@@ -773,14 +781,14 @@ MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/d50add1810d241019be4f907c7f8b73f/localbroadcastmanager-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.print:print:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/fee03f509b19924948e1608b643276ef/print-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.print:print:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/fee03f509b19924948e1608b643276ef/print-1.0.0/AndroidManifest.xml:20:5-44
-MERGED from [com.google.android.exoplayer:exoplayer-dash:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c4aba28563543e476eb220b258a72a16/jetified-exoplayer-dash-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-dash:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c4aba28563543e476eb220b258a72a16/jetified-exoplayer-dash-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-hls:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/ba9beaa4a4b11f67fd4ad65680d976da/jetified-exoplayer-hls-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-hls:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/ba9beaa4a4b11f67fd4ad65680d976da/jetified-exoplayer-hls-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/698692b49cb56b197328a41e5324e2ff/jetified-exoplayer-smoothstreaming-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/698692b49cb56b197328a41e5324e2ff/jetified-exoplayer-smoothstreaming-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7992a766565800af847e792afba32990/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:20:5-22:41
-MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7992a766565800af847e792afba32990/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-dash:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/34b37356754944eca39004804fb1e921/jetified-exoplayer-dash-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-dash:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/34b37356754944eca39004804fb1e921/jetified-exoplayer-dash-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-hls:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a3101eae5a124d5d2da38a5a19c78c9d/jetified-exoplayer-hls-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-hls:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a3101eae5a124d5d2da38a5a19c78c9d/jetified-exoplayer-hls-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1fe3251d5de5be34264b315fc7fedd92/jetified-exoplayer-smoothstreaming-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/1fe3251d5de5be34264b315fc7fedd92/jetified-exoplayer-smoothstreaming-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/76dedf1c1758673e4effbaf5dce64cdf/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/76dedf1c1758673e4effbaf5dce64cdf/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/6436e2af9d8acdc18b77f56c893e902e/swiperefreshlayout-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/6436e2af9d8acdc18b77f56c893e902e/swiperefreshlayout-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f1bbbe44a47205b8c44da8ea5af0f1a/jetified-appcompat-resources-1.1.0/AndroidManifest.xml:20:5-22:41
@@ -831,12 +839,12 @@ MERGED from [androidx.savedstate:savedstate:1.0.0] /Users/elijahhampton/.gradle/
 MERGED from [androidx.savedstate:savedstate:1.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/43793b565196ceb843319da64abed77a/jetified-savedstate-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [io.grpc:grpc-android:1.21.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/075666512af3d5f6ec28b821c8977257/jetified-grpc-android-1.21.0/AndroidManifest.xml:7:5-9:41
 MERGED from [io.grpc:grpc-android:1.21.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/075666512af3d5f6ec28b821c8977257/jetified-grpc-android-1.21.0/AndroidManifest.xml:7:5-9:41
-MERGED from [com.yqritc:android-scalablevideoview:1.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f36d7cdb5ed2ace6133a74fd2beb7f7e/jetified-android-scalablevideoview-1.0.1/AndroidManifest.xml:8:5-10:41
-MERGED from [com.yqritc:android-scalablevideoview:1.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f36d7cdb5ed2ace6133a74fd2beb7f7e/jetified-android-scalablevideoview-1.0.1/AndroidManifest.xml:8:5-10:41
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:8:5-10:41
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:8:5-10:41
-MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7b5fe7df6b3a236e5e43a27d052a9022/jetified-android-maps-utils-0.5/AndroidManifest.xml:5:5-43
-MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7b5fe7df6b3a236e5e43a27d052a9022/jetified-android-maps-utils-0.5/AndroidManifest.xml:5:5-43
+MERGED from [com.yqritc:android-scalablevideoview:1.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f919c2bb6defe5e59fc4e554f2196795/jetified-android-scalablevideoview-1.0.1/AndroidManifest.xml:8:5-10:41
+MERGED from [com.yqritc:android-scalablevideoview:1.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f919c2bb6defe5e59fc4e554f2196795/jetified-android-scalablevideoview-1.0.1/AndroidManifest.xml:8:5-10:41
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:8:5-10:41
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:8:5-10:41
+MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a7df3a551c8d734bfa1b0d9245c1eea7/jetified-android-maps-utils-0.5/AndroidManifest.xml:5:5-43
+MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a7df3a551c8d734bfa1b0d9245c1eea7/jetified-android-maps-utils-0.5/AndroidManifest.xml:5:5-43
 MERGED from [me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:7:5-9:41
 MERGED from [me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:7:5-9:41
 MERGED from [com.google.android.gms:play-services-wallet-license:11.8.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9836ed7455314f5c589d0bccd2881c6d/jetified-play-services-wallet-license-11.8.0/AndroidManifest.xml:4:5-43
@@ -897,16 +905,16 @@ MERGED from [com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhamp
 MERGED from [com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:23:5-79
 MERGED from [com.google.android.gms:play-services-measurement-sdk-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/86e33a67e04741ebee3e53d727dff8c3/jetified-play-services-measurement-sdk-api-17.2.2/AndroidManifest.xml:24:5-79
 MERGED from [com.google.android.gms:play-services-measurement-sdk-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/86e33a67e04741ebee3e53d727dff8c3/jetified-play-services-measurement-sdk-api-17.2.2/AndroidManifest.xml:24:5-79
-MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7992a766565800af847e792afba32990/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:24:5-79
-MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7992a766565800af847e792afba32990/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:24:5-79
+MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/76dedf1c1758673e4effbaf5dce64cdf/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:24:5-79
+MERGED from [com.google.android.exoplayer:exoplayer-core:2.9.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/76dedf1c1758673e4effbaf5dce64cdf/jetified-exoplayer-core-2.9.2/AndroidManifest.xml:24:5-79
 MERGED from [com.google.android.datatransport:transport-backend-cct:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8c0aacdca41d3e1cc54737833111248f/jetified-transport-backend-cct-2.2.0/AndroidManifest.xml:25:5-79
 MERGED from [com.google.android.datatransport:transport-backend-cct:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8c0aacdca41d3e1cc54737833111248f/jetified-transport-backend-cct-2.2.0/AndroidManifest.xml:25:5-79
 MERGED from [com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:22:5-79
 MERGED from [com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:22:5-79
 MERGED from [io.grpc:grpc-android:1.21.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/075666512af3d5f6ec28b821c8977257/jetified-grpc-android-1.21.0/AndroidManifest.xml:11:5-79
 MERGED from [io.grpc:grpc-android:1.21.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/075666512af3d5f6ec28b821c8977257/jetified-grpc-android-1.21.0/AndroidManifest.xml:11:5-79
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:13:5-79
-MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:13:5-79
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:13:5-79
+MERGED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:13:5-79
 	android:name
 		ADDED from [:react-native-firebase_analytics] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/analytics/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:22-76
 uses-permission#android.permission.WAKE_LOCK
@@ -1050,25 +1058,25 @@ ADDED from [:react-native-os] /Users/elijahhampton/Desktop/Lupa/node_modules/rea
 	android:name
 		ADDED from [:react-native-os] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-os/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:22-73
 activity#com.stripe.android.view.AddSourceActivity
-ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:12:9-16:20
+ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:12:9-16:20
 	android:windowSoftInputMode
-		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:15:13-55
+		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:15:13-55
 	android:theme
-		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:14:13-54
+		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:14:13-54
 	android:name
-		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:13:13-69
+		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:13:13-69
 activity#com.stripe.android.view.PaymentMethodsActivity
-ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:17:9-20:20
+ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:17:9-20:20
 	android:theme
-		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:19:13-54
+		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:19:13-54
 	android:name
-		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:18:13-74
+		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:18:13-74
 activity#com.stripe.android.view.PaymentFlowActivity
-ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:21:9-24:20
+ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:21:9-24:20
 	android:theme
-		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:23:13-54
+		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:23:13-54
 	android:name
-		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/656d0dc0a69bf3cfc7fac872ce8d658c/jetified-stripe-android-8.1.0/AndroidManifest.xml:22:13-71
+		ADDED from [com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:22:13-71
 uses-permission#android.permission.STORAGE
 ADDED from [:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:5-66
 	android:name
@@ -1341,8 +1349,8 @@ ADDED from [com.google.android.gms:play-services-base:17.1.0] /Users/elijahhampt
 		ADDED from [com.google.android.gms:play-services-base:17.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f3aea537f7817dc1eaeca3bc08179ecb/jetified-play-services-base-17.1.0/AndroidManifest.xml:24:13-79
 meta-data#com.google.android.gms.version
 ADDED from [com.google.android.gms:play-services-basement:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18537f21500cd17c1f5154d04512bb6f/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
-MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7b5fe7df6b3a236e5e43a27d052a9022/jetified-android-maps-utils-0.5/AndroidManifest.xml:8:9-10:69
-MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/7b5fe7df6b3a236e5e43a27d052a9022/jetified-android-maps-utils-0.5/AndroidManifest.xml:8:9-10:69
+MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a7df3a551c8d734bfa1b0d9245c1eea7/jetified-android-maps-utils-0.5/AndroidManifest.xml:8:9-10:69
+MERGED from [com.google.maps.android:android-maps-utils:0.5] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a7df3a551c8d734bfa1b0d9245c1eea7/jetified-android-maps-utils-0.5/AndroidManifest.xml:8:9-10:69
 	android:value
 		ADDED from [com.google.android.gms:play-services-basement:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18537f21500cd17c1f5154d04512bb6f/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
 	android:name
@@ -1376,31 +1384,31 @@ ADDED from [com.google.android.datatransport:transport-runtime:2.2.0] /Users/eli
 	android:name
 		ADDED from [com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:33:13-132
 uses-permission#com.google.android.providers.gsf.permission.READ_GSERVICES
-ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:15:5-98
+ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:15:5-98
 	android:name
-		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:15:22-95
+		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:15:22-95
 uses-permission#com.google.android.gms.permission.ACTIVITY_RECOGNITION
-ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:16:5-94
+ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:16:5-94
 	android:name
-		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:16:22-91
+		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:16:22-91
 service#io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider$ActivityRecognitionService
-ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:19:9-21:40
+ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:19:9-21:40
 	android:exported
-		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:21:13-37
+		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:21:13-37
 	android:name
-		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:20:13-132
+		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:20:13-132
 service#io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider$GeofencingService
-ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:22:9-24:40
+ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:22:9-24:40
 	android:exported
-		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:24:13-37
+		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:24:13-37
 	android:name
-		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:23:13-127
+		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:23:13-127
 service#io.nlopez.smartlocation.geocoding.providers.AndroidGeocodingProvider$AndroidGeocodingService
-ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:25:9-27:40
+ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:25:9-27:40
 	android:exported
-		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:27:13-37
+		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:27:13-37
 	android:name
-		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/edba36cd72688cb6001d52cf15dc5451/jetified-library-3.2.11/AndroidManifest.xml:26:13-120
+		ADDED from [io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:26:13-120
 uses-permission#com.sec.android.provider.badge.permission.READ
 ADDED from [me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:19:5-86
 	android:name

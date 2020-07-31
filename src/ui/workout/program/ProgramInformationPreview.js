@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
         marginVertical: 25
     },
     mapViewSubContainer: {
-        marginTop: 10, 
+        margin: 10, 
         width: '100%', 
         alignItems: 'center', 
         justifyContent: 'center'

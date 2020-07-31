@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     TouchableWithoutFeedback,
     TextInput as NativeTextInput,
+    Picker,
     ScrollView,
     Image,
     Button as NativeButton,
@@ -44,7 +45,6 @@ import {fromString} from 'uuidv4';
 import ImagePicker from 'react-native-image-picker';
 import { LOG_ERROR } from '../../../../common/Logger';
 
-import {Picker} from '@react-native-community/picker';
 import { SearchBar } from 'react-native-elements';
 
 const mapStateToProps = (state, action) => {
@@ -363,7 +363,7 @@ function AddedExercisePreviewModal(props) {
     return (
         <PaperModal visible={props.isVisible} contentContainerStyle={{borderRadius: 10, alignSelf: 'center', width: Dimensions.get('window').width - 50, height: Dimensions.get('window').height / 2, backgroundColor: '#FFFFFF'}}>
             <View style={{flex: 1, padding: 5}}>
-                <Surface style={{marginTop: 10, width: '50%', elevation: 5, height: 110, alignSelf: 'center', borderRadius: 20}}>
+                <Surface style={{margin: 10, width: '50%', elevation: 5, height: 110, alignSelf: 'center', borderRadius: 20}}>
                     {getWorkoutMedia()}
                 </Surface>
             </View>
@@ -1892,7 +1892,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     contentContainer: {
-        //marginTop: Dimensions.get("screen").height / 4,
+        //margin: Dimensions.get("screen").height / 4,
         width: '100%',
         flex: 2,
         backgroundColor: "white",

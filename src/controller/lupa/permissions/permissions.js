@@ -90,7 +90,7 @@ export const _checkCameraAndPhotoLibraryPermissions = () => {
 
 export default _requestPermissionsAsync = () => {
   
-  if (Platform.OS == 'ios') {
+  if (Platform.OS === 'ios') {
   check(PERMISSIONS.IOS.CAMERA)
   .then((result) => {
     switch (result) {
@@ -209,33 +209,218 @@ export default _requestPermissionsAsync = () => {
 }
 
 if (Platform.OS === 'android') {
-    PermissionsAndroid.requestMultiple(
-      [PermissionsAndroid.PERMISSIONS.CAMERA, 
-      PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      PermissionsAndroid.PERMISSIONS.LOCATION_WHEN_IN_USE,
-      PermissionsAndroid.PERMISSIONS.RECEIVE_WAP_PUSH]
-      ).then((result) => {
-        if (result['android.permission.ACCESS_COARSE_LOCATION']
-        && result['android.permission.CAMERA']
-        && result['android.permission.READ_CONTACTS']
-        && result['android.permission.ACCESS_FINE_LOCATION']
-        && result['android.permission.READ_EXTERNAL_STORAGE']
-        && result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted') {
-          this.setState({
-            permissionsGranted: true
-          });
-        } else if (result['android.permission.ACCESS_COARSE_LOCATION']
-        || result['android.permission.CAMERA']
-        || result['android.permission.READ_CONTACTS']
-        || result['android.permission.ACCESS_FINE_LOCATION']
-        || result['android.permission.READ_EXTERNAL_STORAGE']
-        || result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'never_ask_again') {
-          this.refs.toast.show('Please Go into Settings -> Applications -> APP_NAME -> Permissions and Allow permissions to continue');
-        }
-      });
-    }
+  try {
+    check(PERMISSIONS.ANDROID.CAMERA)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          //tell user it is not available on this device
+          
+          break;
+        case RESULTS.DENIED:
+         //request permission
+      
+          break;
+        case RESULTS.GRANTED:
+          // nothing to do
+          
+          break;
+        case RESULTS.BLOCKED:
+          // alert the user to change it from settings
+         //may need to handle the case here user says only while using?
+          break;
+      }
+    })
+    .catch((error) => {
+      // …
+     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+    });
+  
+    check(PERMISSIONS.ANDROID.READ_CONTACTS)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          //tell user it is not available on this device
+          
+          break;
+        case RESULTS.DENIED:
+         //request permission
+      
+          break;
+        case RESULTS.GRANTED:
+          // nothing to do
+          
+          break;
+        case RESULTS.BLOCKED:
+          // alert the user to change it from settings
+         //may need to handle the case here user says only while using?
+          break;
+      }
+    })
+    .catch((error) => {
+      // …
+     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+    });
+  
+    check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          //tell user it is not available on this device
+          
+          break;
+        case RESULTS.DENIED:
+         //request permission
+      
+          break;
+        case RESULTS.GRANTED:
+          // nothing to do
+          
+          break;
+        case RESULTS.BLOCKED:
+          // alert the user to change it from settings
+         //may need to handle the case here user says only while using?
+          break;
+      }
+    })
+    .catch((error) => {
+      // …
+     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+    });
+  
+    check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          //tell user it is not available on this device
+          
+          break;
+        case RESULTS.DENIED:
+         //request permission
+      
+          break;
+        case RESULTS.GRANTED:
+          // nothing to do
+          
+          break;
+        case RESULTS.BLOCKED:
+          // alert the user to change it from settings
+         //may need to handle the case here user says only while using?
+          break;
+      }
+    })
+    .catch((error) => {
+      // …
+     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+    });
+  
+    check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          //tell user it is not available on this device
+          
+          break;
+        case RESULTS.DENIED:
+         //request permission
+      
+          break;
+        case RESULTS.GRANTED:
+          // nothing to do
+          
+          break;
+        case RESULTS.BLOCKED:
+          // alert the user to change it from settings
+         //may need to handle the case here user says only while using?
+          break;
+      }
+    })
+    .catch((error) => {
+      // …
+     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+    });
+  
+    check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          //tell user it is not available on this device
+          
+          break;
+        case RESULTS.DENIED:
+         //request permission
+      
+          break;
+        case RESULTS.GRANTED:
+          // nothing to do
+          
+          break;
+        case RESULTS.BLOCKED:
+          // alert the user to change it from settings
+         //may need to handle the case here user says only while using?
+          break;
+      }
+    })
+    .catch((error) => {
+      // …
+     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+    });
+  
+    check(PERMISSIONS.ANDROID.LOCATION_WHEN_IN_USE)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          //tell user it is not available on this device
+          
+          break;
+        case RESULTS.DENIED:
+         //request permission
+      
+          break;
+        case RESULTS.GRANTED:
+          // nothing to do
+          
+          break;
+        case RESULTS.BLOCKED:
+          // alert the user to change it from settings
+         //may need to handle the case here user says only while using?
+          break;
+      }
+    })
+    .catch((error) => {
+      // …
+     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+    });
+  
+    check(PERMISSIONS.ANDROID.RECEIVE_WAP_PUSH)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          //tell user it is not available on this device
+          
+          break;
+        case RESULTS.DENIED:
+         //request permission
+      
+          break;
+        case RESULTS.GRANTED:
+          // nothing to do
+          
+          break;
+        case RESULTS.BLOCKED:
+          // alert the user to change it from settings
+         //may need to handle the case here user says only while using?
+          break;
+      }
+    })
+    .catch((error) => {
+      // …
+     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
+    });
+  } catch(err) {
+    alert(err)
+    console.log(err)
+    console.log('BBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMMBBBBBBBBBBBBBBBMMMMMMMMMMMMMM')
+  }
+}
 }

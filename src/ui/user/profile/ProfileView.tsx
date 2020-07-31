@@ -60,16 +60,11 @@ import { connect, useDispatch} from 'react-redux';
 import ServicedComponent from '../../../controller/lupa/interface/ServicedComponent';
 import LupaController from '../../../controller/lupa/LupaController';
 
-import ThinFeatherIcon from "react-native-feather1s";
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure, LupaPackStructure } from '../../../controller/lupa/common/types';
-import { Constants } from 'react-native-unimodules';
 import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
-import { InformationIcon } from '../../icons/index.js';
 import ProgramOptionsModal from '../../workout/program/modal/ProgramOptionsModal';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import { MenuIcon } from '../../icons/index'
@@ -758,7 +753,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         <Text style={{fontSize: 15, fontWeight: '400'}}>
                             After you create your first workout program it will appear here.
                         </Text>
-                        <Button mode="contained" style={{marginTop: 15, width: '60%', elevation: 0}} theme={{
+                        <Button mode="contained" style={{margin: 15, width: '60%', elevation: 0}} theme={{
                                     colors: {
                                         primary: '#2196F3'
                                     },
@@ -947,7 +942,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 </Appbar.Header>
 
                 <ScrollView 
-                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#F2F2F2', marginTop: 10 }} 
+                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#F2F2F2', margin: 10 }} 
                 showsVerticalScrollIndicator={false} 
                 shouldRasterizeIOS={true} 
                 refreshControl={
