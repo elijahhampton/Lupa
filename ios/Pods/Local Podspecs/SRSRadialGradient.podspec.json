@@ -1,0 +1,25 @@
+{
+  "name": "SRSRadialGradient",
+  "version": "1.0.0",
+  "summary": "SRSRadialGradient",
+  "description": "SRSRadialGradient",
+  "homepage": "https://github.com/surajitsarkar19/react-native-radial-gradient",
+  "license": "MIT",
+  "authors": {
+    "author": "author@domain.cn"
+  },
+  "platforms": {
+    "ios": "7.0"
+  },
+  "source": {
+    "git": "https://github.com/author/SRSRadialGradient.git",
+    "tag": "master"
+  },
+  "source_files": "**/*.{h,m}",
+  "requires_arc": true,
+  "dependencies": {
+    "React": [
+
+    ]
+  }
+}
