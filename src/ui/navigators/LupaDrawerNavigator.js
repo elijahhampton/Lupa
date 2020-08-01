@@ -13,6 +13,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardNavigator from './DashboardNavigator';
 import LupaHomeNavigator from './LupaHomeNavigator';
 import Search from '../search/Search';
+import { useSelector } from 'react-redux';
 
 const Drawer = createDrawerNavigator();
 
@@ -43,6 +44,10 @@ const tabBarOptions = {
 }
 
 function LupaBottomTabNavigator() {
+  const currUserData = useSelector(state => {
+    return state.Users.currUserData
+  })
+
   return (
     <Tab.Navigator 
     tabBarOptions={tabBarOptions}
@@ -70,12 +75,18 @@ function LupaBottomTabNavigator() {
              
               <Tab.Screen name="Train" component={LupaHomeNavigator} />
               <Tab.Screen name="Search" component={Search} />
-              <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
-          tabPress: event => {
-            event.preventDefault()
-            navigation.navigate('CreateProgram')
-          }
-        })}  />
+              {
+                currUserData.isTrainer === true ?
+                <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
+                  tabPress: event => {
+                    event.preventDefault()
+                    navigation.navigate('CreateProgram')
+                  }
+                })}  />
+                :
+                null
+              }
+             
         <Tab.Screen name="Dashboard" component={DashboardNavigator} />
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
