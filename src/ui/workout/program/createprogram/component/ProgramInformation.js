@@ -11,9 +11,9 @@ import {
   Slider,
   TextInput,
   TouchableHighlight,
+  KeyboardAvoidingView,
   SafeAreaView,
   Modal,
-  KeyboardAvoidingView,
 } from 'react-native';
 
 import {
@@ -28,6 +28,8 @@ import {
   ProgressBar,
   Divider,
 } from 'react-native-paper';
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import Icon from "react-native-feather1s";
 
@@ -180,25 +182,25 @@ function ProgramInformation(props) {
   checkInputs = () => {
     if (programName.length < MIN_TITLE_LENGTH || programName.length > MAX_TITLE_LENGTH) {
 
-      setRejectedReason("Program title elength")
+      setRejectedReason("Your program title must be between " + MIN_TITLE_LENGTH + " and " + MAX_TITLE_LENGTH + " characters.");
       setSnackBarVisibility(true)
       return true;
     }
 
     if (programDescription.length < MIN_DESCRIPTION_LENGTH || programDescription.length > MAX_DESCRIPTION_LENGTH) {
-      setRejectedReason("Program Deac")
+      setRejectedReason("Your program description must be between " + MIN_DESCRIPTION_LENGTH + " and " + MAX_DESCRIPTION_LENGTH + "characters.")
       setSnackBarVisibility(true)
       return true;
     }
 
     if (programLocation == "Launch Map") {
-      setRejectedReason("You must select a location for your program")
+      setRejectedReason("You must select a location for your program.")
       setSnackBarVisibility(true)
       return true;
     }
 
     if (programTags.length == 0) {
-      setRejectedReason("Please add atleast one tag into your program")
+      setRejectedReason("Please add atleast one tag to make your program discoverable.")
       setSnackBarVisibility(true)
       return true;
     }
@@ -207,6 +209,11 @@ function ProgramInformation(props) {
       setRejectedReason('aaa')
       setSnackBarVisibility(true)
       return true;
+    }
+
+    if (programPrice.length <= 3 || programPrice.length >= 5) {
+      setRejectedReason('Please enter a valid price. (Ex. 9.99, 20.22, 0.50)')
+      setSnackBarVisibility(true)
     }
 
     if (automatedMessageText == "") {
@@ -316,8 +323,8 @@ function ProgramInformation(props) {
       case 0:
         return (
           <>
-            <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: 'space-between' }}>
-              <View>
+            <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: 'space-between' }}>
+            <View>
                 <View style={{ width: '100%', height: 'auto', marginLeft: 5, marginVertical: 50, padding: 10 }} >
                   <View>
                     <Text style={styles.questionText}>
@@ -327,8 +334,8 @@ function ProgramInformation(props) {
                       Choose the days of which your program will require work.
             </Caption>
                   </View>
-                  <TextInput value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" placeholderTextColor="#212121" style={styles.textInput} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
-                  <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={styles.textInput} enablesReturnKeyAutomatically={true} returnKeyLabel="done" keyboardType="default" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
+                  <TextInput value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" placeholderTextColor="#212121" style={styles.textInput} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
+                  <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={styles.textInput} enablesReturnKeyAutomatically={true} returnKeyLabel="done" returnKeyType="done" keyboardType="default" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
                   {/* <TextInput value={numProgramSpots} onChangeText={text => setNumProgramSpots(text)} label="Spots" placeholder="# Spots"  mode="outlined" style={{margin: 3, width: 80, alignSelf: 'flex-start', }} keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" /> */}
                 </View>
               </View>
@@ -336,7 +343,7 @@ function ProgramInformation(props) {
 
               <Divider style={styles.divider} />
 
-              <View style={{ marginHorizontal: 20, marginVertical: 15, marginVertical: 60 }}>
+              <View style={{ marginHorizontal: 10, marginVertical: 60 }}>
                 <Text style={styles.questionText}>
                   2. Which days of the week will your program take place?
             </Text>
@@ -348,7 +355,7 @@ function ProgramInformation(props) {
                   {
                     days.map(day => {
                       return (
-                        <Chip key={day} mode="outlined" style={{ elevation: programDays.includes(day) ? 3 : 0, margin: 5, backgroundColor: programDays.includes(day) ? '#1089ff' : '#FFFFFF', }} textStyle={{ color: programDays.includes(day) ? 'white' : 'black' }} onPress={() => addProgramDay(day)}>
+                        <Chip key={day} mode="outlined" style={{ elevation: programDays.includes(day) ? 3 : 0, margin: 5, backgroundColor: programDays.includes(day) ? '#1089ff' : '#FFFFFF', }} textStyle={{ color: programDays.includes(day) ? 'white' : 'black', fontFamily: 'HelveticaNeue-Bold' }} onPress={() => addProgramDay(day)}>
                           {day}
                         </Chip>
                       )
@@ -359,7 +366,7 @@ function ProgramInformation(props) {
 
               <Divider style={styles.divider} />
 
-              <View style={{ marginHorizontal: 20, marginVertical: 15, marginVertical: 60 }}>
+              <View style={{ marginHorizontal: 10,  marginVertical: 60 }}>
                 <Text style={styles.questionText}>
                   3. How many weeks will your program last?
             </Text>
@@ -367,14 +374,14 @@ function ProgramInformation(props) {
                   Choose the days of which your program will require work.
             </Caption>
                 <Slider step={1} value={programDuration} onValueChange={val => setProgramDuration(val)} thumbTintColor="#2196F3" minimumValue={1} maximumValue={15} value={programDuration} />
-                <Text style={{ alignSelf: 'center', padding: 3, color: '#BDBDBD', fontSize: 15 }}>
+                <Text style={{ alignSelf: 'flex-start', padding: 3, color: '#BDBDBD', fontSize: 15 }}>
                   {programDuration} / week
                                 </Text>
               </View>
 
               <Divider style={styles.divider} />
 
-              <View style={{ marginHorizontal: 20, marginVertical: 15, marginVertical: 60 }}>
+              <View style={{ paddingHorizontal: 10, marginVertical: 60 }}>
                 <Text style={styles.questionText}>
                   4. How much do you want to charge for this program?
                                 </Text>
@@ -383,12 +390,18 @@ function ProgramInformation(props) {
                     You can change this later.
                                   </Text>
                 </Caption>
-                {/* <Text style={{padding: 3, color: '#0076d4', fontSize: 16}}>
-                                $0 - $10.99
-        </Text>*/}
 
-                <Slider step={1} value={programPrice} onValueChange={val => setProgramPrice(val)} thumbTintColor="#2196F3" minimumValue={0} maximumValue={25} />
-                <Text style={{ alignSelf: 'center', padding: 3, color: '#BDBDBD', fontSize: 15 }}>
+                  <Input 
+                    keyboardAppearance="light" 
+                    keyboardType="numeric" 
+                    returnKeyLabel="done" 
+                    returnKeyType="done" 
+                    onChangeText={(text) => setProgramPrice(text)} 
+                    value={programPrice} 
+                    containerStyle={{marginVertical: 15, borderWidth: 0.5, borderRadius: 10, width: '30%'}} 
+                    inputContainerStyle={{borderWidth: 0, borderBottomWidth: 0}} 
+                    inputStyle={{borderWidth: 0}} />
+                <Text style={{ alignSelf: 'flex-start', padding: 3, color: '#BDBDBD', fontSize: 15 }}>
                   Current: ${programPrice}
                 </Text>
                 <View>
@@ -398,18 +411,18 @@ function ProgramInformation(props) {
 
               <Divider style={styles.divider} />
 
-              <View style={{ padding: 10, marginVertical: 60 }}>
+              <View style={{ paddingHorizontal: 10, marginVertical: 60 }}>
                 <View>
 
                   <Text style={styles.questionText}>
                     5. Set a location for your sessions
                             </Text>
                   <Caption style={{ color: '#152230' }}>
-                    Where will your program sessions take place?
+                    Where will your program sessions take place? (Only for in person sessions)
                                 </Caption>
                 </View>
 
-                <Button mode="outlined" color="#23374d" title={programLocation} containerStyle={{ backgroundColor: '#23374d', width: '90%', alignSelf: 'center', margin: 5 }} onPress={() => openMapView()}>
+                <Button mode="contained" color="#23374d" title={programLocation} style={{elevation: 5, width: '90%', alignSelf: 'center', marginVertical: 15 }} onPress={() => openMapView()}>
                   <Text>
                     {programLocation}
                   </Text>
@@ -477,8 +490,8 @@ function ProgramInformation(props) {
 
 
               <View>
-                <Caption style={{ alignSelf: 'center', color: '#152230' }}>
-                  Note: After a client buys your program they will receive an automatic message from you.  It is up to you to set session times with your client.
+                <Caption style={{ marginHorizontal: 10, alignSelf: 'center', color: '#152230' }}>
+                  Note: After a user buys your program they will receive an automatic message from you.  It is up to you to set session times with your client if requested for in person training.
         </Caption>
                 <View>
                   <Text style={[styles.questionText, { fontSize: 15, paddingLeft: 10, paddingVertical: 5 }]}>
@@ -501,7 +514,7 @@ function ProgramInformation(props) {
 
                 </View>
               </View>
-            </ScrollView>
+            </KeyboardAwareScrollView>
 
             <LupaMapView
               initialRegionLatitude={currUserState.location.latitude}
@@ -553,7 +566,7 @@ function ProgramInformation(props) {
     switch (currIndex) {
       case 0:
         return (
-          <Button color="#374e66" style={{ borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={getNextView} mode="contained">
+          <Button color="#23374d" style={{ borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={getNextView} mode="contained">
             <Text>
               Next
               </Text>
@@ -562,7 +575,7 @@ function ProgramInformation(props) {
       case 1:
 
         return (
-          <Button color="#374e66" style={{ borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
+          <Button color="#23374d" style={{ borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
             <Text>
               Add Workouts
             </Text>
@@ -574,7 +587,7 @@ function ProgramInformation(props) {
   return (
     <View style={styles.root}>
       <SafeAreaView />
-      <ProgressBar progress={currIndex == 0 ? 1 : 0.5} color="#23374d" />
+      <ProgressBar progress={currIndex == 0 ? 0.5 : 1} color="#23374d" />
       {
         getViewDisplay()
       }
@@ -643,13 +656,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderBottomColor: '#212121',
     borderBottomWidth: 1,
-    paddingVertical: 15
+    paddingVertical: 15,
+    fontSize: 15,
+    fontFamily: 'HelveticaNeue',
+    fontWeight: '300'
   },
   questionText: {
-    fontFamily: "avenir-roman",
+    fontFamily: "HelveticaNeue-Bold",
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#374e66'
+    color: '#212121'
   }
 })
 
