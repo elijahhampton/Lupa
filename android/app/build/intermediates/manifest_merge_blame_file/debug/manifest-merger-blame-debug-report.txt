@@ -6,661 +6,661 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="21"
-8-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
+8-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml
 9        android:targetSdkVersion="27" />
-9-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml
+9-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
-11-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:4:5-67
-11-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:4:22-64
+11-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:4:5-67
+11-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:4:22-64
 12    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-12-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:5:5-77
-12-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:5:22-75
+12-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:5:5-77
+12-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:5:22-75
 13
 14    <!-- OPTIONAL PERMISSIONS, REMOVE WHATEVER YOU DO NOT NEED -->
 15    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
-15-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:8:5-75
-15-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:8:22-72
+15-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:8:5-75
+15-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:8:22-72
 16    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-16-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:9:5-80
-16-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:9:22-77
+16-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:9:5-80
+16-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:9:22-77
 17    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-17-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:10:5-75
-17-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:10:22-72
+17-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:10:5-75
+17-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:10:22-72
 18    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-18-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:11:5-74
-18-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:11:22-71
+18-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:11:5-74
+18-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:11:22-71
 19    <uses-permission android:name="android.permission.VIBRATE" />
-19-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:12:5-66
-19-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:12:22-63
+19-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:12:5-66
+19-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:12:22-63
 20    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-20-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:13:5-80
-20-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:13:22-77
+20-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:13:5-80
+20-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:13:22-77
 21
 22    <!-- These require runtime permissions on M -->
 23    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-23-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:16:5-81
-23-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:16:22-78
+23-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:16:5-81
+23-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:16:22-78
 24    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-24-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:17:5-79
-24-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:17:22-76
+24-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:17:5-79
+24-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:17:22-76
 25    <uses-permission android:name="android.permission.CAMERA" />
-25-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:18:5-65
-25-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:18:22-62
+25-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:18:5-65
+25-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:18:22-62
 26    <uses-permission android:name="android.permission.INTERNET" />
-26-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:4:5-67
-26-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:4:22-64
+26-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:4:5-67
+26-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:4:22-64
 27    <uses-permission android:name="android.permission.READ_CONTACTS" />
-27-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:20:5-72
-27-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:20:22-69
+27-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:20:5-72
+27-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:20:22-69
 28    <uses-permission android:name="android.permission.READ_CALENDAR" />
-28-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:21:5-72
-28-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:21:22-69
+28-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:21:5-72
+28-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:21:22-69
 29    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-29-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:22:5-73
-29-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:22:22-70
+29-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:22:5-73
+29-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:22:22-70
 30    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-30-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:23:5-80
-30-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:23:22-77
+30-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:23:5-80
+30-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:23:22-77
 31    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-31-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:24:5-71
-31-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:24:22-68
+31-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:24:5-71
+31-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:24:22-68
 32    <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH" />
-32-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:25:5-75
-32-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:25:22-72
+32-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:25:5-75
+32-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:25:22-72
 33    <uses-permission android:name="android.permission.LOCATION_WHEN_IN_USE" />
-33-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:26:9-83
-33-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:26:26-80
+33-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:26:9-83
+33-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:26:26-80
 34    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-34-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:27:5-81
-34-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:27:22-78
+34-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:27:5-81
+34-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:27:22-78
 35    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-35-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:28:5-73
-35-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:28:22-70
+35-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:28:5-73
+35-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:28:22-70
 36    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-36-->[:react-native-firebase_analytics] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/analytics/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-79
-36-->[:react-native-firebase_analytics] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/analytics/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:22-76
+36-->[:react-native-firebase_analytics] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\analytics\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:11:5-79
+36-->[:react-native-firebase_analytics] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\analytics\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:11:22-76
 37    <uses-permission android:name="android.permission.WAKE_LOCK" />
-37-->[:react-native-firebase_analytics] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/analytics/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:5-68
-37-->[:react-native-firebase_analytics] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/analytics/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:22-65
+37-->[:react-native-firebase_analytics] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\analytics\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:5-68
+37-->[:react-native-firebase_analytics] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\analytics\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:22-65
 38
 39    <uses-feature
-39-->[:react-native-camera] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-camera/android/build/intermediates/library_manifest/generalDebug/AndroidManifest.xml:11:5-13:36
+39-->[:react-native-camera] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-camera\android\build\intermediates\library_manifest\generalDebug\AndroidManifest.xml:11:5-13:36
 40        android:name="android.hardware.camera"
-40-->[:react-native-camera] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-camera/android/build/intermediates/library_manifest/generalDebug/AndroidManifest.xml:12:9-47
+40-->[:react-native-camera] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-camera\android\build\intermediates\library_manifest\generalDebug\AndroidManifest.xml:12:9-47
 41        android:required="false" />
-41-->[:react-native-camera] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-camera/android/build/intermediates/library_manifest/generalDebug/AndroidManifest.xml:13:9-33
+41-->[:react-native-camera] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-camera\android\build\intermediates\library_manifest\generalDebug\AndroidManifest.xml:13:9-33
 42    <uses-feature
-42-->[:react-native-camera] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-camera/android/build/intermediates/library_manifest/generalDebug/AndroidManifest.xml:14:5-16:36
+42-->[:react-native-camera] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-camera\android\build\intermediates\library_manifest\generalDebug\AndroidManifest.xml:14:5-16:36
 43        android:name="android.hardware.camera.autofocus"
-43-->[:react-native-camera] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-camera/android/build/intermediates/library_manifest/generalDebug/AndroidManifest.xml:15:9-57
+43-->[:react-native-camera] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-camera\android\build\intermediates\library_manifest\generalDebug\AndroidManifest.xml:15:9-57
 44        android:required="false" />
-44-->[:react-native-camera] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-camera/android/build/intermediates/library_manifest/generalDebug/AndroidManifest.xml:16:9-33
+44-->[:react-native-camera] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-camera\android\build\intermediates\library_manifest\generalDebug\AndroidManifest.xml:16:9-33
 45
 46    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-46-->[:react-native-os] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-os/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:5-76
-46-->[:react-native-os] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-os/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:22-73
+46-->[:react-native-os] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-os\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:5-76
+46-->[:react-native-os] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-os\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:22-73
 47    <uses-permission android:name="android.permission.STORAGE" />
-47-->[:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:5-66
-47-->[:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:22-63
+47-->[:expo-file-system] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo-file-system\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:15:5-66
+47-->[:expo-file-system] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo-file-system\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:15:22-63
 48    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-48-->[:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:5-77
-48-->[:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:22-74
+48-->[:expo-location] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo\node_modules\expo-location\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:5-77
+48-->[:expo-location] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo\node_modules\expo-location\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:22-74
 49    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" /> <!-- Required by older versions of Google Play services to create GCM registration tokens -->
-49-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:26:5-110
-49-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:26:22-107
+49-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:26:5-110
+49-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:26:22-107
 50    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-50-->[com.google.android.gms:play-services-gcm:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18a026114d3d6095d2c9ecf5216c56e4/jetified-play-services-gcm-17.0.0/AndroidManifest.xml:23:5-82
-50-->[com.google.android.gms:play-services-gcm:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18a026114d3d6095d2c9ecf5216c56e4/jetified-play-services-gcm-17.0.0/AndroidManifest.xml:23:22-79
+50-->[com.google.android.gms:play-services-gcm:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\18a026114d3d6095d2c9ecf5216c56e4\jetified-play-services-gcm-17.0.0\AndroidManifest.xml:23:5-82
+50-->[com.google.android.gms:play-services-gcm:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\18a026114d3d6095d2c9ecf5216c56e4\jetified-play-services-gcm-17.0.0\AndroidManifest.xml:23:22-79
 51
 52    <uses-feature
-52-->[com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:26:5-28:35
+52-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\037d25a56f9fc2c296d4452e209c63e3\jetified-play-services-maps-17.0.0\AndroidManifest.xml:26:5-28:35
 53        android:glEsVersion="0x00020000"
-53-->[com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:27:9-41
+53-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\037d25a56f9fc2c296d4452e209c63e3\jetified-play-services-maps-17.0.0\AndroidManifest.xml:27:9-41
 54        android:required="true" />
-54-->[com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:28:9-32
+54-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\037d25a56f9fc2c296d4452e209c63e3\jetified-play-services-maps-17.0.0\AndroidManifest.xml:28:9-32
 55
 56    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-56-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:15:5-98
-56-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:15:22-95
+56-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:15:5-98
+56-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:15:22-95
 57    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" /> <!-- for android -->
-57-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:16:5-94
-57-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:16:22-91
+57-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:16:5-94
+57-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:16:22-91
 58    <!-- <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/> -->
 59    <!-- <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS"/> -->
 60    <!-- <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" /> -->
 61    <!-- <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" /> -->
 62    <!-- for Samsung -->
 63    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
-63-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:19:5-86
-63-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:19:22-83
+63-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:19:5-86
+63-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:19:22-83
 64    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- for htc -->
-64-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:20:5-87
-64-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:20:22-84
+64-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:20:5-87
+64-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:20:22-84
 65    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
-65-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:23:5-81
-65-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:23:22-78
+65-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:23:5-81
+65-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:23:22-78
 66    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" /> <!-- for sony -->
-66-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:24:5-83
-66-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:24:22-80
+66-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:24:5-83
+66-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:24:22-80
 67    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
-67-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:27:5-88
-67-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:27:22-85
+67-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:27:5-88
+67-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:27:22-85
 68    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" /> <!-- for apex -->
-68-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:28:5-92
-68-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:28:22-89
+68-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:28:5-92
+68-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:28:22-89
 69    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" /> <!-- for solid -->
-69-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:31:5-84
-69-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:31:22-81
+69-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:31:5-84
+69-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:31:22-81
 70    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" /> <!-- for huawei -->
-70-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:34:5-83
-70-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:34:22-80
+70-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:34:5-83
+70-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:34:22-80
 71    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
-71-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:37:5-91
-71-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:37:22-88
+71-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:37:5-91
+71-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:37:22-88
 72    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
-72-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:38:5-92
-72-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:38:22-89
+72-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:38:5-92
+72-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:38:22-89
 73    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" /> <!-- for ZUK -->
-73-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:39:5-93
-73-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:39:22-90
+73-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:39:5-93
+73-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:39:22-90
 74    <uses-permission android:name="android.permission.READ_APP_BADGE" /> <!-- for OPPO -->
-74-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:42:5-73
-74-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:42:22-70
+74-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:42:5-73
+74-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:42:22-70
 75    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
-75-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:45:5-82
-75-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:45:22-79
+75-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:45:5-82
+75-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:45:22-79
 76    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" /> <!-- for EvMe -->
-76-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:46:5-83
-76-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:46:22-80
+76-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:46:5-83
+76-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:46:22-80
 77    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
-77-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:49:5-88
-77-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:49:22-85
+77-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:49:5-88
+77-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:49:22-85
 78    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" /> <!-- END OPTIONAL PERMISSIONS -->
-78-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:50:5-89
-78-->[me.leolin:ShortcutBadger:1.1.22] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/124cf9bc3e8b00c49b4d03fbc2312b2c/jetified-ShortcutBadger-1.1.22/AndroidManifest.xml:50:22-86
+78-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:50:5-89
+78-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\124cf9bc3e8b00c49b4d03fbc2312b2c\jetified-ShortcutBadger-1.1.22\AndroidManifest.xml:50:22-86
 79    <application
-79-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:31:5-53:19
+79-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:31:5-53:19
 80        android:name="com.lupa.MainApplication"
-80-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:32:7-38
+80-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:32:7-38
 81        android:allowBackup="false"
-81-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:36:7-34
+81-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:36:7-34
 82        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-82-->[androidx.core:core:1.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/6d32e09bde5b4b2ca6914d6e1f2d65d4/core-1.1.0/AndroidManifest.xml:24:18-86
+82-->[androidx.core:core:1.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\6d32e09bde5b4b2ca6914d6e1f2d65d4\core-1.1.0\AndroidManifest.xml:24:18-86
 83        android:debuggable="true"
 84        android:icon="@mipmap/ic_launcher"
-84-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:34:7-41
+84-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:34:7-41
 85        android:label="@string/app_name"
-85-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:33:7-39
+85-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:33:7-39
 86        android:roundIcon="@mipmap/ic_launcher_round"
-86-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:35:7-52
+86-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:35:7-52
 87        android:theme="@style/AppTheme" >
-87-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:37:7-38
+87-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:37:7-38
 88        <activity
-88-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:38:7-47:18
+88-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:38:7-47:18
 89            android:name="com.lupa.MainActivity"
-89-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:39:9-37
+89-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:39:9-37
 90            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-90-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:41:9-79
+90-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:41:9-79
 91            android:label="@string/app_name"
-91-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:40:9-41
+91-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:40:9-41
 92            android:windowSoftInputMode="adjustResize" >
-92-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:42:9-51
+92-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:42:9-51
 93            <intent-filter>
-93-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:43:9-46:25
+93-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:43:9-46:25
 94                <action android:name="android.intent.action.MAIN" />
-94-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:44:13-65
-94-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:44:21-62
+94-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:44:13-65
+94-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:44:21-62
 95
 96                <category android:name="android.intent.category.LAUNCHER" />
-96-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:45:13-73
-96-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:45:23-70
+96-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:45:13-73
+96-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:45:23-70
 97            </intent-filter>
 98        </activity>
 99        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-99-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:48:7-84
-99-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:48:17-81
+99-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:48:7-84
+99-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:48:17-81
 100        <activity
-100-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:49:7-52:12
+100-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:49:7-52:12
 101            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-101-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:50:3-66
+101-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:50:3-66
 102            android:theme="@style/Base.Theme.AppCompat" >
-102-->/Users/elijahhampton/Desktop/Lupa/android/app/src/main/AndroidManifest.xml:51:3-46
+102-->C:\Users\ozanj\Desktop\Code\Lupa\android\app\src\main\AndroidManifest.xml:51:3-46
 103        </activity>
 104
 105        <service android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingHeadlessService" />
-105-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:9-111
-105-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:18-108
+105-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:16:9-111
+105-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:16:18-108
 106        <service
-106-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:17:9-23:19
+106-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:17:9-23:19
 107            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingService"
-107-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:18:13-95
+107-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:18:13-95
 108            android:exported="false" >
-108-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:19:13-37
+108-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:19:13-37
 109            <intent-filter>
-109-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:20:13-22:29
+109-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:20:13-22:29
 110                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-110-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:21:17-78
-110-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:21:25-75
+110-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:21:17-78
+110-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:21:25-75
 111            </intent-filter>
 112        </service>
 113
 114        <receiver
-114-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:25:9-32:20
+114-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:25:9-32:20
 115            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingReceiver"
-115-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:26:13-96
+115-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:26:13-96
 116            android:exported="true"
-116-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:27:13-36
+116-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:27:13-36
 117            android:permission="com.google.android.c2dm.permission.SEND" >
-117-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:28:13-73
+117-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:28:13-73
 118            <intent-filter>
-118-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:29:13-31:29
+118-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:29:13-31:29
 119                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-119-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:30:17-81
-119-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:30:25-78
+119-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:30:17-81
+119-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:30:25-78
 120            </intent-filter>
 121        </receiver>
 122
 123        <meta-data
-123-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:34:9-36:36
+123-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:34:9-36:36
 124            android:name="firebase_messaging_auto_init_enabled"
-124-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:35:13-64
+124-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:35:13-64
 125            android:value="true" />
-125-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:36:13-33
+125-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:36:13-33
 126        <meta-data
-126-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:37:9-39:32
+126-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:37:9-39:32
 127            android:name="com.google.firebase.messaging.default_notification_channel_id"
-127-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:38:13-89
+127-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:38:13-89
 128            android:value="" />
-128-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:39:13-29
+128-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:39:13-29
 129        <meta-data
-129-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:40:9-42:47
+129-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:40:9-42:47
 130            android:name="com.google.firebase.messaging.default_notification_color"
-130-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:41:13-84
+130-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:41:13-84
 131            android:resource="@color/white" />
-131-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:42:13-44
+131-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:42:13-44
 132
 133        <activity
-133-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:9-16:75
+133-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:12:9-16:75
 134            android:name="com.gettipsi.stripe.OpenBrowserActivity"
-134-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:13-67
+134-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:13-67
 135            android:exported="false"
-135-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:14:13-37
+135-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:14:13-37
 136            android:launchMode="singleTask"
-136-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:13-44
+136-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:15:13-44
 137            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-137-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:13-72
+137-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:16:13-72
 138        <activity
-138-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:17:9-30:20
+138-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:17:9-30:20
 139            android:name="com.gettipsi.stripe.RedirectUriReceiver"
-139-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:18:13-67
+139-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:18:13-67
 140            android:exported="true"
-140-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:19:13-36
+140-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:19:13-36
 141            android:launchMode="singleTask"
-141-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:20:13-44
+141-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:20:13-44
 142            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
-142-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:21:13-83
+142-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:21:13-83
 143            <intent-filter>
-143-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:22:13-29:29
+143-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:22:13-29:29
 144                <action android:name="android.intent.action.VIEW" />
-144-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:23:17-69
-144-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:23:25-66
+144-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:23:17-69
+144-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:23:25-66
 145
 146                <category android:name="android.intent.category.DEFAULT" />
-146-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:25:17-76
-146-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:25:27-73
+146-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:25:17-76
+146-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:25:27-73
 147                <category android:name="android.intent.category.BROWSABLE" />
-147-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:26:17-78
-147-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:26:27-75
+147-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:26:17-78
+147-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:26:27-75
 148
 149                <data android:scheme="example" />
-149-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:28:17-50
-149-->[:tipsi-stripe] /Users/elijahhampton/Desktop/Lupa/node_modules/tipsi-stripe/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:28:23-47
+149-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:28:17-50
+149-->[:tipsi-stripe] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\tipsi-stripe\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:28:23-47
 150            </intent-filter>
 151        </activity>
 152
 153        <provider
-153-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:10:9-18:20
+153-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:10:9-18:20
 154            android:name="com.imagepicker.FileProvider"
-154-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:13-56
+154-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:11:13-56
 155            android:authorities="com.lupa.provider"
-155-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:13-60
+155-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:12:13-60
 156            android:exported="false"
-156-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:13-37
+156-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:13:13-37
 157            android:grantUriPermissions="true" >
-157-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:14:13-47
+157-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:14:13-47
 158            <meta-data
-158-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:13-17:58
+158-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:15:13-17:58
 159                android:name="android.support.FILE_PROVIDER_PATHS"
-159-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:17-67
+159-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:16:17-67
 160                android:resource="@xml/provider_paths" />
-160-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:17:17-55
+160-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:17:17-55
 161        </provider>
 162
 163        <activity
-163-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:12:9-16:20
+163-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:12:9-16:20
 164            android:name="com.stripe.android.view.AddSourceActivity"
-164-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:13:13-69
+164-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:13:13-69
 165            android:theme="@style/StripeDefaultTheme"
-165-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:14:13-54
+165-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:14:13-54
 166            android:windowSoftInputMode="stateVisible" >
-166-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:15:13-55
+166-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:15:13-55
 167        </activity>
 168        <activity
-168-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:17:9-20:20
+168-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:17:9-20:20
 169            android:name="com.stripe.android.view.PaymentMethodsActivity"
-169-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:18:13-74
+169-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:18:13-74
 170            android:theme="@style/StripeDefaultTheme" >
-170-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:19:13-54
+170-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:19:13-54
 171        </activity>
 172        <activity
-172-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:21:9-24:20
+172-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:21:9-24:20
 173            android:name="com.stripe.android.view.PaymentFlowActivity"
-173-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:22:13-71
+173-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:22:13-71
 174            android:theme="@style/StripeDefaultTheme" >
-174-->[com.stripe:stripe-android:8.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/de197e523f0889f59b78844a48d09f3d/jetified-stripe-android-8.1.0/AndroidManifest.xml:23:13-54
+174-->[com.stripe:stripe-android:8.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\431957d4094245462aca85adbe17deeb\jetified-stripe-android-8.1.0\AndroidManifest.xml:23:13-54
 175        </activity>
 176
 177        <provider
-177-->[:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:18:9-27:20
+177-->[:expo-file-system] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo-file-system\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:18:9-27:20
 178            android:name="expo.modules.filesystem.FileSystemFileProvider"
-178-->[:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:19:13-74
+178-->[:expo-file-system] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo-file-system\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:19:13-74
 179            android:authorities="com.lupa.FileSystemFileProvider"
-179-->[:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:20:13-74
+179-->[:expo-file-system] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo-file-system\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:20:13-74
 180            android:exported="false"
-180-->[:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:21:13-37
+180-->[:expo-file-system] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo-file-system\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:21:13-37
 181            android:grantUriPermissions="true" >
-181-->[:expo-file-system] /Users/elijahhampton/Desktop/Lupa/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:22:13-47
+181-->[:expo-file-system] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo-file-system\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:22:13-47
 182            <meta-data
-182-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:13-17:58
+182-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:15:13-17:58
 183                android:name="android.support.FILE_PROVIDER_PATHS"
-183-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:17-67
+183-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:16:17-67
 184                android:resource="@xml/file_system_provider_paths" />
-184-->[:react-native-image-picker] /Users/elijahhampton/Desktop/Lupa/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:17:17-55
+184-->[:react-native-image-picker] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\react-native-image-picker\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:17:17-55
 185        </provider>
 186
 187        <service
-187-->[:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:9-18:40
+187-->[:expo-location] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo\node_modules\expo-location\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:16:9-18:40
 188            android:name="expo.modules.location.services.LocationTaskService"
-188-->[:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:17:13-78
+188-->[:expo-location] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo\node_modules\expo-location\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:17:13-78
 189            android:exported="false" />
-189-->[:expo-location] /Users/elijahhampton/Desktop/Lupa/node_modules/expo/node_modules/expo-location/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:18:13-37
+189-->[:expo-location] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\expo\node_modules\expo-location\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:18:13-37
 190
 191        <receiver
-191-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:29:9-33:20
+191-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:29:9-33:20
 192            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
-192-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:30:13-85
+192-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:30:13-85
 193            android:enabled="true"
-193-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:31:13-35
+193-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:31:13-35
 194            android:exported="false" >
-194-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:32:13-37
+194-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:32:13-37
 195        </receiver>
 196        <receiver
-196-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:34:9-42:20
+196-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:34:9-42:20
 197            android:name="com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver"
-197-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:35:13-100
+197-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:35:13-100
 198            android:enabled="true"
-198-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:36:13-35
+198-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:36:13-35
 199            android:exported="true"
-199-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:37:13-36
+199-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:37:13-36
 200            android:permission="android.permission.INSTALL_PACKAGES" >
-200-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:38:13-69
+200-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:38:13-69
 201            <intent-filter>
-201-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:39:13-41:29
+201-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:39:13-41:29
 202                <action android:name="com.android.vending.INSTALL_REFERRER" />
-202-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:40:17-79
-202-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:40:25-76
+202-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:40:17-79
+202-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:40:25-76
 203            </intent-filter>
 204        </receiver>
 205
 206        <service
-206-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:44:9-47:40
+206-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:44:9-47:40
 207            android:name="com.google.android.gms.measurement.AppMeasurementService"
-207-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:45:13-84
+207-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:45:13-84
 208            android:enabled="true"
-208-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:46:13-35
+208-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:46:13-35
 209            android:exported="false" />
-209-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:47:13-37
+209-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:47:13-37
 210        <service
-210-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:48:9-52:72
+210-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:48:9-52:72
 211            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
-211-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:49:13-87
+211-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:49:13-87
 212            android:enabled="true"
-212-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:50:13-35
+212-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:50:13-35
 213            android:exported="false"
-213-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:51:13-37
+213-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:51:13-37
 214            android:permission="android.permission.BIND_JOB_SERVICE" />
-214-->[com.google.android.gms:play-services-measurement:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/794f34cce8eac1c85c79221ae327d2c0/jetified-play-services-measurement-17.2.2/AndroidManifest.xml:52:13-69
+214-->[com.google.android.gms:play-services-measurement:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\794f34cce8eac1c85c79221ae327d2c0\jetified-play-services-measurement-17.2.2\AndroidManifest.xml:52:13-69
 215        <service
-215-->[com.google.android.gms:play-services-measurement-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/51064a06482365b88e5ceb63d34456b4/jetified-play-services-measurement-api-17.2.2/AndroidManifest.xml:27:9-33:19
+215-->[com.google.android.gms:play-services-measurement-api:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\51064a06482365b88e5ceb63d34456b4\jetified-play-services-measurement-api-17.2.2\AndroidManifest.xml:27:9-33:19
 216            android:name="com.google.firebase.components.ComponentDiscoveryService"
-216-->[com.google.android.gms:play-services-measurement-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/51064a06482365b88e5ceb63d34456b4/jetified-play-services-measurement-api-17.2.2/AndroidManifest.xml:28:13-84
+216-->[com.google.android.gms:play-services-measurement-api:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\51064a06482365b88e5ceb63d34456b4\jetified-play-services-measurement-api-17.2.2\AndroidManifest.xml:28:13-84
 217            android:directBootAware="true"
-217-->[com.google.firebase:firebase-common:19.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/403d1fdad39cdec1050718a0a5ed2e89/jetified-firebase-common-19.3.0/AndroidManifest.xml:34:13-43
+217-->[com.google.firebase:firebase-common:19.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\403d1fdad39cdec1050718a0a5ed2e89\jetified-firebase-common-19.3.0\AndroidManifest.xml:34:13-43
 218            android:exported="false" >
-218-->[com.google.android.gms:play-services-measurement-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/51064a06482365b88e5ceb63d34456b4/jetified-play-services-measurement-api-17.2.2/AndroidManifest.xml:29:13-37
+218-->[com.google.android.gms:play-services-measurement-api:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\51064a06482365b88e5ceb63d34456b4\jetified-play-services-measurement-api-17.2.2\AndroidManifest.xml:29:13-37
 219            <meta-data
-219-->[com.google.android.gms:play-services-measurement-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/51064a06482365b88e5ceb63d34456b4/jetified-play-services-measurement-api-17.2.2/AndroidManifest.xml:30:13-32:85
+219-->[com.google.android.gms:play-services-measurement-api:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\51064a06482365b88e5ceb63d34456b4\jetified-play-services-measurement-api-17.2.2\AndroidManifest.xml:30:13-32:85
 220                android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar"
-220-->[com.google.android.gms:play-services-measurement-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/51064a06482365b88e5ceb63d34456b4/jetified-play-services-measurement-api-17.2.2/AndroidManifest.xml:31:17-139
+220-->[com.google.android.gms:play-services-measurement-api:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\51064a06482365b88e5ceb63d34456b4\jetified-play-services-measurement-api-17.2.2\AndroidManifest.xml:31:17-139
 221                android:value="com.google.firebase.components.ComponentRegistrar" />
-221-->[com.google.android.gms:play-services-measurement-api:17.2.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/51064a06482365b88e5ceb63d34456b4/jetified-play-services-measurement-api-17.2.2/AndroidManifest.xml:32:17-82
+221-->[com.google.android.gms:play-services-measurement-api:17.2.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\51064a06482365b88e5ceb63d34456b4\jetified-play-services-measurement-api-17.2.2\AndroidManifest.xml:32:17-82
 222            <meta-data
-222-->[com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:39:13-41:85
+222-->[com.google.firebase:firebase-messaging:20.2.4] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\10b56c60e5d9755fc3c7c0cc7db886dd\jetified-firebase-messaging-20.2.4\AndroidManifest.xml:39:13-41:85
 223                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
-223-->[com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:40:17-119
+223-->[com.google.firebase:firebase-messaging:20.2.4] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\10b56c60e5d9755fc3c7c0cc7db886dd\jetified-firebase-messaging-20.2.4\AndroidManifest.xml:40:17-119
 224                android:value="com.google.firebase.components.ComponentRegistrar" />
-224-->[com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:41:17-82
+224-->[com.google.firebase:firebase-messaging:20.2.4] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\10b56c60e5d9755fc3c7c0cc7db886dd\jetified-firebase-messaging-20.2.4\AndroidManifest.xml:41:17-82
 225            <meta-data
-225-->[com.google.firebase:firebase-perf:19.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9d1b92d4d104ab64a70dfd41aae43f08/jetified-firebase-perf-19.0.2/AndroidManifest.xml:34:13-36:85
+225-->[com.google.firebase:firebase-perf:19.0.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\9d1b92d4d104ab64a70dfd41aae43f08\jetified-firebase-perf-19.0.2\AndroidManifest.xml:34:13-36:85
 226                android:name="com.google.firebase.components:com.google.firebase.perf.FirebasePerfRegistrar"
-226-->[com.google.firebase:firebase-perf:19.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9d1b92d4d104ab64a70dfd41aae43f08/jetified-firebase-perf-19.0.2/AndroidManifest.xml:35:17-109
+226-->[com.google.firebase:firebase-perf:19.0.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\9d1b92d4d104ab64a70dfd41aae43f08\jetified-firebase-perf-19.0.2\AndroidManifest.xml:35:17-109
 227                android:value="com.google.firebase.components.ComponentRegistrar" />
-227-->[com.google.firebase:firebase-perf:19.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9d1b92d4d104ab64a70dfd41aae43f08/jetified-firebase-perf-19.0.2/AndroidManifest.xml:36:17-82
+227-->[com.google.firebase:firebase-perf:19.0.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\9d1b92d4d104ab64a70dfd41aae43f08\jetified-firebase-perf-19.0.2\AndroidManifest.xml:36:17-82
 228            <meta-data
-228-->[com.google.firebase:firebase-config:19.0.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/31997665adc7fc965cea04beb285550f/jetified-firebase-config-19.0.3/AndroidManifest.xml:32:13-34:85
+228-->[com.google.firebase:firebase-config:19.0.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\31997665adc7fc965cea04beb285550f\jetified-firebase-config-19.0.3\AndroidManifest.xml:32:13-34:85
 229                android:name="com.google.firebase.components:com.google.firebase.remoteconfig.RemoteConfigRegistrar"
-229-->[com.google.firebase:firebase-config:19.0.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/31997665adc7fc965cea04beb285550f/jetified-firebase-config-19.0.3/AndroidManifest.xml:33:17-117
+229-->[com.google.firebase:firebase-config:19.0.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\31997665adc7fc965cea04beb285550f\jetified-firebase-config-19.0.3\AndroidManifest.xml:33:17-117
 230                android:value="com.google.firebase.components.ComponentRegistrar" />
-230-->[com.google.firebase:firebase-config:19.0.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/31997665adc7fc965cea04beb285550f/jetified-firebase-config-19.0.3/AndroidManifest.xml:34:17-82
+230-->[com.google.firebase:firebase-config:19.0.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\31997665adc7fc965cea04beb285550f\jetified-firebase-config-19.0.3\AndroidManifest.xml:34:17-82
 231            <meta-data
-231-->[com.google.firebase:firebase-functions:19.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c6d3b23177de76b7be5d29997de6a9e4/jetified-firebase-functions-19.0.1/AndroidManifest.xml:18:13-20:85
+231-->[com.google.firebase:firebase-functions:19.0.1] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c6d3b23177de76b7be5d29997de6a9e4\jetified-firebase-functions-19.0.1\AndroidManifest.xml:18:13-20:85
 232                android:name="com.google.firebase.components:com.google.firebase.functions.FunctionsRegistrar"
-232-->[com.google.firebase:firebase-functions:19.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c6d3b23177de76b7be5d29997de6a9e4/jetified-firebase-functions-19.0.1/AndroidManifest.xml:19:17-111
+232-->[com.google.firebase:firebase-functions:19.0.1] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c6d3b23177de76b7be5d29997de6a9e4\jetified-firebase-functions-19.0.1\AndroidManifest.xml:19:17-111
 233                android:value="com.google.firebase.components.ComponentRegistrar" />
-233-->[com.google.firebase:firebase-functions:19.0.1] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c6d3b23177de76b7be5d29997de6a9e4/jetified-firebase-functions-19.0.1/AndroidManifest.xml:20:17-82
+233-->[com.google.firebase:firebase-functions:19.0.1] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c6d3b23177de76b7be5d29997de6a9e4\jetified-firebase-functions-19.0.1\AndroidManifest.xml:20:17-82
 234            <meta-data
-234-->[com.google.firebase:firebase-iid:20.2.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c011dd975363b35e2c40be0533fe5c87/jetified-firebase-iid-20.2.3/AndroidManifest.xml:32:13-34:85
+234-->[com.google.firebase:firebase-iid:20.2.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c011dd975363b35e2c40be0533fe5c87\jetified-firebase-iid-20.2.3\AndroidManifest.xml:32:13-34:85
 235                android:name="com.google.firebase.components:com.google.firebase.iid.Registrar"
-235-->[com.google.firebase:firebase-iid:20.2.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c011dd975363b35e2c40be0533fe5c87/jetified-firebase-iid-20.2.3/AndroidManifest.xml:33:17-96
+235-->[com.google.firebase:firebase-iid:20.2.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c011dd975363b35e2c40be0533fe5c87\jetified-firebase-iid-20.2.3\AndroidManifest.xml:33:17-96
 236                android:value="com.google.firebase.components.ComponentRegistrar" />
-236-->[com.google.firebase:firebase-iid:20.2.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c011dd975363b35e2c40be0533fe5c87/jetified-firebase-iid-20.2.3/AndroidManifest.xml:34:17-82
+236-->[com.google.firebase:firebase-iid:20.2.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c011dd975363b35e2c40be0533fe5c87\jetified-firebase-iid-20.2.3\AndroidManifest.xml:34:17-82
 237            <meta-data
-237-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:36:13-38:85
+237-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:36:13-38:85
 238                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
-238-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:37:17-109
+238-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:37:17-109
 239                android:value="com.google.firebase.components.ComponentRegistrar" />
-239-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:38:17-82
+239-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:38:17-82
 240            <meta-data
-240-->[com.google.firebase:firebase-storage:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2f4f6c3d6bb58d5d8a4d1de9ad2ec280/jetified-firebase-storage-19.1.0/AndroidManifest.xml:33:13-35:85
+240-->[com.google.firebase:firebase-storage:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\2f4f6c3d6bb58d5d8a4d1de9ad2ec280\jetified-firebase-storage-19.1.0\AndroidManifest.xml:33:13-35:85
 241                android:name="com.google.firebase.components:com.google.firebase.storage.StorageRegistrar"
-241-->[com.google.firebase:firebase-storage:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2f4f6c3d6bb58d5d8a4d1de9ad2ec280/jetified-firebase-storage-19.1.0/AndroidManifest.xml:34:17-107
+241-->[com.google.firebase:firebase-storage:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\2f4f6c3d6bb58d5d8a4d1de9ad2ec280\jetified-firebase-storage-19.1.0\AndroidManifest.xml:34:17-107
 242                android:value="com.google.firebase.components.ComponentRegistrar" />
-242-->[com.google.firebase:firebase-storage:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/2f4f6c3d6bb58d5d8a4d1de9ad2ec280/jetified-firebase-storage-19.1.0/AndroidManifest.xml:35:17-82
+242-->[com.google.firebase:firebase-storage:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\2f4f6c3d6bb58d5d8a4d1de9ad2ec280\jetified-firebase-storage-19.1.0\AndroidManifest.xml:35:17-82
 243            <meta-data
-243-->[com.google.firebase:firebase-firestore:21.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5037df5e0f237a2dd04f49a6d836dd01/jetified-firebase-firestore-21.3.0/AndroidManifest.xml:20:13-22:85
+243-->[com.google.firebase:firebase-firestore:21.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\5037df5e0f237a2dd04f49a6d836dd01\jetified-firebase-firestore-21.3.0\AndroidManifest.xml:20:13-22:85
 244                android:name="com.google.firebase.components:com.google.firebase.firestore.FirestoreRegistrar"
-244-->[com.google.firebase:firebase-firestore:21.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5037df5e0f237a2dd04f49a6d836dd01/jetified-firebase-firestore-21.3.0/AndroidManifest.xml:21:17-111
+244-->[com.google.firebase:firebase-firestore:21.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\5037df5e0f237a2dd04f49a6d836dd01\jetified-firebase-firestore-21.3.0\AndroidManifest.xml:21:17-111
 245                android:value="com.google.firebase.components.ComponentRegistrar" />
-245-->[com.google.firebase:firebase-firestore:21.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5037df5e0f237a2dd04f49a6d836dd01/jetified-firebase-firestore-21.3.0/AndroidManifest.xml:22:17-82
+245-->[com.google.firebase:firebase-firestore:21.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\5037df5e0f237a2dd04f49a6d836dd01\jetified-firebase-firestore-21.3.0\AndroidManifest.xml:22:17-82
 246            <meta-data
-246-->[com.google.firebase:firebase-database:19.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/d7bb10abadb8a1de76689b41881c8a18/jetified-firebase-database-19.2.0/AndroidManifest.xml:32:13-34:85
+246-->[com.google.firebase:firebase-database:19.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\d7bb10abadb8a1de76689b41881c8a18\jetified-firebase-database-19.2.0\AndroidManifest.xml:32:13-34:85
 247                android:name="com.google.firebase.components:com.google.firebase.database.DatabaseRegistrar"
-247-->[com.google.firebase:firebase-database:19.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/d7bb10abadb8a1de76689b41881c8a18/jetified-firebase-database-19.2.0/AndroidManifest.xml:33:17-109
+247-->[com.google.firebase:firebase-database:19.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\d7bb10abadb8a1de76689b41881c8a18\jetified-firebase-database-19.2.0\AndroidManifest.xml:33:17-109
 248                android:value="com.google.firebase.components.ComponentRegistrar" />
-248-->[com.google.firebase:firebase-database:19.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/d7bb10abadb8a1de76689b41881c8a18/jetified-firebase-database-19.2.0/AndroidManifest.xml:34:17-82
+248-->[com.google.firebase:firebase-database:19.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\d7bb10abadb8a1de76689b41881c8a18\jetified-firebase-database-19.2.0\AndroidManifest.xml:34:17-82
 249            <meta-data
-249-->[com.google.firebase:firebase-datatransport:17.0.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5b23293ab2382ad3464b19dc6c932b93/jetified-firebase-datatransport-17.0.3/AndroidManifest.xml:28:13-30:85
+249-->[com.google.firebase:firebase-datatransport:17.0.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\5b23293ab2382ad3464b19dc6c932b93\jetified-firebase-datatransport-17.0.3\AndroidManifest.xml:28:13-30:85
 250                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
-250-->[com.google.firebase:firebase-datatransport:17.0.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5b23293ab2382ad3464b19dc6c932b93/jetified-firebase-datatransport-17.0.3/AndroidManifest.xml:29:17-115
+250-->[com.google.firebase:firebase-datatransport:17.0.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\5b23293ab2382ad3464b19dc6c932b93\jetified-firebase-datatransport-17.0.3\AndroidManifest.xml:29:17-115
 251                android:value="com.google.firebase.components.ComponentRegistrar" />
-251-->[com.google.firebase:firebase-datatransport:17.0.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5b23293ab2382ad3464b19dc6c932b93/jetified-firebase-datatransport-17.0.3/AndroidManifest.xml:30:17-82
+251-->[com.google.firebase:firebase-datatransport:17.0.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\5b23293ab2382ad3464b19dc6c932b93\jetified-firebase-datatransport-17.0.3\AndroidManifest.xml:30:17-82
 252            <meta-data
-252-->[com.google.firebase:firebase-installations:16.3.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/11e3c60b1bdcc936ee6c9d9c92b9b040/jetified-firebase-installations-16.3.3/AndroidManifest.xml:17:13-19:85
+252-->[com.google.firebase:firebase-installations:16.3.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\11e3c60b1bdcc936ee6c9d9c92b9b040\jetified-firebase-installations-16.3.3\AndroidManifest.xml:17:13-19:85
 253                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
-253-->[com.google.firebase:firebase-installations:16.3.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/11e3c60b1bdcc936ee6c9d9c92b9b040/jetified-firebase-installations-16.3.3/AndroidManifest.xml:18:17-127
+253-->[com.google.firebase:firebase-installations:16.3.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\11e3c60b1bdcc936ee6c9d9c92b9b040\jetified-firebase-installations-16.3.3\AndroidManifest.xml:18:17-127
 254                android:value="com.google.firebase.components.ComponentRegistrar" />
-254-->[com.google.firebase:firebase-installations:16.3.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/11e3c60b1bdcc936ee6c9d9c92b9b040/jetified-firebase-installations-16.3.3/AndroidManifest.xml:19:17-82
+254-->[com.google.firebase:firebase-installations:16.3.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\11e3c60b1bdcc936ee6c9d9c92b9b040\jetified-firebase-installations-16.3.3\AndroidManifest.xml:19:17-82
 255            <meta-data
-255-->[com.google.firebase:firebase-abt:19.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/25e675f562565abbbce46bc50c1fb173/jetified-firebase-abt-19.0.0/AndroidManifest.xml:13:13-15:85
+255-->[com.google.firebase:firebase-abt:19.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\25e675f562565abbbce46bc50c1fb173\jetified-firebase-abt-19.0.0\AndroidManifest.xml:13:13-15:85
 256                android:name="com.google.firebase.components:com.google.firebase.abt.component.AbtRegistrar"
-256-->[com.google.firebase:firebase-abt:19.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/25e675f562565abbbce46bc50c1fb173/jetified-firebase-abt-19.0.0/AndroidManifest.xml:14:17-109
+256-->[com.google.firebase:firebase-abt:19.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\25e675f562565abbbce46bc50c1fb173\jetified-firebase-abt-19.0.0\AndroidManifest.xml:14:17-109
 257                android:value="com.google.firebase.components.ComponentRegistrar" />
-257-->[com.google.firebase:firebase-abt:19.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/25e675f562565abbbce46bc50c1fb173/jetified-firebase-abt-19.0.0/AndroidManifest.xml:15:17-82
+257-->[com.google.firebase:firebase-abt:19.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\25e675f562565abbbce46bc50c1fb173\jetified-firebase-abt-19.0.0\AndroidManifest.xml:15:17-82
 258        </service>
 259        <!--
 260             FirebaseMessagingService performs security checks at runtime,
 261             but set to not exported to explicitly avoid allowing another app to call it.
 262        -->
 263        <service
-263-->[com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:28:9-35:19
+263-->[com.google.firebase:firebase-messaging:20.2.4] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\10b56c60e5d9755fc3c7c0cc7db886dd\jetified-firebase-messaging-20.2.4\AndroidManifest.xml:28:9-35:19
 264            android:name="com.google.firebase.messaging.FirebaseMessagingService"
-264-->[com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:29:13-82
+264-->[com.google.firebase:firebase-messaging:20.2.4] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\10b56c60e5d9755fc3c7c0cc7db886dd\jetified-firebase-messaging-20.2.4\AndroidManifest.xml:29:13-82
 265            android:directBootAware="true"
-265-->[com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:30:13-43
+265-->[com.google.firebase:firebase-messaging:20.2.4] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\10b56c60e5d9755fc3c7c0cc7db886dd\jetified-firebase-messaging-20.2.4\AndroidManifest.xml:30:13-43
 266            android:exported="false" >
-266-->[com.google.firebase:firebase-messaging:20.2.4] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/10b56c60e5d9755fc3c7c0cc7db886dd/jetified-firebase-messaging-20.2.4/AndroidManifest.xml:31:13-37
+266-->[com.google.firebase:firebase-messaging:20.2.4] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\10b56c60e5d9755fc3c7c0cc7db886dd\jetified-firebase-messaging-20.2.4\AndroidManifest.xml:31:13-37
 267            <intent-filter android:priority="-500" >
-267-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:20:13-22:29
+267-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:20:13-22:29
 268                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-268-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:21:17-78
-268-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:21:25-75
+268-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:21:17-78
+268-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:21:25-75
 269            </intent-filter>
 270        </service>
 271
 272        <provider
-272-->[com.google.firebase:firebase-perf:19.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9d1b92d4d104ab64a70dfd41aae43f08/jetified-firebase-perf-19.0.2/AndroidManifest.xml:25:9-29:39
+272-->[com.google.firebase:firebase-perf:19.0.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\9d1b92d4d104ab64a70dfd41aae43f08\jetified-firebase-perf-19.0.2\AndroidManifest.xml:25:9-29:39
 273            android:name="com.google.firebase.perf.provider.FirebasePerfProvider"
-273-->[com.google.firebase:firebase-perf:19.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9d1b92d4d104ab64a70dfd41aae43f08/jetified-firebase-perf-19.0.2/AndroidManifest.xml:26:13-82
+273-->[com.google.firebase:firebase-perf:19.0.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\9d1b92d4d104ab64a70dfd41aae43f08\jetified-firebase-perf-19.0.2\AndroidManifest.xml:26:13-82
 274            android:authorities="com.lupa.firebaseperfprovider"
-274-->[com.google.firebase:firebase-perf:19.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9d1b92d4d104ab64a70dfd41aae43f08/jetified-firebase-perf-19.0.2/AndroidManifest.xml:27:13-72
+274-->[com.google.firebase:firebase-perf:19.0.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\9d1b92d4d104ab64a70dfd41aae43f08\jetified-firebase-perf-19.0.2\AndroidManifest.xml:27:13-72
 275            android:exported="false"
-275-->[com.google.firebase:firebase-perf:19.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9d1b92d4d104ab64a70dfd41aae43f08/jetified-firebase-perf-19.0.2/AndroidManifest.xml:28:13-37
+275-->[com.google.firebase:firebase-perf:19.0.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\9d1b92d4d104ab64a70dfd41aae43f08\jetified-firebase-perf-19.0.2\AndroidManifest.xml:28:13-37
 276            android:initOrder="101" />
-276-->[com.google.firebase:firebase-perf:19.0.2] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/9d1b92d4d104ab64a70dfd41aae43f08/jetified-firebase-perf-19.0.2/AndroidManifest.xml:29:13-36
+276-->[com.google.firebase:firebase-perf:19.0.2] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\9d1b92d4d104ab64a70dfd41aae43f08\jetified-firebase-perf-19.0.2\AndroidManifest.xml:29:13-36
 277
 278        <receiver
-278-->[com.google.firebase:firebase-iid:20.2.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c011dd975363b35e2c40be0533fe5c87/jetified-firebase-iid-20.2.3/AndroidManifest.xml:37:9-44:20
+278-->[com.google.firebase:firebase-iid:20.2.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c011dd975363b35e2c40be0533fe5c87\jetified-firebase-iid-20.2.3\AndroidManifest.xml:37:9-44:20
 279            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
-279-->[com.google.firebase:firebase-iid:20.2.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c011dd975363b35e2c40be0533fe5c87/jetified-firebase-iid-20.2.3/AndroidManifest.xml:38:13-78
+279-->[com.google.firebase:firebase-iid:20.2.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c011dd975363b35e2c40be0533fe5c87\jetified-firebase-iid-20.2.3\AndroidManifest.xml:38:13-78
 280            android:exported="true"
-280-->[com.google.firebase:firebase-iid:20.2.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c011dd975363b35e2c40be0533fe5c87/jetified-firebase-iid-20.2.3/AndroidManifest.xml:39:13-36
+280-->[com.google.firebase:firebase-iid:20.2.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c011dd975363b35e2c40be0533fe5c87\jetified-firebase-iid-20.2.3\AndroidManifest.xml:39:13-36
 281            android:permission="com.google.android.c2dm.permission.SEND" >
-281-->[com.google.firebase:firebase-iid:20.2.3] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/c011dd975363b35e2c40be0533fe5c87/jetified-firebase-iid-20.2.3/AndroidManifest.xml:40:13-73
+281-->[com.google.firebase:firebase-iid:20.2.3] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\c011dd975363b35e2c40be0533fe5c87\jetified-firebase-iid-20.2.3\AndroidManifest.xml:40:13-73
 282            <intent-filter>
-282-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:29:13-31:29
+282-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:29:13-31:29
 283                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-283-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:30:17-81
-283-->[:react-native-firebase_messaging] /Users/elijahhampton/Desktop/Lupa/node_modules/@react-native-firebase/messaging/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:30:25-78
+283-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:30:17-81
+283-->[:react-native-firebase_messaging] C:\Users\ozanj\Desktop\Code\Lupa\node_modules\@react-native-firebase\messaging\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:30:25-78
 284            </intent-filter>
 285        </receiver>
 286
 287        <activity
-287-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:24:9-31:50
+287-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:24:9-31:50
 288            android:name="com.google.firebase.auth.internal.FederatedSignInActivity"
-288-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:25:13-85
+288-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:25:13-85
 289            android:excludeFromRecents="true"
-289-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:26:13-46
+289-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:26:13-46
 290            android:exported="true"
-290-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:27:13-36
+290-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:27:13-36
 291            android:launchMode="singleTask"
-291-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:28:13-44
+291-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:28:13-44
 292            android:permission="com.google.firebase.auth.api.gms.permission.LAUNCH_FEDERATED_SIGN_IN"
-292-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:29:13-102
+292-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:29:13-102
 293            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-293-->[com.google.firebase:firebase-auth:19.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/e19ca6e8a770c639652c68b222077a3d/jetified-firebase-auth-19.1.0/AndroidManifest.xml:30:13-72
+293-->[com.google.firebase:firebase-auth:19.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\e19ca6e8a770c639652c68b222077a3d\jetified-firebase-auth-19.1.0\AndroidManifest.xml:30:13-72
 294
 295        <provider
-295-->[com.google.firebase:firebase-common:19.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/403d1fdad39cdec1050718a0a5ed2e89/jetified-firebase-common-19.3.0/AndroidManifest.xml:26:9-30:39
+295-->[com.google.firebase:firebase-common:19.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\403d1fdad39cdec1050718a0a5ed2e89\jetified-firebase-common-19.3.0\AndroidManifest.xml:26:9-30:39
 296            android:name="com.google.firebase.provider.FirebaseInitProvider"
-296-->[com.google.firebase:firebase-common:19.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/403d1fdad39cdec1050718a0a5ed2e89/jetified-firebase-common-19.3.0/AndroidManifest.xml:27:13-77
+296-->[com.google.firebase:firebase-common:19.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\403d1fdad39cdec1050718a0a5ed2e89\jetified-firebase-common-19.3.0\AndroidManifest.xml:27:13-77
 297            android:authorities="com.lupa.firebaseinitprovider"
-297-->[com.google.firebase:firebase-common:19.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/403d1fdad39cdec1050718a0a5ed2e89/jetified-firebase-common-19.3.0/AndroidManifest.xml:28:13-72
+297-->[com.google.firebase:firebase-common:19.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\403d1fdad39cdec1050718a0a5ed2e89\jetified-firebase-common-19.3.0\AndroidManifest.xml:28:13-72
 298            android:exported="false"
-298-->[com.google.firebase:firebase-common:19.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/403d1fdad39cdec1050718a0a5ed2e89/jetified-firebase-common-19.3.0/AndroidManifest.xml:29:13-37
+298-->[com.google.firebase:firebase-common:19.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\403d1fdad39cdec1050718a0a5ed2e89\jetified-firebase-common-19.3.0\AndroidManifest.xml:29:13-37
 299            android:initOrder="100" /> <!-- Needs to be explicitly declared on P+ -->
-299-->[com.google.firebase:firebase-common:19.3.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/403d1fdad39cdec1050718a0a5ed2e89/jetified-firebase-common-19.3.0/AndroidManifest.xml:30:13-36
+299-->[com.google.firebase:firebase-common:19.3.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\403d1fdad39cdec1050718a0a5ed2e89\jetified-firebase-common-19.3.0\AndroidManifest.xml:30:13-36
 300        <uses-library
-300-->[com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:33:9-35:40
+300-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\037d25a56f9fc2c296d4452e209c63e3\jetified-play-services-maps-17.0.0\AndroidManifest.xml:33:9-35:40
 301            android:name="org.apache.http.legacy"
-301-->[com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:34:13-50
+301-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\037d25a56f9fc2c296d4452e209c63e3\jetified-play-services-maps-17.0.0\AndroidManifest.xml:34:13-50
 302            android:required="false" />
-302-->[com.google.android.gms:play-services-maps:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/037d25a56f9fc2c296d4452e209c63e3/jetified-play-services-maps-17.0.0/AndroidManifest.xml:35:13-37
+302-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\037d25a56f9fc2c296d4452e209c63e3\jetified-play-services-maps-17.0.0\AndroidManifest.xml:35:13-37
 303
 304        <activity
-304-->[com.google.android.gms:play-services-base:17.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f3aea537f7817dc1eaeca3bc08179ecb/jetified-play-services-base-17.1.0/AndroidManifest.xml:23:9-26:75
+304-->[com.google.android.gms:play-services-base:17.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\f3aea537f7817dc1eaeca3bc08179ecb\jetified-play-services-base-17.1.0\AndroidManifest.xml:23:9-26:75
 305            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-305-->[com.google.android.gms:play-services-base:17.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f3aea537f7817dc1eaeca3bc08179ecb/jetified-play-services-base-17.1.0/AndroidManifest.xml:24:13-79
+305-->[com.google.android.gms:play-services-base:17.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\f3aea537f7817dc1eaeca3bc08179ecb\jetified-play-services-base-17.1.0\AndroidManifest.xml:24:13-79
 306            android:exported="false"
-306-->[com.google.android.gms:play-services-base:17.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f3aea537f7817dc1eaeca3bc08179ecb/jetified-play-services-base-17.1.0/AndroidManifest.xml:25:13-37
+306-->[com.google.android.gms:play-services-base:17.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\f3aea537f7817dc1eaeca3bc08179ecb\jetified-play-services-base-17.1.0\AndroidManifest.xml:25:13-37
 307            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-307-->[com.google.android.gms:play-services-base:17.1.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/f3aea537f7817dc1eaeca3bc08179ecb/jetified-play-services-base-17.1.0/AndroidManifest.xml:26:13-72
+307-->[com.google.android.gms:play-services-base:17.1.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\f3aea537f7817dc1eaeca3bc08179ecb\jetified-play-services-base-17.1.0\AndroidManifest.xml:26:13-72
 308
 309        <meta-data
-309-->[com.google.android.gms:play-services-basement:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18537f21500cd17c1f5154d04512bb6f/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
+309-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\18537f21500cd17c1f5154d04512bb6f\jetified-play-services-basement-17.0.0\AndroidManifest.xml:23:9-25:69
 310            android:name="com.google.android.gms.version"
-310-->[com.google.android.gms:play-services-basement:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18537f21500cd17c1f5154d04512bb6f/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
+310-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\18537f21500cd17c1f5154d04512bb6f\jetified-play-services-basement-17.0.0\AndroidManifest.xml:24:13-58
 311            android:value="@integer/google_play_services_version" />
-311-->[com.google.android.gms:play-services-basement:17.0.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/18537f21500cd17c1f5154d04512bb6f/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
+311-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\18537f21500cd17c1f5154d04512bb6f\jetified-play-services-basement-17.0.0\AndroidManifest.xml:25:13-66
 312
 313        <service
-313-->[com.google.android.datatransport:transport-backend-cct:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8c0aacdca41d3e1cc54737833111248f/jetified-transport-backend-cct-2.2.0/AndroidManifest.xml:29:9-35:19
+313-->[com.google.android.datatransport:transport-backend-cct:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8c0aacdca41d3e1cc54737833111248f\jetified-transport-backend-cct-2.2.0\AndroidManifest.xml:29:9-35:19
 314            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
-314-->[com.google.android.datatransport:transport-backend-cct:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8c0aacdca41d3e1cc54737833111248f/jetified-transport-backend-cct-2.2.0/AndroidManifest.xml:30:13-103
+314-->[com.google.android.datatransport:transport-backend-cct:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8c0aacdca41d3e1cc54737833111248f\jetified-transport-backend-cct-2.2.0\AndroidManifest.xml:30:13-103
 315            android:exported="false" >
-315-->[com.google.android.datatransport:transport-backend-cct:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8c0aacdca41d3e1cc54737833111248f/jetified-transport-backend-cct-2.2.0/AndroidManifest.xml:31:13-37
+315-->[com.google.android.datatransport:transport-backend-cct:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8c0aacdca41d3e1cc54737833111248f\jetified-transport-backend-cct-2.2.0\AndroidManifest.xml:31:13-37
 316            <meta-data
-316-->[com.google.android.datatransport:transport-backend-cct:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8c0aacdca41d3e1cc54737833111248f/jetified-transport-backend-cct-2.2.0/AndroidManifest.xml:32:13-34:39
+316-->[com.google.android.datatransport:transport-backend-cct:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8c0aacdca41d3e1cc54737833111248f\jetified-transport-backend-cct-2.2.0\AndroidManifest.xml:32:13-34:39
 317                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
-317-->[com.google.android.datatransport:transport-backend-cct:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8c0aacdca41d3e1cc54737833111248f/jetified-transport-backend-cct-2.2.0/AndroidManifest.xml:33:17-94
+317-->[com.google.android.datatransport:transport-backend-cct:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8c0aacdca41d3e1cc54737833111248f\jetified-transport-backend-cct-2.2.0\AndroidManifest.xml:33:17-94
 318                android:value="cct" />
-318-->[com.google.android.datatransport:transport-backend-cct:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8c0aacdca41d3e1cc54737833111248f/jetified-transport-backend-cct-2.2.0/AndroidManifest.xml:34:17-36
+318-->[com.google.android.datatransport:transport-backend-cct:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8c0aacdca41d3e1cc54737833111248f\jetified-transport-backend-cct-2.2.0\AndroidManifest.xml:34:17-36
 319        </service>
 320        <service
-320-->[com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:26:9-30:19
+320-->[com.google.android.datatransport:transport-runtime:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\a35eded83a71b6b10677e26a84e33991\jetified-transport-runtime-2.2.0\AndroidManifest.xml:26:9-30:19
 321            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
-321-->[com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:27:13-117
+321-->[com.google.android.datatransport:transport-runtime:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\a35eded83a71b6b10677e26a84e33991\jetified-transport-runtime-2.2.0\AndroidManifest.xml:27:13-117
 322            android:exported="false"
-322-->[com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:28:13-37
+322-->[com.google.android.datatransport:transport-runtime:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\a35eded83a71b6b10677e26a84e33991\jetified-transport-runtime-2.2.0\AndroidManifest.xml:28:13-37
 323            android:permission="android.permission.BIND_JOB_SERVICE" >
-323-->[com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:29:13-69
+323-->[com.google.android.datatransport:transport-runtime:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\a35eded83a71b6b10677e26a84e33991\jetified-transport-runtime-2.2.0\AndroidManifest.xml:29:13-69
 324        </service>
 325
 326        <receiver
-326-->[com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:32:9-34:40
+326-->[com.google.android.datatransport:transport-runtime:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\a35eded83a71b6b10677e26a84e33991\jetified-transport-runtime-2.2.0\AndroidManifest.xml:32:9-34:40
 327            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
-327-->[com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:33:13-132
+327-->[com.google.android.datatransport:transport-runtime:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\a35eded83a71b6b10677e26a84e33991\jetified-transport-runtime-2.2.0\AndroidManifest.xml:33:13-132
 328            android:exported="false" />
-328-->[com.google.android.datatransport:transport-runtime:2.2.0] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/a35eded83a71b6b10677e26a84e33991/jetified-transport-runtime-2.2.0/AndroidManifest.xml:34:13-37
+328-->[com.google.android.datatransport:transport-runtime:2.2.0] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\a35eded83a71b6b10677e26a84e33991\jetified-transport-runtime-2.2.0\AndroidManifest.xml:34:13-37
 329
 330        <service
-330-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:19:9-21:40
+330-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:19:9-21:40
 331            android:name="io.nlopez.smartlocation.activity.providers.ActivityGooglePlayServicesProvider$ActivityRecognitionService"
-331-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:20:13-132
+331-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:20:13-132
 332            android:exported="false" />
-332-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:21:13-37
+332-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:21:13-37
 333        <service
-333-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:22:9-24:40
+333-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:22:9-24:40
 334            android:name="io.nlopez.smartlocation.geofencing.providers.GeofencingGooglePlayServicesProvider$GeofencingService"
-334-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:23:13-127
+334-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:23:13-127
 335            android:exported="false" />
-335-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:24:13-37
+335-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:24:13-37
 336        <service
-336-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:25:9-27:40
+336-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:25:9-27:40
 337            android:name="io.nlopez.smartlocation.geocoding.providers.AndroidGeocodingProvider$AndroidGeocodingService"
-337-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:26:13-120
+337-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:26:13-120
 338            android:exported="false" />
-338-->[io.nlopez.smartlocation:library:3.2.11] /Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/4f3afffeff2697039c681581670d945b/jetified-library-3.2.11/AndroidManifest.xml:27:13-37
+338-->[io.nlopez.smartlocation:library:3.2.11] C:\Users\ozanj\.gradle\caches\transforms-2\files-2.1\8656e119d716e0690d9d8da1e1568d90\jetified-library-3.2.11\AndroidManifest.xml:27:13-37
 339    </application>
 340
 341</manifest>
