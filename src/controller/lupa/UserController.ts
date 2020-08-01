@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 import LUPA_DB, { LUPA_AUTH, FIRESTORE_INSTANCE, LUPA_DB_FIREBASE, Fire, FirebaseStorageBucket } from '../firebase/firebase.js';
@@ -16,7 +16,7 @@ const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 const tmpIndex = algoliaUsersIndex.initIndex("tempDev_Users");
- 
+
 const programsIndex = algoliaUsersIndex.initIndex("dev_Programs");
 const tmpProgramsIndex = algoliaUsersIndex.initIndex("tempDev_Programs");
 
@@ -33,7 +33,7 @@ export default class UserController {
     private fbStorage = new FirebaseStorageBucket();
 
     private constructor() {
-    
+
     }
 
     public static getInstance = () => {
@@ -477,7 +477,7 @@ export default class UserController {
                 /* For now we don't handle this year */
                 break;
             case UserCollectionFields.WORKOUT_LOG:
-            let updatedData = []    
+            let updatedData = []
 
             await currentUserDocument.get().then(snapshot => {
                 updatedData = snapshot.data().workout_log;
@@ -486,8 +486,8 @@ export default class UserController {
 
             if (optionalData == 'add') {
                     updatedData.push(value);
-            }    
-            
+            }
+
             await currentUserDocument.update({
                     workout_log: updatedData
                 });
@@ -514,7 +514,7 @@ export default class UserController {
                 })
 
                 break;
-                
+
         }
     }
 
@@ -538,9 +538,9 @@ export default class UserController {
                         await LUPA_DB.collection('programs').doc(userResult.programs[i]).get().then(snapshot => {
                             docData = snapshot.data()
                         })
-                        
+
                         if (typeof(docData) == 'undefined' || docData.program_name == "") {
-                            
+
                         }
                         else
                         {
@@ -549,7 +549,7 @@ export default class UserController {
                     }
                 }
             }
-            
+
         } catch(error) {
             LOG_ERROR('UserController.ts', 'Caught exception in getUserInformationByUUID', error)
             const userData = getLupaUserStructure()
@@ -672,9 +672,9 @@ export default class UserController {
             await USER_COLLECTION.where('isTrainer', '==', true).get().then(docs => {
                 docs.forEach(querySnapshot => {
                     let snapshot = querySnapshot.data();
-         
+
                     if (typeof(snapshot) == 'undefined' || snapshot.display_name == ""){
-                    
+
                     }
                     else
                     {
@@ -697,14 +697,14 @@ export default class UserController {
 
     indexProgramsIntoAlgolia = async () => {
         let records = [], program = undefined;
-        
+
         await PROGRAMS_COLLECTION.get().then(docs => {
             docs.forEach(doc => {
                 //Load user data from document
                 program = doc.data();
 
                 if (program.program_name == "" || typeof(program) == 'undefined') {
-                   
+
                 } else  {
                     program.objectID = program.program_structure_uuid
                     records.push(program);
@@ -782,7 +782,7 @@ export default class UserController {
                     console.log('big error: ' + err);
                 }
 
-        
+
             });
         });
     }
@@ -928,7 +928,7 @@ export default class UserController {
                             data = doc.data();
                             if (data.user_uuid == undefined  || data.user_uuid == "" || data == undefined || typeof(data) != 'object')
                             {
-                               
+
                                 return;
                             }
                             nearbyUsers.push(data);
@@ -1017,7 +1017,7 @@ export default class UserController {
                 for (var i = 0; i < hits.length; ++i) {
                     //if we come across the current user's uuid then skip
                     if (hits[i].user_uuid == this.getCurrentUserUUID() || hits[i].isTrainer != true)
-                    {   
+                    {
                         continue;
                     }
                     let locationHighlightedResult = hits[i]._highlightResult;
@@ -1070,9 +1070,9 @@ export default class UserController {
         await this.updateCurrentUser('programs', uuid, 'add');
     }
 
-    arrayRemove(arr, value) { 
+    arrayRemove(arr, value) {
         return arr.filter(function(ele)
-        { return ele != value; 
+        { return ele != value;
         });
     }
 
@@ -1108,31 +1108,31 @@ export default class UserController {
         let uuid = await this.getCurrentUser().uid;
 
         if (typeof(uuid) == 'undefined') {
-     
+
             return Promise.resolve([])
         }
-        
+
         try {
-   
+
             await USER_COLLECTION.doc(uuid).get().then(snapshot => {
                 temp = snapshot.data();
              });
-     
+
              programUUIDS = temp.programs;
-       
+
              for (let i = 0; i < programUUIDS.length; i++)
              {
                  await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
                      temp = snapshot.data();
                  })
 
-     
+
                  try {
                      if (typeof(temp) != 'undefined')
                      {
                          if (temp.program_name != "")
                          {
-                        
+
                             await programsData.push(temp)
                          }
                      }
@@ -1148,7 +1148,7 @@ export default class UserController {
             LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
             programsData = [];
         }
-        
+
 
       return Promise.resolve(programsData);
       //return Promise.resolve([]);
@@ -1180,7 +1180,7 @@ export default class UserController {
                 let programParticipants = programData.program_participants;
 
                 for(let i = 0; i < programParticipants.length; i++)
-                {   
+                {
                     //Get a reference to the current users document
                     const currUserRef = await USER_COLLECTION.doc(userUUID);
 
@@ -1253,7 +1253,7 @@ export default class UserController {
 
         //add uuid of program to user programs arr
         await this.updateCurrentUser('programs', workoutData.program_structure_uuid, 'add');
-    
+
          let payload;
          await PROGRAMS_COLLECTION.doc(workoutData.program_structure_uuid).get().then(snapshot => {
              payload = snapshot.data();
@@ -1265,7 +1265,7 @@ export default class UserController {
         }
 
     handleSendUserProgram = async (currUserData, userList, program) => {
-      
+
       try {
 
       let receivedProgramNotificationStructure = {
@@ -1285,7 +1285,7 @@ export default class UserController {
         }
 
         for (let i = 0; i < userList.length; i++)
-        {   
+        {
            await USER_COLLECTION.doc(userList[i]).get().then(snapshot => {
                 userNotifications = snapshot.data().notifications;
             })
@@ -1298,7 +1298,7 @@ export default class UserController {
     } catch(err) {
         alert(err)
     }
-        
+
     }
 
     //user one is the sender
@@ -1462,7 +1462,7 @@ export default class UserController {
         await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
             program_participants: updatedParticipants,
         });
- 
+
         //setup trainer and user chat channel
         if (currUserUUID.charAt(0) < programOwnerUUID.charAt(0)) {
             GENERATED_CHAT_UUID = currUserUUID + programOwnerUUID;
@@ -1522,14 +1522,14 @@ export default class UserController {
                     chats: otherUserChats
                 })
             }
-      
+
 }
         } catch(err) {
             alert(err)
-        }   
+        }
 
         /** **************/
-         
+
 
         try {
                      //init Fire
@@ -1563,7 +1563,7 @@ export default class UserController {
                 })
                 return Promise.resolve(updatedProgramSnapshot);
       }
-    
+
     }
 
 //me

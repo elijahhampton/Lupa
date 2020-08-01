@@ -124,9 +124,9 @@ class LupaHome extends React.Component {
 
     setupComponent = async () => {
         await this.loadFeaturedPrograms();
-        await this.loadFeaturedTrainers()
-        //await this.loadTopPicks()
-        //await this.loadRecentlyAddedPrograms
+        await this.loadFeaturedTrainers();
+        await this.loadTopPicks();
+        await this.loadRecentlyAddedPrograms();
     }
 
     loadFeaturedTrainers = async () => {
@@ -147,12 +147,18 @@ class LupaHome extends React.Component {
         })
     }
 
-    loadTopPicks = () => {
-        
+    loadTopPicks = async () => {
+        let topPicksIn = []
+        await this.LUPA_CONTROLLER_INSTANCE.getTopPicks().then(result => {
+            topPicksIn = result;
+        })
     }
 
-    loadRecentlyAddedPrograms = () => {
-
+    loadRecentlyAddedPrograms = async () => {
+        let recentlyAddedPrograms = []
+        await this.LUPA_CONTROLLER_INSTANCE.getRecentlyAddedPrograms().then(result => {
+            recentlyAddedPrograms = result;
+        })
     }
 
     handleOnRefresh = async () => {
@@ -350,7 +356,7 @@ class LupaHome extends React.Component {
                         </Caption>
                               </View>
 
-   
+
                             </View>
                             <ScrollView
                                 horizontal={true}
@@ -360,7 +366,7 @@ class LupaHome extends React.Component {
                                 snapToInterval={Dimensions.get('window').width }
                                 decelerationRate={0}
                                 pagingEnabled={true}
-                                
+
                             >
                                 {
                                     this.state.featuredPrograms.map(item => {
@@ -386,7 +392,7 @@ class LupaHome extends React.Component {
                                                     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
                                                 })
                                                 }
-                                    
+
                                                 </Text>
                                                 <Caption>
                                                     Emily Loefstedt (0)
@@ -405,7 +411,7 @@ class LupaHome extends React.Component {
                         <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
 
                         <View style={{ justifyContent: 'center', justifyContent: 'center' }}>
-                             
+
                             <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, width: '100%',}}>
                                 <Text style={styles.sectionHeaderText}>
                                     Start training with
@@ -433,9 +439,9 @@ class LupaHome extends React.Component {
                                     {this.renderNearbyUsers()}
                                 </ScrollView>
 
-                               
+
                             </View>
-                             
+
                         </View>
 
                         <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
@@ -460,7 +466,7 @@ class LupaHome extends React.Component {
                             </Button>
                         </View>
 
-                         
+
                             */}
                         <View
                             style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
