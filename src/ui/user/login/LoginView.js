@@ -310,7 +310,8 @@ class LoginView extends React.PureComponent {
   title="Login"
   type="solid"
   raised
-  style={{backgroundColor: "#1565C0", padding: 10, borderRadius: 0}}
+  style={{backgroundColor: '#1565C0', padding: 10, borderRadius: 0}}
+  buttonStyle={{backgroundColor: '#1565C0'}}
   onPress={this.onLogin}
   containerStyle={{borderRadius: 12}}
 />

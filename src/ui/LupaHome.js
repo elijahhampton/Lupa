@@ -67,6 +67,7 @@ import ThinFeatherIcon from "react-native-feather1s";
 import LiveWorkout from './workout/modal/LiveWorkout'
 import CircularUserCard from './user/component/CircularUserCard';
 import { TemporaryDirectoryPath } from 'react-native-fs';
+import { ShowTrainersModal } from './modal/ExplorePageModals';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -100,7 +101,8 @@ class LupaHome extends React.Component {
             index: 0,
             data: [0, 1, 2, 3, 4],
             showLiveWorkoutPreview: false,
-            lastRefresh: new Date().getTime()
+            lastRefresh: new Date().getTime(),
+            showSeeMoreTrainersModal: false
         }
 
         this.searchAttributePickerModalRef = React.createRef()
@@ -111,9 +113,9 @@ class LupaHome extends React.Component {
         await this.checkNewUser();
         await this.setupComponent();
 
-        this.currExplorePageProgramsSubscription = LUPA_DB.collection('programs').onSnapshot((querySNapshot => {
+       /* this.currExplorePageProgramsSubscription = LUPA_DB.collection('programs').onSnapshot((querySNapshot => {
             this.setupComponent();
-        }))
+        }))*/
     }
 
     componentWillUnmount = () => {
@@ -146,7 +148,7 @@ class LupaHome extends React.Component {
     }
 
     loadTopPicks = () => {
-
+        
     }
 
     loadRecentlyAddedPrograms = () => {
@@ -311,11 +313,19 @@ class LupaHome extends React.Component {
         this.setState({ showLiveWorkoutPreview: false })
     }
 
+    showSeeMoreTrainersModal = () => {
+        this.setState({ showSeeMoreTrainersModal: true })
+    }
+
+    closeSeeMoreTrainersModal = () => {
+        this.setState({ showSeeMoreTrainersModal: false })
+    }
+
     render() {
         return (
             <View style={styles.root}>
 
-               <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
+               <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
 
                     <Appbar.Content title="Book trainers" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
@@ -400,7 +410,7 @@ class LupaHome extends React.Component {
                                 <Text style={styles.sectionHeaderText}>
                                     Start training with
                     </Text>
-                    <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
+                    <Button onPress={this.showSeeMoreTrainersModal} uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
                 <Text style={{color: '#1089ff', fontWeight: '500'}}>
                     See more
                 </Text>
@@ -495,6 +505,7 @@ class LupaHome extends React.Component {
                 </View>
 
                             <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
+                            <ShowTrainersModal isVisible={this.state.showSeeMoreTrainersModal} closeModal={this.closeSeeMoreTrainersModal}/>
             </View>
         );
     }
