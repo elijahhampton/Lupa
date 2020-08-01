@@ -60,11 +60,17 @@ export default class ProgramController {
     getTopPicks = async () => {
         let topPicks = []
         await PROGRAM_COLLECTION.limit(5).get().then(docs => {
-              docs.forEach(querySnapshot => {
-                  let snapshot = querySnapshot.data()
-                  topPicks.push(snapshot)
+            let snapshot = getLupaProgramInformationStructure()
+            docs.forEach(querySnapshot => {
+                  snapshot = querySnapshot.data()
+                  if (typeof(snapshot) != 'undefined' && snapshot != null && snapshot.program_image != "") {
+                      console.log('getToPciks()')
+                    topPicks.push(snapshot)
+                  }
               })
         })
+
+        console.log('getToPciks()')
 
         return Promise.resolve(topPicks)
     }
@@ -77,12 +83,16 @@ export default class ProgramController {
     getRecentlyAddedPrograms = async () => {
         let recentlyAddedPrograms = []
         await PROGRAM_COLLECTION.orderBy("program_start_date").limit(5).get().then(docs => {
-              docs.forEach(querySnapshot => {
-                  let snapshot = querySnapshot.data()
-                  recentlyAddedPrograms.push(snapshot)
+            let snapshot = getLupaProgramInformationStructure()  
+            docs.forEach(querySnapshot => {
+                console.log('getToPciks()')
+                  snapshot = querySnapshot.data()
+                  if (typeof(snapshot) != 'undefined' && snapshot != null && snapshot.program_image != "") {
+                    recentlyAddedPrograms.push(snapshot)
+                  }
               })
         })
-
+        console.log('getToPciks()')
         return Promise.resolve(recentlyAddedPrograms)
     }
 
