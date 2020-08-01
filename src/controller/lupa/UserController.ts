@@ -514,7 +514,11 @@ export default class UserController {
                 })
 
                 break;
-
+            case UserCollectionFields.HOURLY_PAYMENT_RATE:
+                currentUserDocument.update({
+                    hourly_payment_rate: value
+                })
+                break;
         }
     }
 

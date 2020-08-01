@@ -68,6 +68,7 @@ import ProfileProgramCard from '../../workout/program/components/ProfileProgramC
 import ProgramOptionsModal from '../../workout/program/modal/ProgramOptionsModal';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import { MenuIcon } from '../../icons/index'
+import ChangeHourlyRateModal from './modal/ChangeHourlyRateModal';
 
 const InviteToPackDialog = props => {
     const [userToInvite, setUserToInvite] = useState(props.userToInvite);
@@ -155,6 +156,7 @@ interface IProfileState {
     nearbyUsers: Array<Object>,
     programOptionsModalIsOpen: Boolean,
     programOptionsProgram: Object,
+    changeRateModalIsVisible: Boolean,
 }
 
 
@@ -192,6 +194,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             nearbyUsers: [],
             programOptionsModalIsOpen: false,
             programOptionsProgram: getLupaProgramInformationStructure(),
+            changeRateModalIsVisible: false
         }
     }
 
@@ -204,7 +207,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      */
     componentDidMount = async () => {
         await this.setupComponent();
-       // await this.generateSessionReviewData();
     }
 
     /**
@@ -519,6 +521,20 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     }
 
     /**
+     * Shows change rate modal
+     */
+    showChangeRateModal = () => {
+        this.setState({ changeRateModalIsVisible: true })
+    }
+
+    /**
+     * Closes change rate modal
+     */
+    closeChangeRateModal = () => {
+        this.setState({ changeRateModalIsVisible: false })
+    }
+
+    /**
      * Renders this profile's avatar.
      * @return Returns this profile's avatar is there is a photo url for this user.  Otherwise returns an Avatar with an icon
      */
@@ -692,7 +708,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                              Your hourly rate is 0$.
                          </Text>
 
-                        <Text style={{paddingTop: 10}}>
+                        <Text style={{paddingTop: 10}} onPress={this.showChangeRateModal}>
                             <Text style={{fontSize: 12, fontWeight: '600',  color: '#1089ff'}}>
                             Change Rate
                             </Text>
@@ -1070,7 +1086,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 </ScrollView>
                         
                 <ProgramOptionsModal program={this.state.programOptionsProgram} isVisible={this.state.programOptionsModalIsOpen} closeModal={this.closeProgramOptionsModal} />
-                        
+                <ChangeHourlyRateModal isVisible={this.state.changeRateModalIsVisible} closeModal={this.closeChangeRateModal} />
             </SafeAreaView>
         );
     }
