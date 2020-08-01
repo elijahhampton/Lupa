@@ -864,4 +864,8 @@ export default class LupaController {
       return Promise.resolve(data);
     }
 
+    changeTrainerHourlyRate = (rate) => {
+      USER_CONTROLLER_INSTANCE.updateCurrentUser('hourly_payment_rate', rate, "", "");
+    }
+
 }

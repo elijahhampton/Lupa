@@ -19,7 +19,8 @@ export enum UserCollectionFields {
     TOKENS="tokens",
     PROGRAMS="programs",
     WORKOUT_LOG="workout_log",
-    BOOKMARKED_PROGRAMS="bookmarked_programs"
+    BOOKMARKED_PROGRAMS="bookmarked_programs",
+    HOURLY_PAYMENT_RATE="hourly_payment_rate"
 }
 
 export enum Days {
