@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/elijahhampton/Desktop/Lupa/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-en-rCA/values-en-rCA.xml",
+            "outputFile": "C:\\Users\\ozanj\\Desktop\\Code\\Lupa\\android\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-en-rCA\\values-en-rCA.xml",
             "map": [
                 {
-                    "source": "/Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/5be5c841f53dae4cded7387368566b7e/appcompat-1.1.0/res/values-en-rCA/values-en-rCA.xml",
+                    "source": "C:\\Users\\ozanj\\.gradle\\caches\\transforms-2\\files-2.1\\5be5c841f53dae4cded7387368566b7e\\appcompat-1.1.0\\res\\values-en-rCA\\values-en-rCA.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -14,24 +14,7 @@
                     }
                 },
                 {
-                    "source": "/Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/6d32e09bde5b4b2ca6914d6e1f2d65d4/core-1.1.0/res/values-en-rCA/values-en-rCA.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "100",
-                        "endOffsets": "151"
-                    },
-                    "to": {
-                        "startLines": "30",
-                        "startColumns": "4",
-                        "startOffsets": "2846",
-                        "endColumns": "100",
-                        "endOffsets": "2942"
-                    }
-                },
-                {
-                    "source": "/Users/elijahhampton/.gradle/caches/transforms-2/files-2.1/8e84329fa286998e19d908e2777b8c0a/jetified-play-services-wallet-11.8.0/res/values-en-rCA/values.xml",
+                    "source": "C:\\Users\\ozanj\\.gradle\\caches\\transforms-2\\files-2.1\\15c79dd6f5c9987e5ddc4f154198d4bf\\jetified-play-services-wallet-11.8.0\\res\\values-en-rCA\\values.xml",
                     "from": {
                         "startLines": "4",
                         "startColumns": "0",
@@ -45,6 +28,23 @@
                         "startOffsets": "2947",
                         "endColumns": "103",
                         "endOffsets": "3046"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\ozanj\\.gradle\\caches\\transforms-2\\files-2.1\\6d32e09bde5b4b2ca6914d6e1f2d65d4\\core-1.1.0\\res\\values-en-rCA\\values-en-rCA.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "30",
+                        "startColumns": "4",
+                        "startOffsets": "2846",
+                        "endColumns": "100",
+                        "endOffsets": "2942"
                     }
                 }
             ]

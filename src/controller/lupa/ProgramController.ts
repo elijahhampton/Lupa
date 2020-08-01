@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
@@ -14,7 +14,7 @@ export default class ProgramController {
     private fbStorage = new FirebaseStorageBucket();
 
     private constructor() {
-        
+
     }
 
     public static getInstance = () => {
@@ -34,7 +34,7 @@ export default class ProgramController {
     /**
      * Returns an object representing a Lupa Program
      * See LupaProgramStructure
-     * 
+     *
      * @return Object representing a LupaProgramStructure
      */
     getProgramInformationFromUUID = async (uuid) => {
@@ -49,6 +49,41 @@ export default class ProgramController {
         }
 
         return Promise.resolve(programData);
+    }
+
+    /**
+     * Returns top 5 programs.
+     * For now, just returns 5 programs.
+     *
+     * @return Array
+     */
+    getTopPicks = async () => {
+        let topPicks = []
+        await PROGRAM_COLLECTION.limit(5).get().then(docs => {
+              docs.forEach(querySnapshot => {
+                  let snapshot = querySnapshot.data()
+                  topPicks.push(snapshot)
+              })
+        })
+
+        return Promise.resolve(topPicks)
+    }
+
+    /**
+     * Returns 5 recently added programs.
+     *
+     * @return Array
+     */
+    getRecentlyAddedPrograms = async () => {
+        let recentlyAddedPrograms = []
+        await PROGRAM_COLLECTION.orderBy("program_start_date").limit(5).get().then(docs => {
+              docs.forEach(querySnapshot => {
+                  let snapshot = querySnapshot.data()
+                  recentlyAddedPrograms.push(snapshot)
+              })
+        })
+
+        return Promise.resolve(recentlyAddedPrograms)
     }
 
     saveProgramImage = async (programUUID, url) => {
