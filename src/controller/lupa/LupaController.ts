@@ -171,7 +171,7 @@ export default class LupaController {
 
     updateCurrentUser = (fieldToUpdate, value, optionalData) => {
       //validate data
-      
+
       //pass to usercontroller
       USER_CONTROLLER_INSTANCE.updateCurrentUser(fieldToUpdate, value, optionalData);
     }
@@ -265,7 +265,7 @@ export default class LupaController {
       //validate data
       //call packs controller to create pack
       const packData = await PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource, packVisibility);
-      
+
       return Promise.resolve(packData);
     }
 
@@ -279,7 +279,7 @@ export default class LupaController {
 
       return Promise.resolve(payload);
     }
-    
+
     inviteUserToPacks = (packs, userUUID) => {
       //If the user didn't select any packs then there is no work to be done and we can just exit the function
       if (packs.length == 0)
@@ -339,7 +339,7 @@ export default class LupaController {
     }
 
     /**
-     * 
+     *
      */
     searchPrograms = async searchQuery => {
       const queries = [{
@@ -372,8 +372,8 @@ export default class LupaController {
     }
 
     /**
-     * 
-     * @param searchQuery 
+     *
+     * @param searchQuery
      */
     searchTrainersAndPrograms = (searchQuery) => {
       const queries = [{
@@ -406,7 +406,7 @@ export default class LupaController {
         {
            if (userResults.hits[i].isTrainer == true)
            {
-            if (userResults.hits[i]._highlightResult.display_name.matchLevel == "full" 
+            if (userResults.hits[i]._highlightResult.display_name.matchLevel == "full"
             || userResults.hits[u]._highlightResult.username.matchLevel == "full")
             {
               userResults.hits[i].resultType = "User"
@@ -435,7 +435,7 @@ export default class LupaController {
      * Performs search queries on all indices through algolia
      * @param searchQuery The query to search for
      * @return returns a promise with an array of objects that matched the query.
-     * 
+     *
      * TODO: Save only necessary information into an object before pushing into final results array.
      */
     search = (searchQuery) => {
@@ -462,7 +462,7 @@ export default class LupaController {
       //  - 2nd and 3rd queries target index `products`
       algoliaIndex.search(queries, (err, { results = {}}) => {
         if (err) rejects(err);
-      
+
         const userResults = results[0];
         const packResults = results[1];
 
@@ -471,7 +471,7 @@ export default class LupaController {
         for (let i = 0; i < userResults.hits.length; ++i)
         {
           userResults.hits[i].isTrainer == true ?  userResults.hits[i].resultType="trainer" :  userResults.hits[i].resultType="user"
-          if (userResults.hits[i]._highlightResult.display_name.matchLevel == "full" || userResults.hits[i]._highlightResult.username.matchLevel == "full" 
+          if (userResults.hits[i]._highlightResult.display_name.matchLevel == "full" || userResults.hits[i]._highlightResult.username.matchLevel == "full"
           || userResults.hits[i]._highlightResult.email.matchLevel == "full")
           {
             finalResults.push(userResults.hits[i]);
@@ -488,13 +488,13 @@ export default class LupaController {
         }
         } catch(err)
         {
-          
+
         }
 
         resolve(finalResults);
       });
       })*/
-    
+
     }
 
     followUser = (uuidOfUserToFollow, uuidOfUserFollowing) => {
@@ -554,7 +554,7 @@ export default class LupaController {
     /***********************************************************************************/
     getCurrentUserPacks = async () => {
       let userPacks;
-      
+
       //Get all packs for the current user
       await PACKS_CONTROLLER_INSTANCE.getCurrentUserPacks().then(currUserPacksData => {
         userPacks = currUserPacksData;
@@ -607,7 +607,7 @@ export default class LupaController {
 
     acceptPackInviteByPackUUID = (packUUID, userUUID) => {
       PACKS_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packUUID, userUUID);
-    } 
+    }
 
     declinePackInviteByPackUUID = (packUUID, userUUID) => {
       PACKS_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packUUID, userUUID);
@@ -697,7 +697,7 @@ export default class LupaController {
     }
 
     handleSendUserProgram = (currUserData, userList, program) => {
-       
+
       try {
         USER_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, userList, program);
           } catch(err) {
@@ -708,7 +708,7 @@ export default class LupaController {
     deleteProgram = async (user_uuid, programUUID) => {
       await USER_CONTROLLER_INSTANCE.deleteProgram(user_uuid, programUUID);
     }
-    
+
     loadCurrentUserPrograms = async () => {
       let programsData = []
 
@@ -795,6 +795,37 @@ export default class LupaController {
         return Promise.resolve(retVal);
       }
 
+      getTopPicks = async () => {
+        let topPicks = []
+
+        try {
+            await PROGRAMS_CONTROLLER_INSTANCE.getTopPicks().then(result => {
+              topPicks = result;
+            })
+        }
+        catch (err) {
+            alert(err)
+            topPicks = []
+        }
+        return Promise.resolve(topPicks)
+      }
+
+      getRecentlyAddedPrograms = async () => {
+        let recentlyAddedPrograms = []
+
+        try {
+            await PROGRAMS_CONTROLLER_INSTANCE.getRecentlyAddedPrograms().then(result => {
+              recentlyAddedPrograms = result
+            })
+        }
+        catch (err) {
+            alert(err)
+            recentlyAddedPrograms = []
+        }
+
+        return Promise.resolve(recentlyAddedPrograms)
+      }
+
       purchaseProgram = async (currUserData, programData) => {
         let updatedProgram;
         await USER_CONTROLLER_INSTANCE.purchaseProgram(currUserData, programData).then(retVal => {
@@ -807,7 +838,7 @@ export default class LupaController {
       /**
      * Returns an object representing a Lupa Program
      * See LupaProgramStructure
-     * 
+     *
      * @return Object representing a LupaProgramStructure
      */
     getProgramInformationFromUUID = async (uuid) => {
@@ -832,5 +863,5 @@ export default class LupaController {
 
       return Promise.resolve(data);
     }
-      
+
 }
