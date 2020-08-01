@@ -135,9 +135,9 @@ const SignUp = props => {
     style={styles.keyboardAvoidingView}>
       <View style={{flex: 1}}>
           <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
-          <View style={{margin: Constants.statusBarHeight, width: "100%"}}>
+          <View style={{margin: Constants.statusBarHeight, width: "100%",}}>
           <View style={styles.headerText}>
-                    <Text style={{fontSize: 28, fontWeight: '700', color: 'black',   }}>
+                    <Text style={{fontSize: 28, fontWeight: '700', color: 'black', alignSelf: 'center'   }}>
             Create an account
                         </Text>
                         <View style={{flexDirection: 'row', margin: 5}}>
@@ -227,6 +227,7 @@ const SignUp = props => {
   style={{width: Dimensions.get('window').width, backgroundColor: "#1565C0", padding: 10, borderRadius: 0}}
   containerStyle={{borderRadius: 0}}
   onPress={signupHandler}
+  buttonStyle={{ backgroundColor: '#1565C0' }}
   disabled={false}
 />
                         </View>
@@ -234,7 +235,7 @@ const SignUp = props => {
           <Divider />
       </View>
     </KeyboardAvoidingView>  
-    <SafeAreaView style={{backgroundColor: '#1565C0', height: Constants.statusBarHeight}} /> 
+    <SafeAreaView style={{backgroundColor: '#1565C0'}} /> 
     </View>
   )
 }
