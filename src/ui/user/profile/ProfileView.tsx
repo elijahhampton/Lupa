@@ -942,7 +942,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                 </Appbar.Header>
 
                 <ScrollView 
-                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#F2F2F2', margin: 10 }} 
+                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#F2F2F2', marginTop: 10 }} 
                 showsVerticalScrollIndicator={false} 
                 shouldRasterizeIOS={true} 
                 refreshControl={
