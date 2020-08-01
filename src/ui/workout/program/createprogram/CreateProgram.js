@@ -66,14 +66,18 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
         if (componentReady) {
             return (
                 <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
-                        <Button mode="text" color="white" onPress={closeModal} style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, margin: 20}}>
-                            Cancel
+                        <Button mode="text" color="white" onPress={closeModal} style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, margin: 10}}>
+                            Edit
                         </Button>
                         
                         <View style={{height: 300, justifyContent: 'space-evenly', marginVertical: 60, alignItems: 'center'}}>
-                        <Text style={{fontSize: 30, color: 'white', textAlign: 'center'}}>
-                            Your program has been published
+
+                        <Text style={{fontSize: 25, color: 'white', textAlign: 'center', marginHorizontal: 10}}>
+                            Your program is ready to publish
                         </Text>
+                        <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderColor: '#1089ff', borderWidth: 1.5, width: 40, height: 40, borderRadius: 40}}>
+                        <FeatherIcon name="check" size={20} color="#1089ff" />
+                        </View>
   
                         </View>
 

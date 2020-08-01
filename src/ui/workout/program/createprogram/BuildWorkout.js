@@ -21,6 +21,7 @@ import {
     Modal as PaperModal,
     Dialog,
     Button,
+    Appbar,
     TextInput,
     Divider,
     Caption,
@@ -29,6 +30,7 @@ import {
 import RBSheet from "react-native-raw-bottom-sheet";
 
 import { Video } from 'expo-av';
+import { Banner } from 'react-native-paper';
 
 import { connect } from 'react-redux';
 
@@ -447,6 +449,10 @@ class BuildWorkout extends React.Component {
         this.title = React.createRef();
 
     }
+    
+    componentDidMount = () => {
+        this.setState({ firstTimeUserBannerVisible: true })
+    }
 
     getCurrentDayContent = () => {
         const currDay = this.getCurrentDay()
@@ -574,7 +580,22 @@ this.getWorkoutSurfaceContent(workout)
                         )
                     })
                 default:
-    
+                    return (
+                            <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
+                                <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                                <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                        <FeatherIcon name="plus" size={30} color="#212121" />
+</Surface>
+<Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
+    Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+</Text>
+                                </View>
+
+<Caption style={{paddingLeft: 10}}>
+    Example
+</Caption>
+</View>
+                    )
             }
         } catch(error) {
             return []
@@ -1622,22 +1643,8 @@ this.getWorkoutSurfaceContent(workout)
     render() {
         return (
             <View ref={this.firstView} style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }}>
-                   <SafeAreaView style={{backgroundColor: '#FFFFFF'}} />
-                   <Surface style={{flex: 1, elevation: 0}}>
-                       <TouchableOpacity onPress={() => this.sectionPickerRBSheet.current.open()}>
-                       <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontWeight: '400', fontSize: 20}}>
-                           {this.getCurrentDay()}
-                       </Text>
-                        </View>
-                       </TouchableOpacity>
-                       <ScrollView horizontal contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}>
-                            {this.getCurrentDayContent()}
-                       </ScrollView>
-                    </Surface>
-                    <View style={{flex: 4}}>
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                            <View style={{flex: 3}}>
+                   <Appbar.Header style={{backgroundColor: '#FFFFFF'}}>
+                   <FeatherIcon onPress={() => this.props.goToIndex(0)} name="arrow-left" size={25} color="#1089ff" />
                             <SearchBar placeholder="Search specific workouts"
                         onChangeText={text => console.log(text)} 
                         platform="ios"
@@ -1647,13 +1654,40 @@ this.getWorkoutSurfaceContent(workout)
                         inputStyle={{fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman'}}
                         placeholderTextColor="#212121"
                         value={this.state.searchValue}/>
-                            </View>
-                        
-                        <View style={{flex: 0.5, flexDirection: 'row', alignItems: 'center'}}>
-                        <NativeButton title="All" />
-                        <FeatherIcon name="chevron-down" />
+
+                   </Appbar.Header>
+                   
+                   <Surface style={{flex: 1, elevation: 0}}>
+                       <TouchableOpacity onPress={() => this.sectionPickerRBSheet.current.open()}>
+                       <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                        <Text style={{fontWeight: '400', fontSize: 20}}>
+                           {this.getCurrentDay()}
+                       </Text>
                         </View>
-                        </View>
+                       </TouchableOpacity>
+                       <ScrollView horizontal contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}>
+                           
+                            {this.getCurrentDayContent()}
+                       </ScrollView>
+                    </Surface>
+                    {
+                        /*
+                                                    <Banner
+      visible={this.state.firstTimeUserBannerVisible}
+      actions={[
+        {
+          label: 'Fix it',
+          onPress: () => this.setState({ firstTimeUserBannerVisible: false }),
+        },
+
+      ]}
+      icon={() => <FeatherIcon name="info" size={20} />}>
+      There was a problem processing a transaction on your credit card.
+    </Banner>
+                        */
+                    }
+                    <View style={{flex: 4}}>
+                        <Divider />
                     <ScrollView>
                     {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.map((workout, index, arr)=> {
