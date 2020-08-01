@@ -6,67 +6,40 @@
  *  LupaHome
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
     View,
     StyleSheet,
-    InteractionManager,
     ScrollView,
-    Switch,
     TouchableOpacity,
     Image,
     Text,
-    Modal,
     Dimensions,
-    SafeAreaView,
     Button as NativeButton,
-    Animated,
     RefreshControl,
 } from 'react-native';
 
 import {
     Surface,
-    DataTable,
     Button,
-    IconButton,
-    Chip,
-    Paragraph,
     Card,
-    Banner,
     Caption,
-    Badge,
     Appbar,
-    Searchbar,
     Divider,
-    Avatar,
-    FAB,
-    Menu,
 
 } from 'react-native-paper';
 
 import LupaController from '../controller/lupa/LupaController';
 
 import { connect } from 'react-redux';
-import { Modalize } from 'react-native-modalize';
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
 import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
-import LUPA_DB from '../controller/firebase/firebase'
-import StandardTrainerCard from './user/component/StandardTrainerCard';
+import {  RFValue } from 'react-native-responsive-fontsize';
 import { MenuIcon } from './icons';
-import { SearchBar } from 'react-native-elements';
-import Swiper from 'react-native-swiper';
-import { LOG_ERROR } from '../common/Logger';
-import LargeProgramSearchResultCard from './workout/program/components/LargeProgramSearchResultCard';
 import LiveWorkoutPreview from './workout/program/modal/LiveWorkoutPreview';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import InviteFriendsModal from './user/modal/InviteFriendsModal'
 import { retrieveAsyncData, storeAsyncData } from '../controller/lupa/storage/async';
 import ThinFeatherIcon from "react-native-feather1s";
-import LiveWorkout from './workout/modal/LiveWorkout'
 import CircularUserCard from './user/component/CircularUserCard';
-import { TemporaryDirectoryPath } from 'react-native-fs';
 import { ShowTrainersModal } from './modal/ExplorePageModals';
 
 const mapStateToProps = (state, action) => {
@@ -82,44 +55,22 @@ class LupaHome extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
-            swiperTwoViewIndex: 0,
-            showTrainerRegistrationModal: false,
-            trainerInsightsVisible: false,
-            visible: false,
-            usersNearYou: [],
-            featuredTrainers: [],
-            currCardIndex: 0,
-            searchValue: "",
-            searchResults: [],
             refreshing: false,
-            searching: false,
-            featuredPrograms: [],
-            programModalVisible: false,
-            inviteFriendsIsVisible: false,
-            customizedInviteFriendsModalIsOpen: false,
             trainWithSwiperIndex: 0, //approved,
-            index: 0,
-            data: [0, 1, 2, 3, 4],
-            showLiveWorkoutPreview: false,
             lastRefresh: new Date().getTime(),
-            showSeeMoreTrainersModal: false
+            recentlyAddedPrograms: [],
+            topPicks: [],
+            featuredPrograms: [],
+            featuredTrainers: [],
+            inviteFriendsIsVisible: false,
+            showLiveWorkoutPreview: false,
+            showSeeMoreTrainersModal: false,
         }
-
-        this.searchAttributePickerModalRef = React.createRef()
-        this.offset = 0
     }
 
     async componentDidMount() {
         await this.checkNewUser();
         await this.setupComponent();
-
-       /* this.currExplorePageProgramsSubscription = LUPA_DB.collection('programs').onSnapshot((querySNapshot => {
-            this.setupComponent();
-        }))*/
-    }
-
-    componentWillUnmount = () => {
-        //this.currExplorePageProgramsSubscription.unsubscribe()
     }
 
     setupComponent = async () => {
@@ -127,45 +78,6 @@ class LupaHome extends React.Component {
         await this.loadFeaturedTrainers();
         await this.loadTopPicks();
         await this.loadRecentlyAddedPrograms();
-    }
-
-    loadFeaturedTrainers = async () => {
-        let featuredTrainersIn = []
-        try {
-            await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
-                featuredTrainersIn = result;
-            })
-        }
-        catch (err) {
-            alert(err)
-            featuredTrainersIn = [];
-        }
-
-        //set component state
-        await this.setState({
-            featuredTrainers: featuredTrainersIn
-        })
-    }
-
-    loadTopPicks = async () => {
-        let topPicksIn = []
-        await this.LUPA_CONTROLLER_INSTANCE.getTopPicks().then(result => {
-            topPicksIn = result;
-        })
-    }
-
-    loadRecentlyAddedPrograms = async () => {
-        let recentlyAddedPrograms = []
-        await this.LUPA_CONTROLLER_INSTANCE.getRecentlyAddedPrograms().then(result => {
-            recentlyAddedPrograms = result;
-        })
-    }
-
-    handleOnRefresh = async () => {
-        this.setState({ refreshing: true })
-        await this.setupComponent()
-        this.setState({ refreshing: false, lastRefresh: new Date().getTime() })
-
     }
 
     checkNewUser = async () => {
@@ -182,6 +94,31 @@ class LupaHome extends React.Component {
             this.setState({ inviteFriendsIsVisible: true })
             return;
         }
+    }
+
+    loadFeaturedTrainers = async () => {
+        await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
+            this.setState({ featuredTrainers: result })
+        })
+    }
+
+    loadTopPicks = async () => {
+        await this.LUPA_CONTROLLER_INSTANCE.getTopPicks().then(result => {
+            this.setState({ topPicks: result })
+        })
+    }
+
+    loadRecentlyAddedPrograms = async () => {
+        await this.LUPA_CONTROLLER_INSTANCE.getRecentlyAddedPrograms().then(result => {
+            this.setState({ recentlyAddedPrograms: result })
+        })
+    }
+
+    handleOnRefresh = async () => {
+        this.setState({ refreshing: true })
+        await this.setupComponent()
+        this.setState({ refreshing: false, lastRefresh: new Date().getTime() })
+
     }
 
     loadFeaturedPrograms = async () => {
@@ -202,7 +139,7 @@ class LupaHome extends React.Component {
         })
     }
 
-    renderNearbyUsers = () => {
+    renderFeaturedTrainers = () => {
         try {
             return this.state.featuredTrainers.map(user => {
                 if (typeof (user) != 'object'
@@ -277,39 +214,6 @@ class LupaHome extends React.Component {
         }
     }
 
-    closeTrainerInsightsModalMethod = () => {
-        this.setState({ trainerInsightsVisible: false })
-    }
-
-    _performSearch = async searchQuery => {
-        let searchResultsIn = []
-
-        //If no search query then set state and return
-        if (searchQuery == "" || searchQuery == "") {
-            await this.setState({
-                searching: true,
-                searchValue: "",
-                searchResults: [],
-            })
-
-            return;
-        }
-
-        await this.setState({
-            searchResults: [],
-            searching: true,
-        })
-
-        await this.setState({
-            searchValue: searchQuery,
-        })
-
-        /*    await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
-                searchResultsIn = searchData;
-            })*/
-
-        await this.setState({ searchResults: searchResultsIn, searching: false });
-    }
 
     showLiveWorkoutPreview = () => {
         this.setState({ showLiveWorkoutPreview: true })
@@ -436,7 +340,7 @@ class LupaHome extends React.Component {
                                     showsPagination={false}
                                     horizontal={true}
                                     showsHorizontalScrollIndicator={false} >
-                                    {this.renderNearbyUsers()}
+                                    {this.renderFeaturedTrainers()}
                                 </ScrollView>
 
 
@@ -483,7 +387,7 @@ class LupaHome extends React.Component {
                             </View>
                             <ScrollView scrollEnabled={this.state.featuredPrograms.length > 1 ? true : false} horizontal bounces={false} pagingEnabled={true} snapToInterval={Dimensions.get('window').width - 50} snapToAlignment={'center'} decelerationRate={0} >
                                 {
-                                    this.state.featuredPrograms.map((currProgram, index, arr) => {
+                                    this.state.topPicks.map((currProgram, index, arr) => {
                                         return (
                                             <FeaturedProgramCard currProgram={currProgram} keyProp={currProgram.program_name} />
                                         )
