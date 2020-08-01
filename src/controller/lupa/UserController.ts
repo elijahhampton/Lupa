@@ -669,18 +669,15 @@ export default class UserController {
     getTrainers = async () => {
         let trainers = []
         try {
-            await USER_COLLECTION.where('isTrainer', '==', true).get().then(docs => {
+            await USER_COLLECTION.where('isTrainer', '==', true).limit(5).get().then(docs => {
+                let snapshot = getLupaUserStructure()
                 docs.forEach(querySnapshot => {
-                    let snapshot = querySnapshot.data();
+                    snapshot = querySnapshot.data();
 
-                    if (typeof(snapshot) == 'undefined' || snapshot.display_name == ""){
-
-                    }
-                    else
-                    {
-                    let snapshotID = querySnapshot.id;
-                    snapshot.id = snapshotID;
-                    trainers.push(snapshot);
+                    if (typeof(snapshot) != 'undefined' && snapshot != null && snapshot.display_name != ""){
+                        let snapshotID = querySnapshot.id;
+                        snapshot.id = snapshotID;
+                        trainers.push(snapshot);
                     }
                 })
             })
