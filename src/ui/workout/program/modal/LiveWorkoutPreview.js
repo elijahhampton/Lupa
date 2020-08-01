@@ -26,7 +26,7 @@ function LiveWorkoutPreview({ program, isVisible, closeModal }) {
 
             <View style={{...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)'}} />
             <Chip mode="flat" style={styles.chip} textStyle={styles.chipTextStyle}>
-                    Learn More about {program.program_name}
+                    Learn More about {program.program_name.charAt(0).toUpperCase() + program.program_name.substr(1).toLowerCase()}
                 </Chip>
            
             <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: Constants.statusBarHeight - 20, alignSelf: 'center', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 60, height: 60, borderWidth: 1, borderColor: '#FFFFFF' }}>

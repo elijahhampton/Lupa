@@ -130,6 +130,7 @@ class LiveWorkout extends React.Component {
             dayMenuVisible: false,
             currentDisplayedMediaURI: "",
             contentTypeDisplayed: "",
+            componentDidErr: false,
         }
     }
 
@@ -138,20 +139,25 @@ class LiveWorkout extends React.Component {
     }
 
     setupLiveWorkout = async () => {
-        await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
-            this.setState({ programData: data })
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
-            this.setState({ programOwnerData: data })
-        })
-
-
-        await this.loadWorkoutDays()
-        await this.loadCurrentDayWorkouts()
+        try {
+            await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
+                this.setState({ programData: data })
+            })
+    
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
+                this.setState({ programOwnerData: data })
+            })
+    
+    
+            await this.loadWorkoutDays()
+            await this.loadCurrentDayWorkouts()
+        } catch(err) {
+            await this.setState({ ready: false, componentDidErr: true })
+        }
 
 
         await this.setState({ ready: true })
+     
 
         alert('This alert makes the loading screen go away.  Fix it.')
     }
@@ -363,7 +369,7 @@ class LiveWorkout extends React.Component {
     }
 
     renderComponentDisplay = () => {
-        if (this.state.ready && typeof (this.state.programData) != 'undefined') {
+        if (this.state.ready && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
             return (
                 <View style={{ flex: 1, backgroundColor: 'black' }}>
 
@@ -508,13 +514,27 @@ class LiveWorkout extends React.Component {
                     </View>
                 </View>
             )
+        } else if (this.state.componentDidErr) {
+            return (
+                <View style={{flex: 1, paddingVertical: 100, paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center'}}>
+                   
+                        <Text style={{fontSize: 15, fontFamily: 'HelveticaNeue'}}>
+                            It looks like something wrong.  Try again later.
+                        </Text>
+                        <Button onPress={() => this.props.navigation.pop()} uppercase={false} mode="text" color="#1089ff" icon={() => <FeatherIcon name="arrow-left" color="#1089ff" />}>
+                            Try again later
+                        </Button>
+                   
+                </View>
+            )
+        } else {
+            return (
+                <View style={{ flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                    <LoadingNextWorkoutActivityIndicator isVisible={true} />
+                </View>
+            )
         }
 
-        return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <LoadingNextWorkoutActivityIndicator isVisible={true} />
-            </View>
-        )
     }
 
     renderInteractionBottomSheet = () => {

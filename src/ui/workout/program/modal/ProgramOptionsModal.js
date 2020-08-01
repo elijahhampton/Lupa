@@ -16,9 +16,9 @@ import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 
 const TRAINER_OPTIONS = [
-    {
+  /*  {
         optionTitle: 'Edit Program',
-    },
+    },*/
     {
         optionTitle: 'Share Program',
     },
@@ -42,9 +42,9 @@ const CURR_USER_OPTIONS = [
     {
         optionTitle: 'Launch Live Workout',
     },
-    {
+  /* {
         optionTitle: 'Show Program Preview',
-    }
+    }*/
 ]
 
 const { windowWidth } = Dimensions.get('window').width
