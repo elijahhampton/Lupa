@@ -152,6 +152,7 @@ var lupa_user : LupaUserStructure = {
     waitlistedPrograms: [],
     notifications: [],
     programs: [],
+    hourly_payment_rate: 15,
 }
 
 export const getLupaUserStructure = (
