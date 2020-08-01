@@ -28,11 +28,11 @@ const userSearchResult = (props) => {
                     </View>
                     {
                             props.hasButton == true ?
-                            <Button mode="contained" style={{elevation: 0}} onPress={props.buttonOnPress} theme={{
+                            <Button uppercase={false} mode="contained" style={{elevation: 0}} onPress={props.buttonOnPress} theme={{
                                 colors: {
                                     primary: '#2196F3'
                                 },
-                                roundness: 7
+                                roundness: 5
                             }}>
                                 <Text>
                                 {props.buttonTitle}

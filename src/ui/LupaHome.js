@@ -276,11 +276,7 @@ class LupaHome extends React.Component {
                                     this.state.featuredPrograms.map(item => {
                                         return (
                                             <View>
-                                            <TouchableOpacity key={item.program_name} onPress={/*this.showLiveWorkoutPreview*/ () => {
-                                                this.props.navigation.push('LiveWorkout', {
-                                                    uuid: 'df871187-16b2-58ae-9626-6537b5ac4866'
-                                                })
-                                            }} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                                            <TouchableOpacity key={item.program_name} onPress={this.showLiveWorkoutPreview} style={{ alignItems: 'center', justifyContent: 'center' }}>
                                                 <Card theme={{roundness: 5}} style={{ alignSelf: 'center', elevation: 0, margin: 10, width: Dimensions.get('window').width - 50, height: 220, marginVertical: 10 }}>
                                                     <Card.Cover resizeMode='contain' source={{ uri: item.program_image }} style={{ borderRadius: 5, with: '100%', height: '100%', justifyContent: 'center' }} />
                                                 </Card>
