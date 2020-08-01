@@ -688,8 +688,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid && this.state.userData.isTrainer) {
             return (
                 <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                    <Text style={{fontSize: 12,paddingTop: 10, fontWeight: '600',  color: '#212121'}}>
-                             Your hourly rate is 0$.
+                    <Text style={{fontSize: 12,paddingTop: 10, fontWeight: '500', fontFamily: 'HelveticaNeue-Light', color: '#212121'}}>
+                             Your hourly rate is {this.props.lupa_data.Users.currUserData.hourly_payment_rate}$.
                          </Text>
 
                         <Text style={{paddingTop: 10}}>
@@ -705,7 +705,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             return (
                 <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
                     <Text style={{fontSize: 12,paddingTop: 10, fontWeight: '600',  color: '#212121'}}>
-                    {this.state.userData.display_name} has an hourly rate of 0$
+                    {this.state.userData.display_name} has an hourly rate of {this.state.userData.hourly_payment_rate}$
                          </Text>
 
                         <Text style={{paddingTop: 10}}>

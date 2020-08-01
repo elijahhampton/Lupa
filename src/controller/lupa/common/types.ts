@@ -95,14 +95,15 @@ export type LupaUserStructure = {
     certification: String,
     homegym: Object,
     chats: any,
-    session_reviews: [],
+    session_reviews: Array<Object>,
     trainer_tier: Number,
     tokens: Object,
     waitlistedPrograms: Array<String>,
     notifications: Array<Object>,
     programs: Array<String>,
     services: Array<String>,
-    workout_log: []
+    workout_log: Array<Object>,
+    hourly_payment_rate: Number,
 };
 
 /* LupaWorkoutDataStructure */
