@@ -69,19 +69,24 @@ handleOnLongPress = () => {
     render() {
 return (
     <TouchableOpacity onPress={this.handleOnPress}>
-    <View style={[{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: Dimensions.get('window').width}]}>
+    <View style={[{marginVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
    <View style={{flexDirection: 'row', alignItems: 'center'}}>
    <Surface style={[this.state.isPressed ? styles.pressed : styles.notPressed , styles.videoContainer]}>
           
           </Surface>
-          <Text style={{marginHorizontal: 20, fontSize: 15, color: '#212121', fontWeight: '500'}}>
+          <View style={{paddingHorizontal: 15, flex: 2}}>
+
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <Text style={{fontSize: 20, color: '#212121', fontWeight: '400'}}>
               {this.props.workoutData.workout_name}
           </Text>
+          <FeatherIcon name="heart" size={15} />
+            </View>
+          <Text numberOfLines={1} ellipsizeMode="tail">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi 
+          </Text>
+          </View>
    </View>
-
-    <View style={{marginRight: 20}} >
-    <FeatherIcon name="heart" size={15} />
-    </View>
     </View>
 </TouchableOpacity>
 )
@@ -93,11 +98,11 @@ return (
 
 const styles = StyleSheet.create({
     videoContainer: {
-        margin: 5,
         backgroundColor: "rgb(58,58,60)",
-        borderRadius: 10,
-        width: Dimensions.get("window").width / 5,
-        height: 50,
+        borderRadius: 60,
+        marginHorizontal: 10,
+        width: 60,
+        height: 60,
         elevation: 3,
         alignItems: "center",
         justifyContent: "center",
