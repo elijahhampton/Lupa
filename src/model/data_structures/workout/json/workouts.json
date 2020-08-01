@@ -155,6 +155,18 @@
     "workout_tags": [],
     "workout_uid": "",
     "workout_cue": ""
+}, 
+{
+    "workout_name": "Custom",
+    "workout_description": "",
+    "workout_media": {
+        "uri:": "",
+        "media_type": ""
+    },
+    "workout_steps": [],
+    "workout_tags": [],
+    "workout_uid": "",
+    "workout_cue": ""
 }
 ]
 }
