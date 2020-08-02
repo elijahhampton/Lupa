@@ -59,7 +59,7 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Dashboard':
-              return <FeatherIcon name='bell' size={20} color={focused ? "#1089ff" : "#212121"} />;
+              return <FeatherIcon name='dashboard' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Train':
               return <FeatherIcon name='home' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Create':

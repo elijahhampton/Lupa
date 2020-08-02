@@ -20,7 +20,6 @@ function ProfileNavigator() {
       <Stack.Screen name="FollowerView" component={FollowerView} />
       <Stack.Screen name="UserSettingsView" component={SettingsModal} />
       <Stack.Screen name="MessagesView" component={MessagesView} />
-      <Stack.Screen name="LiveWorkout" component={LiveWorkout} />
     </Stack.Navigator>
   );
 }

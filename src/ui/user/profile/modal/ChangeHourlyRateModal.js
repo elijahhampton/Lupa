@@ -16,7 +16,7 @@ import {
 
 import { Input } from 'react-native-elements';
 import LupaController from '../../../../controller/lupa/LupaController'
-
+import FeatherIcon from 'react-native-vector-icons/Feather'
 function ChangeHourlyRateModal({ isVisible, closeModal }) {
     const [newHourlyRate, setHourlyRate] = useState(0.00)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
@@ -29,14 +29,15 @@ function ChangeHourlyRateModal({ isVisible, closeModal }) {
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animationType="slide" animated={true}>
                 <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
-                   <Appbar.BackAction onPress={closeModal} />
-                   <Appbar.Content title="Change Rate" />
+                   <Appbar.Action icon={() => <FeatherIcon name="x" size={20} />} onPress={closeModal} />
+                   <Appbar.Content title="Change Rate" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
                 </Appbar.Header>
             <View style={{flex: 1, justifyContent: 'space-between'}}>
                 <View >
 
-                <View style={{backgroundColor: '#E5E5E5'}}>
-                <Caption style={{padding: 10, color: '', alignItems: 'center', textAlign: 'center', fontFamily: 'HelveticaNeue', fontSize: 13, fontWeight: '400',}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', padding: 10, backgroundColor: '#E5E5E5'}}>
+                    <FeatherIcon name="info" size={20} color="rgb(28, 28, 30)" />
+                <Caption style={{color: 'rgb(28, 28, 30)', alignItems: 'center', textAlign: 'center', fontFamily: 'HelveticaNeue', fontSize: 13, fontWeight: '400',}}>
                     Your hourly payment rate is used when you meet with clients on on one for an in person sessions.  
                 </Caption>
                 </View>
