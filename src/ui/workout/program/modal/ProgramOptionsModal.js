@@ -146,7 +146,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     }
                 }}>
                     <Appbar.BackAction onPress={closeModal} />
-                    <Appbar.Content title="Program Options" />
+                    <Appbar.Content title="Program Options" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
                 </Appbar.Header>
             <View style={styles.container}>
                 {

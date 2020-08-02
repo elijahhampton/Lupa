@@ -40,7 +40,7 @@ import InviteFriendsModal from './user/modal/InviteFriendsModal'
 import { retrieveAsyncData, storeAsyncData } from '../controller/lupa/storage/async';
 import ThinFeatherIcon from "react-native-feather1s";
 import CircularUserCard from './user/component/CircularUserCard';
-import { ShowTrainersModal } from './modal/ExplorePageModals';
+import { ShowTrainersModal, ShowTopPicksModal } from './modal/ExplorePageModals';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -65,6 +65,7 @@ class LupaHome extends React.Component {
             inviteFriendsIsVisible: false,
             showLiveWorkoutPreview: false,
             showSeeMoreTrainersModal: false,
+            showTopPicksModalIsVisible: false,
         }
     }
 
@@ -231,6 +232,14 @@ class LupaHome extends React.Component {
         this.setState({ showSeeMoreTrainersModal: false })
     }
 
+    showTopPicksModal = () => {
+        this.setState({ showTopPicksModalIsVisible: true })
+    }
+
+    closeTopPicksModal = () => {
+        this.setState({ showTopPicksModalIsVisible: false })
+    }
+
     render() {
         return (
             <View style={styles.root}>
@@ -238,7 +247,7 @@ class LupaHome extends React.Component {
                <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
                     <MenuIcon customStyle={{ margin: 10 }} onPress={() => this.props.navigation.openDrawer()} />
 
-                    <Appbar.Content title="Book trainers" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
+                    <Appbar.Content title="Book Trainers" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
 
                     <ThinFeatherIcon name="mail" thin={true} size={25} style={{ marginRight: 10 }} onPress={() => this.props.navigation.navigate('MessagesView')} />
                 </Appbar.Header>
@@ -346,28 +355,6 @@ class LupaHome extends React.Component {
 
                         <Divider style={{ width: Dimensions.get('window').width, backgroundColor: 'rgb(242, 242, 247)', height: 5 }} />
 
-
-                     {/*   <View style={{ height: 190, backgroundColor: 'white', alignItems: 'center', justifyContent: 'space-evenly' }}>
-
-                            <View style={{ width: '66%', alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ fontFamily: 'Avenir-Roman', paddingVertical: 5, color: '#23374d', fontWeight: '600', fontSize: RFValue(17) }}>
-                                    Need a trainer now?
-                                    </Text>
-                                <Text style={{ textAlign: 'center', fontSize: RFValue(13), fontFamily: 'avenir-roman', fontWeight: '300' }}>
-                                    Click here and we'll recommend a program to you.
-                                    </Text>
-                            </View>
-
-
-                            <Button uppercase={false} mode="contained" color="#1089ff" theme={{ roundness: 7 }} style={{  alignItems: 'center', justifyContent: 'center', elevation: 0, width: '65%' }}>
-                                <Text style={{ fontSize: 15, fontFamily: 'Avenir-Black', fontWeight: '800' }}>
-                                    Find a Trainer
-                                        </Text>
-                            </Button>
-                        </View>
-
-
-                            */}
                         <View
                             style={{ justifyContent: 'center', justifyContent: 'center', marginVertical: 10 }}>
                             <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -375,7 +362,7 @@ class LupaHome extends React.Component {
                                     Top picks
                         </Text>
 
-                        <Button uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
+                        <Button onPress={this.showTopPicksModal} uppercase={false} mode="text" style={{marginVertical: 5, width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
                 <Text style={{color: '#1089ff', fontWeight: '500'}}>
                     See more
                 </Text>
@@ -412,6 +399,7 @@ class LupaHome extends React.Component {
 
                             <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
                             <ShowTrainersModal isVisible={this.state.showSeeMoreTrainersModal} closeModal={this.closeSeeMoreTrainersModal}/>
+                            <ShowTopPicksModal isVisible={this.state.showTopPicksModalIsVisible} closeModal={this.closeTopPicksModal}  />
             </View>
         );
     }

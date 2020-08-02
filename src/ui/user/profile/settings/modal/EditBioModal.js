@@ -37,6 +37,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import { useDispatch, useSelector} from 'react-redux';
 
 import LupaController from '../../../../../controller/lupa/LupaController'
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../../controller/redux/payload_utility';
 
 function EditBioModal(props) {
     //lupa controller instance
@@ -61,14 +62,16 @@ function EditBioModal(props) {
     /**
      * 
      */
-    handleCloseModal = async () => {
+    const handleCloseModal = async () => {
         LUPA_CONTROLLER_INSTANCE.updateCurrentUser('bio', bioText, "");
 
         const PAYLOAD = getUpdateCurrentUserAttributeActionPayload('bio', bioText)
 
         await dispatch({ type: 'UPDATE_CURRENT_USER_ATTRIBUTE', payload: PAYLOAD });
 
+        console.log('HI')
         props.closeModalMethod();
+        console.log('Bye')
     }
 
 
@@ -81,7 +84,7 @@ function EditBioModal(props) {
             <Button theme={{colors: {
                 primary: 'rgb(33,150,243)'
             }}}
-            onPress={() => handleCloseModal()}>
+            onPress={handleCloseModal}>
                 <Text>
                     Save
                 </Text>
@@ -92,7 +95,7 @@ function EditBioModal(props) {
             Write a biography
         </Text>
         <Caption>
-           Tell users something about yourself.  Why did you join Lupa?  What are you hoping to accomplish on your fitness journey?  What are your fitness interest? Goals?
+           Who are you?  Why did you join Lupa?
         </Caption>
        </View>
 

@@ -82,7 +82,7 @@ function EditBioModal(props) {
        <SafeAreaView style={{flex: 1}}>
         <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center'}}>
             <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
-            <Appbar.Content title="Biography" titleStyle={{  color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}/>
+            <Appbar.Content title="Edit Biography" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
             <Button theme={{colors: {
                 primary: 'rgb(33,150,243)'
             }}}
