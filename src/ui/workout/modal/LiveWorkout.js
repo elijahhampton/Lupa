@@ -757,16 +757,6 @@ class LiveWorkout extends React.Component {
                             bottomDivider
                             onPress={this.handleShareProgram}
                         />
-                        <ListItem
-                            title='Close'
-                            titleStyle={styles.interactionsTitleText}
-                            subtitle='End live workout.'
-                            subtitleStyle={styles.interactionsSubtitleText}
-                            rightIcon={() => <FeatherIcon name="x" color="#FFFFFF" size={20} />}
-                            containerStyle={{ backgroundColor: 'transparent' }}
-                            bottomDivider
-                            onPress={this.handleCloseLiveWorkout}
-                        />
                     </View>
                 </View>
 
