@@ -235,7 +235,7 @@ class LiveWorkout extends React.Component {
             default:
                 return (
                     //In this case render information about the workout
-                    <View style={{ borderRadius: 10, width: '100%', height: '100%', backgroundColor: 'black' }}>
+                    <View style={{ borderRadius: 10, borderWidth: 1, borderColor: '#FFFFFF', width: '100%', height: '100%', backgroundColor: 'black' }}>
 
                     </View>
                 )
@@ -259,6 +259,9 @@ class LiveWorkout extends React.Component {
                             justifyContent: 'center',
                             width: '100%',
                             height: '100%',
+                            borderRadius: 10, 
+                            borderWidth: 1, 
+                            borderColor: '#FFFFFF',
                         }}
                      />
 
@@ -280,7 +283,7 @@ class LiveWorkout extends React.Component {
 
     getImageWorkoutPreviewCover = (uri) => {
         return (
-            <Image source={{ uri: uri }} resizeMethod='scale' resizeMode='cover' style={{borderRadius: 10, width: '100%', height: '100%'}} />
+            <Image source={{ uri: uri }} resizeMethod='scale' resizeMode='cover' style={{borderRadius: 10, borderWidth: 1, borderColor: '#FFFFFF', width: '100%', height: '100%'}} />
         )
     }
 
@@ -489,8 +492,8 @@ class LiveWorkout extends React.Component {
                                                    
 
 
-                                                                <Surface key={workout.workout_uid} style={{ borderWidth: 0.3, borderColor: 'white', backgroundColor: '#212121', elevation: 0, width: Dimensions.get("window").width / 2.8, height: 60, marginHorizontal: 10, marginVertical: 3, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
-                                                                    {this.renderPreviewContent(workout.workout_media.uri)}
+                                                                <Surface key={workout.workout_uid} style={{ borderWidth: 1, borderColor: 'white', backgroundColor: '#212121', elevation: 0, width: Dimensions.get("window").width / 2.8, height: 60, marginHorizontal: 10, marginVertical: 3, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+                                                                    {this.renderPreviewContent(workout.workout_media.media_type, workout.workout_media.uri)}
                                                                 </Surface>
                                                                 <View style={{width: '100%', paddingHorizontal: 10, alignItems: 'flex-end', justifyContent: 'flex-end',  }}>
                                                                     <Text style={{ fontFamily: 'HelveticaNeue-Light', borderColor: 'white', fontWeight: '600', fontSize: 12,  color: 'white',}}>
