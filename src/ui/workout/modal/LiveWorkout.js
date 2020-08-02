@@ -7,9 +7,11 @@ import {
     Modal,
     ScrollView,
     Image,
+    Platform,
     SafeAreaView,
     Dimensions,
     TouchableOpacity,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import {
@@ -21,9 +23,11 @@ import {
     Menu,
     Caption,
     Surface,
+    TextInput,
     Provider,
     Avatar,
     Appbar,
+    Dialog,
 } from 'react-native-paper';
 
 import { ListItem, Input } from 'react-native-elements'
@@ -41,6 +45,9 @@ import { Constants } from 'react-native-unimodules';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
+import CircularUserCard from '../../user/component/CircularUserCard';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 
 const chartConfig = {
     backgroundGradientFrom: "red",
@@ -114,6 +121,7 @@ class LiveWorkout extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
         this.interactionsRBSheet = React.createRef();
         this.interactionRBSheet = React.createRef();
+        this.shareProgramRBSheet = React.createRef()
 
         this.state = {
             workoutStructure: ['Workout Name', 'Workout Name', 'Workout Name'],
@@ -133,6 +141,9 @@ class LiveWorkout extends React.Component {
             contentTypeDisplayed: "",
             componentDidErr: false,
             liveWorkoutOptionsVisible: false,
+            currUserFollowing: [],
+            feedback: "",
+            feedbackDialogIsVisible: false,
         }
     }
 
@@ -148,6 +159,10 @@ class LiveWorkout extends React.Component {
     
             await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
                 this.setState({ programOwnerData: data })
+            })
+
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
+                this.setState({ currUserFollowing: data})
             })
     
     
@@ -349,12 +364,6 @@ class LiveWorkout extends React.Component {
             />
     }
 
-    handleShowInteractionsRBSheet = () => {
-        if (this.state.playVideo === true) {
-            this.setState({ playVideo: false })
-        }
-    }
-
     handleShowInteractionRBSheet = async () => {
         this.setState({ liveWorkoutOptionsVisible: false })
         if (this.state.playVideo === true) {
@@ -365,11 +374,16 @@ class LiveWorkout extends React.Component {
     }
 
     handleShareProgram = () => {
+        this.setState({ liveWorkoutOptionsVisible: false })
+        if (this.state.playVideo === true) {
+            this.setState({ playVideo: false})
+        }
 
+        this.shareProgramRBSheet.current.open();
     }
 
     handleCloseLiveWorkout = () => {
-        this.interactionsRBSheet.current.close()
+        this.closeLiveWorkoutOptionsModal()
         this.props.navigation.pop()
     }
 
@@ -582,7 +596,15 @@ class LiveWorkout extends React.Component {
                     <Divider />
                     <View style={{flex: 1, backgroundColor: '#E5E5E5'}}>
                         <View style={{flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, position: 'absolute', bottom: Constants.statusBarHeight,}}>
-                        <Input leftIcon={() => <FeatherIcon color="#1089ff" name="message-circle" size={20} />} placeholder="How can Emily help you?" inputStyle={{fontSize: 15, padding: 10}} containerStyle={{ width: '80%', borderBottomWidth: 0}} inputContainerStyle={{borderBottomWidth: 0, backgroundColor: 'rgb(247, 247, 247)', borderRadius: 20}} />
+                        <Input 
+                            leftIcon={() => <FeatherIcon color="#1089ff" name="message-circle" size={20} />} 
+                            placeholder="How can Emily help you?" 
+                            inputStyle={{fontSize: 15, padding: 10}} 
+                            containerStyle={{ width: '80%', borderBottomWidth: 0}} 
+                            inputContainerStyle={{borderBottomWidth: 0, backgroundColor: 'rgb(247, 247, 247)', borderRadius: 20}} 
+                            returnKeyType="done"
+                            returnKeyLabel="done"
+                            />
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '20%'}}>
                         <FeatherIcon name="paperclip" size={20} />
                             <FeatherIcon name="send" size={20} />
@@ -592,6 +614,78 @@ class LiveWorkout extends React.Component {
                     </View>
 
                    
+                </Surface>
+            </RBSheet>
+        )
+    }
+
+    renderFollowing = () => {
+        const followingList = this.state.currUserFollowing.map(user => {
+            if (typeof(user) == 'undefined' || user == null || user.user_uuid == null) {
+                return null
+            }
+
+            return (
+                <CircularUserCard user={user} />
+            )
+        })
+
+        return followingList;
+    }
+
+    renderShareProgramRBSheet = () => {
+        return (
+            <RBSheet 
+            ref={this.shareProgramRBSheet} 
+            height={Dimensions.get('window').height / 1.8}
+            dragFromTopOnly={true}
+            closeOnDragDown={true}
+            customStyles={{
+                wrapper: {
+                    
+                },
+                container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20
+                },
+                draggableIcon: {
+                    backgroundColor: 'rgb(220, 220, 220)',
+                }
+            }}
+            >
+                <Surface style={{flex: 1, elevation: 0}}>
+                    <View style={{paddingBottom: 5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={{alignSelf: 'center', paddingVertical: 10, fontSize: 15, fontFamily: 'HelveticaNeue-Bold'}}>
+                       Share Program
+                    </Text>
+                    </View>
+
+                    <Divider />
+                    <View>
+                        <ScrollView horizontal>
+                        {this.renderFollowing()}
+                        </ScrollView>
+                    </View>
+                    <Divider />
+                    <View style={{justifyContent: 'space-evenly', padding: 20, position: 'absolute', bottom: 0, width: '100%'}}>
+                        <TouchableWithoutFeedback disabled={true}>
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <FeatherIcon name="share" size={20} color="rgb(58, 58, 60)" style={{paddingHorizontal: 10}} />
+                        <Text style={{fontSize: 16, fontWeight: 'bold', fontFamily: 'HelveticaNeue-Bold', color: 'rgb(58, 58, 60)'}}>
+                            Share program by...
+                        </Text>
+                        
+                        </View>
+                        </TouchableWithoutFeedback>
+                        <Button mode="contained" color="#1089ff" theme={{roundness: 10}} style={{marginVertical: 20, height: 55, alignItems: 'center', justifyContent: 'center', elevation: 0}}>
+                            <Text>
+                                Send
+                            </Text>
+                        </Button>
+                    </View>
+                        
+
+                    <SafeAreaView />
                 </Surface>
             </RBSheet>
         )
@@ -648,6 +742,7 @@ class LiveWorkout extends React.Component {
                             rightIcon={() => <FeatherIcon name="clipboard" color="#FFFFFF" size={20} />}
                             containerStyle={{ backgroundColor: 'transparent' }}
                             bottomDivider
+                            onPress={this.showFeedbackDialog}
                         />
                         <ListItem
                             title='Share'
@@ -657,6 +752,7 @@ class LiveWorkout extends React.Component {
                             rightIcon={() => <FeatherIcon name="share" color="#FFFFFF" size={20} />}
                             containerStyle={{ backgroundColor: 'transparent' }}
                             bottomDivider
+                            onPress={this.handleShareProgram}
                         />
                         <ListItem
                             title='Close'
@@ -678,12 +774,65 @@ class LiveWorkout extends React.Component {
         )
     }
 
+    showFeedbackDialog = () => {
+        this.closeLiveWorkoutOptionsModal()
+       this.setState({ feedbackDialogIsVisible: true })
+    }
+
+    closeFeedbackDialog = () => {
+        this.setState({ feedbackDialogIsVisible: false })
+    }
+
+    handleSaveFeedback = () => {
+       // this.LUPA_CONTROLLER_INSTANCE.saveFeedback(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_owner, this.state.feedback)
+        this.closeFeedbackDialog()
+    }
+
+    handleFeedbackTextInputOnChangeText = (text) => {
+        this.setState({ feedback: text })
+    }
+
+    renderFeedbackDialog = () => {
+        return (
+            <Dialog visible={this.state.feedbackDialogIsVisible} style={{position: 'absolute', top: Constants.statusBarHeight + 50, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+                <Dialog.Title>
+                    Feedback
+                </Dialog.Title>
+                <Dialog.Content>
+                    <Caption>
+                        Leave {this.state.programOwnerData.display_name} a note about their program and the results you've seen.
+                    </Caption>
+                    <View>
+                        <TextInput 
+                            multiline={true} 
+                            returnKeyLabel="done" 
+                            returnKeyType="done"  
+                            value={this.state.feeedback} 
+                            onChangeText={text => this.handleFeedbackTextInputOnChangeText(text)} 
+                            mode="flat" 
+                            theme={{colors: {primary: '#1089ff'}}}/>
+                    </View>
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button  style={{marginHorizontal: 10}} uppercase={false} color="#1089ff" onPress={this.closeFeedbackDialog}>
+                        Cancel
+                    </Button>
+                    <Button style={{marginHorizontal: 10}} uppercase={false} color="#1089ff" mode="contained" onPress={this.handleSaveFeedback}>
+                        Done
+                    </Button>
+                </Dialog.Actions>
+            </Dialog>
+        )
+    }
+
     render() {
         return (
             <>
                 {this.renderComponentDisplay()}
                 {this.renderLiveWorkoutOptions()}
                 {this.renderInteractionBottomSheet()}
+                {this.renderShareProgramRBSheet()}
+                {this.renderFeedbackDialog()}
             </>
         )
     }
