@@ -10,12 +10,12 @@ import {
     Modal,
     TouchableOpacity,
     StatusBar,
+    TextInput,
 } from 'react-native';
 
 import {
     Surface,
     ActivityIndicator,
-    TextInput,
     Checkbox,
     Button,
 } from 'react-native-paper';
@@ -277,11 +277,12 @@ class WelcomeLupaIntroduction extends React.Component {
                     </Text>
                     </View>
 
-                    <View style={{ height: 300, justifyContent: 'space-evenly', alignItems: 'center'}}>
+                    <View style={{ height: 300, justifyContent: 'space-evenly'}}>
                         
                         {
                             OPTIONS.map((option, index, arr) => {
                                 return (
+                                    <>
                                     <TouchableOpacity onPress={() => this.handleCheckOption(index)}>
                                     <View key={index} style={{ flexDirection: 'row', alignItems: 'center'}}>
                                     <Text style={styles.optionText}>
@@ -290,6 +291,15 @@ class WelcomeLupaIntroduction extends React.Component {
                                     {this.renderCheckBox(index)}
                                 </View>
                                 </TouchableOpacity>
+
+                                {this.state.trainerCheck === 'checked' && option.key === 1 ?
+                                 <View style={{height: 'auto'}}>
+                                    <TextInput returnKeyType="done" returnKeyLabel="done" enablesReturnKeyAutomatically={true} placeholderTextColor="#1089ff" placeholder='Enter your certification number here.' />
+                                </View>
+                                :
+                                null
+                                }
+                                </>
                                 )
                             })
                         }
