@@ -7,9 +7,11 @@ import {
     Modal,
     ScrollView,
     Image,
+    Platform,
     SafeAreaView,
     Dimensions,
     TouchableOpacity,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import {
@@ -21,11 +23,14 @@ import {
     Menu,
     Caption,
     Surface,
+    TextInput,
     Provider,
     Avatar,
+    Appbar,
+    Dialog,
 } from 'react-native-paper';
 
-import { ListItem } from 'react-native-elements'
+import { ListItem, Input } from 'react-native-elements'
 
 import { Video } from 'expo-av'
 import FeatherIcon from "react-native-vector-icons/Feather"
@@ -40,6 +45,9 @@ import { Constants } from 'react-native-unimodules';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
+import CircularUserCard from '../../user/component/CircularUserCard';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { throwIfAudioIsDisabled } from 'expo-av/build/Audio/AudioAvailability';
 
 const chartConfig = {
     backgroundGradientFrom: "red",
@@ -93,7 +101,7 @@ const PROGRAM_SECTIONS = [
 
 function LoadingNextWorkoutActivityIndicator({ isVisible }) {
     return (
-        <Modal visible={isVisible} presentationStyle="overFullScreen" style={{ alignItems: "center", justifyContent: "center", backgroundColor: "transparent", margin: 0 }} >
+        <Modal visible={isVisible} presentationStyle="fullScreen" style={{ alignItems: "center", justifyContent: "center", backgroundColor: "transparent", margin: 0 }} >
             <ActivityIndicator style={{ alignSelf: "center" }} animating={true} color="#03A9F4" size="large" />
         </Modal>
     )
@@ -113,6 +121,7 @@ class LiveWorkout extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
         this.interactionsRBSheet = React.createRef();
         this.interactionRBSheet = React.createRef();
+        this.shareProgramRBSheet = React.createRef()
 
         this.state = {
             workoutStructure: ['Workout Name', 'Workout Name', 'Workout Name'],
@@ -131,11 +140,15 @@ class LiveWorkout extends React.Component {
             currentDisplayedMediaURI: "",
             contentTypeDisplayed: "",
             componentDidErr: false,
+            liveWorkoutOptionsVisible: false,
+            currUserFollowing: [],
+            feedback: "",
+            feedbackDialogIsVisible: false,
         }
     }
 
     async componentDidMount() {
-        await this.setupLiveWorkout()
+        await this.setupLiveWorkout();
     }
 
     setupLiveWorkout = async () => {
@@ -147,19 +160,22 @@ class LiveWorkout extends React.Component {
             await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
                 this.setState({ programOwnerData: data })
             })
+
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
+                this.setState({ currUserFollowing: data})
+            })
     
     
             await this.loadWorkoutDays()
             await this.loadCurrentDayWorkouts()
         } catch(err) {
+            alert(err)
             await this.setState({ ready: false, componentDidErr: true })
         }
 
 
         await this.setState({ ready: true })
      
-
-        alert('This alert makes the loading screen go away.  Fix it.')
     }
 
     loadWorkoutDays = () => {
@@ -202,6 +218,14 @@ class LiveWorkout extends React.Component {
 
     closeDayMenu = () => this.setState({ dayMenuVisible: false })
 
+    showLiveWorkoutOptionsModal = () => {
+        this.setState({ liveWorkoutOptionsVisible: true })
+    }
+
+    closeLiveWorkoutOptionsModal = () => {
+        this.setState({ liveWorkoutOptionsVisible: false })
+    }
+
     renderPreviewContent = (type, uri) => {
         switch (type) {
             case 'IMAGE':
@@ -211,7 +235,7 @@ class LiveWorkout extends React.Component {
             default:
                 return (
                     //In this case render information about the workout
-                    <View style={{ borderRadius: 10, width: '100%', height: '100%', backgroundColor: 'black' }}>
+                    <View style={{ borderRadius: 10, borderWidth: 1, borderColor: '#FFFFFF', width: '100%', height: '100%', backgroundColor: 'black' }}>
 
                     </View>
                 )
@@ -235,6 +259,9 @@ class LiveWorkout extends React.Component {
                             justifyContent: 'center',
                             width: '100%',
                             height: '100%',
+                            borderRadius: 10, 
+                            borderWidth: 1, 
+                            borderColor: '#FFFFFF',
                         }}
                      />
 
@@ -256,7 +283,7 @@ class LiveWorkout extends React.Component {
 
     getImageWorkoutPreviewCover = (uri) => {
         return (
-            <Image source={{ uri: uri }} resizeMethod='scale' resizeMode='cover' style={{borderRadius: 10, width: '100%', height: '100%'}} />
+            <Image source={{ uri: uri }} resizeMethod='scale' resizeMode='cover' style={{borderRadius: 10, borderWidth: 1, borderColor: '#FFFFFF', width: '100%', height: '100%'}} />
         )
     }
 
@@ -281,7 +308,6 @@ class LiveWorkout extends React.Component {
 
     getWorkoutVideoMedia = (uri) => {
         try {
-            console.log(uri)
             return (
                 <>
                     <Video
@@ -341,35 +367,31 @@ class LiveWorkout extends React.Component {
             />
     }
 
-    handleShowInteractionsRBSheet = () => {
-        if (this.state.playVideo === true) {
-            this.setState({ playVideo: false })
-        }
-
-        this.interactionsRBSheet.current.open();
-    }
-
     handleShowInteractionRBSheet = async () => {
-        await this.interactionsRBSheet.current.close();
-
+        this.setState({ liveWorkoutOptionsVisible: false })
         if (this.state.playVideo === true) {
             this.setState({ playVideo: false})
         }
 
-        this.interactionRBSheet.current.open();
+        this.interactionRBSheet.current.open()
     }
 
     handleShareProgram = () => {
+        this.setState({ liveWorkoutOptionsVisible: false })
+        if (this.state.playVideo === true) {
+            this.setState({ playVideo: false})
+        }
 
+        this.shareProgramRBSheet.current.open();
     }
 
     handleCloseLiveWorkout = () => {
-        this.interactionsRBSheet.current.close()
+        this.closeLiveWorkoutOptionsModal()
         this.props.navigation.pop()
     }
 
     renderComponentDisplay = () => {
-        if (this.state.ready && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
+        if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
             return (
                 <View style={{ flex: 1, backgroundColor: 'black' }}>
 
@@ -445,7 +467,7 @@ class LiveWorkout extends React.Component {
                         <View style={{ height: 200 }}>
                             <View style={{ marginHorizontal: 10, width: '100%', justifyContent: 'flex-end',  alignItems: 'center', flexDirection: 'row' }}>
                                 {this.getVideoIcon()}
-                                <FeatherIcon name="more-horizontal" color="white" size={35} style={{ padding: 10 }} onPress={this.handleShowInteractionsRBSheet} />
+                                <FeatherIcon name="more-horizontal" color="white" size={35} style={{ padding: 10 }} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />
                             </View>
                             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                 {
@@ -470,8 +492,8 @@ class LiveWorkout extends React.Component {
                                                    
 
 
-                                                                <Surface key={workout.workout_uid} style={{ borderWidth: 0.3, borderColor: 'white', backgroundColor: '#212121', elevation: 0, width: Dimensions.get("window").width / 2.8, height: 60, marginHorizontal: 10, marginVertical: 3, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
-                                                                    {this.renderPreviewContent(workout.workout_media.uri)}
+                                                                <Surface key={workout.workout_uid} style={{ borderWidth: 1, borderColor: 'white', backgroundColor: '#212121', elevation: 0, width: Dimensions.get("window").width / 2.8, height: 60, marginHorizontal: 10, marginVertical: 3, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
+                                                                    {this.renderPreviewContent(workout.workout_media.media_type, workout.workout_media.uri)}
                                                                 </Surface>
                                                                 <View style={{width: '100%', paddingHorizontal: 10, alignItems: 'flex-end', justifyContent: 'flex-end',  }}>
                                                                     <Text style={{ fontFamily: 'HelveticaNeue-Light', borderColor: 'white', fontWeight: '600', fontSize: 12,  color: 'white',}}>
@@ -529,8 +551,10 @@ class LiveWorkout extends React.Component {
             )
         } else {
             return (
-                <View style={{ flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                    <LoadingNextWorkoutActivityIndicator isVisible={true} />
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text>
+                        Loading your program...
+                    </Text>
                 </View>
             )
         }
@@ -539,47 +563,141 @@ class LiveWorkout extends React.Component {
 
     renderInteractionBottomSheet = () => {
         return (
-            <RBSheet
-                ref={this.interactionRBSheet}
-                height={200}
-                customStyles={{
-                    wrapper: {
-                        backgroundColor: "white",
-                    },
-                    container: {
-                        backgroundColor: 'white'
-                    },
-                    draggableIcon: {
-                        backgroundColor: "transparent"
-                    }
-                }}
+            <RBSheet 
+            ref={this.interactionRBSheet} 
+            height={Dimensions.get('window').height / 1.8}
+            dragFromTopOnly={true}
+            closeOnDragDown={true}
+            customStyles={{
+                wrapper: {
+                    
+                },
+                container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20
+                },
+                draggableIcon: {
+                    backgroundColor: 'rgb(220, 220, 220)',
+                }
+            }}
             >
-                <View style={{ padding: 10, flex: 1, backgroundColor: 'white' }}>
+                <Surface style={{flex: 1}}>
+                    <Text style={{alignSelf: 'center', paddingVertical: 10, fontSize: 15, fontFamily: 'HelveticaNeue-Bold'}}>
+                        Interactions
+                    </Text>
+                    <View style={{padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                        <Avatar.Image style={{marginHorizontal: 10}} size={40} source={{uri: this.state.programOwnerData.photo_url}} />
+                        <View>
+                            <Text style={{fontFamily: 'HelveticaNeue-Bold', fontSize: 15}}>
+                                {this.state.programOwnerData.display_name_name}
+                            </Text>
+                            <Text style={{color: 'rgb(58, 58, 60)'}}>
+                                National Academy of Sports and Medicine
+                            </Text>
+                        </View>
+                    </View>
+                    <Divider />
+                    <View style={{flex: 1, backgroundColor: '#E5E5E5'}}>
+                        <View style={{flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, position: 'absolute', bottom: Constants.statusBarHeight,}}>
+                        <Input 
+                            leftIcon={() => <FeatherIcon color="#1089ff" name="message-circle" size={20} />} 
+                            placeholder="How can Emily help you?" 
+                            inputStyle={{fontSize: 15, padding: 10}} 
+                            containerStyle={{ width: '80%', borderBottomWidth: 0}} 
+                            inputContainerStyle={{borderBottomWidth: 0, backgroundColor: 'rgb(247, 247, 247)', borderRadius: 20}} 
+                            returnKeyType="done"
+                            returnKeyLabel="done"
+                            />
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '20%'}}>
+                        <FeatherIcon name="paperclip" size={20} />
+                            <FeatherIcon name="send" size={20} />
+                        </View>
 
+                        </View>
+                    </View>
 
-                </View>
+                   
+                </Surface>
             </RBSheet>
         )
     }
 
-    renderInteractionsBottomSheet = () => {
+    renderFollowing = () => {
+        const followingList = this.state.currUserFollowing.map(user => {
+            if (typeof(user) == 'undefined' || user == null || user.user_uuid == null) {
+                return null
+            }
+
+            return (
+                <CircularUserCard user={user} />
+            )
+        })
+
+        return followingList;
+    }
+
+    renderShareProgramRBSheet = () => {
         return (
-            <RBSheet
-                ref={this.interactionsRBSheet}
-                height={Dimensions.get('window').height - Constants.statusBarHeight}
-                customStyles={{
-                    wrapper: {
-                        backgroundColor: "rgba(0, 0, 0, 0.95)",
-                    },
-                    container: {
-                        backgroundColor: 'transparent'
-                    },
-                    draggableIcon: {
-                        backgroundColor: "transparent"
-                    }
-                }}
+            <RBSheet 
+            ref={this.shareProgramRBSheet} 
+            height={Dimensions.get('window').height / 1.8}
+            dragFromTopOnly={true}
+            closeOnDragDown={true}
+            customStyles={{
+                wrapper: {
+                    
+                },
+                container: {
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20
+                },
+                draggableIcon: {
+                    backgroundColor: 'rgb(220, 220, 220)',
+                }
+            }}
             >
-                <View style={{ padding: 10, flex: 1, backgroundColor: 'transparent' }}>
+                <Surface style={{flex: 1, elevation: 0}}>
+                    <View style={{paddingBottom: 5, alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={{alignSelf: 'center', paddingVertical: 10, fontSize: 15, fontFamily: 'HelveticaNeue-Bold'}}>
+                       Share Program
+                    </Text>
+                    </View>
+
+                    <Divider />
+                    <View>
+                        <ScrollView horizontal>
+                        {this.renderFollowing()}
+                        </ScrollView>
+                    </View>
+                    <Divider />
+                    <View style={{justifyContent: 'space-evenly', padding: 20, position: 'absolute', bottom: 0, width: '100%'}}>
+                        <TouchableWithoutFeedback disabled={true}>
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <FeatherIcon name="share" size={20} color="rgb(58, 58, 60)" style={{paddingHorizontal: 10}} />
+                        <Text style={{fontSize: 16, fontWeight: 'bold', fontFamily: 'HelveticaNeue-Bold', color: 'rgb(58, 58, 60)'}}>
+                            Share program by...
+                        </Text>
+                        
+                        </View>
+                        </TouchableWithoutFeedback>
+                        <Button mode="contained" color="#1089ff" theme={{roundness: 10}} style={{marginVertical: 20, height: 55, alignItems: 'center', justifyContent: 'center', elevation: 0}}>
+                            <Text>
+                                Send
+                            </Text>
+                        </Button>
+                    </View>
+                        
+
+                    <SafeAreaView />
+                </Surface>
+            </RBSheet>
+        )
+    }
+
+    renderLiveWorkoutOptions = () => {
+        return (
+            <Modal visible={this.state.liveWorkoutOptionsVisible} presentationStyle="overFullScreen" transparent animated={true} animationType="slide">
+                <View style={{paddingTop: Constants.statusBarHeight, flex: 1, backgroundColor: 'rgba(0,0,0,0.9)' }}>
                     <View style={{height: 'auto', justifyContent: 'space-evenly', alignItems: 'center' }}>
                         <View>
                             <Text style={[styles.RBSheetText, { fontSize: 20, fontWeight: 'bold', fontFamily: 'HelveticaNeue-Medium' }]}>
@@ -627,6 +745,7 @@ class LiveWorkout extends React.Component {
                             rightIcon={() => <FeatherIcon name="clipboard" color="#FFFFFF" size={20} />}
                             containerStyle={{ backgroundColor: 'transparent' }}
                             bottomDivider
+                            onPress={this.showFeedbackDialog}
                         />
                         <ListItem
                             title='Share'
@@ -636,6 +755,7 @@ class LiveWorkout extends React.Component {
                             rightIcon={() => <FeatherIcon name="share" color="#FFFFFF" size={20} />}
                             containerStyle={{ backgroundColor: 'transparent' }}
                             bottomDivider
+                            onPress={this.handleShareProgram}
                         />
                         <ListItem
                             title='Close'
@@ -651,9 +771,60 @@ class LiveWorkout extends React.Component {
                 </View>
 
                 <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 50, height: 50, borderWidth: 1, borderColor: '#FFFFFF', bottom: Constants.statusBarHeight, alignSelf: 'center', }}>
-                    <FeatherIcon onPress={() => this.interactionsRBSheet.current.close()} name="x" color="white" size={20} style={{ alignSelf: 'center' }} />
+                    <FeatherIcon onPress={() => this.closeLiveWorkoutOptionsModal()} name="x" color="white" size={20} style={{ alignSelf: 'center' }} />
                 </View>
-            </RBSheet>
+            </Modal>
+        )
+    }
+
+    showFeedbackDialog = () => {
+        this.closeLiveWorkoutOptionsModal()
+       this.setState({ feedbackDialogIsVisible: true })
+    }
+
+    closeFeedbackDialog = () => {
+        this.setState({ feedbackDialogIsVisible: false })
+    }
+
+    handleSaveFeedback = () => {
+       // this.LUPA_CONTROLLER_INSTANCE.saveFeedback(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_owner, this.state.feedback)
+        this.closeFeedbackDialog()
+    }
+
+    handleFeedbackTextInputOnChangeText = (text) => {
+        this.setState({ feedback: text })
+    }
+
+    renderFeedbackDialog = () => {
+        return (
+            <Dialog visible={this.state.feedbackDialogIsVisible} style={{position: 'absolute', top: Constants.statusBarHeight + 50, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+                <Dialog.Title>
+                    Feedback
+                </Dialog.Title>
+                <Dialog.Content>
+                    <Caption>
+                        Leave {this.state.programOwnerData.display_name} a note about their program and the results you've seen.
+                    </Caption>
+                    <View>
+                        <TextInput 
+                            multiline={true} 
+                            returnKeyLabel="done" 
+                            returnKeyType="done"  
+                            value={this.state.feeedback} 
+                            onChangeText={text => this.handleFeedbackTextInputOnChangeText(text)} 
+                            mode="flat" 
+                            theme={{colors: {primary: '#1089ff'}}}/>
+                    </View>
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button  style={{marginHorizontal: 10}} uppercase={false} color="#1089ff" onPress={this.closeFeedbackDialog}>
+                        Cancel
+                    </Button>
+                    <Button style={{marginHorizontal: 10}} uppercase={false} color="#1089ff" mode="contained" onPress={this.handleSaveFeedback}>
+                        Done
+                    </Button>
+                </Dialog.Actions>
+            </Dialog>
         )
     }
 
@@ -661,8 +832,10 @@ class LiveWorkout extends React.Component {
         return (
             <>
                 {this.renderComponentDisplay()}
-                {this.renderInteractionsBottomSheet()}
+                {this.renderLiveWorkoutOptions()}
                 {this.renderInteractionBottomSheet()}
+                {this.renderShareProgramRBSheet()}
+                {this.renderFeedbackDialog()}
             </>
         )
     }

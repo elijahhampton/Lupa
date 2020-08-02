@@ -105,7 +105,7 @@ const Dashboard = () => {
     return (
         <SafeAreaView style={styles.safeareaview}>
             <Appbar.Header style={styles.appbar}>
-                <Appbar.Content title="Dashboard" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
+            <Appbar.Content title="Dashboard" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
             </Appbar.Header>
             <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false} refreshControl={
                 <RefreshControl

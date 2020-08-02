@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 
 import {
     StyleSheet,
@@ -13,8 +13,14 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 
 import { Chip, Appbar, ActivityIndicator} from 'react-native-paper'
 import { Constants } from 'react-native-unimodules'
+import ProgramInformationPreview from '../ProgramInformationPreview'
+import { titleCase } from '../../../common/Util'
 
 function LiveWorkoutPreview({ program, isVisible, closeModal }) {
+    const [programInformationPreviewIsVisible, setProgramInformationVisible] = useState(false)
+    const renderProgramName = (text) => {
+        return titleCase(text)
+}
     return (
         <Modal style={styles.container} visible={isVisible} presentationStyle="fullScreen" animated={true} animationType="fade">
 
@@ -25,13 +31,15 @@ function LiveWorkoutPreview({ program, isVisible, closeModal }) {
             </ImageBackground>
 
             <View style={{...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)'}} />
-            <Chip mode="flat" style={styles.chip} textStyle={styles.chipTextStyle}>
-                    Learn More about {program.program_name.charAt(0).toUpperCase() + program.program_name.substr(1).toLowerCase()}
+            <Chip mode="flat" style={styles.chip} textStyle={styles.chipTextStyle} onPress={() => setProgramInformationVisible(true)}>
+                Learn more about {renderProgramName(program.program_name)}
                 </Chip>
            
-            <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: Constants.statusBarHeight - 20, alignSelf: 'center', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 60, height: 60, borderWidth: 1, borderColor: '#FFFFFF' }}>
-                                                                <FeatherIcon thin={true}  onPress={closeModal} name="x" color="white" size={30} style={{ alignSelf: 'center' }} />
+            <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: Constants.statusBarHeight, alignSelf: 'center', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 45, width: 45, height: 45, borderWidth: 1, borderColor: '#FFFFFF' }}>
+                                                                <FeatherIcon thin={true}  onPress={closeModal} name="x" color="white" size={20} style={{ alignSelf: 'center' }} />
                                                             </View>
+
+        <ProgramInformationPreview isVisible={programInformationPreviewIsVisible} programData={program} closeModalMethod={() => setProgramInformationVisible(false)} /> 
         </Modal>
     )
 }

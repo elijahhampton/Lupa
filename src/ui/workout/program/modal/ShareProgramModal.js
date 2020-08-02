@@ -111,7 +111,7 @@ function ShareProgramModal({ navigation, route }) {
                     }
                 }}>
                     <Appbar.BackAction onPress={() => navigation.pop()} />
-                    <Appbar.Content title="Share Program" />
+                    <Appbar.Content title="Share Program" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
                 </Appbar.Header>
 
                 <View style={styles.contentContainer}>

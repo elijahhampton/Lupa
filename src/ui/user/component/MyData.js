@@ -12,7 +12,7 @@ function MyData(props) {
         <SafeAreaView style={styles.container}>
                     <Appbar.Header style={styles.appbar}>
                     <Appbar.BackAction color="#212121" size={20} onPress={() => navigation.pop()} />
-        <Appbar.Content title="My Data" />
+                    <Appbar.Content title="My Data" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
 </Appbar.Header>
             <ScrollView>
             <Surface style={{marginVertical: 10, elevation: 3, borderRadius: 15, backgroundColor: '#1089ff', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>

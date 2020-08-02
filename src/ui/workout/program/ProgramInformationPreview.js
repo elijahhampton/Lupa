@@ -52,6 +52,7 @@ import { colors } from 'react-native-elements';
 
 import MapView, { Marker } from 'react-native-maps';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
+import { titleCase } from '../../common/Util';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -259,7 +260,7 @@ function ProgramInformationPreview(props) {
             try {
                 return (
                     <Text style={{ fontSize: 20, color: '#212121', paddingVertical: 10 }}>
-                              {programData.program_name}
+                           {titleCase(programData.program_name)}
                     </Text>
                 )
             } catch(err) {
@@ -383,7 +384,7 @@ function ProgramInformationPreview(props) {
                           primary: '#FFFFFF'
                       },
                   }}>
-                      <Appbar.Action onPress={() => props.closeModalMethod()} />
+                      <Appbar.Action icon={() => <FeatherIcon name="x" size={20}/>} onPress={() => props.closeModalMethod()} />
                     
                   </Appbar.Header>
                    <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
