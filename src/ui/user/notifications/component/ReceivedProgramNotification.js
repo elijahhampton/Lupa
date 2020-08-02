@@ -31,7 +31,6 @@ function ReceivedProgramNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
-    const navigation = useNavigation()
 
     useEffect(() => {
         async function fetchData() {
@@ -50,9 +49,6 @@ function ReceivedProgramNotification({ notificationData }) {
     const handleOnPress = () => {
         if (notificationData.data.program_participants.includes(currUserData.user_uuid))
         {
-           /*navigation.navigate('LiveWorkout', {
-                           programData: notificationData.data,
-                       })*/
             setProgramOptionsModalVisible(true)
 
         }
