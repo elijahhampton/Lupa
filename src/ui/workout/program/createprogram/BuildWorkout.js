@@ -461,6 +461,25 @@ class BuildWorkout extends React.Component {
             switch (currDay)
             {
                 case 'Monday':
+                    if (workoutDays.Monday.length === 0) {
+                        return (
+                            <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                            <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                    <FeatherIcon name="plus" size={30} color="#212121" />
+</Surface>
+<Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
+Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+</Text>
+                            </View>
+
+<Caption style={{paddingLeft: 10}}>
+Example
+</Caption>
+</View>
+                        )
+                    }
+
                     return workoutDays.Monday.map(workout => {
                         return (
                             <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
@@ -478,6 +497,25 @@ this.getWorkoutSurfaceContent(workout)
                         )
                     })
                 case 'Tuesday':
+                    if (workoutDays.Tuesday.length === 0) {
+                        return (
+                            <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                            <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                    <FeatherIcon name="plus" size={30} color="#212121" />
+</Surface>
+<Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
+Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+</Text>
+                            </View>
+
+<Caption style={{paddingLeft: 10}}>
+Example
+</Caption>
+</View>
+                        )
+                    }
+
                     return workoutDays.Tuesday.map(workout => {
                         return (
                             <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
@@ -495,6 +533,25 @@ this.getWorkoutSurfaceContent(workout)
                         )
                     })
                 case 'Wednesday':
+                    if (workoutDays.Wednesday.length === 0) {
+                        return (
+                            <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                            <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                    <FeatherIcon name="plus" size={30} color="#212121" />
+</Surface>
+<Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
+Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+</Text>
+                            </View>
+
+<Caption style={{paddingLeft: 10}}>
+Example
+</Caption>
+</View>
+                        )
+                    }
+
                     return workoutDays.Wednesday.map(workout => {
                         return (
                             <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
@@ -512,6 +569,26 @@ this.getWorkoutSurfaceContent(workout)
                         )
                     })
                 case 'Thursday':
+                    if (workoutDays.Thursday.length === 0) {
+                        return (
+                            <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                            <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                    <FeatherIcon name="plus" size={30} color="#212121" />
+</Surface>
+<Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
+Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+</Text>
+                            </View>
+
+<Caption style={{paddingLeft: 10}}>
+Example
+</Caption>
+</View>
+                        )
+                    }
+
+
                     return workoutDays.Thursday.map(workout => {
                         return (
                             <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
@@ -529,6 +606,25 @@ this.getWorkoutSurfaceContent(workout)
                         )
                     })
                 case 'Friday':
+                    if (workoutDays.Friday.length === 0) {
+                        return (
+                            <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                            <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                    <FeatherIcon name="plus" size={30} color="#212121" />
+</Surface>
+<Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
+Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+</Text>
+                            </View>
+
+<Caption style={{paddingLeft: 10}}>
+Example
+</Caption>
+</View>
+                        )
+                    }
+
                     return workoutDays.Friday.map(workout => {
                         return (
                             <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
@@ -546,6 +642,25 @@ this.getWorkoutSurfaceContent(workout)
                         )
                     })
                 case 'Saturday':
+                    if (workoutDays.Saturday.length === 0) {
+                        return (
+                            <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                            <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                    <FeatherIcon name="plus" size={30} color="#212121" />
+</Surface>
+<Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
+Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+</Text>
+                            </View>
+
+<Caption style={{paddingLeft: 10}}>
+Example
+</Caption>
+</View>
+                        )
+                    }
+
                     return workoutDays.Saturday.map(workout => {
                         return (
                             <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
@@ -563,6 +678,25 @@ this.getWorkoutSurfaceContent(workout)
                         )
                     })
                 case 'Sunday':
+                    if (workoutDays.Sunday.length === 0) {
+                        return (
+                            <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                            <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                    <FeatherIcon name="plus" size={30} color="#212121" />
+</Surface>
+<Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
+Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+</Text>
+                            </View>
+
+<Caption style={{paddingLeft: 10}}>
+Example
+</Caption>
+</View>
+                        )
+                    }
+
                     return workoutDays.Sunday.map(workout => {
                         return (
                             <TouchableWithoutFeedback key={workout.workout_uid} onPress={() => this.handleWorkoutOnPress(workout)} onLongPress={() => this.handleWorkoutOnLongPress(workout)}>
@@ -580,22 +714,23 @@ this.getWorkoutSurfaceContent(workout)
                         )
                     })
                 default:
-                    return (
+                        return (
                             <View style={{ alignItems: 'flex-start', width: Dimensions.get('window').width}}>
-                                <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
-                                <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
-                        <FeatherIcon name="plus" size={30} color="#212121" />
+                            <View style={{alignItems: 'center', flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
+                            <Surface style={{ backgroundColor: '#e5e5e5', elevation: 0, width: 65, height: 65, borderRadius: 65, margin: 5, alignItems: "center", justifyContent: "center" }}>
+                    <FeatherIcon name="plus" size={30} color="#212121" />
 </Surface>
 <Text style={{width: '80%', color: 'rgb(174, 174, 178)', }}>
-    Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
+Choose a category and add a workout for this day.  Add custom media, cues, and descriptions.
 </Text>
-                                </View>
+                            </View>
 
 <Caption style={{paddingLeft: 10}}>
-    Example
+Example
 </Caption>
 </View>
-                    )
+                        )
+                    
             }
         } catch(error) {
             return []
@@ -1660,7 +1795,7 @@ this.getWorkoutSurfaceContent(workout)
                    <Surface style={{flex: 1, elevation: 0}}>
                        <TouchableOpacity onPress={() => this.sectionPickerRBSheet.current.open()}>
                        <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontWeight: '400', fontSize: 20}}>
+                        <Text style={{fontWeight: '400', fontSize: 15, paddingLeft: 10, alignSelf: 'flex-start'}}>
                            {this.getCurrentDay()}
                        </Text>
                         </View>

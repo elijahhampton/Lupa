@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
     Text,
@@ -25,6 +25,7 @@ import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/
 import _requestPermissionsAsync from '../../../controller/lupa/permissions/permissions'
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
+import { Constants } from 'react-native-unimodules';
 //Activity Indicator to show while fetching location data
 const ActivityIndicatorModal = (props) => {
     return (
@@ -59,12 +60,14 @@ const WelcomeContentDriver = (props) => {
         try {
             await Geolocation.getCurrentPosition(
                 async (locationInfo) => {
+                    console.log(locationInfo)
                     const locationData = await getLocationFromCoordinates(locationInfo.coords.longitude, locationInfo.coords.latitude);
                     await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
                     await setLocationDataIsSet(true)
                     //udpate user in redux
                     const payload = await getUpdateCurrentUserAttributeActionPayload('location', locationData, []);
                     await dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload })
+                console.log(payload)
                 },
                 async (error) => {
                     alert(error)
@@ -124,6 +127,7 @@ const WelcomeContentDriver = (props) => {
                                 </Text>
                                 
                                 <View>
+
                                 <ListItem
         title='Report'
         titleStyle={styles.titleStyle}
@@ -167,7 +171,7 @@ const WelcomeContentDriver = (props) => {
                                
                             </View>
                             </View>
-
+                        <ActivityIndicatorModal isVisible={loadingIndicatorIsShowing} />
                         </View>
     )
 }
@@ -188,7 +192,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center', fontFamily: 'avenir-roman', fontSize: 20, color: 'rgb(58, 58, 60)', fontWeight: '700'
     },
     headerTextContainer: {
-        flex: 0.5, justifyContent: "space-evenly"
+        justifyContent: "space-evenly",
+        marginTop: Constants.statusBarHeight
     },
     highlightedTitleStyle: {
         color: '#1089ff', fontWeight: '500'

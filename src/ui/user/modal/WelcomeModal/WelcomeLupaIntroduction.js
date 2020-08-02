@@ -145,10 +145,6 @@ class WelcomeLupaIntroduction extends React.Component {
                 this.setState({ trainerCheck: 'unchecked' })
            } else {
             this.setState({ trainerCheck: 'checked', userCheck: 'unchecked', learnCheck: 'unchecked' })
-          /*  this.props.navigation.navigate('TrainerInformation', {
-                setCertifiedTrainer: this.setState({ trainerCheck: 'checked'}).bind(this),
-                removeCertifiedTrainer: this.setState({ trainerCheck: 'unchecked'}).bind(this),
-            })*/
            }
                break;
            case 2:
@@ -179,100 +175,19 @@ class WelcomeLupaIntroduction extends React.Component {
                     default:
         }
     }
-
-    /**
-     * Fetches the user's location and populates the user lat, 
-     * long, city, state, and country in the database.
-     * 
-     * TODO: This methid is not working.  Throws an error due to the 'coords' key missing due to async
-     * behavior.
-     */
-    _getLocationAsync = async () => {
-        let result;
-        await this.setState({
-            showLoadingIndicator: true,
-        })
-
-        try {
-            await Geolocation.getCurrentPosition(
-                async (locationInfo) => {
-                    const locationData = await getLocationFromCoordinates(locationInfo.coords.longitude, locationInfo.coords.latitude);
-                    await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
-                    await this.setState({ locationDataSet: true })
-                    //udpate user in redux
-                    const payload = await getUpdateCurrentUserAttributeActionPayload('location', locationData, []);
-                    await this.props.updateCurrentUserAttribute(payload);
-                },
-                async (error) => {
-                    alert(error)
-                    const errLocationData = {
-                        city: 'San Francisco',
-                        state: 'CA',
-                        country: 'USA',
-                        latitude: '37.7749',
-                        longitude: '122.4194',
-                    }
-
-
-                    //Update user location in database
-                    await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', errLocationData);
-
-                    //udpate user in redux
-                    const payload = await getUpdateCurrentUserAttributeActionPayload('location', errLocationData, []);
-                    await this.props.updateCurrentUserAttribute(payload);
-                    await this.setState({ locationDataSet: true })
-                    await this.enableNext();
-
-                    await this.setState({
-                        showLoadingIndicator: false,
-                    })
-                },
-            );
-        } catch (error) {
-            alert(error)
-            const errLocationData = {
-                city: 'San Francisco',
-                state: 'CA',
-                country: 'USA',
-                latitude: '37.7749',
-                longitude: '122.4194',
-            }
-
-
-            //Update user location in database
-            await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', errLocationData);
-
-            //udpate user in redux
-            const payload = await getUpdateCurrentUserAttributeActionPayload('location', errLocationData, []);
-            await this.props.updateCurrentUserAttribute(payload);
-            await this.setState({ locationDataSet: true })
-            await this.enableNext();
-
-            await this.setState({
-                showLoadingIndicator: false,
-            })
-        }
-
-        await this.enableNext();
-
-        await this.setState({
-            showLoadingIndicator: false,
-        })
-
-    }
-
+    
     render() {
         this.state.permissionsRequested == true && this.state.userCheck == 'checked' || this.state.trainerCheck == 'checked' || this.state.learnCheck == 'checked' ? this.enableNext() : this.disableNext()
         return (
             <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <StatusBar networkActivityIndicatorVisible={false} hidden={true} />
 
-                <View style={{ flex: 2.5, justifyContent: 'center' }}>
+                <View style={{ flex: 2, justifyContent: 'center' }}>
                     <View style={{alignItems: 'flex-start', padding: 20}}>
-                    <Text style={{ fontFamily: 'avenir-roman', textAlign: 'left', fontSize: 25, fontWeight: '500', marginVertical: 20 }}>
+                    <Text style={{ fontFamily: 'avenir-roman', textAlign: 'left', fontSize: 25, fontWeight: '500', marginVertical: 10 }}>
                         Which type of account do you want to create?
                     </Text>
-                    <Text style={{ textAlign: 'center', fontSize: 15, fontWeight: '500', color: 'rgb(142, 142, 147)', marginVertical: 20 }}>
+                    <Text style={{ textAlign: 'center', fontSize: 15, fontWeight: '500', color: 'rgb(142, 142, 147)', marginVertical: 5 }}>
                         Select one of the options below
                     </Text>
                     </View>
@@ -283,7 +198,7 @@ class WelcomeLupaIntroduction extends React.Component {
                             OPTIONS.map((option, index, arr) => {
                                 return (
                                     <>
-                                    <TouchableOpacity onPress={() => this.handleCheckOption(index)}>
+                                    <TouchableOpacity onPress={() => this.handleCheckOption(index)} style={{alignSelf: 'flex-start', paddingLeft: 20}}>
                                     <View key={index} style={{ flexDirection: 'row', alignItems: 'center'}}>
                                     <Text style={styles.optionText}>
                                       {option.optionTitle}
@@ -293,7 +208,7 @@ class WelcomeLupaIntroduction extends React.Component {
                                 </TouchableOpacity>
 
                                 {this.state.trainerCheck === 'checked' && option.key === 1 ?
-                                 <View style={{height: 'auto'}}>
+                                 <View style={{height: 'auto', paddingLeft: 25}}>
                                     <TextInput returnKeyType="done" returnKeyLabel="done" enablesReturnKeyAutomatically={true} placeholderTextColor="#1089ff" placeholder='Enter your certification number here.' />
                                 </View>
                                 :
@@ -308,21 +223,23 @@ class WelcomeLupaIntroduction extends React.Component {
 
                 </View>
                 
+                <View style={{flex: 0.3}}>
                 <TouchableOpacity style={{alignSelf: 'center', alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width}}  onPress={this.handleAllowPermissionsOnPress}>
 
-                <LinearGradient
-          // Button Linear Gradient
-          colors={['#8ac5ff', '#1089ff', '#589ee8']}
-          start={{ x: 0, y: 1 }} 
-          end={{ x: 1, y: 1 }}
-          style={{ justifyContent: 'center', elevation:15, alignItems: 'center', borderRadius: 25, width: '80%', height: 55}}
-         >
-                    <Text style={{color: '#FFFFFF', fontSize: 20, }}>
-                        Allow Permissions
-                        </Text>
-            
-                </LinearGradient>
-                </TouchableOpacity >
+<LinearGradient
+// Button Linear Gradient
+colors={['#8ac5ff', '#1089ff', '#589ee8']}
+start={{ x: 0, y: 1 }} 
+end={{ x: 1, y: 1 }}
+style={{ justifyContent: 'center', alignItems: 'center', borderRadius: 25, width: '80%', height: 55}}
+>
+    <Text style={{color: '#FFFFFF', fontSize: 20, }}>
+        Allow Permissions
+        </Text>
+
+</LinearGradient>
+</TouchableOpacity >
+                </View>
 
                 <ActivityIndicatorModal isVisible={this.state.showLoadingIndicator} />
             </SafeAreaView>
@@ -349,7 +266,7 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontSize: 15,
-        width: '85%'
+        width: '90%'
     }
 })
 

@@ -478,6 +478,24 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         return <FeatherIcon name="more-horizontal" size={20} onPress={() => console.log('Hi')} />
     }
 
+    renderInteractionView = () => {
+            if (this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid && this.props.lupa_data.Users.currUserData.isTrainer) {
+                return (
+                    <Text style={{fontSize: 12, fontWeight: '700', alignSelf: 'center', color: '#1089ff'}}>
+                    Verified Trainer
+                </Text>
+                )
+            } else if (this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid) {
+                return (
+                <Text style={{fontSize: 12, fontWeight: '700', alignSelf: 'center', color: '#1089ff'}}>
+                    Lupa User
+                </Text>
+                )
+            } else if(this.state.userData.user_uuid != this.props.lupa_data.Users.currUserData.user_uuid) {
+                return this.renderViewerInteractions()
+            }
+    }
+
     /**
      * Renders interactions if this is not the current user's profile such as Follow, Unfollow, and Send a message.
      * @return Returns a view that contains the Follow/Unfollow button as well as the button to send a message.
@@ -705,7 +723,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             return (
                 <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
                     <Text style={{fontSize: 12,paddingTop: 10, fontWeight: '500', fontFamily: 'HelveticaNeue-Light', color: '#212121'}}>
-                             Your hourly rate is {this.props.lupa_data.Users.currUserData.hourly_payment_rate}$.
+                             Your hourly rate is ${this.props.lupa_data.Users.currUserData.hourly_payment_rate}.
                          </Text>
 
                         <Text style={{paddingTop: 10}} onPress={this.showChangeRateModal}>
@@ -721,7 +739,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
             return (
                 <View style={{flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
                     <Text style={{fontSize: 12,paddingTop: 10, fontWeight: '600',  color: '#212121'}}>
-                    {this.state.userData.display_name} has an hourly rate of {this.state.userData.hourly_payment_rate}$
+                    {this.state.userData.display_name} has an hourly rate of ${this.state.userData.hourly_payment_rate}.
                          </Text>
 
                         <Text style={{paddingTop: 10}}>
@@ -1006,18 +1024,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                 </View>
 
                                 <View style={{width: '100%'}}>
-                                    {
-                                        this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid && this.props.lupa_data.Users.currUserData.isTrainer ?
-                                
-                                            <Text style={{fontSize: 12, fontWeight: '700', alignSelf: 'center', color: '#1089ff'}}>
-                                                Verified Trainer
-                                            </Text>
-                                        
-                                        :
-                                            this.renderViewerInteractions()
+                                    {this.renderInteractionView()}
                                     
-                            
-                                    }
                  
                                 </View>
                             </View>

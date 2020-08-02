@@ -16,15 +16,13 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import LargeProgramSearchResultCard from '../workout/program/components/LargeProgramSearchResultCard'
 
 function Search(props) {
-    const LUPA_INSTANCE_CONTROLLER = LupaController.getInstance();
+    const LUPA_CONTROLLER_INSTANCE= LupaController.getInstance();
 
     const [searching, setIsSearching] = useState(false)
     const [searchValue, setSearchValue] = useState("")
     const [searchResults, setSearchResults] = useState([])
 
     const performSearch = async searchQuery => {
-        let searchResultsIn = []
-
         //If no search query then set state and return
         if (searchQuery == "" || searchQuery == "") {
             setIsSearching(true)
@@ -39,7 +37,7 @@ function Search(props) {
         await setSearchValue(searchQuery)
 
         await LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
-            setSearchResults(searchResultsIn)
+            setSearchResults(searchData)
         })
 
         await setIsSearching(false)
