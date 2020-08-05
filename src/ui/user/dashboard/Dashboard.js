@@ -13,6 +13,7 @@ import {
     StyleSheet,
     SafeAreaView,
     Dimensions,
+    ScrollView,
     Image,
     Text,
 } from 'react-native';
@@ -25,8 +26,11 @@ import {
 } from 'native-base'
 import {
     Appbar,
+    Caption,
     Surface,
+    Divider,
     Button,
+    Avatar,
 } from 'react-native-paper';
 import { LineChart } from 'react-native-chart-kit'
 import { useNavigation } from '@react-navigation/native'
@@ -35,7 +39,8 @@ import { connect, useSelector } from 'react-redux';
 import {MenuIcon } from '../../icons/index'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import ThinFeatherIcon from 'react-native-feather1s'
-
+import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
+import Carousel from 'react-native-snap-carousel'
 const marginSeparatorSize = 15
 
 const Dashboard = () => {
@@ -77,7 +82,78 @@ const Dashboard = () => {
         }   
 
         return (
-            null
+           <View  style={{flex: 1}}>
+                <ScrollView>
+
+                <View style={{alignSelf: 'center',}}>
+                            <Text style={{ padding: 10, fontSize: 18, fontFamily: 'Avenir-Medium'}}>
+                                Activity
+                            </Text>
+
+                            <LineChart
+                bezier
+                data={{
+                  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jul", "Aug", "Sep"],
+                  datasets: [
+                    {
+                      data: [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                      ]
+                    }
+                  ]
+                }}
+                width={Dimensions.get('window').width} // from react-native
+                height={200}
+                yAxisLabel="N"
+                withHorizontalLabels={false}
+                yAxisSuffix=""
+                yAxisInterval={1} // optional, defaults to 1
+                chartConfig={{
+                    strokeWidth: 0.5, 
+                  backgroundColor: "#FFFFFF",
+                  backgroundGradientFrom: "#FFFFFF",
+                  backgroundGradientTo: "#FFFFFF",
+                  decimalPlaces: 0, // optional, defaults to 2dp
+                  color: (opacity = 0) => `rgba(33, 150, 243, ${opacity})`,
+                  labelColor: (opacity = 0) => `rgba(33, 150, 243, ${opacity})`,
+                  style: {
+                    borderRadius: 0
+                  },
+                  propsForDots: {
+                    r: "6",
+                    strokeWidth: "2",
+                    stroke: "#ffa726"
+                  },
+                  propsForBackgroundLines: {
+                      backgroundColor: 'transparent',
+                      color: 'transparent',
+                      stroke: 'transparent',
+                  }
+                }}
+                style={{
+                  borderRadius: 0
+                }}
+              />
+
+              <Divider style={{marginHorizontal: 30, marginVertical: 5}} />
+
+              <Button color="#1089ff" uppercase={false} mode="text" style={{alignSelf: 'flex-end'}} onPress={() => navigation.push('TrainerInsights')}>
+                  Trainer Insights
+                  <FeatherIcon name="arrow-right" size={12}/>
+              </Button>
+                        </View>
+                        <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+                        </ScrollView>
+            </View> 
         )
     }
 
@@ -109,7 +185,25 @@ const Dashboard = () => {
         }
 
         return (
-            null
+            <View style={{flex: 1}}>
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                {
+                        currUserProgramsData.map((program, index, arr) => {
+                            if (index >= 1) {
+                                return null;
+                            }
+
+                            return (
+                                <ProfileProgramCard programData={program} />
+                            )
+                        })
+}
+<Caption>
+    Current Program
+</Caption>
+            </View>
+            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+        </View>
         )
     }
 
@@ -119,22 +213,24 @@ const Dashboard = () => {
 
     return (
         <View style={styles.safeareaview}>
-            <Header>
-                <Left>
-                <MenuIcon customStyle={{ margin: 10 }} onPress={() => navigation.openDrawer()} />
-                </Left>
 
-                <Body>
-                    <Title style={{fontFamily: 'HelveticaNeue', fontSize: 15, fontWeight: '600'}}>
-                        Dashboard
-                    </Title>
-                </Body>
+            <Appbar.Header style={{ backgroundColor: 'white', elevation: 0, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 , flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <View>
+                    <Appbar.Action icon={() =>  <MenuIcon customStyle={{ margin: 10 }} onPress={() => navigation.openDrawer()} />} />
+                    </View>
+                    
+                    
+                    <Appbar.Content title="Dashboard" titleStyle={{alignSelf: 'center', fontFamily: 'HelveticaNeue-Bold', fontSize: 15, fontWeight: '600'}} />
+                    
 
-                <Right>
-                <ThinFeatherIcon thin={true} name="bell" style={{paddingHorizontal: 10}} size={25} onPress={() => navigation.navigate('Notifications')} />
-                <ThinFeatherIcon name="mail" thin={true} size={25} style={{ paddingHorizontal: 10 }} onPress={() => navigation.navigate('MessagesView')}  />
-                </Right>
-            </Header>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Appbar.Action icon={() =>   <ThinFeatherIcon thin={true} name="bell" style={{}} size={25} onPress={() => navigation.navigate('Notifications')} />} />
+                    <Appbar.Action icon={() =>  <ThinFeatherIcon name="mail" thin={true} size={25} style={{ }} onPress={() => navigation.navigate('MessagesView')}  />} />
+        </View>
+                   
+              
+                </Appbar.Header>
+
             <View style={{flex: 1}}>
                 {renderComponentDisplay()}
             </View>
@@ -163,3 +259,10 @@ const styles = StyleSheet.create({
 });
 
 export default connect(mapStateToProps)(Dashboard);
+
+/*
+
+ <ThinFeatherIcon thin={true} name="bell" style={{paddingHorizontal: 10}} size={25} onPress={() => navigation.navigate('Notifications')} />
+                <ThinFeatherIcon name="mail" thin={true} size={25} style={{ paddingHorizontal: 10 }} onPress={() => navigation.navigate('MessagesView')}  />
+
+                */

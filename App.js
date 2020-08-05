@@ -25,6 +25,7 @@ import WelcomeModal from './src/ui/user/modal/WelcomeModal/WelcomeModal';
 import ShareProgramModal from './src/ui/workout/program/modal/ShareProgramModal';
 import AccountSettings from './src/ui/user/profile/component/SettingsModal'
 import LiveWorkout from './src/ui/workout/modal/LiveWorkout'
+import TrainerInsights from './src/ui/user/trainer/TrainerInsights';
 
 class App extends React.Component {
   constructor(props) {
@@ -149,6 +150,7 @@ function AppNavigator() {
     <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
     <StackApp.Screen name="AccountSettings" component={AccountSettings} />
     <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
+    <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
   </StackApp.Navigator>
   )
 

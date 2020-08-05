@@ -339,18 +339,19 @@ class Featured extends React.Component {
                                 showsHorizontalScrollIndicator={false}
                                 snapToAlignment='center'
                                 centerContent
-                                snapToInterval={Dimensions.get('window').width / 1.2 }
-                                scrollEventThrottle={16}
+                                snapToInterval={Dimensions.get('window').width}
                                 decelerationRate={0}
                                 pagingEnabled={true}
                                 onScroll={this.handleOnScroll}
+                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
 
 
                             >
                                 {
                                     this.state.featuredPrograms.map(program => {
                                         return (
-                                           <ProgramInformationComponent program={program} />
+                                                <ProgramInformationComponent program={program} />
+                                           
                                         )
                                     })
                                 }
@@ -446,7 +447,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     sectionHeaderText: {
-        fontSize: RFValue(15), fontFamily: 'Avenir-Medium', fontWeight: 'bold'
+        fontSize: RFValue(15), fontFamily: 'Avenir-Medium'
     },
     searchContainerStyle: {
         backgroundColor: "transparent", width: '90%'
@@ -462,7 +463,7 @@ const styles = StyleSheet.create({
     },
     appbar: {
         backgroundColor: '#FFFFFF',
-        elevation: 0,
+        elevation: 3,
         borderBottomColor: 'rgb(199, 199, 204)', 
         borderBottomWidth: 0.8 
     }

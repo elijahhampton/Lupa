@@ -74,21 +74,20 @@ function LupaHome(props) {
 
     return(
         <Container style={styles.root}>
-            <Header hasTabs={true}>
-                <Left>
-                <MenuIcon customStyle={{ margin: 10 }} onPress={() => navigation.openDrawer()} />
-                </Left>
+            <Appbar.Header style={{ backgroundColor: 'white', elevation: 3, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 , flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <View>
+                    <Appbar.Action icon={() =>  <MenuIcon customStyle={{ margin: 10 }} onPress={() => navigation.openDrawer()} />} />
+                    </View>
+                    
+                    
+                    <Appbar.Content title="Book Trainers" titleStyle={{alignSelf: 'center', fontFamily: 'HelveticaNeue-Bold', fontSize: 15, fontWeight: '700'}} />
+                    
 
-                <Body>
-                    <Title style={{fontFamily: 'Avenir-Roman'}}>
-                        Book Trainers
-                    </Title>
-                </Body>
-
-                <Right />
-            </Header>
+                   
+              
+                </Appbar.Header>
             <Tabs locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
-             <Tab heading="Featured">
+             <Tab  heading="Featured">
                 <Featured />
              </Tab>
               <Tab heading="My Programs">

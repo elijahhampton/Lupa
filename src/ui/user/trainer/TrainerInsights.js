@@ -19,15 +19,18 @@ import {
 import { LineChart } from 'react-native-chart-kit';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 function TrainerInsights(props) {
+    const navigation = useNavigation()
+
     return (
         <Modal presentation="fullScreen" visible={props.isVisible} animationType="slide" animated={true}>
                     <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
                         <Appbar.Header style={{elevation: 0}} theme={{colors: {
                             primary: '#FFFFFF'
                         }}}>
-                        <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
+                        <Appbar.Action icon={() => <FeatherIcon name="x" size={20} />} onPress={() => navigation.pop()}/>
                             <Appbar.Content title="Insights" />
                           
                         </Appbar.Header>

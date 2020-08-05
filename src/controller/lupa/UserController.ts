@@ -1129,11 +1129,10 @@ export default class UserController {
 
 
                  try {
-                     if (typeof(temp) != 'undefined')
+                     if (typeof(temp) != 'undefined' && temp != null)
                      {
-                         if (temp.program_name != "")
+                         if (temp.program_name != "" && temp.program_image != "")
                          {
-
                             await programsData.push(temp)
                          }
                      }
