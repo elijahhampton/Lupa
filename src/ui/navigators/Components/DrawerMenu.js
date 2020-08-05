@@ -117,7 +117,7 @@ function DrawerMenu(props) {
 
         {
           currUserData.isTrainer === true ?
-          <TouchableOpacity onPress={() => setTrainerInsightsModalOpen(true)}>
+          <TouchableOpacity onPress={() => navigation.push('TrainerInsights')}>
           <View style={styles.navigationButtonContaner}>
             <DrawerIcon name="bar-chart" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
             <Text style={styles.buttonText}>
@@ -151,7 +151,7 @@ function DrawerMenu(props) {
 
         <Divider />
         <Caption style={{padding: 10}}>
-          Version 0.7 (14)
+          Version 0.7 (15)
         </Caption>
 
 
@@ -160,8 +160,6 @@ function DrawerMenu(props) {
     Log out
     </Button>
         </View> 
-
-        <TrainerInsights isVisible={trainerInsightsModalIsOpen} closeModalMethod={() => setTrainerInsightsModalOpen(false)} />
     </SafeAreaView>
   </View>
   )

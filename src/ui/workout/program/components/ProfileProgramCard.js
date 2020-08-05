@@ -64,7 +64,7 @@ function ProfileProgramCard(props) {
     }
 
     return (
-        <View style={{width: Dimensions.get('window').width}}>
+        <View style={{width: '100%', alignSelf: 'center', marginHorizontal: 20}}>
 
         <TouchableWithoutFeedback onPress={() => handleOnPress()}>
         <Surface style={styles.container}>

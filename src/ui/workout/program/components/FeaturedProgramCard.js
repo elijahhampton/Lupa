@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'
     },
     programNameText: {
-        fontFamily: 'HelveticaNeue', fontSize: 15, fontWeight: 'bold'
+        fontFamily: 'HelveticaNeue', fontSize: 15, fontWeight: '600'
     },
     programOwnerNameText: {
         fontSize: 15, fontWeight: '400', color: '#1089ff'

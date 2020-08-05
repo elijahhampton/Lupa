@@ -1018,7 +1018,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     
                         
 
-                    <View style={{flex: 1}}>
+                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                     {
                                 this.props.lupa_data.Users.currUserData.isTrainer ?
                                 this.mapTrainerPrograms()

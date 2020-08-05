@@ -44,10 +44,10 @@ function ProgramInformationComponent({ program }) {
 
     return (
         <>
-        <TouchableWithoutFeedback key={program.program_name} onPress={() => handleCardOnPress(program)} style={{width: Dimensions.get('screen').width / 1.2}}>
+        <TouchableWithoutFeedback key={program.program_name} onPress={() => handleCardOnPress(program)} style={{width: Dimensions.get('screen').width, backgroundColor: 'red'}}>
 
-        <View style={{marginHorizontal: 10, width: Dimensions.get('screen').width / 1.2}}>
-        <Surface style={{elevation: 0, width: Dimensions.get('screen').width / 1.2, height: 180, borderRadius: 16, margin: 5}}>
+        <View style={{width: Dimensions.get('screen').width, alignItems: 'center'}}>
+        <Surface style={{elevation: 3, width: Dimensions.get('screen').width / 1.2, height: 180, borderRadius: 16, margin: 5}}>
       <View style={{position: 'absolute', 
         flex: 1,
         top: 0, left: 0, right:0, 
@@ -60,9 +60,9 @@ function ProgramInformationComponent({ program }) {
        </ImageBackground>
       
     </Surface>
-        <View style={{paddingLeft: 10, width: Dimensions.get('screen').width /1.3, alignItems: 'flex-start', justifyContent: 'center' }}>
+        <View style={{ width: Dimensions.get('screen').width /1.3, alignItems: 'flex-start', justifyContent: 'center' }}>
            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: Dimensions.get('screen').width /1.3,}}>
-           <Text style={{color: '#000000', fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Roman' }}>
+           <Text style={{color: '#000000', fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Roman', fontWeight: '700' }}>
                 {titleCase(program.program_name)}
                 </Text>
                 <Caption>
