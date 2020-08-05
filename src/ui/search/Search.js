@@ -81,7 +81,7 @@ function Search(props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F2F2F2'
+        backgroundColor: '#FFFFFF'
     },
     searchContainerStyle: {
         backgroundColor: "transparent", width: '90%'

@@ -58,10 +58,6 @@ function DrawerMenu(props) {
       )
   }
 
-  const navigateToDashboard = () => {
-   navigation.navigate('Dashboard')
-  }
-
   const navigateToTrainerInformation = () => {
     navigation.navigate('RegisterAsTrainer', {
       navFrom: 'Drawer'
@@ -98,16 +94,6 @@ function DrawerMenu(props) {
       </TouchableOpacity>
 
         <Divider />
-
-        <TouchableOpacity onPress={navigateToDashboard}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="clipboard" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Dashboard
-          </Text>
-        </View>
-        </TouchableOpacity>
-
 
         <TouchableOpacity onPress={navigateToTrainerInformation}>
         <View style={styles.navigationButtonContaner}>
@@ -165,7 +151,7 @@ function DrawerMenu(props) {
 
         <Divider />
         <Caption style={{padding: 10}}>
-          Version 0.7 (13)
+          Version 0.7 (14)
         </Caption>
 
 

@@ -3,11 +3,12 @@ import React from 'react';
 import Profile from '../user/profile/ProfileView';
 import CreateProgram from '../workout/program/createprogram/CreateProgram';
 import LiveWorkout from '../workout/modal/LiveWorkout';
-import LupaHome from '../LupaHome';
+import LupaHome from '../LupaHome'
 import MessagesView from '../user/chat/MessagesView'
 
 import { createStackNavigator } from '@react-navigation/stack';
 import MyData from '../user/component/MyData';
+import Featured from '../Featured';
 
 const Stack = createStackNavigator()
 
@@ -19,6 +20,7 @@ function LupaHomeNavigator() {
       <Stack.Screen name="MessagesView" component={MessagesView} />
       <Stack.Screen name="MyData" component={MyData} />
       <Stack.Screen name="CreateProgram" component={CreateProgram} />
+      <Stack.Screen name="Featured" component={Featured} />
     </Stack.Navigator>
     )
 }

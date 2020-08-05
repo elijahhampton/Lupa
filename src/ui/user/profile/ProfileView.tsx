@@ -366,38 +366,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
         }
     }
 
-    /**
-     * Generates user session review data from FB.
-     */
-    generateSessionReviewData = async () => {
-        let userData, userUUID, sessionReviews = [];
-
-        if (this.state.userData)
-        {
-            if (this.state.userData.session_reviews.length != 0)
-            {
-                let reviewData = this.state.userData.session_reviews;
-                for (let i = 0; i < reviewData.length; ++i)
-                {
-                    //get users uuid from review object
-                    userUUID = reviewData[i].reviewBy;
-
-                    //get users information from controller
-                    await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(userUUID).then(userDataIn => {
-                        userData = userDataIn;
-                    });
-
-                    //add it to review object and puhs into arr
-                    reviewData.reviewByData = userData;
-                    sessionReviews.push(reviewData);
-                }
-            }
-        }
-        //Set session review state property
-        await this.setState({
-            sessionReviews: sessionReviews
-        })
-    }
 
     /**
      * Navigates to the follower view.
@@ -470,12 +438,12 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     getHeaderRight = () => {
         if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
             return (
-                    <FeatherIcon color="#212121" name="more-horizontal" size={20} />
+                   null
             )
             
         }
         
-        return <FeatherIcon name="more-horizontal" size={20} onPress={() => console.log('Hi')} />
+        return null
     }
 
     renderInteractionView = () => {
@@ -958,7 +926,6 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <SafeAreaView />
                 <Appbar.Header style={{ backgroundColor: 'white', elevation: 0, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8  }}>
                     <Left>
                         {this.getHeaderLeft()}
@@ -974,22 +941,14 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         {this.getHeaderRight()}
                     </Right>
                 </Appbar.Header>
-
-                <ScrollView 
-                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#F2F2F2', marginTop: 10 }} 
-                showsVerticalScrollIndicator={false} 
-                shouldRasterizeIOS={true} 
-                refreshControl={
-                <RefreshControl refreshing={this.state.refreshing} 
-                onRefresh={this.handleOnRefresh} />}>
-                    
-                    <View style={styles.user}>
-                        <View style={styles.userInfoContainer}>
-                            <View style={{backgroundColor: 'white',flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
-                            <View style={{flex: 2, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start'}}>
-                                {this.getUserAvatar()}
-                                <View style={styles.userAttributesContainer}>
-                            <TouchableOpacity onPress={() => this._navigateToFollowers()}>
+                {/* UserInfo Container */}
+                            {/* Avatar/Following - Name/Bio-EditBioButton */}
+                            <View style={{width: '100%',  flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
+                                {/* Avatar/Following */}
+                                <View style={{flex: 1, height: Dimensions.get('window').height / 4, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                                    {this.getUserAvatar()}
+                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                                    <TouchableOpacity onPress={() => this._navigateToFollowers()}>
                                 <View style={{alignItems: 'center'}}>
                                     <Text>
                                         {this.getFollowerLength()}
@@ -1010,30 +969,21 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                 </Text>
                                 </View>
                             </TouchableOpacity>
-                        </View>
-                            </View>
-                            
-                            <View style={{flex: 3, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10}}>
-                                <View style={{marginVertical: 5, justifyContent: 'center', alignItems: 'flex-start'}}>
-                                <Text style={{ fontSize: 12, color: "#212121", fontWeight: 'bold', padding: 1 }}>
-                                    {this.state.userData.display_name}
-                                </Text>
-                                {
-                                    this.getLocation()
-                                }
+                                    </View>
                                 </View>
 
-                                <View style={{width: '100%'}}>
-                                    {this.renderInteractionView()}
-                                    
-                 
-                                </View>
-                            </View>
-                            </View>
-
-                            <View style={{flex: 1,  alignItems: 'flex-start', justifyContent: 'center', marginVertical: 15, marginBottom: 10, width: '100%'}}>
-                                <>
-                                <Text style={{ padding: 10, fontSize: 10, fontWeight: '500'}}>
+                                {/* Name/Bio */}
+                                <View style={{flex: 1.5, height: Dimensions.get('window').height / 4, justifyContent: 'space-evenly'}}>
+                                        <View>
+                                            <View style={{paddingVertical: 10}}>
+                                            <Text style={{fontSize: 15, fontFamily: 'HelveticaNeue-Bold'}}>
+                                                Elijah Hampton
+                                            </Text>
+                                            <Text style={{fontSize: 12, fontFamily: 'HelveticaNeue-Light'}}>
+                                                Auburn, AL
+                                            </Text>
+                                            </View>
+                                            <Text style={{fontSize: 12, paddingRight: 2, fontFamily: 'HelveticaNeue', fontWeight: '400'}}>
                          {
 
                              this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid ?
@@ -1045,43 +995,30 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                          }
                     
                                 </Text>
-                                <Divider style={{width: Dimensions.get('window').width}} />
-                                </>
-
-                                <>
-                                {this.renderHourlyRate()}
-                         </>
-  
-                                </View>
-                            
-                        </View>
-
-                        <Divider />
-                    </View>
-                    <View>
-                    {
-                                this.props.lupa_data.Users.currUserData.isTrainer ?
-                                <TouchableOpacity style={{}}>
-                                    <View style={{paddingVertical: 10, backgroundColor: 'white'}}>
-                                        <View style={{paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                        <Text style={{fontSize: 15, paddingVertical: 10}}>
-                                        Reviews (0)
-                                    </Text>
-                                    <FeatherIcon name="chevron-down" size={15} />
                                         </View>
-                               
-                                    <Caption style={{paddingLeft: 10}}>
-                                        This trainer has not received any reviews
-                                    </Caption>
-                                    </View>
-                                </TouchableOpacity>
-                                :
-                                null
-                            }
-                            
-                    </View>
+                                        
+                                       {/* <View>
+                                        
+                                            <Button color="rgb(230, 230, 230)" theme={{roundness: 8}} style={{elevation: 0, color: '#212121', alignSelf: 'flex-start', width: '80%'}} uppercase={false} mode="contained">
+                                                Edit Bio
+                                            </Button>
+                                       </View>*/}
+                                </View>
+                            </View>
 
-                    <View style={{backgroundColor: '#F2F2F2'}}>
+                            <Divider />
+
+                <ScrollView 
+                contentContainerStyle={{ flexGrow: 1, backgroundColor: '#FFFFFF'}} 
+                showsVerticalScrollIndicator={false} 
+                shouldRasterizeIOS={true} 
+                refreshControl={
+                <RefreshControl refreshing={this.state.refreshing} 
+                onRefresh={this.handleOnRefresh} />}>
+                    
+                        
+
+                    <View style={{flex: 1}}>
                     {
                                 this.props.lupa_data.Users.currUserData.isTrainer ?
                                 this.mapTrainerPrograms()
@@ -1113,8 +1050,6 @@ const styles = StyleSheet.create({
     },
     user: {
         flexDirection: "column",
-        margin: 0,
-        backgroundColor: "white"
     },
     userAttributesContainer: {
         width: '100%',
