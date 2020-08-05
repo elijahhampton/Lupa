@@ -19,6 +19,7 @@ import ProgramInformationPreview from '../ProgramInformationPreview';
 
 import { RFValue } from 'react-native-responsive-fontsize'
 import ProgramOptionsModal from '../modal/ProgramOptionsModal';
+import { titleCase } from '../../../common/Util';
 
 function FeaturedProgramCard({ currProgram, keyProp }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
@@ -85,7 +86,6 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
     }, [])
 
     return (
-        <>
             <Card
             key={keyProp}
             theme={{ roundness: 5 }} 
@@ -97,7 +97,7 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
                         <View style={styles.actionTopContent}>
                             <>
                                 <Text style={styles.programNameText} numberOfLines={1}>
-                                    {getProgramName()}
+                                    {titleCase(getProgramName())}
                                 </Text>
                             </>
                             <Text style={styles.programOwnerNameText} >
@@ -123,16 +123,15 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
                         </View>
                     </View>
                 </Card.Actions>
-            </Card>
-            <ProgramInformationPreview isVisible={programModalVisible} programData={currProgram} closeModalMethod={() => setProgramModalVisible(false)} />
+                <ProgramInformationPreview isVisible={programModalVisible} programData={currProgram} closeModalMethod={() => setProgramModalVisible(false)} />
             <ProgramOptionsModal program={currProgram} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
-        </>
+            </Card>
     )
 }
 
 const styles = StyleSheet.create({
     card: {
-        borderRadius: 15, elevation: 1, margin: 10, width: Dimensions.get('window').width / 1.2, height: 250, marginVertical: 5, marginBottom: 20, shadowOpacity: 0.1
+        borderRadius: 15, elevation: 3, margin: 10, width: '90%', height: 250, marginVertical: 5, marginBottom: 20, shadowOpacity: 0.1
     },
     cardCover: {
         height: '65%',
@@ -149,10 +148,10 @@ const styles = StyleSheet.create({
         width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'
     },
     programNameText: {
-        fontFamily: 'Helvetica-Bold', fontSize: 15, fontWeight: '800',
+        fontFamily: 'HelveticaNeue', fontSize: 15, fontWeight: 'bold'
     },
     programOwnerNameText: {
-        fontSize: 12, fontWeight: '500', color: '#1089ff'
+        fontSize: 15, fontWeight: '400', color: '#1089ff'
     },
     divider: {
         width: '100%'
@@ -173,7 +172,7 @@ const styles = StyleSheet.create({
         
     },
     programLocationNameText: {
-        fontSize: RFValue(10), fontWeight: '400', flexWrap: 'nowrap',  flex: 1, width: '100%', alignSelf: 'flex-end'
+        fontSize: RFValue(10), fontWeight: '400', flexWrap: 'nowrap',  flex: 1, width: '100%', alignSelf: 'flex-end', fontFamily: 'Avenir-Medium'
     }
 })
 

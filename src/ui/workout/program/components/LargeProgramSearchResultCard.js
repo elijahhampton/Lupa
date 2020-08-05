@@ -84,7 +84,7 @@ function LargeProgramSearchResultCard({ program }) {
 
           <View style={styles.buttonContainer}>
                   
-             <Button color="#1089ff" onPress={handleOnPress}>
+             <Button uppercase={false} color="#1089ff" onPress={handleOnPress}>
                  <Text style={styles.buttonText}>
                      View Program
                  </Text>
@@ -99,7 +99,7 @@ function LargeProgramSearchResultCard({ program }) {
 
 const styles = StyleSheet.create({
     container: {
-        alignSelf: 'center', elevation: 10, shadowOpacity: 0.1,  borderRadius: 10, width: Dimensions.get('window').width - 70, height: 450, margin: 5, marginVertical: 15
+        alignSelf: 'center', elevation: 3, shadowOpacity: 0.1,  borderRadius: 10, width: Dimensions.get('window').width - 70, height: 450, margin: 5, marginVertical: 15
     },
     image: {
         width: '100%', height: '100%', borderTopLeftRadius: 10, borderTopRightRadius: 10,
@@ -120,13 +120,13 @@ const styles = StyleSheet.create({
         fontSize: 15, fontWeight: 'bold', fontFamily: 'avenir-roman'
     },
     programDescriptionText: {
-        fontFamily: 'avenir-roman', fontSize: 10,
+        fontFamily: 'avenir-roman', fontSize: 12,
     },
     buttonContainer: {
         flex: 0.5, alignItems: 'center', justifyContent: 'center'
     },
     buttonText: {
-        fontWeight: '400', fontFamily: 'avenir-roman', fontSize: 12
+        fontWeight: '400', fontFamily: 'HelveticaNeue', fontSize: 13
     }
 })
 

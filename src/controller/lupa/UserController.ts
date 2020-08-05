@@ -1423,10 +1423,10 @@ export default class UserController {
 
       getFeaturedPrograms = async () => {
           let featuredProfiles = [];
-          await PROGRAMS_COLLECTION.where('program_type', '==', 'Single').limit(5).get().then(docs => {
+          await PROGRAMS_COLLECTION.get().then(docs => {
               docs.forEach(doc => {
                   let snapshot = doc.data();
-                if (typeof(snapshot) == 'undefined' || snapshot.program_name.length == 0 || typeof(snapshot.program_name) == 'undefined' || snapshot.program_image == '')
+                if (typeof(snapshot) == 'undefined' || snapshot.program_name == null || typeof(snapshot.program_name) == 'undefined' || snapshot.program_image == '')
                 {
 
                 }

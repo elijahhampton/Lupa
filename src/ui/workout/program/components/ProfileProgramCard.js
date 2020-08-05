@@ -98,7 +98,7 @@ function ProfileProgramCard(props) {
 
 const styles = StyleSheet.create({
     container: {
-        alignSelf: 'center', elevation: 10, shadowOpacity: 0.1,  borderRadius: 10, width: Dimensions.get('window').width - 70, height: 200, margin: 5, marginVertical: 15
+        alignSelf: 'center', elevation: 3, shadowOpacity: 0.1,  borderRadius: 10, width: Dimensions.get('window').width - 70, height: 200, margin: 5, marginVertical: 15
     },
     image: {
         width: '100%', height: '100%', borderTopLeftRadius: 10, borderTopRightRadius: 10,

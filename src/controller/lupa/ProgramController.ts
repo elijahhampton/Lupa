@@ -59,12 +59,11 @@ export default class ProgramController {
      */
     getTopPicks = async () => {
         let topPicks = []
-        await PROGRAM_COLLECTION.limit(5).get().then(docs => {
+        await PROGRAM_COLLECTION.where('completedProgram', '==', true).limit(5).get().then(docs => {
             let snapshot = getLupaProgramInformationStructure()
             docs.forEach(querySnapshot => {
                   snapshot = querySnapshot.data()
                   if (typeof(snapshot) != 'undefined' && snapshot != null && snapshot.program_image != "") {
-                      console.log('getToPciks()')
                     topPicks.push(snapshot)
                   }
               })
