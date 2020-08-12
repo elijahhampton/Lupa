@@ -22,8 +22,10 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import { useNavigation } from '@react-navigation/native';
 
-import { Button, Caption } from 'react-native-paper'
+import { Button, Caption, Appbar } from 'react-native-paper'
 import { Constants } from 'react-native-unimodules';
+import BuildWorkoutController from './buildworkout/BuildWorkoutController';
+import { LOG_ERROR } from '../../../../common/Logger';
 
 
 const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
@@ -172,6 +174,11 @@ class CreateProgram extends React.Component {
         }
     }
 
+    componentDidCatch() {
+        LOG_ERROR
+        this.exit()
+    }
+
     captureProgramImage = (img) => {
         this.setState({
             programImage: img
@@ -303,7 +310,7 @@ class CreateProgram extends React.Component {
                         )} />
                 )
             case 1:
-                return <BuildAWorkout programData={this.state.programData} goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1 })} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} />
+                return <BuildWorkoutController programData={this.state.programData} goToIndex={this.goToIndex} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> /* <BuildAWorkout programData={this.state.programData} goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1 })} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> */
             default:
         }
     }

@@ -336,7 +336,6 @@ function ProgramInformation(props) {
                   </View>
                   <TextInput value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" placeholderTextColor="#212121" style={styles.textInput} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
                   <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={styles.textInput} enablesReturnKeyAutomatically={true} returnKeyLabel="done" returnKeyType="done" keyboardType="default" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
-                  {/* <TextInput value={numProgramSpots} onChangeText={text => setNumProgramSpots(text)} label="Spots" placeholder="# Spots"  mode="outlined" style={{margin: 3, width: 80, alignSelf: 'flex-start', }} keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" /> */}
                 </View>
               </View>
 
@@ -556,7 +555,7 @@ function ProgramInformation(props) {
       default:
         return <View>
           <Text>
-            Hi
+            Something went wrong.
             </Text>
         </View>
     }
@@ -566,7 +565,7 @@ function ProgramInformation(props) {
     switch (currIndex) {
       case 0:
         return (
-          <Button color="#23374d" style={{ borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={getNextView} mode="contained">
+          <Button color="#23374d" style={{elevation: 3,  borderRadius: 5, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={getNextView} mode="contained">
             <Text>
               Next
               </Text>
@@ -575,7 +574,7 @@ function ProgramInformation(props) {
       case 1:
 
         return (
-          <Button color="#23374d" style={{ borderRadius: 2, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
+          <Button color="#23374d" style={{ borderRadius: 5, elevation: 3, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
             <Text>
               Add Workouts
             </Text>
@@ -593,7 +592,7 @@ function ProgramInformation(props) {
       }
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 10 }}>
-        <Button color="#23374d" onPress={() => props.handleCancelOnPress()}>
+        <Button uppercase={false} color="#23374d" onPress={() => props.handleCancelOnPress()}>
           <Text>
             Cancel
   </Text>

@@ -419,7 +419,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
      */
     getHeaderLeft = () => {
         if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.userData.user_uuid) {
-            return <MenuIcon customStyle={{margin: 10}} onPress={() => this.props.navigation.openDrawer()} />
+            return <FeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.goBack(null)} />
         }
 
         return <FeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.goBack(null)} />
@@ -449,13 +449,14 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     renderInteractionView = () => {
             if (this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid && this.props.lupa_data.Users.currUserData.isTrainer) {
                 return (
-                    <Text style={{fontSize: 12, fontWeight: '700', alignSelf: 'center', color: '#1089ff'}}>
+
+                    <Text style={{fontSize: 12, fontWeight: '700',alignSelf: 'center', color: '#1089ff', paddingVertical: 5}}>
                     Verified Trainer
                 </Text>
                 )
             } else if (this.state.userData.user_uuid == this.props.lupa_data.Users.currUserData.user_uuid) {
                 return (
-                <Text style={{fontSize: 12, fontWeight: '700', alignSelf: 'center', color: '#1089ff'}}>
+                <Text style={{fontSize: 12, fontWeight: '700',  alignSelf: 'center', color: '#1089ff'}}>
                     Lupa User
                 </Text>
                 )
@@ -647,11 +648,11 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
     renderViewerInteractions = () => {
         return (
             <>
-            <View style={{width: '100%', margin: 5}}>
+            <View style={{width: '100%', margin: 5, justifyContent: 'flex-start'}}>
                         {
                                             this.state.followers.includes(this.props.lupa_data.Users.currUserData.user_uuid) ?
                                             <TouchableHighlight style={{borderRadius: 8}} onPress={() => this.LUPA_CONTROLLER_INSTANCE.unfollowUser(this.state.userData.user_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>
-                                                                    <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+                                                                    <View style={{backgroundColor: '#1089ff', borderRadius: 8, justifyContent: 'flex-start', alignSelf: 'center', width: '80%', height: 30}}>
                         <Text style={{color: 'white', fontWeight: '500'}}>
                             Unfollow
                         </Text>
@@ -659,7 +660,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                             </TouchableHighlight>
                                             :
                                             <TouchableHighlight onPress={() => this.LUPA_CONTROLLER_INSTANCE.followUser(this.state.userData.user_uuid, this.props.lupa_data.Users.currUserData.user_uuid)}>
-                                            <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+                                            <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start', width: '80%', height: 30}}>
 <Text style={{color: 'white', fontWeight: '500'}}>
     Follow
 </Text>
@@ -669,12 +670,12 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     }        
                     </View> 
 
-                    <View style={{width: '100%', margin: 5}}>
+                    <View style={{width: '100%', margin: 5, justifyContent: 'flex-start'}}>
                                             <TouchableHighlight onPress={() => this.props.navigation.navigate('PrivateChat', {
                                                 currUserUUID: this.props.lupa_data.Users.currUserData.user_uuid,
                                                 otherUserUUID: this.state.userData.user_uuid
                                             })}>
-                                            <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', width: '80%', height: 30}}>
+                                            <View style={{backgroundColor: '#1089ff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start', width: '80%', height: 30}}>
 <Text style={{color: 'white', fontWeight: '500'}}>
     Message
 </Text>
@@ -925,8 +926,8 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
 
     render() {
         return (
-            <SafeAreaView style={styles.container}>
-                <Appbar.Header style={{ backgroundColor: 'white', elevation: 0, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8  }}>
+            <View style={styles.container}>
+                <Appbar.Header style={{ backgroundColor: 'white', elevation: 3, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8  }}>
                     <Left>
                         {this.getHeaderLeft()}
                     </Left>
@@ -946,8 +947,9 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                             <View style={{width: '100%',  flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
                                 {/* Avatar/Following */}
                                 <View style={{flex: 1, height: Dimensions.get('window').height / 4, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                              <View style={{alignItems: 'center'}}>
                                     {this.getUserAvatar()}
-                                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                                    <View style={{width: '100%', paddingVertical: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                                     <TouchableOpacity onPress={() => this._navigateToFollowers()}>
                                 <View style={{alignItems: 'center'}}>
                                     <Text>
@@ -970,10 +972,16 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                                 </View>
                             </TouchableOpacity>
                                     </View>
+                                    </View>
+                                    <View style={{width: '100%',  alignItems: 'flex-start'}}>
+                                            {
+                                        this.renderInteractionView()
+                                       }
+                                        </View>
                                 </View>
 
                                 {/* Name/Bio */}
-                                <View style={{flex: 1.5, height: Dimensions.get('window').height / 4, justifyContent: 'space-evenly'}}>
+                                <View style={{alignItems: 'center', flex: 1.5, height: Dimensions.get('window').height / 4, justifyContent: 'center'}}>
                                         <View>
                                             <View style={{paddingVertical: 10}}>
                                             <Text style={{fontSize: 15, fontFamily: 'HelveticaNeue-Bold'}}>
@@ -996,13 +1004,14 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                     
                                 </Text>
                                         </View>
-                                        
-                                       {/* <View>
-                                        
-                                            <Button color="rgb(230, 230, 230)" theme={{roundness: 8}} style={{elevation: 0, color: '#212121', alignSelf: 'flex-start', width: '80%'}} uppercase={false} mode="contained">
-                                                Edit Bio
-                                            </Button>
-                                       </View>*/}
+
+                                       
+                                        {
+                                            /*
+                                            SPACE UNDER BIO 
+                                            */
+                                        }
+                                       
                                 </View>
                             </View>
 
@@ -1032,7 +1041,7 @@ class ProfileView extends React.Component<IProfileProps, IProfileState> implemen
                         
                 <ProgramOptionsModal program={this.state.programOptionsProgram} isVisible={this.state.programOptionsModalIsOpen} closeModal={this.closeProgramOptionsModal} />
                 <ChangeHourlyRateModal isVisible={this.state.changeRateModalIsVisible} closeModal={this.closeChangeRateModal} />
-            </SafeAreaView>
+            </View>
         );
     }
 }

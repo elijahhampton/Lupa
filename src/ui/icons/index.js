@@ -9,7 +9,7 @@ import {
 export const MenuIcon = ({ onPress, customStyle }) => {
     return (
         <TouchableOpacity onPress={onPress}>
-            <Image source={MENU_ICON_IMAGE} style={[{width: 15, height: 15}, customStyle]} />
+            <Image source={MENU_ICON_IMAGE} style={[{width: 15, height: 15, margin: 5}, customStyle]} />
         </TouchableOpacity>
     )
 }

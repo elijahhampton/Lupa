@@ -328,12 +328,13 @@ class Featured extends React.Component {
                                   Featured
                         </Text>
                         <Caption>
-                            Based on your location (Auburn, AL)
+                            Based on your location ({this.props.lupa_data.Users.currUserData.location.city}, {this.props.lupa_data.Users.currUserData.location.state})
                         </Caption>
                               </View>
 
 
                             </View>
+
                              <ScrollView
                                 horizontal={true}
                                 showsHorizontalScrollIndicator={false}
@@ -344,8 +345,6 @@ class Featured extends React.Component {
                                 pagingEnabled={true}
                                 onScroll={this.handleOnScroll}
                                 contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
-
-
                             >
                                 {
                                     this.state.featuredPrograms.map(program => {
@@ -355,8 +354,7 @@ class Featured extends React.Component {
                                         )
                                     })
                                 }
-                            </ScrollView>
-                            
+                            </ScrollView>            
                         </View>
 
                         <View>
@@ -373,7 +371,7 @@ class Featured extends React.Component {
                 </Text>
                     </Button>
                             </View>
-                            <ScrollView contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                            <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                             {
                                     this.state.topPicks.map(program => {
                                         return (

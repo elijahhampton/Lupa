@@ -88,7 +88,6 @@ async function saveTokenToDatabase(token, uuid) {
   .doc(uuid)
   .get()
   .then(snapshot => {
-    console.log(snapshot.data)
     userData = snapshot.data()
   });
 

@@ -37,8 +37,6 @@ const ICON_COLOR = "#3d3d40"
  */
 function DrawerMenu(props) {
   const navigation = useNavigation()
-  const [trainerInsightsModalIsOpen, setTrainerInsightsModalOpen] = useState(false)
-
   const currUserData = useSelector(state => {
     return state.Users.currUserData;
   })
@@ -76,16 +74,16 @@ function DrawerMenu(props) {
     <View style={styles.container}>
     <SafeAreaView
       style={styles.safeAreaView}
-      forceInset={{top: 'always', horizontal: 'never', padding: 20}}>
+      forceInset={{top: 'always', horizontal: 'never'}}>
 
       <TouchableOpacity onPress={navigateToProfile}>
       <View style={styles.drawerHeader}>
-        <View flexDirection="column">
+        <View>
               <Text style={styles.drawerHeaderText}>
                 {currUserData.display_name}
               </Text>
               <Text style={styles.drawerHeaderSubText}>
-                {currUserData.email}
+                {currUserData.isTrainer ? 'Lupa Trainer' : 'Lupa User'}
               </Text>
             </View>
 
@@ -103,31 +101,6 @@ function DrawerMenu(props) {
           </Text>
         </View>
         </TouchableOpacity>
-
-        <Divider />
-
-        <TouchableOpacity onPress={() => navigation.navigate('MyData')}>
-          <View style={styles.navigationButtonContaner}>
-            <DrawerIcon name="bar-chart-2" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-            <Text style={styles.buttonText}>
-             My Data
-            </Text>
-          </View>
-          </TouchableOpacity>
-
-        {
-          currUserData.isTrainer === true ?
-          <TouchableOpacity onPress={() => navigation.push('TrainerInsights')}>
-          <View style={styles.navigationButtonContaner}>
-            <DrawerIcon name="bar-chart" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-            <Text style={styles.buttonText}>
-             Trainer Insights
-            </Text>
-          </View>
-          </TouchableOpacity>
-          :
-          null
-        }
         
         <Divider />
 
@@ -140,7 +113,6 @@ function DrawerMenu(props) {
         </View>
         </TouchableOpacity>
         
-        <Divider />
 
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="help-circle" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
@@ -201,10 +173,12 @@ export default DrawerMenu;
     },
     drawerHeaderText: { 
       paddingVertical: 5,
-      fontSize: 15,
+      fontSize: 18,
+      fontFamily: 'Avenir-Roman'
     },
     drawerHeaderSubText: {
-      fontSize: 12
+      fontSize: 15,
+      fontFamily: 'Avenir-Roman'
     },
     iconMargin: {
       marginHorizontal: 8

@@ -1088,9 +1088,8 @@ export default class UserController {
         await USER_COLLECTION.doc(user_uuid).get().then(snapshot => {
             tempData = snapshot.data()
         })
-        console.log(tempData.programs)
+
         updatedProgramList = await this.arrayRemove(tempData.programs, programUUID)
-        console.log(updatedProgramList.length)
 
         await USER_COLLECTION.doc(user_uuid).update({
             programs: updatedProgramList
@@ -1235,8 +1234,6 @@ export default class UserController {
             imageURL = url;
         })
 
-        console.log('IMAGE: ' + imageURL)
-
         //update the program image in the structure
         workoutData.program_image = imageURL;
 
@@ -1258,8 +1255,6 @@ export default class UserController {
          await PROGRAMS_COLLECTION.doc(workoutData.program_structure_uuid).get().then(snapshot => {
              payload = snapshot.data();
          })
-
-         console.log('PAYLOAD: ' + payload + "AKFJOISDJFLKDSFJLDSKJ")
 
          return Promise.resolve(payload);
         }
