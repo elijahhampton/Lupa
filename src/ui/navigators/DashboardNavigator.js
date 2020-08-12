@@ -17,14 +17,6 @@ function DashboardNavigator() {
         name="Dashboard"
         component={Dashboard}
       />
-       <Stack.Screen 
-        name="Notifications"
-        component={NotificationsView}
-       />
-
-       <Stack.Screen 
-       name="Messages" 
-       component={MessagesView}/>
     </Stack.Navigator>
     )
 }

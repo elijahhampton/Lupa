@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { View, Modal, StyleSheet } from 'react-native';
+import { View, Modal, StyleSheet, SafeAreaView } from 'react-native';
 
 import { Banner} from 'react-native-paper';
 
@@ -10,6 +10,7 @@ import LupaController from '../../../controller/lupa/LupaController';
 
 function ConfirmHomeGymDialog(props) {
     return (
+        <>
         <Banner
         visible={props.isVisible}
         actions={[
@@ -25,6 +26,7 @@ function ConfirmHomeGymDialog(props) {
       >
         Would you like to set {props.gymInformation.name} at {props.gymInformation.formatted_address} as the location for your program?
       </Banner>
+      </>
     )
 }
 
@@ -117,6 +119,7 @@ class LupaMapView extends React.Component {
     render() {
         return (
             <Modal presentationStyle="fullScreen" visible={this.props.isVisible} animated={true} animationType="slide">
+                          <SafeAreaView style={{backgroundColor: 'transparent'}} />
                   <ConfirmHomeGymDialog isVisible={this.state.showGymConfirmationDialog} gymInformation={this.state.gymInformation} handleHomeGymConfirmation={gymInfo => this.handleHomeGymConfirmation(gymInfo)} closeDialogMethod={this.hideGymConfirmationDialog}/>
                   
                 <MapView style={{flex: 1}}

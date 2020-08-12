@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     text: {
         margin: 50,
         fontSize: 20,
-        color: '#374e66',
+        color: '#23374d',
         fontWeight: 'bold'
     },
     image: {
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center', 
         width: Dimensions.get('window').width - 50, 
-        height: Dimensions.get('window').height - 500
+        height: '50%',
     }
 })
 

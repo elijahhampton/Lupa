@@ -75,12 +75,10 @@ function LupaHome(props) {
     return(
         <Container style={styles.root}>
             <Appbar.Header style={{ backgroundColor: 'white', elevation: 3, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 , flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <View>
-                    <Appbar.Action icon={() =>  <MenuIcon customStyle={{ margin: 10 }} onPress={() => navigation.openDrawer()} />} />
-                    </View>
+                    <Appbar.Action icon={() =>  <MenuIcon onPress={() => navigation.openDrawer()} />} />
                     
                     
-                    <Appbar.Content title="Book Trainers" titleStyle={{alignSelf: 'center', fontFamily: 'HelveticaNeue-Bold', fontSize: 15, fontWeight: '700'}} />
+                    <Appbar.Content title="Book trainers" titleStyle={{alignSelf: 'center', fontFamily: 'HelveticaNeue-Bold', fontSize: 15, fontWeight: '600'}} />
                     
 
                    

@@ -25,9 +25,6 @@ class SingleWorkout extends React.Component {
         super(props);
 
         this.state = {
-            workoutData: this.props.workoutData,
-            workoutPreviewIsVisible: false,
-            pressed: false,
             isPressed: false,
         }
 
@@ -35,17 +32,10 @@ class SingleWorkout extends React.Component {
         
     }
 
-
-handleOnLongPress = () => {
-        this.setState({
-            workoutPreviewIsVisible: true,
-        })
+    shouldComponentUpdate = (nextProps, nextState) => {
+        return true;
     }
 
-    
-    handleSetOriginalPosition = (event) => {
-        this.setState({ originalPositionX: event.nativeEvent.layout.x, originalPositionY: event.nativeEvent.layout.y })
-    }
 
     handleOnPress = () => {
         
@@ -63,31 +53,36 @@ handleOnLongPress = () => {
             })
         }
 
-        this.props.captureWorkout(this.state.workoutData)
+        this.props.captureWorkout(this.props.workout);
     }
 
     render() {
 return (
     <TouchableOpacity onPress={this.handleOnPress}>
     <View style={[{marginVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
-   <View style={{flexDirection: 'row', alignItems: 'center'}}>
+   <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5}}>
    <Surface style={[this.state.isPressed ? styles.pressed : styles.notPressed , styles.videoContainer]}>
-          
+   <Surface style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: this.state.isPressed === true ? '#e53935' : '#1089ff' ,top: 0, right: 0, margin: 0, borderRadius: 20, width: 20, height: 20}}>
+    <FeatherIcon name={this.state.isPressed === true ? "minus" : "plus"} color="white" />
+</Surface>
           </Surface>
-          <View style={{paddingHorizontal: 15, flex: 2}}>
-
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Text style={{fontSize: 20, color: '#212121', fontWeight: '400'}}>
-              {this.props.workoutData.workout_name}
+          <View style={{paddingHorizontal: 5, flex: 2}}>
+                <View>
+                <Text style={{paddingVertical: 3, fontSize: 18, color: '#212121', fontWeight: '400'}}>
+              {this.props.workout.workout_uid}
           </Text>
-          <FeatherIcon name="heart" size={15} />
-            </View>
-          <Text numberOfLines={1} ellipsizeMode="tail">
+        
+          <Text style={{fontSize: 12}} numberOfLines={2} ellipsizeMode="tail">
           Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi 
           </Text>
+                </View>
+           
+           
           </View>
+
    </View>
     </View>
+
 </TouchableOpacity>
 )
  

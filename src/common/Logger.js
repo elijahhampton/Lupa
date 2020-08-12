@@ -3,6 +3,10 @@ export default function LOG(file, message) {
 }
 
 export function LOG_ERROR(file, message, error) {
-    console.log('LOG_ERROR in ', file, ': ', message);
+    console.log('Error occured in ', file, ': ', message);
     console.error(error);
+}
+
+export function LOG_WARN(file, warningMessage) {
+    console.warn(warningMessage);
 }

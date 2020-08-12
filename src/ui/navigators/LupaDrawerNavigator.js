@@ -35,13 +35,17 @@ const PlaceHolder = () => {
   )
 }
 
+const ACTIVE_COLOR = "#23374d"
+const INACTIVE_COLOR = "#212121"
+
 const tabBarOptions = {
   showLabel: true,
+  activeTintColor: '#1089ff',
+  inactiveTintColor: 'rgb(58, 58, 60)',
   labelStyle: {
     fontSize: 12,
     fontFamily: 'HelveticaNeue-Light',
-    fontWeight: '400',
-    color: '#212121'
+    fontWeight: '500',
   }
 }
 
@@ -52,9 +56,11 @@ function LupaBottomTabNavigator() {
 
   return (
     <Tab.Navigator 
+    navig
     tabBarOptions={tabBarOptions}
       initialRouteName="Train"
-      screenOptions={({ route }) => ({
+      screenOptions={({ route, index }) => ({
+        
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -66,8 +72,6 @@ function LupaBottomTabNavigator() {
               return <FeatherIcon name='home' size={20} color={focused ? "#1089ff" : "#212121"} />;
             case 'Create':
               return <FeatherIcon name='plus-circle' size={20} color={focused ? "#1089ff" : "#212121"}/>;
-            case 'Profile':
-              return <FeatherIcon name='user' size={20} color={focused ? "#1089ff" : "#212121"} />;
           }
 
         },
@@ -88,7 +92,6 @@ function LupaBottomTabNavigator() {
               }
              
         <Tab.Screen name="Dashboard" component={DashboardNavigator} />
-      <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );
 }

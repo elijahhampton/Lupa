@@ -38,7 +38,7 @@ import LupaController from '../../../../controller/lupa/LupaController';
 
 import ThinFeatherIcon from "react-native-feather1s";
 
-import FeatherIcon from "react-native-vector-icons/Feather"
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import SingleWorkout from '../../component/SingleWorkout';
 import LupaCamera from './component/LupaCamera'
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
@@ -1778,9 +1778,9 @@ Example
     render() {
         return (
             <View ref={this.firstView} style={styles.container} onLayout={event => { this.setState({ layoutHeight: event.nativeEvent.layout.height }) }}>
-                   <Appbar.Header style={{backgroundColor: '#FFFFFF'}}>
-                   <FeatherIcon onPress={() => this.props.goToIndex(0)} name="arrow-left" size={25} color="#1089ff" />
-                            <SearchBar placeholder="Search specific workouts"
+                   <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 3}}>
+                   <Appbar.Action icon={() => <FeatherIcon onPress={() => this.props.goToIndex(0)} name="arrow-left" size={20} color="#1089ff" />} />
+                          {/*  <SearchBar placeholder="Search specific workouts"
                         onChangeText={text => console.log(text)} 
                         platform="ios"
                         searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
@@ -1788,11 +1788,71 @@ Example
                         inputContainerStyle={{backgroundColor: 'rgb(242, 242, 247))',}}
                         inputStyle={{fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman'}}
                         placeholderTextColor="#212121"
-                        value={this.state.searchValue}/>
-
+        value={this.state.searchValue}/> */}
                    </Appbar.Header>
+
+                   <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+                        <View style={{flex: 2, alignItems: 'center', justifyContent: 'center'}}>
+                            <View style={{alignItems: 'center', justifyContent: 'center',}}>
+                            <View style={{ alignItems: 'center', justifyContent: 'center',width: 180, height: 180, borderRadius: 180, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}}>
+                            <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
+                            </View>
+                            <Text style={{marginVertical: 50, color: 'rgb(142, 142, 147)'}}>
+                                Open the workout library to add workouts.
+                            </Text>
+                            </View>
+                          
+                   </View>
+
+                   <View style={{flex: 1}}>
+                       
+                       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                           <View style={{flex: 2}}>
+
+                           <ScrollView showsHorizontalScrollIndicator={false} centerContent contentContainerStyle={{alignItems: 'center', justifyContent: 'center',}} horizontal={true} decelerationRate={0} pagingEnabled={true} snapToAlignment='center' snapToInterval={Dimensions.get('window').width}>
+                                <View style={{width: Dimensions.get('window').width, alignItems: 'center'}}>
+                                    <Text>
+                                        Monday
+                                    </Text>
+                                </View>
+
+                                <View style={{width: Dimensions.get('window').width, alignItems: 'center'}}>
+                                    <Text>
+                                        Tuesday
+                                    </Text>
+                                </View>
+
+                                <View style={{width: Dimensions.get('window').width, alignItems: 'center'}}>
+                                    <Text>
+                                        Wednesday
+                                    </Text>
+                                </View>
+                           </ScrollView>
+                           </View>
+
+                           <View style={{flex: 1.5, alignItems: 'center', justifyContent: 'center'}}>
+                           <Caption style={{alignSelf: 'center'}}>
+                               Swipe to add workouts to a different day.
+                           </Caption>
+                           </View>
+                         
+                       </View>
+
+
+                       <View style={{width: '100%', flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                           
+                           <Button style={{height: 60}} color="#1089ff" uppercase={false} mode="contained" style={{alignItems: 'center', justifyContent: 'center', height: 55, borderRadius: 8, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+                                <Text style={{fontFamily: 'Avenir-Heavy', fontWeight: '700', fontSize: 15}}>
+                                    Add Workouts
+                                </Text>
+                           </Button>
+                       </View>
+                    </View>
+                   </View>
+
+                   <SafeAreaView />
                    
-                   <Surface style={{flex: 1, elevation: 0}}>
+                 {/*  <Surface style={{flex: 1, elevation: 0, backgroundColor: '#EEEEEE'}}>
                        <TouchableOpacity onPress={() => this.sectionPickerRBSheet.current.open()}>
                        <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
                         <Text style={{fontWeight: '400', fontSize: 15, paddingLeft: 10, alignSelf: 'flex-start'}}>
@@ -1804,7 +1864,7 @@ Example
                            
                             {this.getCurrentDayContent()}
                        </ScrollView>
-                    </Surface>
+    </Surface>*/}
                     {
                         /*
                                                     <Banner
@@ -1821,7 +1881,7 @@ Example
     </Banner>
                         */
                     }
-                    <View style={{flex: 4}}>
+                   {/* <View style={{flex: 4}}>
                         <Divider />
                     <ScrollView>
                     {
@@ -1867,10 +1927,10 @@ Example
                                 </Text>
                         </Button>
                         </View>
-                    </View>
+                </View> */}
 
 
-                  <RBSheet
+                {/*  <RBSheet
           ref={this.RBSheet}
           height={Dimensions.get('window').height / 1.2}
           openDuration={250}
@@ -2049,8 +2109,8 @@ style={styles.exerciseOptionIcon}
             <AddDescriptionModal isVisible={this.state.addDescriptionModalIsVisible} closeDialogMethod={this.closeAddDescriptionModal} captureData={description => this.handleCaptureDescription(description)} />
             <AddCueModal isVisible={this.state.addCueModalModalIsVisible} closeDialogMethod={this.closeAddCueModal} captureData={cue => this.handleCaptureCue(cue)} />
             <AddedExercisePreviewModal exerciseData={this.state.currPressedPopulatedWorkout} isVisible={this.state.addedExercisePreviewModal} closeModalMethod={this.closeAddedExercisePreviewModal} />
-            {this.renderSectionPickerRBSheet()}
-            <SafeAreaView />
+        {this.renderSectionPickerRBSheet()} 
+        <SafeAreaView />*/}
             </View>
         )
     }

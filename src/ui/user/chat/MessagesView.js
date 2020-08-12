@@ -155,12 +155,12 @@ class MessagesView extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <Appbar.Header style={{elevation: 0, alignItems: "center"}} theme={{
+                <Appbar.Header style={{elevation: 3, alignItems: "center"}} theme={{
                     colors: {
                         primary: 'white'
                     }
                 }}>
-                    <Appbar.BackAction onPress={() => this.props.navigation.goBack()} />
+                    <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
                     <Appbar.Content title="Messages" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
                     <Appbar.Action onPress={() => alert('ap')} icon="delete" disabled={!this.state.viewReady && this.state.currMessagesIndex == undefined} color={!this.state.viewReady ? "black" : "grey"} />
                     <Appbar.Action onPress={() => alert('message')} icon="send" disabled={this.state.viewReady} color={this.state.viewReady ? "black" : "grey"} />

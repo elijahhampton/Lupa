@@ -106,7 +106,7 @@ function NotificationsView(props) {
 const styles = StyleSheet.create({
     appbar: {
         backgroundColor: '#FFFFFF',
-        elevation: 0,
+        elevation: 3,
         borderBottomColor: 'rgb(199, 199, 204)', 
         borderBottomWidth: 0.8 
     },
