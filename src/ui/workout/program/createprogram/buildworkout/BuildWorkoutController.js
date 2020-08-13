@@ -523,7 +523,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                             <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#1089ff'}}>
+                            <Caption style={{padding: 20, color: '#23374d'}}>
                                 No workouts have been added.  Choose a day from the drop down menu and add workouts using the workout library.
                             </Caption>
                             </View>
@@ -1224,7 +1224,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                       
                     </View>
 
-                       <FAB small={false} label="Open Library"  onPress={handleOpenLibraryOnPress} style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 12}} color="white" icon="plus" />
+                       <FAB small={false} label="Open Library"  onPress={handleOpenLibraryOnPress} style={{backgroundColor: '#23374d', position: 'absolute', bottom: 0, right: 0, margin: 12}} color="white" icon="plus" />
                  </View>
                  </View>
                 )
