@@ -661,9 +661,9 @@ const styles = StyleSheet.create({
     fontWeight: '300'
   },
   questionText: {
-    fontFamily: "HelveticaNeue-Bold",
-    fontSize: 20,
-    color: '#212121'
+    fontFamily: "Avenir-Medium",
+    fontSize: 18,
+    color: '#23374d'
   }
 })
 
