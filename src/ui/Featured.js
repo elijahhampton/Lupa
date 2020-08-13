@@ -317,12 +317,12 @@ class Featured extends React.Component {
                 </View>
                 </View>
                 </Appbar.Header>
-                    <ScrollView>
+                    <ScrollView showsVerticalScrollIndicator={false}>
                         {
                             this.state.searchValue === "" ?
                             <View >
                             <View style={{ marginVertical: 15, justifyContent: 'center', }}>
-                        <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                               <View style={{paddingHorizontal: 10}}>
                               <Text style={styles.sectionHeaderText}>
                                   Featured
@@ -358,8 +358,8 @@ class Featured extends React.Component {
                         </View>
 
                         <View>
-                            <View style={{ marginVertical: 15, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <View>
+                            <View style={{ marginVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <View style={{paddingHorizontal: 10}}>
                                 <Text style={styles.sectionHeaderText}>
                                    Suggestions
                         </Text>
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     sectionHeaderText: {
-        fontSize: RFValue(15), fontFamily: 'Avenir-Medium'
+        fontSize: RFValue(15), fontFamily: 'Avenir-Heavy', fontSize: 15,
     },
     searchContainerStyle: {
         backgroundColor: "transparent", width: '90%'

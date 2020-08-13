@@ -46,6 +46,7 @@ import WorkoutDisplay from './component/WorkoutDisplay';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import LupaCamera from '../component/LupaCamera'
 import WorkoutSchemeModal from './modal/WorkoutSchemeModal';
+import { Left, Body, Right } from 'native-base';
 
 const CATEGORY_TAGS = [
     'Calisthenics',
@@ -55,7 +56,7 @@ const CATEGORY_TAGS = [
     'General'
 ]
 
-function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData }) {
+function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgramWorkoutData }) {
     const workoutLibraryRef = createRef();
     const dayScrollViewRef = createRef();
     const customizeWorkoutRBSheet = createRef()
@@ -105,7 +106,6 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
 
     const captureWorkout = (workoutObject) => {
         if (typeof(workoutObject) == 'undefined') {
-            setCurrPressedPopulatedWorkout(undefined)
             return;
         }
 
@@ -268,7 +268,7 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
                     }
 
                     return (
-                        <View>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center',}}>
                             <ScrollView 
                                 onScroll={handleOnScroll} 
                                 showsHorizontalScrollIndicator={false} 
@@ -677,7 +677,6 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
         }
 
         setWorkoutDays(newWorkoutData)
-        setCurrPressedPopulatedWorkout(undefined)
         setWorkoutSchemeModalVisible(false)
     }
 
@@ -688,7 +687,7 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
         }
 
         let newWorkoutData = {}, updatedWorkoutData = {}
-        const currDay = this.getCurrentDay()
+        const currDay = getCurrentDay()
         const workout = currPressedPopulatedWorkout
         switch(currDay)
         {
@@ -831,7 +830,6 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
         }
 
         await setWorkoutDays(newWorkoutData) 
-        await setCurrPressedPopulatedWorkout(undefined);
         setCueModalVisible(false)
     }
 
@@ -842,7 +840,7 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
         }
 
         let newWorkoutData = {}, updatedWorkoutData = {}
-        const currDay = this.getCurrentDay()
+        const currDay = getCurrentDay()
         const workout = currPressedPopulatedWorkout
         switch(currDay)
         {
@@ -977,7 +975,6 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
         }
 
         setWorkoutDays(newWorkoutData);
-        setCurrPressedPopulatedWorkout(undefined);
     }
 
     const handleCaptureDescription = async (description) => {
@@ -987,7 +984,7 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
         }
 
         let newWorkoutData = {}, updatedWorkoutData = {}
-        const currDay = this.getCurrentDay()
+        const currDay = getCurrentDay()
         const workout = currPressedPopulatedWorkout
         switch(currDay)
         {
@@ -1115,7 +1112,6 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
         }
 
         setWorkoutDays(newWorkoutData)
-        setCurrPressedPopulatedWorkout(undefined)
         setAddDescriptionModalVisible(false)
     }
 
@@ -1131,9 +1127,9 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
         customizeWorkoutRBSheet.current.close()
     }
 
-    const handleTakeVideo = () => {
-        setMediaCaptureType('VIDEO')
-        handleCloseEditWorkout()
+    const handleTakeVideo = async () => {
+        await setMediaCaptureType('VIDEO')
+        await handleCloseEditWorkout()
         setCameraIsVisible(true)
     }
 
@@ -1234,7 +1230,7 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
                 )
             case 1:
                 return (
-                    <View style={{flex: 1}}>
+                    <View style={{flex: 1.8}}>
                         <DropDownPicker
     items={items}
     defaultValue={getCurrentDay()}
@@ -1247,8 +1243,8 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
     onChangeItem={item => setCurrDayIndex(item.index)}
 />
 <Divider style={{height: 10}} />
-                        <ListItem onPress={handleEditWorkoutOnPress} title="Edit Workout" topDivider={false} subtitle='Swipe to a workout and modify the scheme, cues, description, and media.' bottomDivider titleStyle={{fontFamily: 'Avenir-Light', fontSize: 15}} subtitleStyle={{fontFamily: 'Avenir-Light', fontSize: 13}} rightIcon={() => <FeatherIcon name="arrow-right" size={15} />}/>
-                        <ListItem title="Finish Editing" bottomDivider titleStyle={{fontFamily: 'Avenir-Light', fontSize: 15}} subtitleStyle={{fontFamily: 'Avenir-Light', fontSize: 15}} rightIcon={() => <FeatherIcon name="arrow-right" size={15} />}/>
+                        <ListItem onPress={handleEditWorkoutOnPress} title="Edit Workout" topDivider={false} subtitle='Swipe to a workout and modify the scheme, cues, description, and media.' bottomDivider titleStyle={{fontFamily: 'Avenir-Medium', fontSize: 15}} subtitleStyle={{fontFamily: 'Avenir-Light', fontSize: 13}} rightIcon={() => <FeatherIcon name="arrow-right" size={15} />}/>
+                        <ListItem onPress={saveProgramWorkoutData} title="Finish Editing" bottomDivider titleStyle={{fontFamily: 'Avenir-Medium', fontSize: 15}} subtitleStyle={{fontFamily: 'Avenir-Light', fontSize: 15}} rightIcon={() => <FeatherIcon name="arrow-right" size={15} />}/>
                       
                     </View>
                 )
@@ -1293,7 +1289,7 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
                         {
                             CATEGORY_TAGS.map((tag) => {
                                 return (
-                                    <Chip key={tag} mode="flat" style={{margin: 10, borderColor: '#61b0ff', backgroundColor: '#FFFFFF'}}>
+                                    <Chip key={tag} mode="flat" style={{margin: 10, backgroundColor: '#EEEEEE'}}>
                                         {tag}
                                     </Chip>
                                 )
@@ -1338,18 +1334,34 @@ function BuildWorkoutController({ programData, goToIndex, saveProgramWorkoutData
             container: {
               justifyContent: "center",
               alignItems: "center",
-              borderTopRightRadius: 35,
-                borderTopLeftRadius: 35,
+              borderTopRightRadius: 25,
+                borderTopLeftRadius: 25,
+            },
+            draggableIcon: {
+                backgroundColor: 'grey'
             }
           }}
        >
            <View style={{flex: 1}}>
-               <Text style={{alignSelf: 'center',   fontSize: 15, padding: 10}}>
+               <View style={{ padding: 10, justifyContent: 'space-evenly', flexDirection: 'row', alignItems: 'center', width: '100%'}}>
+               <Left>
+               <Caption>
+                    Cancel
+                </Caption>
+               </Left>
+
+                <Body>
+                <Text style={{alignSelf: 'center', fontWeight: 'bold', fontFamily: 'avenir',  fontSize: 12}}>
                    Workout Options
                </Text>
+                </Body>
+
+                <Right />
+               </View>
+               <Divider />
                
                <View style={{flex: 1, justifyContent: 'space-evenly'}}>
-            <TouchableOpacity onPress={handleTakeVideo}>
+           <TouchableOpacity onPress={handleTakeVideo}>
             <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
             <ThinFeatherIcon
 name="video"
@@ -1362,9 +1374,6 @@ style={styles.exerciseOptionIcon}
 <Text style={styles.exerciseOptionHeaderText}>
                     Record a video
                 </Text>
-                <Caption>
-                    Take a video to use as the exercise media
-                </Caption>
 </View>
             </View>
             </TouchableOpacity>
@@ -1382,9 +1391,6 @@ style={styles.exerciseOptionIcon}
 <Text style={styles.exerciseOptionHeaderText}>
                     Take a picture
                 </Text>
-                <Caption>
-                    Take a picture to use as the exercise media
-                </Caption>
 </View>
             </View>
             </TouchableOpacity>
@@ -1402,9 +1408,6 @@ style={styles.exerciseOptionIcon}
 <Text style={styles.exerciseOptionHeaderText}>
                 Upload media
                 </Text>
-                <Caption>
-                    Use a picture or video from your camera roll to use as the exercise media
-                </Caption>
 </View>
             </View>
             </TouchableOpacity>
@@ -1422,9 +1425,6 @@ style={styles.exerciseOptionIcon}
 <Text style={styles.exerciseOptionHeaderText}>
                     Add a description
                 </Text>
-                <Caption>
-                   Write a brief description of what this exercise will accomplish
-                </Caption>
 </View>
             </View>
             </TouchableOpacity>
@@ -1442,9 +1442,6 @@ style={styles.exerciseOptionIcon}
 <Text style={styles.exerciseOptionHeaderText}>
                     Add a cue
                 </Text>
-                <Caption>
-                    Use cues to as special instructions during an exercise
-                </Caption>
 </View>
             </View>
             </TouchableOpacity>
@@ -1462,9 +1459,6 @@ style={styles.exerciseOptionIcon}
 <Text style={styles.exerciseOptionHeaderText}>
                     Edit Set/Rep Scheme
                 </Text>
-                <Caption>
-                    Specify a specific number of sets or reps for this exercise
-                </Caption>
 </View>
             </View>
             </TouchableOpacity>
@@ -1476,18 +1470,16 @@ name="trash"
 size={18}
 color="#000000"
 thin={false}
-style={styles.exerciseOptionIcon}
+style={[styles.exerciseOptionIcon, {color: 'rgba(229,57,53 ,1)'}]}
 />
 <View style={{paddingVertical: 1.5}}>
 <Text style={[styles.exerciseOptionHeaderText, { color: 'rgba(229,57,53 ,1)' }]}>
                     Delete exercise
                 </Text>
-                <Caption style={{color: 'rgba(229,57,53 ,1)'}}>
-                    Remove this exercise from the program
-                </Caption>
 </View>
             </View>
             </TouchableOpacity>
+        
                </View>
             
            </View>
@@ -1532,13 +1524,13 @@ style={styles.exerciseOptionIcon}
             <LupaCamera 
             isVisible={cameraIsVisible} 
             currWorkoutPressed={currPressedPopulatedWorkout} 
-            currProgramUUID={programData.program_structure_uuid} 
+            currProgramUUID={programUUID} 
             handleCaptureNewMediaURI={(uri, type) => handleCaptureNewMediaURI(uri, type)}
             mediaCaptureType={mediaCaptureType}
             closeModalMethod={() => setCameraIsVisible(false)}
             />
      
-             <SafeAreaView />
+            <SafeAreaView />
         </View>
     )
 }
@@ -1568,7 +1560,16 @@ const styles = StyleSheet.create({
     alignAndJustifyCenter: {
         alignItems: 'center',
         justifyContent: 'center'
-    }
+    },
+    exerciseOptionHeaderText: {
+        fontSize: 15, 
+        fontFamily: 'Avenir-Medium',
+        color: '#23374d',
+      },
+      exerciseOptionIcon: {
+          marginHorizontal: 10,
+          color: '#23374d',
+      }
 })
 
 export default BuildWorkoutController;

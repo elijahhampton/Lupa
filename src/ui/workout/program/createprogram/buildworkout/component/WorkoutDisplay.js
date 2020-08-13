@@ -4,6 +4,7 @@ import {
     View,
     Text,
     TouchableOpacity,
+    Image,
     Dimensions,
     StyleSheet,
 } from 'react-native'
@@ -16,6 +17,7 @@ import {
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { ScrollView } from 'react-native-gesture-handler';
+import { Video } from 'expo-av';
 
 function WorkoutDisplay({ workout, openAddCueModal }) {
 
@@ -62,13 +64,28 @@ function WorkoutDisplay({ workout, openAddCueModal }) {
                 )
             }
 
-            return (
-                <View style={{padding: 5}}>
-                    <Surface style={{alignItems: 'center', justifyContent: 'center', width: 30, height: 30, borderRadius: 8, margin: 8}}>
+
+            switch(workout.workout_media.media_type) {
+                case 'VIDEO':
+                    return (
+                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 30, height: 30, borderRadius: 8, margin: 8}}>
+                            <Video resizeMode="cover" style={{width: '100%', height: '100%', borderRadius: 8}} source={{uri: workout.workout_media.uri}} />
+                    </Surface>
+                    )
+                case 'IMAGE':
+                    return (
+                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 30, height: 30, borderRadius: 8, margin: 8}}>
+                            <Image resizeMethod="scale" resizeMode="cover" style={{width: '100%', height: '100%', borderRadius: 8}} />
+                    </Surface>
+                    )
+                default:
+                    return (
+                        <Surface style={{alignItems: 'center', justifyContent: 'center', width: 30, height: 30, borderRadius: 8, margin: 8}}>
                         <FeatherIcon name="image" color="#23374d" />
                     </Surface>
-                </View>
-            )
+                    )
+            }
+
         } catch(error) {
             alert(error)
             return (
@@ -98,7 +115,7 @@ function WorkoutDisplay({ workout, openAddCueModal }) {
                                         </View>
         
                                         <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', width: '100%', paddingVertical: 10}}>
-                                            <FeatherIcon name="activity" size={15} style={{marginHorizontal: 5}} />
+                                           
                                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                             <View style={{alignItems: 'center'}}>
                                                 <Text style={{marginHorizontal: 10, color: 'rgb(174,189, 207)', fontSize: 13, fontFamily: 'Avenir-Heavy'}}>
@@ -123,10 +140,9 @@ function WorkoutDisplay({ workout, openAddCueModal }) {
         
                                  <Divider style={{width: Dimensions.get('window').width - 50, alignSelf: 'center'}} />
                                         <View style={{paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20}}>
-                                            <Caption>
+                                            <Caption numberOfLines={1} ellipsizeMode="tail"> 
                                                 {renderCue()}
                                             </Caption>
-                                            <FeatherIcon name="arrow-right" size={20}/>
                                         </View>                          
 
                                     </Surface>
