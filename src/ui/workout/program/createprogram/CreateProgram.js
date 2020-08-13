@@ -174,11 +174,6 @@ class CreateProgram extends React.Component {
         }
     }
 
-    componentDidCatch() {
-        LOG_ERROR
-        this.exit()
-    }
-
     captureProgramImage = (img) => {
         this.setState({
             programImage: img
@@ -310,7 +305,7 @@ class CreateProgram extends React.Component {
                         )} />
                 )
             case 1:
-                return <BuildWorkoutController programData={this.state.programData} goToIndex={this.goToIndex} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> /* <BuildAWorkout programData={this.state.programData} goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1 })} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> */
+                return <BuildWorkoutController programUUID={this.state.currProgramUUID} programData={this.state.programData} goToIndex={this.goToIndex} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> /* <BuildAWorkout programData={this.state.programData} goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1 })} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> */
             default:
         }
     }

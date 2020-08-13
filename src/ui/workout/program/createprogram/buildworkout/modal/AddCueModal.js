@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
     View,
     Text,
-    Modal,
     Dimensions,
     StyleSheet,
     TextInput,
@@ -13,9 +12,12 @@ import {
     Button,
     Divider,
     Dialog,
+    Modal,
     Appbar,
+    Portal,
 } from 'react-native-paper';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { Constants } from 'react-native-unimodules';
 
 
 function AddCueModal({ captureData, closeModal, isVisible }) {
@@ -27,12 +29,15 @@ function AddCueModal({ captureData, closeModal, isVisible }) {
     }
 
     return (
-                    <Modal presentationStyle="fullScreen" visible={isVisible} theme={{
+        <Portal>
+                    <Modal visible={isVisible} theme={{
                         colors: {
                             primary: '#23374d'
                         }
-                    }}>
-                        <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 3, justifyContent: 'space-between'}}>
+                    }}
+                    contentContainerStyle={{width: '100%', height: Dimensions.get('window').height + Constants.statusBarHeight}}
+                    >
+                        <Appbar.Header style={{elevation: 3, justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF'}}>
                             <Appbar.Action onPress={closeModal} icon={() => <Feather1s name="arrow-left"  thin={true} size={20} />}/>
                             <Appbar.Content title="Add Cues"  />
                             <Button mode="text" theme={{
@@ -44,12 +49,11 @@ function AddCueModal({ captureData, closeModal, isVisible }) {
                 </Button>
                         </Appbar.Header>
             <Divider />
-            <Dialog.Content style={{alignItems: 'center', padding: 20}}>
+            <View style={{flex: 1, padding: 20, backgroundColor: '#FFFFFF'}}>
                 <TextInput value={cue} onChangeText={text => setCue(text)} placeholder="Watch your back in this movement" style={{fontSize: 15, padding: 5, width: '100%', borderBottomWidth: 1.5}} />
-            </Dialog.Content>
-            <Dialog.Actions>
-            </Dialog.Actions>
+            </View>
         </Modal>
+        </Portal>
     )
 }
 

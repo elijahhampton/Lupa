@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import {
-    Modal,
     View,
     Text,
     StyleSheet,
@@ -13,22 +12,32 @@ import {
     Caption,
     Divider,
     Appbar,
+    Portal,
+    Button,
+    Modal,
 } from 'react-native-paper';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
+import ThinFeatherIcon from 'react-native-feather1s';
+import { Constants } from 'react-native-unimodules';
 
 function WorkoutSchemeModal({ isVisible, captureValues, workout, closeModal}) {
     const [repSliderValue, setRepSliderValue] = useState(0);
     const [setSliderValue, setSetSliderValue] = useState(0);
+
     return (
-        <Modal visible={isVisible} presentationStyle="fullScreen" contentContainerStyle={{borderRadius: 10, alignSelf: 'center', width: Dimensions.get('window').width - 50, height: Dimensions.get('window').height / 2, backgroundColor: '#FFFFFF'}}>
+        <Portal>
+
+        <Modal visible={isVisible} contentContainerStyle={{width: Dimensions.get('window').width, height: Dimensions.get('window').height + Constants.statusBarHeight, backgroundColor: '#FFFFFF'}}>
                                 <Appbar.Header style={{elevation: 3, backgroundColor: '#FFFFFF'}}>
-                            <Appbar.Action icon={() => <FeatherIcon name="arrow-left" />} onPress={closeModal} />
+                            <Appbar.Action icon={() => <ThinFeatherIcon thin={true} name="arrow-left" size={20} />} onPress={closeModal} />
                             <Appbar.Content title="Workout Scheme" />
-                            <Appbar.Action icon={() => <FeatherIcon name="check" />} onPress={() => captureValues(setSliderValue, repSliderValue)} />
+                            <Button color="#23374d" mode="text" uppercase={false} onPress={() => captureValues(setSliderValue, repSliderValue)}>
+                                Save
+                            </Button>
                         </Appbar.Header>
-            <View style={{flex: 1, padding: 5}}>
-                <View style={{flex: 1}}>
+            <View style={{flex: 1, paddingHorizontal: 10}}>
+                <View>
                     <View style={{padding: 5}}>
                     <Text style={{  fontSize: 20}}>
                        Change workout sets and reps
@@ -39,13 +48,12 @@ function WorkoutSchemeModal({ isVisible, captureValues, workout, closeModal}) {
                     </View>
                 </View>
 
-                <Divider />
 
-                <View style={{flex: 1, justifyContent: 'center'}}>
+                <View style={{justifyContent: 'center'}}>
                     <Text style={{alignSelf: 'center', padding: 10}}>
                         {workout.workout_name}
                     </Text>
-                    <View style={{flex: 1, justifyContent: 'center'}}>
+                    <View style={{justifyContent: 'center', marginVertical: 10}}>
                         <Text>
                         <Text style={{  fontSize: 15}}>
                             Reps:
@@ -61,7 +69,7 @@ function WorkoutSchemeModal({ isVisible, captureValues, workout, closeModal}) {
                         <Slider value={repSliderValue} step={1} minimumValue={0} maximumValue={15} onValueChange={value => setRepSliderValue(value)} />
                     </View>
 
-                    <View style={{flex: 1, justifyContent: 'center'}}>
+                    <View style={{justifyContent: 'center', marginVertical: 10}}>
                     <Text>
                         <Text style={{  fontSize: 15}}>
                             Sets:
@@ -78,6 +86,7 @@ function WorkoutSchemeModal({ isVisible, captureValues, workout, closeModal}) {
                 </View>
             </View>
         </Modal>
+        </Portal>
     )
 }
 

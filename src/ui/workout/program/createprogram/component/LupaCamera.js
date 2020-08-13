@@ -46,11 +46,15 @@ class VideoPreview extends React.Component {
   }
 
   saveVideo = async () => {
+    try {
     const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
       this.props.currProgramUUID, 'VIDEO', this.props.videoSrcProps)
     await this.props.captureURI(newURI, "VIDEO")
     await this.props.closeVideoPreview()
     await this.props.closeMainModal()
+    } catch(error) {
+      alert(error)
+    }
   }
 
   saveImage = async () => {
@@ -264,127 +268,6 @@ export default class CameraScreen extends React.Component {
 
   toggle = value => () => this.setState(prevState => ({ [value]: !prevState[value] }));
 
-  facesDetected = ({ faces }) => this.setState({ faces });
-
-  renderFace = ({ bounds, faceID, rollAngle, yawAngle }) => (
-    <View
-      key={faceID}
-      transform={[
-        { perspective: 600 },
-        { rotateZ: `${rollAngle.toFixed(0)}deg` },
-        { rotateY: `${yawAngle.toFixed(0)}deg` },
-      ]}
-      style={[
-        styles.face,
-        {
-          ...bounds.size,
-          left: bounds.origin.x,
-          top: bounds.origin.y,
-        },
-      ]}
-    >
-      <Text style={styles.faceText}>ID: {faceID}</Text>
-      <Text style={styles.faceText}>rollAngle: {rollAngle.toFixed(0)}</Text>
-      <Text style={styles.faceText}>yawAngle: {yawAngle.toFixed(0)}</Text>
-    </View>
-  );
-
-  renderLandmarksOfFace(face) {
-    const renderLandmark = position =>
-      position && (
-        <View
-          style={[
-            styles.landmark,
-            {
-              left: position.x - landmarkSize / 2,
-              top: position.y - landmarkSize / 2,
-            },
-          ]}
-        />
-      );
-    return (
-      <View key={`landmarks-${face.faceID}`}>
-        {renderLandmark(face.leftEyePosition)}
-        {renderLandmark(face.rightEyePosition)}
-        {renderLandmark(face.leftEarPosition)}
-        {renderLandmark(face.rightEarPosition)}
-        {renderLandmark(face.leftCheekPosition)}
-        {renderLandmark(face.rightCheekPosition)}
-        {renderLandmark(face.leftMouthPosition)}
-        {renderLandmark(face.mouthPosition)}
-        {renderLandmark(face.rightMouthPosition)}
-        {renderLandmark(face.noseBasePosition)}
-        {renderLandmark(face.bottomMouthPosition)}
-      </View>
-    );
-  }
-
-  renderFaces = () => (
-    <View style={styles.facesContainer} pointerEvents="none">
-      {this.state.faces.map(this.renderFace)}
-    </View>
-  );
-
-  renderLandmarks = () => (
-    <View style={styles.facesContainer} pointerEvents="none">
-      {this.state.faces.map(this.renderLandmarksOfFace)}
-    </View>
-  );
-
-  renderTextBlocks = () => (
-    <View style={styles.facesContainer} pointerEvents="none">
-      {this.state.textBlocks.map(this.renderTextBlock)}
-    </View>
-  );
-
-  renderTextBlock = ({ bounds, value }) => (
-    <React.Fragment key={value + bounds.origin.x}>
-      <Text style={[styles.textBlock, { left: bounds.origin.x, top: bounds.origin.y }]}>
-        {value}
-      </Text>
-      <View
-        style={[
-          styles.text,
-          {
-            ...bounds.size,
-            left: bounds.origin.x,
-            top: bounds.origin.y,
-          },
-        ]}
-      />
-    </React.Fragment>
-  );
-
-  textRecognized = object => {
-    const { textBlocks } = object;
-    this.setState({ textBlocks });
-  };
-
-  barcodeRecognized = ({ barcodes }) => this.setState({ barcodes });
-
-  renderBarcodes = () => (
-    <View style={styles.facesContainer} pointerEvents="none">
-      {this.state.barcodes.map(this.renderBarcode)}
-    </View>
-  );
-
-  renderBarcode = ({ bounds, data, type }) => (
-    <React.Fragment key={data + bounds.origin.x}>
-      <View
-        style={[
-          styles.text,
-          {
-            ...bounds.size,
-            left: bounds.origin.x,
-            top: bounds.origin.y,
-          },
-        ]}
-      >
-        <Text style={[styles.textBlock]}>{`${data} ${type}`}</Text>
-      </View>
-    </React.Fragment>
-  );
-
   renderRecording = () => {
     const { isRecording } = this.state;
     const backgroundColor = isRecording ? 'darkred' : 'transparent';
@@ -425,12 +308,11 @@ export default class CameraScreen extends React.Component {
   }
 
   renderCamera() {
-    const { canDetectFaces, canDetectText, canDetectBarcode } = this.state;
-
     const drawFocusRingPosition = {
       top: this.state.autoFocusPoint.drawRectPosition.y - 32,
       left: this.state.autoFocusPoint.drawRectPosition.x - 32,
     };
+
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: 'transparent'}}>
               <Surface style={{flex: 1, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, elevation: 10}}>
@@ -457,14 +339,6 @@ export default class CameraScreen extends React.Component {
           buttonPositive: 'Ok',
           buttonNegative: 'Cancel',
         }}
-        faceDetectionLandmarks={
-          RNCamera.Constants.FaceDetection.Landmarks
-            ? RNCamera.Constants.FaceDetection.Landmarks.all
-            : undefined
-        }
-        onFacesDetected={canDetectFaces ? this.facesDetected : null}
-        onTextRecognized={canDetectText ? this.textRecognized : null}
-        onGoogleVisionBarcodesDetected={canDetectBarcode ? this.barcodeRecognized : null}
       >
 
         <View style={StyleSheet.absoluteFill}>
