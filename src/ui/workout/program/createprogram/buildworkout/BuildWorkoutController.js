@@ -28,6 +28,7 @@ import {
 } from 'react-native-elements';
 
 import DropDownPicker from 'react-native-dropdown-picker';
+import ImagePicker from 'react-native-image-picker'
 
 import { useSelector } from 'react-redux'
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -257,10 +258,10 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     if (workoutDays.Monday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
-                            <View style={[styles.alignAndJustifyCenter, {width: 180, height: 180, borderRadius: 180, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
+                            <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#1089ff'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -278,7 +279,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                                 snapToInterval={Dimensions.get('window').width} 
                                 horizontal={true} 
                                 centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
+                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                                 {
                                     workoutDays.Monday.map(workout => {
                                         return (
@@ -294,10 +295,10 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     if (workoutDays.Tuesday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
-                            <View style={[styles.alignAndJustifyCenter, {width: 180, height: 180, borderRadius: 180, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
+                            <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#1089ff'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -306,7 +307,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
 
                     return (
 
-                        <View>
+                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
                         <ScrollView 
                             onScroll={handleOnScroll} 
                             showsHorizontalScrollIndicator={false} 
@@ -316,7 +317,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                             snapToInterval={Dimensions.get('window').width} 
                             horizontal={true} 
                             centerContent 
-                            contentContainerStyle={{alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
+                            contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                             {
                                 workoutDays.Tuesday.map(workout => {
                                     return (
@@ -325,17 +326,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                                 })
                             }
                         </ScrollView>
-                    <Pagination dotsLength={workoutDays.Tuesday.length} activeDotIndex={tuesdayCarouselIndex}  dotColor="#1089ff" inactiveDotColor='#23374d'/>
-                    </View>
+                    <Pagination containerStyle={{}} dotsLength={workoutDays.Tuesday.length} activeDotIndex={tuesdayCarouselIndex}  dotColor="#1089ff" inactiveDotColor='#23374d'/>
+                    </View> 
                     )
                 case 'Wednesday':
                     if (workoutDays.Wednesday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
-                            <View style={[styles.alignAndJustifyCenter, {width: 180, height: 180, borderRadius: 180, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
+                            <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#1089ff'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -344,7 +345,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
 
                     return (
 
-                        <View>
+                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
                             <ScrollView 
                                 onScroll={handleOnScroll} 
                                 showsHorizontalScrollIndicator={false} 
@@ -354,7 +355,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                                 snapToInterval={Dimensions.get('window').width} 
                                 horizontal={true} 
                                 centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
+                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                                 {
                                     workoutDays.Wednesday.map(workout => {
                                         return (
@@ -370,10 +371,10 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     if (workoutDays.Thursday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
-                            <View style={[styles.alignAndJustifyCenter, {width: 180, height: 180, borderRadius: 180, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
+                            <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#1089ff'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -382,7 +383,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
 
                     return (
 
-                        <View>
+                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
                             <ScrollView 
                                 onScroll={handleOnScroll} 
                                 showsHorizontalScrollIndicator={false} 
@@ -392,7 +393,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                                 snapToInterval={Dimensions.get('window').width} 
                                 horizontal={true} 
                                 centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
+                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                                 {
                                     workoutDays.Thursday.map(workout => {
                                         return (
@@ -408,10 +409,10 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     if (workoutDays.Friday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
-                            <View style={[styles.alignAndJustifyCenter, {width: 180, height: 180, borderRadius: 180, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
+                            <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#1089ff'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -419,7 +420,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     }
                     return (
 
-                        <View>
+                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
                             <ScrollView 
                                 onScroll={handleOnScroll} 
                                 showsHorizontalScrollIndicator={false} 
@@ -429,7 +430,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                                 snapToInterval={Dimensions.get('window').width} 
                                 horizontal={true} 
                                 centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
+                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                                 {
                                     workoutDays.Friday.map(workout => {
                                         return (
@@ -445,10 +446,10 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     if (workoutDays.Saturday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
-                            <View style={[styles.alignAndJustifyCenter, {width: 180, height: 180, borderRadius: 180, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
+                            <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#1089ff'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -457,7 +458,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
 
                     return (
 
-                        <View>
+                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
                             <ScrollView 
                                 onScroll={handleOnScroll} 
                                 showsHorizontalScrollIndicator={false} 
@@ -467,7 +468,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                                 snapToInterval={Dimensions.get('window').width} 
                                 horizontal={true} 
                                 centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
+                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                                 {
                                     workoutDays.Saturday.map(workout => {
                                         return (
@@ -483,10 +484,10 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     if (workoutDays.Sunday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
-                            <View style={[styles.alignAndJustifyCenter, {width: 180, height: 180, borderRadius: 180, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
+                            <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#1089ff'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -495,7 +496,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
 
                     return (
 
-                        <View>
+                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
                             <ScrollView 
                                 onScroll={handleOnScroll} 
                                 showsHorizontalScrollIndicator={false} 
@@ -505,7 +506,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                                 snapToInterval={Dimensions.get('window').width} 
                                 horizontal={true} 
                                 centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center', alignSelf: 'center'}}>
+                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                                 {
                                     workoutDays.Sunday.map(workout => {
                                         return (
@@ -1199,7 +1200,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
         switch(bottomViewIndex) {
             case 0:
                 return (
-                    <View style={{flex: 1.8}}>
+                    <View style={{flex: 1.5}}>
                        
                     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                         <View style={{flex: 2}}>
@@ -1224,17 +1225,84 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                       
                     </View>
 
-                       <FAB small={false} label="Open Library"  onPress={handleOpenLibraryOnPress} style={{backgroundColor: '#23374d', position: 'absolute', bottom: 0, right: 0, margin: 12}} color="white" icon="plus" />
+                       <FAB small={false} label="Open Library"  onPress={handleOpenLibraryOnPress} style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 12}} color="white" icon="plus" />
                  </View>
                  </View>
                 )
             case 1:
                 return (
                     <View style={{flex: 1.8}}>
+                        { bottomViewIndex === 1 ?
+             
+             <>
+             <Surface style={{paddingVertical: 5, backgroundColor: 'white', elevation: 3, }}>
+                   <View  style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                   <TouchableOpacity onPress={handleEditWorkoutScheme}>
+                   <View style={{alignItems: 'center'}}>
+                        <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
+                       <ThinFeatherIcon color="#212121" thin={true} name="clipboard" size={15} />
+                       </Surface>
+                        <Caption style={{fontSize: 10}}>
+                           Edit Scheme
+                       </Caption>
+                        </View>
+                        </TouchableOpacity>
+                        
+                        <TouchableOpacity onPress={handleTakeVideo}>
+                        <View style={{alignItems: 'center'}}>
+                        <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
+                       <ThinFeatherIcon color="#212121" thin={true} name="video" size={15} />
+                       </Surface>
+                        <Caption style={{fontSize: 10}}>
+                           Add Video
+                       </Caption>
+                        </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={handleTakePicture}>
+                        <View style={{alignItems: 'center'}}>
+                        <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
+                       <ThinFeatherIcon color="#212121" thin={true} name="image" size={15} />
+                       </Surface>
+                        <Caption style={{fontSize: 10}}>
+                           Add Image
+                       </Caption>
+                        </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={handleAddCue}>
+                        <View style={{alignItems: 'center'}}>
+                        <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
+                       <ThinFeatherIcon color="#212121" thin={true} name="message-circle" size={15} />
+                       </Surface>
+                        <Caption style={{fontSize: 10}}>
+                           Add Cues
+                       </Caption>
+                        </View>
+                        </TouchableOpacity>
+
+                        <View style={{alignItems: 'center'}}>
+                        <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
+                       <ThinFeatherIcon color="#e53935" thin={true} name="trash" size={15} />
+                       </Surface>
+                        <Caption style={{color: '#e53935', fontSize: 10}}>
+                           Remove
+                       </Caption>
+                        </View>
+                   </View>
+             </Surface>
+                                <Divider style={{width: '100%'}} />
+                                </>
+             :
+             null
+}
+                        <Text style={{padding: 10, fontSize: 15, fontWeight: '400', fontFamily: 'Avenir',}}>
+                            Showing workouts from:
+                        </Text>
                         <DropDownPicker
     items={items}
     defaultValue={getCurrentDay()}
-    containerStyle={{backgroundColor: '#FFFFFF', height: 40, width: Dimensions.get('window').width}}
+    containerStyle={{ height: 40, width: Dimensions.get('window').width}}
     style={{backgroundColor: '#fafafa'}}
     itemStyle={{
         justifyContent: 'flex-start'
@@ -1242,9 +1310,6 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
     dropDownStyle={{backgroundColor: '#FFFFFF'}}
     onChangeItem={item => setCurrDayIndex(item.index)}
 />
-<Divider style={{height: 10}} />
-                        <ListItem onPress={handleEditWorkoutOnPress} title="Edit Workout" topDivider={false} subtitle='Swipe to a workout and modify the scheme, cues, description, and media.' bottomDivider titleStyle={{fontFamily: 'Avenir-Medium', fontSize: 15}} subtitleStyle={{fontFamily: 'Avenir-Light', fontSize: 13}} rightIcon={() => <FeatherIcon name="arrow-right" size={15} />}/>
-                        <ListItem onPress={saveProgramWorkoutData} title="Finish Editing" bottomDivider titleStyle={{fontFamily: 'Avenir-Medium', fontSize: 15}} subtitleStyle={{fontFamily: 'Avenir-Light', fontSize: 15}} rightIcon={() => <FeatherIcon name="arrow-right" size={15} />}/>
                       
                     </View>
                 )
@@ -1500,10 +1565,14 @@ style={[styles.exerciseOptionIcon, {color: 'rgba(229,57,53 ,1)'}]}
                    
                    :
                   
-                   null
+                   <Button color="#1089ff" uppercase={false} onPress={() => saveProgramWorkoutData()}>
+                       Finish
+                    <ThinFeatherIcon thin={true} name="arrow-right" size={12} />
+                   </Button>
                   
                    }
              </Appbar.Header>
+             
              <View style={styles.content}>
              <View style={styles.mainContent}>
                            {renderTopView()}
@@ -1539,9 +1608,7 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: '#FFFFFF', 
         elevation: 3,
-    borderBottomColor: 'rgb(199, 199, 204)', 
-        borderBottomWidth: 0.8, 
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     container: {
         flex: 1,
