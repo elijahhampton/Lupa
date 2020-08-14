@@ -135,7 +135,7 @@ const SignUp = props => {
     style={styles.keyboardAvoidingView}>
       <View style={{flex: 1}}>
           <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
-          <View style={{margin: Constants.statusBarHeight, width: "100%",}}>
+          <View style={{alignItems: 'center', marginTop: Constants.statusBarHeight, width: "100%",}}>
           <View style={styles.headerText}>
                     <Text style={{fontSize: 28, fontWeight: '700', color: 'black', alignSelf: 'center'   }}>
             Create an account
@@ -230,10 +230,12 @@ const SignUp = props => {
   buttonStyle={{ backgroundColor: '#1565C0' }}
   disabled={false}
 />
+
                         </View>
           </ScrollView>
-          <Divider />
+        
       </View>
+      
     </KeyboardAvoidingView>  
     <SafeAreaView style={{backgroundColor: '#1565C0'}} /> 
     </View>
