@@ -37,7 +37,7 @@ import { useDispatch } from 'react-redux';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 
-import Color from '../../../common/Color'
+import LupaColor from '../../../common/LupaColor'
 import { connect, useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { Constants } from 'react-native-unimodules';
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
         color: '#2196F3',
     },
     listItemTitleStyle: {
-        color: Color.LUPA_BLUE
+        color: LupaColor.LUPA_BLUE
     },
     alignRowCenter: {
         flexDirection: 'row',

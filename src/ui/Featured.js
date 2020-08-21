@@ -86,10 +86,10 @@ class Featured extends React.Component {
     }
 
     setupComponent = async () => {
-        await this.loadFeaturedPrograms();
+        //await this.loadFeaturedPrograms();
        // await this.loadFeaturedTrainers();
-        await this.loadTopPicks();
-        await this.loadRecentlyAddedPrograms();
+       // await this.loadTopPicks();
+        //await this.loadRecentlyAddedPrograms();
     }
 
     checkNewUser = async () => {
@@ -349,7 +349,7 @@ class Featured extends React.Component {
                                 {
                                     this.state.featuredPrograms.map(program => {
                                         return (
-                                                <ProgramInformationComponent program={program} />
+                                                <ProgramInformationComponent key={program.program_uuid + index.toString()} program={program} />
                                            
                                         )
                                     })
@@ -375,7 +375,7 @@ class Featured extends React.Component {
                             {
                                     this.state.topPicks.map(program => {
                                         return (
-                                            <FeaturedProgramCard currProgram={program} keyProp={program.program_name}/>
+                                            <FeaturedProgramCard key={program.program_uuid + index.toString()} currProgram={program}/>
                                         )
                                     })
                                 }

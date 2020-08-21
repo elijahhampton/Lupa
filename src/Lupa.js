@@ -26,7 +26,7 @@ const Lupa = () => {
 
   useEffect(() => {
    //generateMessagingToken(currUserData.user_uuid)
-    LUPA_CONTROLLER_INSTANCE.indexApplicationData()
+    //LUPA_CONTROLLER_INSTANCE.indexApplicationData()
   }, [])
 
   return (
