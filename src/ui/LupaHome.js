@@ -35,42 +35,8 @@ import ThinFeatherIcon from 'react-native-feather1s'
 import { useSelector } from 'react-redux/lib/hooks/useSelector'
 import LupaController from '../controller/lupa/LupaController'
 
-function LupaHome(props) {
+const LupaHome = () => {
     const navigation = useNavigation()
-    const LUPA_CONTROLLER_INSTANCE= LupaController.getInstance();
-
-    const [searching, setIsSearching] = useState(false)
-    const [searchValue, setSearchValue] = useState("")
-    const [searchResults, setSearchResults] = useState([])
-
-    const performSearch = async searchQuery => {
-        //If no search query then set state and return
-        if (searchQuery == "" || searchQuery == "") {
-            setIsSearching(true)
-            setSearchValue("")
-            setSearchResults([])
-
-            return;
-        }
-
-        await setSearchResults([])
-        await setIsSearching(true)
-        await setSearchValue(searchQuery)
-
-        await LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
-            setSearchResults(searchData)
-        })
-
-        await setIsSearching(false)
-    }
-
-    const renderSearchResults = () => {
-            return searchResults.map(result => {
-                return (
-                    <LargeProgramSearchResultCard program={result} />
-                )
-            })
-        }
 
     return(
         <Container style={styles.root}>

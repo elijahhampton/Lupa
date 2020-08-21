@@ -38,6 +38,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import SelectProgramImage from './SelectProgramImage'
 import { Input} from 'react-native-elements';
 import LupaMapView from '../../../../user/modal/LupaMapView'
+import { copyFileAssets } from 'react-native-fs';
 
 const months = ["January", "February", "March", "April",
   "May", "June", "July", "August", "September", "October",
@@ -141,6 +142,10 @@ const MAX_DESCRIPTION_LENGTH = 100
 function ProgramInformation(props) {
   let [snackBarVisible, setSnackBarVisibility] = useState(false);
   let [rejectedReason, setRejectedReason] = useState(" ")
+
+  const [titleInputFocused, setTitleInputFocused] = useState(false)
+  const [descriptionInputFocused, setDescriptionInputFocused] = useState(false)
+  const [programPriceInputFocused, setProgramPriceInputFocused] = useState(false)
 
 
   const _onToggleSnackBar = () => setSnackBarVisibility(!snackBarVisible)
@@ -309,8 +314,7 @@ function ProgramInformation(props) {
 
   const getNextView = () => {
     //check program values
-    //let retVal = checkInputs()
-    let retVal = false;
+    let retVal = false //checkInputs()
     if (retVal) {
       return;
     }
@@ -334,8 +338,8 @@ function ProgramInformation(props) {
                       Choose the days of which your program will require work.
             </Caption>
                   </View>
-                  <TextInput value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" placeholderTextColor="#212121" style={styles.textInput} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
-                  <TextInput value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={styles.textInput} enablesReturnKeyAutomatically={true} returnKeyLabel="done" returnKeyType="done" keyboardType="default" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
+                  <TextInput onFocus={() => setTitleInputFocused(true)} onBlur={() => setTitleInputFocused(false)} value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" placeholderTextColor="#212121" style={[styles.textInput, { borderBottomColor: titleInputFocused ? "#1089ff" : "#212121",}]} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
+                  <TextInput onFocus={() => setDescriptionInputFocused(true)} onBlur={() => setDescriptionInputFocused(false)} value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={[styles.textInput, { borderBottomColor: descriptionInputFocused ? "#1089ff" : "#212121",}]} enablesReturnKeyAutomatically={true} returnKeyLabel="done" returnKeyType="done" keyboardType="default" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
                 </View>
               </View>
 
@@ -391,13 +395,16 @@ function ProgramInformation(props) {
                 </Caption>
 
                   <Input 
+                  key={programPriceInputFocused}
+                  onFocus={() => setProgramPriceInputFocused(true)}
+                  onBlur={() => setProgramPriceInputFocused(false)}
                     keyboardAppearance="light" 
                     keyboardType="numeric" 
                     returnKeyLabel="done" 
                     returnKeyType="done" 
                     onChangeText={(text) => setProgramPrice(text)} 
                     value={programPrice} 
-                    containerStyle={{marginVertical: 15, borderWidth: 0.5, borderRadius: 10, width: '30%'}} 
+                    containerStyle={{marginVertical: 15, borderWidth: 0.5, borderColor: programPriceInputFocused ? "#1089ff" : "#212121", borderRadius: 10, width: '30%'}} 
                     inputContainerStyle={{borderWidth: 0, borderBottomWidth: 0}} 
                     inputStyle={{borderWidth: 0}} />
                 <Text style={{ alignSelf: 'flex-start', padding: 3, color: '#BDBDBD', fontSize: 15 }}>
@@ -653,16 +660,16 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'flex-start',
     marginVertical: 10,
-    borderBottomColor: '#212121',
-    borderBottomWidth: 1,
+    borderBottomWidth: 1.5,
     paddingVertical: 15,
     fontSize: 15,
-    fontFamily: 'HelveticaNeue',
-    fontWeight: '300'
+    fontFamily: 'Avenir',
+    fontWeight: '600'
   },
   questionText: {
     fontFamily: "Avenir-Medium",
     fontSize: 18,
+    fontWeight: '700',
     color: '#23374d'
   }
 })

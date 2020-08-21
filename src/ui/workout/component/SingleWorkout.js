@@ -69,7 +69,7 @@ return (
           <View style={{paddingHorizontal: 5, flex: 2}}>
                 <View>
                 <Text style={{paddingVertical: 3, fontSize: 18, color: '#212121', fontWeight: '400'}}>
-              {this.props.workout.workout_uid}
+              {this.props.workout.workout_name}
           </Text>
         
           <Text style={{fontSize: 12}} numberOfLines={2} ellipsizeMode="tail">

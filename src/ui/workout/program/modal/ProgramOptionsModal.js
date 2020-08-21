@@ -91,7 +91,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
             return TRAINER_OPTIONS.map((option, index, arr) => {
                 return (
                     <>
-                    <TouchableWithoutFeedback onPress={() => handleDefaultOptionsOnPress(option.optionTitle)}>
+                    <TouchableWithoutFeedback key={index} onPress={() => handleDefaultOptionsOnPress(option.optionTitle)}>
                     <View key={index} style={styles.optionContainerStyle}>
                         <Text style={[styles.textStyle, option.customTextStyle]}>
                             {option.optionTitle}
@@ -108,7 +108,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
             return DEFAULT_OPTIONS.map((option, index, arr) => {
                 return (
                     <>
-                    <TouchableWithoutFeedback onPress={() => handleDefaultOptionsOnPress(option.optionTitle)}>
+                    <TouchableWithoutFeedback key={index} onPress={() => handleDefaultOptionsOnPress(option.optionTitle)}>
                     <View key={index} style={styles.optionContainerStyle}>
                         <Text style={[styles.textStyle, option.customTextStyle]}>
                             {option.optionTitle}
@@ -125,7 +125,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         return CURR_USER_OPTIONS.map((option, index, arr) => {
             return (
                 <>
-                <TouchableWithoutFeedback onPress={() => handleCurrUserOptions(option.optionTitle)}>
+                <TouchableWithoutFeedback key={index} onPress={() => handleCurrUserOptions(option.optionTitle)}>
                 <View key={index} style={styles.optionContainerStyle}>
                     <Text style={[styles.textStyle, option.customTextStyle]}>
                         {option.optionTitle}

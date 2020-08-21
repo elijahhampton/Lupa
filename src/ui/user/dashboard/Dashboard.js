@@ -55,31 +55,6 @@ const Dashboard = () => {
     })
 
     const renderTrainerDisplay = () => {
-        if (currUserProgramsData.length === 0) {
-            return (
-                <View style={{ flex: 1 }}>
-                    <View style={[{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }]}>
-                        <Image source={require('../../images/Clipboard.jpeg')} style={{ marginVertical: 10, width: 150, height: 150, borderRadius: 150 }} />
-
-
-                        <View style={{ alignItems: 'center', paddingHorizontal: 10 }}>
-                            <Text style={{ paddingVertical: 10, fontSize: 20, fontFamily: 'Avenir-Medium' }}>
-                                You haven't created any programs.{" "}
-                            </Text>
-
-                            <Text style={{ color: '#1089ff', paddingVertical: 10, textAlign: 'center', fontFamily: 'Avenir-Light' }} onPress={() => navigation.navigate('CreateProgram')}>
-                                When you create a program you will be able to find details about it here- including insights.
-                        </Text>
-                        </View>
-
-                        <Button uppercase={false} color="#1089ff" mode="contained" style={{ fontFamily: 'Avenir-Roman', marginVertical: 10 }} onPress={() => navigation.navigate('CreateProgram')}>
-                            Create a workout program
-    </Button>
-
-                    </View>
-                </View>
-            )
-        }
 
         return (
             <View style={{ flex: 1 }}>
@@ -87,7 +62,7 @@ const Dashboard = () => {
 
                     <View style={{ alignSelf: 'center', }}>
                         <Text style={{ padding: 10, fontSize: 18, fontFamily: 'Avenir-Medium' }}>
-                            Sales
+                            Interactions
                             </Text>
 
                         <LineChart
@@ -144,12 +119,12 @@ const Dashboard = () => {
                             }}
                         />
 
-                        <Divider style={{ marginHorizontal: 30, marginVertical: 5 }} />
+                       {/* <Divider style={{ marginHorizontal: 30, marginVertical: 5 }} />
 
                         <Button color="#1089ff" uppercase={false} mode="text" style={{ alignSelf: 'flex-end' }} onPress={() => navigation.push('TrainerInsights')}>
                             Trainer Insights
                   <FeatherIcon name="arrow-right" size={12} />
-                        </Button>
+                        </Button> */}
                     </View>
                     <Divider style={{ height: 5, backgroundColor: '#EEEEEE' }} />
                 </ScrollView>

@@ -31,7 +31,7 @@ function NotificationsView(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     useEffect(() => {
-        try {
+      /*  try {
             const currUserSubscription = LUPA_DB.collection('users').doc(currUserData.user_uuid).onSnapshot(documentSnapshot => {
                 let userData = documentSnapshot.data()
                 setUserNotifications(userData.notifications)
@@ -43,7 +43,7 @@ function NotificationsView(props) {
             setUserNotifications([])
             alert(err)
             return
-        }
+        }*/
     }, [])
 
     const setupComponent = async () => {

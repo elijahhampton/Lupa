@@ -26,10 +26,10 @@ import ShareProgramModal from './src/ui/workout/program/modal/ShareProgramModal'
 import AccountSettings from './src/ui/user/profile/component/SettingsModal'
 import LiveWorkout from './src/ui/workout/modal/LiveWorkout'
 import TrainerInsights from './src/ui/user/trainer/TrainerInsights';
-import ProfileView from './src/ui/user/profile/ProfileView';
-import UserProfileView from './src/ui/user/profile/UserProfileView';
 import NotificationsView from './src/ui/user/notifications/NotificationsView';
 import MessagesView from './src/ui/user/chat/MessagesView';
+import LupaCamera from './src/ui/workout/program/createprogram/component/LupaCamera';
+import ProfileController from './src/ui/user/profile/ProfileController';
 
 class App extends React.Component {
   constructor(props) {
@@ -154,17 +154,12 @@ function AppNavigator() {
     <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
     <StackApp.Screen name="AccountSettings" component={AccountSettings} />
     <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
-    <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
-    <StackApp.Screen name="Profile" component={ProfileView} />
-    <StackApp.Screen 
-        name="Notifications"
-        component={NotificationsView}
-       />
-
-       <StackApp.Screen 
-       name="Messages" 
-       component={MessagesView}/>
-  </StackApp.Navigator>
+        <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
+      <StackApp.Screen name="Profile" component={ProfileController} />
+    <StackApp.Screen name="Notifications" component={NotificationsView} />
+  <StackApp.Screen name="Messages" component={MessagesView} />
+  <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{mediaCaptureType: "VIDEO"}} />
+   </StackApp.Navigator>
   )
 
 

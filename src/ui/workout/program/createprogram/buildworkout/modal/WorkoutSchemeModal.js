@@ -25,6 +25,11 @@ function WorkoutSchemeModal({ isVisible, captureValues, workout, closeModal}) {
     const [repSliderValue, setRepSliderValue] = useState(0);
     const [setSliderValue, setSetSliderValue] = useState(0);
 
+    const saveScheme = () => { 
+        captureValues(setSliderValue, repSliderValue);
+        closeModal();
+    }
+
     return (
         <Portal>
 
@@ -32,7 +37,7 @@ function WorkoutSchemeModal({ isVisible, captureValues, workout, closeModal}) {
                                 <Appbar.Header style={{elevation: 3, backgroundColor: '#FFFFFF'}}>
                             <Appbar.Action icon={() => <ThinFeatherIcon thin={true} name="arrow-left" size={20} />} onPress={closeModal} />
                             <Appbar.Content title="Workout Scheme" />
-                            <Button color="#23374d" mode="text" uppercase={false} onPress={() => captureValues(setSliderValue, repSliderValue)}>
+                            <Button color="#23374d" mode="text" uppercase={false} onPress={saveScheme}>
                                 Save
                             </Button>
                         </Appbar.Header>

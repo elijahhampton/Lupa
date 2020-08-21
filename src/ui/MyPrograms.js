@@ -30,10 +30,6 @@ function MyPrograms(props) {
     })
 
 
-    useEffect(() => {
-        
-    }, [])
-
     const handleCardOnPress = (program) => {
         setCurrentProgram(program)
         setProgramOptionsModalIsVisible(true)

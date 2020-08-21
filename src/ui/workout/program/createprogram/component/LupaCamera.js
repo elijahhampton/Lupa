@@ -33,6 +33,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 
 import LupaController from '../../../../../controller/lupa/LupaController';
 import { Constants } from 'react-native-unimodules';
+import FullScreenLoadingIndicator from '../../../../common/FullScreenLoadingIndicator';
 
 class VideoPreview extends React.Component {
   constructor(props) {
@@ -41,29 +42,38 @@ class VideoPreview extends React.Component {
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     this.state = {
-
+      showLoadingIndicator: false
     }
   }
 
   saveVideo = async () => {
     try {
+    this.setState({ showLoadingIndicator: true });
+    console.log('a')
     const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
-      this.props.currProgramUUID, 'VIDEO', this.props.videoSrcProps)
-    await this.props.captureURI(newURI, "VIDEO")
-    await this.props.closeVideoPreview()
-    await this.props.closeMainModal()
+    this.props.currProgramUUID, 'VIDEO', this.props.videoSrcProps);
+    console.log('b')
+   await this.props.captureURI(newURI, "VIDEO");
+   console.log('c')
+    this.setState({ showLoadingIndicator: false });
+    console.log('d')
+    this.props.closeVideoPreview();
+    console.log('e')
+    this.props.closeMainModal()
     } catch(error) {
-      alert(error)
+      alert('saveVideo: ' + error)
     }
   }
 
   saveImage = async () => {
     try {
+      this.setState({ showLoadingIndicator: true });
       const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
         this.props.currProgramUUID, 'IMAGE', this.props.videoSrcProps)
       await this.props.captureURI(newURI, "IMAGE")
-      await this.props.closeVideoPreview()
-      await this.props.closeMainModal()
+      this.setState({ showLoadingIndicator: false });
+      this.props.closeVideoPreview();
+      this.props.closeMainModal()
     } catch(error) {
       alert(err)
     }
@@ -73,7 +83,7 @@ class VideoPreview extends React.Component {
     return (
       <NativeModal visible={this.props.isVisible} 
         presentationStyle="fullScreen" 
-        style={{flex: 1}}
+        style={{flex: 1, backgroundColor: 'red'}}
         animated={true}
         animationType="slide">
                           <View style={{flex: 1, backgroundColor: 'transparent'}}>
@@ -91,7 +101,7 @@ class VideoPreview extends React.Component {
                               
                           />
                           :
-                          <ImageBackground style={{flex: 1}} source={{uri: this.props.videoSrcProps }} />
+                          <ImageBackground style={{flex: 1, backgroundColor: 'blue'}} source={{uri: this.props.videoSrcProps }} />
                             }
 
 <View style={{padding: 15, flexDirection: 'row', alignItems: 'center', backgroundColor: 'black', width: Dimensions.get('window').width, height: 'auto', justifyContent: 'space-evenly'}}>
@@ -102,17 +112,18 @@ class VideoPreview extends React.Component {
 
 {
   this.props.mediaCaptureType == 'VIDEO' ?
-  <Button color="#FFFFFF" mode="text" onPress={this.saveVideo} style={{margin: 15}}>
+  <Button color="#FFFFFF" mode="text" onPress={() => this.saveVideo()} style={{margin: 15}}>
       Save V
 </Button>
 :
-<Button color="#FFFFFF" mode="text" onPress={this.saveImage} style={{margin: 15}}>
+<Button color="#FFFFFF" mode="text" onPress={() => this.saveImage()} style={{margin: 15}}>
       Save
 </Button>
 }
 
 </View>
                           </View>
+                          <FullScreenLoadingIndicator isVisible={this.state.showLoadingIndicator} />
         </NativeModal>
     )
   }
@@ -237,7 +248,7 @@ export default class CameraScreen extends React.Component {
     });
   }
 
-  takePicture = async function() {
+  takePicture = async () => {
     if (this.camera) {
       const data = await this.camera.takePictureAsync();
       console.warn('takePicture ', data);
@@ -261,7 +272,7 @@ export default class CameraScreen extends React.Component {
         }
 
       } catch (e) {
-        console.error(e);
+        alert(e)
       }
     }
   };
@@ -269,13 +280,11 @@ export default class CameraScreen extends React.Component {
   toggle = value => () => this.setState(prevState => ({ [value]: !prevState[value] }));
 
   renderRecording = () => {
-    const { isRecording } = this.state;
-    const backgroundColor = isRecording ? 'darkred' : 'transparent';
-    const videoAction = isRecording ? this.stopVideo : this.takeVideo;
+    const backgroundColor = this.state.isRecording ? 'darkred' : 'transparent';
+    const videoAction = this.state.isRecording ? this.stopVideo : this.takeVideo
     const pictureAction = this.takePicture
-    const { mediaCaptureType } = this.props;
-    
-    if (mediaCaptureType == 'VIDEO')
+
+    if (this.props.mediaCaptureType == 'VIDEO')
     {
       return (
         <TouchableWithoutFeedback onPress={videoAction} style={{borderRadius: 60}}>
@@ -283,11 +292,20 @@ export default class CameraScreen extends React.Component {
         </TouchableWithoutFeedback>
       );
     }
-    else
+    else if ( this.props.mediaCaptureType == 'IMAGE')
     {
+      return (
       <TouchableWithoutFeedback onPress={pictureAction} style={{borderRadius: 60}}>
           <View style={{alignSelf: 'center', width: 60, height: 60, borderRadius: 60, borderWidth: 3, borderColor: '#FFFFFF', padding: 20, backgroundColor: backgroundColor}} />
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>    
+      )
+    }
+    else {
+      return (
+        <TouchableWithoutFeedback onPress={videoAction} style={{borderRadius: 60}}>
+        <View style={{alignSelf: 'center', width: 60, height: 60, borderRadius: 60, borderWidth: 3, borderColor: '#FFFFFF', padding: 20, backgroundColor: backgroundColor}} />
+      </TouchableWithoutFeedback>
+      )
     }
 
   };
@@ -348,72 +366,6 @@ export default class CameraScreen extends React.Component {
           </TouchableWithoutFeedback>
         </View>
 
-        {/*
-          this.state.isRecording == true ?
-          null
-          :
-          <View
-          style={{
-            width: Dimensions.get('window').width,
-            height: 72,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            margin: Constants.statusBarHeight,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              width: Dimensions.get('window').width,
-            height: 'auto',
-            }}
-          >
-            <TouchableOpacity style={[styles.flipButton, {width: 110}]} onPress={this.toggleFacing.bind(this)}>
-              <Text style={styles.flipText}> FLIP </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.flipButton, {width: 110}]} onPress={this.toggleFlash.bind(this)}>
-              <Text style={styles.flipText}> FLASH: {this.state.flash} </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.flipButton, {width: 110}]} onPress={this.toggleWB.bind(this)}>
-              <Text style={styles.flipText}> WB: {this.state.whiteBalance} </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        */
-        }
-
-{/*
-        <View style={{ bottom: 0 }}>
-          <View
-            style={{
-              height: 'auto',
-              backgroundColor: 'transparent',
-              alignSelf: 'flex-end',
-            }}
-          >
-                      {this.state.zoom !== 0 && (
-            <Text style={[styles.flipText, {alignSelf: 'center' }]}>Zoom: {this.state.zoom}</Text>
-          )}
-            <Slider
-              style={{ width: 150, margin: 15, alignSelf: 'flex-end' }}
-              onValueChange={this.setFocusDepth.bind(this)}
-              step={0.1}
-              disabled={this.state.autoFocus === 'on'}
-            />
-          </View>
-        </View>
-                      */}
-       {/* 
-        
-        {!!canDetectFaces && this.renderFaces()}
-        {!!canDetectFaces && this.renderLandmarks()}
-        {!!canDetectText && this.renderTextBlocks()}
-        {!!canDetectBarcode && this.renderBarcodes()} 
-        */}
-
         <View style={{width: Dimensions.get('window').width,
          //   height: 200,
             backgroundColor: 'transparent',   
@@ -421,7 +373,7 @@ export default class CameraScreen extends React.Component {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: 10,}}>
-          <FeatherIcon name="x" size={25} color="#FFFFFF" onPress={this.props.closeModalMethod.bind(this)} />
+          <FeatherIcon name="x" size={25} color="#FFFFFF" onPress={() => this.props.navigation.pop()} />
 
           <FeatherIcon name="zap" size={25} color="#FFFFFF" onPress={this.toggleFlash.bind(this)} />
         </View>
@@ -471,77 +423,29 @@ export default class CameraScreen extends React.Component {
       Perform your best two reps.  For the best capture include your entire body.
   </Text>
   </View>
-{/*
-<View style={{flex: 1}}>
-  <View style={{flex: 1}}>
-
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-<TouchableOpacity
-              style={[styles.flipButton, { flex: 0.1, alignSelf: 'flex-end' }]}
-              onPress={this.zoomIn.bind(this)}
-            >
-              <Text style={styles.flipText}> + </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.flipButton, { flex: 0.1, alignSelf: 'flex-end' }]}
-              onPress={this.zoomOut.bind(this)}
-            >
-              <Text style={styles.flipText}> - </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.flipButton, { flex: 0.25, alignSelf: 'flex-end' }]}
-              onPress={this.toggleFocus.bind(this)}
-            >
-              <Text style={styles.flipText}> AF : {this.state.autoFocus} </Text>
-            </TouchableOpacity>
-</View>
-
-  </View>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'transparent',
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
-            }}
-          >
-            {this.renderRecording()}
-            <TouchableOpacity
-              style={[styles.flipButton, styles.picButton]}
-              onPress={this.takePicture.bind(this)}
-            >
-              <Text style={styles.flipText}> SNAP </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.flipButton, styles.picButton]}
-              onPress={this.props.closeModalMethod.bind(this)}
-            >
-                      <Text style={styles.flipText}> Close </Text>
-            </TouchableOpacity>     
-          </View>
-<SafeAreaView />
-</View>
-          */}
       </SafeAreaView>
     );
   }
 
+  captureURI = (uri, type) => {
+    this.props.route.params.captureURI(uri, type)
+  }
+
   render() {
     return  (
-      <Modal visible={this.props.isVisible} contentContainerStyle={{width: '100%', height: '100%'}}>
+      <>
         <View style={styles.container}>{this.renderCamera()}</View>
         <VideoPreview 
         isVisible={this.state.showVideoPrev} 
         videoSrcProps={this.state.currVideo} 
         closeVideoPreview={() => this.setState({ showVideoPrev: false })} 
-        currWorkoutPressed={this.props.currWorkoutPressed}
-        currProgramUUID={this.props.currProgramUUID}
-        closeMainModal={this.props.closeModalMethod}
-        captureURI={(uri, type) => this.props.handleCaptureNewMediaURI(uri, type)}
-        mediaCaptureType={this.props.mediaCaptureType}
+        currWorkoutPressed={this.props.route.params.currWorkoutPressed}
+        currProgramUUID={this.props.route.params.currProgramUUID}
+        closeMainModal={() => this.props.navigation.goBack('CreateProgram')}
+        captureURI={(uri, type) => this.captureURI(uri,type)}
+        mediaCaptureType={this.props.route.params.mediaCaptureType}
        />
-        </Modal>
+       </>
     )
   }
 }
@@ -624,4 +528,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: 'transparent',
   },
+
 });

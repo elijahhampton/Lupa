@@ -21,15 +21,18 @@ function SelectProgramImage({ captureImage }) {
     const [isProgramImageSet, setIsPromiseImageSet] = useState(false)
 
     const _chooseImageFromCameraRoll = async () => {
-      
+      try {
         ImagePicker.showImagePicker({}, async (response) => {
-          if (!response.didCancel)
-          {
-            await captureImage(response.uri)
-            await setProgramImage(response.uri)
-            await setIsPromiseImageSet(true)
-          }
-      });
+            if (!response.didCancel)
+            {
+              await captureImage(response.uri)
+              await setProgramImage(response.uri)
+              await setIsPromiseImageSet(true)
+            }
+        });
+      } catch(err) {
+          alert(err)
+      }
   
     }
 
