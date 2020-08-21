@@ -314,8 +314,7 @@ function ProgramInformation(props) {
 
   const getNextView = () => {
     //check program values
-    //let retVal = checkInputs()
-    let retVal = false;
+    let retVal = false //checkInputs()
     if (retVal) {
       return;
     }

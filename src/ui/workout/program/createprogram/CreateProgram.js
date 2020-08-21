@@ -15,7 +15,6 @@ import { connect } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import ProgramInformation from './component/ProgramInformation'
-import BuildAWorkout from './BuildWorkout';
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 import { fromString } from 'uuidv4';
 import FeatherIcon from 'react-native-vector-icons/Feather'
@@ -43,8 +42,6 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
             }).then(() => {
                 setComponentReady(true)
             })
-
-            console.log(programData)
         }
 
         try {
@@ -57,10 +54,6 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     const handlePublishProgram =  async() => {
         await LUPA_CONTROLLER_INSTANCE.publishProgram(uuid)
         navigation.navigate('Train')
-        closeModal()
-    }
-
-    const close = () => {
         closeModal()
     }
 
@@ -162,6 +155,11 @@ class CreateProgram extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE.createNewProgram(UUID);
     }
 
+    componentDidCatch(error, info) { 
+        alert('Some error took place: ' + error)
+        alert(info)
+    }
+
     async componentWillUnmount() {
         if (this.state.programComplete == false) {
             //delete from database
@@ -205,13 +203,12 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_automated_message = programAutomatedMessage
         updatedProgramData.completedProgram = false;
 
-        await this.LUPA_CONTROLLER_INSTANCE.updateProgramData(this.state.currProgramUUID, updatedProgramData);
-
+        this.LUPA_CONTROLLER_INSTANCE.updateProgramData(this.state.currProgramUUID, updatedProgramData);
         this.goToIndex(1)
     }
 
     saveProgramWorkoutData = async (workoutData) => {
-        await this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.currProgramUUID, workoutData)
+        this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.currProgramUUID, workoutData)
         this.setState({ programComplete: true, creatingProgram: true });
     }
 
@@ -305,7 +302,7 @@ class CreateProgram extends React.Component {
                         )} />
                 )
             case 1:
-                return <BuildWorkoutController programUUID={this.state.currProgramUUID} programData={this.state.programData} goToIndex={this.goToIndex} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> /* <BuildAWorkout programData={this.state.programData} goToIndex={this.goToIndex} goBackToEditInformation={() => this.setState({ currIndex: this.state.currIndex - 1 })} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> */
+                return <BuildWorkoutController navigation={this.props.navigation} programUUID={this.state.currProgramUUID} programData={this.state.programData} goToIndex={this.goToIndex} saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} /> 
             default:
         }
     }

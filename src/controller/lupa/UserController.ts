@@ -1066,11 +1066,26 @@ export default class UserController {
         return USER_COLLECTION.doc(user_uuid).collection("programs");
     }
 
+    /**
+     * Creates a new program entry in the programs collection and adds the UUID for that program
+     * to the current users program list.
+     * 
+     * Notes:
+     * This method assumes only the current user can create a program for the account and send it to others.
+     * @param uuid 
+     */
     createProgram = async (uuid) => {
         PROGRAMS_COLLECTION.doc(uuid).set(getLupaProgramInformationStructure())
         await this.updateCurrentUser('programs', uuid, 'add');
     }
 
+    /**
+     * Removes a specified value from a given away.
+     * 
+     * !!! Move to lupa/common/utils !!!
+     * @param arr 
+     * @param value 
+     */
     arrayRemove(arr, value) {
         return arr.filter(function(ele)
         { return ele != value;
@@ -1120,7 +1135,7 @@ export default class UserController {
 
              programUUIDS = temp.programs;
 
-             for (let i = 0; i < programUUIDS.length; i++)
+             for (let i = 0; i <= 2; i++)
              {
                  await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
                      temp = snapshot.data();
@@ -1206,6 +1221,12 @@ export default class UserController {
         }*/
 }
 
+    /**
+     * Saves a program image to the FS storage bucket.
+     * 
+     * @param programUUID 
+     * @param url 
+     */
     saveProgramImage = async (programUUID, url) => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -1228,6 +1249,10 @@ export default class UserController {
         })
     }
 
+    /**
+     * 
+     * @param workoutData 
+     */
     saveProgram =  async (workoutData) => {
         let imageURL;
         await this.saveProgramImage(workoutData.program_structure_uuid, workoutData.program_image).then(url => {
@@ -1258,8 +1283,17 @@ export default class UserController {
 
          return Promise.resolve(payload);
         }
-
+    
+        /**
+         *  Sends a notification containing the data to the program to a list of users.
+         * @param currUserData 
+         * @param userList 
+         * @param program 
+         */
     handleSendUserProgram = async (currUserData, userList, program) => {
+        if (userList.length === 0) {
+            return;
+        }
 
       try {
 
@@ -1378,7 +1412,14 @@ export default class UserController {
     }
 
 
-    /* designing programs */
+    /**
+     * Saves a single workout graphic.
+     * 
+     * @param workout 
+     * @param programUUID 
+     * @param graphicType 
+     * @param uri 
+     */
     saveProgramWorkoutGraphic = async (workout, programUUID, graphicType, uri) => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();

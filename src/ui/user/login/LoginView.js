@@ -206,7 +206,6 @@ class LoginView extends React.PureComponent {
       currUserData = result;
     })
 
-
     await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
     })

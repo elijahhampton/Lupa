@@ -32,13 +32,13 @@ function ShowTrainersModal({ isVisible, closeModal }) {
     }
 
     useEffect(() => {
-        async function fetchData() {
+       /* async function fetchData() {
             await LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
                 setTrainers(result)
             })
         }
 
-        fetchData()
+        fetchData()*/
     }, [])
     return (
         <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType='slide'>
@@ -78,13 +78,13 @@ function ShowTopPicksModal({ isVisible, closeModal }) {
     const [topPicks, setTopPicks] = useState([])
 
     useEffect(() => {
-        async function fetchData() {
+       /* async function fetchData() {
             await LUPA_CONTROLLER_INSTANCE.getTopPicks().then(result => {
                 setTopPicks(result)
             })
         }
 
-        fetchData()
+        fetchData()*/
     }, [])
 
     return (

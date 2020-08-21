@@ -1,4 +1,4 @@
-import React, { useState, createRef, useEffect } from 'react';
+import React, { useState, useRef, createRef, useEffect } from 'react';
 
 import {
     View,
@@ -27,9 +27,11 @@ import {
     ListItem
 } from 'react-native-elements';
 
+import Dots from 'react-native-dots-pagination';
+
 import DropDownPicker from 'react-native-dropdown-picker';
 import ImagePicker from 'react-native-image-picker'
-
+import { useNavigation } from '@react-navigation/native'
 import { useSelector } from 'react-redux'
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ThinFeatherIcon from 'react-native-feather1s'
@@ -48,6 +50,9 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import LupaCamera from '../component/LupaCamera'
 import WorkoutSchemeModal from './modal/WorkoutSchemeModal';
 import { Left, Body, Right } from 'native-base';
+import LupaController from '../../../../../controller/lupa/LupaController';
+
+import { connect } from 'react-redux'
 
 const CATEGORY_TAGS = [
     'Calisthenics',
@@ -57,68 +62,80 @@ const CATEGORY_TAGS = [
     'General'
 ]
 
-function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgramWorkoutData }) {
-    const workoutLibraryRef = createRef();
-    const dayScrollViewRef = createRef();
-    const customizeWorkoutRBSheet = createRef()
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
 
-    const [mediaCaptureType, setMediaCaptureType] = useState("")
+class BuildWorkoutController extends React.Component {
+    constructor(props) {
+        super(props);
 
-    const [addCueModalIsVisible, setAddCueModalVisible] = useState(false);
-    const [addDescriptionModalIsVisible, setAddDescriptionModalVisible] = useState(false)
-    const [workoutSchemeModalIsVisible, setWorkoutSchemeModalVisible] = useState(false);
-    
-    const [cameraIsVisible, setCameraIsVisible] = useState(false);
-    const [currPressedPopulatedWorkout, setCurrPressedPopulatedWorkout] = useState(getLupaProgramInformationStructure())
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+        this.workoutLibraryRef = createRef()
 
-    const [mondayCarouselIndex, setMondayCarouselIndex] = useState(0)
-    const [tuesdayCarouselIndex, setTuesdayCarouselIndex] = useState(0)
-    const [wednesdayCarouselIndex, setWednesdayCarouselIndex] = useState(0)
-    const [thursdayCarouselIndex, setThursdayCarouselIndex] = useState(0)
-    const [fridayCarouselIndex, setFridayCarouselIndex] = useState(0)
-    const [saturdayCarouselIndex, setSaturdayCarouselIndex] = useState(0)
-    const [sundayCarouselIndex, setSundayCarouselIndex] = useState(0)
-
-    const [searchValue, setSearchValue] = useState("");
-    const [bottomViewIndex, setBottomViewIndex] = useState(0);
-    const [workoutDays, setWorkoutDays] = useState({
-        Monday: [],
+        this.state = {
+            mediaCaptureType: "",
+            addCueModalIsVisible: false,
+            addDescriptionModalIsVisible: false,
+            workoutSchemeModalIsVisible: false,
+            cameraIsVisible: false,
+            currPressedPopulatedWorkout: getLupaProgramInformationStructure(), // ??
+            mondayCarouselIndex: 0,
+            tuesdayCarouselIndex: 0,
+            wednesdayCarouselIndex: 0,
+            thursdayCarouselIndex: 0,
+            fridayCarouselIndex: 0,
+            saturdayCarouselIndex: 0,
+            sundayCarouselIndex: 0,
+            searchValue: '',
+            bottomViewIndex: 0,
+            workoutDays: {
+                Monday: [],
         Tuesday: [],
         Wednesday: [],
         Thursday: [],
         Friday: [],
         Saturday: [],
         Sunday: []
-    });
-
-
-    const [numWorkoutsAdded, setNumWorkoutsAdded] = useState(0)
-    const [currDayIndex, setCurrDayIndex] = useState(0)
-    const [ customizedWorkoutsButtonIsDisabled,  setCustomizedWorkoutsButtonIsDisabled] = useState(false)
-
-    const LUPA_WORKOUTS = useSelector(state => {
-        return state.Application_Workouts.applicationWorkouts;
-    })
-
-    const getCurrentDay = () => {
-        const currIndex = currDayIndex;
-        return programData.program_workout_days[currIndex]
+            },
+            numWorkoutsAdded: 0,
+            currDayIndex: 0,
+        }
     }
 
-    const captureWorkout = (workoutObject) => {
+    componentDidCatch(err, info) {
+        alert(err)
+    }
+
+    getCurrentDay = () => {
+        const currIndex = this.state.currDayIndex;
+        return this.props.programData.program_workout_days[currIndex]
+    }
+
+
+     captureWorkout = (workoutObject) => {
+        try {
         if (typeof(workoutObject) == 'undefined') {
             return;
         }
 
-        const workoutDay =  getCurrentDay()
-
-        //We assign the workout a new UUID so the workouts are not the same
+        const workoutDay =  this.getCurrentDay()
+        
         const updatedWorkout = {
             workout_name: workoutObject.workout_name,
             workout_description: workoutObject.workout_description,
-            workout_uid: fromString(Math.random().toString()),
-            workout_day: workoutDay, //add the section so it is easy to delete
-            ...workoutObject
+            workout_media: {
+                uri: "",
+                media_type: ""
+            },
+            workout_steps: workoutObject.workout_steps,
+            workout_sets: 0,
+            workout_reps: 0,
+            workout_tags: workoutObject.workout_tags,
+            workout_uid: workoutObject.workout_uid,
+            workout_day: workoutDay //add the section so it is easy to delete
         }
         
 
@@ -126,142 +143,167 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
         switch (workoutDay)
         {
             case 'Monday':
-                updatedWorkoutData = workoutDays.Monday
+             
+                updatedWorkoutData = this.state.workoutDays.Monday
                 updatedWorkoutData.push(updatedWorkout)
 
                 newWorkoutData = {
                     Monday: updatedWorkoutData,
-                    ...workoutDays,
+                    ...this.state.workoutDays,
                 }
 
-                setWorkoutDays(newWorkoutData)
+                this.setState({ workoutDays: newWorkoutData })
                 break;
             case 'Tuesday':
-                updatedWorkoutData = workoutDays.Tuesday
+                updatedWorkoutData = this.state.workoutDays.Tuesday
                 updatedWorkoutData.push(updatedWorkout)
 
                 newWorkoutData = {
                     Tuesday: updatedWorkoutData,
-                    ...workoutDays,
+                    ...this.state.workoutDays,
                 }
 
-                setWorkoutDays(newWorkoutData);
+                this.setState({ workoutDays: newWorkoutData });
                 break;
             case 'Wednesday':
-                updatedWorkoutData = workoutDays.Wednesday
+                updatedWorkoutData = this.state.workoutDays.Wednesday
                 updatedWorkoutData.push(updatedWorkout)
 
                 newWorkoutData = {
                     Wednesday: updatedWorkoutData,
-                    workoutDays,
+                    ...this.state.workoutDays,
                 }
 
-                setWorkoutDays(newWorkoutData);
+                this.setState({ workoutDays: newWorkoutData });
                 break;
             case 'Thursday':
-                updatedWorkoutData = workoutDays.Thursday
+                updatedWorkoutData = this.state.workoutDays.Thursday
                 updatedWorkoutData.push(updatedWorkout)
 
                 newWorkoutData = {
                     Thursday: updatedWorkoutData,
-                    ...workoutDays,
+                    ...this.state.workoutDays,
                 }
 
-                setWorkoutDays(newWorkoutData)
+                this.setState({ workoutDays: newWorkoutData })
                 break;
             case 'Friday':
-                updatedWorkoutData = workoutDays.Friday
+                updatedWorkoutData = this.state.workoutDays.Friday
                 updatedWorkoutData.push(updatedWorkout)
 
                 newWorkoutData = {
                     Friday: updatedWorkoutData,
-                   ...workoutDays,
+                   ...this.state.workoutDays,
                 }
 
-                setWorkoutDays(newWorkoutData)
+                this.setState({ workoutDays: newWorkoutData })
                 break;
             case 'Saturday':
-                updatedWorkoutData = workoutDays.Saturday
+                updatedWorkoutData = this.state.workoutDays.Saturday
                 updatedWorkoutData.push(updatedWorkout)
 
                 newWorkoutData = {
                     Saturday: updatedWorkoutData,
-                    ...workoutDays,
+                    ...this.state.workoutDays,
                 }
 
-                setWorkoutDays(newWorkoutData)
+                this.setState({ workoutDays: newWorkoutData })
                 break;
             case 'Sunday':
-                updatedWorkoutData = workoutDays.Sunday
+                updatedWorkoutData = this.state.workoutDays.Sunday
                 updatedWorkoutData.push(updatedWorkout)
 
                 newWorkoutData = {
                     Sunday: updatedWorkoutData,
-                    ...workoutDays,
+                    ...this.state.workoutDays,
                 }
 
-                setWorkoutDays(newWorkoutData)
+                this.setState({ workoutDays: newWorkoutData })
                 break;
             default:
-                updatedWorkoutData = workoutDays.Monday
+                updatedWorkoutData = this.state.workoutDays.Monday
 
                 updatedWorkoutData.push(updatedWorkout)
 
                 newWorkoutData = {
                     Monday: updatedWorkoutData,
-                    ...workoutDays,
+                    ...this.state.workoutDays,
                 }
 
-                setWorkoutDays(newWorkoutData)
+                this.setState({ workoutDays: newWorkoutData })
         }
 
-        const num = numWorkoutsAdded + 1;
-        setNumWorkoutsAdded(num)
+        const num = this.state.numWorkoutsAdded + 1;
+        this.setState({ numWorkoutsAdded: num })
+    } catch(error) {
+        alert(error)
+    }
     }
 
-    const handleOnScroll = (event) => {
-        const currDay = getCurrentDay()
+     handleOnScroll = (event) => {
+        const currDay = this.getCurrentDay()
 
         switch(currDay) {
             case 'Monday':
-                setMondayCarouselIndex(event.nativeEvent.contentOffset.x)
+                this.setState({ 
+                    mondayCarouselIndex: Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width)),
+                    currPressedPopulatedWorkout: this.state.workoutDays.Monday[Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width))]
+                })
                 break;
                 case 'Tuesday':
-                    setTuesdayCarouselIndex(event.nativeEvent.contentOffset.x)
+                    this.setState({ 
+                        tuesdayCarouselIndex: Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width)),
+                        currPressedPopulatedWorkout: this.state.workoutDays.Tuesday[Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width))]
+                    })
                     break;
                     case 'Wednesday':
-                setWednesdayCarouselIndex(event.nativeEvent.contentOffset.x)
+                        this.setState({ 
+                            wednesdayCarouselIndex: Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width)),
+                            currPressedPopulatedWorkout: this.state.workoutDays.Wednesday[Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width))]
+                        })
                 break;
                 case 'Thursday':
-                setThursdayCarouselIndex(event.nativeEvent.contentOffset.x)
+                    this.setState({ 
+                        thursdayCarouselIndex: Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width)),
+                        currPressedPopulatedWorkout: this.state.workoutDays.Thursday[Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width))]
+                    })
                 break;
                 case 'Friday':
-                setFridayCarouselIndex(event.nativeEvent.contentOffset.x)
+                    this.setState({ 
+                        fridayCarouselIndex: Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width)),
+                        currPressedPopulatedWorkout: this.state.workoutDays.Friday[Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width))]
+                    })
                 break;
                 case 'Saturday':
-                setSaturdayCarouselIndex(event.nativeEvent.contentOffset.x)
+                    this.setState({ 
+                        saturdayCarouselIndex: Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width)),
+                        currPressedPopulatedWorkout: this.state.workoutDays.Saturday[Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width))]
+                    })
                 break;
                 case 'Sunday':
-                setSundayCarouselIndex(event.nativeEvent.contentOffset.x)
+                    this.setState({ 
+                        sundayCarouselIndex: Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width)),
+                        currPressedPopulatedWorkout: this.state.workoutDays.Sunday[Math.round(parseFloat(event.nativeEvent.contentOffset.x/Dimensions.get('window').width))]
+                    })
                 break;
             default:
         }
 
     }
 
-    const getCurrentDayContent = () => {
-        const currDay =  getCurrentDay()
+    getCurrentDayContent = () => {
+        const currDay =  this.getCurrentDay()
         try {
             switch (currDay)
             {
                 case 'Monday':
-                    if (workoutDays.Monday.length === 0) {
+                    if (this.state.workoutDays.Monday.length === 0) {
                         return (
-                            <View style={styles.alignAndJustifyCenter}>
+                            <View style={[styles.alignAndJustifyCenter]}>
                             <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={this.handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -269,9 +311,9 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     }
 
                     return (
-                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center',}}>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                             <ScrollView 
-                                onScroll={handleOnScroll} 
+                                onScroll={this.handleOnScroll} 
                                 showsHorizontalScrollIndicator={false} 
                                 pagingEnabled={true} 
                                 decelerationRate={0} 
@@ -279,26 +321,28 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                                 snapToInterval={Dimensions.get('window').width} 
                                 horizontal={true} 
                                 centerContent 
+                                scrollEventThrottle={3}
                                 contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                                 {
-                                    workoutDays.Monday.map(workout => {
+                                    this.state.workoutDays.Monday.map((workout, index, arr) => {
                                         return (
-                                            <WorkoutDisplay workout={workout} openAddCueModal={handleAddCue} />
+                                            <WorkoutDisplay key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
                                         )
                                     })
                                 }
                             </ScrollView>
-                        <Pagination dotsLength={workoutDays.Monday.length + 1} activeDotIndex={mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d'/>
+                           
+                        <Pagination dotStyle={{width: 5, height: 5}}  containerStyle={{backgroundColor: 'white', height: 2, width: Dimensions.get('window').width}} dotContainerStyle={{height: 5}}  dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d'/> 
                         </View>
                     )
                 case 'Tuesday':
-                    if (workoutDays.Tuesday.length === 0) {
+                    if (this.state.workoutDays.Tuesday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
                             <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={this.handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -306,10 +350,9 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     }
 
                     return (
-
-                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                         <ScrollView 
-                            onScroll={handleOnScroll} 
+                            onScroll={this.handleOnScroll} 
                             showsHorizontalScrollIndicator={false} 
                             pagingEnabled={true} 
                             decelerationRate={0} 
@@ -317,26 +360,28 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                             snapToInterval={Dimensions.get('window').width} 
                             horizontal={true} 
                             centerContent 
+                            scrollEventThrottle={3}
                             contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                             {
-                                workoutDays.Tuesday.map(workout => {
+                                this.state.workoutDays.Tuesday.map((workout, index, arr) => {
                                     return (
-                                        <WorkoutDisplay workout={workout} openAddCueModal={handleAddCue} />
+                                        <WorkoutDisplay key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
                                     )
                                 })
                             }
                         </ScrollView>
-                    <Pagination containerStyle={{}} dotsLength={workoutDays.Tuesday.length} activeDotIndex={tuesdayCarouselIndex}  dotColor="#1089ff" inactiveDotColor='#23374d'/>
-                    </View> 
+                       
+                    <Pagination dotStyle={{width: 5, height: 5}}  containerStyle={{backgroundColor: 'white', height: 2, width: Dimensions.get('window').width}} dotContainerStyle={{height: 5}}  dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d'/> 
+                    </View>
                     )
                 case 'Wednesday':
-                    if (workoutDays.Wednesday.length === 0) {
+                    if (this.state.workoutDays.Wednesday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
                             <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={this.handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -344,37 +389,38 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     }
 
                     return (
-
-                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-                            <ScrollView 
-                                onScroll={handleOnScroll} 
-                                showsHorizontalScrollIndicator={false} 
-                                pagingEnabled={true} 
-                                decelerationRate={0} 
-                                snapToAlignment='center' 
-                                snapToInterval={Dimensions.get('window').width} 
-                                horizontal={true} 
-                                centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                                {
-                                    workoutDays.Wednesday.map(workout => {
-                                        return (
-                                            <WorkoutDisplay workout={workout} openAddCueModal={handleAddCue} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                        <Pagination dotsLength={workoutDays.Wednesday.length} activeDotIndex={wednesdayCarouselIndex}   dotColor="#1089ff" inactiveDotColor='#23374d'/>
-                        </View>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <ScrollView 
+                            onScroll={this.handleOnScroll} 
+                            showsHorizontalScrollIndicator={false} 
+                            pagingEnabled={true} 
+                            decelerationRate={0} 
+                            snapToAlignment='center' 
+                            snapToInterval={Dimensions.get('window').width} 
+                            horizontal={true} 
+                            centerContent 
+                            scrollEventThrottle={3}
+                            contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                            {
+                                this.state.workoutDays.Wednesday.map((workout, index, arr) => {
+                                    return (
+                                        <WorkoutDisplay key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                       
+                    <Pagination dotStyle={{width: 5, height: 5}}  containerStyle={{backgroundColor: 'white', height: 2, width: Dimensions.get('window').width}} dotContainerStyle={{height: 5}}  dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d'/> 
+                    </View>
                         )
                 case 'Thursday':
-                    if (workoutDays.Thursday.length === 0) {
+                    if (this.state.workoutDays.Thursday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
                             <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={this.handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -382,74 +428,76 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     }
 
                     return (
-
-                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-                            <ScrollView 
-                                onScroll={handleOnScroll} 
-                                showsHorizontalScrollIndicator={false} 
-                                pagingEnabled={true} 
-                                decelerationRate={0} 
-                                snapToAlignment='center' 
-                                snapToInterval={Dimensions.get('window').width} 
-                                horizontal={true} 
-                                centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                                {
-                                    workoutDays.Thursday.map(workout => {
-                                        return (
-                                            <WorkoutDisplay workout={workout} openAddCueModal={handleAddCue} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                        <Pagination dotsLength={workoutDays.Thursday.length} activeDotIndex={thursdayCarouselIndex}   dotColor="#1089ff" inactiveDotColor='#23374d'/>
-                        </View>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <ScrollView 
+                            onScroll={this.handleOnScroll} 
+                            showsHorizontalScrollIndicator={false} 
+                            pagingEnabled={true} 
+                            decelerationRate={0} 
+                            snapToAlignment='center' 
+                            snapToInterval={Dimensions.get('window').width} 
+                            horizontal={true} 
+                            centerContent 
+                            scrollEventThrottle={3}
+                            contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                            {
+                                this.state.workoutDays.Thursday.map((workout, index, arr) => {
+                                    return (
+                                        <WorkoutDisplay key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                       
+                    <Pagination dotStyle={{width: 5, height: 5}}  containerStyle={{backgroundColor: 'white', height: 2, width: Dimensions.get('window').width}} dotContainerStyle={{height: 5}}  dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d'/> 
+                    </View>
                         )
                 case 'Friday':
-                    if (workoutDays.Friday.length === 0) {
+                    if (this.state.workoutDays.Friday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
                             <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={this.handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
                         )
                     }
                     return (
-
-                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-                            <ScrollView 
-                                onScroll={handleOnScroll} 
-                                showsHorizontalScrollIndicator={false} 
-                                pagingEnabled={true} 
-                                decelerationRate={0} 
-                                snapToAlignment='center' 
-                                snapToInterval={Dimensions.get('window').width} 
-                                horizontal={true} 
-                                centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                                {
-                                    workoutDays.Friday.map(workout => {
-                                        return (
-                                            <WorkoutDisplay workout={workout} openAddCueModal={handleAddCue} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                        <Pagination dotsLength={workoutDays.Friday.length} activeDotIndex={fridayCarouselIndex}   dotColor="#1089ff" inactiveDotColor='#23374d'/>
-                        </View>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <ScrollView 
+                            onScroll={this.handleOnScroll} 
+                            showsHorizontalScrollIndicator={false} 
+                            pagingEnabled={true} 
+                            decelerationRate={0} 
+                            snapToAlignment='center' 
+                            snapToInterval={Dimensions.get('window').width} 
+                            horizontal={true} 
+                            centerContent 
+                            scrollEventThrottle={3}
+                            contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                            {
+                                this.state.workoutDays.Friday.map((workout, index, arr) => {
+                                    return (
+                                        <WorkoutDisplay key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                       
+                    <Pagination dotStyle={{width: 5, height: 5}}  containerStyle={{backgroundColor: 'white', height: 2, width: Dimensions.get('window').width}} dotContainerStyle={{height: 5}}  dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d'/> 
+                    </View>
                         )
                 case 'Saturday':
-                    if (workoutDays.Saturday.length === 0) {
+                    if (this.state.workoutDays.Saturday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
                             <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={this.handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -457,37 +505,38 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     }
 
                     return (
-
-                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-                            <ScrollView 
-                                onScroll={handleOnScroll} 
-                                showsHorizontalScrollIndicator={false} 
-                                pagingEnabled={true} 
-                                decelerationRate={0} 
-                                snapToAlignment='center' 
-                                snapToInterval={Dimensions.get('window').width} 
-                                horizontal={true} 
-                                centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                                {
-                                    workoutDays.Saturday.map(workout => {
-                                        return (
-                                            <WorkoutDisplay workout={workout} openAddCueModal={handleAddCue} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                        <Pagination dotsLength={workoutDays.Saturday.length} activeDotIndex={saturdayCarouselIndex}   dotColor="#1089ff" inactiveDotColor='#23374d'/>
-                        </View>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <ScrollView 
+                            onScroll={this.handleOnScroll} 
+                            showsHorizontalScrollIndicator={false} 
+                            pagingEnabled={true} 
+                            decelerationRate={0} 
+                            snapToAlignment='center' 
+                            snapToInterval={Dimensions.get('window').width} 
+                            horizontal={true} 
+                            centerContent 
+                            scrollEventThrottle={3}
+                            contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                            {
+                                this.state.workoutDays.Saturday.map((workout, index, arr) => {
+                                    return (
+                                        <WorkoutDisplay key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                       
+                    <Pagination dotStyle={{width: 5, height: 5}}  containerStyle={{backgroundColor: 'white', height: 2, width: Dimensions.get('window').width}} dotContainerStyle={{height: 5}}  dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d'/> 
+                    </View>
                         )
                 case 'Sunday':
-                    if (workoutDays.Sunday.length === 0) {
+                    if (this.state.workoutDays.Sunday.length === 0) {
                         return (
                             <View style={styles.alignAndJustifyCenter}>
                             <View style={[styles.alignAndJustifyCenter, {width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)',}]}>
                             <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
-                            <Caption style={{padding: 20, color: '#212121'}} onPress={handleOpenLibraryOnPress}>
+                            <Caption style={{padding: 20, color: '#212121'}} onPress={this.handleOpenLibraryOnPress}>
                                 No workouts have been added for {currDay}
                             </Caption>
                             </View>
@@ -495,28 +544,29 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                     }
 
                     return (
-
-                        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-                            <ScrollView 
-                                onScroll={handleOnScroll} 
-                                showsHorizontalScrollIndicator={false} 
-                                pagingEnabled={true} 
-                                decelerationRate={0} 
-                                snapToAlignment='center' 
-                                snapToInterval={Dimensions.get('window').width} 
-                                horizontal={true} 
-                                centerContent 
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-                                {
-                                    workoutDays.Sunday.map(workout => {
-                                        return (
-                                            <WorkoutDisplay workout={workout} openAddCueModal={handleAddCue} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                        <Pagination dotsLength={workoutDays.Sunday.length} activeDotIndex={sundayCarouselIndex}   dotColor="#1089ff" inactiveDotColor='#23374d'/>
-                        </View>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <ScrollView 
+                            onScroll={this.handleOnScroll} 
+                            showsHorizontalScrollIndicator={false} 
+                            pagingEnabled={true} 
+                            decelerationRate={0} 
+                            snapToAlignment='center' 
+                            snapToInterval={Dimensions.get('window').width} 
+                            horizontal={true} 
+                            centerContent 
+                            scrollEventThrottle={3}
+                            contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                            {
+                                this.state.workoutDays.Sunday.map((workout, index, arr) => {
+                                    return (
+                                        <WorkoutDisplay key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                       
+                    <Pagination dotStyle={{width: 5, height: 5}}  containerStyle={{backgroundColor: 'white', height: 2, width: Dimensions.get('window').width}} dotContainerStyle={{height: 5}}  dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d'/> 
+                    </View>
                         )
                 default:
                         return (
@@ -536,29 +586,29 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
         }
     }
 
-    const captureSetAndRepValues = async (sets, reps) => {
-        if (typeof(currPressedPopulatedWorkout) == 'undefined' || sets === 0 || reps === 0)
+   captureSetAndRepValues = async (sets, reps) => {
+        if (typeof(this.state.currPressedPopulatedWorkout) == 'undefined' || sets === 0 || reps === 0)
         {
             return;
         }
 
         let newWorkoutData = {}
-        const currDay = getCurrentDay()
-        const workout = currPressedPopulatedWorkout
+        const currDay = this.getCurrentDay()
+        const workout = this.state.currPressedPopulatedWorkout
         switch(currDay)
         {
             case 'Monday':
-                for (let i = 0; i < workoutDays.Monday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Monday[i].workout_uid)
                     {                       
 
-                        workoutDays.Monday[i].workout_sets = sets
-                        workoutDays.Monday[i].workout_reps = reps
+                        this.state.workoutDays.Monday[i].workout_sets = sets
+                        this.state.workoutDays.Monday[i].workout_reps = reps
 
                         newWorkoutData = {
-                            Monday: workoutDays.Monday,
-                            ...workoutDays
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
                         }
 
                         break;
@@ -566,17 +616,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Tuesday":
-                for (let i = 0; i < workoutDays.Tuesday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Tuesday[i].workout_uid)
                     {                       
 
-                        workoutDays.Tuesday[i].workout_sets = sets
-                        workoutDays.Tuesday[i].workout_reps = reps
+                        this.state.workoutDays.Tuesday[i].workout_sets = sets
+                        this.state.workoutDays.Tuesday[i].workout_reps = reps
                         
                         newWorkoutData = {
-                            Tuesday: workoutDays.Tuesday,
-                            ...workoutDays
+                            Tuesday: this.state.workoutDays.Tuesday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -584,17 +634,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Wednesday":
-                for (let i = 0; i < workoutDays.Wednesday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Wednesday[i].workout_uid)
                     {                       
 
-                        workoutDays.Wednesday[i].workout_sets = sets
-                        workoutDays.Wednesday[i].workout_reps = reps
+                        this.state.workoutDays.Wednesday[i].workout_sets = sets
+                        this.state.workoutDays.Wednesday[i].workout_reps = reps
                         
                         newWorkoutData = {
-                            Wednesday: workoutDays.Wednesday,
-                            ...workoutDays
+                            Wednesday: this.state.workoutDays.Wednesday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -602,17 +652,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Thursday":
-                for (let i = 0; i < workoutDays.Thursday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Thursday[i].workout_uid)
                     {                       
 
-                        workoutDays.Thursday[i].workout_sets = sets
-                        workoutDays.Thursday[i].workout_reps = reps
+                        this.state.workoutDays.Thursday[i].workout_sets = sets
+                        this.state.workoutDays.Thursday[i].workout_reps = reps
                         
                         newWorkoutData = {
-                            Thursday: workoutDays.Thursday,
-                            ...workoutDays
+                            Thursday: this.state.workoutDays.Thursday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -620,17 +670,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Friday":
-                for (let i = 0; i < workoutDays.Friday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Friday[i].workout_uid)
                     {                       
 
-                        workoutDays.Friday[i].workout_sets = sets
-                        workoutDays.Friday[i].workout_reps = reps
+                        this.state.workoutDays.Friday[i].workout_sets = sets
+                        this.state.workoutDays.Friday[i].workout_reps = reps
                         
                         newWorkoutData = {
-                            Friday: workoutDays.Friday,
-                            ...workoutDays
+                            Friday: this.state.workoutDays.Friday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -638,17 +688,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Saturday":
-                for (let i = 0; i < workoutDays.Saturday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Saturday[i].workout_uid)
                     {                       
 
-                        workoutDays.Saturday[i].workout_sets = sets
-                        workoutDays.Saturday[i].workout_reps = reps
+                        this.state.workoutDays.Saturday[i].workout_sets = sets
+                        this.state.workoutDays.Saturday[i].workout_reps = reps
                         
                         newWorkoutData = {
-                            Saturday: workoutDays.Saturday,
-                            ...workoutDays
+                            Saturday: this.state.workoutDays.Saturday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -656,17 +706,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Sunday":
-                for (let i = 0; i < workoutDays.Sunday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Sunday[i].workout_uid)
                     {                       
 
-                        workoutDays.Sunday[i].workout_sets = sets
-                        workoutDays.Sunday[i].workout_reps = reps
+                        this.state.workoutDays.Sunday[i].workout_sets = sets
+                        this.state.workoutDays.Sunday[i].workout_reps = reps
                         
                         newWorkoutData = {
-                            Sunday: workoutDays.Sunday,
-                            ...workoutDays
+                            Sunday: this.state.workoutDays.Sunday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -677,32 +727,31 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 return;
         }
 
-        setWorkoutDays(newWorkoutData)
-        setWorkoutSchemeModalVisible(false)
+        this.setState({ workoutDays: newWorkoutData, workoutSchemeModalIsVisible: false })
     }
 
-    const handleCaptureCue = async (cue) => {
-        if (typeof(currPressedPopulatedWorkout) == 'undefined' || cue == '')
+    handleCaptureCue = async (cue) => {
+        if (typeof(this.state.currPressedPopulatedWorkout) == 'undefined' || cue == '')
         {
             return;
         }
 
         let newWorkoutData = {}, updatedWorkoutData = {}
-        const currDay = getCurrentDay()
-        const workout = currPressedPopulatedWorkout
+        const currDay = this.getCurrentDay()
+        const workout = this.state.currPressedPopulatedWorkout
         switch(currDay)
         {
             case 'Monday':
-                for (let i = 0; i < workoutDays.Monday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Monday[i].workout_uid)
                     {                       
 
-                        workoutDays.Monday[i].workout_cue = cue
+                        this.state.workoutDays.Monday[i].workout_cue = cue
 
                         newWorkoutData = {
-                            Monday: workoutDays.Monday,
-                            ...workoutDays
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
                         }
 
                         break;
@@ -710,16 +759,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Tuesday":
-                for (let i = 0; i < workoutDays.Tuesday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Tuesday[i].workout_uid)
                     {                       
 
-                        workoutDays.Tuesday[i].workout_cue = cue
+                        this.state.workoutDays.Tuesday[i].workout_cue = cue
                         
                         newWorkoutData = {
-                            Tuesday: workoutDays.Tuesday,
-                            ...workoutDays
+                            Tuesday: this.state.workoutDays.Tuesday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -727,16 +776,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Wednesday":
-                for (let i = 0; i < workoutDays.Wednesday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Wednesday[i].workout_uid)
                     {                       
 
-                        workoutDays.Wednesday[i].workout_media.workout_cue = cue
+                        this.state.workoutDays.Wednesday[i].workout_media.workout_cue = cue
                         
                         newWorkoutData = {
-                            Wednesday: workoutDays.Wednesday,
-                            ...workoutDays
+                            Wednesday: this.state.workoutDays.Wednesday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -744,16 +793,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Thursday":
-                for (let i = 0; i < workoutDays.Thursday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Thursday[i].workout_uid)
                     {                       
 
-                        workoutDays.Thursday[i].workout_cue = cue
+                        this.state.workoutDays.Thursday[i].workout_cue = cue
                         
                         newWorkoutData = {
-                            Thursday: workoutDays.Thursday,
-                            ...workoutDays
+                            Thursday: this.state.workoutDays.Thursday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -761,16 +810,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Friday":
-                for (let i = 0; i < workoutDays.Friday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Friday[i].workout_uid)
                     {                       
 
-                        workoutDays.Friday[i].workout_cue = cue
+                        this.state.workoutDays.Friday[i].workout_cue = cue
                         
                         newWorkoutData = {
-                            Friday: workoutDays.Friday,
-                            ...workoutDays
+                            Friday: this.state.workoutDays.Friday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -778,16 +827,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Saturday":
-                for (let i = 0; i < workoutDays.Saturday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Saturday[i].workout_uid)
                     {                       
 
-                        workoutDays.Saturday[i].workout_cue = cue
+                        this.state.workoutDays.Saturday[i].workout_cue = cue
                         
                         newWorkoutData = {
-                            Saturday: workoutDays.Saturday,
-                            ...workoutDays
+                            Saturday: this.state.workoutDays.Saturday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -795,16 +844,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Sunday":
-                for (let i = 0; i < workoutDays.Sunday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Sunday[i].workout_uid)
                     {                       
 
-                        workoutDays.Sunday[i].workout_cue = cue
+                        this.state.workoutDays.Sunday[i].workout_cue = cue
                         
                         newWorkoutData = {
-                            Sunday: workoutDays.Sunday,
-                            ...workoutDays
+                            Sunday: this.state.workoutDays.Sunday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -812,51 +861,35 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             default:
-                for (let i = 0; i < workoutDays.Monday.length; i++)
-                {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
-                    {                       
-
-                        workoutDays.Monday[i].workout_cue = cue
-
-                        newWorkoutData = {
-                            Monday: workoutDays.Monday,
-                            ...workoutDays
-                        }
-
-                        break;
-                    }
-                }
                 break;
         }
 
-        await setWorkoutDays(newWorkoutData) 
-        setCueModalVisible(false)
+        await this.setState({ workoutDays: newWorkoutData, addCueModalIsVisible: false }) 
     }
 
-    const handleCaptureNewMediaURI = async (uri, mediaType) => {
-        if (typeof(currPressedPopulatedWorkout) == undefined)
+    handleCaptureNewMediaURI = async (uri, mediaType) => {
+        try {
+        if (typeof(this.state.currPressedPopulatedWorkout) == undefined)
         {
             return;
         }
 
         let newWorkoutData = {}, updatedWorkoutData = {}
-        const currDay = getCurrentDay()
-        const workout = currPressedPopulatedWorkout
+        const currDay = this.getCurrentDay()
+        const workout = this.state.currPressedPopulatedWorkout
         switch(currDay)
         {
             case 'Monday':
-                for (let i = 0; i < workoutDays.Monday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Monday[i].workout_uid)
                     {                       
-
-                        workoutDays.Monday[i].workout_media.uri = uri;
-                        workoutDays.Monday[i].workout_media.media_type = mediaType;
+                        this.state.workoutDays.Monday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Monday[i].workout_media.media_type = mediaType;
 
                         newWorkoutData = {
-                            Monday: workoutDays.Monday,
-                            ...workoutDays
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
                         }
 
                         break;
@@ -864,17 +897,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Tuesday":
-                for (let i = 0; i < workoutDays.Tuesday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Tuesday[i].workout_uid)
                     {                       
 
-                        workoutDays.Tuesday[i].workout_media.uri = uri;
-                        workoutDays.Tuesday[i].workout_media.media_type = mediaType;
+                        this.state.workoutDays.Tuesday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Tuesday[i].workout_media.media_type = mediaType;
                         
                         newWorkoutData = {
-                            Tuesday: workoutDays.Tuesday,
-                            ...workoutDays
+                            Tuesday: this.state.workoutDays.Tuesday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -882,17 +915,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Wednesday":
-                for (let i = 0; i < workoutDays.Wednesday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Wednesday[i].workout_uid)
                     {                       
 
-                        workoutDays.Wednesday[i].workout_media.uri = uri;
-                        workoutDays.Wednesday[i].workout_media.media_type = mediaType;
+                        this.state.workoutDays.Wednesday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Wednesday[i].workout_media.media_type = mediaType;
                         
                         newWorkoutData = {
-                            Wednesday: workoutDays.Wednesday,
-                            ...workoutDays
+                            Wednesday: this.state.workoutDays.Wednesday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -900,17 +933,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Thursday":
-                for (let i = 0; i < workoutDays.Thursday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Thursday[i].workout_uid)
                     {                       
 
-                        workoutDays.Thursday[i].workout_media.uri = uri;
-                        workoutDays.Thursday[i].workout_media.media_type = mediaType;
+                        this.state.workoutDays.Thursday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Thursday[i].workout_media.media_type = mediaType;
                         
                         newWorkoutData = {
-                            Thursday: workoutDays.Thursday,
-                            ...workoutDays
+                            Thursday: this.state.workoutDays.Thursday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -918,17 +951,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Friday":
-                for (let i = 0; i < workoutDays.Friday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Friday[i].workout_uid)
                     {                       
 
-                        workoutDays.Friday[i].workout_media.uri = uri;
-                        workoutDays.Friday[i].workout_media.media_type = mediaType;
+                        this.state.workoutDays.Friday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Friday[i].workout_media.media_type = mediaType;
                         
                         newWorkoutData = {
-                            Friday: workoutDays.Friday,
-                            ...workoutDays
+                            Friday: this.state.workoutDays.Friday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -936,17 +969,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Saturday":
-                for (let i = 0; i < workoutDays.Saturday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Saturday[i].workout_uid)
                     {                       
 
-                        workoutDays.Saturday[i].workout_media.uri = uri;
-                        workoutDays.Saturday[i].workout_media.media_type = mediaType;
+                        this.state.workoutDays.Saturday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Saturday[i].workout_media.media_type = mediaType;
                         
                         newWorkoutData = {
-                            Saturday: workoutDays.Saturday,
-                            ...workoutDays
+                            Saturday: this.state.workoutDays.Saturday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -954,17 +987,17 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Sunday":
-                for (let i = 0; i < workoutDays.Sunday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Sunday[i].workout_uid)
                     {                       
 
-                        workoutDays.Sunday[i].workout_media.uri = uri;
-                        workoutDays.Sunday[i].workout_media.media_type = mediaType;
+                        this.state.workoutDays.Sunday[i].workout_media.uri = uri;
+                        this.state.workoutDays.Sunday[i].workout_media.media_type = mediaType;
                         
                         newWorkoutData = {
-                            Sunday: workoutDays.Sunday,
-                            ...workoutDays
+                            Sunday: this.state.workoutDays.Sunday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -975,31 +1008,34 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 return;
         }
 
-        setWorkoutDays(newWorkoutData);
+        this.setState({ workoutDays: newWorkoutData });
+    } catch(error) {
+        alert(error)
+    }
     }
 
-    const handleCaptureDescription = async (description) => {
-        if (typeof(currPressedPopulatedWorkout) == 'undefined' || description == '')
+    handleCaptureDescription = async (description) => {
+        if (typeof(this.state.currPressedPopulatedWorkout) == 'undefined' || description == '')
         {
             return;
         }
 
         let newWorkoutData = {}, updatedWorkoutData = {}
-        const currDay = getCurrentDay()
-        const workout = currPressedPopulatedWorkout
+        const currDay = this.getCurrentDay()
+        const workout = this.state.currPressedPopulatedWorkout
         switch(currDay)
         {
             case 'Monday':
-                for (let i = 0; i < workoutDays.Monday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Monday[i].workout_uid)
                     {                       
 
-                        workoutDays.Monday[i].workout_description = description
+                        this.state.workoutDays.Monday[i].workout_description = description
 
                         newWorkoutData = {
-                            Monday: workoutDays.Monday,
-                            ...workoutDays
+                            Monday: this.state.workoutDays.Monday,
+                            ...this.state.workoutDays
                         }
 
                         break;
@@ -1007,16 +1043,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Tuesday":
-                for (let i = 0; i < workoutDays.Tuesday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Tuesday[i].workout_uid)
                     {                       
 
-                        workoutDays.Tuesday[i].workout_description = description
+                        this.state.workoutDays.Tuesday[i].workout_description = description
                         
                         newWorkoutData = {
-                            Tuesday: workoutDays.Tuesday,
-                            ...workoutDays
+                            Tuesday: this.state.workoutDays.Tuesday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -1024,16 +1060,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Wednesday":
-                for (let i = 0; i < workoutDays.Wednesday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Wednesday[i].workout_uid)
                     {                       
 
-                        workoutDays.Wednesday[i].workout_media.workout_description = description
+                        this.state.workoutDays.Wednesday[i].workout_media.workout_description = description
                         
                         newWorkoutData = {
-                            Wednesday: workoutDays.Wednesday,
-                            ...workoutDays
+                            Wednesday: this.state.workoutDays.Wednesday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -1041,16 +1077,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Thursday":
-                for (let i = 0; i < workoutDays.Thursday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Thursday[i].workout_uid)
                     {                       
 
-                        workoutDays.Thursday[i].workout_description = description
+                        this.state.workoutDays.Thursday[i].workout_description = description
                         
                         newWorkoutData = {
-                            Thursday: workoutDays.Thursday,
-                            ...workoutDays
+                            Thursday: this.state.workoutDays.Thursday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -1058,16 +1094,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Friday":
-                for (let i = 0; i < workoutDays.Friday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Friday[i].workout_uid)
                     {                       
 
-                       workoutDays.Friday[i].workout_description = description
+                       this.state.workoutDays.Friday[i].workout_description = description
                         
                         newWorkoutData = {
-                            Friday: workoutDays.Friday,
-                            ...workoutDays
+                            Friday: this.state.workoutDays.Friday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -1075,16 +1111,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Saturday":
-                for (let i = 0; i < workoutDays.Saturday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Saturday[i].workout_uid)
                     {                       
 
-                        workoutDays.Saturday[i].workout_description = description
+                        this.state.workoutDays.Saturday[i].workout_description = description
                         
                         newWorkoutData = {
-                            Saturday: workoutDays.Saturday,
-                            ...workoutDays
+                            Saturday: this.state.workoutDays.Saturday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -1092,16 +1128,16 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 }
             break;
             case "Sunday":
-                for (let i = 0; i < workoutDays.Sunday.length; i++)
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++)
                 {
-                    if (workout.workout_uid == currPressedPopulatedWorkout.workout_uid)
+                    if (workout.workout_uid == this.state.workoutDays.Sunday[i].workout_uid)
                     {                       
 
-                        workoutDays.Sunday[i].workout_description = description
+                        this.state.workoutDays.Sunday[i].workout_description = description
                         
                         newWorkoutData = {
-                            Sunday: workoutDays.Sunday,
-                            ...workoutDays
+                            Sunday: this.state.workoutDays.Sunday,
+                            ...this.state.workoutDays
                         }
                         
                         break;
@@ -1112,44 +1148,32 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 return;
         }
 
-        setWorkoutDays(newWorkoutData)
-        setAddDescriptionModalVisible(false)
+        this.setState({ workoutDays: newWorkoutData, addDescriptionModalIsVisible: false })
     }
 
-    const handleOpenLibraryOnPress = () => {
-        workoutLibraryRef.current.open();
+    handleOpenLibraryOnPress = () => {
+        this.workoutLibraryRef.current.open();
     }
 
-    const handleEditWorkoutOnPress = () => {
-        customizeWorkoutRBSheet.current.open();
+     handleTakeVideo = () => {
+         const { navigation }  = this.props;
+         navigation.navigate('LupaCamera', {
+            currWorkoutPressed: this.state.currPressedPopulatedWorkout,
+            currProgramUUID: this.props.programUUID,
+            mediaCaptureType: "VIDEO",
+            captureURI: this.handleCaptureNewMediaURI.bind(this),
+         })
     }
 
-    const handleCloseEditWorkout = () => {
-        customizeWorkoutRBSheet.current.close()
-    }
-
-    const handleTakeVideo = async () => {
-        await setMediaCaptureType('VIDEO')
-        await handleCloseEditWorkout()
-        setCameraIsVisible(true)
-    }
-
-    const handleTakePicture = () => {
-        setMediaCaptureType('IMAGE')
-        handleCloseEditWorkout()
-        setCameraIsVisible(true)
-    }
-
-    const addWorkoutMedia = () => {
-       handleCloseEditWorkout()
-
-        if (typeof(currPressedPopulatedWorkout) == 'undefined')
-        {
-
+     handleTakePicture = () => {
+        if (typeof(this.state.currPressedPopulatedWorkout) == 'undefined') {
             return;
         }
 
+        this.addWorkoutMedia()
+    }
 
+     addWorkoutMedia = () => {
         // Open Image Library
         ImagePicker.launchImageLibrary({}, async (response) => {
             if (response.didCancel) {
@@ -1158,37 +1182,34 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                   LOG_ERROR('BuildWorkoutController.js', 'Caught exception in image picker in addWorkoutMedia()', response.error);
               } else {
                 const source = await response.uri
-                const workoutMediaURI = await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(currPressedPopulatedWorkout, programData.program_structure_uuid, 'IMAGE', source)
-                handleCaptureNewMediaURI(workoutMediaURI, 'IMAGE');
+                const workoutMediaURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.state.currPressedPopulatedWorkout, this.props.programData.program_structure_uuid, 'IMAGE', source)
+                this.handleCaptureNewMediaURI(workoutMediaURI, 'IMAGE');
             }
         });
     }
 
-    const handleAddDescription = async () => {
-        await handleCloseEditWorkout()
-        setAddDescriptionModalVisible(true)
+     handleAddDescription = async () => {
+        this.setState({ addDescriptionModalIsVisible: true })
     }
 
-    const handleAddCue  = () => {
-        handleCloseEditWorkout()
-        setAddCueModalVisible(true)
+    handleAddCue  = () => {
+        this.setState({ addCueModalIsVisible: true })
     }
 
-    const handleEditWorkoutScheme = () => {
-        handleCloseEditWorkout()
-        setWorkoutSchemeModalVisible(true)
+     handleEditWorkoutScheme = () => {
+        this.setState({ workoutSchemeModalIsVisible: true })
     }
 
-    const renderTopView = () => {
+     renderTopView = () => {
        return (
-        getCurrentDayContent()
+        this.getCurrentDayContent()
        )
     }
 
 
-    const renderBottomView = () => {
+     renderBottomView = () => {
         let items = []
-        programData.program_workout_days.map((day, index, arr) => {
+        this.props.programData.program_workout_days.map((day, index, arr) => {
             let item = {
                 label: day,
                 value:day,
@@ -1197,7 +1218,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
             items.push(item)
         })
 
-        switch(bottomViewIndex) {
+        switch(this.state.bottomViewIndex) {
             case 0:
                 return (
                     <View style={{flex: 1.5}}>
@@ -1209,14 +1230,14 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                         </Text>
                         <DropDownPicker
     items={items}
-    defaultValue={getCurrentDay()}
+    defaultValue={this.getCurrentDay()}
     containerStyle={{height: 40, width: Dimensions.get('window').width}}
     style={{backgroundColor: '#fafafa', marginHorizontal: 20}}
     itemStyle={{
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#fafafa'}}
-    onChangeItem={item => setCurrDayIndex(item.index)}
+    onChangeItem={item => this.setState({ currDayIndex: item.index })}
 />
 
                         <Caption>
@@ -1225,19 +1246,19 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                       
                     </View>
 
-                       <FAB small={false} label="Open Library"  onPress={handleOpenLibraryOnPress} style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 12}} color="white" icon="plus" />
+                       <FAB small={false} label="Open Library"  onPress={this.handleOpenLibraryOnPress} style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 12}} color="white" icon="plus" />
                  </View>
                  </View>
                 )
             case 1:
                 return (
                     <View style={{flex: 1.8}}>
-                        { bottomViewIndex === 1 ?
+                        { this.state.bottomViewIndex === 1 ?
              
              <>
              <Surface style={{paddingVertical: 5, backgroundColor: 'white', elevation: 3, }}>
                    <View  style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                   <TouchableOpacity onPress={handleEditWorkoutScheme}>
+                   <TouchableOpacity onPress={this.handleEditWorkoutScheme}>
                    <View style={{alignItems: 'center'}}>
                         <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
                        <ThinFeatherIcon color="#212121" thin={true} name="clipboard" size={15} />
@@ -1248,7 +1269,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                         </View>
                         </TouchableOpacity>
                         
-                        <TouchableOpacity onPress={handleTakeVideo}>
+                        <TouchableOpacity onPress={this.handleTakeVideo}>
                         <View style={{alignItems: 'center'}}>
                         <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
                        <ThinFeatherIcon color="#212121" thin={true} name="video" size={15} />
@@ -1259,7 +1280,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                         </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={handleTakePicture}>
+                        <TouchableOpacity onPress={this.addWorkoutMedia}>
                         <View style={{alignItems: 'center'}}>
                         <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
                        <ThinFeatherIcon color="#212121" thin={true} name="image" size={15} />
@@ -1270,7 +1291,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                         </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={handleAddCue}>
+                        <TouchableOpacity onPress={this.handleAddCue}>
                         <View style={{alignItems: 'center'}}>
                         <Surface style={{elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3}}>
                        <ThinFeatherIcon color="#212121" thin={true} name="message-circle" size={15} />
@@ -1301,14 +1322,14 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                         </Text>
                         <DropDownPicker
     items={items}
-    defaultValue={getCurrentDay()}
+    defaultValue={this.getCurrentDay()}
     containerStyle={{ height: 40, width: Dimensions.get('window').width}}
     style={{backgroundColor: '#fafafa'}}
     itemStyle={{
         justifyContent: 'flex-start'
     }}
     dropDownStyle={{backgroundColor: '#FFFFFF'}}
-    onChangeItem={item => setCurrDayIndex(item.index)}
+    onChangeItem={item => this.setState({ currDayIndex: item.index })}
 />
                       
                     </View>
@@ -1316,10 +1337,10 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
         }
     }
 
-    const renderBottomSheet = () => {
+     renderBottomSheet = () => {
         return (
             <RBSheet 
-                ref={workoutLibraryRef} 
+                ref={this.workoutLibraryRef} 
                 height={Dimensions.get('window').height / 1.2} 
                 closeOnPressMask={true}
                 customStyles={{
@@ -1346,7 +1367,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                         inputContainerStyle={{backgroundColor: 'rgb(242, 242, 247))',}}
                         inputStyle={{fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman'}}
                         placeholderTextColor="#212121"
-        value={searchValue}/>
+                        value={this.state.searchValue}/>
                 </View>
                 <Divider />
                 <View>
@@ -1354,7 +1375,7 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                         {
                             CATEGORY_TAGS.map((tag) => {
                                 return (
-                                    <Chip key={tag} mode="flat" style={{margin: 10, backgroundColor: '#EEEEEE'}}>
+                                    <Chip key={tag} mode="flat" style={{margin: 10, backgroundColor: '#EEEEEE'}} textStyle={{fontFamily: 'Avenir', fontWeight: '600'}}>
                                         {tag}
                                     </Chip>
                                 )
@@ -1364,19 +1385,19 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
                 </View>
                 <View style={{flex: 1}}>
                         <ScrollView>
-                    { 
-                        LUPA_WORKOUTS.map((workout, index, arr)=> {
+                    {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.map((workout, index, arr)=> {
                             if (typeof(workout) == 'undefined' || workout.workout_name == "" || workout.workout_name == undefined)
                             {
                                 return;
                             }
 
-                            workout.workout_uid = workout.workout_name
+                            workout.workout_uid = fromString(workout.workout_name + index.toString())
                             return (
                             <SingleWorkout 
                                 key={workout.workout_uid}
                                 workout={workout}
-                                captureWorkout={(workoutData) => captureWorkout(workoutData)}
+                                captureWorkout={(workoutData) => this.captureWorkout(workoutData)}
                                 />
                             )
                         })
@@ -1389,184 +1410,23 @@ function BuildWorkoutController({ programUUID, programData, goToIndex, saveProgr
         )
     }
 
-    const renderCustomizeWorkoutBottomSheet = () => {
+    render() {
         return (
-            <RBSheet
-          ref={customizeWorkoutRBSheet}
-          height={Dimensions.get('window').height / 1.2}
-          openDuration={250}
-          customStyles={{
-            container: {
-              justifyContent: "center",
-              alignItems: "center",
-              borderTopRightRadius: 25,
-                borderTopLeftRadius: 25,
-            },
-            draggableIcon: {
-                backgroundColor: 'grey'
-            }
-          }}
-       >
-           <View style={{flex: 1}}>
-               <View style={{ padding: 10, justifyContent: 'space-evenly', flexDirection: 'row', alignItems: 'center', width: '100%'}}>
-               <Left>
-               <Caption>
-                    Cancel
-                </Caption>
-               </Left>
-
-                <Body>
-                <Text style={{alignSelf: 'center', fontWeight: 'bold', fontFamily: 'avenir',  fontSize: 12}}>
-                   Workout Options
-               </Text>
-                </Body>
-
-                <Right />
-               </View>
-               <Divider />
-               
-               <View style={{flex: 1, justifyContent: 'space-evenly'}}>
-           <TouchableOpacity onPress={handleTakeVideo}>
-            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
-            <ThinFeatherIcon
-name="video"
-size={18}
-color="#000000"
-thin={false}
-style={styles.exerciseOptionIcon}
-/>
-<View style={{paddingVertical: 1.5}}>
-<Text style={styles.exerciseOptionHeaderText}>
-                    Record a video
-                </Text>
-</View>
-            </View>
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity onPress={handleTakePicture}>
-            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
-            <ThinFeatherIcon
-name="camera"
-size={18}
-color="#000000"
-thin={false}
-style={styles.exerciseOptionIcon}
-/>
-<View style={{paddingVertical: 1.5}}>
-<Text style={styles.exerciseOptionHeaderText}>
-                    Take a picture
-                </Text>
-</View>
-            </View>
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity onPress={addWorkoutMedia}>
-            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
-            <ThinFeatherIcon
-name="film"
-size={18}
-color="#000000"
-thin={false}
-style={styles.exerciseOptionIcon}
-/>
-<View style={{paddingVertical: 1.5, width: '95%'}}>
-<Text style={styles.exerciseOptionHeaderText}>
-                Upload media
-                </Text>
-</View>
-            </View>
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity onPress={handleAddDescription}>
-            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
-            <ThinFeatherIcon
-name="edit"
-size={18}
-color="#000000"
-thin={false}
-style={styles.exerciseOptionIcon}
-/>
-<View style={{paddingVertical: 1.5}}>
-<Text style={styles.exerciseOptionHeaderText}>
-                    Add a description
-                </Text>
-</View>
-            </View>
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity onPress={handleAddCue}>
-            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
-            <ThinFeatherIcon
-name="edit"
-size={18}
-color="#000000"
-thin={false}
-style={styles.exerciseOptionIcon}
-/>
-<View style={{paddingVertical: 1.5}}>
-<Text style={styles.exerciseOptionHeaderText}>
-                    Add a cue
-                </Text>
-</View>
-            </View>
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity onPress={handleEditWorkoutScheme}>
-            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
-            <ThinFeatherIcon
-name="clipboard"
-size={18}
-color="#000000"
-thin={false}
-style={styles.exerciseOptionIcon}
-/>
-<View style={{paddingVertical: 1.5}}>
-<Text style={styles.exerciseOptionHeaderText}>
-                    Edit Set/Rep Scheme
-                </Text>
-</View>
-            </View>
-            </TouchableOpacity>
-            <Divider />
-            <TouchableOpacity>
-            <View style={{width: Dimensions.get('window').width, height: 'auto', padding: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start',}}>
-            <ThinFeatherIcon
-name="trash"
-size={18}
-color="#000000"
-thin={false}
-style={[styles.exerciseOptionIcon, {color: 'rgba(229,57,53 ,1)'}]}
-/>
-<View style={{paddingVertical: 1.5}}>
-<Text style={[styles.exerciseOptionHeaderText, { color: 'rgba(229,57,53 ,1)' }]}>
-                    Delete exercise
-                </Text>
-</View>
-            </View>
-            </TouchableOpacity>
-        
-               </View>
-            
-           </View>
-           <SafeAreaView />
-       </RBSheet>
-        )
-    }
-
-    return (
-        <View style={styles.container}>
+            <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                   <Appbar.Action icon={() => <ThinFeatherIcon thin={true} onPress={() => bottomViewIndex === 0 ? goToIndex(0) : setBottomViewIndex(0)} name="arrow-left" size={20} color="#1089ff" />} />
-                   {bottomViewIndex === 0 ? 
-                   <Button disabled={numWorkoutsAdded === 0 ? true : false} color={numWorkoutsAdded === 0 ? "grey" : "#1089ff"} uppercase={false} onPress={() => setBottomViewIndex(1)}>
+                   <Appbar.Action icon={() => <ThinFeatherIcon thin={true} onPress={() => this.state.bottomViewIndex === 0 ? this.props.goToIndex(0) : this.setState({ bottomViewIndex: 0})} name="arrow-left" size={20} color="#1089ff" />} />
+                   {this.state.bottomViewIndex === 0 ? 
+                   <Button disabled={this.state.numWorkoutsAdded === 0 ? true : false} color={this.state.numWorkoutsAdded === 0 ? "grey" : "#1089ff"} uppercase={false} onPress={() => this.setState({ bottomViewIndex: 1 })}>
                     Customize Workouts
                     <ThinFeatherIcon thin={true} name="arrow-right" size={12} />
                    </Button>
                    
                    :
                   
-                   <Button color="#1089ff" uppercase={false} onPress={() => saveProgramWorkoutData()}>
-                       Finish
+                   <Button color="#1089ff" uppercase={false} onPress={() => this.props.saveProgramWorkoutData(this.state.workoutDays)} >
+                       <Text style={{fontFamily: 'avenir'}}>
+                           Finish
+                       </Text>
                     <ThinFeatherIcon thin={true} name="arrow-right" size={12} />
                    </Button>
                   
@@ -1575,33 +1435,24 @@ style={[styles.exerciseOptionIcon, {color: 'rgba(229,57,53 ,1)'}]}
              
              <View style={styles.content}>
              <View style={styles.mainContent}>
-                           {renderTopView()}
+                           {this.renderTopView()}
                           
                    </View>
 
                   
-                    {renderBottomView()}
+                    {this.renderBottomView()}
              </View>
 
-             {renderBottomSheet()}
-             {renderCustomizeWorkoutBottomSheet()}
+             {this.renderBottomSheet()}
 
-            <AddCueModal isVisible={addCueModalIsVisible} closeModal={() => setAddCueModalVisible(false)} captureData={cue => handleCaptureCue(cue)}/>
-            <AddDescriptionModal isVisible={addDescriptionModalIsVisible} closeModal={() => setAddDescriptionModalVisible(false)} captureData={description => handleCaptureDescription(description)} />
-            <WorkoutSchemeModal closeModal={() => setWorkoutSchemeModalVisible(false)} isVisible={workoutSchemeModalIsVisible} workout={currPressedPopulatedWorkout} captureValues={(sets, reps) => captureSetAndRepValues(sets, reps)} />
+            <AddCueModal isVisible={this.state.addCueModalIsVisible} closeModal={() => this.setState({ addCueModalIsVisible: false })} captureData={cue => this.handleCaptureCue(cue)}/>
+            <AddDescriptionModal isVisible={this.state.addDescriptionModalIsVisible} closeModal={() => this.setState({ addDescriptionModalIsVisible: false })} captureData={description => this.handleCaptureDescription(description)} />
+            <WorkoutSchemeModal closeModal={() => this.setState({ workoutSchemeModalIsVisible: false })} isVisible={this.state.workoutSchemeModalIsVisible} workout={this.state.currPressedPopulatedWorkout} captureValues={(sets, reps) => this.captureSetAndRepValues(sets, reps)} />
 
-            <LupaCamera 
-            isVisible={cameraIsVisible} 
-            currWorkoutPressed={currPressedPopulatedWorkout} 
-            currProgramUUID={programUUID} 
-            handleCaptureNewMediaURI={(uri, type) => handleCaptureNewMediaURI(uri, type)}
-            mediaCaptureType={mediaCaptureType}
-            closeModalMethod={() => setCameraIsVisible(false)}
-            />
-     
             <SafeAreaView />
         </View>
-    )
+        )
+    }
 }
 
 const styles = StyleSheet.create({
@@ -1636,7 +1487,7 @@ const styles = StyleSheet.create({
       exerciseOptionIcon: {
           marginHorizontal: 10,
           color: '#23374d',
-      }
+      },
 })
 
-export default BuildWorkoutController;
+export default connect(mapStateToProps)(BuildWorkoutController);
