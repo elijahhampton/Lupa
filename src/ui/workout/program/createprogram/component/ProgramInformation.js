@@ -54,25 +54,24 @@ function AddTagsModal(props) {
   let [tags, setTags] = useState([]);
   let [inputValue, setInputValue] = useState('');
 
-  handleAddTags = () => {
+  const handleAddTags = () => {
     if (tags.length == 10) {
       return;
     }
 
-    let newTags = []
-    newTags = newTags.concat(tags)
-    newTags.push(inputValue);
-    setTags(newTags);
+    setTags((prevState) => [...prevState].concat(inputValue))
+    setInputValue('')
   }
 
-  handleFinish = () => {
+  const handleFinish = () => {
     props.captureTags(tags);
     props.closeModalMethod()
   }
 
-  handleCancel = () => {
+  const handleCancel = () => {
     props.closeModalMethod()
   }
+
   return (
 
     <PaperModal contentContainerStyle={{ borderRadius: 10, alignSelf: 'center', top: 120, position: 'absolute', backgroundColor: 'white', width: Dimensions.get('window').width - 30, height: 400 }} visible={props.isVisible}>
@@ -104,7 +103,8 @@ function AddTagsModal(props) {
               value={inputValue}
               inputStyle={{ fontSize: 12, padding: 10, }}
               inputContainerStyle={{ backgroundColor: 'white', borderWidth: 1, borderBottomWidth: 1, borderColor: '#BBDEFB' }}
-              onSubmitEditing={() => handleAddTags()}
+             // onSubmitEditing={() => handleAddTags()}
+              onBlur={handleAddTags}
               onChangeText={text => setInputValue(text)}
               keyboardAppearance="light"
               keyboardType="default"
@@ -211,7 +211,7 @@ function ProgramInformation(props) {
     }
 
     if (programDays.length == 0) {
-      setRejectedReason('aaa')
+      setRejectedReason('Please choose at least one day to add to your program.')
       setSnackBarVisibility(true)
       return true;
     }
@@ -514,7 +514,7 @@ function ProgramInformation(props) {
                     value={automatedMessageText}
                     onChangeText={text => setAutomatedMessageText(text)}
                     keyboardType="default"
-                    returnKeyType="done"
+                    returnKeyLabel="return"
                     style={{ width: width - 20, alignSelf: 'center' }}
                   />
 
@@ -558,7 +558,7 @@ function ProgramInformation(props) {
           </>
         )
       case 1:
-        return <SelectProgramImage captureImage={props.captureImage} />
+        return <SelectProgramImage captureImage={props.captureImage} setProgramImageProp={setProgramImage} />
       default:
         return <View>
           <Text>
@@ -581,7 +581,7 @@ function ProgramInformation(props) {
       case 1:
 
         return (
-          <Button color="#23374d" style={{ borderRadius: 5, elevation: 3, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
+          <Button color="#23374d" disabled={programImage == "" || typeof(programImage) == 'undefined'} style={{ borderRadius: 5, elevation: 3, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
             <Text>
               Add Workouts
             </Text>
