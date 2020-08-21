@@ -106,7 +106,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
     }
 
     const renderDisplayName = () => {
-        return <Text style={styles.bioText} key={userData.display_name} style={styles.displayNameText}>{userData.display_name}</Text>
+        return <Text key={userData.display_name} style={styles.displayNameText}>{userData.display_name}</Text>
     }
 
     const renderBio = () => {
@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     bioText: {
-        fontFamily: 'Avenir',
-        fontSize: 10,
+        fontFamily: 'Avenir-Light',
+        fontSize: 11,
     },
     certificationText: {
         fontFamily: 'Avenir-Light',
@@ -200,7 +200,9 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Roman'
     },
     displayNameText: {
-        paddingVertical: 5
+        paddingVertical: 5,
+        fontSize: 12,
+        fontFamily: 'Avenir-Black'
     },
     inactiveTabHeading: {
         fontSize: 12,

@@ -38,7 +38,7 @@ function MyPrograms(props) {
     const renderPrograms = () => {
         return currUserPrograms.map((program, index, arr) => {
             return (
-                <Card key={program.program_name} style={{elevation: 3, width: '92%', marginVertical: 10}} onPress={() => handleCardOnPress(program)}>
+                <Card key={index} style={{elevation: 3, width: '92%', marginVertical: 10}} onPress={() => handleCardOnPress(program)}>
                 <Card.Cover source={{ uri: program.program_image }} />
                 <Card.Actions style={{justifyContent: 'space-between', paddingVertical: 10}}>
                     <Text style={{fontSize: 15, fontFamily: 'HelveticaNeue'}}>

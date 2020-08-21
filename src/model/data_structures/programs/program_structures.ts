@@ -19,7 +19,7 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     },
     program_type: "",
     program_allow_waitlist: false,
-    program_structure_uuid: "",
+    program_structure_uuid: "0",
     program_workout_data: {
         Monday: [],
         Tuesday: [],
@@ -39,7 +39,7 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
 }
 
 export const getLupaProgramInformationStructure = (
-    uuid="", 
+    uuid="0",
     name="", 
     description="", 
     slots=0, 
@@ -66,7 +66,7 @@ export const getLupaProgramInformationStructure = (
     completedProgram=false,
     ) => {
         
-    lupa_program_information_structure.program_structure_uuid = uuid;
+    lupa_program_information_structure.program_structure_uuid = "0"
     lupa_program_information_structure.program_name = name;
     lupa_program_information_structure.program_description = description;
     lupa_program_information_structure.program_slots = slots;

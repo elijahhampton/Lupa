@@ -16,7 +16,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 
 import ImagePicker from 'react-native-image-picker'
 
-function SelectProgramImage({ captureImage }) {
+function SelectProgramImage({ captureImage, setProgramImageProp }) {
     const [programImage, setProgramImage] = useState("")
     const [isProgramImageSet, setIsPromiseImageSet] = useState(false)
 
@@ -27,11 +27,13 @@ function SelectProgramImage({ captureImage }) {
             {
               await captureImage(response.uri)
               await setProgramImage(response.uri)
+              await setProgramImageProp(response.uri)
               await setIsPromiseImageSet(true)
             }
         });
       } catch(err) {
           alert(err)
+          setIsPromiseImageSet(false)
       }
   
     }

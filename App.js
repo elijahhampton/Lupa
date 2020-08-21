@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-  import { ActivityIndicator, View, Text, Button, SafeAreaView } from 'react-native';
+  import { ActivityIndicator, View, Text, AppState } from 'react-native';
 
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider as StoreProvider, useDispatch, useSelector} from 'react-redux';
@@ -31,15 +31,9 @@ import MessagesView from './src/ui/user/chat/MessagesView';
 import LupaCamera from './src/ui/workout/program/createprogram/component/LupaCamera';
 import ProfileController from './src/ui/user/profile/ProfileController';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
 
-   this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-  }
-
-  render() {
-    return (
+const App = () => {
+  return (
       <NavigationContainer>
          <StoreProvider store={LupaStore}>
         <PaperProvider>
@@ -47,8 +41,7 @@ class App extends React.Component {
         </PaperProvider>
       </StoreProvider>
       </NavigationContainer>
-    );
-  }
+  )
 }
 
 const SwitchNavigator = () => {
@@ -140,6 +133,7 @@ const StackApp = createStackNavigator()
  * Allows access to our "global modal" for creating programs.
  */
 function AppNavigator() {
+
   return (
     <StackApp.Navigator initialRouteName='Loading' headerMode='none' screenOptions={{
       gestureEnabled: false

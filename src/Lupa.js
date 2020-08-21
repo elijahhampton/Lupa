@@ -24,10 +24,10 @@ const Lupa = () => {
     return state.Users.currUserData
   })
 
-  useEffect(() => {
+ /* useEffect(() => {
    //generateMessagingToken(currUserData.user_uuid)
     //LUPA_CONTROLLER_INSTANCE.indexApplicationData()
-  }, [])
+  }, [])*/
 
   return (
     <>

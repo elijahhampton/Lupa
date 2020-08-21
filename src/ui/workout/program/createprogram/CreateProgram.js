@@ -11,7 +11,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import ProgramInformation from './component/ProgramInformation'
@@ -24,35 +24,40 @@ import { useNavigation } from '@react-navigation/native';
 import { Button, Caption, Appbar } from 'react-native-paper'
 import { Constants } from 'react-native-unimodules';
 import BuildWorkoutController from './buildworkout/BuildWorkoutController';
-import { LOG_ERROR } from '../../../../common/Logger';
+import LOG, { LOG_ERROR } from '../../../../common/Logger';
+import AppStateContext from '../../../util/AppState';
 
 
 const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     const [programData, setProgramData] = useState(getLupaProgramInformationStructure())
+    const [changedUUID, setChangedUUID] = useState(0);
     const [componentReady, setComponentReady] = useState(false)
 
     const navigation = useNavigation();
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        async function fetchData() {
-            await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(data => {
-                setProgramData(data)
-            }).then(() => {
-                setComponentReady(true)
-            })
+        if (uuid == null || typeof(uuid) == 'undefined') {
+            setComponentReady(false);
         }
 
-        try {
-        fetchData()
-    } catch(err) {
-        alert(err)
-    }
-    }, [])
+        LOG('CreateProgram.js', 'Running useEffect.');
+        setComponentReady(true);
+    }, [uuid])
 
     const handlePublishProgram =  async() => {
+        //publish program
         await LUPA_CONTROLLER_INSTANCE.publishProgram(uuid)
+
+        //update current user
+        await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', uuid, 'add');
+
+        await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(data => {
+            dispatch({ type: 'ADD_CURRENT_USER_PROGRAM', payload: data})
+        })
+
         navigation.navigate('Train')
         closeModal()
     }
@@ -150,8 +155,7 @@ class CreateProgram extends React.Component {
     async componentDidMount() {
         const UUID = fromString((Math.random() + this.props.lupa_data.Programs.currUserProgramsData.length).toString())
         await this.setState({ currProgramUUID: UUID }) 
-        const programPayload = getLupaProgramInformationStructure(UUID, "", "" ,0, new Date(), new Date(), "", 0, 0, 0, {}, false, "", [], this.props.lupa_data.Users.currUserData.user_uuid, [this.props.lupa_data.Users.currUserData.user_uuid], "", false)
-        await this.setState({ programData: programPayload })
+        await this.setState({ programData: getLupaProgramInformationStructure(UUID, "", "" ,0, new Date(), new Date(), "", 0, 0, 0, {}, false, "", [], this.props.lupa_data.Users.currUserData.user_uuid, [this.props.lupa_data.Users.currUserData.user_uuid], "", false) })
         this.LUPA_CONTROLLER_INSTANCE.createNewProgram(UUID);
     }
 
@@ -203,12 +207,12 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_automated_message = programAutomatedMessage
         updatedProgramData.completedProgram = false;
 
-        this.LUPA_CONTROLLER_INSTANCE.updateProgramData(this.state.currProgramUUID, updatedProgramData);
+        await this.LUPA_CONTROLLER_INSTANCE.updateProgramData(this.state.currProgramUUID, updatedProgramData);
         this.goToIndex(1)
     }
 
     saveProgramWorkoutData = async (workoutData) => {
-        this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.currProgramUUID, workoutData)
+        await this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.currProgramUUID, workoutData)
         this.setState({ programComplete: true, creatingProgram: true });
     }
 

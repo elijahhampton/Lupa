@@ -1076,7 +1076,6 @@ export default class UserController {
      */
     createProgram = async (uuid) => {
         PROGRAMS_COLLECTION.doc(uuid).set(getLupaProgramInformationStructure())
-        await this.updateCurrentUser('programs', uuid, 'add');
     }
 
     /**
@@ -1100,15 +1099,15 @@ export default class UserController {
         let updatedProgramList = []
 
         try {
-        await USER_COLLECTION.doc(user_uuid).get().then(snapshot => {
+       /* await USER_COLLECTION.doc(user_uuid).get().then(snapshot => {
             tempData = snapshot.data()
         })
 
-        updatedProgramList = await this.arrayRemove(tempData.programs, programUUID)
+        updatedProgramList = this.arrayRemove(tempData.programs, programUUID)
 
         await USER_COLLECTION.doc(user_uuid).update({
             programs: updatedProgramList
-        })
+        })*/
 
         //delete program from lupa programs
         await PROGRAMS_COLLECTION.doc(programUUID).delete();
@@ -1135,7 +1134,7 @@ export default class UserController {
 
              programUUIDS = temp.programs;
 
-             for (let i = 0; i <= 2; i++)
+             for (let i = 0; i <= programUUIDS.length; i++)
              {
                  await PROGRAMS_COLLECTION.doc(programUUIDS[i]).get().then(snapshot => {
                      temp = snapshot.data();
