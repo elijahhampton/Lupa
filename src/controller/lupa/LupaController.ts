@@ -705,6 +705,7 @@ export default class LupaController {
     }
 
     deleteProgram = async (user_uuid, programUUID) => {
+      alert('deleting')
       await USER_CONTROLLER_INSTANCE.deleteProgram(user_uuid, programUUID);
     }
 

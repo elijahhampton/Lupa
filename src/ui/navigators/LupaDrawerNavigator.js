@@ -77,9 +77,8 @@ function LupaBottomTabNavigator() {
         },
       })} >
              
-              <Tab.Screen name="Train" component={LupaHomeNavigator} />
-           
-              {
+             <Tab.Screen name="Train" component={LupaHomeNavigator} />
+            {
                 currUserData.isTrainer === true ?
                 <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
                   tabPress: event => {
@@ -90,8 +89,7 @@ function LupaBottomTabNavigator() {
                 :
                 null
               }
-             
-        <Tab.Screen name="Dashboard" component={DashboardNavigator} />
+            <Tab.Screen name="Dashboard" component={DashboardNavigator} />
     </Tab.Navigator>
   );
 }

@@ -35,9 +35,9 @@ function AddCueModal({ captureData, closeModal, isVisible }) {
                             primary: '#23374d'
                         }
                     }}
-                    contentContainerStyle={{width: '100%', height: Dimensions.get('window').height + Constants.statusBarHeight}}
+                    contentContainerStyle={{width: Dimensions.get('window').width, height: Dimensions.get('window').height + Constants.statusBarHeight, backgroundColor: '#FFFFFF'}}
                     >
-                        <Appbar.Header style={{elevation: 3, justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFFFF'}}>
+                        <Appbar.Header style={{elevation: 3, backgroundColor: '#FFFFFF'}}>
                             <Appbar.Action onPress={closeModal} icon={() => <Feather1s name="arrow-left"  thin={true} size={20} />}/>
                             <Appbar.Content title="Add Cues"  />
                             <Button mode="text" theme={{
@@ -48,7 +48,6 @@ function AddCueModal({ captureData, closeModal, isVisible }) {
                     Save
                 </Button>
                         </Appbar.Header>
-            <Divider />
             <View style={{flex: 1, padding: 20, backgroundColor: '#FFFFFF'}}>
                 <TextInput value={cue} onChangeText={text => setCue(text)} placeholder="Watch your back in this movement" style={{fontSize: 15, padding: 5, width: '100%', borderBottomWidth: 1.5}} />
             </View>
