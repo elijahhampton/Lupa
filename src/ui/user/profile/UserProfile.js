@@ -178,8 +178,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     bioText: {
-        fontFamily: 'Avenir',
-        fontSize: 10,
+        fontFamily: 'Avenir-Light',
+        fontSize: 11,
     },
     certificationText: {
         fontFamily: 'Avenir-Light',
@@ -193,7 +193,9 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Roman'
     },
     displayNameText: {
-        paddingVertical: 5
+        paddingVertical: 5,
+        fontSize: 12,
+        fontFamily: 'Avenir-Black'
     },
     inactiveTabHeading: {
         fontSize: 12,

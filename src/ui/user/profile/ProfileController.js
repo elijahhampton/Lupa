@@ -45,10 +45,9 @@ const ProfileController = ({ route }) => {
         switch(userData.isTrainer) {
 
             case true:
-                console.log('yaaay');
                 return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} />
             case false:
-                console.log('baaay');
+    
                 return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} />
             default:
                 return <View style={{flex: 1}} />

@@ -42,13 +42,7 @@ const LupaHome = () => {
         <Container style={styles.root}>
             <Appbar.Header style={{ backgroundColor: 'white', elevation: 3, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 , flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Appbar.Action icon={() =>  <MenuIcon onPress={() => navigation.openDrawer()} />} />
-                    
-                    
                     <Appbar.Content title="Book trainers" titleStyle={{alignSelf: 'center', fontFamily: 'HelveticaNeue-Bold', fontSize: 15, fontWeight: '600'}} />
-                    
-
-                   
-              
                 </Appbar.Header>
             <Tabs locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
              <Tab  heading="Featured">

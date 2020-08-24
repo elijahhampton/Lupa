@@ -723,6 +723,20 @@ export default class LupaController {
       return workoutData;
     }
 
+    getAllUserPrograms = async (uuid) => {
+      let retVal = [];
+
+      if (typeof(uuid) == 'undefined' || uuid == null) {
+        return Promise.resolve([])
+      }
+      
+      await PROGRAMS_CONTROLLER_INSTANCE.getAllUserPrograms(uuid).then(data => {
+        retVal = data;
+      })
+
+      return Promise.resolve(retVal)
+    }
+
     getPrivateChatUUID = async (currUserUUID, userTwo) => {
       let result;
       await USER_CONTROLLER_INSTANCE.getPrivateChatUUID(currUserUUID, userTwo).then(chatUUID => {

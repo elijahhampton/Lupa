@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
     View,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import {
-    Surface, Appbar, Caption,
+    Surface, Appbar, Caption, Button, FAB
 } from 'react-native-paper';
 
 import {
@@ -23,13 +23,27 @@ import {
 
 import LupaColor from '../../common/LupaColor'
 import ImagePicker from 'react-native-image-picker';
-import FeatherIcon from 'react-native-vector-icons/Feather'
+import ThinFeatherIcon from 'react-native-feather1s'
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import LupaCalendar from './component/LupaCalendar';
+import SchedulerModal from './component/SchedulerModal';
+
+import RBSheet from 'react-native-raw-bottom-sheet'
+import { useSelector } from 'react-redux';
+import LupaController from '../../../controller/lupa/LupaController';
+import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
+import LOG from '../../../common/Logger';
 
 function TrainerProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
+    const [userPrograms, setUserPrograms] = useState([])
+
+    const currUserPrograms = useSelector(state => {
+        return state.Programs.currUserProgramsData;
+    })
 
     /**
      * Allows the current user to choose an image from their camera roll and updates the profile picture in FB and redux.
@@ -117,6 +131,14 @@ function TrainerProfile({ userData, isCurrentUser }) {
         )
     }
 
+    const renderPrograms = () => {
+       return userPrograms.map((program, index, arr) => {
+            return (
+                <ProfileProgramCard programData={program} />
+            )
+        })
+    }
+
     /**
      * Navigates to the follower view.
      */
@@ -124,10 +146,32 @@ function TrainerProfile({ userData, isCurrentUser }) {
         this.props.navigation.navigate('FollowerView');
     }
 
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                await LUPA_CONTROLLER_INSTANCE.getAllUserPrograms(userData.user_uuid).then(data => {
+                    setUserPrograms(data);
+                })
+            } catch(error) {
+                alert(error);
+                setUserPrograms([])
+            }
+        }
+
+
+        if (isCurrentUser) {
+            setUserPrograms(currUserPrograms)
+        } else {
+            fetchData();
+        }
+
+        LOG('TrainerProfile.js', 'Running useEffect.')
+    }, [userPrograms.length])
+
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.goBack()}/>
+                <ThinFeatherIcon name="arrow-left" size={20} onPress={() => navigation.goBack()}/>
                 <Appbar.Content title={userData.username} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView>
@@ -147,18 +191,23 @@ function TrainerProfile({ userData, isCurrentUser }) {
                 </View>
             </View>
 
-            <Tabs locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
+            <Tabs page={3} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
-      
+                    <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
+                        {renderPrograms()}
+                    </View>
              </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
-       
+       <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
+                        
+                    </View>
               </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-          
+                    <LupaCalendar />
               </Tab>
             </Tabs>
             </ScrollView>
+        
         </SafeAreaView>
     )
 }
@@ -196,7 +245,7 @@ const styles = StyleSheet.create({
         elevation: 0,
     },
     appbarTitle: {
-        fontSize: 12,
+        fontSize: 15,
         fontFamily: 'Avenir-Roman'
     },
     displayNameText: {
