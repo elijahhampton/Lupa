@@ -86,9 +86,9 @@ class Featured extends React.Component {
     }
 
     setupComponent = async () => {
-        //await this.loadFeaturedPrograms();
+        await this.loadFeaturedPrograms();
        // await this.loadFeaturedTrainers();
-       // await this.loadTopPicks();
+        await this.loadTopPicks();
         //await this.loadRecentlyAddedPrograms();
     }
 
@@ -347,7 +347,7 @@ class Featured extends React.Component {
                                 contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
                             >
                                 {
-                                    this.state.featuredPrograms.map(program => {
+                                    this.state.featuredPrograms.map((program, index, arr) => {
                                         return (
                                                 <ProgramInformationComponent key={program.program_uuid + index.toString()} program={program} />
                                            
@@ -373,7 +373,7 @@ class Featured extends React.Component {
                             </View>
                             <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
                             {
-                                    this.state.topPicks.map(program => {
+                                    this.state.topPicks.map((program, index, arr) => {
                                         return (
                                             <FeaturedProgramCard key={program.program_uuid + index.toString()} currProgram={program}/>
                                         )
