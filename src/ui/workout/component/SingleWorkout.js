@@ -37,7 +37,7 @@ class SingleWorkout extends React.Component {
     }
 
 
-    handleOnPress = () => {
+   /* handleOnPress = () => {
         
         if (this.state.isPressed)
         {
@@ -54,11 +54,10 @@ class SingleWorkout extends React.Component {
         }
 
         this.props.captureWorkout(this.props.workout);
-    }
+    }*/
 
     render() {
 return (
-    <TouchableOpacity onPress={this.handleOnPress}>
     <View style={[{marginVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
    <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5}}>
    <Surface style={[this.state.isPressed ? styles.pressed : styles.notPressed , styles.videoContainer]}>
@@ -83,7 +82,6 @@ return (
    </View>
     </View>
 
-</TouchableOpacity>
 )
  
             

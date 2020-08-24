@@ -1,5 +1,20 @@
 {
 "lupa_workouts": [
+    {
+        "workout_name": "Custom",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_steps": [],
+        "workout_tags": [],
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
   {
       "workout_name": "Squat",
       "workout_description": "",
@@ -12,7 +27,8 @@
       "workout_uid": "",
       "workout_cue": "",
       "workout_sets": 0,
-      "workout_reps": 0
+      "workout_reps": 0,
+      "superset": []
   },
   {
     "workout_name": "Lunge",
@@ -26,7 +42,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Crunch",
@@ -40,7 +57,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Bench Press",
@@ -54,7 +72,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Leg Press",
@@ -68,7 +87,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Push Up",
@@ -82,7 +102,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Plank",
@@ -96,7 +117,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Wall Sit",
@@ -110,7 +132,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Jumping Jacks",
@@ -124,7 +147,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Dumbbell Curls",
@@ -138,7 +162,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Pullups",
@@ -152,7 +177,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Step Ups",
@@ -166,7 +192,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 },
 {
     "workout_name": "Plank",
@@ -180,21 +207,8 @@
     "workout_uid": "",
     "workout_cue": "",
     "workout_sets": 0,
-    "workout_reps": 0
-}, 
-{
-    "workout_name": "Custom",
-    "workout_description": "",
-    "workout_media": {
-        "uri:": "",
-        "media_type": ""
-    },
-    "workout_steps": [],
-    "workout_tags": [],
-    "workout_uid": "",
-    "workout_cue": "",
-    "workout_sets": 0,
-    "workout_reps": 0
+    "workout_reps": 0,
+      "superset": []
 }
 ]
 }

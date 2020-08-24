@@ -26,6 +26,27 @@ export default class ProgramController {
         return ProgramController._instance;
     }
 
+    getAllUserPrograms = async (uuid) => {
+        let programsList = [];
+        let programDataList = [];
+        try {
+            await USERS_COLLECTION.doc(uuid).get().then(snapshot => {
+                programsList = snapshot.data().programs;
+            });
+    
+            for (let i = 0; i < programsList.length; i++) {
+                await PROGRAM_COLLECTION.doc(programsList[i]).get().then(snapshot => {
+                    programDataList.push(snapshot.data());
+                })
+            }
+        } catch(error) {
+            alert(error)
+            return Promise.resolve([]);
+        }
+
+        return Promise.resolve(programDataList)
+    }
+
     loadWorkouts = () => {
         const WORKOUTS = require('../../model/data_structures/workout/json/workouts.json')
         return WORKOUTS.lupa_workouts;
