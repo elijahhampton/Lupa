@@ -4,12 +4,17 @@ import {
     View,
     StyleSheet,
     Text,
+    SectionList,
     Dimensions,
     Image,
     SafeAreaView,
     Modal,
     ActivityIndicator,
 } from 'react-native';
+
+import {
+    Icon 
+} from 'react-native-elements';
 
 import { connect, useDispatch } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
@@ -26,14 +31,15 @@ import { Constants } from 'react-native-unimodules';
 import BuildWorkoutController from './buildworkout/BuildWorkoutController';
 import LOG, { LOG_ERROR } from '../../../../common/Logger';
 import AppStateContext from '../../../util/AppState';
-
+import ShareProgramModal from '../modal/ShareProgramModal'
 
 const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     const [programData, setProgramData] = useState(getLupaProgramInformationStructure())
     const [changedUUID, setChangedUUID] = useState(0);
-    const [componentReady, setComponentReady] = useState(false)
+    const [componentReady, setComponentReady] = useState(true)
+    const [isPublished, setIsPublished] = useState(false);
 
     const navigation = useNavigation();
     const dispatch = useDispatch()
@@ -48,6 +54,7 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     }, [uuid])
 
     const handlePublishProgram =  async() => {
+        setComponentReady(false);
         //publish program
         await LUPA_CONTROLLER_INSTANCE.publishProgram(uuid)
 
@@ -56,42 +63,92 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
 
         await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(data => {
             dispatch({ type: 'ADD_CURRENT_USER_PROGRAM', payload: data})
+            setProgramData(data);
         })
+        setComponentReady(true);
+        setIsPublished(true);
+    }
 
-        navigation.navigate('Train')
+    const handleShareProgramOnPress = () => {
         closeModal()
+        navigation.navigate('Train')
+        navigation.navigate('ShareProgramModal', {
+            programData: programData
+        })
+    }
+
+    const handleOnComplete = () => {
+        closeModal()
+        navigation.navigate('Train')
     }
 
     const getComponentDisplay = () => {
-        if (componentReady) {
+        if (componentReady && isPublished === false) {
             return (
-                <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
-                        <Button mode="text" color="white" onPress={closeModal} style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, margin: 10}}>
-                            Edit
-                        </Button>
+                <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
                         
-                        <View style={{height: 300, justifyContent: 'space-evenly', marginVertical: 60, alignItems: 'center'}}>
-
-                        <Text style={{fontSize: 25, color: 'white', textAlign: 'center', marginHorizontal: 10}}>
+                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                       <View style={{ paddingHorizontal: 10, paddingVertical: 20, alignItems: 'flex-start',}}>
+                       <View style={{flexDirection: 'row', alignItems :'center', justifyContent: 'space-evenly'}}>
+                       <View style={{marginRight: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderColor: '#1089ff', borderWidth: 1.5, width: 25, height: 25, borderRadius: 40}}>
+                        <FeatherIcon name="check" size={15} color="#1089ff" />
+                        </View>
+                       <Text style={{fontFamily: 'Avenir-Light', paddingVertical: 5,  fontSize: 20, color: 'white',}}>
                             Your program is ready to publish
                         </Text>
-                        <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderColor: '#1089ff', borderWidth: 1.5, width: 40, height: 40, borderRadius: 40}}>
-                        <FeatherIcon name="check" size={20} color="#1089ff" />
-                        </View>
-  
-                        </View>
+                       </View>
+                        <Text style={{color: 'white', fontFamily: 'Avenir', fontWeight: 'bold'}}>
+                            After your program is published it will go live and instantly be available for purchase.
+                        </Text>
+                       </View>
+                       
+                       </View>
 
-                        <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <Button color="#1089ff" mode="contained" style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 55, borderColor: 'white'}} onPress={handlePublishProgram}>
+  
+
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handlePublishProgram}>
                             Publish
                         </Button>
-                        
-
+                        </View>
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button onPress={closeModal} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}}>
+                            Edit
+                        </Button>
                         </View>
     
                 </SafeAreaView>
             )
-        } else {
+        } else if (componentReady === true && isPublished === true) {
+            return (
+                <SafeAreaView style={{flex: 1, padding: 20, justifyContent: 'center', alignItems: 'center',  backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
+                       <View style={{paddingHorizontal: 10, width: '100%',  marginHorizontal: 10, paddingVertical: 20, alignItems: 'flex-start',}}>
+                       <Text style={{fontFamily: 'Avenir-Light', paddingVertical: 5,  fontSize: 20, color: 'white',}}>
+                            Published.
+                        </Text>
+                        <Text style={{color: 'white', fontFamily: 'Avenir', fontWeight: 'bold'}}>
+                            You're all set.  Share with your friends or view your program in app.
+                        </Text>
+                       </View>
+                       
+
+  
+
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handleShareProgramOnPress}>
+                            Share with friends
+                        </Button>
+                        </View>
+
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handleOnComplete}>
+                            Complete
+                        </Button>
+                        </View>
+                   
+                </SafeAreaView>
+            )
+        }else {
             return (
                 <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
                     <ActivityIndicator animating={true} color="white" />

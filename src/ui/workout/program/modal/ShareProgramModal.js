@@ -22,7 +22,7 @@ import LupaController from '../../../../controller/lupa/LupaController'
 import UserSearchResult from '../../../user/profile/component/UserSearchResult'
 import ProfileProgramCard from '../components/ProfileProgramCard';
 
-const { windowWidth, windowHeight } = Dimensions.get('window')
+import ThinFeatherIcon from 'react-native-feather1s'
 
 function ShareProgramModal({ navigation, route }) {
     const [followingUserObjects, setFollowingUserObjects] = useState([])
@@ -35,7 +35,7 @@ function ShareProgramModal({ navigation, route }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     useEffect(() => {
-        LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(route.params.following).then(objs => {
+        LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(currUserData.following).then(objs => {
             setFollowingUserObjects(objs)
         })
     }, [])
@@ -110,7 +110,7 @@ function ShareProgramModal({ navigation, route }) {
                         primary: '#FFFFFF'
                     }
                 }}>
-                    <Appbar.BackAction onPress={() => navigation.pop()} />
+                    <Appbar.Action onPress={() => navigation.pop()} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}/>
                     <Appbar.Content title="Share Program" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
                 </Appbar.Header>
 
@@ -124,7 +124,7 @@ function ShareProgramModal({ navigation, route }) {
                 </ScrollView>
                     </View>
 
-                    <FAB  color="#FFFFFF" style={styles.fab} icon="done" onPress={handleApply} />
+                    <FAB  color="#FFFFFF" style={styles.fab} icon="check" onPress={handleApply} />
                     <SafeAreaView />
             </View>
     )
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF'
     },
     appbar: {
-        elevation: 0
+        elevation: 3
     },
     fab: {
         position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#2196F3'
