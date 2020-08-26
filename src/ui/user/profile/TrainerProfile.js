@@ -21,6 +21,7 @@ import {
     Tabs
 } from 'native-base'
 
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaColor from '../../common/LupaColor'
 import ImagePicker from 'react-native-image-picker';
 import ThinFeatherIcon from 'react-native-feather1s'
@@ -28,7 +29,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import LupaCalendar from './component/LupaCalendar';
 import SchedulerModal from './component/SchedulerModal';
-
+import CreateNewPost from './modal/CreateNewPost'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useSelector } from 'react-redux';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -40,6 +41,9 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
     const [userPrograms, setUserPrograms] = useState([])
+    const [postType, setPostType] = useState("VLOG");
+    const [postModalIsVisible, setPostModalIsVisible] = useState(false);
+    const [currPage, setCurrPage] = useState(0)
 
     const currUserPrograms = useSelector(state => {
         return state.Programs.currUserProgramsData;
@@ -57,12 +61,12 @@ function TrainerProfile({ userData, isCurrentUser }) {
 
                 let imageURL;
                 //update in FB storage
-                 this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
+                 LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
                     imageURL = result;
                 });
         
                 //update in Firestore
-                this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
+                LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
         
             }
         });
@@ -139,6 +143,14 @@ function TrainerProfile({ userData, isCurrentUser }) {
         })
     }
 
+    const renderFAB = () => {
+        if (currPage == 1) {
+            return  <FAB label="Add Blog" icon="rss" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 12}} />
+        }
+
+        return null;
+    }
+
     /**
      * Navigates to the follower view.
      */
@@ -151,6 +163,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
             try {
                 await LUPA_CONTROLLER_INSTANCE.getAllUserPrograms(userData.user_uuid).then(data => {
                     setUserPrograms(data);
+                    setProfileImage(data.photo_url)
                 })
             } catch(error) {
                 alert(error);
@@ -191,7 +204,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
                 </View>
             </View>
 
-            <Tabs page={3} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
+            <Tabs onChangeTab={tabInfo => console.log(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
                     <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
                         {renderPrograms()}
@@ -199,15 +212,22 @@ function TrainerProfile({ userData, isCurrentUser }) {
              </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
        <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
-                        
+                        <Button onPress={() => setPostModalIsVisible(true)} mode="text" color="#1089ff" uppercase={false} style={{alignSelf: 'flex-end'}} icon={() =>  <FeatherIcon name="rss" color="#1089ff" size={12} />}>
+                            <Text style={{fontFamily: 'Avenir-Light', fontWeight: '300', fontSize: 12}}>
+                                Add Vlog
+                            </Text>
+                        </Button>
                     </View>
+
+                   
               </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
                     <LupaCalendar />
               </Tab>
             </Tabs>
             </ScrollView>
-        
+
+            <CreateNewPost postType={postType} isVisible={postModalIsVisible} closeModal={() => setPostModalIsVisible(false)} />
         </SafeAreaView>
     )
 }

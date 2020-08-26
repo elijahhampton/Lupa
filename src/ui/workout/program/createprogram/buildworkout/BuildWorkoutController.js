@@ -157,10 +157,6 @@ class BuildWorkoutController extends React.Component {
     }
 
     captureWorkout = (workoutObject, placementType) => {
-        if (workoutObject.workout_name === 'Custom') {
-            this.setState({ customWorkoutModalVisible: true });
-            return;
-        }
 
         const workoutDay = this.getCurrentDay()
 
@@ -294,7 +290,6 @@ class BuildWorkoutController extends React.Component {
                     if (typeof (workoutObject) == 'undefined') {
                         return;
                     }
-
 
                     const updatedWorkout = {
                         workout_name: workoutObject.workout_name,
@@ -480,7 +475,7 @@ class BuildWorkoutController extends React.Component {
                                     <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                                 </View>
                                 <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No workouts have been added for {currDay}
+                                    No exercises have been added for {currDay}
                                 </Caption>
                             </View>
                         )
@@ -518,7 +513,7 @@ class BuildWorkoutController extends React.Component {
                                     <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                                 </View>
                                 <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No workouts have been added for {currDay}
+                                    No exercises have been added for {currDay}
                                 </Caption>
                             </View>
                         )
@@ -556,7 +551,7 @@ class BuildWorkoutController extends React.Component {
                                     <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                                 </View>
                                 <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No workouts have been added for {currDay}
+                                    No exercises have been added for {currDay}
                                 </Caption>
                             </View>
                         )
@@ -594,7 +589,7 @@ class BuildWorkoutController extends React.Component {
                                     <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                                 </View>
                                 <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No workouts have been added for {currDay}
+                                    No exercises have been added for {currDay}
                                 </Caption>
                             </View>
                         )
@@ -632,7 +627,7 @@ class BuildWorkoutController extends React.Component {
                                     <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                                 </View>
                                 <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No workouts have been added for {currDay}
+                                    No exercises have been added for {currDay}
                                 </Caption>
                             </View>
                         )
@@ -669,7 +664,7 @@ class BuildWorkoutController extends React.Component {
                                     <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                                 </View>
                                 <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No workouts have been added for {currDay}
+                                    No exercises have been added for {currDay}
                                 </Caption>
                             </View>
                         )
@@ -707,7 +702,7 @@ class BuildWorkoutController extends React.Component {
                                     <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                                 </View>
                                 <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No workouts have been added for {currDay}
+                                    No exercises have been added for {currDay}
                                 </Caption>
                             </View>
                         )
@@ -744,7 +739,7 @@ class BuildWorkoutController extends React.Component {
                                 <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
                             </View>
                             <Caption style={{ padding: 20, color: '#23374d' }}>
-                                No workouts have been added.  Choose a day from the drop down menu and add workouts using the workout library.
+                                No exercises have been added.  Choose a day from the drop down menu and add an exercise using the exercise library.
                             </Caption>
                         </View>
                     )
@@ -755,509 +750,13 @@ class BuildWorkoutController extends React.Component {
         }
     }
 
-    captureSetAndRepValues = async (sets, reps) => {
-        if (typeof (this.state.currPressedPopulatedWorkout) == 'undefined' || sets === 0 || reps === 0) {
-            return;
-        }
-
-        let newWorkoutData = {}
-        const currDay = this.getCurrentDay()
-        const workout = this.state.currPressedPopulatedWorkout
-        switch (currDay) {
-            case 'Monday':
-                for (let i = 0; i < this.state.workoutDays.Monday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Monday[i].workout_uid) {
-
-                        this.state.workoutDays.Monday[i].workout_sets = sets
-                        this.state.workoutDays.Monday[i].workout_reps = reps
-
-                        newWorkoutData = {
-                            Monday: this.state.workoutDays.Monday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Tuesday":
-                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Tuesday[i].workout_uid) {
-
-                        this.state.workoutDays.Tuesday[i].workout_sets = sets
-                        this.state.workoutDays.Tuesday[i].workout_reps = reps
-
-                        newWorkoutData = {
-                            Tuesday: this.state.workoutDays.Tuesday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Wednesday":
-                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Wednesday[i].workout_uid) {
-
-                        this.state.workoutDays.Wednesday[i].workout_sets = sets
-                        this.state.workoutDays.Wednesday[i].workout_reps = reps
-
-                        newWorkoutData = {
-                            Wednesday: this.state.workoutDays.Wednesday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Thursday":
-                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Thursday[i].workout_uid) {
-
-                        this.state.workoutDays.Thursday[i].workout_sets = sets
-                        this.state.workoutDays.Thursday[i].workout_reps = reps
-
-                        newWorkoutData = {
-                            Thursday: this.state.workoutDays.Thursday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Friday":
-                for (let i = 0; i < this.state.workoutDays.Friday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Friday[i].workout_uid) {
-
-                        this.state.workoutDays.Friday[i].workout_sets = sets
-                        this.state.workoutDays.Friday[i].workout_reps = reps
-
-                        newWorkoutData = {
-                            Friday: this.state.workoutDays.Friday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Saturday":
-                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Saturday[i].workout_uid) {
-
-                        this.state.workoutDays.Saturday[i].workout_sets = sets
-                        this.state.workoutDays.Saturday[i].workout_reps = reps
-
-                        newWorkoutData = {
-                            Saturday: this.state.workoutDays.Saturday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Sunday":
-                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Sunday[i].workout_uid) {
-
-                        this.state.workoutDays.Sunday[i].workout_sets = sets
-                        this.state.workoutDays.Sunday[i].workout_reps = reps
-
-                        newWorkoutData = {
-                            Sunday: this.state.workoutDays.Sunday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            default:
-                return;
-        }
-
-        this.setState({ workoutDays: newWorkoutData, workoutSchemeModalIsVisible: false })
+    handleAddCustomWorkout = async () => {
+        await this.workoutLibraryRef.current.close();
+     this.setState({ customWorkoutModalVisible: true })
     }
 
-    handleCaptureCue = async (cue) => {
-        if (typeof (this.state.currPressedPopulatedWorkout) == 'undefined' || cue == '') {
-            return;
-        }
-
-        let newWorkoutData = {}, updatedWorkoutData = {}
-        const currDay = this.getCurrentDay()
-        const workout = this.state.currPressedPopulatedWorkout
-        switch (currDay) {
-            case 'Monday':
-                for (let i = 0; i < this.state.workoutDays.Monday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Monday[i].workout_uid) {
-
-                        this.state.workoutDays.Monday[i].workout_cue = cue
-
-                        newWorkoutData = {
-                            Monday: this.state.workoutDays.Monday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Tuesday":
-                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Tuesday[i].workout_uid) {
-
-                        this.state.workoutDays.Tuesday[i].workout_cue = cue
-
-                        newWorkoutData = {
-                            Tuesday: this.state.workoutDays.Tuesday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Wednesday":
-                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Wednesday[i].workout_uid) {
-
-                        this.state.workoutDays.Wednesday[i].workout_media.workout_cue = cue
-
-                        newWorkoutData = {
-                            Wednesday: this.state.workoutDays.Wednesday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Thursday":
-                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Thursday[i].workout_uid) {
-
-                        this.state.workoutDays.Thursday[i].workout_cue = cue
-
-                        newWorkoutData = {
-                            Thursday: this.state.workoutDays.Thursday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Friday":
-                for (let i = 0; i < this.state.workoutDays.Friday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Friday[i].workout_uid) {
-
-                        this.state.workoutDays.Friday[i].workout_cue = cue
-
-                        newWorkoutData = {
-                            Friday: this.state.workoutDays.Friday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Saturday":
-                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Saturday[i].workout_uid) {
-
-                        this.state.workoutDays.Saturday[i].workout_cue = cue
-
-                        newWorkoutData = {
-                            Saturday: this.state.workoutDays.Saturday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Sunday":
-                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Sunday[i].workout_uid) {
-
-                        this.state.workoutDays.Sunday[i].workout_cue = cue
-
-                        newWorkoutData = {
-                            Sunday: this.state.workoutDays.Sunday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-
-        await this.setState({ workoutDays: newWorkoutData, addCueModalIsVisible: false })
-    }
-
-    handleCaptureNewMediaURI = async (uri, mediaType) => {
-        try {
-            if (typeof (this.state.currPressedPopulatedWorkout) == undefined) {
-                return;
-            }
-
-            let newWorkoutData = {}, updatedWorkoutData = {}
-            const currDay = this.getCurrentDay()
-            const workout = this.state.currPressedPopulatedWorkout
-            switch (currDay) {
-                case 'Monday':
-                    for (let i = 0; i < this.state.workoutDays.Monday.length; i++) {
-                        if (workout.workout_uid == this.state.workoutDays.Monday[i].workout_uid) {
-                            this.state.workoutDays.Monday[i].workout_media.uri = uri;
-                            this.state.workoutDays.Monday[i].workout_media.media_type = mediaType;
-
-                            newWorkoutData = {
-                                Monday: this.state.workoutDays.Monday,
-                                ...this.state.workoutDays
-                            }
-
-                            break;
-                        }
-                    }
-                    break;
-                case "Tuesday":
-                    for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++) {
-                        if (workout.workout_uid == this.state.workoutDays.Tuesday[i].workout_uid) {
-
-                            this.state.workoutDays.Tuesday[i].workout_media.uri = uri;
-                            this.state.workoutDays.Tuesday[i].workout_media.media_type = mediaType;
-
-                            newWorkoutData = {
-                                Tuesday: this.state.workoutDays.Tuesday,
-                                ...this.state.workoutDays
-                            }
-
-                            break;
-                        }
-                    }
-                    break;
-                case "Wednesday":
-                    for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++) {
-                        if (workout.workout_uid == this.state.workoutDays.Wednesday[i].workout_uid) {
-
-                            this.state.workoutDays.Wednesday[i].workout_media.uri = uri;
-                            this.state.workoutDays.Wednesday[i].workout_media.media_type = mediaType;
-
-                            newWorkoutData = {
-                                Wednesday: this.state.workoutDays.Wednesday,
-                                ...this.state.workoutDays
-                            }
-
-                            break;
-                        }
-                    }
-                    break;
-                case "Thursday":
-                    for (let i = 0; i < this.state.workoutDays.Thursday.length; i++) {
-                        if (workout.workout_uid == this.state.workoutDays.Thursday[i].workout_uid) {
-
-                            this.state.workoutDays.Thursday[i].workout_media.uri = uri;
-                            this.state.workoutDays.Thursday[i].workout_media.media_type = mediaType;
-
-                            newWorkoutData = {
-                                Thursday: this.state.workoutDays.Thursday,
-                                ...this.state.workoutDays
-                            }
-
-                            break;
-                        }
-                    }
-                    break;
-                case "Friday":
-                    for (let i = 0; i < this.state.workoutDays.Friday.length; i++) {
-                        if (workout.workout_uid == this.state.workoutDays.Friday[i].workout_uid) {
-
-                            this.state.workoutDays.Friday[i].workout_media.uri = uri;
-                            this.state.workoutDays.Friday[i].workout_media.media_type = mediaType;
-
-                            newWorkoutData = {
-                                Friday: this.state.workoutDays.Friday,
-                                ...this.state.workoutDays
-                            }
-
-                            break;
-                        }
-                    }
-                    break;
-                case "Saturday":
-                    for (let i = 0; i < this.state.workoutDays.Saturday.length; i++) {
-                        if (workout.workout_uid == this.state.workoutDays.Saturday[i].workout_uid) {
-
-                            this.state.workoutDays.Saturday[i].workout_media.uri = uri;
-                            this.state.workoutDays.Saturday[i].workout_media.media_type = mediaType;
-
-                            newWorkoutData = {
-                                Saturday: this.state.workoutDays.Saturday,
-                                ...this.state.workoutDays
-                            }
-
-                            break;
-                        }
-                    }
-                    break;
-                case "Sunday":
-                    for (let i = 0; i < this.state.workoutDays.Sunday.length; i++) {
-                        if (workout.workout_uid == this.state.workoutDays.Sunday[i].workout_uid) {
-
-                            this.state.workoutDays.Sunday[i].workout_media.uri = uri;
-                            this.state.workoutDays.Sunday[i].workout_media.media_type = mediaType;
-
-                            newWorkoutData = {
-                                Sunday: this.state.workoutDays.Sunday,
-                                ...this.state.workoutDays
-                            }
-
-                            break;
-                        }
-                    }
-                    break;
-                default:
-                    return;
-            }
-
-            this.setState({ workoutDays: newWorkoutData });
-        } catch (error) {
-            alert(error)
-        }
-    }
-
-    handleCaptureDescription = async (description) => {
-        if (typeof (this.state.currPressedPopulatedWorkout) == 'undefined' || description == '') {
-            return;
-        }
-
-        let newWorkoutData = {}, updatedWorkoutData = {}
-        const currDay = this.getCurrentDay()
-        const workout = this.state.currPressedPopulatedWorkout
-        switch (currDay) {
-            case 'Monday':
-                for (let i = 0; i < this.state.workoutDays.Monday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Monday[i].workout_uid) {
-
-                        this.state.workoutDays.Monday[i].workout_description = description
-
-                        newWorkoutData = {
-                            Monday: this.state.workoutDays.Monday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Tuesday":
-                for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Tuesday[i].workout_uid) {
-
-                        this.state.workoutDays.Tuesday[i].workout_description = description
-
-                        newWorkoutData = {
-                            Tuesday: this.state.workoutDays.Tuesday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Wednesday":
-                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Wednesday[i].workout_uid) {
-
-                        this.state.workoutDays.Wednesday[i].workout_media.workout_description = description
-
-                        newWorkoutData = {
-                            Wednesday: this.state.workoutDays.Wednesday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Thursday":
-                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Thursday[i].workout_uid) {
-
-                        this.state.workoutDays.Thursday[i].workout_description = description
-
-                        newWorkoutData = {
-                            Thursday: this.state.workoutDays.Thursday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Friday":
-                for (let i = 0; i < this.state.workoutDays.Friday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Friday[i].workout_uid) {
-
-                        this.state.workoutDays.Friday[i].workout_description = description
-
-                        newWorkoutData = {
-                            Friday: this.state.workoutDays.Friday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Saturday":
-                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Saturday[i].workout_uid) {
-
-                        this.state.workoutDays.Saturday[i].workout_description = description
-
-                        newWorkoutData = {
-                            Saturday: this.state.workoutDays.Saturday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            case "Sunday":
-                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++) {
-                    if (workout.workout_uid == this.state.workoutDays.Sunday[i].workout_uid) {
-
-                        this.state.workoutDays.Sunday[i].workout_description = description
-
-                        newWorkoutData = {
-                            Sunday: this.state.workoutDays.Sunday,
-                            ...this.state.workoutDays
-                        }
-
-                        break;
-                    }
-                }
-                break;
-            default:
-                return;
-        }
-
-        this.setState({ workoutDays: newWorkoutData, addDescriptionModalIsVisible: false })
-    }
 
     handleOpenLibraryOnPress = async (placementType) => {
-        console.log(placementType)
         await this.setState({ currPlacementType: placementType })
         this.workoutLibraryRef.current.open();
     }
@@ -1358,7 +857,7 @@ class BuildWorkoutController extends React.Component {
                             <View style={{ flex: 2 }}>
                                 <Divider />
                                 <Text style={{ padding: 10, fontSize: 15, fontWeight: '400', fontFamily: 'Avenir', alignSelf: 'center' }}>
-                                    Choose a day of the week and add workouts from the workout library.
+                                    Choose a day of the week and add exercises from the exercise library.
                         </Text>
                                 <DropDownPicker
                                     items={items}
@@ -1450,7 +949,7 @@ class BuildWorkoutController extends React.Component {
                             null
                         }
                         <Text style={{ padding: 10, fontSize: 15, fontWeight: '400', fontFamily: 'Avenir', }}>
-                            Showing workouts from:
+                            Showing exercises from:
                         </Text>
                         <DropDownPicker
                             items={items}
@@ -1491,7 +990,7 @@ class BuildWorkoutController extends React.Component {
             >
                 <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                     <View style={{ padding: 10 }}>
-                        <SearchBar placeholder="Search specific workouts"
+                        <SearchBar placeholder="Search exercises"
                             onChangeText={text => console.log(text)}
                             platform="ios"
                             searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
@@ -1516,16 +1015,28 @@ class BuildWorkoutController extends React.Component {
                         </ScrollView>
                     </View>
                     <View style={{ flex: 1 }}>
+
+<View style={{justifyContent: 'flex-end', width: '100%'}}>
+    <Button onPress={this.handleAddCustomWorkout} uppercase={false} color="#1089ff" style={{alignSelf: 'flex-end'}}>
+        <Text style={{fontWeight: '300'}}>
+            <ThinFeatherIcon thin={true} name="plus" size={15} />
+            Add a custom exercise
+        </Text>
+    </Button>
+</View>
+
+<Divider />
+
                         <SectionList 
                          sections={this.state.libraryData}
-                         keyExtractor={(item, index) => fromString(item.workout_name + index.toString())}
+                         keyExtractor={(item, index) => itemfromString(item.workout_name + index.toString())}
                          renderItem={({ item }) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || item.workout_name == undefined) {
                                 return;
                             }
 
                         item.workout_uid = fromString(item.workout_name + Math.random().toString())
-
+                         
                             return (
                                 <TouchableOpacity onPress={() => this.captureWorkout(item, this.state.currPlacementType)}>
 
@@ -1569,10 +1080,8 @@ class BuildWorkoutController extends React.Component {
 
                 {this.renderBottomSheet()}
 
-                <AddCueModal isVisible={this.state.addCueModalIsVisible} closeModal={() => this.setState({ addCueModalIsVisible: false })} captureData={cue => this.handleCaptureCue(cue)} />
-                <AddDescriptionModal isVisible={this.state.addDescriptionModalIsVisible} closeModal={() => this.setState({ addDescriptionModalIsVisible: false })} captureData={description => this.handleCaptureDescription(description)} />
-                <WorkoutSchemeModal closeModal={() => this.setState({ workoutSchemeModalIsVisible: false })} isVisible={this.state.workoutSchemeModalIsVisible} workout={this.state.currPressedPopulatedWorkout} captureValues={(sets, reps) => this.captureSetAndRepValues(sets, reps)} />
-                <CreateCustomWorkoutModal isVisible={this.state.customWorkoutModalVisible} />
+                
+                <CreateCustomWorkoutModal isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} captureWorkout={this.captureWorkout} />
                 <SafeAreaView />
             </View>
         )

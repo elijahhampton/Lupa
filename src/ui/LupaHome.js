@@ -1,78 +1,102 @@
-import React, { useState } from 'react'
 
-import {
-    View,
-    Text,
-    StyleSheet
-} from 'react-native'
+import React, {Component} from "react";
+import {Animated, Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
+import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
+import MyPrograms from "./MyPrograms";
+import Featured from "./Featured";
+import { MenuIcon } from "./icons";
 
-import {
-    Appbar, FAB,
-    Divider,
-} from 'react-native-paper'
+const NAVBAR_HEIGHT = 50;
+const {width: SCREEN_WIDTH} = Dimensions.get("window");
+const COLOR = "white";
+const TAB_PROPS = {
+  tabStyle: { backgroundColor: COLOR},
+  activeTabStyle: {backgroundColor: COLOR},
+  textStyle: {color: "#212121", fontFamily: 'Avenir-Medium'},
+  activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold'}
+};
 
-import {
-    Container,
-    Left,
-    Content,
-    Tabs,
-    Tab,
-    Body,
-    Right,
-    Title,
-    Header
-} from 'native-base'
+export class LupaHome extends Component {
+  scroll = new Animated.Value(0);
+  headerY;
 
-import { SearchBar} from 'react-native-elements'
+  constructor(props) {
+    super(props);
+    this.headerY = Animated.multiply(Animated.diffClamp(this.scroll, 0, NAVBAR_HEIGHT), -1);
+  }
 
-import Search from './search/Search'
-import Featured from './Featured'
-import MyPrograms from './MyPrograms'
-import FeatherIcon from 'react-native-vector-icons/Feather'
-import { MenuIcon } from './icons'
-import { useNavigation } from '@react-navigation/native'
-import ThinFeatherIcon from 'react-native-feather1s'
-import { useSelector } from 'react-redux/lib/hooks/useSelector'
-import LupaController from '../controller/lupa/LupaController'
+  render() {
+    const tabContent = (
+      <List>{new Array(20).fill(null).map((_, i) => <Item
+        key={i}><Text>Item {i}</Text></Item>)}</List>);
+    const tabY = Animated.add(this.scroll, this.headerY);
+    return (
+      <View>
+        {Platform.OS === "ios" && 
+        <View style={{backgroundColor: COLOR, height: 30, width: "100%", position: "absolute", zIndex: 2}}/>}
+        <Animated.View style={{
+          width: "100%",
+          position: "absolute",
+          transform: [{
+            translateY: this.headerY
+          }],
+          elevation: 0,
+          flex: 1,
+          zIndex: 1,
+          backgroundColor: COLOR
+        }}>
+          <Header style={{backgroundColor: 'transparent', borderBottomColor: 'transparent'}}  hasTabs>
+            <Left style={{paddingLeft: 10, flexDirection: 'row', alignItems: 'center'}}>
+              <MenuIcon customStyle={{marginRight: 10}} onPress={() => this.props.navigation.openDrawer()}/>
+          
+            </Left>
 
-const LupaHome = () => {
-    const navigation = useNavigation()
+            <Body>
+            <Title style={{}}>
+              <Text style={{color: "black", fontSize: 25, fontFamily: 'Avenir'}}>
+                Lupa
+              </Text>
+            </Title>
+            </Body>
 
-    return(
-        <Container style={styles.root}>
-            <Appbar.Header style={{ backgroundColor: 'white', elevation: 3, borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 , flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Appbar.Action icon={() =>  <MenuIcon onPress={() => navigation.openDrawer()} />} />
-                    <Appbar.Content title="Book trainers" titleStyle={{alignSelf: 'center', fontFamily: 'HelveticaNeue-Bold', fontSize: 15, fontWeight: '600'}} />
-                </Appbar.Header>
-            <Tabs locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
-             <Tab  heading="Featured">
-                <Featured />
-             </Tab>
-              <Tab heading="My Programs">
-                <MyPrograms />
-              </Tab>
-            </Tabs>
-    </Container>
-    )
+            <Right />
+          </Header>
+          <SafeAreaView />
+        </Animated.View>
+        <Animated.ScrollView
+          scrollEventThrottle={1}
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+          style={{zIndex: 0, height: "100%", elevation: -1}}
+          contentContainerStyle={{paddingTop: 50}}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {y: this.scroll}}}],
+            {useNativeDriver: true},
+          )}
+          overScrollMode="never">
+          <Tabs renderTabBar={(props) => <Animated.View
+            style={[{
+              transform: [{translateY: tabY}],
+              zIndex: 1,
+  
+              width: "100%",
+              backgroundColor: COLOR,
+              justifyContent: 'flex-start',
+            }, Platform.OS === "ios" ? {paddingTop: 30} : null]}>
+            <ScrollableTab {...props} style={{shadowColor: 'red', shadowRadius: 1, justifyContent: 'flex-start', elevation: 15, borderBottomColor: 'transparent'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 15, borderBottomColor: 'transparent'}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 15, borderRadius: 8}}/>
+          </Animated.View>
+          }>
+            <Tab heading="Featured" {...TAB_PROPS} >
+            <Featured />
+            </Tab>
+            <Tab heading="My Programs" {...TAB_PROPS}>
+              <MyPrograms />
+            </Tab>
+          </Tabs>
+        </Animated.ScrollView>
+      </View>
+    );
+  }
 }
-
-const styles = StyleSheet.create({
-    root: {
-        backgroundColor: '#FFFFFF',
-        flex: 1,
-    },
-    searchContainerStyle: {
-        backgroundColor: "transparent", width: '90%'
-    },
-    inputContainerStyle: {
-        backgroundColor: '#eeeeee',
-    },
-    inputStyle: {
-        fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman'
-    },
-    iconContainer: {
-        width: '10%', alignItems: 'center', justifyContent: 'center'
-    },
-})
 
 export default LupaHome;

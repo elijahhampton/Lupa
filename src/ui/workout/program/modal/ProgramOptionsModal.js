@@ -14,6 +14,7 @@ import { Divider, Appbar } from 'react-native-paper'
 import { useSelector } from 'react-redux'
 
 import { useNavigation } from '@react-navigation/native'
+import Feather1s from 'react-native-feather1s/src/Feather1s'
 
 const TRAINER_OPTIONS = [
   /*  {
@@ -145,7 +146,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                         primary: '#FFFFFF'
                     }
                 }}>
-                    <Appbar.BackAction onPress={closeModal} />
+                    <Appbar.Action onPress={closeModal} icon={() => <Feather1s thin={true} name="arrow-left" size={20} />} />
                     <Appbar.Content title="Program Options" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
                 </Appbar.Header>
             <View style={styles.container}>

@@ -105,6 +105,12 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
                             </Text>
                         </View>
 
+                        <View style={styles.programLocationAddressTextContainer}>
+                            <Text style={styles.programLocationAddressText} numberOfLines={1} ellipsizeMode="tail">
+                                {currProgram.program_description}
+                            </Text>
+                            </View>
+
                         <Divider style={styles.divider} />
 
 
@@ -115,9 +121,11 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
                             </Text>
                             </View>
 
+                           
+
                             <View style={styles.programLocationNameTextContainer}>
                             <Text style={styles.programLocationNameText}>
-                                ({getProgramLocation().name})
+                                {getProgramLocation().name}
                             </Text>
                             </View>
                         </View>
@@ -151,7 +159,7 @@ const styles = StyleSheet.create({
         fontFamily: 'HelveticaNeue', fontSize: 15, fontWeight: '600'
     },
     programOwnerNameText: {
-        fontSize: 15, fontWeight: '400', color: '#1089ff'
+        fontSize: 12, color: '#1089ff', fontFamily: 'Avenir-Light'
     },
     divider: {
         width: '100%'
