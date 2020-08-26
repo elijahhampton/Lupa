@@ -178,7 +178,8 @@ export default DrawerMenu;
     },
     drawerHeaderSubText: {
       fontSize: 15,
-      fontFamily: 'Avenir-Roman'
+      fontFamily: 'Avenir-Roman',
+      color: '#1089ff',
     },
     iconMargin: {
       marginHorizontal: 8

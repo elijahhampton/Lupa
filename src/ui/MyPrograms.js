@@ -55,9 +55,7 @@ function MyPrograms(props) {
 
     return (
         <SafeAreaView style={styles.root}>
-            <ScrollView contentContainerStyle={{alignItems: 'center'}}>
                 {renderPrograms()}
-            </ScrollView>
             <ProgramOptionsModal program={currentProgram} closeModal={() => setProgramOptionsModalIsVisible(false)} isVisible={programOptionsModalIsVisible} />
         </SafeAreaView>
     )
@@ -66,6 +64,7 @@ function MyPrograms(props) {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
+        alignItems: 'center',
         backgroundColor: '#FFFFFF'
     }
 })

@@ -1,20 +1,5 @@
 {
 "lupa_workouts": [
-    {
-        "workout_name": "Custom",
-        "workout_description": "",
-        "workout_media": {
-            "uri:": "",
-            "media_type": ""
-        },
-        "workout_steps": [],
-        "workout_tags": [],
-        "workout_uid": "",
-        "workout_cue": "",
-        "workout_sets": 0,
-        "workout_reps": 0,
-          "superset": []
-    },
   {
       "workout_name": "Squat",
       "workout_description": "",
