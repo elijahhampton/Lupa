@@ -314,7 +314,7 @@ function ProgramInformation(props) {
 
   const getNextView = () => {
     //check program values
-    let retVal =  checkInputs()
+    let retVal = false// checkInputs()
     if (retVal) {
       return;
     }
@@ -581,7 +581,7 @@ function ProgramInformation(props) {
       case 1:
 
         return (
-          <Button color="#23374d" disabled={programImage == "" || typeof(programImage) == 'undefined'} style={{ borderRadius: 5, elevation: 3, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
+          <Button color="#23374d" disabled={false /*programImage == "" || typeof(programImage) == 'undefined'*/} style={{ borderRadius: 5, elevation: 3, height: 45, alignItems: 'center', justifyContent: 'center' }} onPress={handleSaveProgramInformation} mode="contained">
             <Text>
               Add Workouts
             </Text>

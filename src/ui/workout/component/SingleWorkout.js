@@ -71,8 +71,8 @@ return (
               {this.props.workout.workout_name}
           </Text>
         
-          <Text style={{fontSize: 12}} numberOfLines={2} ellipsizeMode="tail">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi 
+          <Text style={{fontSize: 12}} numberOfLines={3}>
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.
           </Text>
                 </View>
            

@@ -28,10 +28,10 @@ import {
     Avatar,
     Appbar,
     Dialog,
+    FAB,
 } from 'react-native-paper';
 
 import { ListItem, Input } from 'react-native-elements'
-
 import { Video } from 'expo-av'
 import FeatherIcon from "react-native-vector-icons/Feather"
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
@@ -134,7 +134,43 @@ class LiveWorkout extends React.Component {
             playVideo: false,
             contentShowing: false,
             ready: false,
-            programData: getLupaProgramInformationStructure(),
+            programData: {
+                program_name: "Name",
+    program_description: "",
+    program_slots: 0,
+    program_start_date: new Date(),
+    program_end_date: new Date(),
+    program_duration: "",
+    program_time: "",
+    program_price: 0,
+    program_location: {
+        name: "",
+        address: "",
+        location: {
+            lng: 0,
+            lat: 0
+        }
+    },
+    program_type: "",
+    program_allow_waitlist: false,
+    program_structure_uuid: "0",
+    program_workout_data: {
+        Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: []
+    },
+    program_workout_days: [],
+    program_image: "",
+    program_tags: [],
+    program_owner: "",
+    program_participants: [],
+    program_automated_message: "",
+    completedProgram: false,
+            },
             programOwnerData: getLupaUserStructure(),
             dayMenuVisible: false,
             currentDisplayedMediaURI: "",
@@ -144,6 +180,7 @@ class LiveWorkout extends React.Component {
             currUserFollowing: [],
             feedback: "",
             feedbackDialogIsVisible: false,
+            mediaContainerHeight: 0
         }
     }
 
@@ -169,7 +206,7 @@ class LiveWorkout extends React.Component {
             await this.loadWorkoutDays()
             await this.loadCurrentDayWorkouts()
         } catch(err) {
-            alert(err)
+         //   alert(err)
             await this.setState({ ready: false, componentDidErr: true })
         }
 
@@ -391,16 +428,141 @@ class LiveWorkout extends React.Component {
     }
 
     renderComponentDisplay = () => {
-        if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
+        return (
+            <SafeAreaView style={{flex: 1}}>
+                 <View style={{flex: 0.3, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View style={{flex: 2}}>
+                    <ThinFeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.pop()}/>
+                    </View>
+                    <View style={{flex: 1, justifyContent: 'space-evenly', flexDirection: 'row', alignItems: 'center'}}>
+                    <ThinFeatherIcon  thin={false} name="maximize" size={20} onPress={() => this.props.navigation.pop()}/>
+                    <ThinFeatherIcon  thin={false} name="maximize" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })}/>
+                    <ThinFeatherIcon thin={false} name="globe" size={20} onPress={() => this.interactionRBSheet.current.open()}/>
+                    </View>
+
+                    
+                   
+                </View>
+                <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height})} style={{flex: 2.5, alignItems: 'center', justifyContent: 'center'}}>
+               
+                    <Surface style={{backgroundColor: 'black', flex: 1, borderRadius: 8,  width: Dimensions.get('window').width - 20}}>
+                    <Video
+                        source={require('../../videos/pushuppreview.mov')}
+                        rate={1.0}
+                        volume={0}
+                        isMuted={true}
+                        resizeMode="cover"
+                        shouldPlay={true}
+                        isLooping={true}
+                        style={{
+                            flex: 1,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%',
+                            height: '100%',
+                        }}
+                     />
+                    </Surface>
+                    <View style={{paddingVertical: 10, width: Dimensions.get('window').width - 20, justifyContent: 'space-between'}}>
+                        <Text style={{fontFamily: 'Avenir-Heavy'}}>
+                            12 Week Program Wrokout
+                        </Text>
+                        <Text style={{fontFamily: 'Avenir-Light', paddingVertical: 3}}>
+                        A description for the 12 week program workout
+                    </Text>
+                    </View>
+                </View>
+
+                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                    <View style={{paddingHorizontal: 10, flex: 2, alignItems: 'flex-start', justifyContent: 'center'}}>
+                        <Text style={{fontFamily: 'Avenir-Heavy'}}>
+                            Long Squat
+                        </Text>
+                        <Text style={{fontFamily: 'Avenir-Light'}}>
+                            Squattign is a fun workout anyone can do to get into shape baby!
+                        </Text>
+                    </View>
+
+                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <Text style={{alignSelf: 'flex-start', fontFamily: 'Avenir-Heavy'}}>
+                            Participants
+                        </Text>
+                    <Surface style={{marginVertical: 5, elevation: 8, width: 45, height: 45, borderRadius: 65}}>
+                     <Avatar.Image style={{flex: 1}} size={45} />
+                </Surface>
+                    </View>
+                </View>
+
+                <View style={{flex: 2, flexDirection: 'row'}}>
+                
+                <View style={{width: '70%', justifyContent: 'space-evenly'}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20}}>
+                    <View style={{alignItems: 'flex-start', marginRight: 10}}>
+                        <Text style={{paddingVertical: 3}}>
+                            Sets
+                        </Text>
+                        <View style={{borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center'}}>
+                            <Text style={{fontFamily: 'Avenir-Light'}}>
+                                0
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={{alignItems: 'flex-start', marginRight: 10}}>
+                        <Text style={{paddingVertical: 3}}>
+                            Reps
+                        </Text>
+                        <View style={{borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center'}}>
+                            <Text style={{fontFamily: 'Avenir-Light'}}>
+                                0
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={{alignItems: 'flex-start', paddingHorizontal: 20}}>
+                        <Text style={{paddingVertical: 3}}>
+                            Tempo
+                        </Text>
+                        <View style={{borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center'}}>
+                            <Text style={{fontFamily: 'Avenir-Light'}}>
+                                0
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+                <View style={{paddingHorizontal: 10}}>
+                    <Text style={{fontFamily: 'Avenir-Heavy'}}>
+                        Current Day
+                    </Text>
+                    <Button color="#1089ff" icon={() => <FeatherIcon name="chevron-down" size={20} />} uppercase={false} style={{alignSelf: 'flex-start'}}>
+                        Monday
+                    </Button>
+                </View>
+                </View>
+
+                <View style={{width: '30%',   alignItems: 'center', justifyContent: 'center'}}>
+                    {/* Nada */}
+                </View>
+                
+            </View>
+
+            <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, right: 0, backgroundColor: '#1089ff', width: 80, height: 80, borderTopLeftRadius: 100}}>
+                <ThinFeatherIcon name="arrow-right" size={30} color="white" />
+            </View>
+            </SafeAreaView>
+
+
+        )
+       /* if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
             return (
                 <View style={{ flex: 1, backgroundColor: 'black' }}>
 
-                    {/* Content */}
+                 
                     <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
                         {this.renderContent()}
                     </View>
 
-                    {/* Overlay */}
+                 
                     <View style={{ paddingTop: Constants.statusBarHeight,  ...StyleSheet.absoluteFillObject, flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
 
                         <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 10 }}>
@@ -557,7 +719,7 @@ class LiveWorkout extends React.Component {
                     </Text>
                 </View>
             )
-        }
+        }*/
 
     }
 
