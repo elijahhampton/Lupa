@@ -50,6 +50,7 @@ import { Constants } from 'react-native-unimodules';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ProgramInformationComponent from './workout/program/components/ProgramInformationComponent';
 import LargeProgramSearchResultCard from './workout/program/components/LargeProgramSearchResultCard'
+
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
@@ -300,7 +301,7 @@ class Featured extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <Appbar.Header style={styles.appbar}>
+              <Appbar.Header style={styles.appbar}>
 
                                 <View style={{flexDirection: 'row'}}>
                 <SearchBar placeholder="Search fitness programs"
@@ -312,12 +313,9 @@ class Featured extends React.Component {
                     inputStyle={styles.inputStyle}
                     placeholderTextColor="#212121"
                     value={this.state.searchValue} />
-                <View style={styles.iconContainer}>
-                    <FeatherIcon name="sliders" size={20} color="#212121" />
-                </View>
-                </View>
-                </Appbar.Header>
-                    <ScrollView showsVerticalScrollIndicator={false}>
+        </View>
+        </Appbar.Header> 
+                    <View style={{flex: 1}}>
                         {
                             this.state.searchValue === "" ?
                             <View >
@@ -371,7 +369,7 @@ class Featured extends React.Component {
                 </Text>
                     </Button>
                             </View>
-                            <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+                            <View style={{alignItems: 'center', justifyContent: 'center'}}>
                             {
                                     this.state.topPicks.map((program, index, arr) => {
                                         return (
@@ -379,7 +377,7 @@ class Featured extends React.Component {
                                         )
                                     })
                                 }
-                                                            </ScrollView>
+                                                            </View>
                         </View>
                         </View>
                         :
@@ -392,7 +390,7 @@ class Featured extends React.Component {
                         
 <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
                             <ShowTopPicksModal isVisible={this.state.showTopPicksModalIsVisible} closeModal={this.closeTopPicksModal}  />
-                    </ScrollView>   
+                    </View>   
                              
                     </View>
         );
@@ -448,22 +446,22 @@ const styles = StyleSheet.create({
         fontSize: RFValue(15), fontFamily: 'Avenir-Heavy', fontSize: 15,
     },
     searchContainerStyle: {
-        backgroundColor: "transparent", width: '90%'
+        backgroundColor: "transparent", width: '100%'
     },
     inputContainerStyle: {
         backgroundColor: '#eeeeee',
     },
     inputStyle: {
-        fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman'
+        fontSize: 15, color: 'black',  fontFamily: 'Avenir-Roman'
     },
     iconContainer: {
         width: '10%', alignItems: 'center', justifyContent: 'center'
     },
     appbar: {
         backgroundColor: '#FFFFFF',
-        elevation: 3,
-        borderBottomColor: 'rgb(199, 199, 204)', 
-        borderBottomWidth: 0.8 
+        elevation: 0,
+        borderTopColor: 'transparent',
+        shadowOpacity: 0,
     }
 });
 
