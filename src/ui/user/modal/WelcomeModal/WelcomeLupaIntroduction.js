@@ -18,6 +18,7 @@ import {
     ActivityIndicator,
     Checkbox,
     Button,
+    Caption,
 } from 'react-native-paper';
 
 import Map from '../../../images/map.png'
@@ -38,10 +39,12 @@ const OPTIONS = [
     {
         key: 0,
         optionTitle: 'User (Find personalized workout programs from local trainers)',
+        optionSubtitle: 'Users can find personalized workout programs from local trainers and use Lupa tooling to create their own workouts.'
     },
     {
         key: 1,
-        optionTitle: 'Certified Trainer (Create and sell workout programs)',
+        optionTitle: 'Certified Trainer (NASM only)',
+        optionSubtitle: 'Certified trainers can create and sell full scale workout programs.'
     },
     {
         key: 2,
@@ -184,7 +187,7 @@ class WelcomeLupaIntroduction extends React.Component {
 
                 <View style={{ flex: 2, justifyContent: 'center' }}>
                     <View style={{alignItems: 'flex-start', padding: 20}}>
-                    <Text style={{ fontFamily: 'avenir-roman', textAlign: 'left', fontSize: 25, fontWeight: '500', marginVertical: 10 }}>
+                    <Text style={{ fontFamily: 'Avenir-Medium', textAlign: 'left', fontSize: 25, marginVertical: 10 }}>
                         Which type of account do you want to create?
                     </Text>
                     <Text style={{ textAlign: 'center', fontSize: 15, fontWeight: '500', color: 'rgb(142, 142, 147)', marginVertical: 5 }}>
@@ -205,11 +208,14 @@ class WelcomeLupaIntroduction extends React.Component {
                                     </Text>
                                     {this.renderCheckBox(index)}
                                 </View>
+                                <Caption>
+                                    {option.optionSubtitle}
+                                </Caption>
                                 </TouchableOpacity>
 
                                 {this.state.trainerCheck === 'checked' && option.key === 1 ?
-                                 <View style={{height: 'auto', paddingLeft: 25}}>
-                                    <TextInput returnKeyType="done" returnKeyLabel="done" enablesReturnKeyAutomatically={true} placeholderTextColor="#1089ff" placeholder='Enter your certification number here.' />
+                                 <View style={{height: 'auto'}}>
+                                    <TextInput style={{padding: 10, marginHorizontal: 10, borderWidth: 1, borderRadius: 1, borderColor: 'rgb(218, 221, 234)'}} returnKeyType="done" returnKeyLabel="done" enablesReturnKeyAutomatically={true} placeholderTextColor="#1089ff" placeholder='Enter your certification number here.' />
                                 </View>
                                 :
                                 null
