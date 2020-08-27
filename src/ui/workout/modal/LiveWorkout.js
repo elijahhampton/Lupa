@@ -125,7 +125,21 @@ class LiveWorkout extends React.Component {
 
         this.state = {
             workoutStructure: ['Workout Name', 'Workout Name', 'Workout Name'],
-            currentWorkout: {},
+            currentWorkout: {
+                workout_name: "Lunge",
+    workout_description: "",
+    workout_media: {
+        uri: "",
+        media_type: ""
+    },
+    workout_steps: [],
+    workout_tags: [],
+    workout_uid: "",
+    workout_cue: "",
+    workout_sets: 0,
+    workout_reps: 0,
+      superset: []
+            },
             currentWorkoutStructure: [],
             workoutDays: [],
             currentWorkoutDay: "",
@@ -134,43 +148,7 @@ class LiveWorkout extends React.Component {
             playVideo: false,
             contentShowing: false,
             ready: false,
-            programData: {
-                program_name: "Name",
-    program_description: "",
-    program_slots: 0,
-    program_start_date: new Date(),
-    program_end_date: new Date(),
-    program_duration: "",
-    program_time: "",
-    program_price: 0,
-    program_location: {
-        name: "",
-        address: "",
-        location: {
-            lng: 0,
-            lat: 0
-        }
-    },
-    program_type: "",
-    program_allow_waitlist: false,
-    program_structure_uuid: "0",
-    program_workout_data: {
-        Monday: [],
-        Tuesday: [],
-        Wednesday: [],
-        Thursday: [],
-        Friday: [],
-        Saturday: [],
-        Sunday: []
-    },
-    program_workout_days: [],
-    program_image: "",
-    program_tags: [],
-    program_owner: "",
-    program_participants: [],
-    program_automated_message: "",
-    completedProgram: false,
-            },
+            programData: getLupaProgramInformationStructure(),
             programOwnerData: getLupaUserStructure(),
             dayMenuVisible: false,
             currentDisplayedMediaURI: "",
@@ -204,9 +182,8 @@ class LiveWorkout extends React.Component {
     
     
             await this.loadWorkoutDays()
-            await this.loadCurrentDayWorkouts()
         } catch(err) {
-         //   alert(err)
+            alert(err)
             await this.setState({ ready: false, componentDidErr: true })
         }
 
@@ -221,30 +198,57 @@ class LiveWorkout extends React.Component {
     }
 
     loadCurrentDayWorkouts = (day) => {
+        if (!this.state.ready) {
+            return;
+        }
+
+        let workoutStructure;
         switch (day) {
             case 'Monday':
-                this.setState({ currentWorkoutDay: 'Monday', currentWorkoutStructure: this.state.programData.program_workout_structure.Monday, currentWorkout: this.state.programData.program_workout_structure.Monday[0] })
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Monday)
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0] })
                 break;
             case 'Tuesday':
-                this.setState({ currentWorkoutDay: 'Tuesday', currentWorkoutStructure: this.state.programData.program_workout_structure.Tuesday, currentWorkout: this.state.programData.program_workout_structure.Tuesday[0] })
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Tuesday)
+                console.log('UHH: ' + this.state.programData.program_workout_structure.Tuesday)
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0] })
                 break;
             case 'Wednesday':
-                this.setState({ currentWorkoutDay: 'Wednesday', currentWorkoutStructure: this.state.programData.program_workout_structure.Wednesday, currentWorkout: this.state.programData.program_workout_structure.Wednesday[0] })
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Wednesday)
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0] })
                 break;
             case 'Thursday':
-                this.setState({ currentWorkoutDay: 'Thursday', currentWorkoutStructure: this.state.programData.program_workout_structure.Thursday, currentWorkout: this.state.programData.program_workout_structure.Thursday[0] })
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Thursday)
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0] })
                 break;
             case 'Friday':
-                this.setState({ currentWorkoutDay: 'Friday', currentWorkoutStructure: this.state.programData.program_workout_structure.Friday, currentWorkout: this.state.programData.program_workout_structure.Friday[0] })
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Friday)
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0] })
                 break;
             case 'Saturday':
-                this.setState({ currentWorkoutDay: 'Saturday', currentWorkoutStructure: this.state.programData.program_workout_structure.Saturday, currentWorkout: this.state.programData.program_workout_structure.Saturday[0] })
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Saturday)
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0] })
                 break;
             case 'Sunday':
-                this.setState({ currentWorkoutDay: 'Sunday', currentWorkoutStructure: this.state.programData.program_workout_structurea.Sunday, currentWorkout: this.state.programData.program_workout_structure.Sunday[0] })
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Sunday)
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0] })
                 break;
             default:
         }
+
+        
+    }
+
+    generateWorkoutStructure = (workoutData) => {
+        let workoutStructure = []
+        for (let i = 0; i < workoutData.length; i++) {
+            workoutStructure.push(workoutData[i]); //Add the first workout
+            for (let j = 0; j < workoutData[i].superset.length; j++) {
+                workoutStructure.push(workoutData[i].superset[j]);
+            }
+        }
+
+        return workoutStructure;
     }
 
     handleOnChangeWorkout = async (workout) => {
@@ -325,6 +329,22 @@ class LiveWorkout extends React.Component {
     }
 
     renderContent = () => {
+        if (!this.state.ready) {
+            return (
+                <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
+
+                    </View>
+            )
+        }
+
+        if (this.state.currentWorkout.workout_media.media_type == null || typeof(this.state.currentWorkout.workout_media.media_type) == 'undefined') {
+            return (
+                <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
+
+                    </View>
+            )
+        }
+
         const workoutMediaType = this.state.currentWorkout.workout_media.media_type
         switch (workoutMediaType) {
             case 'IMAGE':
@@ -427,26 +447,18 @@ class LiveWorkout extends React.Component {
         this.props.navigation.pop()
     }
 
-    renderComponentDisplay = () => {
-        return (
-            <SafeAreaView style={{flex: 1}}>
-                 <View style={{flex: 0.3, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <View style={{flex: 2}}>
-                    <ThinFeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.pop()}/>
-                    </View>
-                    <View style={{flex: 1, justifyContent: 'space-evenly', flexDirection: 'row', alignItems: 'center'}}>
-                    <ThinFeatherIcon  thin={false} name="maximize" size={20} onPress={() => this.props.navigation.pop()}/>
-                    <ThinFeatherIcon  thin={false} name="maximize" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })}/>
-                    <ThinFeatherIcon thin={false} name="globe" size={20} onPress={() => this.interactionRBSheet.current.open()}/>
-                    </View>
+    advanceExercise = () => {
+        console.log('Next exercise')
+    }
 
-                    
-                   
-                </View>
+    renderComponentDisplay = () => {
+        if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
+            return (
+                <SafeAreaView style={{flex: 1}}>
                 <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height})} style={{flex: 2.5, alignItems: 'center', justifyContent: 'center'}}>
                
-                    <Surface style={{backgroundColor: 'black', flex: 1, borderRadius: 8,  width: Dimensions.get('window').width - 20}}>
-                    <Video
+                    <Surface style={{backgroundColor: 'black', height: '70%', borderRadius: 8,  width: Dimensions.get('window').width - 20}}>
+                    {/*<Video
                         source={require('../../videos/pushuppreview.mov')}
                         rate={1.0}
                         volume={0}
@@ -461,7 +473,8 @@ class LiveWorkout extends React.Component {
                             width: '100%',
                             height: '100%',
                         }}
-                     />
+                    />*/}
+                    {this.renderContent()}
                     </Surface>
                     <View style={{paddingVertical: 10, width: Dimensions.get('window').width - 20, justifyContent: 'space-between'}}>
                         <Text style={{fontFamily: 'Avenir-Heavy'}}>
@@ -476,10 +489,10 @@ class LiveWorkout extends React.Component {
                 <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                     <View style={{paddingHorizontal: 10, flex: 2, alignItems: 'flex-start', justifyContent: 'center'}}>
                         <Text style={{fontFamily: 'Avenir-Heavy'}}>
-                            Long Squat
+                            {this.state.currentWorkout.workout_name}
                         </Text>
                         <Text style={{fontFamily: 'Avenir-Light'}}>
-                            Squattign is a fun workout anyone can do to get into shape baby!
+                            {this.state.currentWorkout.workout_description == '' ? 'Default description' : this.state.currentWorkout.workout_description}
                         </Text>
                     </View>
 
@@ -488,7 +501,7 @@ class LiveWorkout extends React.Component {
                             Participants
                         </Text>
                     <Surface style={{marginVertical: 5, elevation: 8, width: 45, height: 45, borderRadius: 65}}>
-                     <Avatar.Image style={{flex: 1}} size={45} />
+                    {this.props.lupa_data.Users.currUserData.photo_url == '' ? <Avatar.Text size={45} label="EH" labelStyle={{color: 'white', fontSize: 15, fontFamily: 'Avenir'}} style={{backgroundColor: '#1089ff'}}/> : <Avatar.Image style={{flex: 1}} size={45} source={{uri: this.props.lupa_data.Users.currUserData.photo_url }} />} 
                 </Surface>
                     </View>
                 </View>
@@ -532,11 +545,22 @@ class LiveWorkout extends React.Component {
                 </View>
                 <View style={{paddingHorizontal: 10}}>
                     <Text style={{fontFamily: 'Avenir-Heavy'}}>
-                        Current Day
+                        Workout Day:
                     </Text>
-                    <Button color="#1089ff" icon={() => <FeatherIcon name="chevron-down" size={20} />} uppercase={false} style={{alignSelf: 'flex-start'}}>
+                    <Menu visible={this.state.dayMenuVisible} anchor={
+                        <Button onPress={() => this.setState({ dayMenuVisible: true })} color="#1089ff" icon={() => <FeatherIcon name="chevron-down" size={20} />} uppercase={false} style={{alignSelf: 'flex-start'}}>
                         Monday
                     </Button>
+                    }>
+                        {
+                            
+                            this.state.programData.program_workout_days.map((day, index, arr) => {
+                                return <Menu.Item onPress={() => this.loadCurrentDayWorkouts(day)} title={day} titleStyle={{fontFamily: 'Avenir'}} key={index} />
+                            })
+                        }
+                        
+                    </Menu>
+                    
                 </View>
                 </View>
 
@@ -545,158 +569,14 @@ class LiveWorkout extends React.Component {
                 </View>
                 
             </View>
-
-            <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, right: 0, backgroundColor: '#1089ff', width: 80, height: 80, borderTopLeftRadius: 100}}>
+        
+            <TouchableOpacity style={{position: 'absolute', bottom: 0, right: 0, }} onPress={() => this.advanceExercise()}>
+            <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor: '#1089ff', width: 80, height: 80, borderTopLeftRadius: 100}}>
                 <ThinFeatherIcon name="arrow-right" size={30} color="white" />
             </View>
+            </TouchableOpacity>
+            
             </SafeAreaView>
-
-
-        )
-       /* if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
-            return (
-                <View style={{ flex: 1, backgroundColor: 'black' }}>
-
-                 
-                    <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
-                        {this.renderContent()}
-                    </View>
-
-                 
-                    <View style={{ paddingTop: Constants.statusBarHeight,  ...StyleSheet.absoluteFillObject, flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
-
-                        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 10 }}>
-                            {
-                                this.state.playVideo === true ?
-                                    <Text style={{ color: 'white' }}>
-                                        0:00 / 4:30
-                            </Text>
-                                    :
-                                    null
-                            }
-                            <View>
-
-                            </View>
-
-                            
-                            {
-                                this.state.playVideo === true ?
-                                null
-                                :
-                                <TouchableOpacity onPress={this.openDayMenu}>
-
-                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                    
-                                    <Menu
-                                        visible={this.state.dayMenuVisible}
-                                        onDismiss={this.closeDayMenu}
-                                        anchor={
-                                            <View>
-                                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-
-                                                <Text style={{color: 'white', fontWeight: 'bold', fontSize: 15, fontFamily: 'HelveticaNeue'}}>
-                                                {this.state.currentWorkoutDay}
-                                                </Text>
-                                                <FeatherIcon name="chevron-down" size={15} color="white" />
-                                                </View>
-                                            <Caption style={{color: 'white'}}>
-                                                tap to change the day
-                                            </Caption>
-                                            </View>
-                                        }>
-                                        {
-                                            this.state.workoutDays.map((day, index, arr) => {
-                                                return (
-                                                    <Menu.Item key={day} onPress={() => this.loadCurrentDayWorkouts(day)} title={day} />
-                                                )
-                                            })
-                                        }
-                                    </Menu>
-
-
-                                   
-                                </View>
-                            </TouchableOpacity>
-                            }
-                         
-                        </View>
-
-
-
-
-
-
-                        <View style={{ height: 200 }}>
-                            <View style={{ marginHorizontal: 10, width: '100%', justifyContent: 'flex-end',  alignItems: 'center', flexDirection: 'row' }}>
-                                {this.getVideoIcon()}
-                                <FeatherIcon name="more-horizontal" color="white" size={35} style={{ padding: 10 }} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />
-                            </View>
-                            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                {
-                                    this.state.playVideo == false ?
-                                        <ScrollView
-                                            horizontal={true}
-                                            showsHorizontalScrollIndicator={false}
-                                            shouldRasterizeIOS={true}
-                                            deaccelerationRate={0}
-                                            pagingEnabled={true}
-                                            snapToInterval={Dimensions.get('window').width}
-                                            snapToAlignment={'center'}
-                                            centerContent
-                                            scrollEnabled={true}
-                                        >
-                                            {
-                                                this.state.currentWorkoutStructure.map((workout, index, arr) => {
-                                                    return (
-                                                        <TouchableOpacity key={workout.workout_uid} onPress={() => this.handleOnChangeWorkout(workout)} style={{ marginHorizontal: 10, }}>
-
-                                                            <View style={{ width: Dimensions.get("window").width / 2.8, alignItems: 'center', justifyContent: 'center', }}>
-                                                   
-
-
-                                                                <Surface key={workout.workout_uid} style={{ borderWidth: 1, borderColor: 'white', backgroundColor: '#212121', elevation: 0, width: Dimensions.get("window").width / 2.8, height: 60, marginHorizontal: 10, marginVertical: 3, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
-                                                                    {this.renderPreviewContent(workout.workout_media.media_type, workout.workout_media.uri)}
-                                                                </Surface>
-                                                                <View style={{width: '100%', paddingHorizontal: 10, alignItems: 'flex-end', justifyContent: 'flex-end',  }}>
-                                                                    <Text style={{ fontFamily: 'HelveticaNeue-Light', borderColor: 'white', fontWeight: '600', fontSize: 12,  color: 'white',}}>
-                                                                        {workout.workout_name}
-                                                                    </Text>
-                                                                    {
-                                                                         typeof(workout.workout_reps) != 'number' || typeof(workout.workout_sets) != 'number' ?
-                                                                         null
-                                                                         :
-                                                                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 3, padding: 2, backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                                                                         <FeatherIcon name="activity" color="white" size={10} style={{ paddingHorizontal: 3 }} />
-                                                                         
-                                                                         <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'white', }}>
-                                                                             <Text>
-                                                                                {workout.workout_reps} {" "}
-                                                                             </Text>
-                                                                             <Text>
-                                                                                 / 
-                                                                             </Text>
-                                                                             <Text>
-                                                                            {" "} {workout.workout_sets}
-                                                                             </Text>
-                                                                     </Text>
- 
-                                                                     </View>
-                                                                    }
-                                                           
-                                                                </View>
-                                                            </View>
-                                                        </TouchableOpacity>
-                                                    )
-                                                })
-                                            }
-                                        </ScrollView>
-                                        :
-                                        null
-                                }
-                            </View>
-                        </View>
-                    </View>
-                </View>
             )
         } else if (this.state.componentDidErr) {
             return (
@@ -719,8 +599,7 @@ class LiveWorkout extends React.Component {
                     </Text>
                 </View>
             )
-        }*/
-
+        }
     }
 
     renderInteractionBottomSheet = () => {
@@ -983,6 +862,14 @@ class LiveWorkout extends React.Component {
     render() {
         return (
             <>
+             <Appbar.Header style={{backgroundColor: '#1089ff'}}>
+                    <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.pop()}/>} />
+                    
+                    <Appbar.Content title={this.state.programData.program_name} />
+
+                    <Appbar.Action icon={() => <ThinFeatherIcon  thin={false} name="maximize" size={20} onPress={() => {}}/>} />
+                    <Appbar.Action icon={() => <ThinFeatherIcon  thin={false} name="list" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })}/>} />
+</Appbar.Header>
                 {this.renderComponentDisplay()}
                 {this.renderLiveWorkoutOptions()}
                 {this.renderInteractionBottomSheet()}
@@ -996,7 +883,7 @@ class LiveWorkout extends React.Component {
 const styles = StyleSheet.create({
     modal: {
         margin: 0,
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#FAFAFA",
         flex: 1
     },
     container: {
