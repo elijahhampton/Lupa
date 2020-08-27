@@ -25,16 +25,15 @@ const Lupa = () => {
     return state.Users.currUserData
   })
 
- /* useEffect(() => {
-   //generateMessagingToken(currUserData.user_uuid)
-    //LUPA_CONTROLLER_INSTANCE.indexApplicationData()
-  }, [])*/
+  /* useEffect(() => {
+    //generateMessagingToken(currUserData.user_uuid)
+     //LUPA_CONTROLLER_INSTANCE.indexApplicationData()
+   }, [])*/
 
   return (
     <>
-   {/* <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-    <LupaDrawerNavigator />*/}
-    <WelcomeModal />
+      <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
+      <LupaDrawerNavigator />
     </>
   )
 }
