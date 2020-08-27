@@ -6,15 +6,20 @@ import {
     StyleSheet,
     Dimensions,
     Modal,
+    Button,
     SafeAreaView,
+    KeyboardAvoidingView,
 } from 'react-native';
 
 import {
     Headline,
     TextInput,
+    Surface,
+    Avatar,
 } from 'react-native-paper';
 
-import { Avatar, Input } from 'react-native-elements';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import ThinFeatherIcon from 'react-native-feather1s'
 
 import ImagePicker from 'react-native-image-picker';
 
@@ -65,8 +70,8 @@ class BasicInformation extends React.Component {
             surroundingGymLocations: [],
             firstName: '',
             lastName: '',
-            gender: " ",
-            photoSource: undefined,
+            gender: '',
+            photoSource: '',
             showLoadingIndicator: false,
             displayNameSet: false,
             avatarSet: false,
@@ -129,10 +134,10 @@ class BasicInformation extends React.Component {
     _chooseProfilePictureFromCameraRoll = async () => {
        try {
 
-        ImagePicker.showImagePicker({}, (response) => {
+        ImagePicker.showImagePicker({}, async (response) => {
             if (!response.didCancel)
             {
-                this.setState({ 
+                await this.setState({ 
                     photoSource: response.uri,
                     avatarSet: true,
                 });
@@ -179,25 +184,34 @@ class BasicInformation extends React.Component {
     render() {
        this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
         return (
-                <SafeAreaView style={styles.flexFull}>
-
-                    <View style={[styles.flexFull, {alignItems: "center", justifyContent: 'space-evenly'}]}>
-                    <View>
-                    {   
-                       <Avatar containerStyle={{borderWidth: 1, borderColor: '#1089ff'}} showEditButton rounded size={100} source={{uri: this.state.photoSource}} onPress={this._chooseProfilePictureFromCameraRoll}/>
-                    }
-                    </View>
-                    </View>
-
-                    <View style={styles.flexFull}>
-                    <Text style={{ textAlign: 'left', fontFamily: 'avenir-roman', fontSize: 20, fontWeight: '500', marginVertical: 20 }}>
-        What should we call you?
+            <KeyboardAvoidingView style={{flex: 1}}>
+                <SafeAreaView style={[styles.flexFull, {}]}>
+    
+                   
+    <View>
+    <Text style={{ textAlign: 'left', fontFamily: 'Avenir-Roman', fontSize: 18, marginVertical: 20 }}>
+       Add your display name and choose an avatar.
     </Text>
-    <TextInput 
-    mode='flat' 
+                        </View>
+
+    <View>
+                    <View style={{alignItems: 'center', marginVertical: 20}}>
+                        <View>
+                        {this.state.photoSource == '' ? <Avatar.Icon icon={() => <ThinFeatherIcon name="user" size={80} />} size={150} style={{backgroundColor: '#EEEEEE'}} /> : <Avatar.Image source={{uri: this.state.photoSource}} size={150} />    } 
+                        <Button title="Choose an avatar" onPress={this._chooseProfilePictureFromCameraRoll}/>
+                        </View>
+       
+                    </View>
+
+                    <TextInput 
+                    style={{marginVertical: 30}}
+    mode='outlined' 
     theme={{ 
         colors: {
-            primary: '#1089ff'
+            accent: '#1089ff',
+            primary: '#1089ff',
+            surface: '#1089ff',
+            backdrop: '#1089ff'
         }
     }}
     placeholder="Ex. John Smith or Alice Walker" 
@@ -211,7 +225,15 @@ class BasicInformation extends React.Component {
         returnKeyLabel="done"
     />
                     </View>
+
+    
+
+    
+
+
+
             </SafeAreaView>
+            </KeyboardAvoidingView>
         )
     }
 }
@@ -223,6 +245,7 @@ const styles = StyleSheet.create({
     flexFull: {
         flex: 1,
         marginHorizontal: 20,
+
     }
 })
 export default connect(mapStateToProps, mapDispatchToProps)(BasicInformation);
