@@ -45,6 +45,23 @@ export default class UserController {
         return UserController._instance;
     }
 
+    generateCuratedTrainers = async (uuid, attributes) => {
+ 
+        
+        let userData = getLupaUserStructure();
+
+        await this.getUserInformationByUUID(uuid).then(data => {
+            userData = data;
+        })
+
+        let tempRetVal = []
+        await this.getTrainers().then(data => {
+            tempRetVal = data;
+        })
+        
+        return Promise.resolve(tempRetVal)
+    }
+
     saveUserProfileImage = async (string) => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();

@@ -39,7 +39,15 @@ export default class LupaController {
       }
 
       return LupaController._instance;
-      return new LupaController()
+    }
+
+    generateCuratedTrainers = async (uuid, attributes) => {
+        let retVal = [];
+        await USER_CONTROLLER_INSTANCE.generateCuratedTrainers(uuid, attributes).then(data => {
+          retVal = data;
+        });
+
+        return Promise.resolve(retVal);
     }
 
     isUserLoggedIn = async () => {
