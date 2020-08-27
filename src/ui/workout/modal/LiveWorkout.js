@@ -330,11 +330,19 @@ class LiveWorkout extends React.Component {
 
     renderContent = () => {
         if (!this.state.ready) {
-            return null;
+            return (
+                <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
+
+                    </View>
+            )
         }
 
         if (this.state.currentWorkout.workout_media.media_type == null || typeof(this.state.currentWorkout.workout_media.media_type) == 'undefined') {
-            return null;
+            return (
+                <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
+
+                    </View>
+            )
         }
 
         const workoutMediaType = this.state.currentWorkout.workout_media.media_type
