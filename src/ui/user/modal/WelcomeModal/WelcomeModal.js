@@ -48,7 +48,7 @@ const WelcomeModal = (props) => {
     return (
             <SafeAreaView style={styles.container}>
                     {
-                       getView(viewNumber, setIsNextEnabled, props.closeModalMethod)
+                       getView(2, setIsNextEnabled, props.closeModalMethod)
                     }
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                         <Pagination dotsLength={3} activeDotIndex={viewNumber} />

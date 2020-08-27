@@ -17,6 +17,7 @@ import LupaController from './controller/lupa/LupaController';
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 import { connect, useSelector } from 'react-redux'
 import { generateMessagingToken } from "./controller/firebase/firebase";
+import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal'
 
 const Lupa = () => {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -31,8 +32,9 @@ const Lupa = () => {
 
   return (
     <>
-    <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-    <LupaDrawerNavigator />
+   {/* <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
+    <LupaDrawerNavigator />*/}
+    <WelcomeModal />
     </>
   )
 }
