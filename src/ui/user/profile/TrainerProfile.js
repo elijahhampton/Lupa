@@ -41,11 +41,13 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
     const [userPrograms, setUserPrograms] = useState([])
+    const [userVlogs, setUserVlogs] = useState([])
     const [postType, setPostType] = useState("VLOG");
     const [postModalIsVisible, setPostModalIsVisible] = useState(false);
     const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0)
     const [ready, setReady] = useState(false)
+    
     const currUserPrograms = useSelector(state => {
         return state.Programs.currUserProgramsData;
     })
@@ -117,11 +119,17 @@ function TrainerProfile({ userData, isCurrentUser }) {
     }
 
     const renderCertification = () => {
-        return <Text key={userData.certification} style={[styles.userAttributeText, {color: '#1089ff'}]}>NASM</Text>
+        return (<View style={{paddingVertical: 2, flexDirection: 'row', alignItems: 'center'}}>
+                    <FeatherIcon name="file-text" style={{paddingRight: 5}} />
+                    <Text key={userData.certification} style={[styles.userAttributeText, {color: '#23374d'}]}>NASM</Text>
+                </View>)
     }
 
     const renderLocation = () => {
-        return <Text style={[styles.userAttributeText, {color: '#1089ff'}]}>{userData.location.city}, {userData.location.state}</Text>
+               return ( <View style={{paddingVertical: 2, flexDirection: 'row', alignItems: 'center'}}>
+                    <FeatherIcon name="map-pin" style={{paddingRight: 5}} />
+                    <Text style={[styles.userAttributeText, {color: '#23374d'}]}>{userData.location.city}, {userData.location.state}</Text>
+                </View>)
     }
 
     const renderDisplayName = () => {
@@ -134,6 +142,26 @@ function TrainerProfile({ userData, isCurrentUser }) {
                 {userData.bio}
             </Text>
         )
+    }
+
+    const renderVlogs = () => {
+        return userVlogs.map(vlog => {
+            return (
+                <View style={{paddingHorizontal: 20, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'flex-start'}}>
+                    <View style={{marginRight: 10}}>
+                    <Avatar key={userData.photo_url} source={{uri: userData.photo_url}} raised={true} rounded size={50} />
+                    </View>
+                    <View>
+                        <Text style={{fontSize: 12, fontFamily: 'Avenir-Heavy'}}>
+                            Elijah Hampton
+                        </Text>
+                        <Text style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+                    {vlog.vlog_text}
+                </Text>
+                    </View>
+                </View>
+            )
+        })
     }
 
     const renderPrograms = () => {
@@ -165,30 +193,39 @@ function TrainerProfile({ userData, isCurrentUser }) {
         navigation.navigate('FollowerView');
     }
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                await LUPA_CONTROLLER_INSTANCE.getAllUserPrograms(userData.user_uuid).then(data => {
-                    setUserPrograms(data);
-                })
+    const fetchVlogs = async (uuid) => {
+        await LUPA_CONTROLLER_INSTANCE.getAllUserVlogs(uuid).then(vlogs => {
+            setUserVlogs(vlogs);
+        })
+    }
 
+    const fetchPrograms = async (uuid) => {
+        await LUPA_CONTROLLER_INSTANCE.getAllUserPrograms(uuid).then(data => {
+            setUserPrograms(data);
+        })
+    }
+
+    useEffect(() => {
+        async function loadProfileData() {
+            try {
+                setProfileImage(userData.photo_url)
+                await fetchVlogs(userData.user_uuid);
+        if (isCurrentUser) {
+            setUserPrograms(currUserPrograms)
+        } else {
+            fetchPrograms(userData.user_uuid);
+        }
                 setReady(true)
             } catch(error) {
                 setReady(false)
                 alert(error);
+                setUserVlogs([])
                 setUserPrograms([])
             }
         }
-
-        setProfileImage(userData.photo_url)
-        if (isCurrentUser) {
-            setUserPrograms(currUserPrograms)
-        } else {
-            fetchData();
-        }
-
+        
+        loadProfileData()
         LOG('TrainerProfile.js', 'Running useEffect.')
-        console.log(userData.photo_url)
     }, [ready])
 
     return (
@@ -222,7 +259,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
              </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
        <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
-                        
+                        {renderVlogs()}
                     </View>
 
                    
@@ -263,8 +300,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     bioText: {
-        fontFamily: 'Avenir-Light',
+        fontFamily: 'Avenir-Roman',
         fontSize: 11,
+        
     },
     certificationText: {
         fontFamily: 'Avenir-Light',
@@ -279,7 +317,7 @@ const styles = StyleSheet.create({
     },
     displayNameText: {
         paddingVertical: 5,
-        fontSize: 12,
+        fontSize: 15,
         fontFamily: 'Avenir-Black'
     },
     inactiveTabHeading: {

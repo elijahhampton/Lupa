@@ -1,1 +1,1 @@
-../../../../../node_modules/expo/node_modules/expo-font/ios/EXFont/EXFont.h
+../../../../../node_modules/expo-font/ios/EXFont/EXFont.h
