@@ -49,16 +49,22 @@ class VideoPreview extends React.Component {
   saveVideo = async () => {
     try {
     this.setState({ showLoadingIndicator: true });
-    console.log('a')
-    const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
-    this.props.currProgramUUID, 'VIDEO', this.props.videoSrcProps);
-    console.log('b')
-   await this.props.captureURI(newURI, "VIDEO");
-   console.log('c')
+
+    switch (this.props.oulet) {
+      case 'CreateProgram':
+        const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
+        this.props.currProgramUUID, 'VIDEO', this.props.videoSrcProps);
+        await this.props.captureURI(newURI, "VIDEO");
+        break;
+      case 'CreateNewPost':
+        
+        await this.props.captureURI(newURI, "VIDEO");
+        break;
+      default:
+    }
+    
     this.setState({ showLoadingIndicator: false });
-    console.log('d')
     this.props.closeVideoPreview();
-    console.log('e')
     this.props.closeMainModal()
     } catch(error) {
       alert('saveVideo: ' + error)
@@ -439,11 +445,12 @@ export default class CameraScreen extends React.Component {
         isVisible={this.state.showVideoPrev} 
         videoSrcProps={this.state.currVideo} 
         closeVideoPreview={() => this.setState({ showVideoPrev: false })} 
-        currWorkoutPressed={this.props.route.params.currWorkoutPressed}
-        currProgramUUID={this.props.route.params.currProgramUUID}
-        closeMainModal={() => this.props.navigation.goBack('CreateProgram')}
+        currWorkoutPressed={typeof(this.props.route.params.currWorkoutPressed) == 'undefined' ? '' : this.props.route.params.currWorkoutPressed}
+        currProgramUUID={typeof(this.props.route.params.currProgramUUID) == 'undefined' ? '' : this.props.route.params.currProgramUUID}
+        closeMainModal={() => this.props.navigation.goBack()}
         captureURI={(uri, type) => this.captureURI(uri,type)}
         mediaCaptureType={this.props.route.params.mediaCaptureType}
+        outlet={this.props.route.params.outlet}
        />
        </>
     )

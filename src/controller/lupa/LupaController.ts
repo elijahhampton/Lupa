@@ -889,4 +889,12 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE.updateCurrentUser('hourly_payment_rate', rate, "", "");
     }
 
+    publishVlog = (vlogStructure) => {
+      if (typeof(vlogStructure) == 'undefined' || vlogStructure == null) {
+        return;
+      }
+
+      USER_CONTROLLER_INSTANCE.saveVlog(vlogStructure);
+    }
+
 }
