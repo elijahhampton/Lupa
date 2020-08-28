@@ -152,6 +152,7 @@ const LUPA_PACK_IMAGE_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('pack_images
 const LUPA_PACK_EVENT_IMAGE_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('pack_event_images');
 const LUPA_USER_PROGRAMS_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('program_workout_images')
 const LUPA_PROGRAM_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('program_images')
+const LUPA_VLOG_MEDIA_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('vlog_media')
 //save every user image as: useruuid_imgname
 
 
@@ -452,6 +453,19 @@ export class FirebaseStorageBucket {
     });
 
     return Promise.resolve(link)
+  }
+
+  saveVlogMedia = async (blog) => {
+    const user_uuid = await LUPA_AUTH.currentUser.uid;
+    return new Promise((resolve, reject) => {
+      
+     LUPA_VLOG_MEDIA_STORAGE_REF.child(programUUID).put(blob).then(ref => {
+      LUPA_VLOG_MEDIA_STORAGE_REF.child(programUUID).getDownloadURL().then(url => {
+          resolve(url)
+        })
+      })
+
+    })
   }
 
   saveProgramImage = async (programUUID, blob) => {
