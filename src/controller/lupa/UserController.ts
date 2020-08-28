@@ -536,6 +536,21 @@ export default class UserController {
                     hourly_payment_rate: value
                 })
                 break;
+            case 'vlogs':
+                let updatedVlogs = [];
+                if (optionalData == 'add')
+                {
+                    await currentUserDocument.get().then(snapshot => {
+                        updatedVlogs = snapshot.data().vlogs;
+                    });
+    
+                    updatedVlogs.push(value);
+
+                    currentUserDocument.update({
+                        vlogs: updatedVlogs
+                    })
+                }
+                break;
         }
     }
 
@@ -1614,6 +1629,73 @@ export default class UserController {
                     updatedProgramSnapshot = snapshot.data();
                 })
                 return Promise.resolve(updatedProgramSnapshot);
+      }
+
+      saveVlogMedia = async (uri) => {
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
+            xhr.send(null);
+        });
+
+        let imageURL;
+        return new Promise((resolve, reject) => {
+            this.fbStorage.saveVlogMedia(blob).then(url => {
+                resolve(url);
+            })
+        })
+    }
+
+      saveVlog = async (vlogStructure) => {
+        let generatedURL;
+        if (typeof(vlogStructure.vlog_media.uri) == 'undefined' || vlogStructure.vlog_media.uri == null || vlogStructure.vlog_media.uri == '') {
+            
+        } else {
+            await this.saveVlogMedia(vlogStructure.vlog_media.uri).then(mediaURL => {
+                generatedURL = mediaURL;
+            });
+    
+            //Update the existing uri with the newly generated uri we retrieve from firestore storage.
+            vlogStructure.vlog_media.uri = generatedURL;
+        }
+
+        //generate a uuid for the vlog using the vlog test
+        const VLOG_UUID = Math.random().toString()
+
+        //Add the UUID to the users vlog list
+        this.updateCurrentUser('vlogs', VLOG_UUID, 'add', '');
+
+        //Add the vlog structure to the vlog collection
+        LUPA_DB.collection('vlogs').doc(VLOG_UUID).set(vlogStructure);
+      }
+
+      getAllUserVlogs = async (uuid) => {
+          let vlogsList = []
+          let vlogsData = [];
+
+          try {
+            await USER_COLLECTION.doc(uuid).get().then(snapshot => {
+                vlogsList = snapshot.data().vlogs;
+            });
+          } catch(error) {
+              return Promise.resolve([])
+          }
+
+          for (let i = 0; i < vlogsList.length; i++) {
+              await LUPA_DB.collection('vlogs').doc(vlogsList[i]).get().then(snapshot => {
+                const vlogData = snapshot.data();
+                vlogsData.push(vlogData);
+              });
+          }
+
+          return Promise.resolve(vlogsData);
       }
 
     }
