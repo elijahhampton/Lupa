@@ -39,7 +39,7 @@ function SchedulerModal({ closeModal, isVisible }) {
     }
 
     return (
-        <Modal presentationStyle="fullScreen" visible={isVisible}>
+        <Modal presentationStyle="fullScreen" visible={isVisible} animated={true} animationType="slide">
             <Appbar.Header style={{backgroundColor: '#FFFFFF'}}>
                 <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}  onPress={closeModal}/>
                 <Appbar.Content title="Edit Hours" />

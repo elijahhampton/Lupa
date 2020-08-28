@@ -181,7 +181,7 @@ export default class LupaCalendar extends React.Component {
       </View>
 
 
-      <SchedulerModal isVisible={this.state.editHoursModalVisible} closeModal={() => this.setState({ editHoursModalVisible: false })} />
+     
       </>
     );
   }

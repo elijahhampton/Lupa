@@ -30,6 +30,8 @@ import NotificationsView from './src/ui/user/notifications/NotificationsView';
 import MessagesView from './src/ui/user/chat/MessagesView';
 import LupaCamera from './src/ui/workout/program/createprogram/component/LupaCamera';
 import ProfileController from './src/ui/user/profile/ProfileController';
+import CreateNewPost from './src/ui/user/profile/modal/CreateNewPost';
+import ProfileNavigator from './src/ui/navigators/ProfileNavigator';
 
 
 const App = () => {
@@ -142,6 +144,7 @@ function AppNavigator() {
     <StackApp.Screen name='Auth' component={AuthenticationNavigator}/>
     <StackApp.Screen name='App' component={Lupa}/>
     <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{animationEnabled: true}}/>
+    <StackApp.Screen name="CreatePost" component={CreateNewPost} />
     <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{animationEnabled: true}}/>
     <StackApp.Screen name="PrivateChat" component={PrivateChat} />
     <StackApp.Screen name="Onboarding" component={WelcomeModal}/>
@@ -149,7 +152,7 @@ function AppNavigator() {
     <StackApp.Screen name="AccountSettings" component={AccountSettings} />
     <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
         <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
-      <StackApp.Screen name="Profile" component={ProfileController} />
+      <StackApp.Screen name="Profile" component={ProfileNavigator} />
     <StackApp.Screen name="Notifications" component={NotificationsView} />
   <StackApp.Screen name="Messages" component={MessagesView} />
   <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{mediaCaptureType: "VIDEO"}} />
