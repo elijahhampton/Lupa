@@ -323,7 +323,7 @@ class CreateProgram extends React.Component {
             }
         }
 
-        this.props.navigation.navigate('Train');
+        this.props.navigation.goBack();
     }
 
     getViewDisplay = () => {

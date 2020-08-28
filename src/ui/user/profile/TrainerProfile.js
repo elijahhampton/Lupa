@@ -43,8 +43,9 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [userPrograms, setUserPrograms] = useState([])
     const [postType, setPostType] = useState("VLOG");
     const [postModalIsVisible, setPostModalIsVisible] = useState(false);
+    const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0)
-
+    const [ready, setReady] = useState(false)
     const currUserPrograms = useSelector(state => {
         return state.Programs.currUserProgramsData;
     })
@@ -144,8 +145,14 @@ function TrainerProfile({ userData, isCurrentUser }) {
     }
 
     const renderFAB = () => {
-        if (currPage == 1) {
-            return  <FAB label="Add Blog" icon="rss" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 12}} />
+        switch(currPage) {
+            case 0:
+                return  <FAB onPress={() => navigation.push('CreateProgram')} icon="plus" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
+            case 1:
+                return  <FAB onPress={() => navigation.push('CreatePost')} icon="rss" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
+            case 2:
+                return  <FAB onPress={() => setEditHoursModalVisible(true)} icon="calendar" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
+            
         }
 
         return null;
@@ -155,7 +162,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
      * Navigates to the follower view.
      */
     const navigateToFollowers = () => {
-        this.props.navigation.navigate('FollowerView');
+        navigation.navigate('FollowerView');
     }
 
     useEffect(() => {
@@ -163,15 +170,17 @@ function TrainerProfile({ userData, isCurrentUser }) {
             try {
                 await LUPA_CONTROLLER_INSTANCE.getAllUserPrograms(userData.user_uuid).then(data => {
                     setUserPrograms(data);
-                    setProfileImage(data.photo_url)
                 })
+
+                setReady(true)
             } catch(error) {
+                setReady(false)
                 alert(error);
                 setUserPrograms([])
             }
         }
 
-
+        setProfileImage(userData.photo_url)
         if (isCurrentUser) {
             setUserPrograms(currUserPrograms)
         } else {
@@ -179,7 +188,8 @@ function TrainerProfile({ userData, isCurrentUser }) {
         }
 
         LOG('TrainerProfile.js', 'Running useEffect.')
-    }, [userPrograms.length])
+        console.log(userData.photo_url)
+    }, [ready])
 
     return (
         <SafeAreaView style={styles.container}>
@@ -204,7 +214,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
                 </View>
             </View>
 
-            <Tabs onChangeTab={tabInfo => console.log(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
+            <Tabs tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
                     <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
                         {renderPrograms()}
@@ -212,11 +222,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
              </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
        <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
-                        <Button onPress={() => setPostModalIsVisible(true)} mode="text" color="#1089ff" uppercase={false} style={{alignSelf: 'flex-end'}} icon={() =>  <FeatherIcon name="rss" color="#1089ff" size={12} />}>
-                            <Text style={{fontFamily: 'Avenir-Light', fontWeight: '300', fontSize: 12}}>
-                                Add Vlog
-                            </Text>
-                        </Button>
+                        
                     </View>
 
                    
@@ -227,6 +233,9 @@ function TrainerProfile({ userData, isCurrentUser }) {
             </Tabs>
             </ScrollView>
 
+           {renderFAB()}
+
+           <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} />
             <CreateNewPost postType={postType} isVisible={postModalIsVisible} closeModal={() => setPostModalIsVisible(false)} />
         </SafeAreaView>
     )
