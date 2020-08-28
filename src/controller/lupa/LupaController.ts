@@ -897,4 +897,13 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE.saveVlog(vlogStructure);
     }
 
+    getAllUserVlogs = async (uuid) => {
+      let retVal = [];
+      await USER_CONTROLLER_INSTANCE.getAllUserVlogs(uuid).then(vlogs => {
+        retVal = vlogs;
+      });
+
+      return Promise.resolve(retVal);
+    }
+
 }
