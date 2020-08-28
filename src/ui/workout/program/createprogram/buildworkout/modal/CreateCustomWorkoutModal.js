@@ -84,7 +84,8 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
             currWorkoutPressed: customWorkout,
             currProgramUUID: programUUID,
             mediaCaptureType: "VIDEO",
-            captureURI: handleCaptureNewMediaURI
+            captureURI: handleCaptureNewMediaURI,
+            outlet: 'CreateProgram',
         })
     }
 
@@ -137,9 +138,9 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
 
         switch (customWorkout.workout_media.media_type) {
             case 'IMAGE':
-                return <Image style={{ width: '100%', height: '100%', borderRadius: 80 }} />
+                return <Image source={{uri: customWorkout.workout_media.uri}} style={{ flex: 1, width: '100%', height: '100%',  borderRadius: 80 }} />
             case 'VIDEO':
-                return <Video style={{ flex: 1 }} loop={false} />
+                return <Video source={{uri: customWorkout.workout_media.uri}} style={{ flex: 1, width: '100%', height: '100%', borderRadius: 80 }} loop={false} />
         }
     }
 
