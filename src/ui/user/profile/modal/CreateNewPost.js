@@ -18,6 +18,7 @@ import {
     Divider,
 } from 'react-native-paper';
 
+import { useSelector } from 'react-redux'
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ThinFeatherIcon from 'react-native-feather1s'
 import { Constants } from 'react-native-unimodules'
@@ -105,7 +106,9 @@ function CreateNewPost({ isVisible, closeModal, postType }) {
 
     const saveVlog = () => {
         const vlogStructure = getLupaVlogStructure(postText, postMediaURI, postMediaType, currUserUUID);
+        console.log(vlogStructure.vlog_media.uri)
         LUPA_CONTROLLER_INSTANCE.publishVlog(vlogStructure);
+        //closeModal();
     }
 
     useEffect(() => {
