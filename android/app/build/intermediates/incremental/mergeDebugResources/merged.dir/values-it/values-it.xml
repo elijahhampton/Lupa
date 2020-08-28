@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string-array name="gettipsi_currency_array">
+    <item>Currency (optional)</item>
+    <item>Unspecified</item>
+    <item>EUR</item>
+  </string-array>
+    <string name="CreditCardFormCardNumberHint">1234 5678 9012 3456</string>
+    <string name="CreditCardNumberHelp"/>
+    <string name="ExpDateFieldHint">MM/AA</string>
+    <string name="ExpirationDateHelp">Data di scadenza (MM/AA)</string>
+    <string name="SecurityCodeFieldHint">CVV</string>
+    <string name="SecurityCodeHelp">Codice di sicurezza (CVV)</string>
+    <string name="ZipCodeFieldHint">   CAP   </string>
+    <string name="ZipHelp">CAP indirizzo di fatturazione</string>
+    <string msgid="7903180715631665059" name="abc_action_bar_home_description">"Portami a casa"</string>
+    <string msgid="6794660482873516081" name="abc_action_bar_up_description">"Torna indietro"</string>
+    <string msgid="1155814932213556626" name="abc_action_menu_overflow_description">"Altre opzioni"</string>
+    <string msgid="2571498368472823490" name="abc_action_mode_done">"Fine"</string>
+    <string msgid="3732416590524162402" name="abc_activity_chooser_view_see_all">"Mostra tutto"</string>
+    <string msgid="1798588241954930982" name="abc_activitychooserview_choose_application">"Scelta di un\'app"</string>
+    <string msgid="3403923230105792483" name="abc_capital_off">"OFF"</string>
+    <string msgid="7831734969929204599" name="abc_capital_on">"ON"</string>
+    <string msgid="5725160506500770567" name="abc_menu_alt_shortcut_label">"ALT +"</string>
+    <string msgid="944415252197684443" name="abc_menu_ctrl_shortcut_label">"CTRL +"</string>
+    <string msgid="129742188101734366" name="abc_menu_delete_shortcut_label">"CANC"</string>
+    <string msgid="6840127756824236027" name="abc_menu_enter_shortcut_label">"INVIO"</string>
+    <string msgid="4974283687810130415" name="abc_menu_function_shortcut_label">"FUNZIONE +"</string>
+    <string msgid="8046416353848716905" name="abc_menu_meta_shortcut_label">"META +"</string>
+    <string msgid="3271697756921353410" name="abc_menu_shift_shortcut_label">"MAIUSC +"</string>
+    <string msgid="2304645930658438191" name="abc_menu_space_shortcut_label">"SPAZIO"</string>
+    <string msgid="8327365089695024394" name="abc_menu_sym_shortcut_label">"SYM +"</string>
+    <string msgid="3570106412128999382" name="abc_prepend_shortcut_label">"MENU +"</string>
+    <string msgid="940844115270746197" name="abc_search_hint">"Cerca…"</string>
+    <string msgid="1769270744562318534" name="abc_searchview_description_clear">"Cancella query"</string>
+    <string msgid="908784302972860853" name="abc_searchview_description_query">"Query di ricerca"</string>
+    <string msgid="5466662225065974044" name="abc_searchview_description_search">"Cerca"</string>
+    <string msgid="8203855622131699655" name="abc_searchview_description_submit">"Invia query"</string>
+    <string msgid="3478748990613108725" name="abc_searchview_description_voice">"Ricerca vocale"</string>
+    <string msgid="2650565705514630347" name="abc_shareactionprovider_share_with">"Condividi con"</string>
+    <string msgid="9009661856846212431" name="abc_shareactionprovider_share_with_application">"Condividi tramite <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
+    <string msgid="6389460216547290468" name="abc_toolbar_collapse_description">"Comprimi"</string>
+    <string name="acc_label_card_number">Numero della carta</string>
+    <string name="acc_label_expiry_date">Data di scadenza</string>
+    <string name="acc_label_zip">Codice postale</string>
+    <string name="acc_label_zip_short">ZIP</string>
+    <string name="add_card">Aggiungi una nuova carta di credito o di debito per fare acquisti in questa app.</string>
+    <string name="address_city_required">Inserisci la città</string>
+    <string name="address_county_required">Inserisci la contea</string>
+    <string name="address_label_address">Indirizzo</string>
+    <string name="address_label_address_line1">Indirizzo riga 1</string>
+    <string name="address_label_address_line1_optional">Indirizzo riga 1 (facoltativo)</string>
+    <string name="address_label_address_line2">Indirizzo riga 2</string>
+    <string name="address_label_address_line2_optional">Indirizzo riga 2 (facoltativo)</string>
+    <string name="address_label_address_optional">Indirizzo (facoltativo) </string>
+    <string name="address_label_apt">Appart.</string>
+    <string name="address_label_apt_optional">Appart. (facoltativo)</string>
+    <string name="address_label_city">Città</string>
+    <string name="address_label_city_optional">Città (facoltativo)</string>
+    <string name="address_label_country">Paese</string>
+    <string name="address_label_county">Regione</string>
+    <string name="address_label_county_optional">Regione (facoltativo)</string>
+    <string name="address_label_name">Nome</string>
+    <string name="address_label_name_optional">Nome (facoltativo)</string>
+    <string name="address_label_phone_number">Numero di telefono</string>
+    <string name="address_label_phone_number_optional">Numero di telefono (facoltativo)</string>
+    <string name="address_label_postal_code">Codice postale</string>
+    <string name="address_label_postal_code_optional">Codice postale (facoltativo)</string>
+    <string name="address_label_postcode">Codice postale</string>
+    <string name="address_label_postcode_optional">Codice postale (facoltativo)</string>
+    <string name="address_label_province">Provincia</string>
+    <string name="address_label_province_optional">Provincia (facoltativo)</string>
+    <string name="address_label_region_generic"> Stato / Provincia / Regione</string>
+    <string name="address_label_region_generic_optional">Stato / Provincia / Regione (facoltativo)</string>
+    <string name="address_label_state">Stato</string>
+    <string name="address_label_state_optional">Stato (facoltativo)</string>
+    <string name="address_label_zip_code">Codice postale</string>
+    <string name="address_label_zip_code_optional">Codice postale (facoltativo)</string>
+    <string name="address_label_zip_postal_code">CAP/Codice postale</string>
+    <string name="address_label_zip_postal_code_optional">CAP/Codice postale (facoltativo)</string>
+    <string name="address_name_required">Inserisci il tuo nome</string>
+    <string name="address_phone_number_required">Inserisci il tuo numero di telefono</string>
+    <string name="address_postal_code_invalid">Il codice postale non è valido</string>
+    <string name="address_postcode_invalid">Il codice postale non è valido</string>
+    <string name="address_province_required">Inserisci la provincia</string>
+    <string name="address_region_generic_required">Inserisci lo Stato/Provincia/Regione</string>
+    <string name="address_required">Inserisci il tuo indirizzo</string>
+    <string name="address_shipping_address">Indirizzo di spedizione</string>
+    <string name="address_state_required">Inserisci lo stato</string>
+    <string name="address_zip_invalid">Il codice postale non è valido.</string>
+    <string name="address_zip_postal_invalid">Il CAP/codice postale non è valido</string>
+    <string msgid="8585111718777012708" name="common_google_play_services_enable_button">"Attiva"</string>
+    <string msgid="7045129128108380659" name="common_google_play_services_enable_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> non funzionerà se non attivi Google Play Services."</string>
+    <string msgid="3147157405986503375" name="common_google_play_services_enable_title">"Attiva Google Play Services"</string>
+    <string msgid="9115728400623041681" name="common_google_play_services_install_button">"Installa"</string>
+    <string msgid="8179894293032530091" name="common_google_play_services_install_text">"L\'app <ns1:g id="APP_NAME">%1$s</ns1:g> non funzionerà senza Google Play Services, non presente sul tuo dispositivo."</string>
+    <string msgid="7442193194585196676" name="common_google_play_services_install_title">"Installa Google Play Services"</string>
+    <string msgid="4293541511340436975" name="common_google_play_services_notification_channel_name">"Disponibilità di Google Play Services"</string>
+    <string msgid="180394615667698242" name="common_google_play_services_notification_ticker">"Errore Google Play Services"</string>
+    <string msgid="2518680582564677258" name="common_google_play_services_unknown_issue">"<ns1:g id="APP_NAME">%1$s</ns1:g> sta riscontrando problemi con Google Play Services. Riprova."</string>
+    <string msgid="5501187292256987189" name="common_google_play_services_unsupported_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> non funzionerà senza Google Play Services, non supportati dal tuo dispositivo."</string>
+    <string msgid="8172070149091615356" name="common_google_play_services_update_button">"Aggiorna"</string>
+    <string msgid="7773943415006962566" name="common_google_play_services_update_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> non funzionerà se non aggiorni Google Play Services."</string>
+    <string msgid="8706675115216073244" name="common_google_play_services_update_title">"Aggiorna Google Play Services"</string>
+    <string msgid="7894275749778928941" name="common_google_play_services_updating_text">"<ns1:g id="APP_NAME">%1$s</ns1:g> non funzionerà senza Google Play Services, attualmente in fase di aggiornamento."</string>
+    <string msgid="2804989272736383918" name="common_google_play_services_wear_update_text">"È richiesta una nuova versione di Google Play Services. L\'aggiornamento automatico verrà eseguito a breve."</string>
+    <string msgid="5201977337835724196" name="common_open_on_phone">"Apri sul telefono"</string>
+    <string msgid="3441753203274453993" name="common_signin_button_text">"Accedi"</string>
+    <string msgid="669893613918351210" name="common_signin_button_text_long">"Accedi con Google"</string>
+    <string name="ending_in">" - "</string>
+    <string name="exo_controls_fastforward_description">Avanti veloce</string>
+    <string name="exo_controls_fullscreen_description">Modalità a schermo intero</string>
+    <string name="exo_controls_next_description">Traccia successiva</string>
+    <string name="exo_controls_pause_description">Pausa</string>
+    <string name="exo_controls_play_description">Riproduci</string>
+    <string name="exo_controls_previous_description">Traccia precedente</string>
+    <string name="exo_controls_repeat_all_description">Ripeti tutto</string>
+    <string name="exo_controls_repeat_off_description">Non ripetere nulla</string>
+    <string name="exo_controls_repeat_one_description">Ripeti uno</string>
+    <string name="exo_controls_rewind_description">Riavvolgi</string>
+    <string name="exo_controls_shuffle_description">Riproduzione casuale</string>
+    <string name="exo_controls_stop_description">Interrompi</string>
+    <string name="exo_download_completed">Download completato</string>
+    <string name="exo_download_description">Scarica</string>
+    <string name="exo_download_downloading">Download…</string>
+    <string name="exo_download_failed">Download non riuscito</string>
+    <string name="exo_download_notification_channel_name">Download</string>
+    <string name="exo_download_removing">Rimozione dei download…</string>
+    <string name="exo_item_list">%1$s, %2$s</string>
+    <string name="exo_track_bitrate">%1$.2f Mbps</string>
+    <string name="exo_track_mono">Mono</string>
+    <string name="exo_track_resolution">%1$d × %2$d</string>
+    <string name="exo_track_selection_auto">Auto</string>
+    <string name="exo_track_selection_none">Nessuno</string>
+    <string name="exo_track_selection_title_audio">Audio</string>
+    <string name="exo_track_selection_title_text">Testo</string>
+    <string name="exo_track_selection_title_video">Video</string>
+    <string name="exo_track_stereo">Stereo</string>
+    <string name="exo_track_surround">Audio surround</string>
+    <string name="exo_track_surround_5_point_1">Audio surround 5.1</string>
+    <string name="exo_track_surround_7_point_1">Audio surround 7.1</string>
+    <string name="exo_track_unknown">Sconosciuta</string>
+    <string name="expiry_date_hint">MM/AA</string>
+    <string name="expiry_label_short">Scad.</string>
+    <string msgid="4133737464567140336" name="fcm_fallback_notification_channel_label">"Varie"</string>
+    <string msgid="9521340570209730" name="gcm_fallback_notification_channel_label">"Varie"</string>
+    <string name="gettipsi_card_cvc">CVC</string>
+    <string name="gettipsi_card_enter_dialog_negative_button">Annulla</string>
+    <string name="gettipsi_card_enter_dialog_positive_button">Completato</string>
+    <string name="gettipsi_card_enter_dialog_title">Inserisci i dati della tua carta</string>
+    <string name="gettipsi_card_number">Numero carta</string>
+    <string name="gettipsi_card_number_label">Carta</string>
+    <string name="gettipsi_google_pay_unavaliable">Google Pay non è disponibile sul tuo dispositivo.</string>
+    <string name="gettipsi_save">Salva</string>
+    <string name="gettipsi_user_cancel_dialog">Un utente ha annullato l\'operazione. Nessun addebito è stato effettuato!</string>
+    <string name="invalid_card_number">Il numero della carta non è valido.</string>
+    <string name="invalid_cvc">Il codice di sicurezza della carta non è valido.</string>
+    <string name="invalid_expiry_month">Il mese di scadenza della carta non è valido.</string>
+    <string name="invalid_expiry_year">L\'anno di scadenza della carta non è valido.</string>
+    <string name="invalid_shipping_information">Indirizzo di spedizione non valido</string>
+    <string name="invalid_zip">Il tuo codice postale è incompleto.</string>
+    <string name="no_payment_methods">Nessuna modalità di pagamento.</string>
+    <string name="payment_method_add_new_card">Aggiungi una nuova carta…</string>
+    <string name="price_free">Gratuito</string>
+    <string msgid="730395136688082741" name="search_menu_title">"Cerca"</string>
+    <string msgid="8106346172024741305" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="title_add_a_card">Aggiungi una carta</string>
+    <string name="title_add_an_address">Aggiungi un indirizzo</string>
+    <string name="title_payment_method">Metodo di pagamento</string>
+    <string name="title_select_shipping_method">Seleziona metodo di spedizione</string>
+    <string msgid="363496807345461806" name="wallet_buy_button_place_holder">"Acquista con Google"</string>
+</resources>
