@@ -26,6 +26,7 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 import LOG, {LOG_ERROR} from '../../common/Logger';
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
+import { config } from 'process';
 
 export default class UserController {
     private static _instance: UserController;
@@ -285,6 +286,34 @@ export default class UserController {
         });
 
         switch (fieldToUpdate) {
+            case 'scheduler_times':
+                if (optionalData == 'add') {
+                    console.log('hereeeee')
+                    let schedulerObject = {}, updatedSchedulerTimes = {}, newDateObject = {}
+                    await currentUserDocument.get().then(result => {
+                        schedulerObject = result.data().scheduler_times;
+                     });
+
+                     updatedSchedulerTimes = schedulerObject;
+
+                     console.log('trying this messs')
+                     for (const key in value) {
+                         //there is already a date with times in the dataabse
+                         if (Object.keys(updatedSchedulerTimes).includes(key)) {
+                            let existingDateObjectValues = Object.values(updatedSchedulerTimes[key])[0].times
+                            let comingInObjectValues = value[key]
+                            updatedSchedulerTimes[key] = [{times: [...existingDateObjectValues, ...comingInObjectValues]}]
+                         } else if (!Object.keys(updatedSchedulerTimes).includes(key)) { // //if there is not a date already present
+                            updatedSchedulerTimes[key] = [{ times: value[key] }]
+                         }
+                     }
+
+                        console.log('updating...')
+                     currentUserDocument.update({
+                         scheduler_times: updatedSchedulerTimes,
+                     })
+                }
+                break;
             case UserCollectionFields.PROGRAMS:
                 try {
 

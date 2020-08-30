@@ -59,6 +59,7 @@
     "react-dom": "16.9.0",
     "react-native": "^0.62.2",
     "react-native-autocomplete-input": "^4.2.0",
+    "react-native-calendars": "^1.343.0",
     "react-native-camera": "^3.35.0",
     "react-native-chart-kit": "^3.9.0",
     "react-native-contacts": "^5.2.0",

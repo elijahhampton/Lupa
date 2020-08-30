@@ -47,11 +47,17 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [postModalIsVisible, setPostModalIsVisible] = useState(false);
     const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0)
+    const [markedDates, setMarkedDates] = useState([])
     const [ready, setReady] = useState(false)
+    const [agendaContainerHeight, setAgendaContainerHeight] = useState(0)
     
     const currUserPrograms = useSelector(state => {
         return state.Programs.currUserProgramsData;
     })
+
+    const captureMarkedDate = (dateObject) => {
+        setMarkedDates(prevState => prevState.concat(dateObject));
+    }
 
     /**
      * Allows the current user to choose an image from their camera roll and updates the profile picture in FB and redux.
@@ -281,14 +287,16 @@ function TrainerProfile({ userData, isCurrentUser }) {
                    
               </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-                    <LupaCalendar />
+                    <View style={{flex: 1}}>
+                    <LupaCalendar captureMarkedDates={captureMarkedDate} />
+                    </View>
               </Tab>
             </Tabs>
             </ScrollView>
 
            {renderFAB()}
 
-           <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} />
+           <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} selectedDates={markedDates} />
         </SafeAreaView>
     )
 }

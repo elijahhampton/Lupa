@@ -924,4 +924,12 @@ export default class LupaController {
       return Promise.resolve(retVal);
     }
 
+    addSchedulerTime = (dateObject) => {
+      if (typeof(dateObject) == 'undefined' || dateObject == null) {
+        return;
+      }
+      console.log('addingTime')
+      console.log(dateObject)
+      USER_CONTROLLER_INSTANCE.updateCurrentUser('scheduler_times', dateObject, 'add')
+    }
 }
