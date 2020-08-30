@@ -497,7 +497,7 @@ class BuildWorkoutController extends React.Component {
                                 {
                                     this.state.workoutDays.Monday.map((workout, index, arr) => {
                                         return (
-                                            <WorkoutDisplay captureSuperSetIndex={(index) => this.setState({ currSuperSetWorkoutIndex: index })} handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                            <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} />
                                         )
                                     })
                                 }
@@ -535,7 +535,7 @@ class BuildWorkoutController extends React.Component {
                                 {
                                     this.state.workoutDays.Tuesday.map((workout, index, arr) => {
                                         return (
-                                            <WorkoutDisplay captureSuperSetIndex={(index) => this.setState({ currSuperSetWorkoutIndex: index })} handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                            <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
                                         )
                                     })
                                 }
@@ -573,7 +573,7 @@ class BuildWorkoutController extends React.Component {
                                 {
                                     this.state.workoutDays.Wednesday.map((workout, index, arr) => {
                                         return (
-                                            <WorkoutDisplay captureSuperSetIndex={(index) => this.setState({ currSuperSetWorkoutIndex: index })} handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                            <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
                                         )
                                     })
                                 }
@@ -611,7 +611,7 @@ class BuildWorkoutController extends React.Component {
                                 {
                                     this.state.workoutDays.Thursday.map((workout, index, arr) => {
                                         return (
-                                            <WorkoutDisplay captureSuperSetIndex={(index) => this.setState({ currSuperSetWorkoutIndex: index })} handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                            <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
                                         )
                                     })
                                 }
@@ -648,7 +648,7 @@ class BuildWorkoutController extends React.Component {
                             {
                                 this.state.workoutDays.Friday.map((workout, index, arr) => {
                                     return (
-                                        <WorkoutDisplay captureSuperSetIndex={(index) => this.setState({ currSuperSetWorkoutIndex: index })} handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                        <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
                                     )
                                 })
                             }
@@ -686,7 +686,7 @@ class BuildWorkoutController extends React.Component {
                             {
                                 this.state.workoutDays.Saturday.map((workout, index, arr) => {
                                     return (
-                                        <WorkoutDisplay captureSuperSetIndex={(index) => this.setState({ currSuperSetWorkoutIndex: index })} handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                        <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
                                     )
                                 })
                             }
@@ -724,7 +724,7 @@ class BuildWorkoutController extends React.Component {
                             {
                                 this.state.workoutDays.Sunday.map((workout, index, arr) => {
                                     return (
-                                        <WorkoutDisplay captureSuperSetIndex={(index) => this.setState({ currSuperSetWorkoutIndex: index })} handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
+                                        <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
                                     )
                                 })
                             }
@@ -1029,13 +1029,13 @@ class BuildWorkoutController extends React.Component {
 
                         <SectionList 
                          sections={this.state.libraryData}
-                         keyExtractor={(item, index) => itemfromString(item.workout_name + index.toString())}
+                         keyExtractor={(item, index) => Math.random().toString()}
                          renderItem={({ item }) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || item.workout_name == undefined) {
                                 return;
                             }
 
-                        item.workout_uid = fromString(item.workout_name + Math.random().toString())
+                        item.workout_uid = Math.random().toString()
                          
                             return (
                                 <TouchableOpacity onPress={() => this.captureWorkout(item, this.state.currPlacementType)}>

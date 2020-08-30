@@ -37,7 +37,6 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED } from '../../../modules/payments/stripe/index'
-const { fromString } = require('uuidv4')
 import FeatherIcon from 'react-native-vector-icons/Feather'
 
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -53,29 +52,8 @@ import { colors } from 'react-native-elements';
 import MapView, { Marker } from 'react-native-maps';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import { titleCase } from '../../common/Util';
+import FullScreenLoadingIndicator from '../../common/FullScreenLoadingIndicator';
 
-const mapStateToProps = (state, action) => {
-    return {
-        lupa_data: state,
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        addProgram: (programPayload) => {
-            dispatch({
-                type: "ADD_CURRENT_USER_PROGRAM",
-                payload: programPayload,
-            })
-        },
-        updateCurrentUserAttribute: (payload) => {
-            dispatch({
-                type: "UPDATE_CURRENT_USER_ATTRIBUTE",
-              payload: payload
-            })
-        }
-    }
-}
 
 const { windowWidth } = Dimensions.get('window').width
 const VERTICAL_SEPARATION = 25
@@ -97,12 +75,6 @@ function ProgramInformationPreview(props) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
-
-    const handleToggleBookmark = () => {
-        const payload = getUpdateCurrentUserAttributeActionPayload('bookmarked_programs', programData.program_structure_uuid, '');
-        LUPA_CONTROLLER_INSTANCE.toggleProgramBookmark(currUserData.user_uuid, programData.program_structure_uuid)
-        dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", ...payload })
-     }
 
     useEffect(() => {
         async function fetchData() {
@@ -132,7 +104,7 @@ function ProgramInformationPreview(props) {
      * Sends request to server to complete payment
      */
     const makePayment = async (token, amount) => {
-        const idempotencyKey = await fromString(token.toString() + Math.random().toString())
+        const idempotencyKey = await Math.random().toString()
 
         axios({
             headers: {
@@ -159,13 +131,13 @@ function ProgramInformationPreview(props) {
      * Handles program purchase process
      */
     const handlePurchaseProgram = async (amount) => {
+        await setLoading(true)
         /*
          //handle stripe
          await initStripe();
  
          //collect payment information and generate payment token
          try {
-             setLoading(true)
              setToken(null)
              const token = await stripe.paymentRequestWithCardForm({
                  requiredBillingAddressFields: 'zip'
@@ -175,7 +147,6 @@ function ProgramInformationPreview(props) {
                  throw LUPA_ERR_TOKEN_UNDEFINED;
              }
              
-             await setLoading(false)
              await setToken(token)
          } catch (error) {
              setLoading(false)
@@ -187,32 +158,35 @@ function ProgramInformationPreview(props) {
  
          //Send request to make payment
          try {
-             makePayment(generatedToken, amount)
+             await makePayment(generatedToken, amount)
          } catch (error) {
-             setPaymentComplete(false)
-             setPaymentSuccessful(false)
+             await setPaymentComplete(false)
+             await setPaymentSuccessful(false)
              return;
          }
          */
 
         /****  REMOVE THIS IF PAYMENTS ARE LIVE ******/
-        setPaymentSuccessful(true)
-        setPaymentComplete(true)
+        await setPaymentSuccessful(true)
+        await setPaymentComplete(true)
 
         //If the payment is complete and successful then update database
         if (paymentComplete == true && paymentSuccessful == true) {
 
             //handle program in backend
             try {
+                console.log('purchasing')
                 const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData.user_uuid, programData);
                 await dispatch({ type: "ADD_CURRENT_USER_PROGRAM" , ...updatedProgramData})
+                console.log('done purchasing')
             } catch (err) {
+                setLoading(false);
                 alert(err)
                 //need to handle the case where there is an error when we add the program
                 props.closeModalMethod()
             }
         }
-
+        await setLoading(false);
         //close modal
         props.closeModalMethod()
     }
@@ -483,6 +457,7 @@ function ProgramInformationPreview(props) {
                         Purchase
                     </Button>
                    </View>
+                   <FullScreenLoadingIndicator isVisible={loading} />
                    </SafeAreaView>
             </Modal>
     )

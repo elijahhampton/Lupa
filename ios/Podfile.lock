@@ -740,6 +740,8 @@ PODS:
   - tipsi-stripe (7.5.3):
     - React
     - Stripe (~> 14.0.1)
+  - toolbar-android (0.1.0-rc.2):
+    - React
   - UMAppLoader (1.0.2)
   - UMBarCodeScannerInterface (5.1.0)
   - UMCameraInterface (5.1.0)
@@ -845,6 +847,7 @@ DEPENDENCIES:
   - SRSRadialGradient (from `../node_modules/react-native-radial-gradient/ios`)
   - Stripe (~> 14.0.1)
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
+  - "toolbar-android (from `../node_modules/@react-native-community/toolbar-android`)"
   - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
   - UMBarCodeScannerInterface (from `../node_modules/unimodules-barcode-scanner-interface/ios`)
   - UMCameraInterface (from `../node_modules/unimodules-camera-interface/ios`)
@@ -1065,6 +1068,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-radial-gradient/ios"
   tipsi-stripe:
     :path: "../node_modules/tipsi-stripe"
+  toolbar-android:
+    :path: "../node_modules/@react-native-community/toolbar-android"
   UMAppLoader:
     :path: !ruby/object:Pathname
     path: "../node_modules/unimodules-app-loader/ios"
@@ -1219,6 +1224,7 @@ SPEC CHECKSUMS:
   SRSRadialGradient: c8ab040309de2b2c1fc3f5c4804f2436c2df1f1a
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: 41299d30e9b906413315eeb1b94607aaac9b6781
+  toolbar-android: 404f4450b203597e7b417f714ff417bed562a1be
   UMAppLoader: ae5eaee9f3c8cc847c631a579fed20d217de5913
   UMBarCodeScannerInterface: aa3409ab9d108866e55c09ad0292e4a6c08a7775
   UMCameraInterface: 9d5da92c521e0af7815afbf77ea19bd0312b4928

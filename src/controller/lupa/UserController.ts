@@ -26,7 +26,6 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 import LOG, {LOG_ERROR} from '../../common/Logger';
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
-import {fromString} from 'uuidv4';
 
 export default class UserController {
     private static _instance: UserController;
@@ -287,6 +286,8 @@ export default class UserController {
 
         switch (fieldToUpdate) {
             case UserCollectionFields.PROGRAMS:
+                try {
+
                 let programs = [], snapshot = {}
                 if (optionalData == 'add')
                 {
@@ -296,7 +297,7 @@ export default class UserController {
 
                     programs = snapshot.programs
                     programs.push(value);
-
+                    console.log('made it here')
                     await currentUserDocument.update({
                         programs: programs
                     });
@@ -305,6 +306,9 @@ export default class UserController {
                 {
 
                 }
+            } catch(error) {
+                alert(error)
+            }
             break;
             case UserCollectionFields.CHATS:
                 let chats;
@@ -1329,7 +1333,7 @@ export default class UserController {
       try {
 
       let receivedProgramNotificationStructure = {
-            notification_uuid: fromString(Math.random().toString()),
+            notification_uuid: Math.random().toString(),
             data: program,
             from: currUserData.user_uuid,
             to: userList,
@@ -1433,11 +1437,16 @@ export default class UserController {
 
 
     getAllCurrentUserChats = async () => {
-        let result;
+        let result = [];
 
-        await USER_COLLECTION.doc(this.getCurrentUser().uid).get().then(snapshot => {
-            result = snapshot.data().chats;
-        });
+        try {
+            await USER_COLLECTION.doc(this.getCurrentUser().uid).get().then(snapshot => {
+                result = snapshot.data().chats;
+            });
+        } catch(error) {
+            alert(error);
+            return Promise.resolve([])
+        }
 
         return Promise.resolve(result);
     }
@@ -1492,7 +1501,7 @@ export default class UserController {
           await PROGRAMS_COLLECTION.get().then(docs => {
               docs.forEach(doc => {
                   let snapshot = doc.data();
-                if (typeof(snapshot) == 'undefined' || snapshot.program_name == null || typeof(snapshot.program_name) == 'undefined' || snapshot.program_image == '')
+                if (typeof(snapshot) == 'undefined' || snapshot.program_name == null || typeof(snapshot.program_name) == 'undefined' || snapshot.program_image == '' || snapshot.completedProgram === false)
                 {
 
                 }
@@ -1674,6 +1683,20 @@ export default class UserController {
 
         //Add the vlog structure to the vlog collection
         LUPA_DB.collection('vlogs').doc(VLOG_UUID).set(vlogStructure);
+      }
+
+      deleteVlog = (userID, vlogID) => {
+        LUPA_DB.collection('vlogs').doc(userID).delete();
+
+        let updatedVlogs = [];
+        USER_COLLECTION.doc(userID).get().then(snapshot => {
+            updatedVlogs = snapshot.data().vlogs;
+        })
+
+        this.arrayRemove(updatedVlogs, vlogID);
+        USER_COLLECTION.doc(userID).update({
+            vlogs: updatedVlogs
+        });
       }
 
       getAllUserVlogs = async (uuid) => {

@@ -21,7 +21,6 @@ import LupaController from '../../../../controller/lupa/LupaController';
 
 import ProgramInformation from './component/ProgramInformation'
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
-import { fromString } from 'uuidv4';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import { useNavigation } from '@react-navigation/native';
@@ -32,7 +31,6 @@ import BuildWorkoutController from './buildworkout/BuildWorkoutController';
 import LOG, { LOG_ERROR } from '../../../../common/Logger';
 import AppStateContext from '../../../util/AppState';
 import ShareProgramModal from '../modal/ShareProgramModal'
-
 const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
@@ -210,7 +208,7 @@ class CreateProgram extends React.Component {
     }
 
     async componentDidMount() {
-        const UUID = fromString((Math.random() + this.props.lupa_data.Programs.currUserProgramsData.length).toString())
+        const UUID = Math.random().toString()
         await this.setState({ currProgramUUID: UUID }) 
         await this.setState({ programData: getLupaProgramInformationStructure(UUID, "", "" ,0, new Date(), new Date(), "", 0, 0, 0, {}, false, "", [], this.props.lupa_data.Users.currUserData.user_uuid, [this.props.lupa_data.Users.currUserData.user_uuid], "", false) })
         this.LUPA_CONTROLLER_INSTANCE.createNewProgram(UUID);

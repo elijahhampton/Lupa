@@ -21,7 +21,6 @@ import ThinFeatherIcon from 'react-native-feather1s'
 import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../../../../controller/lupa/LupaController'
 import ImagePicker from 'react-native-image-picker'
-import { fromString } from 'uuidv4';
 
 function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureWorkout }) {
     const navigation = useNavigation();
@@ -43,7 +42,7 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
         },
         workout_steps: [],
         workout_tags: [],
-        workout_uid: fromString(Math.random().toString()),
+        workout_uid: Math.random().toString(),
         workout_cue: "",
         workout_sets: 0,
         workout_reps: 0,

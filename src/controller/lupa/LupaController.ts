@@ -897,6 +897,14 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE.saveVlog(vlogStructure);
     }
 
+    deleteVlog = (userID, vlogID) => {
+      if (typeof(userID) == 'undefined' || typeof(vlogID) == 'undefined') {
+        return;
+      }
+      
+      USER_CONTROLLER_INSTANCE.deleteVlog(userID, vlogID);
+    }
+
     getAllUserVlogs = async (uuid) => {
       let retVal = [];
       await USER_CONTROLLER_INSTANCE.getAllUserVlogs(uuid).then(vlogs => {

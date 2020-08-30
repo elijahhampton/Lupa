@@ -121,7 +121,7 @@ class TrainerInformation extends React.Component {
         try {
             if ( this.props.route.params.navFrom)
             {
-                if ( this.props.route.navFrom == 'Drawer')
+                if ( this.props.route.params.navFrom == 'Drawer')
                 {
                     return (
                         <Appbar.Header style={{elevation: 0}} theme={{
@@ -143,7 +143,7 @@ class TrainerInformation extends React.Component {
 
     render() {
         return (
-            <SafeAreaView style={styles.root}>
+            <View style={styles.root}>
                 {
                     this.getHeader()
                 }
@@ -182,7 +182,8 @@ class TrainerInformation extends React.Component {
                         }
                     </View>
                     <VerificationModal isVisible={this.state.verificationSent} closeModalMethod={this.closeVerificationCompleteModal} />
-                </SafeAreaView>
+                    <SafeAreaView />
+                </View>
 
         )
     }

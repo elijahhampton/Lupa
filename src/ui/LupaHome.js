@@ -1,7 +1,8 @@
 
 import React, {Component} from "react";
-import {Animated, Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
+import {Animated, Image, Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
+import { Banner } from 'react-native-paper';
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import { MenuIcon } from "./icons";
@@ -63,6 +64,7 @@ export class LupaHome extends Component {
           </Header>
           <SafeAreaView />
         </Animated.View>
+        
         <Animated.ScrollView
           scrollEventThrottle={1}
           bounces={false}
@@ -83,17 +85,23 @@ export class LupaHome extends Component {
               backgroundColor: COLOR,
               justifyContent: 'flex-start',
             }, Platform.OS === "ios" ? {paddingTop: 30} : null]}>
-            <ScrollableTab {...props} style={{shadowColor: 'red', shadowRadius: 1, justifyContent: 'flex-start', elevation: 15, borderBottomColor: 'transparent'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 15, borderBottomColor: 'transparent'}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 15, borderRadius: 8}}/>
+            <ScrollableTab {...props} style={{ shadowRadius: 1, justifyContent: 'flex-start', elevation: 15, borderBottomColor: 'transparent'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 15, borderBottomColor: 'transparent'}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 15, borderRadius: 8}}/>
           </Animated.View>
           }>
+            
             <Tab heading="Featured" {...TAB_PROPS} >
             <Featured />
             </Tab>
             <Tab heading="My Programs" {...TAB_PROPS}>
               <MyPrograms />
             </Tab>
+            <Tab heading="Packs" {...TAB_PROPS}>
+             
+            </Tab>
           </Tabs>
         </Animated.ScrollView>
+
+        
       </View>
     );
   }

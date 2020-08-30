@@ -259,7 +259,7 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
             </Text>
             <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
         <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={handleDecrementExerciseReps(superset)} />
+            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseReps(superset)} />
         </View>
         <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
         <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>

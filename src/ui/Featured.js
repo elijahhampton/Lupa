@@ -28,6 +28,7 @@ import {
     Appbar,
     Divider,
     FAB,
+    Banner
 
 } from 'react-native-paper';
 
@@ -311,13 +312,14 @@ class Featured extends React.Component {
                     containerStyle={styles.searchContainerStyle}
                     inputContainerStyle={styles.inputContainerStyle}
                     inputStyle={styles.inputStyle}
-                    placeholderTextColor="#212121"
+                    placeholderTextColor="#23374d"
                     value={this.state.searchValue} />
         </View>
         </Appbar.Header> 
                     <View style={{flex: 1}}>
                         {
                             this.state.searchValue === "" ?
+                            
                             <View >
                             <View style={{ marginVertical: 15, justifyContent: 'center', }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -363,11 +365,7 @@ class Featured extends React.Component {
                         </Text>
                                 </View>
 
-                        <Button onPress={this.showTopPicksModal} uppercase={false} mode="text" style={{ width: 'auto', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start'}}>
-                <Text style={{color: '#1089ff', fontWeight: '500'}}>
-                    See more
-                </Text>
-                    </Button>
+                       
                             </View>
                             <View style={{alignItems: 'center', justifyContent: 'center'}}>
                             {
@@ -389,7 +387,7 @@ class Featured extends React.Component {
 
                         
 <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
-                            <ShowTopPicksModal isVisible={this.state.showTopPicksModalIsVisible} closeModal={this.closeTopPicksModal}  />
+                            
                     </View>   
                              
                     </View>

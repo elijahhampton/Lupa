@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import {
-    Surface, Appbar, Caption, Button, FAB
+    Surface, Appbar, Caption, Button, FAB, Menu
 } from 'react-native-paper';
 
 import {
@@ -43,6 +43,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [userPrograms, setUserPrograms] = useState([])
     const [userVlogs, setUserVlogs] = useState([])
     const [postType, setPostType] = useState("VLOG");
+    const [optionsMenuVisible, setOptionsMenuVisible] = useState(false)
     const [postModalIsVisible, setPostModalIsVisible] = useState(false);
     const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0)
@@ -144,13 +145,16 @@ function TrainerProfile({ userData, isCurrentUser }) {
         )
     }
 
+    const openOptionsMenu = () => setOptionsMenuVisible(true)
+    const closeOptionsMenu = () => setOptionsMenuVisible(false);
+
     const renderVlogs = () => {
         return userVlogs.map(vlog => {
             return (
                 <View style={{paddingHorizontal: 20, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'flex-start'}}>
-                    <View style={{marginRight: 10}}>
-                    <Avatar key={userData.photo_url} source={{uri: userData.photo_url}} raised={true} rounded size={50} />
-                    </View>
+                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Avatar containerStyle={{marginRight: 10}} key={userData.photo_url} source={{uri: userData.photo_url}} raised={true} rounded size={50} />
                     <View>
                         <Text style={{fontSize: 12, fontFamily: 'Avenir-Heavy'}}>
                             Elijah Hampton
@@ -159,6 +163,18 @@ function TrainerProfile({ userData, isCurrentUser }) {
                     {vlog.vlog_text}
                 </Text>
                     </View>
+                    
+                    </View>
+
+                    <Menu
+          visible={optionsMenuVisible}
+          onDismiss={closeOptionsMenu}
+          anchor={ <ThinFeatherIcon onPress={openOptionsMenu} thin={true} name="more-horizontal" size={20} />}>
+          <Menu.Item onPress={() => {}} title="Delete" />
+        </Menu>
+                   
+                    </View>
+                    
                 </View>
             )
         })

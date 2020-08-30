@@ -109,6 +109,7 @@
     "tipsi-stripe": "^7.5.3",
     "toggle-switch-react-native": "^2.1.0",
     "url": "^0.11.0",
+    "uuid": "^8.3.0",
     "uuidv4": "^6.0.8",
     "zlib": "^1.0.5"
   },

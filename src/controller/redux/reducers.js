@@ -180,7 +180,6 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
       else
       {
         updatedProgramsData.push(action.payload);
-        
       }
 
       return Object.assign({}, state, { currUserProgramsData: updatedProgramsData });

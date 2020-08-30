@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
     View,
@@ -20,12 +20,14 @@ import ProgramInformationPreview from '../ProgramInformationPreview';
 import { RFValue } from 'react-native-responsive-fontsize'
 import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 import { titleCase } from '../../../common/Util';
+import LUPA_DB, { LUPA_AUTH } from '../../../../controller/firebase/firebase';
 
 function FeaturedProgramCard({ currProgram, keyProp }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    const [newCurrUserData, setNewCurrUserData] = useState(getLupaUserStructure())
 
     const navigation = useNavigation()
 
@@ -34,12 +36,12 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
     })
 
     const handleCardOnPress = (programData) => {
-        if (currUserData.programs.includes(programData.program_structure_uuid)) {
-
+        if (newCurrUserData.programs.includes(programData.program_structure_uuid)) {
+            alert('huuh')
            setProgramOptionsModalVisible(true)
-
         }
         else {
+            alert('nah')
             setProgramModalVisible(true);
         }
     }
@@ -75,7 +77,7 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
         }
     }
 
-    useSelector(() => {
+    useEffect(() => {
         async function fetchData() {
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(currProgram.program_owner).then(data => {
                 setProgramOwnerData(data)
@@ -83,6 +85,12 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
         }
 
         fetchData()
+        const currUserSubscription = LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).onSnapshot(documentSnapshot => {
+        let userData = documentSnapshot.data()
+            setNewCurrUserData(userData)
+        });
+
+        return () => currUserSubscription()
     }, [])
 
     return (

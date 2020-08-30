@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     TouchableWithoutFeedback,
     View,
@@ -19,11 +19,13 @@ import { useSelector } from 'react-redux/lib/hooks/useSelector';
 import { titleCase } from '../../../common/Util';
 import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 import ProgramInformationPreview from '../ProgramInformationPreview';
+import LUPA_DB, { LUPA_AUTH } from '../../../../controller/firebase/firebase';
 
 function ProgramInformationComponent({ program }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
+    const [newCurrUserData, setNewCurrUserData] = useState(getLupaUserStructure())
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -32,7 +34,7 @@ function ProgramInformationComponent({ program }) {
     })
 
     const handleCardOnPress = (programData) => {
-        if (currUserData.programs.includes(programData.program_structure_uuid)) {
+        if (newCurrUserData.programs.includes(programData.program_structure_uuid)) {
 
            setProgramOptionsModalVisible(true)
 
@@ -41,6 +43,15 @@ function ProgramInformationComponent({ program }) {
             setProgramModalVisible(true);
         }
     }
+
+    useEffect(() => {
+        const currUserSubscription = LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).onSnapshot(documentSnapshot => {
+            let userData = documentSnapshot.data()
+                setNewCurrUserData(userData)
+            });
+    
+            return () => currUserSubscription()
+    }, [])
 
     return (
         <>
