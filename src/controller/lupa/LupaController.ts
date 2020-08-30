@@ -56,6 +56,15 @@ export default class LupaController {
     return result;
     }
 
+    saveVlogMedia = async (mediaURI) => {
+      let url;
+      await USER_CONTROLLER_INSTANCE.saveVlogMedia(mediaURI).then(result => {
+        url = result;
+      })
+
+      return Promise.resolve(url);
+    }
+
     /***************** Firebase Storage *********** */
     saveUserProfileImage = async (imageURI) => {
       let url;
@@ -888,6 +897,7 @@ export default class LupaController {
     changeTrainerHourlyRate = (rate) => {
       USER_CONTROLLER_INSTANCE.updateCurrentUser('hourly_payment_rate', rate, "", "");
     }
+
 
     publishVlog = (vlogStructure) => {
       if (typeof(vlogStructure) == 'undefined' || vlogStructure == null) {

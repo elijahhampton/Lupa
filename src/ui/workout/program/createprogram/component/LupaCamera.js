@@ -47,41 +47,58 @@ class VideoPreview extends React.Component {
   }
 
   saveVideo = async () => {
+    let newURI = "";
     try {
     this.setState({ showLoadingIndicator: true });
-
-    switch (this.props.oulet) {
+    
+    switch (this.props.outlet) {
       case 'CreateProgram':
-        const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
+        newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
         this.props.currProgramUUID, 'VIDEO', this.props.videoSrcProps);
         await this.props.captureURI(newURI, "VIDEO");
         break;
       case 'CreateNewPost':
-        
+        newURI = await this.LUPA_CONTROLLER_INSTANCE.saveVlogMedia(this.props.videoSrcProps);
         await this.props.captureURI(newURI, "VIDEO");
         break;
       default:
+       // alert('ummm')
     }
-    
+
     this.setState({ showLoadingIndicator: false });
     this.props.closeVideoPreview();
     this.props.closeMainModal()
+    
     } catch(error) {
-      alert('saveVideo: ' + error)
+    
     }
   }
 
   saveImage = async () => {
+    let newURI = "";
     try {
-      this.setState({ showLoadingIndicator: true });
-      const newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
-        this.props.currProgramUUID, 'IMAGE', this.props.videoSrcProps)
-      await this.props.captureURI(newURI, "IMAGE")
-      this.setState({ showLoadingIndicator: false });
-      this.props.closeVideoPreview();
-      this.props.closeMainModal()
+    this.setState({ showLoadingIndicator: true });
+    
+    switch (this.props.outlet) {
+      case 'CreateProgram':
+        newURI = await this.LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(this.props.currWorkoutPressed, 
+        this.props.currProgramUUID, 'IMAGE', this.props.videoSrcProps);
+        await this.props.captureURI(newURI, "IMAGE");
+        break;
+      case 'CreateNewPost':
+        newURI = await this.LUPA_CONTROLLER_INSTANCE.saveVlogMedia(this.props.videoSrcProps);
+        await this.props.captureURI(newURI, "IMAGE");
+        break;
+      default:
+       // alert('ummm')
+    }
+
+    this.setState({ showLoadingIndicator: false });
+    this.props.closeVideoPreview();
+    this.props.closeMainModal()
+    
     } catch(error) {
-      alert(err)
+    
     }
   }
 
@@ -424,11 +441,16 @@ export default class CameraScreen extends React.Component {
         </View>
       </RNCamera>
 </Surface>
-<View style={{flex: 0.15, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+{
+  this.props.route.params.outlet === 'CreateProgram' ?
+  <View style={{flex: 0.15, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
   <Text style={{color: 'white', fontSize: 16,  }}>
       Perform your best two reps.  For the best capture include your entire body.
   </Text>
   </View>
+  :
+  null
+}
       </SafeAreaView>
     );
   }
@@ -447,7 +469,7 @@ export default class CameraScreen extends React.Component {
         closeVideoPreview={() => this.setState({ showVideoPrev: false })} 
         currWorkoutPressed={typeof(this.props.route.params.currWorkoutPressed) == 'undefined' ? '' : this.props.route.params.currWorkoutPressed}
         currProgramUUID={typeof(this.props.route.params.currProgramUUID) == 'undefined' ? '' : this.props.route.params.currProgramUUID}
-        closeMainModal={() => this.props.navigation.goBack()}
+        closeMainModal={(path) => this.props.navigation.pop()}
         captureURI={(uri, type) => this.captureURI(uri,type)}
         mediaCaptureType={this.props.route.params.mediaCaptureType}
         outlet={this.props.route.params.outlet}

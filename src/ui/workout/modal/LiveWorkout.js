@@ -100,7 +100,7 @@ class LiveWorkout extends React.Component {
             messages: [],
             interactionInputFocused: false,
             showFullScreenContent: false,
-            showFinishedDayDialog: true
+            showFinishedDayDialog: false
         }
     }
 

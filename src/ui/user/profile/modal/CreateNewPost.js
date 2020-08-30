@@ -6,6 +6,7 @@ import {
     InputAccessoryView,
     StyleSheet,
     Modal,
+    Image,
     SafeAreaView,
     TextInput,
 } from 'react-native';
@@ -18,6 +19,8 @@ import {
     Divider,
 } from 'react-native-paper';
 
+import { Video } from 'expo-av'
+
 import { useSelector } from 'react-redux'
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ThinFeatherIcon from 'react-native-feather1s'
@@ -27,7 +30,7 @@ import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { getLupaVlogStructure } from '../../../../model/data_structures/vlog';
 
-function CreateNewPost({ isVisible, closeModal, postType }) {
+function CreateNewPost(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const navigation = useNavigation();
@@ -47,8 +50,7 @@ function CreateNewPost({ isVisible, closeModal, postType }) {
         if (typeof(uri) == 'undefined' || uri == null) {
             return null;
         }
-
-        setPostURI(uri);
+        setPostMediaURI(uri);
         setPostMediaType(mediaType);
 
         setAddedPostMedia(true)
@@ -79,36 +81,39 @@ function CreateNewPost({ isVisible, closeModal, postType }) {
 
         switch (postMediaType) {
             case 'IMAGE':
-                return <Image source={{uri: customWorkout.workout_media.uri}} style={{ flex: 1, width: '100%', height: '100%',  borderRadius: 80 }} />
+                return <Image resizeMethod="scale" resizeMode="cover" source={{uri: postMediaURI}} style={{ width: '100%', height: '100%',  borderRadius: 19 }} />
             case 'VIDEO':
-                return <Video source={{uri: customWorkout.workout_media.uri}} style={{ flex: 1, width: '100%', height: '100%', borderRadius: 80 }} loop={false} />
+                return <Video resizeMode="cover"  source={{uri: postMediaURI}} style={{ width: '100%', height: '100%',  borderRadius: 19 }} loop={false} />
         }
     }
 
     const handleOpenCameraRoll = () => {
-        ImagePicker.showImagePicker({}, async (response) => {
+        ImagePicker.showImagePicker({
+            allowsEditing: true,
+            cancelButtonTitle: 'Cancel'
+        }, async (response) => {
             if (!response.didCancel)
             {   
-                setProfileImage(response.uri);
-
-                let imageURL;
-                //update in FB storage
-                 LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
-                    imageURL = result;
-                });
-        
-                //update in Firestore
-                LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
-        
+                handleCaptureNewMediaURI(response.uri, 'IMAGE')
             }
         });
     }
 
     const saveVlog = () => {
         const vlogStructure = getLupaVlogStructure(postText, postMediaURI, postMediaType, currUserUUID);
-        console.log(vlogStructure.vlog_media.uri)
         LUPA_CONTROLLER_INSTANCE.publishVlog(vlogStructure);
-        //closeModal();
+        handleClose();
+    }
+
+    const clearVlog = () => {
+        setPostMediaURI("")
+        setPostText("")
+        setPostMediaType("")
+    }
+
+    const handleClose = () => {
+        clearVlog();
+        navigation.pop();
     }
 
     useEffect(() => {
@@ -119,10 +124,10 @@ function CreateNewPost({ isVisible, closeModal, postType }) {
         }
     }, [])
     return (
-        <Modal presentationStyle="fullScreen" visible={isVisible} animated={true} animationType="slide">
+        <View style={{flex: 1}}>
             <View style={{flex: 1}}>
     <Appbar.Header  style={{ height: Constants.statusBarHeight + 20, backgroundColor: 'white'}} statusBarHeight>
-    <Appbar.Action onPress={() => navigation.pop()} style={{alignSelf: 'flex-start'}} icon={() => <ThinFeatherIcon onPress={closeModal} name="arrow-left" size={20} onPress={closeModal} />} />
+    <Appbar.Action onPress={handleClose}  style={{alignSelf: 'flex-start'}} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />} />
     <Appbar.Content title="New Vlog" titleStyle={{fontFamily: 'Avenir-Heavy', paddingVertical: 3}} />
     </Appbar.Header>
 
@@ -140,11 +145,11 @@ function CreateNewPost({ isVisible, closeModal, postType }) {
                             </View>
                             <Divider style={{marginHorizontal: 20}} />
 
-                            <TextInput  multiline ref={postTextInputRef} value={postText} onChangeText={text => setPostText(text)}  style={{fontSize: 15, fontFamily: 'HelveticaNeue', alignSelf: 'center', width: '90%', margin: 10}} placeholder="Share techniques and advice..." />
+                            <TextInput keyboardType="twitter" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)}  style={{fontSize: 15,lineHeight: 20, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', margin: 10}} placeholder="Share techniques and advice..." />
                             
                             
                             {addedPostMedia === true ?
-                            <Surface style={{backgroundColor: 'black', width: '90%', alignSelf: 'center', height: 120, borderRadius: 20}}>
+                            <Surface style={{backgroundColor: 'black', width: '90%', alignSelf: 'center', height: 250, borderRadius: 20}}>
                             {renderMedia()}
                             </Surface>
                             :
@@ -161,9 +166,8 @@ function CreateNewPost({ isVisible, closeModal, postType }) {
                 <View style={{flex: 1}} />
                
             </View>
-
             <FAB onPress={saveVlog} icon="check" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
-        </Modal>
+           </View>
     )
 }
 

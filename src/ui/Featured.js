@@ -312,7 +312,7 @@ class Featured extends React.Component {
                     containerStyle={styles.searchContainerStyle}
                     inputContainerStyle={styles.inputContainerStyle}
                     inputStyle={styles.inputStyle}
-                    placeholderTextColor="#23374d"
+                    placeholderTextColor="#212121"
                     value={this.state.searchValue} />
         </View>
         </Appbar.Header> 

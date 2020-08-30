@@ -104,7 +104,7 @@ function DrawerMenu(props) {
         
         <Divider />
 
-        <TouchableOpacity onPress={() => navigation.navigate('AccountSettings')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="settings" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={styles.buttonText}>

@@ -180,7 +180,7 @@ const WelcomeContentDriver = (props) => {
                 <ListItem
                     title='Get started'
                     titleStyle={[styles.highlightedTitleStyle, { color: locationDataSet === true ? '#1089ff' : '#E5E5E5' }]}
-                    disabled={true}
+                    disabled={locationDataSet === false}
                     style={{ color: '#E5E5E5' }}
                     bottomDivider
                     rightIcon={() => <FeatherIcon name="arrow-right" />}

@@ -289,7 +289,6 @@ function TrainerProfile({ userData, isCurrentUser }) {
            {renderFAB()}
 
            <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} />
-            <CreateNewPost postType={postType} isVisible={postModalIsVisible} closeModal={() => setPostModalIsVisible(false)} />
         </SafeAreaView>
     )
 }

@@ -4,7 +4,6 @@ import {
     LupaHealthDataStructure, 
     LupaWorkoutStructure,
     LupaUserStructure, 
-    SESSION_STATUS,
     LupaTrainerService,
 } from '../lupa/common/types';
 
@@ -153,6 +152,7 @@ var lupa_user : LupaUserStructure = {
     notifications: [],
     programs: [],
     hourly_payment_rate: 15,
+    vlogs: [],
 }
 
 export const getLupaUserStructure = (

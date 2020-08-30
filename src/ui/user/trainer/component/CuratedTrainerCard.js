@@ -41,7 +41,7 @@ function CuratedTrainerCard({ trainer }) {
                                     </View>
                                     
                                     <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                                        <Text style={{fontSize: RFValue(20), paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
+                                        <Text style={{fontSize: RFValue(15), paddingVertical: 5, fontFamily: 'Avenir-Medium'}}>
                                             12 Week Resistance Training
                                         </Text>
                                     </View>

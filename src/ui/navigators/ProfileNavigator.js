@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 
 import LupaController from '../../controller/lupa/LupaController'
 import ProfileController from '../user/profile/ProfileController';
-
+import SettingsNavigator from './SettingsNavigator'
 const Stack = createStackNavigator();
 
 function ProfileNavigator() {
@@ -18,7 +18,7 @@ function ProfileNavigator() {
     <Stack.Navigator initialRouteName="Profile" screenOptions={{ gestureEnabled: false }} headerMode='none'>
      <Stack.Screen name="Profile" component={ProfileController} initialParams={{userUUID: 0, navFrom: 'BottomTabNavigator'}} />
       <Stack.Screen name="FollowerView" component={FollowerView} />
-      <Stack.Screen name="UserSettingsView" component={SettingsModal} />
+      <Stack.Screen name="UserSettingsView" component={SettingsNavigator} />
       <Stack.Screen name="MessagesView" component={MessagesView} />
     </Stack.Navigator>
   );

@@ -32,6 +32,7 @@ import LupaCamera from './src/ui/workout/program/createprogram/component/LupaCam
 import ProfileController from './src/ui/user/profile/ProfileController';
 import CreateNewPost from './src/ui/user/profile/modal/CreateNewPost';
 import ProfileNavigator from './src/ui/navigators/ProfileNavigator';
+import SettingsStackNavigator from './src/ui/navigators/SettingsNavigator';
 
 
 const App = () => {
@@ -53,7 +54,7 @@ const SwitchNavigator = () => {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async (uuid) => {
-   /* try {
+    try {
       //setup redux
       await _setupRedux(uuid)
     } catch(err) {
@@ -61,9 +62,7 @@ const SwitchNavigator = () => {
     }
 
     //navigate to app
-    navigation.navigate('App')*/
-
-    showAuthentication()
+    navigation.navigate('App')
   }
 
   const showAuthentication = () => {
@@ -99,11 +98,12 @@ const SwitchNavigator = () => {
 
   useEffect(() => {
       
-     /* async function getUserAuthState() {
+      async function getUserAuthState() {
         try {
         await LUPA_AUTH.onAuthStateChanged(user => {
           if (typeof(user) == 'undefined' || user == null) {
             showAuthentication()
+            return;
           }
           
           introduceApp(user.uid)
@@ -114,9 +114,9 @@ const SwitchNavigator = () => {
     }
       }
 
-      getUserAuthState()*/
+      getUserAuthState()
 
-      showAuthentication()
+      //showAuthentication()
     }, [])
 
   return (
@@ -149,7 +149,7 @@ function AppNavigator() {
     <StackApp.Screen name="PrivateChat" component={PrivateChat} />
     <StackApp.Screen name="Onboarding" component={WelcomeModal}/>
     <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
-    <StackApp.Screen name="AccountSettings" component={AccountSettings} />
+    <StackApp.Screen name="Settings" component={SettingsStackNavigator} />
     <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
         <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
       <StackApp.Screen name="Profile" component={ProfileNavigator} />

@@ -124,24 +124,9 @@ accountList = [
         description: '',
     },
     {
-        key: 'Payments',
-        title: 'Payments',
-        description: '',
-    },
-    {
         key: 'LupaTrainer',
         title: 'Lupa Trainer',
         description: '',
-    },
-    {
-        key: 'ChangePassword',
-        title: 'Change Password',
-        description: 'Change Password',
-    },
-    {
-        key: 'RecoverPassword',
-        title: 'Recover Password',
-        description: 'Lupa will send you an email with a temporary password',
     },
 ]
 
@@ -297,12 +282,12 @@ class SettingsModal extends React.Component {
 
       handleListItemOnPress = (key) => {
         switch(key) {
-            case 'ChangePaymentInformation':
-               this._navigateToPaymentSettings();
-            case 'Goals':
-                this._handleGoalsModalOpen();
+            case 'Account':
+               this.props.navigation.push('AccountSettings');
+               break;
+            case 'LupaTrainer':
                 break;
-
+            default:
         }
     }
 
@@ -353,7 +338,7 @@ class SettingsModal extends React.Component {
                         {
                             accountList.map(item => {
                                 return (
-                                    <ListItem title={item.title} titleStyle={styles.titleStyle} description={this.getAccountListDescription(item.property)} bottomDivider rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}/>
+                                    <ListItem onPress={() => this.handleListItemOnPress(item.key)} title={item.title} titleStyle={styles.titleStyle} description={this.getAccountListDescription(item.property)} bottomDivider rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}/>
                                 )
                             })
                         }
@@ -361,14 +346,14 @@ class SettingsModal extends React.Component {
                         <View style={{padding: 10, marginVertical: 20}}>
    
                             <Text style={{paddingVertical: 15}}>
-                                <Text style={{fontSize: 20,  fontFamily: 'Helvetica-Light'}}>
+                                <Text style={{fontSize: 15,  fontFamily: 'Helvetica-Light'}}>
                                     Privacy Policy
                                 </Text>
                                 <FeatherIcon name="arrow-right" size={15} />
                                 </Text>
 
                                 <Text>
-                                <Text style={{fontSize: 20,  fontFamily: 'Helvetica-Light'}}>
+                                <Text style={{fontSize: 15,  fontFamily: 'Helvetica-Light'}}>
                                     Terms and Conditions
                                 </Text>
                                 <FeatherIcon name="arrow-right" size={15} />

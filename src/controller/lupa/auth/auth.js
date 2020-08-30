@@ -8,6 +8,14 @@ function signUpUser() {
     }
 }
 
+const sendVerificationEmail = () => {
+    LUPA_AUTH.currentUser.sendEmailVerification().then(function() {
+        // Email sent.
+      }).catch(function(error) {
+        // An error happened.
+      });
+}
+
 export const signup = (username, email, password) => {
     const authHandler = new UserAuthenticationHandler()
     let USER_UUID;
@@ -16,7 +24,6 @@ export const signup = (username, email, password) => {
              //Authenticate user in firebase
   await LUPA_AUTH.createUserWithEmailAndPassword(email.trim(), password.trim()).then( userCredential => {
     USER_UUID = userCredential.user.uid
-
     //Catch error on signup
 }).catch(error => {
    alert(error)

@@ -7,8 +7,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import DrawerMenu from './Components/DrawerMenu';
 import ProfileNavigator from './ProfileNavigator';
-import FeatherIcon from 'react-native-feather1s'
-
+import ThinFeatherIcon from 'react-native-feather1s'
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardNavigator from './DashboardNavigator';
 import LupaHomeNavigator from './LupaHomeNavigator';
@@ -67,11 +67,11 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Dashboard':
-              return <FeatherIcon name='clipboard' size={20} color={focused ? "#1089ff" : "#212121"} />;
+              return focused === true ? <FeatherIcon name='clipboard' size={20} color="#1089ff" /> : <ThinFeatherIcon name='clipboard' size={20} color="#212121" />
             case 'Train':
-              return <FeatherIcon name='home' size={20} color={focused ? "#1089ff" : "#212121"} />;
+              return focused === true ? <FeatherIcon name='home' size={20} color="#1089ff" /> : <ThinFeatherIcon name='home' size={20} color="#212121" />
             case 'Create':
-              return <FeatherIcon name='plus-circle' size={20} color={focused ? "#1089ff" : "#212121"}/>;
+              return focused === true ? <FeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <ThinFeatherIcon name='plus-circle' size={20} color="#212121" />
           }
 
         },

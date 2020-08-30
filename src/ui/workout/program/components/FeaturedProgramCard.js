@@ -37,11 +37,9 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
 
     const handleCardOnPress = (programData) => {
         if (newCurrUserData.programs.includes(programData.program_structure_uuid)) {
-            alert('huuh')
            setProgramOptionsModalVisible(true)
         }
         else {
-            alert('nah')
             setProgramModalVisible(true);
         }
     }

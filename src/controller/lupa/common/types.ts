@@ -105,6 +105,7 @@ export type LupaUserStructure = {
     services: Array<String>,
     workout_log: Array<Object>,
     hourly_payment_rate: Number,
+    vlogs: Array<String>,
 };
 
 /* LupaWorkoutDataStructure */

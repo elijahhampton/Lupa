@@ -455,12 +455,12 @@ export class FirebaseStorageBucket {
     return Promise.resolve(link)
   }
 
-  saveVlogMedia = async (blog) => {
+  saveVlogMedia = async (blob) => {
     const user_uuid = await LUPA_AUTH.currentUser.uid;
     return new Promise((resolve, reject) => {
       
-     LUPA_VLOG_MEDIA_STORAGE_REF.child(programUUID).put(blob).then(ref => {
-      LUPA_VLOG_MEDIA_STORAGE_REF.child(programUUID).getDownloadURL().then(url => {
+     LUPA_VLOG_MEDIA_STORAGE_REF.child(user_uuid).put(blob).then(ref => {
+      LUPA_VLOG_MEDIA_STORAGE_REF.child(user_uuid).getDownloadURL().then(url => {
           resolve(url)
         })
       })
