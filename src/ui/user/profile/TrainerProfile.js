@@ -6,6 +6,7 @@ import {
     StyleSheet,
     SafeAreaView,
     TouchableOpacity,
+    Dimensions,
 } from 'react-native';
 
 import {
@@ -195,6 +196,10 @@ function TrainerProfile({ userData, isCurrentUser }) {
     }
 
     const renderFAB = () => {
+        if (!isCurrentUser) {
+            return;
+        }
+        
         switch(currPage) {
             case 0:
                 return  <FAB onPress={() => navigation.push('CreateProgram')} icon="plus" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
@@ -286,8 +291,8 @@ function TrainerProfile({ userData, isCurrentUser }) {
 
                    
               </Tab>
-              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-                    <View style={{flex: 1}}>
+              <Tab containerStyle={{flex: 1}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
+                    <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>
                     <LupaCalendar captureMarkedDates={captureMarkedDate} />
                     </View>
               </Tab>

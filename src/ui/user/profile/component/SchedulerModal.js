@@ -61,10 +61,24 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
       })
     }
 
-    const handleSaveTimes = () => {
-      let dateObject = {
-
+    renderSelectedDates = () => {
+      if (selectedDates.length == 0 || typeof(selectedDates) == 'undefined' || selectedDates == null) {
+        return (<Caption>
+          You haven't selected any dates.  Return to the calendar and select your desired dates.
+        </Caption>
+        )
       }
+      return selectedDates.map((date, index, arr) => {
+        return (
+          <Text style={{margin: 10}}>
+          {date}
+        </Text>
+        )
+      })
+    }
+
+    const handleSaveTimes = () => {
+      let dateObject = {}
       //for every date string we have add it as a key to our object and for the value have an object with a key "times" inside
       for (let i = 0; i < selectedDates.length; i++) {
           dateObject[selectedDates[i]]  =  [...addedTimes] 
@@ -85,17 +99,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
                <Caption> Note: You must use one hour intervals. </Caption>
               </View>
               <ScrollView centerContent horizontal>
-                {
-                  selectedDates.map((date, index, arr) => {
-                    <Text style={{margin: 10}}>
-                  {date}
-                </Text>
-                  })
-                }
-                <Text style={{margin: 10}}>
-                  August 20, 2020
-                </Text>
-
+                {renderSelectedDates()}
               </ScrollView>
               <Divider />
               {renderAddedTimes()}

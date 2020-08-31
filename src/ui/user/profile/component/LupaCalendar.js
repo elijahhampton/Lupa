@@ -28,7 +28,7 @@ import { useSelector } from 'react-redux';
 import LUPA_DB from '../../../../controller/firebase/firebase';
 
 
-function LupaCalendar({ captureMarkedDates }) {
+function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
   const [markedDates, setMarkedDates] = useState({})
   const [items, setItems] = useState({})
 
@@ -37,11 +37,23 @@ function LupaCalendar({ captureMarkedDates }) {
   })
 
   const addMarkedDate = (day) => {
+    if (Object.keys(markedDates).includes(day.dateString)) {
+      let updatedMarkedDates = markedDates;
+      delete updatedMarkedDates[day.dateString]
+    setMarkedDates(updatedMarkedDates)
+    return;
+    }
+
     const dateString = day.dateString;
     let dateObject = markedDates;
     dateObject[day.dateString] = { startingDay: markedDates.length === 0 ?  true : false, color: '#1089ff', selected: true, marked: true }
     setMarkedDates(dateObject);
     captureMarkedDates(day.dateString);
+  }
+
+  const handleDeleteTimeBlock = (day, time) => {
+    alert('delete time');
+    //LUPA_CONTROLLER_INSTANCE.deleteSchedulertimeBlock(day, time);
   }
 
   useEffect(() => {
@@ -63,6 +75,8 @@ function LupaCalendar({ captureMarkedDates }) {
   items={items}
   // Callback that gets called when items for a certain month should be loaded (month became visible)
   loadItemsForMonth={(month) => {console.log('trigger items loading')}}
+  displayLoadingIndicator={false}
+  dayLoading={false}
   // Callback that fires when the calendar is opened or closed
   onCalendarToggled={(calendarOpened) => {console.log(calendarOpened)}}
   // Callback that gets called on day press
@@ -80,36 +94,46 @@ function LupaCalendar({ captureMarkedDates }) {
   // Max amount of months allowed to scroll to the future. Default = 50
   futureScrollRange={50}
   // Specify how each item should be rendered in agenda
-  renderItem={(item, firstItemInDay) => {
-    if (typeof(item) == 'undefined' || item == null) {
-      console.log('null item')
-      return;
-    }
-
-    console.log('YYY: ' + item[0].times)
-  }}
+  renderItem={(item, firstItemInDay) =>  <View />}
   // Specify how each date should be rendered. day can be undefined if the item is not first in that day.
   renderDay={(day, item) => {
-    if (typeof(day) == 'undefined' || day == null) {
+    if (typeof(day) == 'undefined' || typeof(item) == 'undefined') {
       return;
     }
 
+    const times = item.times;
+    const list = times.map(time => {
+      return (
+        <View style={{paddingHorizontal: 20, width: '100%', flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <Text style={styles.timePeriod}>
+{time.startTime} {time.startTimePeriod} - {time.endTime} {time.endTimePeriod}
+</Text>
+{isCurrentUser === true ? <Feather1s  name="x" size={20} onPress={() => handleDeleteTimeBlock(day, time)}/> : null}
+
+          </View>
+      )
+    });
+
     return (
-    <View style={{width: '100%'}}>
-      <Text>
-        August {day.day}, {day.year}
-      </Text>
-    </View>
-    );
+      <View style={{backgroundColor: 'white', width: '100%'}}>
+        <Text style={styles.dateHeading}>
+      August {day.day}, {day.year}
+</Text>
+<View>
+{list}
+</View>
+<Divider style={{marginVertical: 5}} />
+</View>
+    )
   }}
   // Specify how empty date content with no items should be rendered
-  //renderEmptyDate={() => {return (<View />);}}
+  renderEmptyDate={() => {return (<View />);}}
   // Specify how agenda knob should look like
   //renderKnob={() => {return (<View />);}}
   // Specify what should be rendered instead of ActivityIndicator
-  //renderEmptyData = {() => {return (<View />);}}
+  renderEmptyData = {() => {return <View />}}
   // Specify your item comparison function for increased performance
-  rowHasChanged={(r1, r2) => {return r1.text !== r2.text}}
+  rowHasChanged={() => {return true}}
   // Hide knob button. Default = false
   hideKnob={false}
   // By default, agenda dates are marked if they have at least one item, but you can override this if needed
@@ -127,11 +151,12 @@ function LupaCalendar({ captureMarkedDates }) {
     agendaDayTextColor: 'yellow',
     agendaDayNumColor: 'green',
     agendaTodayColor: 'red',
-    agendaKnobColor: 'blue',
-    backgroundColor: 'white'
-  }}
+    agendaKnobColor: 'rgb(199, 199, 204)',
+    backgroundColor: 'rgb(248, 248, 248)',
+  }}å
+
   // Agenda container style
-  style={{height: 800}}
+  style={{height: Dimensions.get('window').height}}
 />
     </View>
     );
@@ -139,8 +164,17 @@ function LupaCalendar({ captureMarkedDates }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF'
+    width: '100%',
+    height: Dimensions.get('window').height,
+  },
+  dateHeading: {
+      margin: 10,
+      fontSize: 15,
+      fontFamily: 'Avenir-Heavy'
+  },
+  timePeriod: {
+    fontFamily: 'Avenir-Roman',
+    fontSize: 15
   }
 })
 

@@ -298,7 +298,13 @@ export default class UserController {
 
                      console.log('trying this messs')
                      for (const key in value) {
-                         //there is already a date with times in the dataabse
+                        if (Object.keys(updatedSchedulerTimes).includes(key)) {
+                            let existingDateObjectValues = updatedSchedulerTimes[key]
+                        }
+                        
+                        
+                        
+                        //there is already a date with times in the dataabse
                          if (Object.keys(updatedSchedulerTimes).includes(key)) {
                             let existingDateObjectValues = Object.values(updatedSchedulerTimes[key])[0].times
                             let comingInObjectValues = value[key]
@@ -308,7 +314,6 @@ export default class UserController {
                          }
                      }
 
-                        console.log('updating...')
                      currentUserDocument.update({
                          scheduler_times: updatedSchedulerTimes,
                      })
