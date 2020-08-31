@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   View,
   StyleSheet,
   Text,
+  Dimensions,
   TouchableOpacity,
   TextInput,
   Modal,
@@ -13,187 +14,168 @@ import {
 import {
   Surface,
   IconButton,
-  Button
+  Button,
+  Caption,
+  Divider,
+  Paragraph
 } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import CreateCustomWorkoutModal from '../../../workout/program/createprogram/buildworkout/modal/CreateCustomWorkoutModal';
 import SchedulerModal from './SchedulerModal';
+import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { useSelector } from 'react-redux';
+import LUPA_DB from '../../../../controller/firebase/firebase';
 
-const months = ["January", "February", "March", "April",
-  "May", "June", "July", "August", "September", "October",
-  "November", "December"];
 
-const numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
+  const [markedDates, setMarkedDates] = useState({})
+  const [items, setItems] = useState({})
 
-const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const currUserData = useSelector(state => {
+    return state.Users.currUserData;
+  })
 
-export default class LupaCalendar extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      activeDate: new Date(),
-      selectedDates: [],
-      dateIsSelected: false,
-      editHoursModalVisible: false,
-    }
-  }
-
-  generateMatrix = () => {
-    var matrix = [];
-
-    matrix[0] = days;
-
-    var year = this.state.activeDate.getFullYear();
-    var month = this.state.activeDate.getMonth();
-
-    var firstDay = new Date(year, month, 1).getDay();
-
-    var maxDays = numDays[month];
-    if (month == 1) { // February
-      if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
-        maxDays += 1;
-      }
+  const addMarkedDate = (day) => {
+    if (Object.keys(markedDates).includes(day.dateString)) {
+      let updatedMarkedDates = markedDates;
+      delete updatedMarkedDates[day.dateString]
+    setMarkedDates(updatedMarkedDates)
+    return;
     }
 
-    var counter = 1;
-    for (var row = 1; row < 7; row++) {
-      matrix[row] = [];
-      for (var col = 0; col < 7; col++) {
-        matrix[row][col] = -1;
-        if (row == 1 && col >= firstDay) {
-          // Fill in rows only after the first day of the month
-          matrix[row][col] = counter++;
-        } else if (row > 1 && counter <= maxDays) {
-          // Fill in rows only if the counter's not greater than
-          // the number of days in the month
-          matrix[row][col] = counter++;
-        }
-      }
+    const dateString = day.dateString;
+    let dateObject = markedDates;
+    dateObject[day.dateString] = { startingDay: markedDates.length === 0 ?  true : false, color: '#1089ff', selected: true, marked: true }
+    setMarkedDates(dateObject);
+    captureMarkedDates(day.dateString);
+  }
+
+  const handleDeleteTimeBlock = (day, time) => {
+    alert('delete time');
+    //LUPA_CONTROLLER_INSTANCE.deleteSchedulertimeBlock(day, time);
+  }
+
+  useEffect(() => {
+      const currUserSubscription = LUPA_DB.collection('users').doc(currUserData.user_uuid).onSnapshot(documentSnapshot => {
+        let userData = documentSnapshot.data()
+        setItems(userData.scheduler_times);
+    })
+
+  return () => currUserSubscription()
+  }, []);
+
+  return (
+    <View style={styles.container}>
+          <Agenda
+    markingType="multi-period"
+  // The list of items that have to be displayed in agenda. If you want to render item as empty date
+  // the value of date key has to be an empty array []. If there exists no value for date key it is
+  // considered that the date in question is not yet loaded
+  items={items}
+  // Callback that gets called when items for a certain month should be loaded (month became visible)
+  loadItemsForMonth={(month) => {console.log('trigger items loading')}}
+  displayLoadingIndicator={false}
+  dayLoading={false}
+  // Callback that fires when the calendar is opened or closed
+  onCalendarToggled={(calendarOpened) => {console.log(calendarOpened)}}
+  // Callback that gets called on day press
+  onDayPress={(day)=> addMarkedDate(day)}
+  // Callback that gets called when day changes while scrolling agenda list
+  onDayChange={(day)=>{console.log('day changed')}}
+  // Initially selected day
+  selected={Date()}
+  // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
+  minDate={Date()}
+  // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
+  maxDate={'2020-31-12'}
+  // Max amount of months allowed to scroll to the past. Default = 50
+  pastScrollRange={50}
+  // Max amount of months allowed to scroll to the future. Default = 50
+  futureScrollRange={50}
+  // Specify how each item should be rendered in agenda
+  renderItem={(item, firstItemInDay) =>  <View />}
+  // Specify how each date should be rendered. day can be undefined if the item is not first in that day.
+  renderDay={(day, item) => {
+    if (typeof(day) == 'undefined' || typeof(item) == 'undefined') {
+      return;
     }
 
-    return matrix;
-  }
-
-  changeMonth = (n) => {
-    this.setState(() => {
-      this.state.activeDate.setMonth(
-        this.state.activeDate.getMonth() + n
-      )
-      return this.state;
-    });
-}
-
-  _onPress = async (item) => {
-    this.checkDateSelected()
-    let newState = this.state.selectedDates;
-    newState.push(item);
-
-    this.setState({ selectedDates: newState })
-  };
-
-  handleLeftChevronOnPress = () => {
-    this.setState({ selectedDates: [] })
-    this.changeMonth(-1)
-  }
-  
-  handleRightChevronOnPress = () => {
-    this.setState({ selectedDates: [] })
-    this.changeMonth(+1)
-  }
-
-  checkDateSelected = () => {
-    if (this.state.selectedDates.length >= 0) {
-      this.setState({ dateIsSelected: true })
-    } else {
-      console.log('hi')
-      this.setState({ dateIsSelected: false })
-    }
-  }
-
-  render() {
-    var matrix = this.generateMatrix();
-
-    var rows = [];
-    rows = matrix.map((row, rowIndex) => {
-      var rowItems = row.map((item, colIndex) => {
-        return (
-          <Text
-
-            style={{
-              flex: 1,
-              height: 18,
-              textAlign: 'center',
-              // Highlight header
-              backgroundColor: rowIndex == 0 ? 'transparent' : 'transparent',
-              // Highlight Sundays
-              color: colIndex == 0 ? '#1565C0' : '#000',
-              // Highlight current date
-              fontWeight: this.state.selectedDates.includes(item)
-                ? 'bold' : ''
-            }}
-            onPress={() => this._onPress(item)}>
-            {item != -1 ? item : ''}
-          </Text>
-        );
-      });
+    const times = item.times;
+    const list = times.map(time => {
       return (
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            padding: 15,
-            justifyContent: 'space-around',
-            alignItems: 'center',
-            color: 'white'
-          }}>
-          {rowItems}
-        </View>
-      );
+        <View style={{paddingHorizontal: 20, width: '100%', flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <Text style={styles.timePeriod}>
+{time.startTime} {time.startTimePeriod} - {time.endTime} {time.endTimePeriod}
+</Text>
+{isCurrentUser === true ? <Feather1s  name="x" size={20} onPress={() => handleDeleteTimeBlock(day, time)}/> : null}
+
+          </View>
+      )
     });
+
     return (
-      <>
-      {this.state.dateIsSelected === true ? 
-      <View style={{backgroundColor: 'rgb(248, 248, 248)', justifyContent: 'flex-end', width: '100%', flexDirection: 'row', alignItems: 'center'}}>
-        <Button onPress={() => this.setState({ editHoursModalVisible: true })} color="#1089ff" uppercase={false} style={{alignSelf: 'flex-end'}}><Text style={{fontFamily: 'Avenir-Light'}}>Edit Hours</Text></Button> 
-        <Button color="#1089ff" uppercase={false} style={{alignSelf: 'flex-end'}}><Text style={{fontFamily: 'Avenir-Light'}}>Clear Hours</Text></Button> 
-      </View>
-      
-      : 
-      null}
-      
-      <View style={styles.container}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%", height: "auto" }}>
-          <IconButton icon="chevron-left" size={18} onPress={() => this.handleLeftChevronOnPress()}/>
-          <Text style={{
-            fontWeight: 'bold',
-            fontSize: 15,
-            textAlign: 'center',
-            color: "black",
-          }}>
-            {months[this.state.activeDate.getMonth()]} &nbsp;
-            {this.state.activeDate.getFullYear()}
-          </Text>
-          <IconButton icon="chevron-right" size={18} onPress={() => this.handleRightChevronOnPress()}/>
-        </View>
-        {rows}
-      </View>
+      <View style={{backgroundColor: 'white', width: '100%'}}>
+        <Text style={styles.dateHeading}>
+      August {day.day}, {day.year}
+</Text>
+<View>
+{list}
+</View>
+<Divider style={{marginVertical: 5}} />
+</View>
+    )
+  }}
+  // Specify how empty date content with no items should be rendered
+  renderEmptyDate={() => {return (<View />);}}
+  // Specify how agenda knob should look like
+  //renderKnob={() => {return (<View />);}}
+  // Specify what should be rendered instead of ActivityIndicator
+  renderEmptyData = {() => {return <View />}}
+  // Specify your item comparison function for increased performance
+  rowHasChanged={() => {return true}}
+  // Hide knob button. Default = false
+  hideKnob={false}
+  // By default, agenda dates are marked if they have at least one item, but you can override this if needed
+  markedDates={markedDates}
+  // If disabledByDefault={true} dates flagged as not disabled will be enabled. Default = false
+  disabledByDefault={true}
+  // If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the refreshing prop correctly.
+  onRefresh={() => console.log('refreshing...')}
+  // Set this true while waiting for new data from a refresh
+  refreshing={false}
+  // Add a custom RefreshControl component, used to provide pull-to-refresh functionality for the ScrollView.
+  refreshControl={null}
+  // Agenda theme
+  theme={{
+    agendaDayTextColor: 'yellow',
+    agendaDayNumColor: 'green',
+    agendaTodayColor: 'red',
+    agendaKnobColor: 'rgb(199, 199, 204)',
+    backgroundColor: 'rgb(248, 248, 248)',
+  }}å
 
-
-     
-      </>
+  // Agenda container style
+  style={{height: Dimensions.get('window').height}}
+/>
+    </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    color: 'white',
-    backgroundColor: 'rgb(248, 248, 248)',
+    width: '100%',
+    height: Dimensions.get('window').height,
+  },
+  dateHeading: {
+      margin: 10,
+      fontSize: 15,
+      fontFamily: 'Avenir-Heavy'
+  },
+  timePeriod: {
+    fontFamily: 'Avenir-Roman',
+    fontSize: 15
   }
 })
+
+export default LupaCalendar;

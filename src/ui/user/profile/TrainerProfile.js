@@ -6,6 +6,7 @@ import {
     StyleSheet,
     SafeAreaView,
     TouchableOpacity,
+    Dimensions,
 } from 'react-native';
 
 import {
@@ -47,11 +48,17 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [postModalIsVisible, setPostModalIsVisible] = useState(false);
     const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0)
+    const [markedDates, setMarkedDates] = useState([])
     const [ready, setReady] = useState(false)
+    const [agendaContainerHeight, setAgendaContainerHeight] = useState(0)
     
     const currUserPrograms = useSelector(state => {
         return state.Programs.currUserProgramsData;
     })
+
+    const captureMarkedDate = (dateObject) => {
+        setMarkedDates(prevState => prevState.concat(dateObject));
+    }
 
     /**
      * Allows the current user to choose an image from their camera roll and updates the profile picture in FB and redux.
@@ -189,6 +196,10 @@ function TrainerProfile({ userData, isCurrentUser }) {
     }
 
     const renderFAB = () => {
+        if (!isCurrentUser) {
+            return;
+        }
+        
         switch(currPage) {
             case 0:
                 return  <FAB onPress={() => navigation.push('CreateProgram')} icon="plus" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
@@ -280,15 +291,17 @@ function TrainerProfile({ userData, isCurrentUser }) {
 
                    
               </Tab>
-              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-                    <LupaCalendar />
+              <Tab containerStyle={{flex: 1}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
+                    <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>
+                    <LupaCalendar captureMarkedDates={captureMarkedDate} />
+                    </View>
               </Tab>
             </Tabs>
             </ScrollView>
 
            {renderFAB()}
 
-           <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} />
+           <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} selectedDates={markedDates} />
         </SafeAreaView>
     )
 }

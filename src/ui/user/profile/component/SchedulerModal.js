@@ -12,8 +12,10 @@ import ThinFeatherIcon from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import LupaController from '../../../../controller/lupa/LupaController';
 
-function SchedulerModal({ closeModal, isVisible }) {
+function SchedulerModal({ closeModal, isVisible, selectedDates }) {
+  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
     const [addedTimes, setAddedTimes] = useState([]);
 
     const [startTime, setStartTime] = useState("");
@@ -32,10 +34,57 @@ function SchedulerModal({ closeModal, isVisible }) {
     const openEndTimeMenu = () => setEndTimeMenuVisible(true);
   
     const closeEndTimeMenu = () => setEndTimeMenuVisible(false);
-  
 
-    const renderTimeRow = () => {
-        return null;
+    const addTimes = () => {
+      const timeBlock = {
+        startTime: startTime,
+        startTimePeriod: startTimePeriod,
+        endTime: endTime,
+        endTimePeriod: endTimePeriod
+      }
+
+      setAddedTimes(prevState => prevState.concat(timeBlock));
+    }
+
+    const renderAddedTimes = () => {
+      return addedTimes.map((timeBlock, index, arr) => {
+        return (
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
+            <Text>
+              {timeBlock.startTime} {timeBlock.startTimePeriod}
+            </Text>
+            <Text>
+              {timeBlock.endTime} {timeBlock.endTimePeriod}
+            </Text>
+          </View>
+        )
+      })
+    }
+
+    renderSelectedDates = () => {
+      if (selectedDates.length == 0 || typeof(selectedDates) == 'undefined' || selectedDates == null) {
+        return (<Caption>
+          You haven't selected any dates.  Return to the calendar and select your desired dates.
+        </Caption>
+        )
+      }
+      return selectedDates.map((date, index, arr) => {
+        return (
+          <Text style={{margin: 10}}>
+          {date}
+        </Text>
+        )
+      })
+    }
+
+    const handleSaveTimes = () => {
+      let dateObject = {}
+      //for every date string we have add it as a key to our object and for the value have an object with a key "times" inside
+      for (let i = 0; i < selectedDates.length; i++) {
+          dateObject[selectedDates[i]]  =  [...addedTimes] 
+      }
+
+      LUPA_CONTROLLER_INSTANCE.addSchedulerTime(dateObject);
     }
 
     return (
@@ -45,8 +94,16 @@ function SchedulerModal({ closeModal, isVisible }) {
                 <Appbar.Content title="Edit Hours" />
             </Appbar.Header>
             <ScrollView contentContainerStyle={{marginTop: 10}}>
-                {addedTimes.length === 0 ? <Caption style={{marginVertical: 10, alignSelf: 'center'}}>You don't have any times added for the days.</Caption> : null}
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+              <View style={{marginVertical: 10, paddingHorizontal: 20,}}>
+              <Caption> Add blocks of time your are available for the dates you selected.</Caption>
+               <Caption> Note: You must use one hour intervals. </Caption>
+              </View>
+              <ScrollView centerContent horizontal>
+                {renderSelectedDates()}
+              </ScrollView>
+              <Divider />
+              {renderAddedTimes()}
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{}}>
             <Text style={{paddingVertical: 5}}>
@@ -61,13 +118,13 @@ function SchedulerModal({ closeModal, isVisible }) {
           onDismiss={closeStartTimeMenu}
           anchor={ 
           <TouchableOpacity onPress={openStartTimeMenu}>
-              <Text  style={{margin: 10, fontSize: 15}}>
+              <Text  style={{paddingHorizontal: 10, fontSize: 15}}>
           AM
           <FeatherIcon name="chevron-down" size={12} />
         </Text>
         </TouchableOpacity>}>
           <Menu.Item onPress={() => setStartTimePeriod("AM")} title="AM" />
-          <Menu.Item onPress={() => setStartTimePeriod("AM")} title="PM" />
+          <Menu.Item onPress={() => setStartTimePeriod("PM")} title="PM" />
         </Menu> 
    
            
@@ -76,7 +133,7 @@ function SchedulerModal({ closeModal, isVisible }) {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{}}>
             <Text style={{paddingVertical: 5}}>
-              Start time
+              End time
             </Text>
             <TextInput returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" maxLength={4} value={endTime.lengtj === 1 ? endTime + ":" : endTime} onChangeText={text => setEndTime(text)} placeholder="8:00" style={{borderWidth: 1, padding: 10, borderRadius: 3, borderColor: '#EEEEEE'}} />
             </View>
@@ -86,7 +143,7 @@ function SchedulerModal({ closeModal, isVisible }) {
           onDismiss={closeEndTimeMenu}
           anchor={ 
           <TouchableOpacity onPress={openEndTimeMenu}>
-              <Text  style={{margin: 10, fontSize: 15}}>
+              <Text  style={{paddingHorizontal: 10, fontSize: 15}}>
           AM
           <FeatherIcon name="chevron-down" size={12} />
         </Text>
@@ -97,11 +154,11 @@ function SchedulerModal({ closeModal, isVisible }) {
           </View>
 
 
-          <ThinFeatherIcon name="check"  size={20} />
+          <ThinFeatherIcon name="check"  size={20} onPress={addTimes} />
          
 </View>
 </ScrollView>
-<FAB onPress={closeModal} icon="check" style={{position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#1089ff'}} />
+<FAB onPress={handleSaveTimes} icon="check" style={{position: 'absolute', bottom: 0, right: 0, margin: 22, backgroundColor: '#1089ff'}} />
       
       </Modal>
     )
