@@ -446,15 +446,6 @@ export class FirebaseStorageBucket {
      })
   }
 
-  getUserProfileImageFromUUID = async (uuid) => {
-    let link;
-    await LUPA_USER_PROFILE_IMAGES_STORAGE_REF.child(`${uuid}`).getDownloadURL().then(url => {
-      link = url;
-    });
-
-    return Promise.resolve(link)
-  }
-
   saveVlogMedia = async (blob) => {
     const user_uuid = await LUPA_AUTH.currentUser.uid;
     return new Promise((resolve, reject) => {

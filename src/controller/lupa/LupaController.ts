@@ -76,15 +76,6 @@ export default class LupaController {
       return Promise.resolve(url);
     }
 
-    getUserProfileImageFromUUID = async (uuid) => {
-      let imageURI;
-      await USER_CONTROLLER_INSTANCE.getUserProfileImageFromUUID(uuid).then(result => {
-        imageURI = result;
-      });
-
-      return Promise.resolve(imageURI);
-    }
-
     savePackImage = async (string, uuid) => {
       let url;
       await PACKS_CONTROLLER_INSTANCE.savePackImage(string, uuid).then(data => {
@@ -164,20 +155,6 @@ export default class LupaController {
       return Promise.resolve(userData);
     }
 
-    getCurrentUserHealthData = async () => {
-      let healthData;
-      await USER_CONTROLLER_INSTANCE.getCurrentUserHealthData().then(result => {
-        healthData = result;
-      });
-
-      return Promise.resolve(healthData);
-    }
-
-    isTrainer = (userUUID) => {
-      let isTrainer = USER_CONTROLLER_INSTANCE.isTrainer(userUUID);
-      return isTrainer;
-    }
-
     updatePack = (packID, attribute, value, optionalData=[]) => {
       PACKS_CONTROLLER_INSTANCE.updatePack(packID, attribute, value, optionalData);
     }
@@ -199,14 +176,6 @@ export default class LupaController {
 
     updateProgramWorkoutData = (programUUID, workoutData) => {
       PROGRAMS_CONTROLLER_INSTANCE.updateProgramWorkoutData(programUUID, workoutData);
-    }
-
-    getUserDisplayName = () => {
-      return USER_CONTROLLER_INSTANCE.getUserDisplayName(true);
-    }
-
-    getUserPhotoURL = () => {
-      return USER_CONTROLLER_INSTANCE.getUserPhotoURL(true);
     }
 
     completeSession = async (uuid) => {
@@ -239,23 +208,6 @@ export default class LupaController {
       return result;
     }
 
-    getAttributeFromUUID = async (uuid, attribute) => {
-      let result;
-      await USER_CONTROLLER_INSTANCE.getAttributeFromUUID(uuid, attribute).then(res => {
-        result = res;
-      });
-      return result;
-    }
-
-    getUUIDFromDisplayName  = async (displayName) => {
-      let result;
-      await USER_CONTROLLER_INSTANCE.getUserInformationFromDisplayName(displayName).then(snapshot => {
-        result = snapshot.data();
-      })
-
-      let userUUID = result.uid;
-      return userUUID;
-    }
     /********************** */
 
     /* Algolia */
