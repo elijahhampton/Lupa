@@ -10,18 +10,15 @@ import {
 } from 'react-native';
 
 import {
-    Surface, Appbar, Caption, Button, FAB, Menu
+    Surface, Appbar, Caption, Button, FAB, Menu, Card, Avatar as PaperAvatar
 } from 'react-native-paper';
 
-import {
-    Avatar
-} from 'react-native-elements';
 
 import {
     Tab,
     Tabs
 } from 'native-base'
-
+import { Avatar } from 'react-native-elements';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaColor from '../../common/LupaColor'
 import ImagePicker from 'react-native-image-picker';
@@ -51,6 +48,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [markedDates, setMarkedDates] = useState([])
     const [ready, setReady] = useState(false)
     const [agendaContainerHeight, setAgendaContainerHeight] = useState(0)
+    const [cardContentHeight, setCardContentHeight] = useState(0)
     
     const currUserPrograms = useSelector(state => {
         return state.Programs.currUserProgramsData;
@@ -158,7 +156,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const renderVlogs = () => {
         return userVlogs.map(vlog => {
             return (
-                <View style={{paddingHorizontal: 20, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'flex-start'}}>
+              /*  <View style={{paddingHorizontal: 20, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'flex-start'}}>
                     <View style={{width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Avatar containerStyle={{marginRight: 10}} key={userData.photo_url} source={{uri: userData.photo_url}} raised={true} rounded size={50} />
@@ -182,7 +180,22 @@ function TrainerProfile({ userData, isCurrentUser }) {
                    
                     </View>
                     
-                </View>
+                </View>*/
+
+                <Card style={{margin: 10, elevation: 0}}>
+                    <Card.Cover style={{elevation: 0,height: 340}} source={{uri: 'https://picsum.photos/200'}} />
+                    <PaperAvatar.Image source={{uri: profileImage}} size={30} style={{position: 'absolute', bottom: cardContentHeight + 30, right: 0, marginRight: 15}} />
+                    <FeatherIcon name="maximize" size={20} style={{position: 'absolute', top: 0, right: 0, margin: 12}} color="white" />
+                    <Card.Content style={{backgroundColor: 'transparent'}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                            <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
+                                How to do high intensity workouts
+                            </Text>
+                        
+                            <Text numberOfLines={2} style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                            </Text>
+                    </Card.Content>
+                </Card>
             )
         })
     }
@@ -285,14 +298,14 @@ function TrainerProfile({ userData, isCurrentUser }) {
                     </View>
              </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
-       <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
+       <View style={{flex: 1, backgroundColor: 'white' /*'rgb(248, 248, 248)'*/}}>
                         {renderVlogs()}
                     </View>
 
                    
               </Tab>
               <Tab containerStyle={{flex: 1}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-                    <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>
+                    <View  style={{backgroundColor: 'white'  /*'rgb(248, 248, 248)'*/, height: Dimensions.get('window').height}}>
                     <LupaCalendar captureMarkedDates={captureMarkedDate} />
                     </View>
               </Tab>
@@ -309,7 +322,8 @@ function TrainerProfile({ userData, isCurrentUser }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'rgb(248, 248, 248)'
+        backgroundColor: 'white'
+       // backgroundColor: 'rgb(248, 248, 248)'
     },
     userInformationContainer: {
         flexDirection: 'row',
