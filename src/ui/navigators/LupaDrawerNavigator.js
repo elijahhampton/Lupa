@@ -87,7 +87,12 @@ function LupaBottomTabNavigator() {
                   }
                 })}  />
                 :
-                null
+                <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
+                  tabPress: event => {
+                    event.preventDefault()
+                    navigation.navigate('CreateWorkout')
+                  }
+                })}  />
               }
             <Tab.Screen name="Dashboard" component={DashboardNavigator} />
     </Tab.Navigator>

@@ -9,6 +9,7 @@ const USER_COLLECTION = LUPA_DB.collection('users');
 const HEALTH_DATA_COLLECTION = LUPA_DB.collection('health_data');
 
 const PROGRAMS_COLLECTION = LUPA_DB.collection('programs');
+const WORKOUTS_COLLECTION = LUPA_DB.collection('workouts');
 
 
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
@@ -344,6 +345,30 @@ export default class UserController {
                 alert(error)
             }
             break;
+            case 'workouts':
+                let workouts, snapshot = {}
+                
+                try {
+                    if (optionalData == 'add')
+                {
+                    await currentUserDocument.get().then(result => {
+                       snapshot = result.data()
+                    });
+
+                    workouts = snapshot.workouts
+                    workouts.push(value);
+                    await currentUserDocument.update({
+                        workouts: workouts
+                    });
+                }
+                else if (optionalData == 'remove')
+                {
+
+                }
+                } catch(error) {
+                    alert(error);
+                }
+                break;
             case UserCollectionFields.CHATS:
                 let chats;
                 if (optionalData == 'add') {
@@ -1145,7 +1170,7 @@ export default class UserController {
      * @param uuid 
      */
     createProgram = async (uuid) => {
-        PROGRAMS_COLLECTION.doc(uuid).set(getLupaProgramInformationStructure())
+        PROGRAMS_COLLECTION.doc(uuid).set(getLupaProgramInformationStructure());
     }
 
     /**
@@ -1347,6 +1372,28 @@ export default class UserController {
 
          let payload;
          await PROGRAMS_COLLECTION.doc(workoutData.program_structure_uuid).get().then(snapshot => {
+             payload = snapshot.data();
+         })
+
+         return Promise.resolve(payload);
+        }
+
+        /**
+     * 
+     * @param workoutData 
+     */
+    saveWorkout = async (workoutData) => {
+        /* Perform check on data */
+        const checkedWorkoutData = workoutData;
+
+        //add program to lupa programs collection
+        await WORKOUTS_COLLECTION.doc(checkedWorkoutData.workout_structure_uuid).set(checkedWorkoutData);
+
+        //add uuid of program to user programs arr
+        await this.updateCurrentUser('workouts', checkedWorkoutData.workout_structure_uuid, 'add');
+
+         let payload;
+         await WORKOUTS_COLLECTION.doc(checkedWorkoutData.program_structure_uuid).get().then(snapshot => {
              payload = snapshot.data();
          })
 

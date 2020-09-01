@@ -1,24 +1,38 @@
-import { Workout } from './types';
+import { LupaWorkoutInformationStructure } from "./common/types";
 
-var lupa_workout : Workout = {
-    workout_name: '',
-    workout_description: '',
-    workout_steps: [],
-    workout_uid: '',
-    workout_modalities: [],
-    workout_tags: [],
+var lupa_workout_information_structure : LupaWorkoutInformationStructure = {
+    workout_name: "",
+    workout_structure_uuid: "",
+    workout_data: {
+        Monday: [],
+        Tuesday: [],
+        Wednesday: [],
+        Thursday: [],
+        Friday: [],
+        Saturday: [],
+        Sunday: []
+    },
+    workout_days: [],
+    workout_owner: "",
 }
 
-const getWorkoutStructure = (workout_name, workout_description, workout_steps, workout_uid, workout_modalities, workout_tags) => {
-    lupa_workout.workout_name = workout_name;
-    lupa_workout.workout_description = workout_description;
-    lupa_workout.workout_steps = workout_steps;
-    lupa_workout.workout_uid = workout_uid;
-    lupa_workout.workout_modalities = workout_modalities;
-    lupa_workout.workout_tags = workout_tags;
-    return lupa_workout;
-}
+export const getLupaWorkoutInformationStructure = (
+    workoutName = "", 
+    workoutUUID = "", 
+    workoutData = {
+        Monday: [],
+    Tuesday: [],
+    Wednesday: [],
+    Thursday: [],
+    Friday: [],
+    Saturday: [],
+    Sunday: []
+}, workoutDays = [], workoutOwner = "") => {
+    lupa_workout_information_structure.workout_name =  workoutName;
+    lupa_workout_information_structure.workout_structure_uuid =  workoutUUID;
+    lupa_workout_information_structure.workout_data = workoutData;
+    lupa_workout_information_structure.workout_days = workoutDays;
+    lupa_workout_information_structure.workout_owner = workoutOwner;
 
-export {
-    getWorkoutStructure
+    return lupa_workout_information_structure;
 }

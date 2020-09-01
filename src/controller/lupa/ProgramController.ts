@@ -5,9 +5,10 @@
 import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
 import WorkoutController from './WorkoutController';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures.js';
-
+import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
+const WORKOUT_COLLECTION = LUPA_DB.collection('workouts');
 
 export default class ProgramController {
     private static _instance: ProgramController;
@@ -63,6 +64,20 @@ export default class ProgramController {
 
         try {
             await PROGRAM_COLLECTION.doc(uuid).get().then(snapshot => {
+                programData = snapshot.data();
+            })
+        } catch (error) {
+            return Promise.resolve(programData);
+        }
+
+        return Promise.resolve(programData);
+    }
+
+    getWorkoutInformationFromUUID = async (uuid) => {
+        let programData = getLupaWorkoutInformationStructure()
+
+        try {
+            await WORKOUT_COLLECTION.doc(uuid).get().then(snapshot => {
                 programData = snapshot.data();
             })
         } catch (error) {
@@ -158,6 +173,12 @@ export default class ProgramController {
         })
     }
 
+    publishWorkout = async (uuid) => {
+        await WORKOUT_COLLECTION.doc(uuid).update({
+            completedProgram: true
+        });
+    }
+
     updateProgramData = (programUUID, programData) => {
         const docRef = PROGRAM_COLLECTION.doc(programUUID);
         docRef.set(programData);
@@ -168,6 +189,28 @@ export default class ProgramController {
         docRef.update({
             program_workout_structure: workoutData
         })
+    }
+
+    updateWorkoutInformation = (workoutUUID, workoutData) => {
+        const docRef = WORKOUT_COLLECTION.doc(workoutUUID);
+        docRef.set(workoutData);
+    }
+
+    updateWorkoutData = (workoutUUID, workoutData) => {
+        const docRef = WORKOUT_COLLECTION.doc(workoutUUID);
+        docRef.update({
+            workout_data: workoutData,
+        })
+    }
+
+    /**
+     * Creates a new workout entry in the workout collection and adds the UUID for that workout
+     * to the current users program list.
+     * @param arr 
+     * @param value 
+     */
+    createWorkout = async (uuid) => {
+        PROGRAM_COLLECTION.doc(uuid).set(getLupaWorkoutInformationStructure());
     }
 
 }

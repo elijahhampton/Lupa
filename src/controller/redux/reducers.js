@@ -80,7 +80,7 @@ const initialPacksReducerState = {
 
 const initialProgramsReducerState = {
   currUserProgramsData: {},
-  currUserServicesData: {}
+  currUserWorkoutsData: {}
 }
 
 const initialAppWorkoutsReducerState = {
@@ -171,6 +171,30 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
 
   switch(action.type)
   {
+    case 'ADD_CURRENT_USER_WORKOUT':
+      let updatedWorkoutsData = state.currUserWorkoutsData;
+      if (!updatedWorkoutsData.length)
+      {
+        updatedWorkoutsData = [action.payload];
+      }
+      else
+      {
+        updatedWorkoutsData.push(action.payload);
+      }
+
+      return Object.assign({}, state, { currUserWorkoutsData: updatedWorkoutsData });
+    case 'DELETE_CURRENT_USER_WORKOUT':
+      let workouts = state.currUserWorkoutsData;
+      let workoutsToKeep = [];
+      for (let i = 0; i < workouts.length; i++)
+  {
+    let workout = workouts[i];
+    if (workout.program_structure_uuid != action.payload)
+    {
+     workoutsToKeep.push(workout);
+    }
+  }
+      return Object.assign({},  {currUserWorkoutsData: workoutsToKeep} );
     case "ADD_CURRENT_USER_PROGRAM":
       let updatedProgramsData = state.currUserProgramsData;
       if (!updatedProgramsData.length)
@@ -195,54 +219,6 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
     }
   }
       return Object.assign({},  {currUserProgramsData: programsToKeep} );
-    case UPDATE_CURRENT_USER_PROGRAMS_ACTION:
-      return Object.assign({}, state, {currUserProgramsData: action.payload});
-    case 'UPDATE_CURRENT_USER_PROGRAM_ATTRIBUTE':
-      const updatedState = handleProgramAttributeUpdate(state, action.payload);
-      return Object.assign(state, updatedState)
-    case ADD_WORKOUT_TO_PROGRAM_ACTION:
-        let programID = action.payload.programUUID;
-        let workout = action.payload.workoutData;
-        let sectionName = action.payload.sectionName;
-
-        let programsArr =  state.currUserProgramsData;
-        let currProgram;
-        for (let i = 0; i < programsArr.length; i++)
-        {
-          if (programsArr[i].program_structure_uuid == programID)
-          {
-            switch(sectionName)
-            {
-              case 'warm up':
-                programsArr[i].program_workout_data.warmup.push(workout);
-                break;
-              case 'primary':
-                programsArr[i].program_workout_data.primary.push(workout);
-                break;
-              case 'break':
-                programsArr[i].program_workout_data.break.push(workout);
-                break;
-              case 'secondary':
-                programsArr[i].program_workout_data.secondary.push(workout);
-                break;
-              case 'cooldown':
-                programsArr[i].program_workout_data.cooldown.push(workout);
-                break;
-              case 'homework':
-                programsArr[i].program_workout_data.homework.push(workout);
-                break;
-            }
-          }
-        }
-
-      return Object.assign(state, {currUserProgramsData: programsArr });
-      case UPDATE_CURRENT_USER_SERVICES_ACTION:
-      return Object.assign({}, state, {currUserServicesData: action.payload});
-      case ADD_CURRENT_USER_SERVICE_ACTION:
-        const USER_SERVICE = action.payload;
-        let updatedUserServiceState = state.currUserServicesData;
-        updatedUserServiceState.push(USER_SERVICE);
-      return Object.assign({}, state, {currUserServicesData: updatedUserServiceState})
     default:
       return newState;
   }

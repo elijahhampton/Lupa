@@ -201,6 +201,14 @@ export default class LupaController {
       PROGRAMS_CONTROLLER_INSTANCE.updateProgramWorkoutData(programUUID, workoutData);
     }
 
+    updateWorkoutInformation = (workoutUUID, workoutData) => {
+      PROGRAMS_CONTROLLER_INSTANCE.updateWorkoutInformation(workoutUUID, workoutData);
+    }
+
+    updateWorkoutData = (workoutUUID, workoutData) => {
+      PROGRAMS_CONTROLLER_INSTANCE.updateWorkoutData(workoutUUID, workoutData);
+    }
+
     getUserDisplayName = () => {
       return USER_CONTROLLER_INSTANCE.getUserDisplayName(true);
     }
@@ -694,8 +702,16 @@ export default class LupaController {
      USER_CONTROLLER_INSTANCE.createProgram(uuid)
     }
 
+    createNewWorkout = async (uuid) => {
+      PROGRAMS_CONTROLLER_INSTANCE.createWorkout(uuid);
+    }
+
     publishProgram = (uuid) => {
       PROGRAMS_CONTROLLER_INSTANCE.publishProgram(uuid);
+    }
+
+    publishWorkout = (uuid) => {
+      PROGRAMS_CONTROLLER_INSTANCE.publishWorkout(uuid);
     }
 
     saveProgram = async (programUUID) => {
@@ -706,6 +722,15 @@ export default class LupaController {
        })
 
        return Promise.resolve(res);
+    }
+
+    saveWorkout = async (workoutUUID) => {
+      let res;
+      await USER_CONTROLLER_INSTANCE.saveWorkout(workoutUUID).then(result => {
+        res = result;
+      });
+
+      return Promise.resolve(res);
     }
 
     deleteUserProgram = async (programUUID, userUUID) => {
@@ -879,6 +904,20 @@ export default class LupaController {
       }
 
       await PROGRAMS_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(result => {
+        retVal = result;
+      });
+
+      return Promise.resolve(retVal);
+    }
+
+    getWorkoutInformationFromUUID = async (uuid) => {
+      let retVal = getLupaProgramInformationStructure()
+
+      if (typeof uuid != 'string' || typeof(uuid) == 'undefined'){
+        return Promise.resolve(retVal)
+      }
+
+      await PROGRAMS_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(uuid).then(result => {
         retVal = result;
       });
 

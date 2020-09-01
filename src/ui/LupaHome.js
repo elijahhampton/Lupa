@@ -6,6 +6,7 @@ import { Banner } from 'react-native-paper';
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import { MenuIcon } from "./icons";
+import CreateWorkout from "./workout/createworkout/CreateWorkout";
 
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
