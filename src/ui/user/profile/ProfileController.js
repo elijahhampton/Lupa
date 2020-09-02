@@ -10,6 +10,7 @@ import LupaController from '../../../controller/lupa/LupaController';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import { useSelector } from 'react-redux/lib/hooks/useSelector';
 import TrainerProfile from './TrainerProfile';
+import UserProfile from './UserProfile';
 
 const ProfileController = ({ route }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -48,7 +49,7 @@ const ProfileController = ({ route }) => {
                 return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} />
             case false:
     
-                return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} />
+                return <UserProfile userData={userData} isCurrentUser={isCurrentUser} />
             default:
                 return <View style={{flex: 1}} />
         }

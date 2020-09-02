@@ -48,7 +48,7 @@ class FollowingTab extends React.Component {
     mapFollowing = () => {
         return this.state.followingUserObjects.map(user => {
             return (
-                <UserSearchResult avatarSrc={user.photo_url} displayName={user.display_name} username={user.username} isTrainer={user.isTrainer}/>
+                <UserSearchResult userData={user} />
             );
         })
     }

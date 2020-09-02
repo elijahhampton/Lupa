@@ -171,6 +171,11 @@ const programsReducer = (state = initialProgramsReducerState, action) => {
 
   switch(action.type)
   {
+    case UPDATE_CURRENT_USER_PROGRAMS_ACTION:
+      return Object.assign({}, state, {currUserProgramsData: action.payload});
+    case 'UPDATE_CURRENT_USER_PROGRAM_ATTRIBUTE':
+      const updatedState = handleProgramAttributeUpdate(state, action.payload);
+      return Object.assign(state, updatedState)
     case 'ADD_CURRENT_USER_WORKOUT':
       let updatedWorkoutsData = state.currUserWorkoutsData;
       if (!updatedWorkoutsData.length)

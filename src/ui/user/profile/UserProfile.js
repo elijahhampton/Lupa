@@ -26,11 +26,13 @@ import ImagePicker from 'react-native-image-picker';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import LupaController from '../../../controller/lupa/LupaController';
 
 function UserProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
 
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     /**
      * Allows the current user to choose an image from their camera roll and updates the profile picture in FB and redux.
      */
@@ -43,12 +45,12 @@ function UserProfile({ userData, isCurrentUser }) {
 
                 let imageURL;
                 //update in FB storage
-                 this.LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
+                 LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
                     imageURL = result;
                 });
         
                 //update in Firestore
-                this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
+                LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
         
             }
         });
@@ -102,11 +104,16 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     const renderLocation = () => {
-        return <Text style={[styles.userAttributeText, {color: '#1089ff'}]}>{userData.location.city}, {userData.location.state}</Text>
+        return (
+            <View style={{paddingVertical: 2, flexDirection: 'row', alignItems: 'center'}}>
+            <FeatherIcon name="map-pin" style={{paddingRight: 5}} />
+            <Text style={[styles.userAttributeText, {color: '#23374d'}]}>{userData.location.city}, {userData.location.state}</Text>
+        </View>
+        )
     }
 
     const renderDisplayName = () => {
-        return <Text style={styles.bioText} key={userData.display_name} style={styles.displayNameText}>{userData.display_name}</Text>
+        return <Text key={userData.display_name} style={styles.displayNameText}>{userData.display_name}</Text>
     }
 
     const renderBio = () => {
@@ -121,7 +128,7 @@ function UserProfile({ userData, isCurrentUser }) {
      * Navigates to the follower view.
      */
     const navigateToFollowers = () => {
-        this.props.navigation.navigate('FollowerView');
+        navigation.navigate('FollowerView');
     }
 
     return (
@@ -146,7 +153,7 @@ function UserProfile({ userData, isCurrentUser }) {
                 </View>
             </View>
 
-            <Tabs locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
+            <Tabs tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF' locked={true} >
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
        
               </Tab>
@@ -194,7 +201,7 @@ const styles = StyleSheet.create({
     },
     displayNameText: {
         paddingVertical: 5,
-        fontSize: 12,
+        fontSize: 15,
         fontFamily: 'Avenir-Black'
     },
     inactiveTabHeading: {

@@ -10,6 +10,7 @@ import {
     Right,
     Container,
     Header,
+    Body,
     Tab,
     Tabs,
 } from 'native-base';
@@ -23,6 +24,7 @@ import FollowingTab from '../component/FollowingTab';
 
 import { connect, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 const FollowerModal = ({ activeTab }) => {
     const navigation = useNavigation()
@@ -35,16 +37,13 @@ const FollowerModal = ({ activeTab }) => {
         <Container style={styles.root}>
                     <Header hasTabs>
                         <Left>
-                            <IconButton icon="arrow-back"  onPress={() => navigation.pop()}/>
+                            <IconButton icon={() => <Feather1s name="arrow-left" size={20} />}  onPress={() => navigation.pop()}/>
                         </Left>
-                        <Right>
-                            <Text style={styles.userDisplayName}>
-                                {currUserData.display_name}
-                            </Text>
-                        </Right>
+                        <Body />
+                        <Right />
                     </Header>
 
-                    <Tabs page={activeTab}>
+                    <Tabs page={activeTab} tabBarUnderlineStyle={{height: 2}}>
                             <Tab heading="Followers">
                                 <FollowersTab  />
                             </Tab>
