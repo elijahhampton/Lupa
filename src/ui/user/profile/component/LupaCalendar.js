@@ -116,9 +116,15 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
 
     return (
       <View style={{backgroundColor: 'white', width: '100%'}}>
-        <Text style={styles.dateHeading}>
-      August {day.day}, {day.year}
+        <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
+        <Text style={{ fontSize: 20, fontFamily: 'Avenir-Light'}}>
+      {day.day}
 </Text>
+<Text style={{fontSize: 10}}>
+      August
+      </Text>
+        </View>
+        
 <View>
 {list}
 </View>

@@ -10,18 +10,15 @@ import {
 } from 'react-native';
 
 import {
-    Surface, Appbar, Caption, Button, FAB, Menu
+    Surface, Appbar, Caption, Button, FAB, Menu, Card, Avatar as PaperAvatar
 } from 'react-native-paper';
 
-import {
-    Avatar
-} from 'react-native-elements';
 
 import {
     Tab,
     Tabs
 } from 'native-base'
-
+import { Avatar } from 'react-native-elements';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaColor from '../../common/LupaColor'
 import ImagePicker from 'react-native-image-picker';
@@ -51,6 +48,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [markedDates, setMarkedDates] = useState([])
     const [ready, setReady] = useState(false)
     const [agendaContainerHeight, setAgendaContainerHeight] = useState(0)
+    const [cardContentHeight, setCardContentHeight] = useState(0)
     
     const currUserPrograms = useSelector(state => {
         return state.Programs.currUserProgramsData;
@@ -158,7 +156,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const renderVlogs = () => {
         return userVlogs.map(vlog => {
             return (
-                <View style={{paddingHorizontal: 20, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'flex-start'}}>
+              /*  <View style={{paddingHorizontal: 20, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'flex-start'}}>
                     <View style={{width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Avatar containerStyle={{marginRight: 10}} key={userData.photo_url} source={{uri: userData.photo_url}} raised={true} rounded size={50} />
@@ -182,7 +180,33 @@ function TrainerProfile({ userData, isCurrentUser }) {
                    
                     </View>
                     
-                </View>
+                </View>*/
+
+                <Card theme={{roundness: 0}} style={{ marginTop: 10, borderRadius: 0, elevation: 0}}>
+                    <Card.Cover theme={{roundness: 0}} style={{elevation: 0, height: 180, borderRadius: 0}} source={{uri: 'https://picsum.photos/200'}} />
+                    <PaperAvatar.Image source={{uri: profileImage}} size={30} style={{position: 'absolute', bottom: cardContentHeight + 15, right: 0, marginRight: 15}} />
+                   
+                    <Card.Content style={{backgroundColor: 'rgb(248, 248, 248)'}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
+                                How to do high intensity workouts
+                            </Text>
+                            <FeatherIcon name="more-horizontal" size={20} color="#212121"  />
+                            </View>
+                            
+                            
+                            <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end'}}>
+                            <Text numberOfLines={2} style={{width: '80%', fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud {" "}
+                            </Text>
+                            
+                               <Text style={{fontFamily: 'Avenir-Light', fontSize: 12}}>
+                                   See more
+                               </Text>
+                            </View>
+                            
+                    </Card.Content>
+                </Card>
             )
         })
     }
