@@ -157,7 +157,11 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
 
   // Agenda container style
   style={{height: Dimensions.get('window').height}}
-/>
+>
+  <Text>
+    Hi
+  </Text>
+</Agenda>
     </View>
     );
 }
