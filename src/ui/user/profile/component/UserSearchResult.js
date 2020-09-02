@@ -9,25 +9,31 @@ import {
 import {
     Avatar,
     Chip,
-    Button
+    Button,
+    Caption,
 } from 'react-native-paper';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
-const userSearchResult = (props) => {
+const userSearchResult = ({userData, hasButton, buttonTitle}) => {
+    const navigation = useNavigation();
+
     return (
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Profile', {uuid: userData.user_uuid})}>
         <View style={styles.root}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Avatar.Image size={40} source={{uri: props.avatarSrc}} style={{margin: 5}}/>
+                    <Avatar.Image size={40} source={{uri: userData.photo_url}} style={{margin: 5}}/>
                     <View style={styles.userContent}>
-                        <Text style={{fontSize: 12, fontWeight: 'bold'}}>
-                           {props.displayName}
+                        <Text style={{fontSize: 13, fontFamily: 'Avenir-Heavy'}}>
+                           {userData.username}
                         </Text>
-                        <Text style={{fontSize: 10, fontWeight: "600"}}>
-                            {props.username}
-                        </Text>
+                        <Caption style={{}}>
+                            {userData.display_name}
+                        </Caption>
                     </View>
                     </View>
                     {
-                            props.hasButton == true ?
+                            hasButton == true ?
                             <Button uppercase={false} mode="outlined" style={{elevation: 0}} onPress={props.buttonOnPress} theme={{
                                 colors: {
                                     primary: '#2196F3'
@@ -35,13 +41,14 @@ const userSearchResult = (props) => {
                                 roundness: 5
                             }}>
                                 <Text>
-                                {props.buttonTitle}
+                                {buttonTitle}
                                 </Text>
                             </Button>
                             :
                             null
                      }
                 </View>
+                </TouchableWithoutFeedback>
     )
 };
 
