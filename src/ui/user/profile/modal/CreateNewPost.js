@@ -100,7 +100,7 @@ function CreateNewPost(props) {
     }
 
     const saveVlog = () => {
-        const vlogStructure = getLupaVlogStructure(postText, postMediaURI, postMediaType, currUserUUID);
+        const vlogStructure = getLupaVlogStructure(postText, postMediaURI, postMediaType, currUserUUID, new Date().getTime(), new Date());
         LUPA_CONTROLLER_INSTANCE.publishVlog(vlogStructure);
         handleClose();
     }

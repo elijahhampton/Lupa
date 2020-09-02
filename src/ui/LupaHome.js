@@ -2,7 +2,7 @@
 import React, {Component} from "react";
 import {Animated, Image, Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
-import { Banner } from 'react-native-paper';
+import { Banner, FAB } from 'react-native-paper';
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import { MenuIcon } from "./icons";
@@ -11,9 +11,9 @@ const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
 const COLOR = "white";
 const TAB_PROPS = {
-  tabStyle: { backgroundColor: COLOR},
+  tabStyle: {backgroundColor: COLOR},
   activeTabStyle: {backgroundColor: COLOR},
-  textStyle: {color: "#212121", fontFamily: 'Avenir-Medium'},
+  textStyle: {color: "rgb(174, 174, 178)", fontFamily: 'Avenir-Heavy'},
   activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold'}
 };
 
@@ -76,7 +76,9 @@ export class LupaHome extends Component {
             {useNativeDriver: true},
           )}
           overScrollMode="never">
-          <Tabs renderTabBar={(props) => <Animated.View
+          <Tabs 
+          
+          renderTabBar={(props) => <Animated.View
             style={[{
               transform: [{translateY: tabY}],
               zIndex: 1,
@@ -85,7 +87,7 @@ export class LupaHome extends Component {
               backgroundColor: COLOR,
               justifyContent: 'flex-start',
             }, Platform.OS === "ios" ? {paddingTop: 30} : null]}>
-            <ScrollableTab {...props} style={{ shadowRadius: 1, justifyContent: 'flex-start', elevation: 15, borderBottomColor: 'transparent'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 15, borderBottomColor: 'transparent'}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 15, borderRadius: 8}}/>
+            <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: 'transparent'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 0, borderBottomColor: 'transparent'}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
           </Animated.View>
           }>
             
@@ -101,7 +103,7 @@ export class LupaHome extends Component {
           </Tabs>
         </Animated.ScrollView>
 
-        
+        <FAB onPress={() => this.props.navigation.push('CreatePost')} icon="rss" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
       </View>
     );
   }

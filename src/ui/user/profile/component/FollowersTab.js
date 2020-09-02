@@ -67,7 +67,7 @@ class FollowersTab extends React.Component {
     mapFollowers = () => {
         return this.state.followersUserObjects.map(user => {
             return (
-                <UserSearchResult avatarSrc={user.photo_url} displayName={user.display_name} username={user.username} isTrainer={user.isTrainer}/>
+                <UserSearchResult  userData={user} />
             );
         })
     }

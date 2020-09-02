@@ -51,12 +51,16 @@ import { Constants } from 'react-native-unimodules';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ProgramInformationComponent from './workout/program/components/ProgramInformationComponent';
 import LargeProgramSearchResultCard from './workout/program/components/LargeProgramSearchResultCard'
+import LUPA_DB from '../controller/firebase/firebase';
+import VlogFeedCard from './user/component/VlogFeedCard';
 
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
     }
 }
+
+let vlogCollectionObserver;
 
 class Featured extends React.Component {
     constructor(props) {
@@ -79,12 +83,41 @@ class Featured extends React.Component {
             inviteFriendsIsVisible: false,
             showLiveWorkoutPreview: false,
             showTopPicksModalIsVisible: false,
+            feedVlogs: [],
         }
     }
 
     async componentDidMount() {
         await this.checkNewUser();
         await this.setupComponent();
+
+        const query = LUPA_DB.collection('vlogs').where('vlog_state', '==', this.props.lupa_data.Users.currUserData.location.state)//.orderBy('time_created', 'asc');
+
+         vlogCollectionObserver = query.onSnapshot(querySnapshot => {
+            console.log(`Received query snapshot of size ${querySnapshot.size}`);
+                querySnapshot.forEach(doc => {
+                let data = doc.data();
+                const updatedState = this.state.feedVlogs;
+                if (typeof(updatedState) != 'undefined') {
+                    updatedState.push(data);
+                }
+            
+                this.sortVlogs(updatedState);
+                this.setState({ feedVlogs: updatedState });
+            })
+        
+        }, err => {
+          alert(err)
+        });
+
+    }
+
+    async componentWillUnmount() {
+        return await vlogCollectionObserver();
+    }
+
+    sortVlogs = () => {
+
     }
 
     setupComponent = async () => {
@@ -357,21 +390,14 @@ class Featured extends React.Component {
                             </ScrollView>            
                         </View>
 
-                        <View>
-                            <View style={{ marginVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <View style={{paddingHorizontal: 10}}>
-                                <Text style={styles.sectionHeaderText}>
-                                   Suggestions
-                        </Text>
-                                </View>
+                        <Divider style={{height: 15, backgroundColor: '#EEEEEE'}} />
 
-                       
-                            </View>
+                        <View>
                             <View style={{alignItems: 'center', justifyContent: 'center'}}>
                             {
-                                    this.state.topPicks.map((program, index, arr) => {
+                                    this.state.feedVlogs.map((vlog, index, arr) => {
                                         return (
-                                            <FeaturedProgramCard key={program.program_uuid + index.toString()} currProgram={program}/>
+                                           <VlogFeedCard vlogData={vlog} />
                                         )
                                     })
                                 }

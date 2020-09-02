@@ -195,8 +195,11 @@ function ProgramInformationPreview(props) {
         try {
             return programData.program_tags.map((tag, index, arr) => {
                 return (
-                    <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: 'rgb(160, 160, 160)'}} style={{backgroundColor: 'rgb(237, 237, 237)', borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
+                    <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: '#23374d'}} style={{backgroundColor: 'transparent', borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
+                    
+                        <Caption style={{color: '#23374d'}}>
                         {tag}
+                        </Caption>
                     </Chip>
 
                 )
@@ -233,7 +236,7 @@ function ProgramInformationPreview(props) {
     const getProgramName = () => {
             try {
                 return (
-                    <Text style={{ fontSize: 20, color: '#212121', paddingVertical: 10 }}>
+                    <Text style={{ fontSize: 15, color: '#212121', paddingVertical: 10, fontFamily: 'Avenir-Heavy'}}>
                            {titleCase(programData.program_name)}
                     </Text>
                 )
@@ -363,35 +366,22 @@ function ProgramInformationPreview(props) {
                   </Appbar.Header>
                    <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
                    <View style={styles.programImageContainer}>
-                       <Image style={styles.image} source={{uri: getProgramImage()}} />
+                       <Surface style={{marginHorizontal: 20, width: '90%', borderRadius: 10, height: 300, alignItems: 'center', justifyContent: 'center'}}>
+                       <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: getProgramImage()}} />
+                       <Chip textStyle={{color: 'white', fontFamily: 'Avenir-Heavy', fontWeight: '600'}} style={{paddingHorizontal: 10, borderRadius: 0, borderBottomLeftRadius: 8, elevation: 8, position: 'absolute', top: 0, right: 0, alignSelf: 'center', backgroundColor: '#1089ff', width: 'auto'}}>
+                           $50.00
+                       </Chip>
+                       </Surface>
+                       
                    </View>
 
                    <View style={styles.programInformationContainer}>
-                       <Text>
                            {getProgramName()}
-                       </Text>
                        <Paragraph style={styles.programDescriptionText}>
                            {getProgramDescription()}
                        </Paragraph>
                        <View style={[styles.programTags, styles.alignRowAndCenter]}>
                            {getProgramTags()}
-                       </View>
-                   </View>
-
-                   <View style={styles.programOwnerDetailsContainer}>
-                      
-                       <View style={styles.programOwnerDetailsSubContainer}>
-                       <View>
-                               <Avatar.Image source={{uri: programOwnerData.photo_url}} label="EH" color="#FFFFFF" size={50} style={{backgroundColor: '#212121'}} />
-                           </View>
-                           <View>
-                               <Text style={styles.mapViewText}>
-                                 {programOwnerData.display_name}
-                               </Text>
-                               <Text style={styles.mapViewText}>
-                                   National Association of Sports Medicine
-                               </Text>
-                           </View>
                        </View>
                    </View>
 
@@ -403,7 +393,10 @@ function ProgramInformationPreview(props) {
                         longitude: getLocationLongitude(),
                         latitudeDelta: 0.05,
                         longitudeDelta: 0.05,
-                      }} />
+                        
+                      }} 
+                   
+                      />
                                 <View style={styles.mapViewTextContainer}>
                                 <Text style={styles.mapViewText}>
                            {renderProgramLocationName()}
@@ -417,10 +410,27 @@ function ProgramInformationPreview(props) {
                    
 
                    <View style={styles.programTermsContainer}>
-                       <Caption style={styles.textAlignCenter}>
-                       Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?
+                       <Caption style={{alignItems: 'flex-start'}}>
+                       Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
                        </Caption>
                    </View>
+
+                   <View style={styles.programOwnerDetailsContainer}>
+                      
+                      <View style={styles.programOwnerDetailsSubContainer}>
+                      <View>
+                              <Avatar.Image source={{uri: programOwnerData.photo_url}} label="EH" color="#FFFFFF" size={50} style={{backgroundColor: '#212121'}} />
+                          </View>
+                          <View>
+                              <Text style={styles.mapViewText}>
+                                {programOwnerData.display_name}
+                              </Text>
+                              <Text style={styles.mapViewText}>
+                                  National Association of Sports Medicine
+                              </Text>
+                          </View>
+                      </View>
+                  </View>
 
                    <View style={styles.messageButtonContainer}>
                            <Button 
@@ -441,20 +451,18 @@ function ProgramInformationPreview(props) {
 
                    </ScrollView>
                    <View style={styles.purchaseContainer}>
-                    <Text style={styles.programPriceText}>
-                        ${getProgramPrice()}
-                    </Text>
 
                     <Button 
                         onPress={() => handlePurchaseProgram(0)} 
-                        mode="contained"
+                        mode="outlined"
                         theme={{
                         roundness: 8,
                         colors: {
-                            primary: '#23374d'
+                            primary: '#1089ff'
                         }
-                    }}>
-                        Purchase
+                    }}
+                    style={{width: '100%'}}>
+                        Proceed to Checkout
                     </Button>
                    </View>
                    <FullScreenLoadingIndicator isVisible={loading} />
@@ -478,7 +486,7 @@ const styles = StyleSheet.create({
         marginVertical: 25
     },
     mapViewSubContainer: {
-        margin: 10, 
+      
         width: '100%', 
         alignItems: 'center', 
         justifyContent: 'center'
@@ -490,7 +498,6 @@ const styles = StyleSheet.create({
         borderRadius: 15
     },
     mapViewTextContainer: {
-        marginHorizontal: 20, 
         paddingVertical: 10, 
         width: '100%', 
         alignItems: 'flex-start', 
@@ -514,7 +521,6 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center', 
         width: windowWidth,
-        height: 300,
         marginBottom: VERTICAL_SEPARATION
     },
     image: {
@@ -529,14 +535,14 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'
 },
     programInformationContainer: {
-        marginHorizontal: 10, 
+        marginHorizontal: 20, 
         height: 150, 
         justifyContent: 'space-evenly',
-        marginVertical: VERTICAL_SEPARATION
     },
     programDescriptionText: {
-        color: 'rgb(180, 180, 180)', 
-        fontWeight: '600'
+        color: '#212121', 
+        fontFamily: 'Avenir-Light',
+        paddingVertical: 10
     },
     programPriceText: {
         fontSize: 30, 

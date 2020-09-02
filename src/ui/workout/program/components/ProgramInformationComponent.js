@@ -10,7 +10,8 @@ import {
 
 import {
     Surface,
-    Caption
+    Caption,
+    Avatar
 } from 'react-native-paper'
 
 import LupaController from '../../../../controller/lupa/LupaController'
@@ -35,9 +36,7 @@ function ProgramInformationComponent({ program }) {
 
     const handleCardOnPress = (programData) => {
         if (newCurrUserData.programs.includes(programData.program_structure_uuid)) {
-
-           setProgramOptionsModalVisible(true)
-
+            setProgramOptionsModalVisible(true)
         }
         else {
             setProgramModalVisible(true);
@@ -68,6 +67,8 @@ function ProgramInformationComponent({ program }) {
        imageStyle={{borderRadius: 16}} 
        style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
        source={{uri: program.program_image }}>
+
+    <Avatar.Image source={{uri: programOwnerData.photo_url }} size={30} style={{position: 'absolute', bottom: 0, right: 0, margin: 10}} />
        </ImageBackground>
       
     </Surface>

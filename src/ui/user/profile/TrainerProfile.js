@@ -182,18 +182,29 @@ function TrainerProfile({ userData, isCurrentUser }) {
                     
                 </View>*/
 
-                <Card style={{margin: 10, elevation: 0}}>
-                    <Card.Cover style={{elevation: 0,height: 340}} source={{uri: 'https://picsum.photos/200'}} />
-                    <PaperAvatar.Image source={{uri: profileImage}} size={30} style={{position: 'absolute', bottom: cardContentHeight + 30, right: 0, marginRight: 15}} />
-                    <FeatherIcon name="maximize" size={20} style={{position: 'absolute', top: 0, right: 0, margin: 12}} color="white" />
-                    <Card.Content style={{backgroundColor: 'transparent'}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                <Card theme={{roundness: 0}} style={{ marginTop: 10, borderRadius: 0, elevation: 0}}>
+                    <Card.Cover theme={{roundness: 0}} style={{elevation: 0, height: 180, borderRadius: 0}} source={{uri: 'https://picsum.photos/200'}} />
+                    <PaperAvatar.Image source={{uri: profileImage}} size={30} style={{position: 'absolute', bottom: cardContentHeight + 15, right: 0, marginRight: 15}} />
+                   
+                    <Card.Content style={{backgroundColor: 'rgb(248, 248, 248)'}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                             <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
                                 How to do high intensity workouts
                             </Text>
-                        
-                            <Text numberOfLines={2} style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                            <FeatherIcon name="more-horizontal" size={20} color="#212121"  />
+                            </View>
+                            
+                            
+                            <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end'}}>
+                            <Text numberOfLines={2} style={{width: '80%', fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud {" "}
                             </Text>
+                            
+                               <Text style={{fontFamily: 'Avenir-Light', fontSize: 12}}>
+                                   See more
+                               </Text>
+                            </View>
+                            
                     </Card.Content>
                 </Card>
             )
@@ -298,14 +309,14 @@ function TrainerProfile({ userData, isCurrentUser }) {
                     </View>
              </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
-       <View style={{flex: 1, backgroundColor: 'white' /*'rgb(248, 248, 248)'*/}}>
+       <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
                         {renderVlogs()}
                     </View>
 
                    
               </Tab>
               <Tab containerStyle={{flex: 1}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-                    <View  style={{backgroundColor: 'white'  /*'rgb(248, 248, 248)'*/, height: Dimensions.get('window').height}}>
+                    <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>
                     <LupaCalendar captureMarkedDates={captureMarkedDate} />
                     </View>
               </Tab>
@@ -322,8 +333,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
-       // backgroundColor: 'rgb(248, 248, 248)'
+        backgroundColor: 'rgb(248, 248, 248)'
     },
     userInformationContainer: {
         flexDirection: 'row',

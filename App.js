@@ -137,7 +137,7 @@ const StackApp = createStackNavigator()
 function AppNavigator() {
 
   return (
-    <StackApp.Navigator initialRouteName='Loading' headerMode='none' screenOptions={{
+    <StackApp.Navigator initialRouteName='Loading' mode="modal" headerMode='none' screenOptions={{
       gestureEnabled: false
     }}>
     <StackApp.Screen name='Loading' component={SwitchNavigator} />
