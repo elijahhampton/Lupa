@@ -116,7 +116,7 @@ class Featured extends React.Component {
         return await vlogCollectionObserver();
     }
 
-    sortVlogs = () => {
+    sortVlogs = (vlogs) => {
 
     }
 

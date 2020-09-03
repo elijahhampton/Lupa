@@ -257,6 +257,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
     }
 
     useEffect(() => {
+
         async function loadProfileData() {
             try {
                 setProfileImage(userData.photo_url)
@@ -274,7 +275,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
                 setUserPrograms([])
             }
         }
-        
+
         loadProfileData()
         LOG('TrainerProfile.js', 'Running useEffect.')
     }, [ready])
@@ -282,7 +283,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <ThinFeatherIcon name="arrow-left" size={20} onPress={() => navigation.goBack()}/>
+                <ThinFeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()}/>
                 <Appbar.Content title={userData.username} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView>
@@ -312,8 +313,6 @@ function TrainerProfile({ userData, isCurrentUser }) {
        <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
                         {renderVlogs()}
                     </View>
-
-                   
               </Tab>
               <Tab containerStyle={{flex: 1}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
                     <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>

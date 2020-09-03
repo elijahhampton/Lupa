@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 
 import {
     View,
     Text,
     StyleSheet,
+    ScrollView,
     SafeAreaView,
     TouchableOpacity,
 } from 'react-native';
@@ -21,18 +22,45 @@ import {
     Tabs
 } from 'native-base'
 
-import LupaColor from '../../common/LupaColor'
 import ImagePicker from 'react-native-image-picker';
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../controller/lupa/LupaController';
+import LOG from '../../../common/Logger';
 
 function UserProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
-
+    const [currPage, setCurrPage] = useState(0);
+    const [userVlogs, setUserVlogs] = useState([])
+    const [postType, setPostType] = useState("VLOG");
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    const [ready, setReady] = useState(false);
+
+    useEffect(() => {
+        async function loadProfileData() {
+            try {
+                setProfileImage(userData.photo_url)
+                await fetchVlogs(userData.user_uuid);
+                setReady(true)
+            } catch(error) {
+                setReady(false)
+                alert(error);
+                setUserVlogs([])
+            }
+        }
+        
+        loadProfileData()
+        LOG('UserProfile.js', 'Running useEffect.')
+    }, [ready])
+
+
+    const fetchVlogs = async (uuid) => {
+        await LUPA_CONTROLLER_INSTANCE.getAllUserVlogs(uuid).then(vlogs => {
+            setUserVlogs(vlogs);
+        })
+    }
+    
     /**
      * Allows the current user to choose an image from their camera roll and updates the profile picture in FB and redux.
      */
@@ -99,10 +127,6 @@ function UserProfile({ userData, isCurrentUser }) {
         )
     }
 
-    const renderCertification = () => {
-        return <Text key={userData.certification} style={[styles.userAttributeText, {color: '#1089ff'}]}>NASM</Text>
-    }
-
     const renderLocation = () => {
         return (
             <View style={{paddingVertical: 2, flexDirection: 'row', alignItems: 'center'}}>
@@ -128,13 +152,13 @@ function UserProfile({ userData, isCurrentUser }) {
      * Navigates to the follower view.
      */
     const navigateToFollowers = () => {
-        navigation.navigate('FollowerView');
+        navigation.push('FollowerView');
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.goBack()}/>
+                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()}/>
                 <Appbar.Content title={userData.username} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView>
@@ -153,9 +177,11 @@ function UserProfile({ userData, isCurrentUser }) {
                 </View>
             </View>
 
-            <Tabs tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF' locked={true} >
+            <Tabs page={currPage} tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF' locked={true} >
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
-       
+                    <View style={{flex: 1}}>
+                        
+                    </View>
               </Tab>
             </Tabs>
             </ScrollView>

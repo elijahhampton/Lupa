@@ -1477,7 +1477,7 @@ export default class UserController {
                 vlogsList = snapshot.data().vlogs;
             });
         } catch (error) {
-            alert(error);
+           // alert(error);
             return Promise.resolve([])
         }
 

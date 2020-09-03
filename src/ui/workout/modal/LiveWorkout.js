@@ -527,7 +527,7 @@ class LiveWorkout extends React.Component {
                             <Text style={{ alignSelf: 'flex-start', fontFamily: 'Avenir-Heavy' }}>
                                 Participants
                         </Text>
-                            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Profile', { uuid: this.props.lupa_data.Users.currUserData.user_uuid })}>
+                            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Profile', { userUUID: this.props.lupa_data.Users.currUserData.user_uuid })}>
                             <Surface style={{ marginVertical: 5, elevation: 8, width: 45, height: 45, borderRadius: 65 }}>
                                 {this.props.lupa_data.Users.currUserData.photo_url == '' ? <Avatar.Text size={45} label="EH" labelStyle={{ color: 'white', fontSize: 15, fontFamily: 'Avenir' }} style={{ backgroundColor: '#1089ff' }} /> : <Avatar.Image style={{ flex: 1 }} size={45} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} />}
                             </Surface>

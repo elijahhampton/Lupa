@@ -70,7 +70,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 
         if (optionTitle == 'View Trainer Profile') {
             navigation.navigate('Profile', {
-                profileUUID: program.program_owner,
+                userUUID: program.program_owner,
             })
         }
 

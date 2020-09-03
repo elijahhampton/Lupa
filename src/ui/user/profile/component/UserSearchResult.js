@@ -19,7 +19,7 @@ const userSearchResult = ({userData, hasButton, buttonTitle}) => {
     const navigation = useNavigation();
 
     return (
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('Profile', {uuid: userData.user_uuid})}>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Profile', {userUUID: userData.user_uuid})}>
         <View style={styles.root}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Avatar.Image size={40} source={{uri: userData.photo_url}} style={{margin: 5}}/>

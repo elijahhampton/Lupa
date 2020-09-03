@@ -58,7 +58,7 @@ function CuratedTrainerCard({ trainer }) {
 
                                         <View style={{width: 120, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                                             <Button onPress={() => navigation.navigate('Profile', {
-                                                uuid: trainer.user_uuid
+                                                userUUID: trainer.user_uuid
                                             })} color="#1089ff" mode="contained" theme={{roundness: 3}} style={{elevation: 8, shadowColor: '#1089ff'}}>
                                                 View
                                             </Button>
