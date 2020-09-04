@@ -72,8 +72,8 @@ export class LupaHome extends Component {
             </Body>
 
             <Right>
-            <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
-                <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
+            <Appbar.Action onPress={() => this.props.navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
+                <Appbar.Action onPress={() => this.props.navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
             </Right>
           </Header>
           <SafeAreaView />
@@ -107,14 +107,11 @@ export class LupaHome extends Component {
           </Animated.View>
           }>
             
-            <Tab heading="Featured" {...TAB_PROPS} >
+            <Tab heading="Home" {...TAB_PROPS} >
             <Featured />
             </Tab>
             <Tab heading="My Programs" {...TAB_PROPS}>
               <MyPrograms />
-            </Tab>
-            <Tab heading="Packs" {...TAB_PROPS}>
-             
             </Tab>
           </Tabs>
         </Animated.ScrollView>

@@ -134,7 +134,9 @@ class BasicInformation extends React.Component {
     _chooseProfilePictureFromCameraRoll = async () => {
        try {
 
-        ImagePicker.showImagePicker({}, async (response) => {
+        ImagePicker.showImagePicker({
+            allowsEditing: true
+        }, async (response) => {
             if (!response.didCancel)
             {
                 await this.setState({ 

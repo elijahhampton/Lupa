@@ -94,7 +94,9 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
 
     const addWorkoutMedia = () => {
         // Open Image Library
-        ImagePicker.launchImageLibrary({}, async (response) => {
+        ImagePicker.launchImageLibrary({
+            allowsEditing: true
+        }, async (response) => {
             if (response.didCancel) {
                 // LOG_ERROR('CreateCustomWorkoutModal.js', 'User cancelled image picker in addWorkoutMedia()', 'true');
             } else if (response.error) {

@@ -66,7 +66,9 @@ function UserProfile({ userData, isCurrentUser }) {
      */
     const _chooseProfilePictureFromCameraRoll = async () => {
         
-        ImagePicker.showImagePicker({}, async (response) => {
+        ImagePicker.showImagePicker({
+            allowsEditing: true
+        }, async (response) => {
             if (!response.didCancel)
             {   
                 setProfileImage(response.uri);

@@ -27,6 +27,37 @@ import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { useSelector } from 'react-redux';
 import LUPA_DB from '../../../../controller/firebase/firebase';
 
+function getMonthString(monthNum) {
+  switch(monthNum) {
+    case 1:
+      return 'January'
+    case 2:
+      return 'Februrary'
+      case 3:
+      return 'March'
+      case 4:
+      return 'April'
+      case 5:
+      return 'May'
+      case 6:
+      return 'June'
+      case 7:
+      return 'July'
+      case 8:
+      return 'August'
+      case 9:
+      return 'September'
+      case 10:
+      return 'October'
+      case 11:
+      return 'November'
+      case 12:
+      return 'December'
+      default:
+        return 'January'
+  }
+}
+
 
 function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
   const [markedDates, setMarkedDates] = useState({})
@@ -52,8 +83,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
   }
 
   const handleDeleteTimeBlock = (day, time) => {
-    alert('delete time');
-    //LUPA_CONTROLLER_INSTANCE.deleteSchedulertimeBlock(day, time);
+    LUPA_CONTROLLER_INSTANCE.deleteSchedulertimeBlock(day, time);
   }
 
   useEffect(() => {
@@ -104,11 +134,16 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
     const times = item.times;
     const list = times.map(time => {
       return (
-        <View style={{paddingHorizontal: 20, width: '100%', flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{paddingHorizontal: 20, width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <View>
                   <Text style={styles.timePeriod}>
 {time.startTime} {time.startTimePeriod} - {time.endTime} {time.endTimePeriod}
 </Text>
-{isCurrentUser === true ? <Feather1s  name="x" size={20} onPress={() => handleDeleteTimeBlock(day, time)}/> : null}
+                  </View>
+
+                  <View>
+                  {isCurrentUser === true ? <Feather1s name="x" size={20} onPress={() => handleDeleteTimeBlock(day, time)}/> : null}
+                  </View>
 
           </View>
       )
@@ -121,7 +156,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
       {day.day}
 </Text>
 <Text style={{fontSize: 10}}>
-      August
+      {getMonthString(day.month)}
       </Text>
         </View>
         

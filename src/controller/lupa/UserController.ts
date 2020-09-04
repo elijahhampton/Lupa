@@ -250,7 +250,6 @@ export default class UserController {
         switch (fieldToUpdate) {
             case 'scheduler_times':
                 if (optionalData == 'add') {
-                    console.log('hereeeee')
                     let schedulerObject = {}, updatedSchedulerTimes = {}, newDateObject = {}
                     await currentUserDocument.get().then(result => {
                         schedulerObject = result.data().scheduler_times;
@@ -258,7 +257,6 @@ export default class UserController {
 
                     updatedSchedulerTimes = schedulerObject;
 
-                    console.log('trying this messs')
                     for (const key in value) {
                         if (Object.keys(updatedSchedulerTimes).includes(key)) {
                             let existingDateObjectValues = updatedSchedulerTimes[key]
@@ -279,6 +277,34 @@ export default class UserController {
                     currentUserDocument.update({
                         scheduler_times: updatedSchedulerTimes,
                     })
+                } else if (optionalData == 'remove') {
+                    let schedulerObject = {}, updatedSchedulerTimes = {}
+
+                    //Get the user's scheduler times
+                    await currentUserDocument.get().then(result => {
+                        schedulerObject = result.data().scheduler_times;
+                    });
+
+                    //Loop thrpugh schedulerObject to find the key of the time block
+                    for (const key in schedulerObject) {
+                        if (key == optionalDataTwo) {
+                            let updatedDay = schedulerObject[key];
+                            for (let i = 0; i < updatedDay[0].times.length; i++) {
+                                if (updatedDay[0].times[i].startTime == optionalDataTwo.startTime
+                                    && updatedDay[0].times[i].endTime == optionalDataTwo.endTime
+                                    && updatedDay[0].times[i].startTimePeriod == optionalDataTwo.startTimePeriod
+                                    && updatedDay[0].times[i].endTimePeriod == optionalDataTwo.endTimePeriod) {
+                                        updatedDay[0].times = updatedDay[0].times.splice(i, 1);
+                                    }
+                            }
+
+                            schedulerObject[key] = updatedDay;
+                            
+                            currentUserDocument.update({
+                                scheduler_times: schedulerObject
+                            })
+                        }
+                    }
                 }
                 break;
             case UserCollectionFields.PROGRAMS:
@@ -1447,6 +1473,7 @@ export default class UserController {
 
         //generate a uuid for the vlog using the vlog test
         const VLOG_UUID = Math.random().toString()
+        vlogStructure.vlog_uuid = VLOG_UUID;
 
         //Add the UUID to the users vlog list
         this.updateCurrentUser('vlogs', VLOG_UUID, 'add', '');

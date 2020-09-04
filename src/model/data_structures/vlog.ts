@@ -1,5 +1,6 @@
 
 type LupaVlog = {
+    vlog_uuid: String,
     vlog_text: String,
     vlog_media: {
         uri: String,
@@ -16,6 +17,7 @@ type LupaVlog = {
 }
 
 var lupa_vlog_structure : LupaVlog = {
+    vlog_uuid: '',
     vlog_text: '',
     vlog_media: {
         uri: '',
@@ -32,6 +34,7 @@ var lupa_vlog_structure : LupaVlog = {
 }
 
 export const getLupaVlogStructure = (text, uri, mediaType, owner, longitude, latitude, city, state, country, timeCreated, dateCreated) => {
+    lupa_vlog_structure.vlog_uuid = 0;
     lupa_vlog_structure.vlog_text = text;
     lupa_vlog_structure.vlog_media.uri = uri;
     lupa_vlog_structure.vlog_media.media_type = mediaType;

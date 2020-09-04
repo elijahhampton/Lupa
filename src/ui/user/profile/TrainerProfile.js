@@ -33,6 +33,7 @@ import { useSelector } from 'react-redux';
 import LupaController from '../../../controller/lupa/LupaController';
 import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
 import LOG from '../../../common/Logger';
+import VlogFeedCard from '../component/VlogFeedCard'
 
 function TrainerProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
@@ -40,15 +41,14 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [profileImage, setProfileImage] = useState(userData.photo_url)
     const [userPrograms, setUserPrograms] = useState([])
     const [userVlogs, setUserVlogs] = useState([])
-    const [postType, setPostType] = useState("VLOG");
-    const [optionsMenuVisible, setOptionsMenuVisible] = useState(false)
-    const [postModalIsVisible, setPostModalIsVisible] = useState(false);
     const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0)
     const [markedDates, setMarkedDates] = useState([])
     const [ready, setReady] = useState(false)
-    const [agendaContainerHeight, setAgendaContainerHeight] = useState(0)
-    const [cardContentHeight, setCardContentHeight] = useState(0)
+    
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
     
     const currUserPrograms = useSelector(state => {
         return state.Programs.currUserProgramsData;
@@ -63,7 +63,9 @@ function TrainerProfile({ userData, isCurrentUser }) {
      */
     const _chooseProfilePictureFromCameraRoll = async () => {
         
-        ImagePicker.showImagePicker({}, async (response) => {
+        ImagePicker.showImagePicker({
+            allowsEditing: true
+        }, async (response) => {
             if (!response.didCancel)
             {   
                 setProfileImage(response.uri);
@@ -154,60 +156,8 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const closeOptionsMenu = () => setOptionsMenuVisible(false);
 
     const renderVlogs = () => {
-        return userVlogs.map(vlog => {
-            return (
-              /*  <View style={{paddingHorizontal: 20, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'flex-start'}}>
-                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Avatar containerStyle={{marginRight: 10}} key={userData.photo_url} source={{uri: userData.photo_url}} raised={true} rounded size={50} />
-                    <View>
-                        <Text style={{fontSize: 12, fontFamily: 'Avenir-Heavy'}}>
-                            Elijah Hampton
-                        </Text>
-                        <Text style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
-                    {vlog.vlog_text}
-                </Text>
-                    </View>
-                    
-                    </View>
-
-                    <Menu
-          visible={optionsMenuVisible}
-          onDismiss={closeOptionsMenu}
-          anchor={ <ThinFeatherIcon onPress={openOptionsMenu} thin={true} name="more-horizontal" size={20} />}>
-          <Menu.Item onPress={() => {}} title="Delete" />
-        </Menu>
-                   
-                    </View>
-                    
-                </View>*/
-
-                <Card theme={{roundness: 0}} style={{ marginTop: 10, borderRadius: 0, elevation: 0}}>
-                    <Card.Cover theme={{roundness: 0}} style={{elevation: 0, height: 180, borderRadius: 0}} source={{uri: 'https://picsum.photos/200'}} />
-                    <PaperAvatar.Image source={{uri: profileImage}} size={30} style={{position: 'absolute', bottom: cardContentHeight + 15, right: 0, marginRight: 15}} />
-                   
-                    <Card.Content style={{backgroundColor: 'rgb(248, 248, 248)'}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
-                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                            <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
-                                How to do high intensity workouts
-                            </Text>
-                            <FeatherIcon name="more-horizontal" size={20} color="#212121"  />
-                            </View>
-                            
-                            
-                            <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end'}}>
-                            <Text numberOfLines={2} style={{width: '80%', fontSize: 12, fontFamily: 'Avenir-Roman'}}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud {" "}
-                            </Text>
-                            
-                               <Text style={{fontFamily: 'Avenir-Light', fontSize: 12}}>
-                                   See more
-                               </Text>
-                            </View>
-                            
-                    </Card.Content>
-                </Card>
-            )
+        return userVlogs.map((vlog, index, arr) => {
+            return <VlogFeedCard vlogData={vlog} />
         })
     }
 
@@ -217,6 +167,65 @@ function TrainerProfile({ userData, isCurrentUser }) {
                 <ProfileProgramCard programData={program} />
             )
         })
+    }
+
+    const renderInteractions = () => {
+        if (isCurrentUser) { return; }
+
+        return (
+        <View style={{width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <Button onPress={() => navigation.push('PrivateChat', {
+                    currUserUUID: currUserData.user_uuid,
+                    otherUserUUID: userData.user_uuid
+                })} 
+                theme={{roundness: 5}} 
+                color="#23374d" 
+                icon={() => <FeatherIcon name="mail" />} 
+                uppercase={false} 
+                mode="contained" 
+                style={{ elevation: 0}}>
+                    <Text>
+                        Send a message
+                    </Text>
+                </Button>
+
+               {renderFollowButton()}
+            </View>
+        )
+    }
+
+    const renderFollowButton = () => {
+        if (currUserData.following.includes(userData.user_uuid)) {
+            return (
+            <Button 
+            onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)} 
+            icon={() => <FeatherIcon name="user" />} 
+            theme={{roundness: 5}} 
+            uppercase={false} 
+            color="#23374d" 
+            mode="contained" 
+            style={{elevation: 0}}>
+                    <Text style={{ color: 'white' }}>
+                        Unfollow
+                    </Text>
+                </Button>
+            )
+        } else {
+            return (
+                <Button 
+                onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)} 
+                icon={() => <FeatherIcon name="user" />} 
+                theme={{roundness: 5}} 
+                uppercase={false} 
+                color="#E5E5E5" 
+                mode="contained" 
+                style={{elevation: 0}}>
+                    <Text style={{}}>
+                        Follow
+                    </Text>
+                </Button>
+            )
+        }
     }
 
     const renderFAB = () => {
@@ -287,6 +296,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
                 <Appbar.Content title={userData.username} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView>
+            <View>
             <View style={styles.userInformationContainer}>
                 <View style={styles.infoContainer}>
                     {renderDisplayName()}
@@ -302,11 +312,13 @@ function TrainerProfile({ userData, isCurrentUser }) {
                     {renderFollowers()}
                 </View>
             </View>
+            {renderInteractions()}
+            </View>
 
             <Tabs tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
                     <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
-                        {renderPrograms()}
+                        {/*renderPrograms()*/}
                     </View>
              </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">

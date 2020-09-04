@@ -31,7 +31,6 @@ const ProfileController = ({ route }) => {
         try {
             if (route.params.userUUID) {
                 id = route.params.userUUID;
-                alert(route.params.userUUID)
         } else {
             id = currUserData.user_uuid
         }
@@ -45,6 +44,7 @@ const ProfileController = ({ route }) => {
 
     const renderProfile = () => {
         switch(userData.isTrainer) {
+       
             case true:
                return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} />
             case false:

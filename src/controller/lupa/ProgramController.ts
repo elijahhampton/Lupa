@@ -8,6 +8,7 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 import { getPurchaseMetaDataStructure } from '../../model/data_structures/programs/purchaseMetaData'
 import { getLupaUserStructure } from '../firebase/collection_structures';
+
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
 const WORKOUT_COLLECTION = LUPA_DB.collection('workouts');
@@ -175,6 +176,41 @@ export default class ProgramController {
         })
     }
 
+    /**
+     * Removes a specified value from a given away.
+     * 
+     * !!! Move to lupa/common/utils !!!
+     * @param arr 
+     * @param value 
+     */
+    arrayRemove(arr, value) {
+        return arr.filter(function (ele) {
+            return ele != value;
+        });
+    }
+
+    deleteProgram = async (uuid) => {
+        let programParticipants = []
+        await PROGRAM_COLLECTION.doc(uuid).get().then(snapshot => {
+            programParticipants = snapshot.data().program_participants;
+        });
+
+        for (let i = 0; i < programParticipants.length; i++) {
+            let userPrograms = []
+           let userRef = USERS_COLLECTION.doc(programParticipants[i]).get().then(snapshot => {
+            userPrograms = snapshot.data().programs;
+           })
+
+           let updatedProgramsList = this.arrayRemove(userPrograms, uuid);
+
+           userRef.update({
+            programs: updatedProgramsList
+           })
+        }
+
+        PROGRAM_COLLECTION.doc(uuid).delete();
+    }
+
     publishWorkout = async (uuid) => {
         await WORKOUT_COLLECTION.doc(uuid).update({
             completedProgram: true
@@ -228,7 +264,7 @@ export default class ProgramController {
         for (let i = 0; i < userPrograms.length; i++) {
             await PROGRAM_COLLECTION.doc(userPrograms[i]).get().then(snapshot => {
                 tempProgramData = snapshot.data();
-                if (typeof(tempProgramData) != 'undefined') {
+                if (typeof(tempProgramData) != 'undefined' && tempProgramData.program_owner == LUPA_AUTH.currentUser.uid) {
                     programData.push(tempProgramData);
                 }
             });

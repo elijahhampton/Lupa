@@ -64,7 +64,11 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         closeModal()
 
         if (optionTitle == 'Share Program') {
-            shareProgramOnPress(program)
+            shareProgramOnPress(program);
+        }
+
+        if (optionTitle == 'Delete Program') {
+            LUPA_CONTROLLER_INSTANCE.eraseProgram(program.program_structure_uuid);
         }
     }
 
@@ -74,13 +78,13 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         if (optionTitle == 'View Trainer Profile') {
             navigation.navigate('Profile', {
                 userUUID: program.program_owner,
-            })
+            });
         }
 
         if (optionTitle == 'Launch Live Workout') {
             navigation.navigate('LiveWorkout', {
                 uuid: program.program_structure_uuid
-            })
+            });
         }
     }
 
@@ -88,7 +92,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         navigation.push('ShareProgramModal', {
             programData: program,
             following: currUserData.following,
-        })
+        });
     }
     
     const renderProgramOwnerOptions = () => {
@@ -105,7 +109,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     <Divider />
                     </>
                 )
-            })
+            });
     }
 
     const renderDefaultOptions = () => {
@@ -122,7 +126,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     <Divider />
                     </>
             )
-       })
+       });
     }
 
     const renderCurrUserOptions = () => {
@@ -139,7 +143,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                 <Divider />
                 </>
         )
-   })
+   });
 }
 
     return (

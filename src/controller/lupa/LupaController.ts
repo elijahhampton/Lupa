@@ -694,6 +694,10 @@ export default class LupaController {
       await USER_CONTROLLER_INSTANCE.deleteProgram(user_uuid, programUUID);
     }
 
+    eraseProgram = (uuid) => {
+      PROGRAMS_CONTROLLER_INSTANCE.deleteProgram(uuid);
+    }
+
     loadCurrentUserPrograms = async () => {
       let programsData = []
 
@@ -913,6 +917,10 @@ export default class LupaController {
       }
 
       USER_CONTROLLER_INSTANCE.updateCurrentUser('scheduler_times', dateObject, 'add')
+    }
+
+    deleteSchedulertimeBlock = (day, timeBlock) => {
+      USER_CONTROLLER_INSTANCE.updateCurrentUser('scheduler_times', timeBlock, 'remove', day)
     }
 
     fetchDashboardData =  async () => {

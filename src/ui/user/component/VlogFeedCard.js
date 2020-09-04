@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { Card, Avatar, Caption } from 'react-native-paper';
+import { Card, Avatar, Caption, Menu } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -20,9 +20,9 @@ function VlogFeedCard({ vlogData }) {
 
     const [cardContentHeight, setCardContentHeight] = useState(0);
     const [vlogOwnerData, setVlogOwnerData] = useState(getLupaUserStructure());
-
+   const [optionsMenuVisible, setOptionsMenuVisible] = useState(false);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
+    
     useEffect(() => {
         LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(vlogData.vlog_owner).then(data => {
             setVlogOwnerData(data);
@@ -30,7 +30,7 @@ function VlogFeedCard({ vlogData }) {
     }, [])
 
     return (
-        <Card theme={{roundness: 0}} style={{width: Dimensions.get('window').width, borderRadius: 0, elevation: 5, marginBottom: 15}}>
+        <Card theme={{roundness: 0}} style={{width: Dimensions.get('window').width, borderRadius: 0, elevation: 3, marginBottom: 15}}>
                         <Card.Cover theme={{roundness: 0}} style={{elevation: 0, height: 180, borderRadius: 0}} source={{uri: 'https://picsum.photos/200/'}} />
                         <Avatar.Image source={{uri: vlogOwnerData.photo_url }} size={30} style={{position: 'absolute', bottom: cardContentHeight + 15, right: 0, marginRight: 15}} />
                        
@@ -39,7 +39,17 @@ function VlogFeedCard({ vlogData }) {
                                 <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
                                     {vlogData.vlog_title}
                                 </Text>
-                                    { currUserData.user_uuid === vlogData.vlog_owner ? <FeatherIcon name="more-horizontal" size={20} color="#212121"  />  : null}
+                                    { currUserData.user_uuid === vlogData.vlog_owner ? 
+                                    <Menu 
+    
+                                        visible={optionsMenuVisible} 
+                                        onDismiss={() => setOptionsMenuVisible(false)}
+                                        anchor={<FeatherIcon onPress={() => setOptionsMenuVisible(true)} name="more-horizontal" size={20} color="#212121"  />  }>
+                                        <Menu.Item title="Delete Vlog" onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid ,vlogData.vlog_uuid)} />
+                                    </Menu>
+                                    : 
+                                    null
+                                    }
                                 </View>
                                 
                                 
@@ -51,14 +61,13 @@ function VlogFeedCard({ vlogData }) {
                                 {vlogData.vlog_text}
                                 </Text>
                                 
-                           {/*  <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12}}>
-                                       See more
-    </Text> */}
                                 </View>
                                 <Caption style={{fontFamily: 'Avenir-Light', fontSize: 10}}>
-                                    {new Date().getTime() - vlogData.time_created} hour ago
+                                    {Math.round(new Date().getTime() - vlogData.time_created.seconds)} hour ago
                                 </Caption>
                         </Card.Content>
+
+                        
                     </Card>
     )
 }

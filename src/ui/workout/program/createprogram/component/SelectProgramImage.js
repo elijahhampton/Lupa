@@ -22,7 +22,9 @@ function SelectProgramImage({ captureImage, setProgramImageProp }) {
 
     const _chooseImageFromCameraRoll = async () => {
       try {
-        ImagePicker.showImagePicker({}, async (response) => {
+        ImagePicker.showImagePicker({
+            allowsEditing: true
+        }, async (response) => {
             if (!response.didCancel)
             {
               await captureImage(response.uri)
