@@ -21,6 +21,7 @@ import { getLupaWorkoutInformationStructure } from '../../../model/data_structur
 import { connect, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native'
 import LOG from '../../../common/Logger';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
@@ -222,21 +223,20 @@ class CreateWorkout extends React.Component {
         const currPage = this.state.currPage;
         switch(currPage) {
             case 0:
-                <WorkoutInformation saveProgramInformation={this.saveProgramInformation} goToIndex={this.goToIndex} />
-                break;
+                return <WorkoutInformation saveProgramInformation={this.saveProgramInformation} goToIndex={this.goToIndex} />
             case 1:
-                <BuildWorkoutTool navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
-                break;
+                return <BuildWorkoutTool navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
             default:
         }
     }
 
     render() {
         return (
-            <View style={styles.root}>
+            <SafeAreaView style={styles.root}>
+                <Feather1s style={{paddingLeft: 10}} name="arrow-left" size={20} onPress={() => this.props.navigation.pop()}/>
                 {this.renderComponentDisplay()}
                 <CreatingWorkoutModal uuid={this.state.currWorkoutUUID} isVisible={this.state.creatingWorkout} closeModal={this.handleSuccessfulReset} />
-            </View>
+            </SafeAreaView>
         )
     }
 }

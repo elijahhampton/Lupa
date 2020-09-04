@@ -30,11 +30,11 @@ function VlogFeedCard({ vlogData }) {
     }, [])
 
     return (
-        <Card theme={{roundness: 0}} style={{width: Dimensions.get('window').width, borderRadius: 0, elevation: 3, marginBottom: 15}}>
+        <Card theme={{roundness: 0}} style={{width: Dimensions.get('window').width, borderRadius: 0, elevation: 5, marginBottom: 15}}>
                         <Card.Cover theme={{roundness: 0}} style={{elevation: 0, height: 180, borderRadius: 0}} source={{uri: 'https://picsum.photos/200/'}} />
                         <Avatar.Image source={{uri: vlogOwnerData.photo_url }} size={30} style={{position: 'absolute', bottom: cardContentHeight + 15, right: 0, marginRight: 15}} />
                        
-                        <Card.Content style={{backgroundColor: 'rgb(248, 248, 248)'}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                        <Card.Content style={{backgroundColor: 'white'}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                 <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
                                     {vlogData.vlog_title}
@@ -44,7 +44,10 @@ function VlogFeedCard({ vlogData }) {
                                 
                                 
                                 <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end'}}>
-                                <Text numberOfLines={2} style={{width: '80%', fontSize: 12, fontFamily: 'Avenir-Light'}}>
+                                <Text numberOfLines={2} style={{width: '80%', fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+                                <Text style={{fontFamily: 'Avenir-Heavy'}}>
+                                {currUserData.display_name} {" "}
+                                </Text>
                                 {vlogData.vlog_text}
                                 </Text>
                                 

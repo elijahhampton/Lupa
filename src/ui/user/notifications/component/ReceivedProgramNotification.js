@@ -55,6 +55,7 @@ function ReceivedProgramNotification({ notificationData }) {
         else
         {
             setProgramModalVisible(true)
+            LUPA_CONTROLLER_INSTANCE.addProgramView(programData.program_structure_uuid);
         }
     }
 

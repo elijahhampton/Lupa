@@ -1,12 +1,14 @@
 
 import React, {Component} from "react";
-import {Animated, Image, Dimensions, Platform, SafeAreaView, Text, View} from 'react-native';
+import {Animated, Image, Dimensions, Platform, SafeAreaView, Text, View, RefreshControl} from 'react-native';
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
-import { Banner, FAB } from 'react-native-paper';
+import { Banner, FAB, Appbar, Divider } from 'react-native-paper';
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import { MenuIcon } from "./icons";
 import CreateWorkout from "./workout/createworkout/CreateWorkout";
+import Feather1s from "react-native-feather1s/src/Feather1s";
+import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
@@ -14,7 +16,7 @@ const COLOR = "white";
 const TAB_PROPS = {
   tabStyle: {backgroundColor: COLOR},
   activeTabStyle: {backgroundColor: COLOR},
-  textStyle: {color: "rgb(174, 174, 178)", fontFamily: 'Avenir-Heavy'},
+  textStyle: {color: "rgba(35, 55, 77, 0.75)", fontFamily: 'Avenir-Heavy'},
   activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold'}
 };
 
@@ -24,7 +26,16 @@ export class LupaHome extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      refreshing: false
+    }
     this.headerY = Animated.multiply(Animated.diffClamp(this.scroll, 0, NAVBAR_HEIGHT), -1);
+  }
+
+  handleOnRefresh() {
+    this.setState({ refreshing: true })
+    console.log('Refreshing LupaHome')
+    this.setState({ refreshing: false })
   }
 
   render() {
@@ -48,9 +59,8 @@ export class LupaHome extends Component {
           backgroundColor: COLOR
         }}>
           <Header style={{backgroundColor: 'transparent', borderBottomColor: 'transparent'}}  hasTabs>
-            <Left style={{paddingLeft: 10, flexDirection: 'row', alignItems: 'center'}}>
-              <MenuIcon customStyle={{marginRight: 10}} onPress={() => this.props.navigation.openDrawer()}/>
-          
+            <Left style={{flexDirection: 'row', alignItems: 'center'}}>
+              <MenuIcon customStyle={{}} onPress={() => this.props.navigation.openDrawer()}/>
             </Left>
 
             <Body>
@@ -61,12 +71,16 @@ export class LupaHome extends Component {
             </Title>
             </Body>
 
-            <Right />
+            <Right>
+            <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
+                <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
+            </Right>
           </Header>
           <SafeAreaView />
         </Animated.View>
         
         <Animated.ScrollView
+        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
           scrollEventThrottle={1}
           bounces={false}
           showsVerticalScrollIndicator={false}
@@ -89,6 +103,7 @@ export class LupaHome extends Component {
               justifyContent: 'flex-start',
             }, Platform.OS === "ios" ? {paddingTop: 30} : null]}>
             <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: 'transparent'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 0, borderBottomColor: 'transparent'}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
+            <Divider />
           </Animated.View>
           }>
             

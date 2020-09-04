@@ -36,6 +36,18 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_participants: [],
     program_automated_message: "",
     completedProgram: false,
+    program_metadata: {
+        num_interactions: 0,
+        views: 0,
+        shares: 0,
+    },
+    program_purchase_metadata: {
+        num_purchases: 0,
+        purchase_list: [],
+        date_purchased: new Date(), //remove
+        gross_pay: 0,
+        net_pay: 0,
+    }
 }
 
 export const getLupaProgramInformationStructure = (

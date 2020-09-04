@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux'
 
 import { useNavigation } from '@react-navigation/native'
 import Feather1s from 'react-native-feather1s/src/Feather1s'
+import LupaController from '../../../../controller/lupa/LupaController'
 
 const TRAINER_OPTIONS = [
   /*  {
@@ -54,6 +55,8 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
+
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const navigation = useNavigation()
 

@@ -349,12 +349,13 @@ class Featured extends React.Component {
                     value={this.state.searchValue} />
         </View>
         </Appbar.Header> 
+        <Divider style={{height: 15, backgroundColor: 'rgb(242, 242, 247)'}} />
                     <View style={{flex: 1}}>
                         {
                             this.state.searchValue === "" ?
                             
                             <View >
-                            <View style={{ marginVertical: 15, justifyContent: 'center', }}>
+                            <Surface style={{elevation: 5, paddingVertical: 15, justifyContent: 'center', }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                               <View style={{paddingHorizontal: 10}}>
                               <Text style={styles.sectionHeaderText}>
@@ -388,16 +389,16 @@ class Featured extends React.Component {
                                     })
                                 }
                             </ScrollView>            
-                        </View>
+                        </Surface>
 
-                        <Divider style={{height: 15, backgroundColor: '#EEEEEE'}} />
+                        <Divider style={{height: 15, backgroundColor: 'rgb(242, 242, 247)'}} />
 
                         <View>
                             <View style={{alignItems: 'center', justifyContent: 'center'}}>
                             {
                                     this.state.feedVlogs.map((vlog, index, arr) => {
                                         return (
-                                           <VlogFeedCard vlogData={vlog} />
+                                           <VlogFeedCard key={index} vlogData={vlog} />
                                         )
                                     })
                                 }

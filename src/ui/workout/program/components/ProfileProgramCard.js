@@ -31,11 +31,12 @@ function ProfileProgramCard(props) {
 
         if (result.program_participants.includes(currUserData.user_uuid))
         {
-            setProgramOptionsModalVisible(true)
+            setProgramOptionsModalVisible(true);
         }
         else
         {
-            setProgramModalVisible(true)
+            setProgramModalVisible(true);
+            LUPA_CONTROLLER_INSTANCE.addProgramView(programData.program_structure_uuid);
         }
     }
 

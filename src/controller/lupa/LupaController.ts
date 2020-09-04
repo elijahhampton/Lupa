@@ -911,8 +911,40 @@ export default class LupaController {
       if (typeof(dateObject) == 'undefined' || dateObject == null) {
         return;
       }
-      console.log('addingTime')
-      console.log(dateObject)
+
       USER_CONTROLLER_INSTANCE.updateCurrentUser('scheduler_times', dateObject, 'add')
+    }
+
+    fetchDashboardData =  async () => {
+      let retVal = {};
+      await PROGRAMS_CONTROLLER_INSTANCE.fetchDashboardData().then(data => {
+        retVal = data;
+      });
+
+      return Promise.resolve(retVal);
+    }
+
+    addProgramShare = (programUUID, numShares) => {
+      if (typeof(programUUID) == 'undefined') {
+        return;
+      }
+
+      PROGRAMS_CONTROLLER_INSTANCE.addProgramShare(programUUID, numShares)
+    }
+
+    addProgramView = (programUUID) => {
+      if (typeof(programUUID) == 'undefined') {
+        return;
+      }
+
+      PROGRAMS_CONTROLLER_INSTANCE.addProgramView(programUUID);
+    }
+
+    addProgramInteraction = (programUUID) => {
+      if (typeof(programUUID) == 'undefined') {
+        return;
+      }
+
+      PROGRAMS_CONTROLLER_INSTANCE.addProgramInteraction(programUUID);
     }
 }
