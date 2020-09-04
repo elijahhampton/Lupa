@@ -56,7 +56,7 @@ import FullScreenLoadingIndicator from '../../common/FullScreenLoadingIndicator'
 
 
 const { windowWidth } = Dimensions.get('window').width
-const VERTICAL_SEPARATION = 25
+const VERTICAL_SEPARATION = 20
 
 function ProgramInformationPreview(props) {
     const [programData, setProgramData] = useState(getLupaProgramInformationStructure());
@@ -176,7 +176,7 @@ function ProgramInformationPreview(props) {
             //handle program in backend
             try {
                 console.log('purchasing')
-                const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData.user_uuid, programData);
+                const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData, programData);
                 await dispatch({ type: "ADD_CURRENT_USER_PROGRAM" , ...updatedProgramData})
                 console.log('done purchasing')
             } catch (err) {
@@ -407,13 +407,6 @@ function ProgramInformationPreview(props) {
                        </View>
                        </View>
                    </View>
-                   
-
-                   <View style={styles.programTermsContainer}>
-                       <Caption style={{alignItems: 'flex-start'}}>
-                       Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-                       </Caption>
-                   </View>
 
                    <View style={styles.programOwnerDetailsContainer}>
                       
@@ -432,22 +425,14 @@ function ProgramInformationPreview(props) {
                       </View>
                   </View>
 
-                   <View style={styles.messageButtonContainer}>
-                           <Button 
-                           mode="contained" 
-                           theme={{
-                               colors: {
-                                   primary: '#1089ff'
-                               }
-                           }} 
-                           style={styles.messageButton}>
-                               <FeatherIcon name="message-circle" size={15} />
-                                <Text>
-                                    Send {programOwnerData.display_name} a Message
-                                </Text>
-                           </Button>
-                       </View>
-
+                {/*  <View style={styles.programTermsContainer}>
+                       <Text style={{alignItems: 'flex-start', fontFamily: 'Avenir-Light'}}>
+                            Terms of Service
+                       </Text>
+                       <Text style={{alignItems: 'flex-start', fontFamily: 'Avenir-Light'}}>
+                            Privacy Policy
+                       </Text>
+                    </View>*/}
 
                    </ScrollView>
                    <View style={styles.purchaseContainer}>
@@ -483,7 +468,7 @@ const styles = StyleSheet.create({
         elevation: 0
     },
     mapViewContainer: {
-        marginVertical: 25
+        marginVertical: VERTICAL_SEPARATION
     },
     mapViewSubContainer: {
       
@@ -535,6 +520,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'
 },
     programInformationContainer: {
+        marginVertical: VERTICAL_SEPARATION,
         marginHorizontal: 20, 
         height: 150, 
         justifyContent: 'space-evenly',
@@ -573,9 +559,9 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width - 20
     },
     programTermsContainer: {
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        marginHorizontal: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
         marginVertical: VERTICAL_SEPARATION
     }
 })

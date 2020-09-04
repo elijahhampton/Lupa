@@ -20,4 +20,20 @@ export type LupaProgramInformationStructure = {
     program_workout_days: Array<String>,
     program_automated_message: String,
     completedProgram: Boolean,
+    program_metadata: ProgramMetaData,
+    program_purchase_metadata: PurchaseMetaData,
+}
+
+export type PurchaseMetaData = {
+    num_purchases: Number,
+    purchase_list: Array<String>,
+    date_purchased: Date,
+    gross_pay: Number,
+    net_pay: Number,
+}
+
+export type ProgramMetaData = {
+    num_interactions: Number,
+    shares: Number,
+    views: Number,
 }

@@ -6,6 +6,8 @@ import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.
 import WorkoutController from './WorkoutController';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures.js';
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
+import { getPurchaseMetaDataStructure } from '../../model/data_structures/programs/purchaseMetaData'
+import { getLupaUserStructure } from '../firebase/collection_structures';
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
 const WORKOUT_COLLECTION = LUPA_DB.collection('workouts');
@@ -210,7 +212,104 @@ export default class ProgramController {
      * @param value 
      */
     createWorkout = async (uuid) => {
-        PROGRAM_COLLECTION.doc(uuid).set(getLupaWorkoutInformationStructure());
+        WORKOUT_COLLECTION.doc(uuid).set(getLupaWorkoutInformationStructure());
+    }
+
+    fetchDashboardData = async () => {
+        let userData = getLupaUserStructure()
+        await USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(snapshot => {
+            userData = snapshot.data();
+        });
+
+        const userPrograms = userData.programs;
+
+        let programData = [];
+        let tempProgramData;
+        for (let i = 0; i < userPrograms.length; i++) {
+            await PROGRAM_COLLECTION.doc(userPrograms[i]).get().then(snapshot => {
+                tempProgramData = snapshot.data();
+                if (typeof(tempProgramData) != 'undefined') {
+                    programData.push(tempProgramData);
+                }
+            });
+        }
+
+        /* Gather Purchase History and Interactions */
+        let purchaseMetaDataList = [];
+        let numInteractions = 0;
+        let shares = 0;
+        let views = 0;
+        let grossPay = 0;
+        let netPay = 0;
+        for (let j = 0; j < programData.length; j++) {
+            console.log(programData[j].program_purchase_metadata.purchase_list.length)
+            console.log(programData[j].program_purchase_metadata.purchase_list)
+            purchaseMetaDataList = purchaseMetaDataList.concat(programData[j].program_purchase_metadata.purchase_list)
+             numInteractions = numInteractions += programData[j].program_metadata.num_interactions 
+             shares = shares += programData[j].program_metadata.shares;
+             views = views += programData[j].program_metadata.views;
+            grossPay = programData[j].program_purchase_metadata.gross_pay;
+            netPay = programData[j].program_purchase_metadata.net_pay;
+            }
+
+        const dashboardData = {
+            purchaseMetaData: {
+                purchase_history: typeof(purchaseMetaDataList.length) == 'undefined' ?  [] : purchaseMetaDataList,
+                gross_pay: grossPay,
+                net_pay: netPay,
+            },
+            interactions: {
+                numInteractions: numInteractions,
+                shares: shares,
+                views: views
+            }
+        }
+
+        console.log(dashboardData)
+
+        return Promise.resolve(dashboardData);
+
+    }
+
+    addProgramView = async (programUUID) => {
+        let updatedProgramMetaData = {}
+        await PROGRAM_COLLECTION.doc(programUUID).get().then(snapshot => {
+            updatedProgramMetaData = snapshot.data().program_metadata;
+        })
+
+        updatedProgramMetaData.views = updatedProgramMetaData.views += 1;
+        updatedProgramMetaData.num_interactions = updatedProgramMetaData.num_interactions += 1;
+    
+        PROGRAM_COLLECTION.doc(programUUID).update({
+            program_metadata: updatedProgramMetaData
+        })
+    }
+
+    addProgramShare = async (programUUID, numShares) => {
+        let updatedProgramMetaData = {}
+        await PROGRAM_COLLECTION.doc(programUUID).get().then(snapshot => {
+            updatedProgramMetaData = snapshot.data().program_metadata;
+        })
+
+        updatedProgramMetaData.shares = updatedProgramMetaData.shares += numShares;
+        updatedProgramMetaData.num_interactions = updatedProgramMetaData.num_interactions += 1;
+    
+        PROGRAM_COLLECTION.doc(programUUID).update({
+            program_metadata: updatedProgramMetaData
+        })
+    }
+
+    addProgramInteraction = async (programUUID) => {
+        let updatedProgramMetaData = {}
+        await PROGRAM_COLLECTION.doc(programUUID).get().then(snapshot => {
+            updatedProgramMetaData = snapshot.data().program_metadata;
+        })
+
+        updatedProgramMetaData.num_interactions = updatedProgramMetaData.num_interactions += 1;
+    
+        PROGRAM_COLLECTION.doc(programUUID).update({
+            program_metadata: updatedProgramMetaData
+        })
     }
 
 }

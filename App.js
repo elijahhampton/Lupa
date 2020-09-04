@@ -33,6 +33,7 @@ import ProfileController from './src/ui/user/profile/ProfileController';
 import CreateNewPost from './src/ui/user/profile/modal/CreateNewPost';
 import ProfileNavigator from './src/ui/navigators/ProfileNavigator';
 import SettingsStackNavigator from './src/ui/navigators/SettingsNavigator';
+import CreateWorkout from './src/ui/workout/createworkout/CreateWorkout';
 
 
 const App = () => {
@@ -142,6 +143,7 @@ function AppNavigator() {
     <StackApp.Screen name='Auth' component={AuthenticationNavigator}/>
     <StackApp.Screen name='App' component={Lupa}/>
     <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{animationEnabled: true}}/>
+    <StackApp.Screen name="CreateWorkout" component={CreateWorkout} options={{animationEnabled: true}}/>
     <StackApp.Screen name="CreatePost" component={CreateNewPost} />
     <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{animationEnabled: true}}/>
     <StackApp.Screen name="PrivateChat" component={PrivateChat} />

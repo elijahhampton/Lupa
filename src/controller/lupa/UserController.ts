@@ -22,10 +22,12 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 import LOG, { LOG_ERROR } from '../../common/Logger';
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
+import ProgramController from './ProgramController';
 
 export default class UserController {
     private static _instance: UserController;
     private fbStorage = new FirebaseStorageBucket();
+    private PROGRAMS_CONTROLLER_INSTANCE = ProgramController.getInstance();
 
     private constructor() {
 
@@ -1120,6 +1122,8 @@ export default class UserController {
                 })
             }
 
+            this.PROGRAMS_CONTROLLER_INSTANCE.addProgramShare(program.program_structure_uuid, userList.length);
+
         } catch (err) {
             alert(err)
         }
@@ -1280,22 +1284,29 @@ export default class UserController {
         let GENERATED_CHAT_UUID, chats;
 
 
-        const currUserUUID = await currUserData
+        const currUserUUID = await currUserData.user_uuid
         const programOwnerUUID = programData.program_owner;
 
         try {
             //add the program to users list
             await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
             //add the user as one of the program participants
-            let updatedParticipants;
+            let updatedParticipants= [], updatedPurchaseMetadata = {}
             await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
                 updatedParticipants = snapshot.data().program_participants;
+                updatedPurchaseMetadata = snapshot.data().program_purchase_metadata;
             });
 
             updatedParticipants.push(currUserUUID);
+            updatedPurchaseMetadata.purchase_list.push({
+                purchaser: currUserData.display_name,
+                date_purchased: new Date(),
+                program_name: programData.program_name,
+            })
 
             await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
                 program_participants: updatedParticipants,
+                program_purchase_metadata: updatedPurchaseMetadata,
             });
 
             //setup trainer and user chat channel
