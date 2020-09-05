@@ -39,7 +39,7 @@ function AddCueModal({ captureData, closeModal, isVisible }) {
                     >
                         <Appbar.Header style={{elevation: 3, backgroundColor: '#FFFFFF'}}>
                             <Appbar.Action onPress={closeModal} icon={() => <Feather1s name="arrow-left"  thin={true} size={20} />}/>
-                            <Appbar.Content title="Add Cues"  />
+                            <Appbar.Content title="Add Cues" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}}  />
                             <Button mode="text" theme={{
                         colors: {
                             primary: '#23374d'

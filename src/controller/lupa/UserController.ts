@@ -7,7 +7,7 @@ import LUPA_DB, { LUPA_AUTH, FIRESTORE_INSTANCE, LUPA_DB_FIREBASE, Fire, Firebas
 const USER_COLLECTION = LUPA_DB.collection('users');
 const PROGRAMS_COLLECTION = LUPA_DB.collection('programs');
 const VLOGS_COLLECTION = LUPA_DB.collection('vlogs');
-
+const WORKOUTS_COLLECTION = LUPA_DB.collection('workouts');
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -945,6 +945,14 @@ export default class UserController {
             alert(err)
         }
     }
+
+    /**
+     *  /**
+     * Used for deleting workouts that were in the process of creation
+     */
+     deleteWorkout = async (user_uuid, workoutUUID) => {
+         await WORKOUTS_COLLECTION.doc(workoutUUID).delete();
+     }
 
     loadCurrentUserPrograms = async () => {
         let programUUIDS = [], programsData = [];

@@ -639,6 +639,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>react-native-splash-screen.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>tipsi-stripe.xcscheme</key>
 		<dict>
 			<key>isShown</key>

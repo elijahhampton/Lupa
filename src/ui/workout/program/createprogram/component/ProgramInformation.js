@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, createRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
@@ -9,7 +9,6 @@ import {
   Image,
   Dimensions,
   Slider,
-  TextInput,
   TouchableHighlight,
   KeyboardAvoidingView,
   SafeAreaView,
@@ -20,6 +19,7 @@ import {
   Surface,
   Modal as PaperModal,
   Caption,
+  TextInput,
   Button,
   IconButton,
   Chip,
@@ -178,13 +178,23 @@ function ProgramInformation(props) {
   const [programDays, setProgramDays] = useState([])
   const [automatedMessageText, setAutomatedMessageText] = useState("")
 
+  const programTitleInput = createRef();
+
   //visibility modifiers
   const [mapViewVisible, setMapViewVisibility] = useState(false);
   const [timePickerVisible, setTimePickerVisible] = useState(false);
 
   const [currIndex, setCurrIndex] = useState(0)
 
-  checkInputs = () => {
+  useEffect(() => {
+   focusTitleInput()
+  }, [])
+
+  const focusTitleInput = () => {
+    programTitleInput.current.focus();
+  }
+
+  const checkInputs = () => {
     if (programName.length < MIN_TITLE_LENGTH || programName.length > MAX_TITLE_LENGTH) {
 
       setRejectedReason("Your program title must be between " + MIN_TITLE_LENGTH + " and " + MAX_TITLE_LENGTH + " characters.");
@@ -329,7 +339,7 @@ function ProgramInformation(props) {
           <>
             <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: 'space-between' }}>
             <View>
-                <View style={{ width: '100%', height: 'auto', marginLeft: 5, marginVertical: 50, padding: 10 }} >
+                <View style={{ width: '100%', height: 'auto', marginVertical: 50, padding: 10 }} >
                   <View>
                     <Text style={styles.questionText}>
                       1. Give your program a title and description
@@ -338,8 +348,8 @@ function ProgramInformation(props) {
                       Choose the days of which your program will require work.
             </Caption>
                   </View>
-                  <TextInput onFocus={() => setTitleInputFocused(true)} onBlur={() => setTitleInputFocused(false)} value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" placeholderTextColor="#212121" style={[styles.textInput, { borderBottomColor: titleInputFocused ? "#1089ff" : "#212121",}]} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
-                  <TextInput onFocus={() => setDescriptionInputFocused(true)} onBlur={() => setDescriptionInputFocused(false)} value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={[styles.textInput, { borderBottomColor: descriptionInputFocused ? "#1089ff" : "#212121",}]} enablesReturnKeyAutomatically={true} returnKeyLabel="done" returnKeyType="done" keyboardType="default" theme={{ colors: { primary: 'rgb(30,136,229)' } }} />
+                  <TextInput ref={programTitleInput} mode="outlined" onFocus={() => setTitleInputFocused(true)} onBlur={() => setTitleInputFocused(false)} value={programName} onChangeText={text => setProgramName(text)} label="Title" placeholder="Program Title" placeholderTextColor="#212121" style={[styles.textInput, { height: 45, borderBottomColor: titleInputFocused ? "#1089ff" : "#212121",}]} keyboardType="default" keyboardAppearance="light" returnKeyLabel="done" returnKeyType="done" theme={{ roundness: 3, colors: { primary: 'rgb(30,136,229)' } }} />
+                  <TextInput mode="outlined" onFocus={() => setDescriptionInputFocused(true)} onBlur={() => setDescriptionInputFocused(false)} value={programDescription} onChangeText={text => setProgramDescription(text)} label="Description" placeholder="Program Description" placeholderTextColor="#212121" style={[styles.textInput, {height: 60, borderBottomColor: descriptionInputFocused ? "#1089ff" : "#212121",}]} enablesReturnKeyAutomatically={true} returnKeyLabel="done" returnKeyType="done" keyboardType="default" theme={{roundness: 3, colors: { primary: 'rgb(30,136,229)' } }} />
                 </View>
               </View>
 
@@ -657,14 +667,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     margin: 3,
-    width: '90%',
+    width: '100%',
     alignSelf: 'flex-start',
     marginVertical: 10,
-    borderBottomWidth: 1.5,
     paddingVertical: 15,
-    fontSize: 15,
-    fontFamily: 'Avenir',
-    fontWeight: '600'
+    fontSize: 13,
+    fontFamily: 'Avenir-Light',
   },
   questionText: {
     fontFamily: "Avenir-Medium",

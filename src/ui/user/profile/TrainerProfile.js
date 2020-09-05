@@ -235,11 +235,11 @@ function TrainerProfile({ userData, isCurrentUser }) {
         
         switch(currPage) {
             case 0:
-                return  <FAB onPress={() => navigation.push('CreateProgram')} icon="plus" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
+                return  <FAB onPress={() => navigation.push('CreateProgram')} icon="plus" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
             case 1:
-                return  <FAB onPress={() => navigation.push('CreatePost')} icon="rss" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
+                return  <FAB onPress={() => navigation.push('CreatePost')} icon="rss" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
             case 2:
-                return  <FAB onPress={() => setEditHoursModalVisible(true)} icon="calendar" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
+                return  <FAB onPress={() => setEditHoursModalVisible(true)} icon="calendar" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
             
         }
 

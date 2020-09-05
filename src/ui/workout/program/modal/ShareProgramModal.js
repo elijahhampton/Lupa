@@ -111,7 +111,7 @@ function ShareProgramModal({ navigation, route }) {
                     }
                 }}>
                     <Appbar.Action onPress={() => navigation.pop()} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}/>
-                    <Appbar.Content title="Share Program" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
+                    <Appbar.Content title="Share Program" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 </Appbar.Header>
 
                 <View style={styles.contentContainer}>
@@ -124,7 +124,7 @@ function ShareProgramModal({ navigation, route }) {
                 </ScrollView>
                     </View>
 
-                    <FAB  color="#FFFFFF" style={styles.fab} icon="check" onPress={handleApply} />
+                    <FAB color="#FFFFFF" style={styles.fab} icon="check" onPress={handleApply} />
                     <SafeAreaView />
             </View>
     )
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         elevation: 3
     },
     fab: {
-        position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#2196F3'
+        position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#1089ff'
     },
     contentContainer: {
         flex: 1

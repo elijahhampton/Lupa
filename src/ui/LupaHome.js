@@ -2,7 +2,7 @@
 import React, {Component} from "react";
 import {Animated, Image, Dimensions, Platform, SafeAreaView, Text, View, RefreshControl} from 'react-native';
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
-import { Banner, FAB, Appbar, Divider } from 'react-native-paper';
+import { Banner, FAB, Appbar, Divider , Surface} from 'react-native-paper';
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import { MenuIcon } from "./icons";
@@ -58,7 +58,7 @@ export class LupaHome extends Component {
           zIndex: 1,
           backgroundColor: COLOR
         }}>
-          <Header style={{backgroundColor: 'transparent', borderBottomColor: 'transparent'}}  hasTabs>
+          <Header style={{backgroundColor: 'transparent', borderBottomColor: 'transparent', borderColor: 'transparent'}} noShadow={true} hasTabs>
             <Left style={{flexDirection: 'row', alignItems: 'center'}}>
               <MenuIcon customStyle={{}} onPress={() => this.props.navigation.openDrawer()}/>
             </Left>

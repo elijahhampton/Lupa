@@ -91,7 +91,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
         <Modal presentationStyle="fullScreen" visible={isVisible} animated={true} animationType="slide">
             <Appbar.Header style={{backgroundColor: '#FFFFFF'}}>
                 <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}  onPress={closeModal}/>
-                <Appbar.Content title="Edit Hours" />
+                <Appbar.Content title="Edit Hours" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
             </Appbar.Header>
             <ScrollView contentContainerStyle={{marginTop: 10}}>
               <View style={{marginVertical: 10, paddingHorizontal: 20,}}>
@@ -158,7 +158,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
          
 </View>
 </ScrollView>
-<FAB onPress={handleSaveTimes} icon="check" style={{position: 'absolute', bottom: 0, right: 0, margin: 22, backgroundColor: '#1089ff'}} />
+<FAB onPress={handleSaveTimes} icon="check" style={{position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#1089ff'}} />
       
       </Modal>
     )

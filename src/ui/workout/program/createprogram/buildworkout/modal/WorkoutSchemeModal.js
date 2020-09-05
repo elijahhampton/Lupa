@@ -36,7 +36,7 @@ function WorkoutSchemeModal({ isVisible, captureValues, workout, closeModal}) {
         <Modal visible={isVisible} contentContainerStyle={{width: Dimensions.get('window').width, height: Dimensions.get('window').height + Constants.statusBarHeight, backgroundColor: '#FFFFFF'}}>
                                 <Appbar.Header style={{elevation: 3, backgroundColor: '#FFFFFF'}}>
                             <Appbar.Action icon={() => <ThinFeatherIcon thin={true} name="arrow-left" size={20} />} onPress={closeModal} />
-                            <Appbar.Content title="Workout Scheme" />
+                            <Appbar.Content title="Workout Scheme" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                             <Button color="#23374d" mode="text" uppercase={false} onPress={saveScheme}>
                                 Save
                             </Button>

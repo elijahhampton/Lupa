@@ -7,6 +7,7 @@ import {
     Text,
     Modal,
     SafeAreaView,
+    ActivityIndicator
 } from 'react-native';
 
 import {
@@ -70,7 +71,8 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
     const handleStartLiveWorkout = () => {
         handleOnComplete();
         navigation.navigate('LiveWorkout', {
-            uuid: workoutData.program_structure_uuid
+            uuid: uuid,
+            workoutType: 'WORKOUT',
         })
     }
 
@@ -183,7 +185,8 @@ class CreateWorkout extends React.Component {
             workoutData: getLupaWorkoutInformationStructure(),
             currWorkoutUUID: "",
             workoutComplete: false, 
-            creatingWorkout: false
+            creatingWorkout: false,
+            workoutComplete: false
         }
     }
 
@@ -194,6 +197,18 @@ class CreateWorkout extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE.createNewWorkout(UUID);
     }
 
+    async componentWillUnmount() {
+        if (this.state.workoutComplete === false) {
+            //delete from database
+            this.LUPA_CONTROLLER_INSTANCE.deleteWorkout(this.props.lupa_data.Users.currUserData.user_uuid, this.state.currProgramUUID);
+
+            if (typeof(this.state.currWorkoutUUID) != 'undefined') {
+                //delete from redux
+                //this.props.deleteProgram(this.state.currProgramUUID)
+            }
+        }
+    }
+
     handleSuccessfulReset = () => {
         this.setState({ 
             creatingProgram: false,
@@ -201,16 +216,17 @@ class CreateWorkout extends React.Component {
     }
 
     goToIndex = (index) => {
-        this.setState({ currPage: index, ...this.state });
+        this.setState({ currPage: index });
     }
 
     saveProgramInformation = (workoutName, workoutDays) => {
         let updatedProgramData = this.state.programData;
         updatedProgramData.program_name = workoutName;
         updatedProgramData.program_workout_days = workoutDays;
+        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
 
         this.setState({ programData: updatedProgramData, ...this.state })
-        this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(workoutUUID, updatedProgramData);
+        this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, updatedProgramData);
         this.goToIndex(1);
     }
 
@@ -223,9 +239,9 @@ class CreateWorkout extends React.Component {
         const currPage = this.state.currPage;
         switch(currPage) {
             case 0:
-                return <WorkoutInformation saveProgramInformation={this.saveProgramInformation} goToIndex={this.goToIndex} />
+                return <WorkoutInformation saveWorkoutInformation={this.saveProgramInformation} goToIndex={this.goToIndex} />
             case 1:
-                return <BuildWorkoutTool navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
+                return <BuildWorkoutTool saveProgramWorkoutData={this.saveProgramWorkoutData} navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
             default:
         }
     }
@@ -233,7 +249,6 @@ class CreateWorkout extends React.Component {
     render() {
         return (
             <SafeAreaView style={styles.root}>
-                <Feather1s style={{paddingLeft: 10}} name="arrow-left" size={20} onPress={() => this.props.navigation.pop()}/>
                 {this.renderComponentDisplay()}
                 <CreatingWorkoutModal uuid={this.state.currWorkoutUUID} isVisible={this.state.creatingWorkout} closeModal={this.handleSuccessfulReset} />
             </SafeAreaView>

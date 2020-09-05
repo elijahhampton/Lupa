@@ -214,11 +214,6 @@ class CreateProgram extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE.createNewProgram(UUID);
     }
 
-    componentDidCatch(error, info) { 
-        alert('Some error took place: ' + error)
-        alert(info)
-    }
-
     async componentWillUnmount() {
         if (this.state.programComplete == false) {
             //delete from database

@@ -211,6 +211,10 @@ export default class ProgramController {
         PROGRAM_COLLECTION.doc(uuid).delete();
     }
 
+    deleteWorkout = async (uuid) => {
+        // not sure if we will need this yet or what it will do
+    }
+
     publishWorkout = async (uuid) => {
         await WORKOUT_COLLECTION.doc(uuid).update({
             completedProgram: true
@@ -237,7 +241,7 @@ export default class ProgramController {
     updateWorkoutData = (workoutUUID, workoutData) => {
         const docRef = WORKOUT_COLLECTION.doc(workoutUUID);
         docRef.update({
-            workout_data: workoutData,
+            program_workout_structure: workoutData,
         })
     }
 

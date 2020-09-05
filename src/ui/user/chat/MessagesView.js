@@ -6,6 +6,7 @@ import {
     Text,
     Button,
     SafeAreaView,
+    Dimensions,
     TouchableOpacity,
     ScrollView
 } from 'react-native';
@@ -22,7 +23,7 @@ import { Fire } from '../../../controller/firebase/firebase';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
-
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import { connect } from 'react-redux';
 
 const mapStateToProps = (state, action) => {
@@ -161,7 +162,7 @@ class MessagesView extends React.Component {
                     }
                 }}>
                     <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
-                    <Appbar.Content title="Messages" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
+                    <Appbar.Content title="Messages" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                     <Appbar.Action onPress={() => alert('ap')} icon="delete" disabled={!this.state.viewReady && this.state.currMessagesIndex == undefined} color={!this.state.viewReady ? "black" : "grey"} />
                     <Appbar.Action onPress={() => alert('message')} icon="send" disabled={this.state.viewReady} color={this.state.viewReady ? "black" : "grey"} />
 
@@ -185,7 +186,25 @@ class MessagesView extends React.Component {
     renderUsernameOnMessage={true}
     showUserAvatar={true}
     alwaysShowSend={true}
+    renderInputToolbar={() =>
+        <View style={{ marginVertical: 5, flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
 
+        <Input
+            leftIcon={() => <FeatherIcon color="#212121" name="message-circle" size={20} />}
+            placeholder='How is your workout?'
+            inputStyle={{ fontSize: 15, padding: 10 }}
+            containerStyle={{ width: '80%', borderBottomWidth: 0 }}
+            inputContainerStyle={{ borderBottomWidth: 0, backgroundColor: 'rgb(247, 247, 247)', borderRadius: 20 }}
+            returnKeyType="done"
+            returnKeyLabel="done"
+        />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '20%' }}>
+            <FeatherIcon name="paperclip" size={20} />
+            <FeatherIcon name="send" size={20} />
+        </View>
+
+    </View>
+    }
     />
     :
     this.state.userMessageData.length >= 1 ?
