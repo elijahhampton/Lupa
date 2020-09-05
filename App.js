@@ -9,7 +9,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import AuthenticationNavigator from './src/ui/navigators/AuthenticationNavigator';
 import Lupa from './src/Lupa';
-
+import SplashScreen from 'react-native-splash-screen'
 import { connect } from 'react-redux';
 import LupaStore from './src/controller/redux/index';
 
@@ -88,11 +88,12 @@ const SwitchNavigator = () => {
 
     await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
       currUserPrograms = result;
-    })
-    await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
+    });
+
+    await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms});
 
     lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-    dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
+    dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts});
   }
 
   useEffect(() => {
@@ -101,28 +102,31 @@ const SwitchNavigator = () => {
         try {
         await LUPA_AUTH.onAuthStateChanged(user => {
           if (typeof(user) == 'undefined' || user == null) {
+            SplashScreen.hide()
             showAuthentication()
             return;
           }
-          
+ 
           introduceApp(user.uid)
       })
     } catch(err) {
+      SplashScreen.hide()
       showAuthentication()
       alert(err)
     }
       }
 
       getUserAuthState()
+      SplashScreen.hide()
+
 
       //showAuthentication()
     }, [])
 
   return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <Text>Loading...</Text>
-          <ActivityIndicator size="large" color="#e9446a"></ActivityIndicator>
-      </View>
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <ActivityIndicator size="large" color="#23374d"></ActivityIndicator>
+</View>
   )
 }
 

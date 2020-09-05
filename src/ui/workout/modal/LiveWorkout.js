@@ -134,9 +134,21 @@ class LiveWorkout extends React.Component {
 
     setupLiveWorkout = async () => {
         try {
-            await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
-                this.setState({ programData: data })
-            })
+            switch(this.props.route.params.workoutType) {
+                case 'PROGRAM':
+                    await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
+                        this.setState({ programData: data })
+                    })
+                    break;
+                case 'WORKOUT':
+                    await this.LUPA_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(this.props.route.params.uuid).then(data => {
+                        console.log(data);
+                        this.setState({ programData: data })
+                    })
+                    break;
+                default:
+                    this.setState({ ready: false, componentDidErr: true })
+            }
 
             await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
                 this.setState({ programOwnerData: data })
@@ -164,11 +176,13 @@ class LiveWorkout extends React.Component {
     }
 
     loadCurrentDayWorkouts = (day) => {
-        /*if (!this.state.ready) {
+       /* if (!this.state.ready) {
             return;
         }*/
 
         let workoutStructure;
+        console.log('THE STRUCTURE: ')
+        console.log(this.state.programData.program_workout_structure.Monday)
         switch (day) {
             case 'Monday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Monday)
@@ -578,7 +592,7 @@ class LiveWorkout extends React.Component {
                     </Text>
                                 <Menu visible={this.state.dayMenuVisible} anchor={
                                     <Button onPress={() => this.setState({ dayMenuVisible: true })} color="#1089ff" icon={() => <FeatherIcon name="chevron-down" size={20} />} uppercase={false} style={{ alignSelf: 'flex-start' }}>
-                                        Monday
+                                        {this.state.programData.program_workout_days[0]}
                     </Button>
                                 }>
                                     {
@@ -897,10 +911,10 @@ class LiveWorkout extends React.Component {
                 <Appbar.Header style={{ backgroundColor: '#1089ff'}}>
                     <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.pop()} />} />
 
-                    <Appbar.Content title={this.state.programData.program_name} titleStyle={{ alignSelf: 'center' }} />
+                    <Appbar.Content title={this.state.programData.program_name} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
 
                     <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="maximize" size={20} onPress={() => this.setState({ showFullScreenContent: true })} />} />
-                    <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="list" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />} />
+                    {this.props.route.params.workoutType === 'PROGRAM' ? <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="list" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />} /> : null }
                 </Appbar.Header>
                 {this.renderComponentDisplay()}
                 {this.renderLiveWorkoutOptions()}

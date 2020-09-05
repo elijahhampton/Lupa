@@ -128,7 +128,7 @@ function CreateNewPost(props) {
             <View style={{flex: 1}}>
     <Appbar.Header  style={{ height: Constants.statusBarHeight + 20, backgroundColor: 'white'}} statusBarHeight>
     <Appbar.Action onPress={handleClose}  style={{alignSelf: 'flex-start'}} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />} />
-    <Appbar.Content title="New Vlog" titleStyle={{fontFamily: 'Avenir-Heavy', paddingVertical: 3}} />
+    <Appbar.Content title="New Vlog" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
     </Appbar.Header>
 
                 <View style={{flex: 1, justifyContent: 'space-between'}}>
@@ -166,7 +166,7 @@ function CreateNewPost(props) {
                 <View style={{flex: 1}} />
                
             </View>
-            <FAB onPress={saveVlog} icon="check" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 20}} />
+            <FAB onPress={saveVlog} icon="check" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
            </View>
     )
 }

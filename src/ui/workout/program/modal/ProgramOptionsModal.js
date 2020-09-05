@@ -83,7 +83,8 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 
         if (optionTitle == 'Launch Live Workout') {
             navigation.navigate('LiveWorkout', {
-                uuid: program.program_structure_uuid
+                uuid: program.program_structure_uuid,
+                workout: 'PROGRAM',
             });
         }
     }
@@ -154,7 +155,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     }
                 }}>
                     <Appbar.Action onPress={closeModal} icon={() => <Feather1s thin={true} name="arrow-left" size={20} />} />
-                    <Appbar.Content title="Program Options" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
+                    <Appbar.Content title="Program Options" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 </Appbar.Header>
             <View style={styles.container}>
                 {
@@ -164,7 +165,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     renderCurrUserOptions()
                 }
                 {
-                    renderProgramOwnerOptions()
+                    currUserData.isTrainer && program.program_owner == currUserData.user_uuid ? renderProgramOwnerOptions() : null
                 }
             </View>
         </Modal>

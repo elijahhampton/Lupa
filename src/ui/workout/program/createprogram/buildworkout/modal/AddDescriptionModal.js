@@ -32,7 +32,7 @@ function AddDescriptionModal({ isVisible, captureData, closeModal }) {
                     <Modal visible={isVisible} contentContainerStyle={{width: '100%', height: Dimensions.get('window').height + Constants.statusBarHeight, backgroundColor: '#FFFFFF'}}>
                         <Appbar.Header style={{elevation: 3, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-between'}}>
                             <Appbar.Action icon={() => <ThinFeatherIcon  thin={true} name="arrow-left" size={20} />} onPress={closeModal} />
-                            <Appbar.Content title="Add a description" />
+                            <Appbar.Content title="Add a description" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                             <Button uppercase={false} mode="text" color="#23374d" onPress={saveDescription}>
                                 Save
                             </Button>

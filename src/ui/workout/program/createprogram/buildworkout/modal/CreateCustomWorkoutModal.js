@@ -276,7 +276,7 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
 
             </SafeAreaView>
 
-            <FAB onPress={handleOnSave} icon="check" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 12 }} />
+            <FAB onPress={handleOnSave} icon="check" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
         </Modal>
     )
 }

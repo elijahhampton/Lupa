@@ -24,16 +24,8 @@ import {
     DataTable,
 } from 'react-native-paper';
 
-import {
-    ListItem
-} from 'react-native-elements';
-
-import Dots from 'react-native-dots-pagination';
-
 import DropDownPicker from 'react-native-dropdown-picker';
 import ImagePicker from 'react-native-image-picker'
-import { useNavigation } from '@react-navigation/native'
-import { useSelector } from 'react-redux'
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ThinFeatherIcon from 'react-native-feather1s'
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -43,14 +35,7 @@ import {
 import { fromString } from 'uuidv4';
 import SingleWorkout from '../../../component/SingleWorkout';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import { getLupaProgramInformationStructure } from '../../../../../model/data_structures/programs/program_structures';
-import AddCueModal from './modal/AddCueModal';
-import AddDescriptionModal from './modal/AddDescriptionModal';
 import WorkoutDisplay from './component/WorkoutDisplay';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import LupaCamera from '../component/LupaCamera'
-import WorkoutSchemeModal from './modal/WorkoutSchemeModal';
-import { Left, Body, Right } from 'native-base';
 import LupaController from '../../../../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux'
@@ -141,10 +126,6 @@ class BuildWorkoutController extends React.Component {
                 },
               ],
         }
-    }
-
-    componentDidCatch(err, info) {
-       console.log(err)
     }
 
     handleSaveProgramData = () => {
@@ -283,7 +264,8 @@ class BuildWorkoutController extends React.Component {
                     default:
                 }
 
-
+                const num = this.state.numWorkoutsAdded + 1;
+                this.setState({ numWorkoutsAdded: num })
                 break;
             case PLACEMENT_TYPES.EXERCISE:
                 try {
@@ -833,7 +815,7 @@ class BuildWorkoutController extends React.Component {
               Showing superset exercises {this.state.currSuperSetWorkoutIndex} / {this.state.currPressedPopulatedWorkout.superset.length}
           </Caption>*/
             <Caption style={{ paddingLeft: 20, color: '#1089ff' }}>
-                Scroll vertically to see workouts added for supersets.
+                Scroll vertically to see exercises added for supersets.
             </Caption>
         )
     }
@@ -847,11 +829,10 @@ class BuildWorkoutController extends React.Component {
                 value: day,
                 index: index
             }
+
             items.push(item)
         })
 
-        switch (this.state.bottomViewIndex) {
-            case 0:
                 return (
                     <View style={{ flex: 1.5 }}>
 
@@ -883,91 +864,6 @@ class BuildWorkoutController extends React.Component {
                         </View>
                     </View>
                 )
-            case 1:
-                return (
-                    <View style={{ flex: 1.8 }}>
-                        {this.state.bottomViewIndex === 1 ?
-
-                            <>
-                                <Surface style={{ paddingVertical: 5, backgroundColor: 'white', elevation: 3, }}>
-                                    <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                                        <TouchableOpacity onPress={this.handleEditWorkoutScheme}>
-                                            <View style={{ alignItems: 'center' }}>
-                                                <Surface style={{ elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3 }}>
-                                                    <ThinFeatherIcon color="#212121" thin={true} name="clipboard" size={15} />
-                                                </Surface>
-                                                <Caption style={{ fontSize: 10 }}>
-                                                    Edit Scheme
-                       </Caption>
-                                            </View>
-                                        </TouchableOpacity>
-
-                                        <TouchableOpacity onPress={this.handleTakeVideo}>
-                                            <View style={{ alignItems: 'center' }}>
-                                                <Surface style={{ elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3 }}>
-                                                    <ThinFeatherIcon color="#212121" thin={true} name="video" size={15} />
-                                                </Surface>
-                                                <Caption style={{ fontSize: 10 }}>
-                                                    Add Video
-                       </Caption>
-                                            </View>
-                                        </TouchableOpacity>
-
-                                        <TouchableOpacity onPress={this.addWorkoutMedia}>
-                                            <View style={{ alignItems: 'center' }}>
-                                                <Surface style={{ elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3 }}>
-                                                    <ThinFeatherIcon color="#212121" thin={true} name="image" size={15} />
-                                                </Surface>
-                                                <Caption style={{ fontSize: 10 }}>
-                                                    Add Image
-                       </Caption>
-                                            </View>
-                                        </TouchableOpacity>
-
-                                        <TouchableOpacity onPress={this.handleAddCue}>
-                                            <View style={{ alignItems: 'center' }}>
-                                                <Surface style={{ elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3 }}>
-                                                    <ThinFeatherIcon color="#212121" thin={true} name="message-circle" size={15} />
-                                                </Surface>
-                                                <Caption style={{ fontSize: 10 }}>
-                                                    Add Cues
-                       </Caption>
-                                            </View>
-                                        </TouchableOpacity>
-
-                                        <View style={{ alignItems: 'center' }}>
-                                            <Surface style={{ elevation: 2, width: 30, height: 30, borderRadius: 40, alignItems: 'center', justifyContent: 'center', margin: 3 }}>
-                                                <ThinFeatherIcon color="#e53935" thin={true} name="trash" size={15} />
-                                            </Surface>
-                                            <Caption style={{ color: '#e53935', fontSize: 10 }}>
-                                                Remove
-                       </Caption>
-                                        </View>
-                                    </View>
-                                </Surface>
-                                <Divider style={{ width: '100%' }} />
-                            </>
-                            :
-                            null
-                        }
-                        <Text style={{ padding: 10, fontSize: 15, fontWeight: '400', fontFamily: 'Avenir', }}>
-                            Showing exercises from:
-                        </Text>
-                        <DropDownPicker
-                            items={items}
-                            defaultValue={this.getCurrentDay()}
-                            containerStyle={{ height: 40, width: Dimensions.get('window').width }}
-                            style={{ backgroundColor: '#fafafa' }}
-                            itemStyle={{
-                                justifyContent: 'flex-start'
-                            }}
-                            dropDownStyle={{ backgroundColor: '#FFFFFF' }}
-                            onChangeItem={item => this.setState({ currDayIndex: item.index })}
-                        />
-
-                    </View>
-                )
-        }
     }
 
     renderBottomSheet = () => {
@@ -1065,9 +961,7 @@ class BuildWorkoutController extends React.Component {
             <View style={styles.container}>
                 <Appbar.Header style={styles.appbar}>
                     <Appbar.Action icon={() => <ThinFeatherIcon thin={true} onPress={() => this.state.bottomViewIndex === 0 ? this.props.goToIndex(0) : this.setState({ bottomViewIndex: 0 })} name="arrow-left" size={20} color="#1089ff" />} />
-                        <Button color="#1089ff" uppercase={false} onPress={this.handleSaveProgramData} >
-                            <ThinFeatherIcon thin={true} name="arrow-right" size={20} />
-                        </Button>
+                    <Appbar.Action icon={() => <ThinFeatherIcon thin={true} onPress={this.handleSaveProgramData} name="arrow-right" size={20} color="#1089ff" />} />
                 </Appbar.Header>
 
                 <View style={styles.content}>

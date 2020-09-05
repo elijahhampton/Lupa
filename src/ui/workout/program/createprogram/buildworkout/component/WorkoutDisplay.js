@@ -22,29 +22,22 @@ import {
 
 import ThinFeatherIcon from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'
+import { Video } from 'expo-av';
+import Slider from "react-native-slider";
 
 
 function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperSetIndex }) {
     const [scrollViewContainerHeight, setScrollViewContainerHeight] = useState(0)
-    const [updateState, setUpdateState] = useState(false);
-    const handleIncrementExcerciseSets = (workoutRef) => {
-        workoutRef.workout_sets++;
-        setUpdateState(!updateState)
+    const [updateState, forceUpdateState] = useState(false);
+
+    const handleChangeRepsSliderValue = (workoutRef, value) => {
+        workoutRef.workout_reps = value;
+        forceUpdateState(!updateState)
     }
 
-    const handleDecrementExerciseSets = (workoutRef) => {
-        workoutRef.workout_sets--;
-        setUpdateState(!updateState)
-    }
-
-    const handleIncrementExcerciseReps = (workoutRef) => {
-        workoutRef.workout_reps++;
-        setUpdateState(!updateState)
-    }
-
-    const handleDecrementExerciseReps = (workoutRef) => {
-        workoutRef.workout_reps--;
-        setUpdateState(!updateState)
+    const handleChangeSetsSliderValue  = (workoutRef, value) => {
+        workoutRef.workout_sets = value;
+        forceUpdateState(!updateState)
     }
 
     const renderComponentDisplay = () => {
@@ -53,73 +46,81 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
             case true:
                 return (
                     <View style={{flex: 1, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Surface style={{padding: 10, justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
-                                     
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10}}>
-                                        <Text style={{fontFamily: 'Avenir-Heavy', color: '#23374d', fontSize: 20}}>
+                                    <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
+                                     <View style={{flex: 1,}}>
+
+                                        <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 20, padding: 10}}>
                                           {workout.workout_name}
                                         </Text>
-                                       
-                                        </View>
-        
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
 
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
-                                                <View style={{marginHorizontal: 5}}>
-                                                    <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                                                        Sets
-                                                    </Text>
-                                                    <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                                <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                                                    <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseSets(workout)} />
-                                                </View>
-                                                <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-                                                <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-                                                    <Text style={{fontSize: 30, fontFamily: 'Avenir-Light'}}>
-                                                        {workout.workout_sets}
-                                                    </Text>
-                                                </View>
-                                                <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-                                                <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseSets(workout)}/>
-                                            </View>
-                                                </View>
-                                     
-                                                <View style={{marginHorizontal: 5}}>
-                                                    <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                                                        Reps
-                                                    </Text>
-                                                    <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                                <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                                                    <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseReps(workout)} />
-                                                </View>
-                                                <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-                                                <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-                                                    <Text style={{fontSize: 30, fontFamily: 'Avenir-Light'}}>
-                                                        {workout.workout_reps}
-                                                    </Text>
-                                                </View>
-                                                <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-                                                <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseReps(workout)}/>
-                                            </View>
-                                                </View>
-                                            
+                                        <TouchableOpacity style={{margin: 12, alignSelf: 'flex-end'}} onPress={handleSuperSetOnPress}>
+                                            <View style={{borderColor: '#212121', padding: 5, width: 90, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                                <Text style={{fontFamily: 'Avenir-Medium', fontSize: 12, color: '#1089ff'}}>
+                                                    Super Set
+                                                </Text>
+                                                <FeatherIcon name="plus" size={15} color='#1089ff' />
+                                            </View>  
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        <Surface style={{width: '100%', height: '60%', alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+                                                <Video shouldPlay={true} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
+                                            </Surface>
+        
+                                        <View style={{alignItems: 'center', justifyContent: 'space-between'}}>
+
+                                        <View style={{justifyContent: 'space-evenly', width: '100%'}}>
+
+                <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <View style={{flex: 1,alignItems: 'center', justifyContent: 'center'}}>
+                   
+                <Slider
+                value={workout.workout_sets}
+            style={styles.container}
+            trackStyle={styles.track}
+            thumbStyle={styles.thumb}
+            minimumTrackTintColor='#31a4db'
+            thumbTouchSize={{width: 50, height: 40}}
+            onValueChange={value => handleChangeSetsSliderValue(workout, value)}
+            minimumValue={0}
+            maximumValue={15}
+            step={1}
+          />
+           <Caption>
+                        Sets ({workout.workout_sets})
+                    </Caption>
+                </View>
+
+                <View style={{flex: 1,alignItems: 'center', justifyContent: 'center'}}>
+                   
+                <Slider
+                value={workout.workout_reps}
+            style={styles.container}
+            trackStyle={styles.track}
+            thumbStyle={styles.thumb}
+            minimumTrackTintColor='#31a4db'
+            thumbTouchSize={{width: 50, height: 40}}
+            onValueChange={value => handleChangeRepsSliderValue(workout, value)}
+            minimumValue={0}
+            maximumValue={15}
+            step={1}
+          />
+           <Caption>
+                        Reps ({workout.workout_reps})
+                    </Caption>
+                </View>
+                </View> 
+
                                             </View>
 
 
                 
                                             </View>
-                                            <Surface style={{alignSelf: 'center', marginVertical: 30, width: Dimensions.get('window').width - 100, height: 100, borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
 
-                                            </Surface>
+                                            </View>
 
-                                            <TouchableOpacity style={{position: 'absolute', bottom: 0, right: 0, margin: 12, }} onPress={handleSuperSetOnPress}>
-                                            <View style={{borderWidth: 1, borderRadius: 5, borderColor: '#212121', padding: 10, borderWidth: 0.5, width: 90, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                                <Text style={{fontFamily: 'Avenir-Medium'}}>
-                                                    Super Set
-                                                </Text>
-                                                <FeatherIcon name="plus" size={15} />
-                                            </View>  
-                                            </TouchableOpacity>
+                                        
                                                         
 
                                     </Surface>
@@ -141,155 +142,159 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
                                 contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
                         >
                         <View style={{flex: 1, height: scrollViewContainerHeight, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Surface style={{padding: 10, justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
-                                     
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10}}>
-                                        <Text style={{fontFamily: 'Avenir-Heavy', color: '#23374d', fontSize: 20}}>
+                                    <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
+                                    <View style={{flex: 1}}>
+
+                               
+                                    <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 20, padding: 10}}>
                                           {workout.workout_name}
                                         </Text>
-                                       
+
+                                        <TouchableOpacity style={{margin: 12, alignSelf: 'flex-end'}} onPress={handleSuperSetOnPress}>
+                                            <View style={{borderColor: '#212121', padding: 5, width: 90, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                                <Text style={{fontFamily: 'Avenir-Medium', fontSize: 12, color: '#1089ff'}}>
+                                                    Super Set
+                                                </Text>
+                                                <FeatherIcon name="plus" size={15} color='#1089ff' />
+                                            </View>  
+                                            </TouchableOpacity>
                                         </View>
+
+                                        <Surface style={{width: '100%', height: '60%', alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+                                                <Video shouldPlay={true} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
+                                            </Surface>
         
                             
         
 
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <View style={{alignItems: 'center', justifyContent: 'space-between'}}>
 
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
-        <View style={{marginHorizontal: 5}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                Sets
-            </Text>
-            <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseSets(workout)} />
-        </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-        <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 30, fontFamily: 'Avenir-Light'}}>
-                {workout.workout_sets}
-            </Text>
-        </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-        <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseSets(workout)}/>
-    </View>
-        </View>
-
-        <View style={{marginHorizontal: 5}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                Reps
-            </Text>
-            <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseReps(workout)} />
-        </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-        <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 30, fontFamily: 'Avenir-Light'}}>
-                {workout.workout_reps}
-            </Text>
-        </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-        <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseReps(workout)}/>
-    </View>
-        </View>
+<View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+<View style={{flex: 1,alignItems: 'center', justifyContent: 'center'}}>
+                   
+                   <Slider
+                   value={workout.workout_sets}
+               style={styles.container}
+               trackStyle={styles.track}
+               thumbStyle={styles.thumb}
+               minimumTrackTintColor='#31a4db'
+               thumbTouchSize={{width: 50, height: 40}}
+               onValueChange={value => handleChangeSetsSliderValue(workout, value)}
+               minimumValue={0}
+               maximumValue={15}
+               step={1}
+             />
+              <Caption>
+                           Sets ({workout.workout_sets})
+                       </Caption>
+                   </View>
+   
+                   <View style={{flex: 1,alignItems: 'center', justifyContent: 'center'}}>
+                      
+                   <Slider
+                   value={workout.workout_reps}
+               style={styles.container}
+               trackStyle={styles.track}
+               thumbStyle={styles.thumb}
+               minimumTrackTintColor='#31a4db'
+               thumbTouchSize={{width: 50, height: 40}}
+               onValueChange={value => handleChangeRepsSliderValue(workout, value)}
+               minimumValue={0}
+               maximumValue={15}
+               step={1}
+             />
+              <Caption>
+                           Reps ({workout.workout_reps})
+                       </Caption>
+                   </View>
     
     </View>
 
 
 
     </View>
-    <Surface style={{alignSelf: 'center', marginVertical: 30, width: Dimensions.get('window').width - 100, height: 100, borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
 
-    </Surface>
-
-                                            <TouchableOpacity style={{position: 'absolute', bottom: 0, right: 0, margin: 12, }} onPress={handleSuperSetOnPress}>
-                                            <View style={{borderWidth: 1, borderRadius: 5, borderColor: '#212121', padding: 10, borderWidth: 0.5, width: 90, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                                <Text style={{fontFamily: 'Avenir-Medium', color: '#1089ff'}}>
-                                                    Super Set
-                                                </Text>
-                                                <FeatherIcon name="plus" size={15} color="#1089ff" />
-                                            </View>  
-                                            </TouchableOpacity>
-                                                        
-
+    </View>
                                     </Surface>
                                     </View>
                                     {
                                         workout.superset.map((superset, index, arr) => {
                                             return (
                                                 <View style={{flex: 1, height: scrollViewContainerHeight, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Surface style={{padding: 10, justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
-                                     
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10}}>
-                                        <Text style={{fontFamily: 'Avenir-Heavy', color: '#23374d', fontSize: 20}}>
+                                    <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
+                                                <View style={{flex: 1}}>
+
+                                      
+                                    <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 20, padding: 10}}>
                                           {superset.workout_name}
                                         </Text>
-                                       
+
+                                        <TouchableOpacity style={{margin: 12, alignSelf: 'flex-end'}} onPress={handleSuperSetOnPress}>
+                                            <View style={{borderColor: '#212121', padding: 5, width: 90, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                                <Text style={{fontFamily: 'Avenir-Medium', fontSize: 12, color: '#1089ff'}}>
+                                                    Super Set
+                                                </Text>
+                                                <FeatherIcon name="plus" size={15} color='#1089ff' />
+                                            </View>  
+                                            </TouchableOpacity>
                                         </View>
+
+                                        <Surface style={{width: '100%', height: '60%', alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+                                                <Video shouldPlay={true} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
+                                            </Surface>
         
                             
         
 
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <View style={{alignItems: 'center', justifyContent: 'space-between'}}>
 
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
-        <View style={{marginHorizontal: 5}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                Sets
-            </Text>
-            <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseSets(superset)} />
-        </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-        <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 30, fontFamily: 'Avenir-Light'}}>
-                {superset.workout_sets}
-            </Text>
-        </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-        <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseSets(superset)}/>
-    </View>
-        </View>
-
-        <View style={{marginHorizontal: 5}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                Reps
-            </Text>
-            <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseReps(superset)} />
-        </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-        <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 30, fontFamily: 'Avenir-Light'}}>
-                {superset.workout_reps}
-            </Text>
-        </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
-        <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseReps(superset)}/>
-    </View>
-        </View>
+<View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+<View style={{flex: 1,alignItems: 'center', justifyContent: 'center'}}>
+                   
+                   <Slider
+                   value={superset.workout_sets}
+               style={styles.container}
+               trackStyle={styles.track}
+               thumbStyle={styles.thumb}
+               minimumTrackTintColor='#31a4db'
+               thumbTouchSize={{width: 50, height: 40}}
+               onValueChange={value => handleChangeSetsSliderValue(superset, value)}
+               minimumValue={0}
+               maximumValue={15}
+               step={1}
+             />
+              <Caption>
+                           Sets ({superset.workout_sets})
+                       </Caption>
+                   </View>
+   
+                   <View style={{flex: 1,alignItems: 'center', justifyContent: 'center'}}>
+                      
+                   <Slider
+                   value={superset.workout_reps}
+               style={styles.container}
+               trackStyle={styles.track}
+               thumbStyle={styles.thumb}
+               minimumTrackTintColor='#31a4db'
+               thumbTouchSize={{width: 50, height: 40}}
+               onValueChange={value => handleChangeRepsSliderValue(superset, value)}
+               minimumValue={0}
+               maximumValue={15}
+               step={1}
+             />
+              <Caption>
+                           Reps ({superset.workout_reps})
+                       </Caption>
+                   </View>
     
     </View>
 
 
 
     </View>
-    <Surface style={{alignSelf: 'center', marginVertical: 30, width: Dimensions.get('window').width - 100, height: 100, borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
-
-    </Surface>
-
-                                            <TouchableOpacity style={{position: 'absolute', bottom: 0, right: 0, margin: 12, }} onPress={handleSuperSetOnPress}>
-                                            <View style={{borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', padding: 10, borderWidth: 1, borderColor: '#212121', width: 90, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                                <Text style={{fontFamily: 'Avenir-Medium'}}>
-                                                    Super Set
-                                                </Text>
-                                                <FeatherIcon name="plus" size={15} />
-                                            </View>  
-                                            </TouchableOpacity>
-                                                        
+    </View>                
 
                                     </Surface>
                                     </View>
@@ -316,7 +321,26 @@ const styles = StyleSheet.create({
     captionNotifier: {
         color: '#e53935',
         fontSize: 12
-    }
+    },
+    container: {
+        height: 30,
+        width: '80%',
+      },
+      track: {
+        height: 4,
+        backgroundColor: '#303030',
+        width: '100%',
+      },
+      thumb: {
+        width: 10,
+        height: 10,
+        backgroundColor: '#31a4db',
+        borderRadius: 10 / 2,
+        shadowColor: '#31a4db',
+        shadowOffset: {width: 0, height: 0},
+        shadowRadius: 2,
+        shadowOpacity: 1,
+      }
 })
 
 export default WorkoutDisplay;

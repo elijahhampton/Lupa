@@ -7,6 +7,7 @@ import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
 import WorkoutController from './WorkoutController';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 import { getLupaUserStructure } from '../firebase/collection_structures';
+import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -177,6 +178,16 @@ export default class LupaController {
     updateProgramWorkoutData = (programUUID, workoutData) => {
       PROGRAMS_CONTROLLER_INSTANCE.updateProgramWorkoutData(programUUID, workoutData);
     }
+
+    updateWorkoutInformation = (workoutUUID, workoutData) =>  {
+      PROGRAMS_CONTROLLER_INSTANCE.updateWorkoutInformation(workoutUUID, workoutData);
+    }
+
+    updateWorkoutData = (workoutUUID, workoutData) => {
+      PROGRAMS_CONTROLLER_INSTANCE.updateWorkoutData(workoutUUID, workoutData);
+    }
+
+
 
     completeSession = async (uuid) => {
       await SESSION_CONTROLLER_INSTANCE.completeSession(uuid);
@@ -694,8 +705,16 @@ export default class LupaController {
       await USER_CONTROLLER_INSTANCE.deleteProgram(user_uuid, programUUID);
     }
 
+    deleteWorkout = async (user_uuid, workoutUUID) => {
+      await USER_CONTROLLER_INSTANCE.deleteWorkout(user_uuid, workoutUUID);
+    }
+
     eraseProgram = (uuid) => {
       PROGRAMS_CONTROLLER_INSTANCE.deleteProgram(uuid);
+    }
+
+    eraseWorkout = (uuid) => {
+      PROGRAMS_CONTROLLER_INSTANCE.deleteWorkout(uuid);
     }
 
     loadCurrentUserPrograms = async () => {
@@ -858,8 +877,14 @@ export default class LupaController {
       return Promise.resolve(retVal);
     }
 
+     /**
+     * Returns an object representing a Lupa Workout
+     * See LupaWorkoutStructure
+     *
+     * @return Object representing a LupaWorkoutStructure
+     */
     getWorkoutInformationFromUUID = async (uuid) => {
-      let retVal = getLupaProgramInformationStructure()
+      let retVal = getLupaWorkoutInformationStructure()
 
       if (typeof uuid != 'string' || typeof(uuid) == 'undefined'){
         return Promise.resolve(retVal)

@@ -355,7 +355,7 @@ class Featured extends React.Component {
                             this.state.searchValue === "" ?
                             
                             <View >
-                            <Surface style={{elevation: 5, paddingVertical: 15, justifyContent: 'center', }}>
+                            <Surface style={{elevation: 0, paddingVertical: 15, justifyContent: 'center', }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                               <View style={{paddingHorizontal: 10}}>
                               <Text style={styles.sectionHeaderText}>
@@ -398,7 +398,7 @@ class Featured extends React.Component {
                             {
                                     this.state.feedVlogs.map((vlog, index, arr) => {
                                         return (
-                                           <VlogFeedCard key={index} vlogData={vlog} />
+                                            <VlogFeedCard key={index} vlogData={vlog} />
                                         )
                                     })
                                 }

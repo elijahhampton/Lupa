@@ -65,8 +65,8 @@ function DrawerMenu(props) {
   /**
    * Logs the user out.
    */
-  const _handleLogout = () => {
-    LUPA_AUTH.signOut()
+  const _handleLogout = async () => {
+    await LUPA_AUTH.signOut()
     navigation.navigate('Auth')
   }
 

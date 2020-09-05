@@ -82,7 +82,7 @@ function EditBioModal(props) {
        <SafeAreaView style={{flex: 1}}>
         <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center'}}>
             <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
-            <Appbar.Content title="Edit Biography" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
+            <Appbar.Content title="Edit Biography" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
             <Button theme={{colors: {
                 primary: 'rgb(33,150,243)'
             }}}
@@ -331,7 +331,7 @@ class SettingsModal extends React.Component {
                 <Container style={styles.root}>
                             <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                                 <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
-                                <Appbar.Content title="Settings" />
+                                <Appbar.Content title="Settings" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 </Appbar.Header>
                     <SafeAreaView style={{flex: 1}}>
                     <ScrollView>

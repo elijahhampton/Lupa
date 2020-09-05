@@ -184,7 +184,9 @@ function TrainerDashboard(props) {
         }}>
              <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3,}}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
-                <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center'}} />
+                <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                <Appbar.Action onPress={() => this.props.navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
+              <Appbar.Action onPress={() => this.props.navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
 </Appbar.Header> 
  <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-evenly'}}>
 

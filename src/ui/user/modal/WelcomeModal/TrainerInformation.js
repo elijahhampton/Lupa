@@ -8,12 +8,14 @@ import {
     Image,
     Modal,
     SafeAreaView,
+    KeyboardAvoidingView
 } from 'react-native';
 
 import {
     Button,
     Menu,
     Divider,
+    Caption,
     TextInput,
     Portal,
     Dialog,
@@ -95,13 +97,21 @@ class TrainerInformation extends React.Component {
         switch (this.state.certification)
         {
             case 'NASM':
-                return <View style={{flex: 1, justifyContent: 'space-around'}}>
-                                    <TextInput theme={{
+                return <View style={{justifyContent: 'center'}}>
+                                    <TextInput 
+                                    
+                                    theme={{
+                                        roundness: 3,
                                         colors: {
-                                            primary: '#2196F3'
+                                            primary: '#1089ff'
                                         }
-                                    }} placeholder="Please enter your NASM certification number." value={this.state.NASM_CERTIFICATE_NUMBER} color="#2196F3" mode="outlined" onChangeText={text => this.setState({ NASM_CERTIFICATE_NUMBER: text })}/>
-                <NativeButton title="Submit" onPress={() => this.sendCertificationNotice()} />
+                                    }} 
+                                    placeholder="Please enter your NASM certification number." 
+                                    value={this.state.NASM_CERTIFICATE_NUMBER} 
+                                    mode="outlined" 
+                                    onChangeText={text => this.setState({ NASM_CERTIFICATE_NUMBER: text })}
+                                    style={{marginHorizontal: 10}}
+                                    />
                 </View>
             }
     }
@@ -126,11 +136,11 @@ class TrainerInformation extends React.Component {
                     return (
                         <Appbar.Header style={{elevation: 0}} theme={{
                             colors: {
-                                primary: '#FFFFFF'
+                                primary: 'transparent'
                             }
                         }}>
                             <Appbar.BackAction onPress={() => this.props.navigation.goBack()} />
-                            <Appbar.Content title="Trainer Registration" />
+                            <Appbar.Content title="Trainer Registration" titleStyle={{fontSize: 20, fontWeight: 'bold', fontFamily: 'Avenir-Heavy'}} />
                         </Appbar.Header>
                     )
                 }
@@ -143,20 +153,24 @@ class TrainerInformation extends React.Component {
 
     render() {
         return (
-            <View style={styles.root}>
+            <View behavior="padding" style={styles.root}>
                 {
                     this.getHeader()
                 }
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', }}>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'flex-start', width: '100%', paddingHorizontal: 10 }}>
                     <Text style={styles.instructionalText}>
-                    Trainers registered on Lupa have access to exclusive tools such as building client list, creating workout programs, and engaging in research opportunies sponsored by Lupa.  
-                    As a Lupa Trainer you will be able to make money and engage your clientele through our platform.  We currently only support the NASM certification, b
-                    but plan on adding many more in the future.
+                    Trainers registered on Lupa have access to create full scale workout programs.  As a Lupa Trianer you will be able to make money and engage your clientele through our platform.
                 </Text>
+                <Caption>
+                    Currently we only support NASM certifications.
+                </Caption>
                 </View>
 
-                    <Provider>
-                    <Menu
+     
+
+                    <View style={{flex: 3, justifyContent: 'space-evenly'}}>
+                        <View style={{flex: 1, justifyContent: 'center'}}>
+                        <Menu
             visible={this.state.menuVisible}
             onDismiss={() => this.setState({ menuVisible: false })}
             anchor={
@@ -171,15 +185,21 @@ class TrainerInformation extends React.Component {
             <Divider />
             <Menu.Item onPress={() => {}} title="Cancel" />
           </Menu>
-          </Provider>
-
-                    <View style={{flex: 2.5, justifyContent: 'center'}}>
-                        {
+          {
                             this.state.buttonText == 'Select a certification' ? 
                             null
                             :
                             this.getCertificationDetails()
                         }
+          </View>
+
+          <View style={{flex: 1}}>
+{this.state.buttonText == 'Select a certification' ?  null :  <NativeButton title="Submit" onPress={() => this.sendCertificationNotice()} />}
+                       
+          </View>
+                    
+
+                       
                     </View>
                     <VerificationModal isVisible={this.state.verificationSent} closeModalMethod={this.closeVerificationCompleteModal} />
                     <SafeAreaView />
@@ -192,19 +212,16 @@ class TrainerInformation extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        padding: 10
     },
     instructionalText: {
         height: 'auto',
         flexShrink: 1,
         alignSelf: 'center',
+        fontFamily: 'Avenir-Roman',
         fontSize: 15,
-        marginHorizontal: 15,
-        padding: 10,
-        margin: 5,
-        flex: 1,
-        textAlign: 'center',
+        textAlign: 'left',
         width: '100%',
+        paddingVertical: 10
     },
     verificationModal: {
         width: '50%',
