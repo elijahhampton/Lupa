@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-  import { ActivityIndicator, View, Text, AppState } from 'react-native';
+import { ActivityIndicator, View, Text, AppState } from 'react-native';
 
 import { Provider as PaperProvider } from 'react-native-paper';
-import { Provider as StoreProvider, useDispatch, useSelector} from 'react-redux';
+import { Provider as StoreProvider, useDispatch, useSelector } from 'react-redux';
 
 import { NavigationContainer, useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -13,7 +13,7 @@ import SplashScreen from 'react-native-splash-screen'
 import { connect } from 'react-redux';
 import LupaStore from './src/controller/redux/index';
 
- import LupaController from './src/controller/lupa/LupaController';
+import LupaController from './src/controller/lupa/LupaController';
 import { LUPA_AUTH } from './src/controller/firebase/firebase';
 import { getLupaUserStructure, getLupaPackStructure } from './src/controller/firebase/collection_structures';
 import { getLupaProgramInformationStructure } from './src/model/data_structures/programs/program_structures';
@@ -38,13 +38,13 @@ import CreateWorkout from './src/ui/workout/createworkout/CreateWorkout';
 
 const App = () => {
   return (
-      <NavigationContainer>
-         <StoreProvider store={LupaStore}>
+    <NavigationContainer>
+      <StoreProvider store={LupaStore}>
         <PaperProvider>
           <AppNavigator />
         </PaperProvider>
       </StoreProvider>
-      </NavigationContainer>
+    </NavigationContainer>
   )
 }
 
@@ -52,13 +52,15 @@ const SwitchNavigator = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
 
+
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async (uuid) => {
+    alert(uuid)
     try {
       //setup redux
       await _setupRedux(uuid)
-    } catch(err) {
+    } catch (err) {
       showAuthentication()
     }
 
@@ -70,13 +72,14 @@ const SwitchNavigator = () => {
     navigation.navigate('Auth')
   }
 
-    /**
-   * Sets up redux by loading the current user's data, packs, and programs
-   * as well as Lupa application data (assessments, workouts);
-   */
+  /**
+ * Sets up redux by loading the current user's data, packs, and programs
+ * as well as Lupa application data (assessments, workouts);
+ */
   const _setupRedux = async (uuid) => {
     let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = [];
-    
+
+    // Load user data
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
     })
@@ -84,49 +87,48 @@ const SwitchNavigator = () => {
       userData: currUserData,
       healthData: {}
     }
-    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload})
+    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload })
 
-    await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-      currUserPrograms = result;
-    });
+    // Load user program data if the user is a trainer
+    if (currUserData.isTrainer) {
+      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+        currUserPrograms = result;
+      });
+  
+      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+    }
 
-    await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms});
-
+    // Load application workouts
     lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-    dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts});
+    dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
   }
 
   useEffect(() => {
-      
-      async function getUserAuthState() {
-        try {
+    async function getUserAuthState() {
+      try {
         await LUPA_AUTH.onAuthStateChanged(user => {
-          if (typeof(user) == 'undefined' || user == null) {
+          if (typeof (user) == 'undefined' || user == null) {
             SplashScreen.hide()
             showAuthentication()
             return;
           }
- 
+
           introduceApp(user.uid)
-      })
-    } catch(err) {
-      SplashScreen.hide()
-      showAuthentication()
-      alert(err)
-    }
+        })
+      } catch (err) {
+        SplashScreen.hide()
+        showAuthentication()
+        alert(err)
       }
-
-      getUserAuthState()
-      SplashScreen.hide()
-
-
-      //showAuthentication()
-    }, [])
+    }
+    getUserAuthState()
+    SplashScreen.hide()
+  }, [])
 
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-    <ActivityIndicator size="large" color="#23374d"></ActivityIndicator>
-</View>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator size="large" color="#23374d"></ActivityIndicator>
+    </View>
   )
 }
 
@@ -138,31 +140,28 @@ const StackApp = createStackNavigator()
  * Allows access to our "global modal" for creating programs.
  */
 function AppNavigator() {
-
   return (
     <StackApp.Navigator initialRouteName='Loading' mode="modal" headerMode='none' screenOptions={{
       gestureEnabled: false
     }}>
-    <StackApp.Screen name='Loading' component={SwitchNavigator} />
-    <StackApp.Screen name='Auth' component={AuthenticationNavigator}/>
-    <StackApp.Screen name='App' component={Lupa}/>
-    <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{animationEnabled: true}}/>
-    <StackApp.Screen name="CreateWorkout" component={CreateWorkout} options={{animationEnabled: true}}/>
-    <StackApp.Screen name="CreatePost" component={CreateNewPost} />
-    <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{animationEnabled: true}}/>
-    <StackApp.Screen name="PrivateChat" component={PrivateChat} />
-    <StackApp.Screen name="Onboarding" component={WelcomeModal}/>
-    <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
-    <StackApp.Screen name="Settings" component={SettingsStackNavigator} />
-    <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
-        <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
+      <StackApp.Screen name='Loading' component={SwitchNavigator} />
+      <StackApp.Screen name='Auth' component={AuthenticationNavigator} />
+      <StackApp.Screen name='App' component={Lupa} />
+      <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{ animationEnabled: true }} />
+      <StackApp.Screen name="CreateWorkout" component={CreateWorkout} options={{ animationEnabled: true }} />
+      <StackApp.Screen name="CreatePost" component={CreateNewPost} />
+      <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{ animationEnabled: true }} />
+      <StackApp.Screen name="PrivateChat" component={PrivateChat} />
+      <StackApp.Screen name="Onboarding" component={WelcomeModal} />
+      <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
+      <StackApp.Screen name="Settings" component={SettingsStackNavigator} />
+      <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
+      <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
       <StackApp.Screen name="Profile" component={ProfileNavigator} />
-    <StackApp.Screen name="Notifications" component={NotificationsView} />
-  <StackApp.Screen name="Messages" component={MessagesView} />
-  <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{mediaCaptureType: "VIDEO"}} />
-   </StackApp.Navigator>
+      <StackApp.Screen name="Notifications" component={NotificationsView} />
+      <StackApp.Screen name="Messages" component={MessagesView} />
+      <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />
+    </StackApp.Navigator>
   )
-
-
 }
- export default App;
+export default App;

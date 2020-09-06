@@ -180,7 +180,7 @@ function TrainerDashboard(props) {
         componentReady === true ?
         <View style={{
             flex: 1,
-            backgroundColor: '#FFFFFF'
+            backgroundColor: 'rgb(247, 247, 246)'
         }}>
              <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3,}}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
@@ -241,9 +241,9 @@ function TrainerDashboard(props) {
         yAxisInterval={1} // optional, defaults to 1
         chartConfig={{
             strokeWidth: 0.5,
-            backgroundColor: "#FFFFFF",
-            backgroundGradientFrom: "#FFFFFF",
-            backgroundGradientTo: "#FFFFFF",
+            backgroundColor: "rgb(247, 247, 246)",
+            backgroundGradientFrom: "rgb(247, 247, 246)",
+            backgroundGradientTo: "rgb(247, 247, 246)",
             decimalPlaces: 0, // optional, defaults to 2dp
             color: (opacity = 0) => `rgba(33, 150, 243, ${opacity})`,
             labelColor: (opacity = 0) => `rgba(33, 150, 243, ${opacity})`,
@@ -368,7 +368,7 @@ function TrainerDashboard(props) {
 </ScrollView>
         </View>
         :
-        <View style={{flex: 1, backgroundColor: 'white'}} />
+        <View style={{flex: 1, backgroundColor: 'rgb(247 ,247, 247)'}} />
     )
 }
 
