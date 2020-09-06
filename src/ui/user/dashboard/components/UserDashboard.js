@@ -5,39 +5,56 @@ import {
     StyleSheet,
     Text,
     Image,
-    ScrollView
+    ScrollView,
+    Dimensions
 } from 'react-native';
 
 import {
     Button,
     Appbar,
     Menu,
+    Divider,
+    Surface,
 } from 'react-native-paper';
-
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useNavigation } from '@react-navigation/native';
 import { MenuIcon } from '../../../icons';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { useSelector } from 'react-redux/lib/hooks/useSelector';
 import DashboardProgramCard from './DashboardProgramCard';
+import { ListItem } from 'react-native-elements';
+import DashboardPrograms from './DashboardPrograms';
+import DashboardTrainers from './DashboardTrainers';
 
 function UserDashboard(props) {
     const navigation = useNavigation();
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
-    })
+    });
+
+    const [programsModalIsOpen, setProgramModalIsOpen] = useState(false);
+    const [trainersModalIsOpen, setTrainersModalIsOpen] = useState(false);
 
     const renderComponent = () => {
-        return currUserData.programs.length !== 0 ?
-        <ScrollView>
-            {
-                currUserData.programs.map(program => {
-                    return <DashboardProgramCard uuid={program} />
-                })
-            }
+        return currUserData.program_data.length !== 0 ?
+        <ScrollView contentContainerStyle={{backgroundColor: 'rgb(247, 247, 247)',}}>
+                   <View style={{marginVertical: 10, backgroundColor: 'transparent'}} />
+        <ListItem onPress={() => setProgramModalIsOpen(true)} title={"Programs " + '(' + currUserData.programs.length + ')'} rightIcon={() => <FeatherIcon name="chevron-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} topDivider bottomDivider style={{elevation: 3}}/>
+
+        <ListItem onPress={() => setTrainersModalIsOpen(true)} title="Trainers" rightIcon={() => <FeatherIcon name="chevron-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} bottomDivider style={{elevation: 3}}/>
+        
+        <View style={{borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#E5E5E5', flexDirection: 'row', alignItems: 'center', alignItems: 'center', justifyContent: 'center', marginVertical: 20, padding: 20, backgroundColor: 'white'}}>
+            <Text style={{color: '#1089ff', fontSize: 18, paddingHorizontal: 26, fontFamily: 'Avenir-Light'}}>
+                Invite your friends to Lupa and get 1 free program.
+            </Text>
+
+            <Image source={require('../../../images/friends.jpeg')}  style={{width: 90, height: 90}}/>
+        </View>
+
         </ScrollView>
         :
-        <ScrollView contentContainerStyle={{flexGrow: 2, justifyContent: 'space-evenly'}}>
+        <ScrollView contentContainerStyle={{backgroundColor: 'rgb(247, 247, 247)', flexGrow: 2, justifyContent: 'space-evenly'}}>
              <View style={[{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }]}>
                 <Image source={require('../../../images/Clipboard.jpeg')} style={{ marginVertical: 10, width: 150, height: 150, borderRadius: 150 }} />
 
@@ -63,7 +80,7 @@ function UserDashboard(props) {
     return (
         <View style={{
             flex: 1,
-            backgroundColor: '#FFFFFF'
+            backgroundColor: 'rgb(247, 247, 247)'
         }}>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3,}}>
             <MenuIcon onPress={() => navigation.openDrawer()} />
@@ -72,6 +89,9 @@ function UserDashboard(props) {
               <Appbar.Action onPress={() => this.props.navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
 </Appbar.Header> 
             {renderComponent()}
+
+            <DashboardPrograms isVisible={programsModalIsOpen} closeModal={() => setProgramModalIsOpen(false)} />
+            <DashboardTrainers isVisible={trainersModalIsOpen} closeModal={() => setTrainersModalIsOpen(false)}/>
         </View>
     )
 }

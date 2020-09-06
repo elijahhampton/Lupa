@@ -43,6 +43,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import CircularUserCard from '../../user/component/CircularUserCard';
 import LiveWorkoutFullScreenContentModal from './LiveWorkoutFullScreenContentModal';
+import RestTimer from './RestTimer';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -100,7 +101,10 @@ class LiveWorkout extends React.Component {
             messages: [],
             interactionInputFocused: false,
             showFullScreenContent: false,
-            showFinishedDayDialog: false
+            showFinishedDayDialog: false,
+            restTimerStarted: false,
+            restTimerVisible: false,
+            descriptionDialogVisible: false,
         }
     }
 
@@ -133,37 +137,46 @@ class LiveWorkout extends React.Component {
     }
 
     setupLiveWorkout = async () => {
-        try {
-            switch(this.props.route.params.workoutType) {
-                case 'PROGRAM':
-                    await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
-                        this.setState({ programData: data })
-                    })
-                    break;
-                case 'WORKOUT':
-                    await this.LUPA_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(this.props.route.params.uuid).then(data => {
-                        console.log(data);
-                        this.setState({ programData: data })
-                    })
-                    break;
-                default:
-                    this.setState({ ready: false, componentDidErr: true })
+        if (this.props.route.params.programData) {
+            await this.setState({ programData: this.props.route.params.programData })
+            console.log('di')
+        } else if (this.props.route.params.uuid) {
+            console.log('should have gone here')
+            try {
+                switch(this.props.route.params.workoutType) {
+                    case 'PROGRAM':
+                        console.log('PROGRAMsfalkdjflsd;kfjsdkl;fjasdl;')
+                        await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
+                            this.setState({ programData: data })
+                        })
+                        break;
+                    case 'WORKOUT':
+                        await this.LUPA_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(this.props.route.params.uuid).then(data => {
+                            console.log(data);
+                            this.setState({ programData: data })
+                        })
+                        break;
+                    default:
+                        console.log('dsfsdjfklsfdksdlk')
+                        this.setState({ ready: false, componentDidErr: true })
+                }
+    
+                await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
+                    this.setState({ programOwnerData: data })
+                })
+    
+                await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
+                    this.setState({ currUserFollowing: data })
+                })
+    
+    
+                await this.loadWorkoutDays()
+            } catch (err) {
+                console.log(err)
+                await this.setState({ ready: false, componentDidErr: true })
             }
-
-            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
-                this.setState({ programOwnerData: data })
-            })
-
-            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
-                this.setState({ currUserFollowing: data })
-            })
-
-
-            await this.loadWorkoutDays()
-        } catch (err) {
-            alert(err)
-            await this.setState({ ready: false, componentDidErr: true })
         }
+
 
 
         await this.setState({ ready: true })
@@ -176,7 +189,7 @@ class LiveWorkout extends React.Component {
     }
 
     loadCurrentDayWorkouts = (day) => {
-       /* if (!this.state.ready) {
+      /*  if (!this.state.ready) {
             return;
         }*/
 
@@ -447,6 +460,7 @@ class LiveWorkout extends React.Component {
     }
 
     advanceExercise = () => {
+       this.setState({ restTimerVisible: true, restTimerStarted: true });
         if (this.state.currentWorkoutIndex === this.state.currentWorkoutStructure.length - 1) {
             this.setState({
                 showFinishedDayDialog: true
@@ -520,7 +534,7 @@ class LiveWorkout extends React.Component {
                                {this.state.programData.program_description}
                                
                     </Text>
-                    <Text style={{color: '#1089ff', fontFamily: 'Avenir-Light'}}>
+                    <Text onPress={() => this.setState({ descriptionDialogVisible: true })} style={{color: '#1089ff', fontFamily: 'Avenir-Light'}}>
                                    Read full description
                                </Text>
                     </>
@@ -866,6 +880,24 @@ class LiveWorkout extends React.Component {
           </Dialog.Content>
           <Dialog.Actions>
             <Button color="#1089ff" onPress={this.hideDialog}>Done</Button>
+            <Button color="#1089ff" onPress={this.hideDialog}>Create Vlog</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+        )
+    }
+
+    renderDescriptionDialog = () => {
+        return (
+            <Portal>
+        <Dialog visible={this.state.descriptionDialogVisible}>
+          <Dialog.Content>
+            <Paragraph>
+                {this.state.programData.program_description}
+            </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button color="#1089ff" onPress={() => this.setState({ descriptionDialogVisible: false })}>Done</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -921,6 +953,8 @@ class LiveWorkout extends React.Component {
                 {this.renderInteractionBottomSheet()}
                 {this.renderFeedbackDialog()}
                 {this.renderFinishedDialog()}
+                {this.renderDescriptionDialog()}
+                <RestTimer isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <LiveWorkoutFullScreenContentModal isVisible={this.state.showFullScreenContent} closeModal={() => this.setState({ showFullScreenContent: false })} contentType={'VIDEO' /*this.state.contentTypeDisplayed*/} contentURI={this.state.currentDisplayedMediaURI} />
             </>
         )

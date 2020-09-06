@@ -330,6 +330,38 @@ export default class UserController {
                     alert(error)
                 }
                 break;
+            case 'program_data':
+                    try {
+    
+                        let programDataList = [], snapshot = {}
+                        if (optionalData == 'add') {
+                            await currentUserDocument.get().then(result => {
+                                snapshot = result.data()
+                            });
+    
+                            programDataList = snapshot.program_data
+                            value.program_purchase_metadata = {
+                                date_purchased: new Date(),
+                            }
+                            value.program_metadata.num_interactions = null;
+                            value.program_metadata.shares = null;
+                            value.program_metadata.views = null;
+                            value.program_metadata = {
+                                workouts_completed: 0
+                            }
+                            programDataList.push(value);
+                     
+                            await currentUserDocument.update({
+                                program_data: programDataList
+                            });
+                        }
+                        else if (optionalData == 'remove') {
+    
+                        }
+                    } catch (error) {
+                        alert(error)
+                    }
+                    break;
             case UserCollectionFields.CHATS:
                 let chats;
                 if (optionalData == 'add') {
@@ -906,6 +938,7 @@ export default class UserController {
      */
     createProgram = async (uuid) => {
         PROGRAMS_COLLECTION.doc(uuid).set(getLupaProgramInformationStructure());
+        this.updateCurrentUser('program_data', getLupaProgramInformationStructure(), 'add');
     }
 
     /**
@@ -1106,8 +1139,12 @@ export default class UserController {
         //add program to lupa programs collection
         await PROGRAMS_COLLECTION.doc(workoutData.program_structure_uuid).set(checkedWorkoutData);
 
-        //add uuid of program to user programs arr
+        //add uuid of program and programData to user programs/program data arr
         await this.updateCurrentUser('programs', workoutData.program_structure_uuid, 'add');
+        let variationProgramData = checkedWorkoutData;
+        variationProgramData.date_created = new Date();
+        variationProgramData.workouts_completed = 0;
+        await this.updateCurrentUser('program_data', variationProgramData, 'add');
 
         let payload;
         await PROGRAMS_COLLECTION.doc(workoutData.program_structure_uuid).get().then(snapshot => {
@@ -1322,8 +1359,13 @@ export default class UserController {
         const programOwnerUUID = programData.program_owner;
 
         try {
-            //add the program to users list
+            //add the program and programData to users list
             await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
+            let variationProgramData = programData;
+            variationProgramData.date_purchased = new Date()
+            variationProgramData.workouts_completed = 0;
+            await this.updateCurrentUser('program_data', variationProgramData, 'add');
+            
             //add the user as one of the program participants
             let updatedParticipants= [], updatedPurchaseMetadata = {}
             await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {

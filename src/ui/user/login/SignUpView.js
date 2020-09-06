@@ -90,21 +90,21 @@ const SignUp = props => {
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
-
-    await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-      currUserPrograms = result;
-    })
-
-    lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-
     let userPayload = {
       userData: currUserData,
       healthData: {}
     }
-
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload})
-    await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
-    await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
+
+    if (currUserData.isTrainer) {
+      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+        currUserPrograms = result;
+      })
+      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms})
+    }
+
+      lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
+     dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts})
   }
 
   const signupHandler = async () => {

@@ -710,7 +710,7 @@ export default class LupaController {
     }
 
     eraseProgram = (uuid) => {
-      PROGRAMS_CONTROLLER_INSTANCE.deleteProgram(uuid);
+      PROGRAMS_CONTROLLER_INSTANCE.eraseProgram(uuid);
     }
 
     eraseWorkout = (uuid) => {

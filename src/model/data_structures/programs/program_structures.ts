@@ -106,6 +106,18 @@ export const getLupaProgramInformationStructure = (
     }
     lupa_program_information_structure.program_workout_days = []
     lupa_program_information_structure.completedProgram = completedProgram
+    lupa_program_information_structure.program_purchase_metadata = {
+        num_purchases: 0,
+        purchase_list: [],
+        date_purchased: new Date(), //remove
+        gross_pay: 0,
+        net_pay: 0,
+    }
+    lupa_program_information_structure.program_metadata = {
+        num_interactions: 0,
+        views: 0,
+        shares: 0,
+    }
 
     return lupa_program_information_structure;
 }

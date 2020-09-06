@@ -256,6 +256,18 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
         updatedProgramData.program_automated_message = programAutomatedMessage
         updatedProgramData.completedProgram = false;
+        updatedProgramData.program_purchase_metadata = {
+            num_purchases: 0,
+            purchase_list: [],
+            date_purchased: new Date(), //remove
+            gross_pay: 0,
+            net_pay: 0,
+        };
+        updatedProgramData.program_metadata = {
+            num_interactions: 0,
+            views: 0,
+            shares: 0,
+        };
 
         await this.LUPA_CONTROLLER_INSTANCE.updateProgramData(this.state.currProgramUUID, updatedProgramData);
         this.goToIndex(1)

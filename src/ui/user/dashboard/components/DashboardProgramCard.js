@@ -7,7 +7,7 @@ import  {
     Dimensions,
     StyleSheet
 } from 'react-native';
-import { Surface, Button, Divider } from 'react-native-paper';
+import { Surface, Button, Divider, Card, Avatar } from 'react-native-paper';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 import LupaCalendar from '../../profile/component/LupaCalendar';
@@ -15,23 +15,11 @@ import LupaController from '../../../../controller/lupa/LupaController';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { useNavigation } from '@react-navigation/native';
 
-function DashboardProgramCard({ uuid }) {
-    const [programData, setProgramData] = useState(getLupaProgramInformationStructure());
+function DashboardProgramCard({ programData }) {
     const [contentHeight, setContentHeight] = useState(0)
     const [contentExpanded, setContentExpanded] = useState(false)
     const navigation = useNavigation();
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    useEffect(() => {
-        async function fetchProgramData() {
-            LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(data => {
-                setProgramData(data);
-            });
-        }
-
-        fetchProgramData();
-
-    }, [programData.program_structure_uuid]);
 
     const handleOnPress = () => {
         if (contentHeight === 0) {
@@ -44,13 +32,35 @@ function DashboardProgramCard({ uuid }) {
     }
 
     return (
-        <View>
+        //<View>
+       <Surface style={{padding: 20, borderRadius: 5, alignSelf: 'center', marginVertical: 20, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', width: Dimensions.get('window').width - 20}}>
+           <View style={{flex: 3, flexDirection: 'row', alignItems: 'center'}}>
+           <Avatar.Text style={{marginHorizontal: 10}} size={40} label="EH" />
+           <View>
+           <Text style={{fontWeight: '700', fontFamily: 'Avenir', color: '#1089ff'}}>
+               Elijah Hampton
+           </Text>
+           <Text style={{fontSize: 12, fontWeight: '600', fontFamily: 'HelveticaNeue', color: 'rgb(129, 135, 138)'}}>
+              10 Week Arm Burner
+           </Text>
+           </View>
+          
+           </View>
 
-        <TouchableOpacity onPress={handleOnPress}>
+        <View style={{flex: 1}}>
+            <Button color="#1089ff" uppercase={false}>
+                <Text style={{fontFamily: 'Avenir-Heavy', fontWeight: '800', fontSize: 15}}>
+                    Launch
+                </Text>
+            </Button>
+        </View>
+       </Surface>  
+
+     /*   <TouchableOpacity onPress={handleOnPress}>
         <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 120, backgroundColor: 'transparent'}} >
                                 
-        <View style={{flex: 1, padding: 10, alignItems: 'center', justifyContent: 'center' }}>
-            <Surface style={{width: '80%', height: '70%', elevation: 15, borderRadius: 10}}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
+            <Surface style={{width: '100%', height: '70%', elevation: 15, borderRadius: 10}}>
                 <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: programData.program_image}} />
             </Surface>
             <View style={{flex: 1, flexDirection: 'row', alignItems: 'center',justifyContent: 'flex-start'}}>
@@ -60,7 +70,7 @@ function DashboardProgramCard({ uuid }) {
             </View>
         </View>
 
-        <View style={{flex: 3, height: '100%', justifyContent: 'space-evenly'}}>
+        <View style={{flex: 3, height: '100%', justifyContent: 'flex-start'}}>
             <View style={{justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row'}}>
                 <Text style={{fontSize: 15, fontFamily: 'Avenir-Heavy', color: '#212121'}}>
                     {programData.program_name}
@@ -82,20 +92,20 @@ function DashboardProgramCard({ uuid }) {
 
         <View style={{height: contentHeight, padding: 10}}>
         <Text style={{marginVertical: 5}}>
-                Date Purchased: {new Date().toString()}
+                Date Purchased: {new Date(programData.program_purchase_metadata.date_purchased.seconds * 1000).toString()}
             </Text>
             <Text style={{marginVertical: 5}}>
-                Workouts Completed: 0
+                Workouts Completed: {programData.program_metadata.workouts_completed}
             </Text>
             <Text onPress={() => navigation.push('LiveWorkout', {
-                uuid: programData.program_structure_uuid,
+                programData: programData,
                 workoutType: 'PROGRAM'
             })} style={{marginVertical: 5, fontWeight: '500', color: '#1089ff', letterSpacing: 1}}>
                 Launch Live Workout
             </Text>
         </View>
         <Divider />
-      </View>
+        </View>*/
     )
 }
 

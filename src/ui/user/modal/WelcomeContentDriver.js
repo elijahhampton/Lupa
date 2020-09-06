@@ -4,7 +4,8 @@ import {
     Text,
     View,
     StyleSheet,
-
+Image,
+SafeAreaView,
     Modal,
     Dimensions,
     ScrollView,
@@ -28,6 +29,8 @@ import _requestPermissionsAsync from '../../../controller/lupa/permissions/permi
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Constants } from 'react-native-unimodules';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { Pagination } from 'react-native-snap-carousel';
 //Activity Indicator to show while fetching location data
 const ActivityIndicatorModal = (props) => {
     return (
@@ -135,7 +138,40 @@ const WelcomeContentDriver = (props) => {
         return curatedTrainers.map(trainer => {
             console.log(trainer)
             return (
-                <CuratedTrainerCard key={trainer.user_uuid} trainer={trainer} />
+                <View style={{backgroundColor: '#EEEEEE', width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{borderRadius: 12, alignSelf: 'center', width: Dimensions.get('window').width - 20, marginHorizontal: 20, backgroundColor: 'transparent', justifyContent: 'space-between',  padding: 20}}>
+                    <View style={{backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',  }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Image source={{uri: trainer.photo_url }} style={{marginRight: 10, borderRadius: 50, width: 50, height: 50}} />
+               <View>
+               <Text style={{paddingVertical: 3, fontWeight: '700', color: '#212121', fontFamily: 'Avenir'}}>
+                                                    Elijah Hampton
+                                                </Text>
+                                                <Text style={{fontWeight: '500', color: '#1089ff'}}>
+                                                    View Profile
+                                                </Text>
+               </View>
+     
+                                               
+                </View>
+                              
+                                                <View style={{ justifyContent: 'flex-start', flexDirection: 'row', }}>
+                                                    <Feather1s name="mail" size={20} style={{paddingHorizontal: 10}} />
+                                                    <Feather1s name="share" size={20} style={{paddingHorizontal: 10}} />
+                                                </View>
+                    </View>
+              
+                                    <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <Text style={{fontSize: 20, color: '#212121', fontWeight: 'bold', alignSelf: 'center', paddingVertical: 10}}>
+                                            Burn Fat, Burn Abs
+                                        </Text>
+                                        <Button color="#1089ff" uppercase={false}>
+                                            Preview
+                                        </Button>
+                                    </View>
+                                        </View>
+                                        </View>
+               // <CuratedTrainerCard key={trainer.user_uuid} trainer={trainer} />
             )
         });
 
@@ -152,7 +188,7 @@ const WelcomeContentDriver = (props) => {
     return (
         <View style={styles.container}>
             <View style={styles.headerTextContainer}>
-                <Text style={styles.headerText}>
+                <Text style={[styles.headerText, {fontWeight: 'bold'}]}>
                     Thank you for joining Lupa.
                                 </Text>
             </View>
@@ -195,6 +231,7 @@ const WelcomeContentDriver = (props) => {
                             Before we take you into the app we have curated a list of trainers based on your location and goals.
                                 </Text>
 
+
                         <ScrollView
                             centerContent
                             contentContainerStyle={{ alignItems: 'center' }}
@@ -206,10 +243,6 @@ const WelcomeContentDriver = (props) => {
                             snapToInterval={Dimensions.get('window').width}>
                             {renderCuratedTrainers()}
                         </ScrollView>
-
-
-
-
                     </View>
 
                     :
@@ -234,7 +267,7 @@ const styles = StyleSheet.create({
         fontSize: 15, fontFamily: 'Avenir-Medium'
     },
     headerText: {
-        alignSelf: 'center', fontSize: 18, fontFamily: 'Avenir-Roman', paddingHorizontal: 10
+        alignSelf: 'center', fontSize: 18, color: '#212121', fontFamily: 'Avenir-Roman', paddingHorizontal: 10
     },
     headerTextContainer: {
         justifyContent: "space-evenly",

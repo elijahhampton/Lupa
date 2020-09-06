@@ -10,6 +10,7 @@ import {
   Text,
   StyleSheet,
   AsyncStorage,
+  View,
   StatusBar,
 
 } from "react-native";
@@ -18,44 +19,21 @@ import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 import { connect, useSelector } from 'react-redux'
 import { generateMessagingToken } from "./controller/firebase/firebase";
 import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal'
+import WelcomeContentDriver from "./ui/user/modal/WelcomeContentDriver";
 
 const Lupa = () => {
-  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-  const currUserData = useSelector(state => {
-    return state.Users.currUserData
-  })
-
   /* useEffect(() => {
     //generateMessagingToken(currUserData.user_uuid)
      //LUPA_CONTROLLER_INSTANCE.indexApplicationData()
    }, [])*/
 
   return (
-    <>
+    <View style={{flex: 1}}>
       <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
       <LupaDrawerNavigator />
-    </>
+    </View>
   )
 }
-
-const config = {
-  tabBarOptions: {
-    activeTintColor: '#1089ff',
-    inactiveTintColor: 'rgb(58, 58, 60)',
-    labelStyle: {
-      fontSize: 12,
-      fontWeight: '400',
-    },
-    style: {
-    },
-    labelPosition: 'below icon',
-    showIcon: true,
-    showLabel: true,
-  },
-  adaptive: true,
-  lazy: true
-}
-
 
 const styles = StyleSheet.create({
   appContainer: {

@@ -25,8 +25,8 @@ function MyPrograms(props) {
     const [currentProgram, setCurrentProgram] = useState(getLupaProgramInformationStructure())
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
-    const currUserPrograms = useSelector(state => {
-        return state.Programs.currUserProgramsData
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
     })
 
 
@@ -36,7 +36,7 @@ function MyPrograms(props) {
     }
 
     const renderPrograms = () => {
-        return currUserPrograms.map((program, index, arr) => {
+        return currUserData.program_data.map((program, index, arr) => {
             return (
                 <Card key={index} style={{elevation: 3, width: '92%', marginVertical: 10}} onPress={() => handleCardOnPress(program)}>
                 <Card.Cover source={{ uri: program.program_image }} />
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: 'rgb(247, 247, 247)',
     }
 })
 
