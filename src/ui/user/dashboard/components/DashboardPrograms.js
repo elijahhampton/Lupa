@@ -80,7 +80,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                           </Surface>
                           </TouchableOpacity>
                             <View style={{width: Dimensions.get('window').width - 20, height: cardContentHeight}}>
-                                <Text style={{padding: 10}}>
+                                <Text style={{margin: 10}}>
                                     Workouts Completed: {result.program_metadata.workouts_completed}
                                 </Text>
                             </View>
