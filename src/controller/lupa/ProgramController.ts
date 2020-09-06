@@ -174,6 +174,20 @@ export default class ProgramController {
             program_image: imageURL,
             completedProgram: true
         })
+
+        await USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(snapshot => {
+            userData = snapshot.data();
+        })
+
+        let programDataList = userData.program_data;
+        programData.completedProgram = true;
+        programData.program_metadata.workouts_completed = 0;
+        programData.program_metadata.date_created = new Date().toDateString()
+        programDataList.push(programData);
+
+        USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({
+            program_data: programDataList
+        })
     }
 
     /**
@@ -189,22 +203,31 @@ export default class ProgramController {
         });
     }
 
-    deleteProgram = async (uuid) => {
+    eraseProgram = async (uuid) => {
         let programParticipants = []
         await PROGRAM_COLLECTION.doc(uuid).get().then(snapshot => {
             programParticipants = snapshot.data().program_participants;
         });
 
         for (let i = 0; i < programParticipants.length; i++) {
-            let userPrograms = []
+            let userPrograms = [], userProgramsDataList = []
            let userRef = USERS_COLLECTION.doc(programParticipants[i]).get().then(snapshot => {
             userPrograms = snapshot.data().programs;
+            userProgramsDataList = snapshot.data().program_data;
            })
 
            let updatedProgramsList = this.arrayRemove(userPrograms, uuid);
+           let updatedProgramsDataList = []
+           for (let j = 0; j < userProgramsDataList.length; j++) {
+            if (userProgramsDataList[j].program_structure_uuid == uuid) {
+                updatedProgramsDataList = userProgramsDataList.splice(j, 1);
+            }
+           }
+
 
            userRef.update({
-            programs: updatedProgramsList
+            programs: updatedProgramsList,
+            program_data: updatedProgramsDataList,
            })
         }
 
@@ -257,14 +280,18 @@ export default class ProgramController {
 
     fetchDashboardData = async () => {
         let userData = getLupaUserStructure()
+        //Access user's data
         await USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(snapshot => {
             userData = snapshot.data();
         });
 
+        //get program uuids from program field
         const userPrograms = userData.programs;
 
         let programData = [];
+
         let tempProgramData;
+        //get the data from each uuid
         for (let i = 0; i < userPrograms.length; i++) {
             await PROGRAM_COLLECTION.doc(userPrograms[i]).get().then(snapshot => {
                 tempProgramData = snapshot.data();

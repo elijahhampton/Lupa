@@ -205,20 +205,21 @@ class LoginView extends React.PureComponent {
     await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     })
-
-    await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-      currUserPrograms = result;
-    })
-
-    lupaWorkouts =  this.LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-
     let userPayload = {
       userData: currUserData,
       healthData: {}
     }
-
     await this._updateUserInRedux(userPayload);
-    await this._updateUserProgramsDataInRedux(currUserPrograms);
+
+    if (currUserData.isTrainer) {
+      await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+        currUserPrograms = result;
+      })
+      await this._updateUserProgramsDataInRedux(currUserPrograms);
+    }
+
+
+    lupaWorkouts =  this.LUPA_CONTROLLER_INSTANCE.loadWorkouts();
     this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
 

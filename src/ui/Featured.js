@@ -53,6 +53,7 @@ import ProgramInformationComponent from './workout/program/components/ProgramInf
 import LargeProgramSearchResultCard from './workout/program/components/LargeProgramSearchResultCard'
 import LUPA_DB from '../controller/firebase/firebase';
 import VlogFeedCard from './user/component/VlogFeedCard';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -350,7 +351,7 @@ class Featured extends React.Component {
         </View>
         </Appbar.Header> 
         <Divider style={{height: 15, backgroundColor: 'rgb(242, 242, 247)'}} />
-                    <View style={{flex: 1}}>
+                    <View style={{flex: 1, backgroundColor: 'rgb(247, 247, 247)'}}>
                         {
                             this.state.searchValue === "" ?
                             
@@ -359,10 +360,10 @@ class Featured extends React.Component {
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                               <View style={{paddingHorizontal: 10}}>
                               <Text style={styles.sectionHeaderText}>
-                                  Featured
+                                 Near Cupertino, CA
                         </Text>
                         <Caption>
-                            Based on your location ({this.props.lupa_data.Users.currUserData.location.city}, {this.props.lupa_data.Users.currUserData.location.state})
+                            Based on your location 
                         </Caption>
                               </View>
 
@@ -378,9 +379,10 @@ class Featured extends React.Component {
                                 decelerationRate={0}
                                 pagingEnabled={true}
                                 onScroll={this.handleOnScroll}
-                                contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
+                                contentContainerStyle={{backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}
                             >
                                 {
+          
                                     this.state.featuredPrograms.map((program, index, arr) => {
                                         return (
                                                 <ProgramInformationComponent key={program.program_uuid + index.toString()} program={program} />
@@ -393,9 +395,19 @@ class Featured extends React.Component {
 
                         <Divider style={{height: 15, backgroundColor: 'rgb(242, 242, 247)'}} />
 
-                        <View>
-                            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{backgroundColor: 'white'}}>
+                            <View style={{backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
                             {
+                                this.state.feedVlogs.length === 0 ?
+                                <View style={{width: '100%', alignItems: 'center', backgroundColor: 'rgb(247, 247, 247)'}}>
+                                      <Caption style={{fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: 'rgb(247, 247, 247)'}} >
+                                    There are not any vlogs in your area.  Check back later.
+                                </Caption>
+                               
+                                </View>
+
+                                :
+
                                     this.state.feedVlogs.map((vlog, index, arr) => {
                                         return (
                                             <VlogFeedCard key={index} vlogData={vlog} />
@@ -425,7 +437,7 @@ class Featured extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "white",
     },
     mainGraphicText: {
 

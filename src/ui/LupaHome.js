@@ -58,7 +58,7 @@ export class LupaHome extends Component {
           zIndex: 1,
           backgroundColor: COLOR
         }}>
-          <Header style={{backgroundColor: 'transparent', borderBottomColor: 'transparent', borderColor: 'transparent'}} noShadow={true} hasTabs>
+          <Header style={{backgroundColor: 'white', borderBottomColor: 'transparent', borderColor: 'transparent'}} noShadow={true} hasTabs>
             <Left style={{flexDirection: 'row', alignItems: 'center'}}>
               <MenuIcon customStyle={{}} onPress={() => this.props.navigation.openDrawer()}/>
             </Left>
@@ -85,7 +85,7 @@ export class LupaHome extends Component {
           bounces={false}
           showsVerticalScrollIndicator={false}
           style={{zIndex: 0, height: "100%", elevation: -1}}
-          contentContainerStyle={{paddingTop: 50}}
+          contentContainerStyle={{paddingTop: 50, backgroundColor: 'white'}}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: this.scroll}}}],
             {useNativeDriver: true},

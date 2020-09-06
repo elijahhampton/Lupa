@@ -318,7 +318,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
             <Tabs tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
                     <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
-                        {/*renderPrograms()*/}
+                        {renderPrograms()}
                     </View>
              </Tab>
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">

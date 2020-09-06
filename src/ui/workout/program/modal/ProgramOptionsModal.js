@@ -84,7 +84,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         if (optionTitle == 'Launch Live Workout') {
             navigation.navigate('LiveWorkout', {
                 uuid: program.program_structure_uuid,
-                workout: 'PROGRAM',
+                workoutType: 'PROGRAM',
             });
         }
     }

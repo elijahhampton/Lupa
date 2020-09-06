@@ -154,7 +154,8 @@ var lupa_user : LupaUserStructure = {
     hourly_payment_rate: 15,
     vlogs: [],
     scheduler_times: {},
-    workouts: []
+    workouts: [],
+    program_data: [],
 }
 
 export const getLupaUserStructure = (
