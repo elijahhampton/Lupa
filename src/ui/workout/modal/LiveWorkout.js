@@ -139,25 +139,20 @@ class LiveWorkout extends React.Component {
     setupLiveWorkout = async () => {
         if (this.props.route.params.programData) {
             await this.setState({ programData: this.props.route.params.programData })
-            console.log('di')
         } else if (this.props.route.params.uuid) {
-            console.log('should have gone here')
             try {
                 switch(this.props.route.params.workoutType) {
                     case 'PROGRAM':
-                        console.log('PROGRAMsfalkdjflsd;kfjsdkl;fjasdl;')
                         await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
                             this.setState({ programData: data })
                         })
                         break;
                     case 'WORKOUT':
                         await this.LUPA_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(this.props.route.params.uuid).then(data => {
-                            console.log(data);
                             this.setState({ programData: data })
                         })
                         break;
                     default:
-                        console.log('dsfsdjfklsfdksdlk')
                         this.setState({ ready: false, componentDidErr: true })
                 }
     
@@ -172,7 +167,7 @@ class LiveWorkout extends React.Component {
     
                 await this.loadWorkoutDays()
             } catch (err) {
-                console.log(err)
+                alert(err)
                 await this.setState({ ready: false, componentDidErr: true })
             }
         }
@@ -194,18 +189,13 @@ class LiveWorkout extends React.Component {
         }*/
 
         let workoutStructure;
-        console.log('THE STRUCTURE: ')
-        console.log(this.state.programData.program_workout_structure.Monday)
         switch (day) {
             case 'Monday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Monday)
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
                 break;
             case 'Tuesday':
-             
-                console.log('UMMM: ' + this.state.programData.program_workout_structure.Tuesday)
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Tuesday)
-                
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
                 break;
             case 'Wednesday':
@@ -236,7 +226,7 @@ class LiveWorkout extends React.Component {
 
     generateWorkoutStructure = (workoutData) => {
         let workoutStructure = []
-        console.log('WORKOUTDATA: ' + workoutData)
+
         for (let i = 0; i < workoutData.length; i++) {
             workoutStructure.push(workoutData[i]); //Add the first workout
             for (let j = 0; j < workoutData[i].superset.length; j++) {

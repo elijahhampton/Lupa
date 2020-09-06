@@ -69,9 +69,7 @@ function EditBioModal(props) {
 
         await dispatch({ type: 'UPDATE_CURRENT_USER_ATTRIBUTE', payload: PAYLOAD });
 
-        console.log('HI')
         props.closeModalMethod();
-        console.log('Bye')
     }
 
 

@@ -754,7 +754,7 @@ export default class UserController {
             USER_COLLECTION.doc(usernameIn).set(newUserData);
             return true;
         } catch (Exception) {
-            console.log(Exception)
+            alert(Exception)
             return false;
         }
     }

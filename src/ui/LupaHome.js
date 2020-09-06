@@ -34,7 +34,6 @@ export class LupaHome extends Component {
 
   handleOnRefresh() {
     this.setState({ refreshing: true })
-    console.log('Refreshing LupaHome')
     this.setState({ refreshing: false })
   }
 

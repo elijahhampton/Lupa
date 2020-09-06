@@ -312,7 +312,7 @@ class Featured extends React.Component {
 
     handleOnScroll = (event) => {
         this.setState({ featuredProgramsCurrentIndex: event.nativeEvent.contentOffset.x }, () => {
-            console.log(this.state.featuredProgramsCurrentIndex)
+
         })
     }
 

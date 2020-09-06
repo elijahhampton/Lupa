@@ -75,14 +75,12 @@ const WelcomeContentDriver = (props) => {
         try {
             await Geolocation.getCurrentPosition(
                 async (locationInfo) => {
-                    console.log(locationInfo)
                     const locationData = await getLocationFromCoordinates(locationInfo.coords.longitude, locationInfo.coords.latitude);
                     await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
                     await setLocationDataIsSet(true)
                     //udpate user in redux
                     const payload = await getUpdateCurrentUserAttributeActionPayload('location', locationData, []);
                     await dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload })
-                    console.log(payload)
                 },
                 async (error) => {
                     alert(error)
@@ -136,7 +134,6 @@ const WelcomeContentDriver = (props) => {
 
     const renderCuratedTrainers = () => {
         return curatedTrainers.map(trainer => {
-            console.log(trainer)
             return (
                 <View style={{backgroundColor: '#EEEEEE', width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center'}}>
                 <View style={{borderRadius: 12, alignSelf: 'center', width: Dimensions.get('window').width - 20, marginHorizontal: 20, backgroundColor: 'transparent', justifyContent: 'space-between',  padding: 20}}>
