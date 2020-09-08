@@ -40,6 +40,10 @@ import LupaController from '../../../../../controller/lupa/LupaController';
 
 import { connect } from 'react-redux'
 import CreateCustomWorkoutModal from './modal/CreateCustomWorkoutModal';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { Video } from 'expo-av';
+import AddSets from './component/AddSets';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const CATEGORY_TAGS = [
     'Body Weight',
@@ -67,6 +71,7 @@ class BuildWorkoutController extends React.Component {
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
         this.workoutLibraryRef = createRef()
+        this.addedWorkoutOptionsRef = createRef();
 
         this.state = {
             mediaCaptureType: "",
@@ -125,11 +130,17 @@ class BuildWorkoutController extends React.Component {
                   data: []
                 },
               ],
+            currView: 0
         }
     }
 
-    handleSaveProgramData = () => {
-        this.props.saveProgramWorkoutData(this.state.workoutDays)
+    goToIndex = (index) => {
+        alert(index)
+        this.setState({ currView: index })
+    }
+
+    handleSaveProgramData = (workoutDays) => {
+        this.props.saveProgramWorkoutData(workoutDays)
     }
 
     getCurrentDay = () => {
@@ -143,6 +154,7 @@ class BuildWorkoutController extends React.Component {
 
         switch (this.state.currPlacementType) {
             case PLACEMENT_TYPES.SUPERSET:
+                alert('SUPER')
                 const updatedWorkout = {
                     workout_name: workoutObject.workout_name,
                     workout_description: workoutObject.workout_description,
@@ -153,7 +165,7 @@ class BuildWorkoutController extends React.Component {
                     workout_sets: 0,
                     workout_reps: 0,
                     workout_tags: workoutObject.workout_tags,
-                    workout_uid: workoutObject.workout_uid,
+                    workout_uid: Math.random().toString(),
                     workout_day: workoutDay, //add the section so it is easy to delete
                     superset: new Array(),
                 }
@@ -165,7 +177,7 @@ class BuildWorkoutController extends React.Component {
                 switch (workoutDay) {
                     case 'Monday':
                         for (let i = 0; i < this.state.workoutDays.Monday.length; i++) {
-                            if (this.state.workoutDays.Monday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
+                            if (this.state.workoutDays.Monday[i].workout_uid == workoutToUpdate.workout_uid) {
                                 newWorkoutData = this.state.workoutDays.Monday;
                                 newWorkoutData[i] = workoutToUpdate
                                 newState = {
@@ -174,6 +186,7 @@ class BuildWorkoutController extends React.Component {
                                 }
 
                                 this.setState({ workoutDays: newState })
+                                console.log(this.state.workoutDays.Monday)
                             }
                         }
                         break;
@@ -265,7 +278,7 @@ class BuildWorkoutController extends React.Component {
                 }
 
                 const num = this.state.numWorkoutsAdded + 1;
-                this.setState({ numWorkoutsAdded: num })
+                this.setState({ numWorkoutsAdded: num, currPlacementType: PLACEMENT_TYPES.EXERCISE, currPressedPopulatedWorkout: undefined })
                 break;
             case PLACEMENT_TYPES.EXERCISE:
                 try {
@@ -283,7 +296,7 @@ class BuildWorkoutController extends React.Component {
                         workout_sets: 0,
                         workout_reps: 0,
                         workout_tags: workoutObject.workout_tags,
-                        workout_uid: workoutObject.workout_uid,
+                        workout_uid: Math.random().toString(),
                         workout_day: workoutDay, //add the section so it is easy to delete
                         superset: new Array(),
                     }
@@ -303,7 +316,7 @@ class BuildWorkoutController extends React.Component {
 
                             this.setState({ workoutDays: newWorkoutData })
 
-                       
+                    
                             break;
                         case 'Tuesday':
                             updatedWorkoutData = this.state.workoutDays.Tuesday
@@ -452,278 +465,231 @@ class BuildWorkoutController extends React.Component {
                 case 'Monday':
                     if (this.state.workoutDays.Monday.length === 0) {
                         return (
-                            <View style={[styles.alignAndJustifyCenter]}>
-                                <View style={[styles.alignAndJustifyCenter, { width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)', }]}>
-                                    <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
-                                </View>
-                                <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No exercises have been added for {currDay}
-                                </Caption>
-                            </View>
+                           null
                         )
                     }
 
+                    let allWorkouts = this.state.workoutDays.Monday
+            
+                        
+                        //(
+                         /*   <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: '100%', height: 100, marginTop: 5, marginBottom: 10}}>
+                            <View style={[{flex: 1}, this.state.currPressedPopulatedWorkout.workout_uid == workout.workout_uid ? styles.pressedWorkoutStyle : null]}>
+                    <View style={{flex: 1}} >
+               <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                    <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+  </Surface>
+               </View>
+               <Text style={{padding: 3}}>
+      Push up
+  </Text>
+                    </View>
+                    </TouchableWithoutFeedback>
+                    */
+                 
+                      //  )
+
+
+                 
+                    for (let i = 0; i < allWorkouts.length; i++) {
+                        if (allWorkouts[i].superset.length != 0) {
+                            allWorkouts = allWorkouts.concat(allWorkouts[i].superset)
+                            console.log('uhh')
+                        }
+                    }
+
+
                     return (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <ScrollView
-                                onScroll={this.handleOnHorizontalScroll}
-                                showsHorizontalScrollIndicator={false}
-                                pagingEnabled={true}
-                                decelerationRate={0}
-                                snapToAlignment='center'
-                                snapToInterval={Dimensions.get('window').width}
-                                horizontal={true}
-                                centerContent
-                                scrollEventThrottle={3}
-                                contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-                                {
-                                    this.state.workoutDays.Monday.map((workout, index, arr) => {
-                                        return (
-                                            <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                            <Pagination dotStyle={{ width: 5, height: 5 }} containerStyle={{ backgroundColor: 'white', height: 2, width: Dimensions.get('window').width }} dotContainerStyle={{ height: 5 }} dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d' />
+                        <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                            {
+
+                           allWorkouts.map((workout, index, arr) => {
+                                return (
+                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: '100%', height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <View style={[{flex: 1}, this.state.currPressedPopulatedWorkout.workout_uid == workout.workout_uid ? styles.pressedWorkoutStyle : null]}>
+                            <View style={{flex: 1}} >
+                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+          </Surface>
+                       </View>
+                       <Text style={{padding: 3}}>
+              Push up
+          </Text>
+                            </View>
+                            </TouchableWithoutFeedback>
+                            
+                                )
+
+
+                            })
+
+                            }
                         </View>
                     )
                 case 'Tuesday':
                     if (this.state.workoutDays.Tuesday.length === 0) {
                         return (
-                            <View style={styles.alignAndJustifyCenter}>
-                                <View style={[styles.alignAndJustifyCenter, { width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)', }]}>
-                                    <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
-                                </View>
-                                <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No exercises have been added for {currDay}
-                                </Caption>
-                            </View>
+                            null
                         )
                     }
 
                     return (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <ScrollView
-                                onScroll={this.handleOnHorizontalScroll}
-                                showsHorizontalScrollIndicator={false}
-                                pagingEnabled={true}
-                                decelerationRate={0}
-                                snapToAlignment='center'
-                                snapToInterval={Dimensions.get('window').width}
-                                horizontal={true}
-                                centerContent
-                                scrollEventThrottle={3}
-                                contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-                                {
-                                    this.state.workoutDays.Tuesday.map((workout, index, arr) => {
-                                        return (
-                                            <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                            <Pagination dotStyle={{ width: 5, height: 5 }} containerStyle={{ backgroundColor: 'white', height: 2, width: Dimensions.get('window').width }} dotContainerStyle={{ height: 5 }} dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d' />
+                        <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                        {
+                        this.state.workoutDays.Monday.map((workout, index, arr) => {
+                            return (
+                                <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
+                        <View style={{flex: 1}} >
+                   <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                        <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+      </Surface>
+                   </View>
+                   <Text style={{padding: 3}}>
+          Push up
+      </Text>
                         </View>
+                            )
+                        })
+                        }
+                    </View>
                     )
                 case 'Wednesday':
                     if (this.state.workoutDays.Wednesday.length === 0) {
                         return (
-                            <View style={styles.alignAndJustifyCenter}>
-                                <View style={[styles.alignAndJustifyCenter, { width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)', }]}>
-                                    <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
-                                </View>
-                                <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No exercises have been added for {currDay}
-                                </Caption>
-                            </View>
+                           null
                         )
                     }
 
                     return (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <ScrollView
-                                onScroll={this.handleOnHorizontalScroll}
-                                showsHorizontalScrollIndicator={false}
-                                pagingEnabled={true}
-                                decelerationRate={0}
-                                snapToAlignment='center'
-                                snapToInterval={Dimensions.get('window').width}
-                                horizontal={true}
-                                centerContent
-                                scrollEventThrottle={3}
-                                contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-                                {
-                                    this.state.workoutDays.Wednesday.map((workout, index, arr) => {
-                                        return (
-                                            <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                            <Pagination dotStyle={{ width: 5, height: 5 }} containerStyle={{ backgroundColor: 'white', height: 2, width: Dimensions.get('window').width }} dotContainerStyle={{ height: 5 }} dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d' />
+                        <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                        {
+                        this.state.workoutDays.Monday.map((workout, index, arr) => {
+                            return (
+                                <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
+                        <View style={{flex: 1}} >
+                   <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                        <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+      </Surface>
+                   </View>
+                   <Text style={{padding: 3}}>
+          Push up
+      </Text>
                         </View>
+                            )
+                        })
+                        }
+                    </View>
                     )
                 case 'Thursday':
                     if (this.state.workoutDays.Thursday.length === 0) {
                         return (
-                            <View style={styles.alignAndJustifyCenter}>
-                                <View style={[styles.alignAndJustifyCenter, { width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)', }]}>
-                                    <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
-                                </View>
-                                <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No exercises have been added for {currDay}
-                                </Caption>
-                            </View>
+                            null
                         )
                     }
 
                     return (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <ScrollView
-                                onScroll={this.handleOnHorizontalScroll}
-                                showsHorizontalScrollIndicator={false}
-                                pagingEnabled={true}
-                                decelerationRate={0}
-                                snapToAlignment='center'
-                                snapToInterval={Dimensions.get('window').width}
-                                horizontal={true}
-                                centerContent
-                                scrollEventThrottle={3}
-                                contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-                                {
-                                    this.state.workoutDays.Thursday.map((workout, index, arr) => {
-                                        return (
-                                            <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                            <Pagination dotStyle={{ width: 5, height: 5 }} containerStyle={{ backgroundColor: 'white', height: 2, width: Dimensions.get('window').width }} dotContainerStyle={{ height: 5 }} dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d' />
+                        <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                            {
+                            this.state.workoutDays.Monday.map((workout, index, arr) => {
+                                return (
+                                    <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
+                            <View style={{flex: 1}} >
+                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+          </Surface>
+                       </View>
+                       <Text style={{padding: 3}}>
+              Push up
+          </Text>
+                            </View>
+                                )
+                            })
+                            }
                         </View>
                     )
                 case 'Friday':
                     if (this.state.workoutDays.Friday.length === 0) {
                         return (
-                            <View style={styles.alignAndJustifyCenter}>
-                                <View style={[styles.alignAndJustifyCenter, { width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)', }]}>
-                                    <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
-                                </View>
-                                <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No exercises have been added for {currDay}
-                                </Caption>
-                            </View>
+                           null
                         )
                     }
                     return (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <ScrollView
-                            onScroll={this.handleOnHorizontalScroll}
-                            showsHorizontalScrollIndicator={false}
-                            pagingEnabled={true}
-                            decelerationRate={0}
-                            snapToAlignment='center'
-                            snapToInterval={Dimensions.get('window').width}
-                            horizontal={true}
-                            centerContent
-                            scrollEventThrottle={3}
-                            contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
-                                this.state.workoutDays.Friday.map((workout, index, arr) => {
-                                    return (
-                                        <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
-                                    )
-                                })
+                            this.state.workoutDays.Monday.map((workout, index, arr) => {
+                                return (
+                                    <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
+                            <View style={{flex: 1}} >
+                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+          </Surface>
+                       </View>
+                       <Text style={{padding: 3}}>
+              Push up
+          </Text>
+                            </View>
+                                )
+                            })
                             }
-                        </ScrollView>
-                        <Pagination dotStyle={{ width: 5, height: 5 }} containerStyle={{ backgroundColor: 'white', height: 2, width: Dimensions.get('window').width }} dotContainerStyle={{ height: 5 }} dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d' />
-                    </View>
+                        </View>
                     )
                 case 'Saturday':
                     if (this.state.workoutDays.Saturday.length === 0) {
                         return (
-                            <View style={styles.alignAndJustifyCenter}>
-                                <View style={[styles.alignAndJustifyCenter, { width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)', }]}>
-                                    <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
-                                </View>
-                                <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No exercises have been added for {currDay}
-                                </Caption>
-                            </View>
+                           null
                         )
                     }
 
                     return (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <ScrollView
-                            onScroll={this.handleOnHorizontalScroll}
-                            showsHorizontalScrollIndicator={false}
-                            pagingEnabled={true}
-                            decelerationRate={0}
-                            snapToAlignment='center'
-                            snapToInterval={Dimensions.get('window').width}
-                            horizontal={true}
-                            centerContent
-                            scrollEventThrottle={3}
-                            contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
-                                this.state.workoutDays.Saturday.map((workout, index, arr) => {
-                                    return (
-                                        <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
-                                    )
-                                })
+                            this.state.workoutDays.Monday.map((workout, index, arr) => {
+                                return (
+                                    <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
+                            <View style={{flex: 1}} >
+                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+          </Surface>
+                       </View>
+                       <Text style={{padding: 3}}>
+              Push up
+          </Text>
+                            </View>
+                                )
+                            })
                             }
-                        </ScrollView>
-                        <Pagination dotStyle={{ width: 5, height: 5 }} containerStyle={{ backgroundColor: 'white', height: 2, width: Dimensions.get('window').width }} dotContainerStyle={{ height: 5 }} dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d' />
-                    </View>
+                        </View>
                     )
                 case 'Sunday':
                     if (this.state.workoutDays.Sunday.length === 0) {
                         return (
-                            <View style={styles.alignAndJustifyCenter}>
-                                <View style={[styles.alignAndJustifyCenter, { width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)', }]}>
-                                    <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
-                                </View>
-                                <Caption style={{ padding: 20, color: '#212121' }} onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)}>
-                                    No exercises have been added for {currDay}
-                                </Caption>
-                            </View>
+                          null
                         )
                     }
 
                     return (
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <ScrollView
-                            onScroll={this.handleOnHorizontalScroll}
-                            showsHorizontalScrollIndicator={false}
-                            pagingEnabled={true}
-                            decelerationRate={0}
-                            snapToAlignment='center'
-                            snapToInterval={Dimensions.get('window').width}
-                            horizontal={true}
-                            centerContent
-                            scrollEventThrottle={3}
-                            contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-                            {
-                                this.state.workoutDays.Sunday.map((workout, index, arr) => {
-                                    return (
-                                        <WorkoutDisplay handleSuperSetOnPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.SUPERSET)} key={workout.workout_uid} workout={workout} showContentSection={this.state.bottomViewIndex == 1} />
-                                    )
-                                })
-                            }
-                        </ScrollView>
-                        <Pagination dotStyle={{ width: 5, height: 5 }} containerStyle={{ backgroundColor: 'white', height: 2, width: Dimensions.get('window').width }} dotContainerStyle={{ height: 5 }} dotsLength={this.state.workoutDays.Monday.length} activeDotIndex={this.state.mondayCarouselIndex} dotColor="#1089ff" inactiveDotColor='#23374d' />
+                        <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                        {
+                        this.state.workoutDays.Monday.map((workout, index, arr) => {
+                            return (
+                                <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
+                        <View style={{flex: 1}} >
+                   <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                        <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+      </Surface>
+                   </View>
+                   <Text style={{padding: 3}}>
+          Push up
+      </Text>
+                        </View>
+                            )
+                        })
+                        }
                     </View>
                     )
                 default:
                     return (
-                        <View style={styles.alignAndJustifyCenter}>
-                            <View style={[styles.alignAndJustifyCenter, { width: 120, height: 120, borderRadius: 120, borderWidth: 1.5, borderColor: 'rgb(142, 142, 147)', }]}>
-                                <ThinFeatherIcon color="rgb(142, 142, 147)" thin={true} name="plus" size={80} />
-                            </View>
-                            <Caption style={{ padding: 20, color: '#23374d' }}>
-                                No exercises have been added.  Choose a day from the drop down menu and add an exercise using the exercise library.
-                            </Caption>
-                        </View>
+                        null
                     )
 
             }
@@ -741,6 +707,11 @@ class BuildWorkoutController extends React.Component {
     handleOpenLibraryOnPress = async (placementType) => {
         await this.setState({ currPlacementType: placementType })
         this.workoutLibraryRef.current.open();
+    }
+
+    handleOpenAddedWorkoutOptionsSheet = async (workout) => {
+        this.setState({ currPressedPopulatedWorkout: workout })
+        await this.addedWorkoutOptionsRef.current.open();
     }
 
     handleTakeVideo = () => {
@@ -792,7 +763,9 @@ class BuildWorkoutController extends React.Component {
 
     renderTopView = () => {
         return (
-            this.getCurrentDayContent()
+            <View style={{flex: 1, backgroundColor: 'red'}}>
+
+            </View>
         )
     }
 
@@ -866,11 +839,17 @@ class BuildWorkoutController extends React.Component {
                 )
     }
 
-    renderBottomSheet = () => {
+    handleAddSuperSet =  async () => {
+        await this.setState({ currPlacementType: PLACEMENT_TYPES.SUPERSET });
+        this.addedWorkoutOptionsRef.current.close();
+    }
+
+
+    renderWorkoutOptionsSheet = () => {
         return (
             <RBSheet
-                ref={this.workoutLibraryRef}
-                height={Dimensions.get('window').height / 1.2}
+                ref={this.addedWorkoutOptionsRef}
+                height={140}
                 closeOnPressMask={true}
                 customStyles={{
                     wrapper: {
@@ -886,44 +865,118 @@ class BuildWorkoutController extends React.Component {
                 dragFromTopOnly={true}
 
             >
-                <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                    <View style={{ padding: 10 }}>
-                        <SearchBar placeholder="Search exercises"
-                            onChangeText={text => console.log(text)}
-                            platform="ios"
-                            searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
-                            containerStyle={{ backgroundColor: "transparent", width: '100%' }}
-                            inputContainerStyle={{ backgroundColor: 'rgb(242, 242, 247))', }}
-                            inputStyle={{ fontSize: 15, color: 'black', fontWeight: '800', fontFamily: 'avenir-roman' }}
-                            placeholderTextColor="#212121"
-                            value={this.state.searchValue} />
-                    </View>
-                    <Divider />
-                    <View>
-                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                            {
-                                CATEGORY_TAGS.map((tag) => {
-                                    return (
-                                        <Chip key={tag} mode="flat" style={{ margin: 10, backgroundColor: '#EEEEEE' }} textStyle={{ fontFamily: 'Avenir', fontWeight: '600' }}>
-                                            {tag}
-                                        </Chip>
-                                    )
-                                })
-                            }
-                        </ScrollView>
-                    </View>
-                    <View style={{ flex: 1 }}>
+                
+                <View style={{alignItems: 'flex-start', flex: 1, padding: 20, backgroundColor: '#FFFFFF' }}>
+                <TouchableWithoutFeedback onPress={() => this.handleAddSuperSet()} style={{marginVertical: 10,}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <FeatherIcon name="plus" size={20} style={{paddingHorizontal: 10}} />
+                    <Text style={{fontFamily: 'Avenir-Medium', fontSize: 15}}>
+                    
+                        Add super set
+                    </Text>
+                </View>
+                </TouchableWithoutFeedback>
 
-<View style={{justifyContent: 'flex-end', width: '100%'}}>
-    <Button onPress={this.handleAddCustomWorkout} uppercase={false} color="#1089ff" style={{alignSelf: 'flex-end'}}>
-        <Text style={{fontWeight: '300'}}>
-            <ThinFeatherIcon thin={true} name="plus" size={15} />
+                <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <FeatherIcon color="#e53935" name="trash" size={20} style={{paddingHorizontal: 10}} />
+                    <Text style={{ color: '#e53935', fontFamily: 'Avenir-Medium', fontSize: 15}}>
+                    
+                        Remove Workout
+                    </Text>
+                </View>
+             
+</View>
+<SafeAreaView />
+            </RBSheet>
+        )
+    }
+
+    renderComponentDisplay = () => {
+        let items = [];
+
+        switch(this.state.currView) {
+            case 0:
+              return ( <View style={styles.container}>
+                <Appbar.Header style={[styles.appbar, {height: 'auto',  paddingVertical: 10}]}>
+                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Button color="white" uppercase={false} onPress={() => this.state.bottomViewIndex === 0 ? this.props.goToIndex(0) : this.setState({ bottomViewIndex: 0 })}>
+                        Back
+                    </Button>
+
+                    <Button color="white" uppercase={false} onPress={() => this.goToIndex(1)}>
+                        Add Sets
+                    </Button>
+                    </View>
+
+                    <View style={{justifyContent: 'flex-start', width: '100%', padding: 10}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Text style={{  color: 'white', fontWeight: 'bold', fontFamily: 'Avenir-Heavy', fontSize: 25}}>
+                        Add Exercises
+                    </Text>
+                    <View>
+                        <FeatherIcon name="search" size={24} color="white" />
+                    </View>
+                    </View>
+                   
+                    <Caption style={{color: 'white'}}>
+                        Choose a day of the week and add exercises Select your workouts for further options.
+                    </Caption>
+                    </View>
+                   
+        
+                
+                </Appbar.Header>
+
+                {
+                    
+                     this.props.programData.program_workout_days.map((day, index, arr) => {
+                        let item = {
+                            label: day,
+                            value: day,
+                            index: index
+                        }
+            
+                        items.push(item)
+                    })
+                }
+
+                <DropDownPicker
+                                    items={items}
+                                    defaultValue={this.getCurrentDay()}
+                                    containerStyle={{ marginVertical: 10, height: 45, width: Dimensions.get('window').width }}
+                                    style={{ backgroundColor: '#fafafa', marginHorizontal: 20 }}
+                                    itemStyle={{
+                                         fontSize: 12,
+                                        justifyContent: 'flex-start'
+                                    }}
+                                    dropDownStyle={{ backgroundColor: '#fafafa' }}
+                                    onChangeItem={item => this.setState({ currDayIndex: item.index })}
+                                />
+            <Divider />
+               <View style={styles.content}>
+                   <View style={{flex: 4}}>
+                   <View style={{}}>
+               
+                        <View style={{flex: 1}}>
+                            <Text>
+                                No Workouts
+                            </Text>
+                        </View>
+              
+                   </View>
+              
+               <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+     
+
+                    <View style={{justifyContent: 'flex-start', width: '100%'}}>
+    <Button icon={() => <FeatherIcon name="plus" color="#1089ff" />} onPress={this.handleAddCustomWorkout}color="#1089ff" style={{alignSelf: 'flex-start'}}>
+        <Text style={{fontSize: 12}}>
+        
             Add a custom exercise
         </Text>
     </Button>
 </View>
 
-<Divider />
 
                         <SectionList 
                          sections={this.state.libraryData}
@@ -932,8 +985,6 @@ class BuildWorkoutController extends React.Component {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || item.workout_name == undefined) {
                                 return;
                             }
-
-                        item.workout_uid = Math.random().toString()
                          
                             return (
                                 <TouchableOpacity onPress={() => this.captureWorkout(item, this.state.currPlacementType)}>
@@ -948,55 +999,55 @@ class BuildWorkoutController extends React.Component {
                            <Text style={styles.sectionHeader}>{title}</Text>
                          )}
                         />
-                    
                     </View>
-                </View>
-                <SafeAreaView />
-            </RBSheet>
-        )
+                    </View>
+
+                    <View style={{height: '100%', width: 1.5,  backgroundColor: '#EEEEEE'}} />
+
+                    <View style={{flex: 1.5}}>
+                        <ScrollView contentContainerStyle={{alignItems: 'center', width: '100%'}}>
+                
+                            {this.getCurrentDayContent()}
+                      
+                       
+                        </ScrollView>
+                    </View>
+               </View>
+
+                
+                <CreateCustomWorkoutModal isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} captureWorkout={this.captureWorkout} />
+                {this.renderWorkoutOptionsSheet()}
+            </View>
+              );
+            case 1:
+                return  <AddSets saveProgramWorkoutData={this.handleSaveProgramData} goToIndex={this.goToIndex} programWorkoutDays={this.props.programData.program_workout_days} workoutDays={this.state.workoutDays} structureID={this.props.currProgramUUID} />
+        }
     }
 
     render() {
         return (
-            <View style={styles.container}>
-                <Appbar.Header style={styles.appbar}>
-                    <Appbar.Action icon={() => <ThinFeatherIcon thin={true} onPress={() => this.state.bottomViewIndex === 0 ? this.props.goToIndex(0) : this.setState({ bottomViewIndex: 0 })} name="arrow-left" size={20} color="#1089ff" />} />
-                    <Appbar.Action icon={() => <ThinFeatherIcon thin={true} onPress={this.handleSaveProgramData} name="arrow-right" size={20} color="#1089ff" />} />
-                </Appbar.Header>
-
-                <View style={styles.content}>
-                    <View style={styles.mainContent}>
-                        {this.renderTopView()}
-
-                    </View>
-
-
-                    {this.renderBottomView()}
-                </View>
-
-                {this.renderBottomSheet()}
-
-                
-                <CreateCustomWorkoutModal isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} captureWorkout={this.captureWorkout} />
-                <SafeAreaView />
-            </View>
+            this.renderComponentDisplay()
         )
     }
 }
 
 const styles = StyleSheet.create({
     appbar: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#1089ff',
         elevation: 3,
-        justifyContent: 'space-between',
+        flexDirection: 'column',
     },
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        
     },
     content: {
         flex: 1,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFFFFF',
     },
     mainContent: {
         flex: 2,
@@ -1022,6 +1073,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         fontSize: 15,
         padding: 10
+    },
+    pressedWorkoutStyle: {
+        borderColor: '#1089ff',
+        borderWidth: 0.5,
+        padding: 10,
+        shadowRadius: 50,
+        shadowColor: 'red',
+    
     }
 })
 

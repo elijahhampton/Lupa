@@ -350,8 +350,7 @@ class Featured extends React.Component {
                     value={this.state.searchValue} />
         </View>
         </Appbar.Header> 
-        <Divider style={{height: 15, backgroundColor: 'rgb(242, 242, 247)'}} />
-                    <View style={{flex: 1, backgroundColor: 'rgb(247, 247, 247)'}}>
+                    <View style={{flex: 1, backgroundColor: 'white'}}>
                         {
                             this.state.searchValue === "" ?
                             

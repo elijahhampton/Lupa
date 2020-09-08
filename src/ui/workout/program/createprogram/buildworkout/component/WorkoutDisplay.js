@@ -24,6 +24,7 @@ import ThinFeatherIcon from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Video } from 'expo-av';
 import Slider from "react-native-slider";
+import { Pagination } from 'react-native-snap-carousel'
 
 
 function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperSetIndex }) {
@@ -45,7 +46,8 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
         {
             case true:
                 return (
-                    <View style={{flex: 1, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                    <>
+                    <View style={{flex: 1, height: 300, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
                                     <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
                                      <View style={{flex: 1,}}>
 
@@ -125,23 +127,25 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
 
                                     </Surface>
                                     </View>
+                                    <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
+                                    </>
                 )
             case false:
+
                 return (
                     <View style={{flex: 1}}>
                         <ScrollView 
-                        onLayout={event => setScrollViewContainerHeight(event.nativeEvent.layout.height)}
                                 showsHorizontalScrollIndicator={false} 
                                 pagingEnabled={true} 
                                 decelerationRate={0} 
                                 snapToAlignment='center' 
-                                snapToInterval={scrollViewContainerHeight} 
-                                horizontal={false} 
+                                snapToInterval={Dimensions.get('window').width} 
+                                horizontal={true} 
                                 centerContent 
                                 scrollEventThrottle={3}
                                 contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
                         >
-                        <View style={{flex: 1, height: scrollViewContainerHeight, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{flex: 1, height: 300, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
                                     <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
                                     <View style={{flex: 1}}>
 
@@ -221,7 +225,7 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
                                     {
                                         workout.superset.map((superset, index, arr) => {
                                             return (
-                                                <View style={{flex: 1, height: scrollViewContainerHeight, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                                                <View style={{flex: 1, height: 300, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
                                     <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
                                                 <View style={{flex: 1}}>
 
@@ -302,6 +306,8 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
                                         })
                                     }
                         </ScrollView>
+                        <Pagination dotsLength={5} />
+                        <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
                     </View>
                 )
                 default:
