@@ -342,7 +342,7 @@ class Featured extends React.Component {
               <Appbar.Header style={styles.appbar}>
 
                                 <View style={{flexDirection: 'row'}}>
-                <SearchBar placeholder="Search program or trainer names"
+                <SearchBar placeholder="Search programs or trainers"
                     onChangeText={text => this.performSearch(text)}
                     platform="ios"
                     searchIcon={<FeatherIcon name="search" size={20} color="#23374d" />}

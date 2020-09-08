@@ -40,12 +40,12 @@ const INACTIVE_COLOR = "#212121"
 
 const tabBarOptions = {
   showLabel: true,
-  activeTintColor: '#1089ff',
+  activeTintColor: 'black',
   inactiveTintColor: 'rgb(58, 58, 60)',
   labelStyle: {
     fontSize: 12,
     fontFamily: 'HelveticaNeue-Light',
-    fontWeight: '500',
+    fontWeight: '400',
   }
 }
 

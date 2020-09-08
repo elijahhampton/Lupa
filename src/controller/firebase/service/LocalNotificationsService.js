@@ -4,7 +4,6 @@ import { Platform } from 'react-native';
 
 class LocalNotificationService {
     configure = (onOpenNotification) => {
-        alert('trying to configure')
         PushNotification.configure({
             onRegister: function(token) {
                
