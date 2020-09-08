@@ -361,10 +361,14 @@ class Featured extends React.Component {
                             <Banner style={{elevation: 0, width: '100%'}} visible={this.state.suggestionBannerVisisble}  actions={[
         {
           label: 'Preview',
+          color: '#1089ff',
+          uppercase: false,
           onPress: () => this.setState({ suggestionBannerVisisble: false }),
         },
         {
           label: 'No thanks',
+          uppercase: false,
+          color: '#1089ff',
           onPress: () => this.setState({ suggestionBannerVisisble: false }),
         },
       ]}>
