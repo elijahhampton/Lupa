@@ -90,6 +90,10 @@ function TrainerDashboard(props) {
         }
 
         return data.purchaseMetaData.purchase_history.map((purchaseHistory, index, arr) => {
+            if (index == 3) {
+                return;
+            }
+
             return (
                 <DataTable.Row>
                 <DataTable.Cell>{purchaseHistory.purchaser} </DataTable.Cell>
@@ -101,18 +105,19 @@ function TrainerDashboard(props) {
     }
 
     const renderDataTablePagination = () => {
-        if (typeof(data) == 'undefined' || data.purchaseMetaData.purchase_history.length === 0 || componentReady === false) {
+        if (componentReady === false || typeof(data) == 'undefined' || data.purchaseMetaData.purchase_history.length === 0) {
             return (
-                null
+               null
             )
         } else {
+            return (
             <DataTable.Pagination
                 page={1}
-                numberOfPages={3}
+                numberOfPages={componentReady === true ? data.purchaseMetaData.purchase_history : 0}
                 onPageChange={(page) => { console.log(page); }}
                 label="1-1 of 1"
-                
               />
+            )
         }
     }
 
@@ -205,7 +210,7 @@ function TrainerDashboard(props) {
       </DataTable>
                         </View>
 
-                        <Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#EEEEEE' }} />
+                    {/*    <Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#EEEEEE' }} />
 
 <View style={{ }}>
     <Text style={{ padding: 10, fontSize: 18 }}>
@@ -264,19 +269,19 @@ function TrainerDashboard(props) {
         style={{
             borderRadius: 0
         }}
-    />
+    />*
 
     <Caption style={{alignSelf: 'flex-end', paddingRight: 20}}>
         Updated {new Date().getTime() - Math.round(lastUpdated)} seconds ago
     </Caption>
 
-   {/* <Divider style={{ marginHorizontal: 30, marginVertical: 5 }} />
+    <Divider style={{ marginHorizontal: 30, marginVertical: 5 }} />
 
     <Button color="#1089ff" uppercase={false} mode="text" style={{ alignSelf: 'flex-end' }} onPress={() => navigation.push('TrainerInsights')}>
         Trainer Insights
 <FeatherIcon name="arrow-right" size={12} />
-    </Button> */}
-</View>
+    </Button> 
+    </View>*/}
 
 <Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#EEEEEE' }} />
 

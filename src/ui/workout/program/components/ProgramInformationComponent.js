@@ -5,12 +5,16 @@ import {
     ImageBackground,
     Dimensions,
     Text,
+    TouchableOpacity,
+    Image,
     StyleSheet
 } from 'react-native'
 
 import {
     Surface,
     Caption,
+    Button,
+    Divider,
     Avatar
 } from 'react-native-paper'
 
@@ -54,45 +58,42 @@ function ProgramInformationComponent({ program }) {
     }, [])
 
     return (
-        <>
-        <TouchableWithoutFeedback key={program.program_name} onPress={() => handleCardOnPress(program)} style={{width: Dimensions.get('screen').width, backgroundColor: 'red'}}>
+        <View style={{backgroundColor: 'transparent', width: Dimensions.get('window').width, padding: 20}}>
+                            <Surface style={{backgroundColor: 'transparent', elevation: 0, flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto',}} >
+                                                    
+                            <View style={{width: 60, height: 60, alignItems: 'flex-start', justifyContent: 'center' }}>
+                                <Surface style={{width: '100%', height: '100%', elevation: 0, borderRadius: 3}}>
+                                    <Image style={{width: '100%', height: '100%', borderRadius: 3}} source={{uri: program.program_image}} />
+                                </Surface>
+                            </View>
+                    
+                            <View style={{height: '80%', justifyContent: 'space-between' }}>
+                                <View style={{justifyContent: 'space-between', flexDirection: 'row',}}>
+                                <View style={{paddingHorizontal: 10}} >
+                                    <Text style={{fontSize: 15, color: '#212121'}}>
+                                        {program.program_name}
+                                    </Text>
+                                    <Text style={{paddingVertical: 10, fontSize: 10,flexWrap: 'wrap'}} numberOfLines={4}>
+                                    {program.program_description}
+                                    </Text>
 
-        <View style={{width: Dimensions.get('screen').width, alignItems: 'center'}}>
-        <Surface style={{elevation: 3, width: Dimensions.get('screen').width / 1.2, height: 180, borderRadius: 16, margin: 5}}>
-      <View style={{position: 'absolute', 
-        flex: 1,
-        top: 0, left: 0, right:0, 
-        borderRadius: 16, 
-        backgroundColor: 'rgba(0,0,0,0.7)'}} />               
-      <ImageBackground 
-       imageStyle={{borderRadius: 16}} 
-       style={{alignItems: 'flex-start', justifyContent: 'center', width: '100%', height: '100%', borderRadius:16 }} 
-       source={{uri: program.program_image }}>
 
-    <Avatar.Image source={{uri: programOwnerData.photo_url }} size={30} style={{position: 'absolute', bottom: 0, right: 0, margin: 10}} />
-       </ImageBackground>
-      
-    </Surface>
-        <View style={{ width: Dimensions.get('screen').width /1.3, alignItems: 'flex-start', justifyContent: 'center' }}>
-           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: Dimensions.get('screen').width /1.3,}}>
-           <Text style={{color: '#000000', fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Roman', fontWeight: '700' }}>
-                {titleCase(program.program_name)}
-                </Text>
-                <Caption>
-                    Single
-                </Caption>
-           </View>
-                <Text  numberOfLines={2} style={{ color: '#000000', fontSize: 12, fontFamily: 'Avenir-Light'}}>
-                {program.program_description}
-                </Text>
-           </View>
+                                </View>
 
-    </View>
-    </TouchableWithoutFeedback>
+                                </View>
 
-    <ProgramInformationPreview isVisible={programModalVisible} programData={program} closeModalMethod={() => setProgramModalVisible(false)} />
-      <ProgramOptionsModal program={program} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
-        </>
+                           
+                         
+                            </View>
+                    
+                    
+                          </Surface>
+                        
+                          <Text style={{ paddingVertical: 10, color: '#1089ff', fontWeight: '500', letterSpacing: 1}}>
+                              Preview Program
+                          </Text>
+                 
+                          </View>
     )
 }
 
