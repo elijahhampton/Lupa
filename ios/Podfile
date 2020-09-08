@@ -6,7 +6,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 permissions_path = '../node_modules/react-native-permissions/ios'
 # Override Firebase SDK Version
 #$FirebaseSDKVersion = '6.8.1'
-$RNFirebaseAsStaticFramework = true
+#$RNFirebaseAsStaticFramework = true
 
 target 'Lupa' do
   rnPrefix = "../node_modules/react-native"

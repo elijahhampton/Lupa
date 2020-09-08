@@ -58,9 +58,11 @@ function ShareProgramModal({ navigation, route }) {
         {
             
             updatedList.push(userObject.user_uuid);
+            
         }
 
         setSelectedUsers(updatedList)
+        console.log(updatedList)
     }
 
     const waitListIncludesUser = (userObject) => {
@@ -80,10 +82,7 @@ function ShareProgramModal({ navigation, route }) {
             return (
                 <View key={user.user_uuid} style={{backgroundColor: waitListIncludesUser(user) ? '#E0E0E0' : 'transparent'}}>
                     <UserSearchResult 
-                        avatarSrc={user.photo_url} 
-                        displayName={user.display_name} 
-                        username={user.username} 
-                        isTrainer={user.isTrainer}
+                        userData={user}
                         hasButton={true}
                         buttonTitle="Invite"
                         buttonOnPress={() => handleAddToFollowList(user)}

@@ -1,4 +1,4 @@
-import { Colors } from "react-native/Libraries/NewAppScreen";
+
 
 const functions = require('firebase-functions')
 const admin = require("firebase-admin");
@@ -51,7 +51,7 @@ exports.receivedNotification = functions.firestore
     let newNotification = dataAfter.notifications[dataAfter.notifications.length - 1];
     console.log('B')
     //Find out which notification it is
-    if (newNotification.type == "RECEIVED_PROGRAMS")
+    if (newNotification.type == "RECEIVED_PROGRAM")
     {
       const payload = {
         data: {
@@ -67,27 +67,21 @@ exports.receivedNotification = functions.firestore
       };
 
       console.log('C')
-      admin
-        .messaging()
-        .sendToDevice(
-            [dataAfter.tokens.fb_messaging_token], 
-            payload,
+
+      
+      return admin.messaging().sendToDevice(dataAfter.tokens.fb_messaging_token, payload,
             {
                 // Required for background/quit data-only messages on iOS
                 contentAvailable: true,
                 // Required for background/quit data-only messages on Android
                 priority: 'high',
             }
-        )
-        .then(function(response) {
-          console.log("Notification sent successfully:", response);
-        })
-        .catch(function(error) {
-          console.log("Notification sent failed:", error);
-    })
+        );
     }
+
   }
-  
+
+  return false;
 })
 
 

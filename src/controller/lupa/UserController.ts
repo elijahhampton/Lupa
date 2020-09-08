@@ -491,7 +491,7 @@ export default class UserController {
                 userResult = result.data();
             });
 
-            if (typeof (userResult.programs) == 'undefined') {
+            if (typeof (userResult.programs) != 'undefined') {
                 if (userResult.programs.length > 0) {
                     for (let i = 0; i < userResult.programs.length; i++) {
                         docData = getLupaProgramInformationStructure()
@@ -1173,7 +1173,7 @@ export default class UserController {
                 from: currUserData.user_uuid,
                 to: userList,
                 read: false,
-                type: NOTIFICATION_TYPES.RECEIVED_NOTIFICATION,
+                type: NOTIFICATION_TYPES.RECEIVED_PROGRAM,
                 actions: ['View', 'Delete'],
                 timestamp: new Date().getTime()
             }

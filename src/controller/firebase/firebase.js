@@ -9,6 +9,9 @@ import axios from 'axios';
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from './collection_structures';
 
 import * as EmailValidator from 'email-validator'
+import { Platform } from 'react-native';
+import LOG from '../../common/Logger';
+import { openContactForm } from 'react-native-contacts';
 
 //Initialize firebase
 const firebaseConfig = {
@@ -35,14 +38,6 @@ const LUPA_DB = reactfirestore()
 const LUPA_DB_FIREBASE = reactfirebase.database()
 const LUPA_AUTH = reactfirebaseauth()
 const LUPA_MESSAGING = reactfirebasemessaging();
-
-LUPA_MESSAGING.onMessage(async remoteMessage => {
-  //sendLocalPushNotification(remoteMessage.data.title, remoteMessage.data.body, remoteMessage.data.time)
-});
-
-LUPA_MESSAGING.setBackgroundMessageHandler(async remoteMessage => {
- // sendLocalPushNotification(remoteMessage.data.title, remoteMessage.data.body, remoteMessage.data.time)
-});
 
 
 export async function sendNotificationToCurrentUsersDevice() {
@@ -78,21 +73,15 @@ export async function sendNotificationToCurrentUsersDevice() {
 
 
 async function saveTokenToDatabase(token, uuid) {
+  let userData = getLupaUserStructure(), tokenObject = {
+    fb_messaging_token: token
+  }
+
   // Assume user is already signed in
   if (typeof(uuid) == 'undefined' || typeof(uuid) != 'string') {
     const userId = await reactfirebaseauth().currentUser.uid;
 
-    let userData = getLupaUserStructure(), tokenObject = {}
-  await reactfirestore()
-  .collection('users')
-  .doc(uuid)
-  .get()
-  .then(snapshot => {
-    userData = snapshot.data()
-  });
-
-  tokenObject.userData.tokens.fb_messaging_token = token;
-
+    console.log('token: ' + tokenObject.fb_messaging_token)
   // Add the token to the users datastore
   await reactfirestore()
     .collection('users')
@@ -104,18 +93,10 @@ async function saveTokenToDatabase(token, uuid) {
     return;
   }
 
-  let tokenObject;
-  await reactfirestore()
-  .collection('users')
-  .doc(uuid)
-  .get()
-  .then(snapshot => {
-    userData = snapshot.data()
-  });
-
-  tokenObject.userData.tokens.fb_messaging_token = token;
-
   // Add the token to the users datastore
+  await LUPA_DB.collection('users').doc(uuid).update({
+    tokens: tokenObject
+  })
   await reactfirestore()
     .collection('users')
     .doc(uuid)
@@ -125,26 +106,21 @@ async function saveTokenToDatabase(token, uuid) {
 }
 
 export function generateMessagingToken(uuid) {
-  reactfirebasemessaging()
+  LUPA_MESSAGING.hasPermission().then(enabled => {
+    if (enabled) {
+      reactfirebasemessaging()
       .getToken()
       .then(token => {
         return saveTokenToDatabase(token, uuid);
       });
+    } else {
+      requestNotificationPermissions();
+    }
+  }).catch(err => {
+    alert(err)
+  })
+ 
 }
-
-  /**
-   * Callback fire is instand ID is changed.
-   * Update to the latest version of @react-native-firebase/messaging to use this method.  Causes
-   * crashes.
-   */
-/*LUPA_MESSAGING.onTokenRefresh(() => {
-  LUPA_MESSAGING.getToken().then((refreshedToken) => {
-    saveTokenToDatabase(refreshedToken);
-    // ...
-  }).catch((err) => {
-
-  });
-});*/
 
 const LUPA_STORAGE_BUCKET = reactfirebasestorage()
 const LUPA_USER_PROFILE_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('profile_images');
