@@ -85,6 +85,7 @@ class Featured extends React.Component {
             showLiveWorkoutPreview: false,
             showTopPicksModalIsVisible: false,
             feedVlogs: [],
+            suggestionBannerVisisble: false
         }
     }
 
@@ -110,6 +111,8 @@ class Featured extends React.Component {
         }, err => {
           alert(err)
         });
+
+        this.setState({ suggestionBannerVisisble: true })
 
     }
 
@@ -339,68 +342,43 @@ class Featured extends React.Component {
               <Appbar.Header style={styles.appbar}>
 
                                 <View style={{flexDirection: 'row'}}>
-                <SearchBar placeholder="Search fitness programs"
+                <SearchBar placeholder="Search program or trainer names"
                     onChangeText={text => this.performSearch(text)}
                     platform="ios"
-                    searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
+                    searchIcon={<FeatherIcon name="search" size={20} color="#23374d" />}
                     containerStyle={styles.searchContainerStyle}
                     inputContainerStyle={styles.inputContainerStyle}
                     inputStyle={styles.inputStyle}
-                    placeholderTextColor="#212121"
+                    placeholderTextColor="rgba(35, 55, 77, 0.5)"
                     value={this.state.searchValue} />
         </View>
         </Appbar.Header> 
-        <Divider style={{height: 15, backgroundColor: 'rgb(242, 242, 247)'}} />
-                    <View style={{flex: 1, backgroundColor: 'rgb(247, 247, 247)'}}>
+                    <View style={{flex: 1, backgroundColor: '#EEEEEE'}}>
                         {
                             this.state.searchValue === "" ?
                             
-                            <View >
-                            <Surface style={{elevation: 0, paddingVertical: 15, justifyContent: 'center', }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <View style={{paddingHorizontal: 10}}>
-                              <Text style={styles.sectionHeaderText}>
-                                 Near Cupertino, CA
-                        </Text>
-                        <Caption>
-                            Based on your location 
-                        </Caption>
-                              </View>
+                            <View style={{backgroundColor: '#EEEEEE'}}>
+                            <Banner style={{elevation: 0, width: '100%'}} visible={this.state.suggestionBannerVisisble}  actions={[
+        {
+          label: 'Preview',
+          onPress: () => this.setState({ suggestionBannerVisisble: false }),
+        },
+        {
+          label: 'No thanks',
+          onPress: () => this.setState({ suggestionBannerVisisble: false }),
+        },
+      ]}>
+             {typeof(this.state.featuredPrograms[0]) == 'undefined' ? null : <ProgramInformationComponent program={this.state.featuredPrograms[0]} />}
+                            </Banner>
 
+                   
 
-                            </View>
-
-                             <ScrollView
-                                horizontal={true}
-                                showsHorizontalScrollIndicator={false}
-                                snapToAlignment='center'
-                                centerContent
-                                snapToInterval={Dimensions.get('window').width}
-                                decelerationRate={0}
-                                pagingEnabled={true}
-                                onScroll={this.handleOnScroll}
-                                contentContainerStyle={{backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}
-                            >
-                                {
-          
-                                    this.state.featuredPrograms.map((program, index, arr) => {
-                                        return (
-                                                <ProgramInformationComponent key={program.program_uuid + index.toString()} program={program} />
-                                           
-                                        )
-                                    })
-                                }
-                            </ScrollView>            
-                        </Surface>
-
-                        <Divider style={{height: 15, backgroundColor: 'rgb(242, 242, 247)'}} />
-
-                        <View style={{backgroundColor: 'white'}}>
-                            <View style={{backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{backgroundColor: '#EEEEEE'}}>
+                            <View style={{backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
                             {
                                 this.state.feedVlogs.length === 0 ?
-                                <View style={{width: '100%', alignItems: 'center', backgroundColor: 'rgb(247, 247, 247)'}}>
-                                      <Caption style={{fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: 'rgb(247, 247, 247)'}} >
+                                <View style={{width: '100%', alignItems: 'center', backgroundColor: 'white'}}>
+                                      <Caption style={{fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: 'transparent'}} >
                                     There are not any vlogs in your area.  Check back later.
                                 </Caption>
                                
@@ -483,13 +461,13 @@ const styles = StyleSheet.create({
         fontSize: RFValue(15), fontFamily: 'Avenir-Heavy', fontSize: 15,
     },
     searchContainerStyle: {
-        backgroundColor: "transparent", width: '100%'
+        backgroundColor: "white", width: '100%'
     },
     inputContainerStyle: {
-        backgroundColor: '#eeeeee',
+        backgroundColor: 'white',
     },
     inputStyle: {
-        fontSize: 15, color: 'black',  fontFamily: 'Avenir-Roman'
+        fontSize: 15, fontWeight: '800', fontFamily: 'Avenir-Roman'
     },
     iconContainer: {
         width: '10%', alignItems: 'center', justifyContent: 'center'
@@ -497,8 +475,6 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: '#FFFFFF',
         elevation: 0,
-        borderTopColor: 'transparent',
-        shadowOpacity: 0,
     }
 });
 
