@@ -15,9 +15,11 @@ import {
 
 import {
     Surface,
+    Caption,
 } from 'react-native-paper';
 
 import FeatherIcon from "react-native-vector-icons/Feather"
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 
 class SingleWorkout extends React.Component {
@@ -60,26 +62,25 @@ class SingleWorkout extends React.Component {
 return (
     <View style={[{marginVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
    <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5}}>
-   <Surface style={[this.state.isPressed ? styles.pressed : styles.notPressed , styles.videoContainer]}>
-   <Surface style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: this.state.isPressed === true ? '#e53935' : '#1089ff' ,top: 0, right: 0, margin: 0, borderRadius: 20, width: 20, height: 20}}>
-    <FeatherIcon name={this.state.isPressed === true ? "minus" : "plus"} color="white" />
-</Surface>
+   <View style={{flexDirection: 'row', alignItems: 'flex-start',}}>
+   <Surface style={{height: 70, width: 100, backgroundColor: '#212121'}}>
+                            <Video source={require('../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
           </Surface>
-          <View style={{paddingHorizontal: 5, flex: 2}}>
-                <View>
-                <Text style={{paddingVertical: 3, fontSize: 18, color: '#212121', fontWeight: '400'}}>
+    <View style={{paddingHorizontal: 10,}}>
+    <Text style={{width: 90,  paddingVertical: 3, fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
               {this.props.workout.workout_name}
           </Text>
-        
-          <Text style={{fontSize: 12}} numberOfLines={3}>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.
+          <Text style={{fontFamily: 'Avenir-Light', color: '#1089ff'}}>
+              Preview Exercise
           </Text>
-                </View>
-           
-           
-          </View>
+    </View>
+               
+   </View>
 
    </View>
+
+   
+
     </View>
 
 )
