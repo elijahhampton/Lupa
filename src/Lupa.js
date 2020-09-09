@@ -17,15 +17,23 @@ import {
 import LupaController from './controller/lupa/LupaController';
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 import { connect, useSelector } from 'react-redux'
-import { generateMessagingToken } from "./controller/firebase/firebase";
+import { generateMessagingToken, requestNotificationPermissions, registerAppWithFCM, } from "./controller/firebase/firebase";
+import { fcmService } from './controller/firebase/service/FCMService'
 import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal'
 import WelcomeContentDriver from "./ui/user/modal/WelcomeContentDriver";
 
 const Lupa = () => {
-  /* useEffect(() => {
-    //generateMessagingToken(currUserData.user_uuid)
-     //LUPA_CONTROLLER_INSTANCE.indexApplicationData()
-   }, [])*/
+  const currUserData = useSelector(state => {
+    return state.Users.currUserData;
+  });
+
+  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+   useEffect(() => {
+    fcmService.requestNotificationPermissions()
+    generateMessagingToken(currUserData.user_uuid)
+     LUPA_CONTROLLER_INSTANCE.indexApplicationData()
+   }, [])
 
   return (
     <View style={{flex: 1}}>

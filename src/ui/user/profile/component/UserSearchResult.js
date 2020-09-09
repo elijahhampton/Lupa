@@ -15,11 +15,11 @@ import {
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
-const userSearchResult = ({userData, hasButton, buttonTitle}) => {
+const userSearchResult = ({userData, hasButton, buttonTitle, buttonOnPress}) => {
     const navigation = useNavigation();
 
     return (
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('Profile', {userUUID: userData.user_uuid})}>
+        <TouchableWithoutFeedback onPress={typeof(buttonOnPress) == 'undefined' ?  () => navigation.navigate('Profile', {userUUID: userData.user_uuid}) : buttonOnPress }>
         <View style={styles.root}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Avatar.Image size={40} source={{uri: userData.photo_url}} style={{margin: 5}}/>
@@ -34,7 +34,7 @@ const userSearchResult = ({userData, hasButton, buttonTitle}) => {
                     </View>
                     {
                             hasButton == true ?
-                            <Button uppercase={false} mode="outlined" style={{elevation: 0}} onPress={props.buttonOnPress} theme={{
+                            <Button uppercase={false} mode="outlined" style={{elevation: 0}} onPress={buttonOnPress} theme={{
                                 colors: {
                                     primary: '#2196F3'
                                 },

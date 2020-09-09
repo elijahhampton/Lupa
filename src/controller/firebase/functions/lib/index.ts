@@ -44,30 +44,31 @@ exports.receivedNotification = functions.firestore
 .onUpdate((change, context) => {
   const dataAfter = change.after.data();
   const dataBefore = change.before.data();
-
+console.log('A')
   //Check to see if the size of the notification array has changed
   if (dataBefore.notifications.length < dataAfter.notifications.length)
   {
     //If the size of the array has grown
     let newNotification = dataAfter.notifications[dataAfter.notifications.length - 1];
-
+console.log('B')
     //Find out which notification it is
-    if (newNotification.type == "RECEIVED_PROGRAMS")
+    if (newNotification.type == "RECEIVED_PROGRAM")
     {
+      console.log('C')
       const payload = {
         data: {
           title: "New Program Invite",
-          body: `${newNotification.fromData.display_name} has invited you to try a program. Navigate to your notifications for more details.`,
+          body: "You have been invited to try a new program. Navigate to your notifications for more details.",
           time: new Date().getTime().toString()
         },
         notification: {
           title: "New Program Invite",
-          body: `${newNotification.fromData.display_name} has invited you to try a program. Navigate to your notifications for more details.`,
+          body: "You have been invited to try a new program. Navigate to your notifications for more details.",
           time: new Date().getTime().toString()
         },
       };
-
-      admin
+      console.log('D')
+      return admin
         .messaging()
         .sendToDevice(
             [dataBefore.tokens.fb_messaging_token], 
@@ -78,16 +79,12 @@ exports.receivedNotification = functions.firestore
                 // Required for background/quit data-only messages on Android
                 priority: 'high',
             }
-        )
-        .then(function(response) {
-
-        })
-        .catch(function(error) {
-    
-    })
+        );
     }
+    console.log("F")
   }
-  
+  console.log("E")
+  return false;
 })
 
 /**

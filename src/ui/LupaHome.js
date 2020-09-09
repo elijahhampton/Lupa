@@ -57,7 +57,7 @@ export class LupaHome extends Component {
           zIndex: 1,
           backgroundColor: COLOR
         }}>
-          <Header style={{backgroundColor: 'white', borderBottomColor: 'transparent', borderColor: 'transparent'}} noShadow={true} hasTabs>
+          <Header style={{backgroundColor: 'white',}} noShadow={true} hasTabs>
             <Left style={{flexDirection: 'row', alignItems: 'center'}}>
               <MenuIcon customStyle={{}} onPress={() => this.props.navigation.openDrawer()}/>
             </Left>
@@ -101,8 +101,8 @@ export class LupaHome extends Component {
               backgroundColor: COLOR,
               justifyContent: 'flex-start',
             }, Platform.OS === "ios" ? {paddingTop: 30} : null]}>
-            <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: 'transparent'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 0, borderBottomColor: 'transparent'}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
-            <Divider />
+            <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: 'white'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
+       
           </Animated.View>
           }>
             

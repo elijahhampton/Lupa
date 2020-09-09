@@ -14,8 +14,8 @@
   "main": "lib/index.ts",
   "dependencies": {
     "cors": "^2.8.5",
-    "firebase-admin": "^8.9.0",
-    "firebase-functions": "^3.3.0",
+    "firebase-admin": "^9.1.1",
+    "firebase-functions": "^3.11.0",
     "stripe": "^8.55.0",
     "tipsi-stripe": "^7.5.3"
   },

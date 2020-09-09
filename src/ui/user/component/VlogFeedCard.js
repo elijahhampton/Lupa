@@ -8,10 +8,12 @@ import {
 } from 'react-native';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { Card, Avatar, Caption, Menu } from 'react-native-paper';
+import { Card,  Caption, Menu, Chip } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import LupaController from '../../../controller/lupa/LupaController';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { Avatar } from 'react-native-elements'
 
 function VlogFeedCard({ vlogData }) {
     const currUserData = useSelector(state => {
@@ -30,11 +32,26 @@ function VlogFeedCard({ vlogData }) {
     }, [])
 
     return (
-        <Card theme={{roundness: 0}} style={{width: Dimensions.get('window').width, borderRadius: 0, elevation: 0, marginBottom: 15}}>
-                        <Card.Cover theme={{roundness: 0}} style={{elevation: 0, height: 180, borderRadius: 0}} source={{uri: 'https://picsum.photos/200/'}} />
-                        <Avatar.Image source={{uri: vlogOwnerData.photo_url }} size={30} style={{position: 'absolute', bottom: cardContentHeight + 15, right: 0, marginRight: 15}} />
+        <Card theme={{roundness: 10}} style={{marginVertical: 10, alignSelf: 'center', width: Dimensions.get('window').width - 20, borderRadius: 20, elevation: 5}}>
+                        <Card.Cover resizeMode="cover" theme={{roundness: 10}} style={{elevation: 0, height: 180, borderRadius: 0}} source={{uri: 'https://picsum.photos/200/'}} />
+                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, position: 'absolute', bottom: cardContentHeight + 15, right: 0, }}>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                        <Chip textStyle={{color: 'white'}} style={{backgroundColor: 'rgba(0,0,0,0.3)', position: 'absolute', left: 30,  borderTopLeftRadius: 0, borderBottomLeftRadius: 0, height: 25, alignItems: 'center', justifyContent: 'center'}}>
+                            {vlogOwnerData.display_name}
+                        </Chip>
+                        <Avatar  containerStyle={{borderWidth: 1.5, borderColor: 'white'}} rounded source={{uri: vlogOwnerData.photo_url }} size={35} />
+                        
+                        </View>
                        
-                        <Card.Content style={{backgroundColor: 'white'}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                        <View style={{backgroundColor: 'rgba(142, 142, 147, 0.5)', borderWidth: 1, borderColor: 'white', borderRadius: 20}}>
+                        <Feather1s color="white"  name="volume-x" size={20} style={{backgroundColor: 'transparent', padding: 5}} />
+                       
+                        </View>
+                        
+                        </View>
+                       
+                       
+                        <Card.Content theme={{roundness: 10}} style={{backgroundColor: 'white', borderRadius: 10}} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                 <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
                                     {vlogData.vlog_title}
@@ -54,10 +71,7 @@ function VlogFeedCard({ vlogData }) {
                                 
                                 
                                 <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end'}}>
-                                <Text numberOfLines={2} style={{width: '80%', fontSize: 12, fontFamily: 'Avenir-Roman'}}>
-                                <Text style={{fontFamily: 'Avenir-Heavy'}}>
-                                {currUserData.display_name} {" "}
-                                </Text>
+                                <Text numberOfLines={2} style={{width: '80%', fontSize: 15, fontFamily: 'Avenir-Roman'}}>
                                 {vlogData.vlog_text}
                                 </Text>
                                 
@@ -66,8 +80,6 @@ function VlogFeedCard({ vlogData }) {
                                     {Math.round(new Date().getTime() - vlogData.time_created.seconds)} hour ago
                                 </Caption>
                         </Card.Content>
-
-                        
                     </Card>
     )
 }

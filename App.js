@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import LupaStore from './src/controller/redux/index';
 
 import LupaController from './src/controller/lupa/LupaController';
-import { LUPA_AUTH } from './src/controller/firebase/firebase';
+import LUPA_DB, { LUPA_AUTH, registerAppWithFCM, generateMessagingToken } from './src/controller/firebase/firebase';
 import { getLupaUserStructure, getLupaPackStructure } from './src/controller/firebase/collection_structures';
 import { getLupaProgramInformationStructure } from './src/model/data_structures/programs/program_structures';
 import CreateProgram from './src/ui/workout/program/createprogram/CreateProgram';
@@ -34,8 +34,8 @@ import CreateNewPost from './src/ui/user/profile/modal/CreateNewPost';
 import ProfileNavigator from './src/ui/navigators/ProfileNavigator';
 import SettingsStackNavigator from './src/ui/navigators/SettingsNavigator';
 import CreateWorkout from './src/ui/workout/createworkout/CreateWorkout';
-
-
+import { localNotificationService } from './src/controller/firebase/service/LocalNotificationsService'
+import { fcmService } from './src/controller/firebase/service/FCMService';
 const App = () => {
   return (
     <NavigationContainer>
@@ -56,14 +56,14 @@ const SwitchNavigator = () => {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async (uuid) => {
-    alert(uuid)
     try {
       //setup redux
       await _setupRedux(uuid)
     } catch (err) {
+      SplashScreen.hide()
       showAuthentication()
     }
-
+    SplashScreen.hide()
     //navigate to app
     navigation.navigate('App')
   }
@@ -87,6 +87,7 @@ const SwitchNavigator = () => {
       userData: currUserData,
       healthData: {}
     }
+
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload })
 
     // Load user program data if the user is a trainer
@@ -112,7 +113,10 @@ const SwitchNavigator = () => {
             showAuthentication()
             return;
           }
-
+          console.log('A')
+          fcmService.createNotificationListeners(onNotification, onOpenNotification);
+          console.log('B')
+          localNotificationService.configure(onOpenNotification);
           introduceApp(user.uid)
         })
       } catch (err) {
@@ -121,8 +125,36 @@ const SwitchNavigator = () => {
         alert(err)
       }
     }
+
+    function onOpenNotification(notify) {
+      console.log('onOpenNotification')
+     console.log(notify)
+    }
+  
+    function onNotification(notify) {
+      console.log('onNotification')
+
+      const options = {
+        soundName: 'default',
+        playSound: true,
+      }
+
+      console.log(notify)
+      localNotificationService.showNotification(
+        0,
+        notify.notification.title,
+        notify.notification.body,
+        notify,
+        options
+      )
+    }
+
     getUserAuthState()
-    SplashScreen.hide()
+
+    return () => {
+      fcmService.unRegister()
+      localNotificationService.unregister()
+    }
   }, [])
 
   return (
