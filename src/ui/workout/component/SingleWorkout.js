@@ -15,6 +15,7 @@ import {
 
 import {
     Surface,
+    Caption,
 } from 'react-native-paper';
 
 import FeatherIcon from "react-native-vector-icons/Feather"
@@ -65,16 +66,20 @@ return (
    <Surface style={{height: 70, width: 100, backgroundColor: '#212121'}}>
                             <Video source={require('../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
           </Surface>
-  
-                <Text style={{width: 90, paddingHorizontal: 10, paddingVertical: 3, fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
+    <View style={{paddingHorizontal: 10,}}>
+    <Text style={{width: 90,  paddingVertical: 3, fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
               {this.props.workout.workout_name}
           </Text>
-   </View>
+          <Text style={{fontFamily: 'Avenir-Light', color: '#1089ff'}}>
+              Preview Exercise
+          </Text>
+    </View>
+               
    </View>
 
-   <View style={{alignItems: 'center', justifyContent: 'center', marginHorizontal: 20}}>
-        <Feather1s name="plus-square" size={20} />
    </View>
+
+   
 
     </View>
 

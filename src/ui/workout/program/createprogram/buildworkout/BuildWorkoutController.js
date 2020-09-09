@@ -78,6 +78,7 @@ class BuildWorkoutController extends React.Component {
             addCueModalIsVisible: false,
             addDescriptionModalIsVisible: false,
             workoutSchemeModalIsVisible: false,
+            addedWorkoutsScrollViewWidth: 0,
             cameraIsVisible: false,
             currPressedPopulatedWorkout: {
                 workout_name: "",
@@ -135,7 +136,6 @@ class BuildWorkoutController extends React.Component {
     }
 
     goToIndex = (index) => {
-        alert(index)
         this.setState({ currView: index })
     }
 
@@ -154,7 +154,6 @@ class BuildWorkoutController extends React.Component {
 
         switch (this.state.currPlacementType) {
             case PLACEMENT_TYPES.SUPERSET:
-                alert('SUPER')
                 const updatedWorkout = {
                     workout_name: workoutObject.workout_name,
                     workout_description: workoutObject.workout_description,
@@ -468,52 +467,22 @@ class BuildWorkoutController extends React.Component {
                            null
                         )
                     }
-
-                    let allWorkouts = this.state.workoutDays.Monday
-            
-                        
-                        //(
-                         /*   <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: '100%', height: 100, marginTop: 5, marginBottom: 10}}>
-                            <View style={[{flex: 1}, this.state.currPressedPopulatedWorkout.workout_uid == workout.workout_uid ? styles.pressedWorkoutStyle : null]}>
-                    <View style={{flex: 1}} >
-               <Surface style={{flex: 1, backgroundColor: '#212121'}}>
-                    <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
-  </Surface>
-               </View>
-               <Text style={{padding: 3}}>
-      Push up
-  </Text>
-                    </View>
-                    </TouchableWithoutFeedback>
-                    */
-                 
-                      //  )
-
-
-                 
-                    for (let i = 0; i < allWorkouts.length; i++) {
-                        if (allWorkouts[i].superset.length != 0) {
-                            allWorkouts = allWorkouts.concat(allWorkouts[i].superset)
-                            console.log('uhh')
-                        }
-                    }
-
-
+                    
                     return (
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
 
-                           allWorkouts.map((workout, index, arr) => {
+                           this.state.workoutDays.Monday.map((exercise, index, arr) => {
                                 return (
-                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: '100%', height: 100, marginTop: 5, marginBottom: 10}}>
-                                    <View style={[{flex: 1}, this.state.currPressedPopulatedWorkout.workout_uid == workout.workout_uid ? styles.pressedWorkoutStyle : null]}>
+                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <View style={[{flex: 1, width: '100%'}]}>
                             <View style={{flex: 1}} >
                        <Surface style={{flex: 1, backgroundColor: '#212121'}}>
                             <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
           </Surface>
                        </View>
-                       <Text style={{padding: 3}}>
-              Push up
+                       <Text style={{padding: 3, alignSelf: 'center'}}>
+             {exercise.workout_name}
           </Text>
                             </View>
                             </TouchableWithoutFeedback>
@@ -763,7 +732,7 @@ class BuildWorkoutController extends React.Component {
 
     renderTopView = () => {
         return (
-            <View style={{flex: 1, backgroundColor: 'red'}}>
+            <View style={{flex: 1}}>
 
             </View>
         )
@@ -844,12 +813,44 @@ class BuildWorkoutController extends React.Component {
         this.addedWorkoutOptionsRef.current.close();
     }
 
+    renderCurrWorkoutSupersets = () => {
+        if (typeof(this.state.currPressedPopulatedWorkout) == 'undefined') {
+            return (
+                <View>
+                    <Caption>
+                        You haven't added any supersets to this exercise.
+                    </Caption>
+                </View>
+            )
+        }
+
+        return (
+            <ScrollView>
+                {
+                this.state.currPressedPopulatedWorkout.superset.map(exercise => {
+                             return (
+                                <View style={{width: 100, height: 100}}>
+                                <View style={{flex: 1}} >
+                           <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                                <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+              </Surface>
+                           </View>
+                           <Text style={{padding: 3}}>
+                  Push up
+              </Text>
+                                </View>
+                             )
+                         })
+                }
+            </ScrollView>
+        )
+    }
 
     renderWorkoutOptionsSheet = () => {
         return (
             <RBSheet
                 ref={this.addedWorkoutOptionsRef}
-                height={140}
+                height={Dimensions.get('window').height / 3}
                 closeOnPressMask={true}
                 customStyles={{
                     wrapper: {
@@ -884,7 +885,13 @@ class BuildWorkoutController extends React.Component {
                         Remove Workout
                     </Text>
                 </View>
-             
+            <Divider style={{alignSelf: 'center', width: Dimensions.get('window').width}} />
+             <View style={{width: '100%'}}>
+                 <Text style={{alignSelf: 'flex-end', paddingVertical: 5, fontSize: 18, fontWeight: 'bold'}}>
+                     Exercise Supersets ({typeof(this.state.currPressedPopulatedWorkout) == 'undefined' ? 0 : this.state.currPressedPopulatedWorkout.superset.length})
+                 </Text>
+                 {this.renderCurrWorkoutSupersets()}
+             </View>
 </View>
 <SafeAreaView />
             </RBSheet>
@@ -919,7 +926,7 @@ class BuildWorkoutController extends React.Component {
                     </View>
                    
                     <Caption style={{color: 'white'}}>
-                        Choose a day of the week and add exercises Select your workouts for further options.
+                        Choose a day of the week and add exercises. Select your added exercises for further options.
                     </Caption>
                     </View>
                    
@@ -1005,7 +1012,7 @@ class BuildWorkoutController extends React.Component {
                     <View style={{height: '100%', width: 1.5,  backgroundColor: '#EEEEEE'}} />
 
                     <View style={{flex: 1.5}}>
-                        <ScrollView contentContainerStyle={{alignItems: 'center', width: '100%'}}>
+                        <ScrollView onLayout={event => this.setState({ addedWorkoutsScrollViewWidth: event.nativeEvent.layout.width })} contentContainerStyle={{alignItems: 'center', width: '100%'}}>
                 
                             {this.getCurrentDayContent()}
                       
@@ -1078,8 +1085,7 @@ const styles = StyleSheet.create({
         borderColor: '#1089ff',
         borderWidth: 0.5,
         padding: 10,
-        shadowRadius: 50,
-        shadowColor: 'red',
+        flex: 1,
     
     }
 })
