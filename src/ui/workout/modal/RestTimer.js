@@ -34,7 +34,11 @@ const RestTimer = ({isVisible, closeModal, timerHasStarted}) => {
     return (
         <Modal visible={isVisible} presentationStyle="overFullScreen" transparent >
             <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', alignItems: 'center', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontSize: 40, fontWeight: 'bold'}}>
+            <Text style={{color: 'white', paddingHorizontal: 20, paddingVertical: 10, fontSize: 20, fontWeight: 'bold'}}>
+                    Loading your next workout.  Take this time to rest and drink some water.
+                </Text>
+
+                <Text style={{color: 'white', fontSize: 35, fontWeight: 'bold'}}>
                     {secondsLeft}
                 </Text>
             </View>
