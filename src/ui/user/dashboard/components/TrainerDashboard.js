@@ -45,6 +45,9 @@ function TrainerDashboard(props) {
     })
     const [lastUpdated, setLastUpdated] = useState(new Date().getTime());
     const [componentReady, setComponentReady] = useState(false);
+    const [currPurchaseHistoryStartIndex, setCurrPurchaseHistoryStartIndex] = useState(0);
+    const [currPurchaseHistoryEndIndex, setCurrPurchaseHistoryEndIndex] = useState(3);
+    const [currPage, setCurrPage] = useState(1)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     useEffect(() => {
@@ -89,11 +92,8 @@ function TrainerDashboard(props) {
             )
         }
 
-        return data.purchaseMetaData.purchase_history.map((purchaseHistory, index, arr) => {
-            if (index == 3) {
-                return;
-            }
-
+        return data.purchaseMetaData.purchase_history.slice(currPurchaseHistoryStartIndex, currPurchaseHistoryEndIndex).map((purchaseHistory, index, arr) => {
+   
             return (
                 <DataTable.Row>
                 <DataTable.Cell>{purchaseHistory.purchaser} </DataTable.Cell>
@@ -112,13 +112,22 @@ function TrainerDashboard(props) {
         } else {
             return (
             <DataTable.Pagination
-                page={1}
+                page={currPage}
                 numberOfPages={componentReady === true ? data.purchaseMetaData.purchase_history : 0}
-                onPageChange={(page) => { console.log(page); }}
-                label="1-1 of 1"
+                onPageChange={(page) => handleNextPage(page)}
+                label={`1-3 of ${Math.round(data.purchaseMetaData.purchase_history.length / currPurchaseHistoryEndIndex)}`}
               />
             )
         }
+    }
+
+    const handleNextPage = (page) => {
+       let updatedStartIndex = currPurchaseHistoryStartIndex + 3
+       setCurrPurchaseHistoryStartIndex(updatedStartIndex)
+      
+       let updatedEndIndex = currPurchaseHistoryEndIndex + 3;
+       setCurrPurchaseHistoryEndIndex(updatedEndIndex)
+
     }
 
     const renderGrossPay = () => {

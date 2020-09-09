@@ -2,7 +2,7 @@
 "lupa_workouts": [
   {
       "workout_name": "Squat",
-      "workout_description": "",
+      "workout_description": "A squat is a strength exercise in which the trainee lowers their hips from a standing position and then stands back up.",
       "workout_media": {
           "uri:": "",
           "media_type": ""
@@ -17,7 +17,7 @@
   },
   {
     "workout_name": "Lunge",
-    "workout_description": "",
+    "workout_description": "A lunge can refer to any position of the human body where one leg is positioned forward with knee bent and foot flat on the ground while the other leg is positioned behind.",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -32,7 +32,7 @@
 },
 {
     "workout_name": "Crunch",
-    "workout_description": "",
+    "workout_description": "The crunch is one of the most popular abdominal exercises. When performed properly, it engages all the abdominal muscles but primarily it works the rectus abdominis muscle and the obliques.",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -47,7 +47,7 @@
 },
 {
     "workout_name": "Bench Press",
-    "workout_description": "",
+    "workout_description": "The bench press is an upper-body weight training exercise in which the trainee presses a weight upwards while lying on a weight training bench.",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -62,7 +62,7 @@
 },
 {
     "workout_name": "Leg Press",
-    "workout_description": "",
+    "workout_description": "The leg press is a weight training exercise in which the individual pushes a weight or resistance away from them using their legs.",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -77,7 +77,7 @@
 },
 {
     "workout_name": "Push Up",
-    "workout_description": "",
+    "workout_description": "A push-up is a common calisthenics exercise beginning from the prone position. By raising and lowering the body using the arms, push-ups exercise the pectoral muscles, triceps, and anterior deltoids, with ancillary benefits to the rest of the deltoids, serratus anterior, coracobrachialis and the midsection as a whole. ",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -92,7 +92,7 @@
 },
 {
     "workout_name": "Plank",
-    "workout_description": "",
+    "workout_description": "The plank is an isometric core strength exercise that involves maintaining a position similar to a push-up for the maximum possible time.",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -122,7 +122,7 @@
 },
 {
     "workout_name": "Jumping Jacks",
-    "workout_description": "",
+    "workout_description": "A wall sit is an exercise done to strengthen the quadriceps muscles. It is characterized by the two right angles formed by the body, one at the hips and one at the knees.",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -137,7 +137,7 @@
 },
 {
     "workout_name": "Dumbbell Curls",
-    "workout_description": "",
+    "workout_description": "Biceps curl is a general term for a series of strength exercises that involve brachioradialis, front deltoid and the main target on biceps brachii. Includes variations using barbell, dumbbell and resistance band, etc",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -152,7 +152,7 @@
 },
 {
     "workout_name": "Pullups",
-    "workout_description": "",
+    "workout_description": "A pull-up is an upper-body strength exercise. The pull-up is a closed-chain movement where the body is suspended by the hands and pulls up.",
     "workout_media": {
         "uri:": "",
         "media_type": ""
@@ -182,7 +182,7 @@
 },
 {
     "workout_name": "Plank",
-    "workout_description": "",
+    "workout_description": "The plank is an isometric core strength exercise that involves maintaining a position similar to a push-up for the maximum possible time",
     "workout_media": {
         "uri:": "",
         "media_type": ""

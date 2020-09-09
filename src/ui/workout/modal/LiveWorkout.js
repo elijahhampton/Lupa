@@ -79,6 +79,7 @@ class LiveWorkout extends React.Component {
                 workout_reps: 0,
                 superset: []
             },
+            currentWrkoutOriginalReps: 0,
             currentWorkoutStructure: [],
             workoutDays: [],
             currentWorkoutDay: "",
@@ -192,31 +193,31 @@ class LiveWorkout extends React.Component {
         switch (day) {
             case 'Monday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Monday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Tuesday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Tuesday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Wednesday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Wednesday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Thursday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Thursday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Friday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Friday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Saturday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Saturday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Sunday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Sunday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             default:
         }
@@ -450,7 +451,6 @@ class LiveWorkout extends React.Component {
     }
 
     advanceExercise = () => {
-       this.setState({ restTimerVisible: true, restTimerStarted: true });
         if (this.state.currentWorkoutIndex === this.state.currentWorkoutStructure.length - 1) {
             this.setState({
                 showFinishedDayDialog: true
@@ -458,12 +458,28 @@ class LiveWorkout extends React.Component {
             return;
         }
 
-        this.setState(prevState => {
-            return {
-                currentWorkout: this.state.currentWorkoutStructure[prevState.currentWorkoutIndex + 1],
-                currentWorkoutIndex: prevState.currentWorkoutIndex + 1
+            if (this.state.currentWorkout.workout_reps != 0) {
+                let currentWorkout = this.state.currentWorkout;
+                currentWorkout.workout_reps -= 1;
+                this.setState({ currentWorkout: currentWorkout });
+                return;
+            } else if (this.state.currentWorkout.workout_reps == 0 &&  this.state.currentWorkout.workout_sets != 0) {
+                let currentWorkout = this.state.currentWorkout;
+                currentWorkout.workout_sets -= 1;
+                currentWorkout.workout_reps = this.state.currentWorkoutOriginalReps;
+                this.setState({ currentWorkout: currentWorkout });
+            } else if (this.state.currentWorkout.workout_reps == 0 &&  this.state.currentWorkout.workout_sets == 0) {
+                this.setState({ restTimerVisible: true, restTimerStarted: true });
+                this.setState(prevState => {
+                    return {
+                        currentWorkout: this.state.currentWorkoutStructure[prevState.currentWorkoutIndex + 1],
+                        currentWorkoutIndex: prevState.currentWorkoutIndex + 1
+                    }
+                })
             }
-        })
+
+
+        
     }
 
     renderWorkoutReps = () => {
@@ -532,7 +548,7 @@ class LiveWorkout extends React.Component {
                     </View>
 
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                        <View style={{ paddingHorizontal: 10, flex: 2, alignItems: 'flex-start', justifyContent: 'center' }}>
+                        <View style={{ paddingHorizontal: 10, flex: 2.5, alignItems: 'flex-start', justifyContent: 'center' }}>
                             <Text style={{ fontFamily: 'Avenir-Heavy' }}>
                                 {this.state.currentWorkout.workout_name}
                             </Text>
@@ -542,9 +558,7 @@ class LiveWorkout extends React.Component {
                         </View>
 
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ alignSelf: 'flex-start', fontFamily: 'Avenir-Heavy' }}>
-                                Participants
-                        </Text>
+                            
                             <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Profile', { userUUID: this.props.lupa_data.Users.currUserData.user_uuid })}>
                             <Surface style={{ marginVertical: 5, elevation: 8, width: 45, height: 45, borderRadius: 65 }}>
                                 {this.props.lupa_data.Users.currUserData.photo_url == '' ? <Avatar.Text size={45} label="EH" labelStyle={{ color: 'white', fontSize: 15, fontFamily: 'Avenir' }} style={{ backgroundColor: '#1089ff' }} /> : <Avatar.Image style={{ flex: 1 }} size={45} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} />}
