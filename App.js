@@ -36,6 +36,8 @@ import SettingsStackNavigator from './src/ui/navigators/SettingsNavigator';
 import CreateWorkout from './src/ui/workout/createworkout/CreateWorkout';
 import { localNotificationService } from './src/controller/firebase/service/LocalNotificationsService'
 import { fcmService } from './src/controller/firebase/service/FCMService';
+
+
 const App = () => {
   return (
     <NavigationContainer>

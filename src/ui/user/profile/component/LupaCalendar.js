@@ -59,6 +59,8 @@ function getMonthString(monthNum) {
 }
 
 
+const HEIGHT = 800
+
 function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
   const [markedDates, setMarkedDates] = useState({})
   const [items, setItems] = useState({})
@@ -150,7 +152,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
     });
 
     return (
-      <View style={{backgroundColor: 'white', width: '100%'}}>
+      <View style={{height: HEIGHT, backgroundColor: 'white', width: '100%'}}>
         <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
         <Text style={{ fontSize: 20, fontFamily: 'Avenir-Light'}}>
       {day.day}
@@ -197,7 +199,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
   }}å
 
   // Agenda container style
-  style={{height: Dimensions.get('window').height}}
+  style={{height: HEIGHT}}
 >
   <Text>
     Hi
@@ -210,7 +212,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: Dimensions.get('window').height,
+    height: HEIGHT,
   },
   dateHeading: {
       margin: 10,

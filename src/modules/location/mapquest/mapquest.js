@@ -37,7 +37,6 @@ export default getLocationFromCoordinates = async (long, lat) => {
         console.log(err);
     });
 
-
     //get all keys from locations field - specifically the first object which contains the main location data we need
     let mainLocationData = locationDataResults.results[0].locations[0];
 

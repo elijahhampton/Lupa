@@ -35,6 +35,27 @@ import ProfileProgramCard from '../../workout/program/components/ProfileProgramC
 import LOG from '../../../common/Logger';
 import VlogFeedCard from '../component/VlogFeedCard'
 
+const LAT_LONG_DIFF = 60
+
+function inside(point, vs) {
+    // ray-casting algorithm based on
+    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
+    
+    var x = point[0], y = point[1];
+    
+    var inside = false;
+    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        var xi = vs[i][0], yi = vs[i][1];
+        var xj = vs[j][0], yj = vs[j][1];
+        
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    
+    return inside;
+};
+
 function TrainerProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -44,8 +65,9 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0)
     const [markedDates, setMarkedDates] = useState([])
+   const [showSchedulerButton, setShowSchedulerButton] = useState(false);
     const [ready, setReady] = useState(false)
-    
+
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
@@ -276,6 +298,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
         } else {
             fetchPrograms(userData.user_uuid);
         }
+        checkCurrFitnessLocation()
                 setReady(true)
             } catch(error) {
                 setReady(false)
@@ -285,7 +308,80 @@ function TrainerProfile({ userData, isCurrentUser }) {
             }
         }
 
+        function inside(point, vs) {
+    // ray-casting algorithm based on
+    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
+    
+    var x = point[0], y = point[1];
+    
+    var inside = false;
+    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        var xi = vs[i][0], yi = vs[i][1];
+        var xj = vs[j][0], yj = vs[j][1];
+        
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    
+    return inside;
+};
+
+        async function checkCurrFitnessLocation() {
+            let results = []
+        try {
+            await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=gym&location=${userData.location.lat},${userData.location.lng}&radius=5000&type=gym&key=AIzaSyAPrxdNkncexkRazrgGy4FY6Nd-9ghZVWE`).then(response => response.json()).then(result => {
+                results = result.results;    
+            });
+
+            for (let i = 0; i < results.length; i++) {
+                LOG('TrainerProfile.js', 'Checking location')
+                 //Create the region around the result
+                //TOP LEFT
+                const topLeftLAT = results[i].geometry.location.lat + LAT_LONG_DIFF;
+                const topLeftLONG =  results[i].geometry.location.long - LAT_LONG_DIFF;
+
+                //TOP RIGHT
+                const topRightLAT = results[i].geometry.location.lat - LAT_LONG_DIFF;
+                const topRightLONG = results[i].geometry.location.long - LAT_LONG_DIFF;
+
+                //BOTTOM LEFT
+                const bottomLeftLAT = results[i].geometry.location.lat + LAT_LONG_DIFF;
+                const bottomLeftLONG = results[i].geometry.location.long + LAT_LONG_DIFF;
+
+                //BOTTOM RIGHT
+                const bottomRightLAT = results[i].geometry.location.lat - LAT_LONG_DIFF;
+                const bottomRightLONG = results[i].geometry.location.lat + LAT_LONG_DIFF;
+
+                const polygon = [
+                    [topLeftLAT, topLeftLONG],
+                    [topRightLAT, topRightLONG],
+                    [bottomLeftLAT, bottomLeftLONG],
+                    [bottomRightLAT, bottomRightLONG]
+                ]
+
+                const trainerIsInside = inside([userData.location.lat, userData.location.long], polygon);
+                const currUserIsInside = inside([currUserData.location.lat, currUserData.location.long], polygon);
+                
+                if (trainerIsInside === true  && currUserIsInside === true) {
+                    console.log('WORKING')
+                    setShowSchedulerButton(true);
+                    return;
+                }
+                console.log('NOT WORKING');
+                setShowSchedulerButton(false);
+            }
+        } catch (err)
+        {
+            alert(err);
+            setShowSchedulerButton(false)
+        }
+
+
+        }
+
         loadProfileData()
+       
         LOG('TrainerProfile.js', 'Running useEffect.')
     }, [ready])
 
@@ -315,6 +411,15 @@ function TrainerProfile({ userData, isCurrentUser }) {
             {renderInteractions()}
             </View>
 
+           {
+                showSchedulerButton === true ?
+                <View  style={{backgroundColor: 'rgb(248, 248, 248)', width: '100%', height: Dimensions.get('window').height}}>
+                <LupaCalendar captureMarkedDates={captureMarkedDate} />
+            </View>
+               :
+            null
+            }
+
             <Tabs tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
                     <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
@@ -324,11 +429,6 @@ function TrainerProfile({ userData, isCurrentUser }) {
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
        <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
                         {renderVlogs()}
-                    </View>
-              </Tab>
-              <Tab containerStyle={{flex: 1}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-                    <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>
-                    <LupaCalendar captureMarkedDates={captureMarkedDate} />
                     </View>
               </Tab>
             </Tabs>

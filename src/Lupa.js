@@ -21,26 +21,105 @@ import { generateMessagingToken, requestNotificationPermissions, registerAppWith
 import { fcmService } from './controller/firebase/service/FCMService'
 import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal'
 import WelcomeContentDriver from "./ui/user/modal/WelcomeContentDriver";
+import {check, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import getLocationFromCoordinates from './modules/location/mapquest/mapquest'
+import Geolocation from '@react-native-community/geolocation';
 
-const Lupa = () => {
-  const currUserData = useSelector(state => {
-    return state.Users.currUserData;
-  });
+Geolocation.setRNConfiguration({
+  authorizationLevel: 'whenInUse',
+  skipPermissionRequests: false,
+});
 
-  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+const mapStateToProps = (state, action) => {
+  return {
+    lupa_data: state
+  }
+}
 
-   useEffect(() => {
-    fcmService.requestNotificationPermissions()
-    generateMessagingToken(currUserData.user_uuid)
-     LUPA_CONTROLLER_INSTANCE.indexApplicationData()
-   }, [])
+class Lupa extends React.Component {
+  constructor(props) {
+    super(props);
+    
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-  return (
-    <View style={{flex: 1}}>
-      <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-      <LupaDrawerNavigator />
-    </View>
-  )
+    this.state = {
+      initialPosition: '',
+      lastPosition: '',
+      locationPermissionStatus: '',
+    }
+  }
+
+  async componentDidMount() {
+  
+    await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+    
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          alert('Location Services Unavailable')
+          this.setState({ locationPermissionStatus: 'unavailable' })
+          break;
+        case RESULTS.DENIED:
+          alert('Location Services Denied')
+          this.setState({ locationPermissionStatus: 'denied' })
+          break;
+        case RESULTS.GRANTED:
+          this.setState({ locationPermissionStatus: 'granted' })
+          break;
+        case RESULTS.BLOCKED:
+          alert('Location Services Blocked')
+          this.setState({ locationPermissionStatus: 'blocked' })
+          break;
+        default:
+       
+      }
+    })
+    .catch((error) => {
+      // …
+      alert(error)
+    });
+
+    generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid)
+
+  if (this.state.locationPermissionStatus == 'granted') {
+    Geolocation.getCurrentPosition(
+      async (position) => {
+        const locationData = await getLocationFromCoordinates(position.coords.longitude, position.coords.latitude);
+        console.log("AAAAAAAAAAAA")
+        console.log(locationData)
+        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
+         const initialPosition = JSON.stringify(position);
+         this.setState({ initialPosition : initialPosition });
+      },
+      (error) => alert(error.message),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+   );
+
+    this.watchID = Geolocation.watchPosition(async (position) => {
+      const locationData = await getLocationFromCoordinates(position.coords.longitude, position.coords.latitude);
+      await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
+      const lastPosition = await JSON.stringify(position);
+      this.setState({ lastPosition: lastPosition });
+     // console.log('From Lupa.js');
+      //console.log(locationData)
+   });
+  }
+
+  this.LUPA_CONTROLLER_INSTANCE.indexApplicationData()
+}
+
+  componentWillUnmount() {
+    Geolocation.clearWatch(this.watchID);
+  }
+
+  render() {
+    return (
+      <View style={{flex: 1}}>
+        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
+        <LupaDrawerNavigator />
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
@@ -50,4 +129,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Lupa;
+export default connect(mapStateToProps)(Lupa);
