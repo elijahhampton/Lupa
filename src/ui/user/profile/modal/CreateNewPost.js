@@ -126,27 +126,29 @@ function CreateNewPost(props) {
     return (
         <View style={{flex: 1}}>
             <View style={{flex: 1}}>
-    <Appbar.Header  style={{ height: Constants.statusBarHeight + 20, backgroundColor: 'white'}} statusBarHeight>
+    <Appbar.Header  style={{backgroundColor: 'white'}}>
     <Appbar.Action onPress={handleClose}  style={{alignSelf: 'flex-start'}} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />} />
     <Appbar.Content title="New Vlog" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+    <Button uppercase={false} color="#1089ff">
+        Post
+    </Button>
     </Appbar.Header>
 
-                <View style={{flex: 1, justifyContent: 'space-between'}}>
+                <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: 'white'}}>
                 
 
 
-                        <Surface style={{borderRadius: 8, borderWidth: 0.5, borderColor: '#E5E5E5', flex: 1, margin: 10, elevation: 0}}>
-                            <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                            <ThinFeatherIcon name="camera" size={20} onPress={handleAddImage}/>
-                            <ThinFeatherIcon name="video" size={20} onPress={handleAddVideo}/>
-                            <ThinFeatherIcon name="aperture" size={20} onPress={handleOpenCameraRoll} />
-                           {/* <ThinFeatherIcon color="#1089ff" name="clipboard" size={20} />
-                            <ThinFeatherIcon color="#1089ff" name="activity" size={20} />*/}
-                            </View>
-                            <Divider style={{marginHorizontal: 20}} />
+                        <Surface style={{flex: 1, margin: 10, elevation: 0}}>
+                           
+  
 
-                            <TextInput keyboardType="twitter" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)}  style={{fontSize: 15,lineHeight: 20, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', margin: 10}} placeholder="Share techniques and advice..." />
-                            
+                            <TextInput inputAccessoryViewID="textInputAccessory" keyboardType="twitter" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)}   style={{fontSize: 20,lineHeight: 20, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Share techniques and advice..." />
+                            <InputAccessoryView nativeID={"textInputAccessory"}>
+                            <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                            <ThinFeatherIcon style={{paddingHorizontal: 20}} name="video" size={20} onPress={handleAddVideo}/>
+                            <ThinFeatherIcon style={{paddingHorizontal: 20}} name="aperture" size={20} onPress={handleOpenCameraRoll} />
+                            </View>
+                            </InputAccessoryView>
                             
                             {addedPostMedia === true ?
                             <Surface style={{backgroundColor: 'black', width: '90%', alignSelf: 'center', height: 250, borderRadius: 20}}>
@@ -163,7 +165,7 @@ function CreateNewPost(props) {
                     
 
                 </View>
-                <View style={{flex: 1}} />
+                <View style={{flex: 1, backgroundColor: 'white'}} />
                
             </View>
             <FAB onPress={saveVlog} icon="check" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
