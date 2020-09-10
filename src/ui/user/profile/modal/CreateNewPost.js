@@ -35,15 +35,17 @@ function CreateNewPost(props) {
 
     const navigation = useNavigation();
 
-    const currUserUUID = useSelector(state => {
-        return state.Users.currUserData.user_uuid;
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
     })
     
+    const [titleText, setTitleText] = useState("")
     const [postText, setPostText] = useState("");
     const [postMediaURI, setPostMediaURI] = useState("");
     const [postMediaType, setPostMediaType] = useState("");
     const [addedPostMedia, setAddedPostMedia] = useState(false)
     const postTextInputRef = createRef();
+    const titleTextInputRef = createRef();
     const [ready, setReady] = useState(false)
 
     const handleCaptureNewMediaURI = (uri, mediaType) => {
@@ -57,6 +59,8 @@ function CreateNewPost(props) {
     }
 
     const handleAddVideo = () => {
+        titleTextInputRef.current.blur();
+        postTextInputRef.current.blur();
         navigation.push('LupaCamera', {
             captureURI: handleCaptureNewMediaURI,
             mediaCaptureType: 'VIDEO',
@@ -88,6 +92,8 @@ function CreateNewPost(props) {
     }
 
     const handleOpenCameraRoll = () => {
+        titleTextInputRef.current.blur();
+        postTextInputRef.current.blur();
         ImagePicker.showImagePicker({
             allowsEditing: true,
             cancelButtonTitle: 'Cancel'
@@ -100,8 +106,14 @@ function CreateNewPost(props) {
     }
 
     const saveVlog = () => {
-        const vlogStructure = getLupaVlogStructure(postText, postMediaURI, postMediaType, currUserUUID, new Date().getTime(), new Date());
+        //Get a vlog structure
+        const vlogStructure = getLupaVlogStructure(titleText, postText, postMediaURI, postMediaType, currUserData.user_uuid, currUserData.location.longitude, currUserData.location.latitude, currUserData.location.city, currUserData.location.state, currUserData.location.country, new Date().getTime(), new Date());
+
+        
+        //save vlog to firestore
         LUPA_CONTROLLER_INSTANCE.publishVlog(vlogStructure);
+
+        //handleClose
         handleClose();
     }
 
@@ -113,59 +125,58 @@ function CreateNewPost(props) {
 
     const handleClose = () => {
         clearVlog();
-        navigation.pop();
+        navigation.goBack();
     }
 
     useEffect(() => {
         setReady(ready);
 
         if (ready) {
-            postTextInputRef.current.focus();
+            titleTextInputRef.current.focus();
         }
     }, [])
     return (
         <View style={{flex: 1}}>
-            <View style={{flex: 1}}>
-    <Appbar.Header  style={{backgroundColor: 'white'}}>
+    <Appbar.Header  style={{backgroundColor: 'white', elevation: 3}}>
     <Appbar.Action onPress={handleClose}  style={{alignSelf: 'flex-start'}} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />} />
     <Appbar.Content title="New Vlog" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
-    <Button uppercase={false} color="#1089ff">
+    <Button mode="contained" theme={{roundness: 5}} uppercase={false} color="#1089ff" onPress={saveVlog}>
         Post
     </Button>
     </Appbar.Header>
 
-                <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: 'white'}}>
-                
+                <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: 'white', paddingTop: Constants.statusBarHeight}}>
+
+                        <View style={{flex: 1,  elevation: 0}}>
+                        <TextInput keyboardType="default" returnKeyLabel="done" returnKeyType="done" ref={titleTextInputRef} value={titleText} maxLength={30} onChangeText={text => setTitleText(text)}    style={{marginVertical: 10, fontSize: 25, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Title..." />
 
 
-                        <Surface style={{flex: 1, margin: 10, elevation: 0}}>
-                           
-  
-
-                            <TextInput inputAccessoryViewID="textInputAccessory" keyboardType="twitter" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)}   style={{fontSize: 20,lineHeight: 20, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Share techniques and advice..." />
+                            <TextInput inputAccessoryViewID="textInputAccessory" keyboardType="default" returnKeyLabel="done" returnKeyType="done" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)}   style={{marginVertical: 20, fontSize: 15, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Share techniques and advice..." />
                             <InputAccessoryView nativeID={"textInputAccessory"}>
                             <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                             <ThinFeatherIcon style={{paddingHorizontal: 20}} name="video" size={20} onPress={handleAddVideo}/>
                             <ThinFeatherIcon style={{paddingHorizontal: 20}} name="aperture" size={20} onPress={handleOpenCameraRoll} />
                             </View>
                             </InputAccessoryView>
-                            
+
                             {addedPostMedia === true ?
-                            <Surface style={{backgroundColor: 'black', width: '90%', alignSelf: 'center', height: 250, borderRadius: 20}}>
+                            <View style={{backgroundColor: 'black', width: '90%', alignSelf: 'center', height: 250, borderRadius: 3}}>
                             {renderMedia()}
-                            </Surface>
+                            </View>
                             :
                             null
                             }
                             
-                        </Surface>
+                          
+                            
+                        </View>
                    
 
                     
                     
 
-                </View>
-                <View style={{flex: 1, backgroundColor: 'white'}} />
+              
+        
                
             </View>
             <FAB onPress={saveVlog} icon="check" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />

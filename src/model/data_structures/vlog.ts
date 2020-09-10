@@ -10,6 +10,7 @@ type LupaVlog = {
     vlog_longitude: String,
     vlog_latitude: String,
     vlog_state: String,
+    vlog_title: String,
     vlog_city: String,
     vlog_country: String,
     time_created: String,
@@ -19,6 +20,7 @@ type LupaVlog = {
 var lupa_vlog_structure : LupaVlog = {
     vlog_uuid: '',
     vlog_text: '',
+    vlog_title: '',
     vlog_media: {
         uri: '',
         media_type: '',
@@ -33,7 +35,7 @@ var lupa_vlog_structure : LupaVlog = {
     date_created: "",
 }
 
-export const getLupaVlogStructure = (text, uri, mediaType, owner, longitude, latitude, city, state, country, timeCreated, dateCreated) => {
+export const getLupaVlogStructure = (title, text, uri, mediaType, owner, longitude, latitude, city, state, country, timeCreated, dateCreated) => {
     lupa_vlog_structure.vlog_uuid = 0;
     lupa_vlog_structure.vlog_text = text;
     lupa_vlog_structure.vlog_media.uri = uri;
@@ -41,10 +43,11 @@ export const getLupaVlogStructure = (text, uri, mediaType, owner, longitude, lat
     lupa_vlog_structure.vlog_owner = owner;
     lupa_vlog_structure.time_created = timeCreated;
     lupa_vlog_structure.date_created = dateCreated;
-    lupa_vlog_structure.vlog_longitude = "";
-    lupa_vlog_structure.vlog_latitude = "";
-    lupa_vlog_structure.vlog_state = "";
-    lupa_vlog_structure.vlog_city = "";
-    lupa_vlog_structure.vlog_country = "";
+    lupa_vlog_structure.vlog_longitude = longitude;
+    lupa_vlog_structure.vlog_latitude = latitude;
+    lupa_vlog_structure.vlog_title = title;
+    lupa_vlog_structure.vlog_state = state;
+    lupa_vlog_structure.vlog_city = city;
+    lupa_vlog_structure.vlog_country = country;
     return lupa_vlog_structure;
 }

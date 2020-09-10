@@ -24,6 +24,8 @@ import WelcomeContentDriver from "./ui/user/modal/WelcomeContentDriver";
 import {check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import getLocationFromCoordinates from './modules/location/mapquest/mapquest'
 import Geolocation from '@react-native-community/geolocation';
+import LOG from "./common/Logger";
+import CreateNewPost from "./ui/user/profile/modal/CreateNewPost";
 
 Geolocation.setRNConfiguration({
   authorizationLevel: 'whenInUse',
@@ -50,7 +52,7 @@ class Lupa extends React.Component {
   }
 
   async componentDidMount() {
-  
+    LOG('Lupa.js', 'Checking location permissions.');
     await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
     
     .then((result) => {
@@ -82,11 +84,10 @@ class Lupa extends React.Component {
     generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid)
 
   if (this.state.locationPermissionStatus == 'granted') {
+    LOG('Lupa.js', 'Retrieving the current users position');
     Geolocation.getCurrentPosition(
       async (position) => {
         const locationData = await getLocationFromCoordinates(position.coords.longitude, position.coords.latitude);
-        console.log("AAAAAAAAAAAA")
-        console.log(locationData)
         await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
          const initialPosition = JSON.stringify(position);
          this.setState({ initialPosition : initialPosition });
@@ -100,8 +101,6 @@ class Lupa extends React.Component {
       await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
       const lastPosition = await JSON.stringify(position);
       this.setState({ lastPosition: lastPosition });
-     // console.log('From Lupa.js');
-      //console.log(locationData)
    });
   }
 
@@ -109,13 +108,14 @@ class Lupa extends React.Component {
 }
 
   componentWillUnmount() {
+    LOG('Lupa.js', 'Clearing subscription to Geolocation');
     Geolocation.clearWatch(this.watchID);
   }
 
   render() {
     return (
       <View style={{flex: 1}}>
-        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
+  <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
         <LupaDrawerNavigator />
       </View>
     )

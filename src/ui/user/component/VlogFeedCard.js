@@ -33,7 +33,7 @@ function VlogFeedCard({ vlogData }) {
 
     return (
         <Card theme={{roundness: 10}} style={{marginVertical: 10, alignSelf: 'center', width: Dimensions.get('window').width - 20, borderRadius: 20, elevation: 5}}>
-                        <Card.Cover resizeMode="cover" theme={{roundness: 10}} style={{elevation: 0, height: 180, borderRadius: 0}} source={{uri: 'https://picsum.photos/200/'}} />
+                        <Card.Cover resizeMode="cover" theme={{roundness: 10}} style={{elevation: 0, height: 180, width: Dimensions.get('window').width - 20, borderRadius: 0}} source={{uri: vlogData.vlog_media.uri}} />
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, position: 'absolute', bottom: cardContentHeight + 15, right: 0, }}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                         <Chip textStyle={{color: 'white'}} style={{backgroundColor: 'rgba(0,0,0,0.3)', position: 'absolute', left: 30,  borderTopLeftRadius: 0, borderBottomLeftRadius: 0, height: 25, alignItems: 'center', justifyContent: 'center'}}>
