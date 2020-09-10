@@ -19,6 +19,7 @@ const ProfileController = ({ route }) => {
     const [userData, setUserData] = useState(getLupaUserStructure());
     const [isCurrentUser, setIsCurrentUser] = useState(false);
     const [ready, setReady] = useState(false);
+    const [userUUID, setUserUUID] = useState(0);
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -33,8 +34,10 @@ const ProfileController = ({ route }) => {
         try {
             if (route.params.userUUID) {
                 id = route.params.userUUID;
+                setUserUUID(id)
         } else {
             id = currUserData.user_uuid
+            setUserUUID(id)
         }
         } catch(error) {
             alert(error);
@@ -45,10 +48,11 @@ const ProfileController = ({ route }) => {
     }
 
     const renderProfile = () => {
+        
             switch(userData.isTrainer) {
        
                 case true:
-                   return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} />
+                   return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} uuid={userUUID} />
                 case false:
                     return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} />
                   // return <UserProfile userData={userData} isCurrentUser={isCurrentUser} />

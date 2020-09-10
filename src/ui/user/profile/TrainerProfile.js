@@ -58,7 +58,7 @@ function inside(point, vs) {
     return inside;
 };
 
-function TrainerProfile({ userData, isCurrentUser }) {
+function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const navigation = useNavigation();
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
@@ -300,13 +300,13 @@ function TrainerProfile({ userData, isCurrentUser }) {
         async function loadProfileData() {
             try {
                 setProfileImage(userData.photo_url)
-               // await fetchVlogs(userData.user_uuid);
+                await fetchVlogs(userData.user_uuid);
         if (isCurrentUser) {
             setUserPrograms(currUserPrograms)
         } else {
             fetchPrograms(userData.user_uuid);
         }
-        checkCurrFitnessLocation()
+       checkCurrFitnessLocation()
                 setReady(true)
             } catch(error) {
                 setReady(false)
@@ -373,7 +373,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
                      <Button onPress={() => setShowSchedulerButton(false)} mode="contained" uppercase={false} color='#1089ff' style={{marginVertical: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
                 Done
             </Button>
-                <LupaCalendar captureMarkedDates={captureMarkedDate} />
+            <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} />
            </View>
             )
         }
@@ -440,7 +440,7 @@ function TrainerProfile({ userData, isCurrentUser }) {
                   isCurrentUser === true ? 
                   <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Scheduler">
                   <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>
-                  <LupaCalendar captureMarkedDates={captureMarkedDate} uuid={userData.user_uuid} />
+                  <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} />
                   </View>
                     </Tab>
                   :
