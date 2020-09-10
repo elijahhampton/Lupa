@@ -120,7 +120,7 @@ function DrawerMenu(props) {
 
         <Divider />
         <Caption style={{padding: 10}}>
-          Version 0.7 (28)
+          Version 0.7 (30)
         </Caption>
 
 
