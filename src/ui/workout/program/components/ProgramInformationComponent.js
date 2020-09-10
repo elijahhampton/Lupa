@@ -58,41 +58,22 @@ function ProgramInformationComponent({ program }) {
     }, [])
 
     return (
-        <View style={{width: Dimensions.get('window').width, padding: 20,}}>
-                            <Surface style={{ elevation: 10, flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto',}} >
-                                                    
+        <View style={{width: Dimensions.get('window').width, marginVertical: 10}}>
+                            <Surface style={{ elevation: 0, justifyContent: 'center', flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto',}} >             
                             <View style={{width: 60, height: 60, alignItems: 'flex-start', justifyContent: 'center' }}>
                                 <Surface style={{width: '100%', height: '100%', elevation: 0, borderRadius: 3}}>
                                     <Image style={{width: '100%', height: '100%', borderRadius: 3}} source={{uri: program.program_image}} />
                                 </Surface>
                             </View>
-                    
-                            <View style={{height: '80%', justifyContent: 'space-between' }}>
-                                <View style={{justifyContent: 'space-between', flexDirection: 'row',}}>
-                                <View style={{paddingHorizontal: 10}} >
+                                <View style={{paddingHorizontal: 20, width: '80%'}} >
                                     <Text style={{fontSize: 15, color: '#212121'}}>
                                         {program.program_name}
                                     </Text>
-                                    <Text style={{paddingVertical: 10, fontSize: 10,flexWrap: 'wrap'}} numberOfLines={4}>
+                                    <Text style={{fontSize: 10,flexWrap: 'wrap'}} numberOfLines={3}>
                                     {program.program_description}
                                     </Text>
-
-
                                 </View>
-
-                                </View>
-
-                           
-                         
-                            </View>
-                    
-                    
                           </Surface>
-                        
-                          <Text style={{ paddingVertical: 10, color: '#1089ff', fontWeight: '500', letterSpacing: 1}}>
-                              Preview Program
-                          </Text>
-                 
                           </View>
     )
 }

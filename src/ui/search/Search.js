@@ -6,103 +6,121 @@ import {
     SafeAreaView,
     StyleSheet,
     ScrollView,
+    Animated,
+    RefreshControl,
     Dimensions,
 } from 'react-native'
 
+import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
+
 import LupaController from '../../controller/lupa/LupaController'
-import { Appbar, Button } from 'react-native-paper'
+import { Appbar, Button, FAB, Surface } from 'react-native-paper'
 import {
     SearchBar
 } from 'react-native-elements'
+
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import LargeProgramSearchResultCard from '../workout/program/components/LargeProgramSearchResultCard'
 import Feather1s from 'react-native-feather1s/src/Feather1s'
 import { useNavigation } from '@react-navigation/native'
 import { Constants } from 'react-native-unimodules'
+import { MenuIcon } from '../icons';
+import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
+import LUPA_DB from '../../controller/firebase/firebase';
 
 const CATEGORY_SEPARATION = 15
+const NAVBAR_HEIGHT = 50;
+const {width: SCREEN_WIDTH} = Dimensions.get("window");
+const COLOR = "#FFFFFF";
+const TAB_PROPS = {
+  tabStyle: {backgroundColor: COLOR},
+  activeTabStyle: {backgroundColor: COLOR},
+  textStyle: {color: "rgba(35, 55, 77, 0.75)", fontFamily: 'Avenir-Heavy'},
+  activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold'}
+};
 
-function Search({ navigation, route }) {
-    const LUPA_CONTROLLER_INSTANCE= LupaController.getInstance();
+class Search extends React.Component {
+    constructor(props) {
+        super(props);
 
-    const [searching, setIsSearching] = useState(false)
-    const [searchValue, setSearchValue] = useState("")
-    const [searchResults, setSearchResults] = useState([])
+        this.LUPA_CONTROLLER_INSTANCE= LupaController.getInstance();
+
+        this.state = {
+            searching: false,
+            searchValue: "",
+            searchResults: [],
+            refreshing: false,
+            popularPrograms: [],
+        }
+
+    }
+
+    componentDidMount() {
+        let docData = getLupaProgramInformationStructure();
+        let popularProgramResults = [];
+
+        this.popularProgramsObsever = LUPA_DB.collection('programs').where('completedProgram', '==', true).onSnapshot(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                docData = doc.data();
+                popularProgramResults.push(docData);
+            });
+
+            alert(popularProgramResults.length)
+
+            this.setState({ popularPrograms: popularProgramResults})
+        });
+    }
+
+    componentWillUnmount() {
+        return () => this.popularProgramsObsever();
+    }
+
+    handleOnRefresh() {
+        this.setState({ refreshing: true })
+        this.setState({ refreshing: false })
+      }
 
 
-    const performSearch = async searchQuery => {
+   performSearch = async searchQuery => {
         //If no search query then set state and return
         if (searchQuery == "" || searchQuery == "") {
-            setIsSearching(true)
-            setSearchValue("")
-            setSearchResults([])
-
+            this.state({
+                searching: true,
+                searchValue: "",
+                searchResults: []
+            })
             return;
         }
 
-        await setSearchResults([])
-        await setIsSearching(true)
-        await setSearchValue(searchQuery)
-
-        await LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
-            setSearchResults(searchData)
+        await this.setState({
+            searching: true,
+            searchValue: searchQuery,
+            searchResults: []
         })
 
-        await setIsSearching(false)
+        await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
+            this.setState({ searchResults: searchData })
+        })
+
+        await this.setState({
+            searching: false
+        })
+
     }
 
-    const renderComponentDisplay = () => {
-        if (searching === true) {
-            return renderSearchResults()
+    renderComponentDisplay = () => {
+        if (this.state.searching === true) {
+            return this.renderSearchResults()
         }
 
         return (
-            <ScrollView>
-                <View style={[styles.category, { flexDirection: 'row', alignItems: 'center'}]}>
-                <Text style={styles.categoryText}>
-                    Programs Near you
-                </Text>
-                <FeatherIcon color="#1089ff" name="map-pin" size={15} style={{marginHorizontal: 10}} />
-                </View>
-
-                <View style={styles.category}>
-                <Text style={styles.categoryText}>
-                    Based off of Strength
-                </Text>
-                </View>
-
-                <View style={styles.category}>
-                <Text style={styles.categoryText}>
-                    Based off of Power
-                </Text>
-                </View>
-
-                <View style={styles.category}>
-                <Text style={styles.categoryText}>
-                    Based off of Agility
-                </Text>
-                </View>
-
-                <View style={styles.category}>
-                <Text style={styles.categoryText}>
-                    Based off of Flexibility
-                </Text>
-                </View>
-
-                <View style={styles.category}>
-                <Text style={styles.categoryText}>
-                    Based off of Speed
-                </Text>
-                </View>
-                
-               
-            </ScrollView>
-       
+            null
         )
     }
 
-    const renderSearchResults = () => {
-            return searchResults.map(result => {
+    renderSearchResults = () => {
+            return this.state.searchResults.map(result => {
                 return (
                     <LargeProgramSearchResultCard program={result} />
                 )
@@ -110,34 +128,83 @@ function Search({ navigation, route }) {
         }  
     
 
-
+        render() {
+         
     return (
-        <View style={styles.container}>
-            <Appbar.Header style={styles.appbar}>
-                <Appbar.Action onPress={() => navigation.pop()} icon={() => <Feather1s name="arrow-left" size={20} color="#212121" />} />
-          
-                <SearchBar placeholder="Search fitness programs"
-                    onChangeText={text => performSearch(text)}
-                    platform="ios"
-                    searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
-                    containerStyle={styles.searchContainerStyle}
-                    inputContainerStyle={styles.inputContainerStyle}
-                    inputStyle={styles.inputStyle}
-                    placeholderTextColor="#212121"
-                    value={searchValue} 
 
-                    />
-                    
+        <View style={{flex: 1, backgroundColor: 'white'}}>
+            <Appbar.Header style={styles.appbar}>
+                <Appbar.Action onPress={() => this.props.navigation.pop()} icon={() => <Feather1s name="arrow-left" size={20} color="#212121" />} />
+          
+                <Appbar.Content title="Search" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
               
             </Appbar.Header>
-            {renderComponentDisplay()}
-            <Button theme={{roundness: 8}} mode="contained" color="#1089ff" uppercase={false} style={{elevation: 5, height: 45, alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: Constants.statusBarHeight, alignSelf: 'center', width: Dimensions.get('window').width - 20, }}>
-                    Recommendation
-                </Button>
+          
+          <ScrollView
+          contentContainerStyle={{flex: 1}}
+          refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
+            scrollEventThrottle={1}
+            bounces={false}
+            showsVerticalScrollIndicator={false}>
+            <Tabs 
+            
+            
+            renderTabBar={(props) => <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{width: '90%'}}>
+                <ScrollableTab {...props} style={{  shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: '#FFFFFF', backgroundColor: COLOR}} tabsContainerStyle={{flex: 1, justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 5, width: 5, borderRadius: 10,marginLeft: 30, elevation: 0, borderRadius: 8}}/>
+                </View>
+          
+                <View style={{width: '10%', alignItems: 'center', justifyContent: 'center'}}>
+                    <MaterialIcon name="search" size={20} />
+                </View>
+            </View>
+            }>
+              
+              <Tab heading="Popular" {...TAB_PROPS}>
+                <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
+                    {
+                        this.state.popularPrograms.map(program => {
+                            return (
+                                <LargeProgramSearchResultCard program={program} />
+                            )
+                        })
+                    }
+                </ScrollView>
+    
+              </Tab>
+
+              <Tab heading="Most Recent" {...TAB_PROPS} >
+                <View style={{flex: 1}}>
+
+                </View>
+              </Tab>
+              
+              <Tab heading="Location" {...TAB_PROPS} >
+                <View style={{flex: 1}}>
+
+                </View>
+              </Tab>
+
+              <Tab heading="Strength" {...TAB_PROPS} >
+                <View style={{flex: 1}}>
+
+                </View>
+              </Tab>
+
+              <Tab heading="Endurance" {...TAB_PROPS} >
+                <View style={{flex: 1}}>
+
+                </View>
+              </Tab>
+            </Tabs>
+          </ScrollView>
+  
+       
         </View>
     )
-    
+        }
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -148,7 +215,7 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",flex: 1,
     },
     inputContainerStyle: {
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#FFFFFF',
     },
     inputStyle: {
         fontSize: 15, fontWeight: '800', fontFamily: 'Avenir-Roman'
@@ -161,8 +228,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '#FFFFFF',
-        borderBottomColor: 'rgb(199, 199, 204)', 
-        borderBottomWidth: 0.8 
+       // borderBottomColor: 'rgb(199, 199, 204)', 
+       // borderBottomWidth: 0.8,
+        elevation: 0,
     },
     categoryText: {
         fontSize: 15,
