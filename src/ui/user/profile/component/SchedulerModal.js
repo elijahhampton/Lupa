@@ -27,6 +27,8 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
     const [startTimeMenuVisible, setStartTimeMenuVisible] = useState(false);
     const [endTimeMenuVisible, setEndTimeMenuVisible] = useState(false);
 
+    const [allowTextChange, setAllowTextChange] = useState(0);
+
     const openStartTimeMenu = () => setStartTimeMenuVisible(true);
   
     const closeStartTimeMenu = () => setStartTimeMenuVisible(false);
@@ -61,7 +63,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
       })
     }
 
-    renderSelectedDates = () => {
+    const renderSelectedDates = () => {
       if (selectedDates.length == 0 || typeof(selectedDates) == 'undefined' || selectedDates == null) {
         return (<Caption>
           You haven't selected any dates.  Return to the calendar and select your desired dates.
@@ -87,11 +89,31 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
       LUPA_CONTROLLER_INSTANCE.addSchedulerTime(dateObject);
     }
 
+    const renderStartTime = () => {
+      if (startTime.length == 2) {
+        return startTime + ":";
+      } else if (startTime.length < 2) {
+        setAllowTextChange(true);
+      } else {
+        return startTime;
+      }
+
+ 
+      if (allowTextChange) {
+        return startTime;
+      }
+
+
+
+      startTime.length < 2 ? startTime + ":" : startTime
+      return startTime;
+    }
+
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animated={true} animationType="slide">
             <Appbar.Header style={{backgroundColor: '#FFFFFF'}}>
                 <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}  onPress={closeModal}/>
-                <Appbar.Content title="Edit Hours" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                <Appbar.Content title="Add Hours" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
             </Appbar.Header>
             <ScrollView contentContainerStyle={{marginTop: 10}}>
               <View style={{marginVertical: 10, paddingHorizontal: 20,}}>
@@ -109,7 +131,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
             <Text style={{paddingVertical: 5}}>
               Start time
             </Text>
-            <TextInput returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" maxLength={4} value={startTime.length == 1 ? startTime + ":" : startTime} onChangeText={text => setStartTime(text)} placeholder="8:00" style={{borderWidth: 1, padding: 10, borderRadius: 3, borderColor: '#EEEEEE'}} />
+            <TextInput returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" maxLength={4} value={startTime} onChangeText={text => setStartTime(text)} placeholder="08:00" style={{borderWidth: 1, padding: 10, borderRadius: 3, borderColor: '#EEEEEE'}} />
             </View>
 
    
@@ -119,7 +141,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
           anchor={ 
           <TouchableOpacity onPress={openStartTimeMenu}>
               <Text  style={{paddingHorizontal: 10, fontSize: 15}}>
-          AM
+          {startTimePeriod}
           <FeatherIcon name="chevron-down" size={12} />
         </Text>
         </TouchableOpacity>}>
@@ -135,7 +157,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
             <Text style={{paddingVertical: 5}}>
               End time
             </Text>
-            <TextInput returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" maxLength={4} value={endTime.lengtj === 1 ? endTime + ":" : endTime} onChangeText={text => setEndTime(text)} placeholder="8:00" style={{borderWidth: 1, padding: 10, borderRadius: 3, borderColor: '#EEEEEE'}} />
+            <TextInput returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" maxLength={4} value={endTime} onChangeText={text => setEndTime(text)} placeholder="11:00" style={{borderWidth: 1, padding: 10, borderRadius: 3, borderColor: '#EEEEEE'}} />
             </View>
     
             <Menu
@@ -144,7 +166,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
           anchor={ 
           <TouchableOpacity onPress={openEndTimeMenu}>
               <Text  style={{paddingHorizontal: 10, fontSize: 15}}>
-          AM
+          {endTimePeriod}
           <FeatherIcon name="chevron-down" size={12} />
         </Text>
         </TouchableOpacity>}>
@@ -154,7 +176,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
           </View>
 
 
-          <ThinFeatherIcon name="check"  size={20} onPress={addTimes} />
+          <FeatherIcon name="check"  size={24} onPress={addTimes} />
          
 </View>
 </ScrollView>

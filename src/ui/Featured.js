@@ -6,7 +6,7 @@
  *  Featured
  */
 
-import React from 'react';
+import React, { useRef, createRef } from 'react';
 import {
     View,
     StyleSheet,
@@ -18,6 +18,7 @@ import {
     Dimensions,
     Button as NativeButton,
     RefreshControl,
+    Platform,
 } from 'react-native';
 
 import {
@@ -28,7 +29,8 @@ import {
     Appbar,
     Divider,
     FAB,
-    Banner
+    Banner,
+    Searchbar
 
 } from 'react-native-paper';
 
@@ -36,7 +38,7 @@ import LupaController from '../controller/lupa/LupaController';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { connect } from 'react-redux';
 import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
-import {  RFValue } from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import { MenuIcon } from './icons';
 import { SearchBar } from 'react-native-elements'
 import LiveWorkoutPreview from './workout/program/modal/LiveWorkoutPreview';
@@ -48,7 +50,7 @@ import { ShowTrainersModal, ShowTopPicksModal } from './modal/ExplorePageModals'
 import { titleCase } from './common/Util';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { Constants } from 'react-native-unimodules';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback, TouchableHighlight } from 'react-native-gesture-handler';
 import ProgramInformationComponent from './workout/program/components/ProgramInformationComponent';
 import LargeProgramSearchResultCard from './workout/program/components/LargeProgramSearchResultCard'
 import LUPA_DB from '../controller/firebase/firebase';
@@ -68,6 +70,7 @@ class Featured extends React.Component {
         super(props);
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+        this.searchBarRef = createRef()
 
         this.state = {
             refreshing: false,
@@ -85,7 +88,8 @@ class Featured extends React.Component {
             showLiveWorkoutPreview: false,
             showTopPicksModalIsVisible: false,
             feedVlogs: [],
-            suggestionBannerVisisble: false
+            suggestionBannerVisisble: false,
+            searchBarFocused: false,
         }
     }
 
@@ -95,21 +99,24 @@ class Featured extends React.Component {
 
         const query = LUPA_DB.collection('vlogs').where('vlog_state', '==', this.props.lupa_data.Users.currUserData.location.state)//.orderBy('time_created', 'asc');
 
-         vlogCollectionObserver = query.onSnapshot(querySnapshot => {
+        vlogCollectionObserver = query.onSnapshot(querySnapshot => {
             console.log(`Received query snapshot of size ${querySnapshot.size}`);
-                querySnapshot.forEach(doc => {
+            querySnapshot.forEach(doc => {
                 let data = doc.data();
                 const updatedState = this.state.feedVlogs;
-                if (typeof(updatedState) != 'undefined') {
+                if (typeof (updatedState) != 'undefined') {
                     updatedState.push(data);
+                    updatedState.push(data);
+                    updatedState.push(data);
+
                 }
-            
+
                 this.sortVlogs(updatedState);
                 this.setState({ feedVlogs: updatedState });
             })
-        
+
         }, err => {
-          alert(err)
+            alert(err)
         });
 
         this.setState({ suggestionBannerVisisble: true })
@@ -125,9 +132,9 @@ class Featured extends React.Component {
     }
 
     setupComponent = async () => {
-        await this.loadFeaturedPrograms();
-       // await this.loadFeaturedTrainers();
-        await this.loadTopPicks();
+        // await this.loadFeaturedPrograms();
+        // await this.loadFeaturedTrainers();
+        // await this.loadTopPicks();
         //await this.loadRecentlyAddedPrograms();
     }
 
@@ -190,8 +197,8 @@ class Featured extends React.Component {
         })
     }
 
-    renderCarouselItem = ({currProgram, index}) => {
-        if (typeof(currProgram) == null || currProgram == null || currProgram.program_name == "")  {
+    renderCarouselItem = ({ currProgram, index }) => {
+        if (typeof (currProgram) == null || currProgram == null || currProgram.program_name == "") {
             return null;
         }
 
@@ -228,44 +235,44 @@ class Featured extends React.Component {
 
                 return (
                     <>
-                    <TouchableOpacity style={{}}>
-                        <View style={{ margin: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center' }}>
-                            <Surface style={{ margin: 10, borderRadius: 5, width: 150, height: 170, backgroundColor: '#FFFFFF', elevation: 0, borderRadius: 5 }}>
-                                <Image source={{ uri: element.program_image }} style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    borderRadius: 5
-                                }}
-                                    resizeMode='cover'
-                                />
-                            </Surface>
+                        <TouchableOpacity style={{}}>
+                            <View style={{ margin: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center' }}>
+                                <Surface style={{ margin: 10, borderRadius: 5, width: 150, height: 170, backgroundColor: '#FFFFFF', elevation: 0, borderRadius: 5 }}>
+                                    <Image source={{ uri: element.program_image }} style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        borderRadius: 5
+                                    }}
+                                        resizeMode='cover'
+                                    />
+                                </Surface>
 
-                            <View style={{ flex: 1, padding: 10, height: 150, justifyContent: 'space-evenly', alignSelf: 'flex-start' }}>
-                                <Text style={{ color: '#1089ff', fontSize: 12, fontWeight: '600' }}>
-                                    Emily Loefstedt
+                                <View style={{ flex: 1, padding: 10, height: 150, justifyContent: 'space-evenly', alignSelf: 'flex-start' }}>
+                                    <Text style={{ color: '#1089ff', fontSize: 12, fontWeight: '600' }}>
+                                        Emily Loefstedt
         </Text>
-                                <Text style={{ color: '#212121', fontSize: 15, fontWeight: '700' }}>
-                                    {element.program_name}
-                                </Text>
+                                    <Text style={{ color: '#212121', fontSize: 15, fontWeight: '700' }}>
+                                        {element.program_name}
+                                    </Text>
 
-                                <Text numberOfLines={3} style={{ color: 'black', fontSize: 12, fontWeight: '300', fontFamily: 'avenir-roman' }}>
-                                    {element.program_description}
-                                </Text>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    {
-                                        element.program_tags.map(tag => {
-                                            return (
-                                                <Caption>
-                                                    {tag} {" "}
-                                                </Caption>
-                                            )
-                                        })
-                                    }
+                                    <Text numberOfLines={3} style={{ color: 'black', fontSize: 12, fontWeight: '300', fontFamily: 'avenir-roman' }}>
+                                        {element.program_description}
+                                    </Text>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        {
+                                            element.program_tags.map(tag => {
+                                                return (
+                                                    <Caption>
+                                                        {tag} {" "}
+                                                    </Caption>
+                                                )
+                                            })
+                                        }
+                                    </View>
                                 </View>
                             </View>
-                        </View>
-                    </TouchableOpacity>
-                    <Divider />
+                        </TouchableOpacity>
+                        <Divider />
                     </>
                 )
             })
@@ -298,19 +305,19 @@ class Featured extends React.Component {
             searchValue: searchQuery,
         })
 
-            await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
-                searchResultsIn = searchData;
-            })
+        await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
+            searchResultsIn = searchData;
+        })
 
         await this.setState({ searchResults: searchResultsIn, searching: false });
     }
 
     renderSearchResults = () => {
-            return this.state.searchResults.map(result => {
-                return (
-                    <LargeProgramSearchResultCard program={result} />
-                )
-            })
+        return this.state.searchResults.map(result => {
+            return (
+                <LargeProgramSearchResultCard program={result} />
+            )
+        })
     }
 
     handleOnScroll = (event) => {
@@ -336,82 +343,79 @@ class Featured extends React.Component {
         this.setState({ showTopPicksModalIsVisible: false })
     }
 
+    checkSearchBarState = () => {
+        if (this.state.searchBarFocused === true) {
+            this.props.navigation.push('Search')
+            this.searchBarRef.current.blur();
+        }
+
+
+    }
+
     render() {
+        this.checkSearchBarState()
         return (
             <View style={styles.root}>
-              <Appbar.Header style={styles.appbar}>
+                <Appbar style={styles.appbar}>
+                    <Searchbar
+                        ref={this.searchBarRef}
+                        placeholder="Search programs or trainers"
+                        onChangeText={text => this.performSearch(text)}
+                        placeholderTextColor="rgba(35, 55, 77, 0.5)"
+                        value={this.state.searchValue}
+                        inputStyle={styles.inputStyle}
+                        style={{ backgroundColor: 'white', height: 50, marginVertical: 10, width: Dimensions.get('window').width - 20 }}
+                        iconColor="#1089ff"
+                        theme={{
+                            roundness: 8,
+                            colors: {
+                                primary: 'white',
+                            }
+                        }}
+                        onFocus={() => this.setState({ searchBarFocused: true })}
+                        onBlur={() => this.setState({ searchBarFocused: false })}
+                    />
 
-                                <View style={{flexDirection: 'row'}}>
-                <SearchBar placeholder="Search programs or trainers"
-                    onChangeText={text => this.performSearch(text)}
-                    platform="ios"
-                    searchIcon={<FeatherIcon name="search" size={20} color="#23374d" />}
-                    containerStyle={styles.searchContainerStyle}
-                    inputContainerStyle={styles.inputContainerStyle}
-                    inputStyle={styles.inputStyle}
-                    placeholderTextColor="rgba(35, 55, 77, 0.5)"
-                    value={this.state.searchValue} />
-        </View>
-        </Appbar.Header> 
-                    <View style={{flex: 1, backgroundColor: '#EEEEEE'}}>
-                        {
-                            this.state.searchValue === "" ?
-                            
-                            <View style={{backgroundColor: '#EEEEEE'}}>
-                            <Banner style={{elevation: 0, width: '100%'}} visible={this.state.suggestionBannerVisisble}  actions={[
-        {
-          label: 'Preview',
-          color: '#1089ff',
-          uppercase: false,
-          onPress: () => this.setState({ suggestionBannerVisisble: false }),
-        },
-        {
-          label: 'No thanks',
-          uppercase: false,
-          color: '#1089ff',
-          onPress: () => this.setState({ suggestionBannerVisisble: false }),
-        },
-      ]}>
-             {typeof(this.state.featuredPrograms[0]) == 'undefined' ? null : <ProgramInformationComponent program={this.state.featuredPrograms[0]} />}
-                            </Banner>
+                </Appbar>
+                <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
+                    {
 
-                   
+                        <View style={{ backgroundColor: '#EEEEEE' }}>
 
-                        <View style={{backgroundColor: '#EEEEEE'}}>
-                            <View style={{backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
-                            {
-                                this.state.feedVlogs.length === 0 ?
-                                <View style={{width: '100%', alignItems: 'center', backgroundColor: 'white'}}>
-                                      <Caption style={{fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: 'transparent'}} >
-                                    There are not any vlogs in your area.  Check back later.
+
+
+                            <View style={{ backgroundColor: '#EEEEEE' }}>
+                                <View style={{ backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center' }}>
+                                    {
+                                        this.state.feedVlogs.length === 0 ?
+                                            <View style={{ width: '100%', alignItems: 'center', backgroundColor: 'white' }}>
+                                                <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: 'transparent' }} >
+                                                    There are not any vlogs in your area.  Check back later.
                                 </Caption>
-                               
+
+                                            </View>
+
+                                            :
+
+                                            this.state.feedVlogs.map((vlog, index, arr) => {
+                                                return (
+                                                    <VlogFeedCard key={index} vlogData={vlog} />
+                                                )
+                                            })
+                                    }
                                 </View>
-
-                                :
-
-                                    this.state.feedVlogs.map((vlog, index, arr) => {
-                                        return (
-                                            <VlogFeedCard key={index} vlogData={vlog} />
-                                        )
-                                    })
-                                }
-                                                            </View>
+                            </View>
                         </View>
-                        </View>
-                        :
-                        this.renderSearchResults()
-
-                        }
-                          
+                    }
 
 
-                        
-<InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
-                            
-                    </View>   
-                             
-                    </View>
+
+
+                    <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
+
+                </View>
+
+            </View>
         );
     }
 }
@@ -419,7 +423,7 @@ class Featured extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#EEEEEE",
     },
     mainGraphicText: {
 
@@ -465,7 +469,7 @@ const styles = StyleSheet.create({
         fontSize: RFValue(15), fontFamily: 'Avenir-Heavy', fontSize: 15,
     },
     searchContainerStyle: {
-        backgroundColor: "white", width: '100%'
+        backgroundColor: "#EEEEEE", width: Dimensions.get('window').width, alignSelf: 'center'
     },
     inputContainerStyle: {
         backgroundColor: 'white',
@@ -477,8 +481,12 @@ const styles = StyleSheet.create({
         width: '10%', alignItems: 'center', justifyContent: 'center'
     },
     appbar: {
-        backgroundColor: '#FFFFFF',
+        width: Dimensions.get('window').width,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#EEEEEE',
         elevation: 0,
+        marginVertical: 20
     }
 });
 

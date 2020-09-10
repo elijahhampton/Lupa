@@ -58,8 +58,8 @@ function ProgramInformationComponent({ program }) {
     }, [])
 
     return (
-        <View style={{backgroundColor: 'transparent', width: Dimensions.get('window').width, padding: 20}}>
-                            <Surface style={{backgroundColor: 'transparent', elevation: 0, flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto',}} >
+        <View style={{width: Dimensions.get('window').width, padding: 20,}}>
+                            <Surface style={{ elevation: 10, flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto',}} >
                                                     
                             <View style={{width: 60, height: 60, alignItems: 'flex-start', justifyContent: 'center' }}>
                                 <Surface style={{width: '100%', height: '100%', elevation: 0, borderRadius: 3}}>
