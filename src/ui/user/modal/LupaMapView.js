@@ -52,11 +52,28 @@ class LupaMapView extends React.Component {
         try {
             await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=gym&location=${this.props.initialRegionLatitude},${this.props.initialRegionLongitude}&radius=5000&type=gym&key=AIzaSyAPrxdNkncexkRazrgGy4FY6Nd-9ghZVWE`).then(response => response.json()).then(result => {
                 results = result.results;
+                
             })
         } catch (err)
         {
         
             results = [];
+        }
+
+        for (let i = 0; i < results.length; i++) {
+            console.log("     ")
+            console.log("     ")
+            console.log("     ")
+            console.log("     ")
+            console.log("     ")
+            console.log("     ")
+            console.log(results[i]);
+            console.log("     ")
+            console.log("     ")
+            console.log("     ")
+            console.log("     ")
+            console.log("     ")
+            console.log("     ")
         }
 
         await this.setState({

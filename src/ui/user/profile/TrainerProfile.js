@@ -34,6 +34,29 @@ import LupaController from '../../../controller/lupa/LupaController';
 import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
 import LOG from '../../../common/Logger';
 import VlogFeedCard from '../component/VlogFeedCard'
+import { getStreetAddressFromCoordinates } from '../../../modules/location/mapquest/mapquest';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+
+const LAT_LONG_DIFF = 60
+
+function inside(point, vs) {
+    // ray-casting algorithm based on
+    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
+    
+    var x = point[0], y = point[1];
+    
+    var inside = false;
+    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        var xi = vs[i][0], yi = vs[i][1];
+        var xj = vs[j][0], yj = vs[j][1];
+        
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    
+    return inside;
+};
 
 function TrainerProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
@@ -44,8 +67,11 @@ function TrainerProfile({ userData, isCurrentUser }) {
     const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0)
     const [markedDates, setMarkedDates] = useState([])
+   const [showSchedulerButton, setShowSchedulerButton] = useState(false);
     const [ready, setReady] = useState(false)
-    
+    const [showLocationMessage, setShowLocationMessage] = useState(false);
+    const [resultsLength, setResultsLength] = useState(0);
+
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
@@ -232,6 +258,10 @@ function TrainerProfile({ userData, isCurrentUser }) {
         if (!isCurrentUser) {
             return;
         }
+
+        if (showSchedulerButton === true) {
+            return;
+        }
         
         switch(currPage) {
             case 0:
@@ -270,12 +300,13 @@ function TrainerProfile({ userData, isCurrentUser }) {
         async function loadProfileData() {
             try {
                 setProfileImage(userData.photo_url)
-                await fetchVlogs(userData.user_uuid);
+               // await fetchVlogs(userData.user_uuid);
         if (isCurrentUser) {
             setUserPrograms(currUserPrograms)
         } else {
             fetchPrograms(userData.user_uuid);
         }
+        checkCurrFitnessLocation()
                 setReady(true)
             } catch(error) {
                 setReady(false)
@@ -285,14 +316,89 @@ function TrainerProfile({ userData, isCurrentUser }) {
             }
         }
 
+        async function checkCurrFitnessLocation() {
+            let results = []
+            let currUserStreet = ""
+            let trainerStreet = ""
+        try {
+            await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=gym&location=${userData.location.latitude},${userData.location.longitude}&radius=5000&type=gym&key=AIzaSyAPrxdNkncexkRazrgGy4FY6Nd-9ghZVWE`).then(response => response.json()).then(result => {
+                results = result.results;    
+                setResultsLength(results.length)
+            });
+
+            await getStreetAddressFromCoordinates(currUserData.location.longitude, currUserData.location.latitude).then(result => {
+                currUserStreet = result;
+            });
+
+            await getStreetAddressFromCoordinates(userData.location.longitude, userData.location.latitude).then(result => {
+                trainerStreet = result;
+            });
+
+        
+            for (let i = 0; i < results.length; i++) {
+                LOG('TrainerProfile.js', 'Checking location')
+                
+                const formattedAddressParts = results[i].formatted_address.split(" ")
+                
+                for (let j = 0; j < formattedAddressParts.length; j++) {
+                    if (currUserStreet.includes(formattedAddressParts[j]) && trainerStreet.includes(formattedAddressParts[j])) {
+                        setShowLocationMessage(true);
+                        return;
+                    }
+                }
+                console.log('false')
+                setShowLocationMessage(false);
+            }
+        } catch (err)
+        {
+            setShowLocationMessage(false)
+        }
+
+
+        }
+
         loadProfileData()
+       
         LOG('TrainerProfile.js', 'Running useEffect.')
-    }, [ready])
+    }, [ready, resultsLength])
+
+    const renderScheduler = () => {
+        if (isCurrentUser) {
+            return;
+        }
+        
+        if (showSchedulerButton === true) {
+            return (
+                <View  style={{backgroundColor: 'rgb(248, 248, 248)', width: '100%', height: Dimensions.get('window').height}}>
+                     <Button onPress={() => setShowSchedulerButton(false)} mode="contained" uppercase={false} color='#1089ff' style={{marginVertical: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+                Done
+            </Button>
+                <LupaCalendar captureMarkedDates={captureMarkedDate} />
+           </View>
+            )
+        }
+       
+        return renderCloseLocationMessage();
+    }
+
+    const renderCloseLocationMessage = () => {
+        return (
+            <Surface style={{backgroundColor: 'transparent', width: Dimensions.get('window').width - 20, elevation: 0, padding: 20, borderRadius: 8, marginVertical: 10, alignSelf: 'center'}}>
+            <Caption style={{color: '#1089ff'}}>
+                It looks like you and {userData.display_name} might be training in the same gym.  Would you like to see her available hours?
+            </Caption>
+
+            <Button onPress={() => setShowSchedulerButton(true)} mode="contained" uppercase={false} color='#1089ff' style={{marginVertical: 10}}>
+                View Hours
+            </Button>
+        </Surface>
+        )
+    }
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <ThinFeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()}/>
+                <ThinFeatherIcon  name="arrow-left" size={20} onPress={() => navigation.pop()}/>
                 <Appbar.Content title={userData.username} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView>
@@ -315,6 +421,10 @@ function TrainerProfile({ userData, isCurrentUser }) {
             {renderInteractions()}
             </View>
 
+           <>
+           {renderScheduler()}
+           </>
+
             <Tabs tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF'>
              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
                     <View style={{flex: 1, backgroundColor: 'rgb(248, 248, 248)'}}>
@@ -326,11 +436,16 @@ function TrainerProfile({ userData, isCurrentUser }) {
                         {renderVlogs()}
                     </View>
               </Tab>
-              <Tab containerStyle={{flex: 1}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-                    <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>
-                    <LupaCalendar captureMarkedDates={captureMarkedDate} />
-                    </View>
-              </Tab>
+              {
+                  isCurrentUser === true ? 
+                  <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Scheduler">
+                  <View  style={{backgroundColor: 'rgb(248, 248, 248)', height: Dimensions.get('window').height}}>
+                  <LupaCalendar captureMarkedDates={captureMarkedDate} uuid={userData.user_uuid} />
+                  </View>
+                    </Tab>
+                  :
+                  null
+              }
             </Tabs>
             </ScrollView>
 
@@ -373,6 +488,7 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: 'transparent',
         elevation: 0,
+        paddingHorizontal: 20
     },
     appbarTitle: {
         fontSize: 15,

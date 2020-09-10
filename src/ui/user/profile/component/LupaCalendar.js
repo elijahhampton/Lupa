@@ -26,6 +26,8 @@ import SchedulerModal from './SchedulerModal';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { useSelector } from 'react-redux';
 import LUPA_DB from '../../../../controller/firebase/firebase';
+import FeatherIcon from 'react-native-vector-icons/Feather'
+import moment from 'moment';
 
 function getMonthString(monthNum) {
   switch(monthNum) {
@@ -59,13 +61,11 @@ function getMonthString(monthNum) {
 }
 
 
-function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
+const HEIGHT = 800
+
+function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   const [markedDates, setMarkedDates] = useState({})
   const [items, setItems] = useState({})
-
-  const currUserData = useSelector(state => {
-    return state.Users.currUserData;
-  })
 
   const addMarkedDate = (day) => {
     if (Object.keys(markedDates).includes(day.dateString)) {
@@ -75,7 +75,6 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
     return;
     }
 
-    const dateString = day.dateString;
     let dateObject = markedDates;
     dateObject[day.dateString] = { startingDay: markedDates.length === 0 ?  true : false, color: '#1089ff', selected: true, marked: true }
     setMarkedDates(dateObject);
@@ -86,8 +85,78 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
     LUPA_CONTROLLER_INSTANCE.deleteSchedulertimeBlock(day, time);
   }
 
+  const renderTimeBlocks = (timeBlock, year, month, day) => {
+    const startTimePeriod = timeBlock.startTimePeriod;
+    const endTimePeriod = timeBlock.endTimePeriod;
+
+    let startTime = "", endTime = "";
+    if (startTimePeriod == "AM") {
+      startTime = Math.abs(12 - Number(timeBlock.startTime.substr(0, 2)));
+    } else {
+      startTime = timeBlock.startTime.substr(0, 2)
+    }
+
+    if (endTimePeriod == "PM") {  
+      endTime = Math.abs(12 - Number(timeBlock.endTime.substr(0, 2)));
+    } else {
+      endTime = timeBlock.endTime.substr(0, 2)
+    }
+
+
+    const updatedStartTime = moment(`${year}-0${month}-${day} ${timeBlock.startTime.split(":")[0]}:${timeBlock.startTime.split(":")[1]}`, 'YYYY-MM-DD hh:mm a')
+    const updatedEndTime = moment(`${year}-${month}-${day} ${timeBlock.endTime.split(":")[0]}:${timeBlock.endTime.split(":")[1]}`, 'YYYY-MM-DD hh:mm a')
+    let start = moment(updatedStartTime)
+    let end = moment(updatedEndTime);
+
+    let blocks = []
+    while (start.isSameOrBefore(end)) {
+      let parsedTime = start.toString()
+      let time = parsedTime.split(" ")[4]
+
+      let updatedTimeFirst = "";
+      let updatedTimeSecond = "";
+
+      if (time.split(":")[0].toString().includes('0')) {
+        updatedTimeFirst = time.split(":")[0].toString().charAt(1);
+      } else {
+        updatedTimeFirst = time.split(":")[0].toString();
+      }
+
+      updatedTimeSecond = time.split(":")[1].toString()
+
+      updatedTimeOne = updatedTimeFirst + ":" + updatedTimeSecond;
+      updatedTimeTwo =  (Number(updatedTimeFirst.charAt(0)) + 1).toString() + ":" + updatedTimeSecond;
+      blocks.push(
+          [updatedTimeOne, updatedTimeTwo]
+      );
+     
+      start.add(1, 'hour')
+    }
+
+    return blocks.map(timeBlock => {
+      return(
+        <View style={[isCurrentUser === true ? styles.userTimeOptions : null  ,{padding: 10, paddingHorizontal: 20, borderRadius: 10, backgroundColor: '#E5E5E5', marginVertical: 5, alignItems: 'center',  width: Dimensions.get('window').width - 20, alignSelf: 'center'}]}>
+   
+<Text>
+        <Text style={styles.timeBlockNumbers}>
+          {timeBlock[0]}
+        </Text>
+        <Text>
+          {" "}-{" "}
+        </Text>
+        <Text style={styles.timeBlockNumbers}>
+          {timeBlock[1]}
+        </Text>
+      </Text>
+
+      {isCurrentUser === true ? <FeatherIcon name="x" color="black" size={24} /> : null}
+        </View>
+      );
+    })
+  }
+
   useEffect(() => {
-      const currUserSubscription = LUPA_DB.collection('users').doc(currUserData.user_uuid).onSnapshot(documentSnapshot => {
+      const currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(documentSnapshot => {
         let userData = documentSnapshot.data()
         setItems(userData.scheduler_times);
     })
@@ -134,23 +203,22 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
     const times = item.times;
     const list = times.map(time => {
       return (
-        <View style={{paddingHorizontal: 20, width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{paddingHorizontal: 20, width: Dimensions.get('window').width}}>
                   <View>
-                  <Text style={styles.timePeriod}>
-{time.startTime} {time.startTimePeriod} - {time.endTime} {time.endTimePeriod}
-</Text>
+                    {renderTimeBlocks(time, day.year, day.month, day.day)}
+
                   </View>
 
-                  <View>
+                {/*  <View>
                   {isCurrentUser === true ? <Feather1s name="x" size={20} onPress={() => handleDeleteTimeBlock(day, time)}/> : null}
-                  </View>
+                </View>*/}
 
           </View>
       )
     });
 
     return (
-      <View style={{backgroundColor: 'white', width: '100%'}}>
+      <View style={{height: HEIGHT, backgroundColor: 'white', width: '100%'}}>
         <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
         <Text style={{ fontSize: 20, fontFamily: 'Avenir-Light'}}>
       {day.day}
@@ -197,7 +265,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
   }}å
 
   // Agenda container style
-  style={{height: Dimensions.get('window').height}}
+  style={{height: HEIGHT}}
 >
   <Text>
     Hi
@@ -210,7 +278,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser }) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: Dimensions.get('window').height,
+    height: HEIGHT,
   },
   dateHeading: {
       margin: 10,
@@ -220,6 +288,15 @@ const styles = StyleSheet.create({
   timePeriod: {
     fontFamily: 'Avenir-Roman',
     fontSize: 15
+  },
+  timeBlockNumbers: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    fontFamily: 'Avenir'
+  },
+  userTimeOptions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   }
 })
 

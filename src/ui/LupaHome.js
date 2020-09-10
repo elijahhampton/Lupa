@@ -12,7 +12,7 @@ import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
-const COLOR = "white";
+const COLOR = "#EEEEEE";
 const TAB_PROPS = {
   tabStyle: {backgroundColor: COLOR},
   activeTabStyle: {backgroundColor: COLOR},
@@ -57,7 +57,7 @@ export class LupaHome extends Component {
           zIndex: 1,
           backgroundColor: COLOR
         }}>
-          <Header style={{backgroundColor: 'white',}} noShadow={true} hasTabs>
+          <Header style={{backgroundColor: COLOR,}} noShadow={true} hasTabs>
             <Left style={{flexDirection: 'row', alignItems: 'center'}}>
               <MenuIcon customStyle={{}} onPress={() => this.props.navigation.openDrawer()}/>
             </Left>
@@ -84,7 +84,7 @@ export class LupaHome extends Component {
           bounces={false}
           showsVerticalScrollIndicator={false}
           style={{zIndex: 0, height: "100%", elevation: -1}}
-          contentContainerStyle={{paddingTop: 50, backgroundColor: 'white'}}
+          contentContainerStyle={{paddingTop: 50, backgroundColor: COLOR}}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: this.scroll}}}],
             {useNativeDriver: true},
@@ -97,17 +97,17 @@ export class LupaHome extends Component {
               transform: [{translateY: tabY}],
               zIndex: 1,
   
-              width: "100%",
+              width: Dimensions.get('window').width,
               backgroundColor: COLOR,
               justifyContent: 'flex-start',
             }, Platform.OS === "ios" ? {paddingTop: 30} : null]}>
-            <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: 'white'}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: '#FFFFFF', elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
+            <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: '#EEEEEE', backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
        
           </Animated.View>
           }>
             
             <Tab heading="Home" {...TAB_PROPS} >
-            <Featured />
+            <Featured navigation={this.props.navigation} />
             </Tab>
             <Tab heading="My Programs" {...TAB_PROPS}>
               <MyPrograms />
