@@ -1,0 +1,25 @@
+{
+"business_status": "CLOSED_TEMPORARILY", 
+"formatted_address": "1900 Duane Ave, Santa Clara, CA 95054", 
+"geometry": {
+	"location": {
+		"lat": 37.379918, 
+		"lng": -121.959164
+    }, 
+		"viewport": {
+			"northeast": [Object], 
+			"southwest": [Object]}}, 
+			"icon": "https://maps.gstatic.com/mapfiles/place_api/		icons/generic_business-71.png", 
+			"name": "American Barbell Clubs", 
+			"permanently_closed": true, 
+			"photos": [{"height": 750, "html_attributions": [Array], 				"photo_reference": 				"CkQ0AAAAdMBY4Scy3v_RtrsGmo0o5dclo_PBYyrnF1VVgg9lAHDk		X984ILf4KdMMTfGlsr9N9Ew6NRYHmozy_eQDFxyKNhIQWusrez9qcyCG6M8wsdDXuRoUAvPMjU1ilMKC5kSVBkKsT4OymJ4", 
+				"width": 1000}], 
+			"place_id": "ChIJqZ-uoIjJj4ARlHbyZshTRZY", 
+			"plus_code": {
+				"compound_code": "92HR+X8 Santa Clara, California", 				"global_code": “849W92HR+X8"
+			}, 
+			"rating": 4.5, 
+			"reference": "ChIJqZ-uoIjJj4ARlHbyZshTRZY", 
+			"types": ["gym", "health", "point_of_interest", "store", "establishment"], 
+			"user_ratings_total": 105
+}

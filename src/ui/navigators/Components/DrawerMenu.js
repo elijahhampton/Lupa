@@ -47,13 +47,10 @@ function DrawerMenu(props) {
    * @param navFrom String Location navigating from
    */
   const navigateToProfile = () => {
-    navigation.dispatch(
-
-      CommonActions.navigate({
-        name: 'Profile',
-        params: {userUUID: currUserData.user_uuid, navFrom: 'Drawer'},
-      })
-      )
+    navigation.push('Profile', {
+      userUUID: currUserData.user_uuid,
+      navFrom: 'Drawer'
+    })
   }
 
   const navigateToTrainerInformation = () => {

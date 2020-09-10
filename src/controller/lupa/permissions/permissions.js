@@ -8,6 +8,7 @@ import {
 import {request, PERMISSIONS, RESULTS, check} from 'react-native-permissions';
 import Contacts, { requestPermission } from 'react-native-contacts'; 
 import { requestNotificationPermissions } from '../../firebase/firebase';
+import { fcmService } from '../../firebase/service/FCMService';
 
 /**
 PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL;
@@ -420,6 +421,8 @@ if (Platform.OS === 'android') {
       // …
      // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
     });
+
+    fcmService.requestNotificationPermissions();
   } catch(err) {
     alert(err)
   }

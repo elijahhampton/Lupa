@@ -36,6 +36,9 @@ import SettingsStackNavigator from './src/ui/navigators/SettingsNavigator';
 import CreateWorkout from './src/ui/workout/createworkout/CreateWorkout';
 import { localNotificationService } from './src/controller/firebase/service/LocalNotificationsService'
 import { fcmService } from './src/controller/firebase/service/FCMService';
+import Search from './src/ui/search/Search';
+
+
 const App = () => {
   return (
     <NavigationContainer>
@@ -192,6 +195,7 @@ function AppNavigator() {
       <StackApp.Screen name="Profile" component={ProfileNavigator} />
       <StackApp.Screen name="Notifications" component={NotificationsView} />
       <StackApp.Screen name="Messages" component={MessagesView} />
+      <StackApp.Screen name="Search" component={Search} />
       <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />
     </StackApp.Navigator>
   )
