@@ -86,7 +86,7 @@ function UserDashboard(props) {
     return (
         <View style={{
             flex: 1,
-            backgroundColor: 'rgb(247, 247, 247)'
+            backgroundColor: '#FFFFFF'
         }}>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3,}}>
             <MenuIcon onPress={() => navigation.openDrawer()} />

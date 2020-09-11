@@ -7,7 +7,7 @@ import {
     Text,
     TouchableOpacity,
     Image,
-    StyleSheet
+    StyleSheet, Pressable
 } from 'react-native'
 
 import {
@@ -25,6 +25,7 @@ import { titleCase } from '../../../common/Util';
 import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 import ProgramInformationPreview from '../ProgramInformationPreview';
 import LUPA_DB, { LUPA_AUTH } from '../../../../controller/firebase/firebase';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 function ProgramInformationComponent({ program }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
@@ -38,13 +39,13 @@ function ProgramInformationComponent({ program }) {
         return state.Users.currUserData;
     })
 
-    const handleCardOnPress = (programData) => {
-        if (newCurrUserData.programs.includes(programData.program_structure_uuid)) {
+    const handleCardOnPress = () => {
+        if (newCurrUserData.programs.includes(program.program_structure_uuid)) {
             setProgramOptionsModalVisible(true)
         }
         else {
             setProgramModalVisible(true);
-            LUPA_CONTROLLER_INSTANCE.addProgramView(programData.program_structure_uuid);
+            LUPA_CONTROLLER_INSTANCE.addProgramView(program.program_structure_uuid);
         }
     }
 
@@ -58,6 +59,7 @@ function ProgramInformationComponent({ program }) {
     }, [])
 
     return (
+        <TouchableOpacity onPress={handleCardOnPress}>
         <View style={{width: Dimensions.get('window').width, marginVertical: 10}}>
                             <Surface style={{ elevation: 0, justifyContent: 'center', flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto',}} >             
                             <View style={{width: 60, height: 60, alignItems: 'flex-start', justifyContent: 'center' }}>
@@ -74,7 +76,11 @@ function ProgramInformationComponent({ program }) {
                                     </Text>
                                 </View>
                           </Surface>
+
+                          <ProgramOptionsModal isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} program={program} />
+                          <ProgramInformationPreview isVisible={programModalVisible} closeModalMethod={() => setProgramModalVisible(false)} program={program}  />
                           </View>
+                          </TouchableOpacity>
     )
 }
 

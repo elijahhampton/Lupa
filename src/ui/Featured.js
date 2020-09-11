@@ -407,12 +407,6 @@ class Featured extends React.Component {
                             </View>
                         </View>
                     }
-
-
-
-
-                    <InviteFriendsModal isVisible={this.state.inviteFriendsIsVisible} showGettingStarted={true} closeModalMethod={() => this.setState({ inviteFriendsIsVisible: false })} />
-
                 </View>
 
             </View>

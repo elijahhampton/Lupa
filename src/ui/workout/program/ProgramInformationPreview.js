@@ -79,7 +79,7 @@ function ProgramInformationPreview(props) {
     useEffect(() => {
         async function fetchData() {
             try {
-                await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.programData.program_structure_uuid).then(data => {
+                await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.program.program_structure_uuid).then(data => {
                     setProgramData(data)
                 })
             } catch(err) {
@@ -88,7 +88,7 @@ function ProgramInformationPreview(props) {
             }
 
             try {
-                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.programData.program_owner).then(data => {
+                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.program.program_owner).then(data => {
                     setProgramOwnerData(data)
                 })
             } catch(err) {

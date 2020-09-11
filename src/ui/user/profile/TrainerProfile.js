@@ -304,7 +304,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         if (isCurrentUser) {
             setUserPrograms(currUserPrograms)
         } else {
-            fetchPrograms(userData.user_uuid);
+            //fetchPrograms(userData.user_uuid);
         }
       // checkCurrFitnessLocation()
                 setReady(true)

@@ -455,28 +455,31 @@ function ProgramInformation(props) {
 
                 </View>
 
-                <View style={{ width: '100%', flexWrap: 'wrap', flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ width: '100%' }}>
                   <TouchableHighlight onPress={showAddTagsModal}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <MaterialIcon name="add" size={15} color='#2196F3' />
                       <Caption style={{ color: '#2196F3' }}>
-                        Add Tag
+                        Add Tags
                 </Caption>
                     </View>
                   </TouchableHighlight>
+                  <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center'}}>
                   {
 
-                    programTags.length == 0 ?
-                      null
-                      :
-                      programTags.map(tag => {
-                        return (
-                          <Chip style={{ margin: 3, width: 'auto', backgroundColor: '#2196F3' }} textStyle={{ color: '#FFFFFF' }} mode="flat" color='#2196F3'>
-                            {tag}
-                          </Chip>
-                        )
-                      })
-                  }
+programTags.length == 0 ?
+  null
+  :
+  programTags.map(tag => {
+    return (
+      <Chip style={{ margin: 3, width: 'auto', backgroundColor: '#2196F3' }} textStyle={{ color: '#FFFFFF' }} mode="flat" color='#2196F3'>
+        {tag}
+      </Chip>
+    )
+  })
+}
+                  </View>
+        
                 </View>
               </View>
 

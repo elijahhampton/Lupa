@@ -343,9 +343,6 @@ export default class UserController {
                             value.program_purchase_metadata = {
                                 date_purchased: new Date(),
                             }
-                            value.program_metadata.num_interactions = null;
-                            value.program_metadata.shares = null;
-                            value.program_metadata.views = null;
                             value.program_metadata = {
                                 workouts_completed: 0
                             }

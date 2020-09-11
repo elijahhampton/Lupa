@@ -28,6 +28,14 @@ function WorkoutInformation({ saveWorkoutInformation }) {
     const [workoutName, setWorkoutName] = useState("");
     const workoutTitleInput = createRef();
 
+    const [monday, setMonday] = useState('unchecked')
+    const [tuesday, setTuesday] = useState('unchecked')
+    const [wednesday, setWednesday] = useState('unchecked')
+    const [thursday, setThursday] = useState('unchecked')
+    const [friday, setFriday] = useState('unchecked')
+    const [saturday, setSaturday] = useState('unchecked')
+    const [sunday, setSunday] = useState('unchecked')
+
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -35,6 +43,31 @@ function WorkoutInformation({ saveWorkoutInformation }) {
     }, []);
 
     const handleCheckboxOnPress = (day) => {
+        switch(day) {
+            case 'Monday':
+                checked.includes(day) === true ? setMonday('unchecked') : setMonday('checked')
+                break;
+            case 'Tuesday':
+                checked.includes(day) === true ? setTuesday('unchecked') : setTuesday('checked')
+                break;
+            case 'Wednesday':
+                checked.includes(day) === true ? setWednesday('unchecked') : setWednesday('checked')
+                break;
+            case 'Thursday':
+                checked.includes(day) === true ? setThursday('unchecked') : setThursday('checked')
+                break;
+            case 'Friday':
+                checked.includes(day) === true ? setFriday('unchecked') : setFriday('checked')
+                break;
+            case 'Saturday':
+                checked.includes(day) === true ? setSaturday('unchecked') : setSaturday('checked')
+                break;
+            case 'Sunday':
+                checked.includes(day) === true ? setSunday('unchecked') : setSunday('checked')
+                break;
+            default:
+        }
+
         let updatedArr = checked;
 
         if (checked.includes(day)) { 
@@ -73,17 +106,67 @@ function WorkoutInformation({ saveWorkoutInformation }) {
                         ( Choose at least one )
                     </Caption>
                 </Text>
-                {daysOfTheWeek.map(day => {
-                    return (
-                        <View style={{width: '60%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                            <Text  onPress={() => handleCheckboxOnPress(day)}  style={{fontFamily: 'Avenir-Light', fontSize: 18}}>
-                                {day}
+
+                <View style={{width: '60%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <Text  onPress={() => handleCheckboxOnPress('Monday')}  style={{fontFamily: 'Avenir-Light', fontSize: 18}}>
+                                Monday
                             </Text>
 
-                            <Checkbox.IOS key={day} status={checked.includes(day) === true ? 'checked' : 'unchecked'} color="#1089ff"  />
+                            <Checkbox.IOS key={'Monday'} status={monday} color="#1089ff"  />
                         </View>
-                    )
-                })}
+
+                        <View style={{width: '60%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <Text  onPress={() => handleCheckboxOnPress('Tuesday')}  style={{fontFamily: 'Avenir-Light', fontSize: 18}}>
+                                Tuesday
+                            </Text>
+
+                            <Checkbox.IOS key={'Tuesday'} status={tuesday} color="#1089ff"  />
+                        </View>
+
+                        <View style={{width: '60%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <Text  onPress={() => handleCheckboxOnPress('Wednesday')}  style={{fontFamily: 'Avenir-Light', fontSize: 18}}>
+                                Wednesday
+                            </Text>
+
+                            <Checkbox.IOS key={'Wednesday'} status={wednesday} color="#1089ff"  />
+                        </View>
+
+                        <View style={{width: '60%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <Text  onPress={() => handleCheckboxOnPress('Thursday')}  style={{fontFamily: 'Avenir-Light', fontSize: 18}}>
+                                Thursday
+                            </Text>
+
+                            <Checkbox.IOS key={'Thursday'} status={thursday} color="#1089ff"  />
+                        </View>
+
+                        <View style={{width: '60%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <Text  onPress={() => handleCheckboxOnPress('Friday')}  style={{fontFamily: 'Avenir-Light', fontSize: 18}}>
+                                Friday
+                            </Text>
+
+                            <Checkbox.IOS key={'Friday'} status={friday} color="#1089ff"  />
+                        </View>
+
+                        <View style={{width: '60%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <Text  onPress={() => handleCheckboxOnPress('Saturday')}  style={{fontFamily: 'Avenir-Light', fontSize: 18}}>
+                                Saturday
+                            </Text>
+
+                            <Checkbox.IOS key={'Saturday'} status={saturday} color="#1089ff"  />
+                        </View>
+
+                        <View style={{width: '60%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <Text  onPress={() => handleCheckboxOnPress('Sunday')}  style={{fontFamily: 'Avenir-Light', fontSize: 18}}>
+                                Sunday
+                            </Text>
+
+                            <Checkbox.IOS key={'Sunday'} status={sunday} color="#1089ff"  />
+                        </View>
+
+              
+            
+            
+            
             </View>
 
             <Button onPress={saveInformation} mode="contained" style={{height: 40,  borderRadius: 5, alignItems: 'center', justifyContent: 'center', elevation: 3, marginHorizontal: 20}} uppercase={false} color="#1089ff">

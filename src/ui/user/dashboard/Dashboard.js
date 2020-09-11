@@ -57,8 +57,8 @@ const Dashboard = () => {
     const renderTrainerDisplay = () => {
 
         return (
-            <View style={{ flex: 1 }}>
-                <ScrollView>
+            <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
 
                     <View style={{ alignSelf: 'center', }}>
                         <Text style={{ padding: 10, fontSize: 18, fontFamily: 'Avenir-Medium' }}>
@@ -135,7 +135,7 @@ const Dashboard = () => {
     const renderUserDisplay = () => {
         if (currUserProgramsData.length === 0) {
             return (
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                     <View style={[{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }]}>
                         <Image source={require('../../images/Clipboard.jpeg')} style={{ marginVertical: 10, width: 150, height: 150, borderRadius: 150 }} />
 
@@ -160,7 +160,7 @@ const Dashboard = () => {
         }
 
         return (
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1 , backgroundColor: '#FFFFFF'}}>
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     {
                         currUserProgramsData.map((program, index, arr) => {

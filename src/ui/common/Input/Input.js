@@ -57,6 +57,11 @@ const Input = props => {
         if (props.email && !emailRegex.test(text.toLowerCase())) {
           isValid = false;
         }
+
+        if (props.password && text.trim().length === 0) {
+          isValid = false;
+        }
+
         if (props.min != null && +text < props.min) {
           isValid = false;
         }

@@ -8,7 +8,6 @@ import Featured from "./Featured";
 import { MenuIcon } from "./icons";
 import CreateWorkout from "./workout/createworkout/CreateWorkout";
 import Feather1s from "react-native-feather1s/src/Feather1s";
-import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
