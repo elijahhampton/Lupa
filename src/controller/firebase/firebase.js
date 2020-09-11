@@ -12,6 +12,7 @@ import * as EmailValidator from 'email-validator'
 import { Platform } from 'react-native';
 import LOG from '../../common/Logger';
 import { openContactForm } from 'react-native-contacts';
+import { fcmService } from './service/FCMService';
 
 //Initialize firebase
 const firebaseConfig = {
@@ -114,7 +115,7 @@ export function generateMessagingToken(uuid) {
         return saveTokenToDatabase(token, uuid);
       });
     } else {
-      requestNotificationPermissions();
+      fcmService.requestNotificationPermissions();
     }
   }).catch(err => {
     alert(err)

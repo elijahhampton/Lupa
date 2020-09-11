@@ -12,7 +12,7 @@ import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
-const COLOR = "#EEEEEE";
+const COLOR = "#FFFFFF";
 const TAB_PROPS = {
   tabStyle: {backgroundColor: COLOR},
   activeTabStyle: {backgroundColor: COLOR},

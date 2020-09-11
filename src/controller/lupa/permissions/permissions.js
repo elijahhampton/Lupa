@@ -5,7 +5,7 @@ import {
     PermissionsAndroid
 } from 'react-native';
 
-import {request, PERMISSIONS, RESULTS, check} from 'react-native-permissions';
+import {request, PERMISSIONS, RESULTS, check, requestMultiple} from 'react-native-permissions';
 import Contacts, { requestPermission } from 'react-native-contacts'; 
 import { requestNotificationPermissions } from '../../firebase/firebase';
 import { fcmService } from '../../firebase/service/FCMService';
@@ -91,125 +91,30 @@ export const _checkCameraAndPhotoLibraryPermissions = () => {
 }
 
 export default _requestPermissionsAsync = () => {
-  
-  if (Platform.OS === 'ios') {
-  check(PERMISSIONS.IOS.CAMERA)
-  .then((result) => {
-    switch (result) {
-      case RESULTS.UNAVAILABLE:
-        //tell user it is not available on this device
-        break;
-      case RESULTS.DENIED:
-       //request permission
-       request(PERMISSIONS.IOS.CAMERA).then((result) => {
-        if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
-        {
-        //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
-        }
-      });
-        break;
-      case RESULTS.GRANTED:
-        // nothing to do
-        break;
-      case RESULTS.BLOCKED:
-        // alert the user to change it from settings
-      //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
-        break;
-    }
-  })
-  .catch((error) => {
-    // …
-   // alert('Oops.  It looks like there was an error while trying to anable the Camera permission.  You can enable it from the Lupa tab in the Settings app.')
-  });
-  
-  check(PERMISSIONS.IOS.PHOTO_LIBRARY)
-  .then((result) => {
-    switch (result) {
-      case RESULTS.UNAVAILABLE:
-        //tell user it is not available on this device
-        break;
-      case RESULTS.DENIED:
-       //request permission
-       request(PERMISSIONS.IOS.PHOTO_LIBRARY).then((result) => {
-        if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
-        {
-    //      alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
-        }
-      });
-        break;
-      case RESULTS.GRANTED:
-        // nothing to do
-        break;
-      case RESULTS.BLOCKED:
-        // alert the user to change it from settings
-    //    alert('The Photo Library permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
-        break;
-    }
-  })
-  .catch((error) => {
-    // …
-   // alert('Oops.  It looks like there was an error while trying to anable the Photo Library permission.  You can enable it from the Lupa tab in the Settings app.')
-  });
-  
-  //TODO: Change to location in use and fix errors where is always denied or blocked
-  check(PERMISSIONS.IOS.LOCATION_ALWAYS)
-  .then((result) => {
-    switch (result) {
-      case RESULTS.UNAVAILABLE:
-        //tell user it is not available on this device
-        
-        break;
-      case RESULTS.DENIED:
-       //request permission
-       request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((result) => {
-        if (result == RESULTS.DENIED || result == RESULTS.BLOCKED)
-        {
-       //   alert('The Location permission is required to use the Lupa app.  You can enable it from the Lupa tab in the Settings app.')
-        }
-      });
-        break;
-      case RESULTS.GRANTED:
-        // nothing to do
-        
-        break;
-      case RESULTS.BLOCKED:
-        // alert the user to change it from settings
-       //may need to handle the case here user says only while using?
-        break;
-    }
-  })
-  .catch((error) => {
-    // …
-   // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
-  });
 
-  check(PERMISSIONS.IOS.CONTACTS)
-  .then((result) => {
-    switch (result) {
-      case RESULTS.UNAVAILABLE:
-        //tell user it is not available on this device
-        
-        break;
-      case RESULTS.DENIED:
-       //request permission
-    
-        break;
-      case RESULTS.GRANTED:
-        // nothing to do
-        
-        break;
-      case RESULTS.BLOCKED:
-        // alert the user to change it from settings
-       //may need to handle the case here user says only while using?
-        break;
-    }
-  })
-  .catch((error) => {
-    // …
-   // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
-  });
+  requestMultiple([
+    PERMISSIONS.IOS.CAMERA, 
+    PERMISSIONS.IOS.PHOTO_LIBRARY,
+    PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+  ]).then(
+    (statuses) => {
+      let statusD
+      if (statuses[PERMISSIONS.IOS.CAMERA] == 'blocked' || statuses[PERMISSIONS.IOS.CAMERA] == 'denied' || statuses[PERMISSIONS.IOS.CAMERA] == 'unavailable') {
+        Alert.alert('It looks like camera permissions have been denied.  Open your settings to change this.')
+      }
 
-  requestNotificationPermissions();
+      if (statuses[PERMISSIONS.IOS.PHOTO_LIBRARY] == 'blocked' || statuses[PERMISSIONS.IOS.PHOTO_LIBRARY] == 'denied' || statuses[PERMISSIONS.IOS.PHOTO_LIBRARY] == 'unavailable') {
+        Alert.alert('It looks like camera permissions have been denied.  Open your settings to change this.')
+      }
+
+      if (statuses[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] == 'blocked' || statuses[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] == 'denied' || statuses[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] == 'unavailable') {
+        Alert.alert('It looks like camera permissions have been denied.  Open your settings to change this.')
+      }
+
+    },
+  );
+
+  fcmService.requestNotificationPermissions()
 }
 
 if (Platform.OS === 'android') {
@@ -426,5 +331,4 @@ if (Platform.OS === 'android') {
   } catch(err) {
     alert(err)
   }
-}
 }

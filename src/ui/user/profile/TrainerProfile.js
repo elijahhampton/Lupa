@@ -300,13 +300,13 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         async function loadProfileData() {
             try {
                 setProfileImage(userData.photo_url)
-                await fetchVlogs(userData.user_uuid);
+            //    await fetchVlogs(userData.user_uuid);
         if (isCurrentUser) {
             setUserPrograms(currUserPrograms)
         } else {
             fetchPrograms(userData.user_uuid);
         }
-       checkCurrFitnessLocation()
+      // checkCurrFitnessLocation()
                 setReady(true)
             } catch(error) {
                 setReady(false)

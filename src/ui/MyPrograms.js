@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: 'rgb(247, 247, 247)',
+        backgroundColor: '#FFFFFF',
     }
 })
 

@@ -38,13 +38,13 @@ function UserDashboard(props) {
 
     const renderComponent = () => {
         return currUserData.program_data.length !== 0 ?
-        <ScrollView contentContainerStyle={{marginTop: 5, backgroundColor: 'rgb(247, 247, 247)',}}>
+        <ScrollView contentContainerStyle={{marginTop: 5, backgroundColor: '#FFFFFF',}}>
                    <View style={{marginVertical: 10, backgroundColor: 'transparent'}} />
         <ListItem onPress={() => setProgramModalIsOpen(true)} title={"Programs " + '(' + currUserData.programs.length + ')'} rightIcon={() => <FeatherIcon name="chevron-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} topDivider bottomDivider style={{elevation: 3}}/>
 
         <ListItem onPress={() => setTrainersModalIsOpen(true)} title="Trainers" rightIcon={() => <FeatherIcon name="chevron-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} bottomDivider style={{elevation: 3}}/>
         
-        <View style={{width: Dimensions.get('window').width, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#E5E5E5', flexDirection: 'row', alignItems: 'center', alignItems: 'center', justifyContent: 'space-evenly', marginVertical: 20, padding: 20, backgroundColor: 'white'}}>
+        <View style={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#E5E5E5', flexDirection: 'row', alignItems: 'center', alignItems: 'center', justifyContent: 'space-evenly', marginVertical: 20, padding: 20, backgroundColor: 'white'}}>
           <View style={{flex: 3}}>
           <Text style={{color: '#1089ff', fontSize: 18, flexWrap: 'wrap',  fontFamily: 'Avenir-Light'}}>
                 Invite your friends to Lupa and get 1 free program.
@@ -60,7 +60,7 @@ function UserDashboard(props) {
 
         </ScrollView>
         :
-        <ScrollView contentContainerStyle={{backgroundColor: 'rgb(247, 247, 247)', flexGrow: 2, justifyContent: 'space-evenly'}}>
+        <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF', flexGrow: 2, justifyContent: 'space-evenly'}}>
              <View style={[{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }]}>
                 <Image source={require('../../../images/Clipboard.jpeg')} style={{ marginVertical: 10, width: 150, height: 150, borderRadius: 150 }} />
 

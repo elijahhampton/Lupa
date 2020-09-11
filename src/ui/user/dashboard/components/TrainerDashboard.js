@@ -194,7 +194,7 @@ function TrainerDashboard(props) {
         componentReady === true ?
         <View style={{
             flex: 1,
-            backgroundColor: 'rgb(247, 247, 246)'
+            backgroundColor: '#FFFFFF'
         }}>
              <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3,}}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
@@ -219,7 +219,7 @@ function TrainerDashboard(props) {
       </DataTable>
                         </View>
 
-                    {/*    <Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#EEEEEE' }} />
+                    {/*    <Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#FFFFFF' }} />
 
 <View style={{ }}>
     <Text style={{ padding: 10, fontSize: 18 }}>
@@ -292,7 +292,7 @@ function TrainerDashboard(props) {
     </Button> 
     </View>*/}
 
-<Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#EEEEEE' }} />
+<Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#FFFFFF' }} />
 
 
 

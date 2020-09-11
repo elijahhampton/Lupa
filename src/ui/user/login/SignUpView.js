@@ -108,9 +108,9 @@ const SignUp = props => {
   }
 
   const signupHandler = async () => {
-    await dispatch(authActions.signup(formState.inputValues.username.trim(), formState.inputValues.email.trim(), formState.inputValues.password.trim()));
+    await dispatch(authActions.signup(formState.inputValues.username.trim(), formState.inputValues.email.trim(), formState.inputValues.password.trim()))
     navigation.navigate('Onboarding')
-    await _setupRedux()
+    _setupRedux()
   }
 
   const inputChangeHandler = useCallback(

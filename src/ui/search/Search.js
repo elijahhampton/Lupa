@@ -28,6 +28,7 @@ import { Constants } from 'react-native-unimodules'
 import { MenuIcon } from '../icons';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 import LUPA_DB from '../../controller/firebase/firebase';
+import { connect } from 'react-redux';
 
 const CATEGORY_SEPARATION = 15
 const NAVBAR_HEIGHT = 50;
@@ -39,6 +40,12 @@ const TAB_PROPS = {
   textStyle: {color: "rgba(35, 55, 77, 0.75)", fontFamily: 'Avenir-Heavy'},
   activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold'}
 };
+
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
 
 class Search extends React.Component {
     constructor(props) {
@@ -52,6 +59,7 @@ class Search extends React.Component {
             searchResults: [],
             refreshing: false,
             popularPrograms: [],
+            locationResults: []
         }
 
     }
@@ -59,21 +67,26 @@ class Search extends React.Component {
     componentDidMount() {
         let docData = getLupaProgramInformationStructure();
         let popularProgramResults = [];
+        let locationBasedResults = []
 
-        this.popularProgramsObsever = LUPA_DB.collection('programs').where('completedProgram', '==', true).onSnapshot(querySnapshot => {
+        this.popularProgramsObserver = LUPA_DB.collection('programs').where('completedProgram', '==', true).onSnapshot(querySnapshot => {
             querySnapshot.forEach(doc => {
                 docData = doc.data();
+                if (docData.program_location.address.includes(this.props.lupa_data.Users.currUserData.location.city) || docData.program_location.address.includes(this.props.lupa_data.Users.currUserData.location.state)) {
+                    locationBasedResults.push(docData);
+                }
+
+
                 popularProgramResults.push(docData);
             });
 
-            alert(popularProgramResults.length)
-
-            this.setState({ popularPrograms: popularProgramResults})
+            this.setState({ popularPrograms: popularProgramResults, locationResults: locationBasedResults})
         });
+
     }
 
     componentWillUnmount() {
-        return () => this.popularProgramsObsever();
+        return() => this.popularProgramsObserver();
     }
 
     handleOnRefresh() {
@@ -174,28 +187,29 @@ class Search extends React.Component {
               </Tab>
 
               <Tab heading="Most Recent" {...TAB_PROPS} >
-                <View style={{flex: 1}}>
-
-                </View>
+              <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
+                    {
+                        this.state.popularPrograms.map(program => {
+                            return (
+                                <LargeProgramSearchResultCard program={program} />
+                            )
+                        })
+                    }
+                </ScrollView>
               </Tab>
               
               <Tab heading="Location" {...TAB_PROPS} >
-                <View style={{flex: 1}}>
-
-                </View>
+              <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
+                    {
+                        this.state.locationResults.map(program => {
+                            return (
+                                <LargeProgramSearchResultCard program={program} />
+                            )
+                        })
+                    }
+                </ScrollView>
               </Tab>
 
-              <Tab heading="Strength" {...TAB_PROPS} >
-                <View style={{flex: 1}}>
-
-                </View>
-              </Tab>
-
-              <Tab heading="Endurance" {...TAB_PROPS} >
-                <View style={{flex: 1}}>
-
-                </View>
-              </Tab>
             </Tabs>
           </ScrollView>
   
@@ -242,4 +256,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Search;
+export default connect(mapStateToProps)(Search)
