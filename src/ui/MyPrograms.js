@@ -37,8 +37,16 @@ function MyPrograms(props) {
 
     const renderPrograms = () => {
         return currUserData.program_data.map((program, index, arr) => {
+            /*
+            * TODO: There is a problem where programs are deleted from the users program_data if
+            * if they do not publish the program.  For now we will check to not render programs that don't have completedPrograms as true 
+            */
+            if (typeof(program) == 'undefined' || program.completedProgram == false) {
+                return;
+            }
+            
             return (
-                <Card key={index} style={{elevation: 3, width: '92%', marginVertical: 10}} onPress={() => handleCardOnPress(program)}>
+                <Card key={program.program_structure_uuid} style={{elevation: 3, width: '92%', marginVertical: 10}} onPress={() => handleCardOnPress(program)}>
                 <Card.Cover source={{ uri: program.program_image }} />
                 <Card.Actions style={{justifyContent: 'space-between', paddingVertical: 10}}>
                     <Text style={{fontSize: 15, fontFamily: 'HelveticaNeue'}}>

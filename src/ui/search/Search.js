@@ -9,12 +9,13 @@ import {
     Animated,
     RefreshControl,
     Dimensions,
+    Easing
 } from 'react-native'
 
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
 
 import LupaController from '../../controller/lupa/LupaController'
-import { Appbar, Button, FAB, Surface } from 'react-native-paper'
+import { Appbar, Button, FAB, Searchbar, Surface } from 'react-native-paper'
 import {
     SearchBar
 } from 'react-native-elements'
@@ -54,12 +55,17 @@ class Search extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE= LupaController.getInstance();
 
         this.state = {
+            searchShowing: false,
             searching: false,
             searchValue: "",
             searchResults: [],
             refreshing: false,
             popularPrograms: [],
-            locationResults: []
+            locationResults: [],
+            searchContainerWidth: new Animated.Value(0),
+            scrollableTabbarWidth: new Animated.Value(1),
+            previousSearches: [],
+            currTab: 1,
         }
 
     }
@@ -92,13 +98,45 @@ class Search extends React.Component {
     handleOnRefresh() {
         this.setState({ refreshing: true })
         this.setState({ refreshing: false })
-      }
+    }
+
+    showSearch = () => {
+       this.setState({ searchShowing: true })
+
+        Animated.timing(this.state.searchContainerWidth, {
+            toValue: 1,
+            duration: 200,
+            easing: Easing.linear
+        }).start();
+
+        Animated.timing(this.state.scrollableTabbarWidth, {
+            toValue: 0,
+            duration: 200,
+            easing: Easing.linear
+        }).start();
+    }
+
+    hideSearch = () => {
+        this.setState({ searchShowing: false })
+
+        Animated.timing(this.state.searchContainerWidth, {
+            toValue: 0,
+            duration: 200,
+            easing: Easing.linear
+        }).start();
+
+        Animated.timing(this.state.scrollableTabbarWidth, {
+            toValue: 1,
+            duration: 200,
+            easing: Easing.linear
+        }).start();
+    }
 
 
    performSearch = async searchQuery => {
         //If no search query then set state and return
         if (searchQuery == "" || searchQuery == "") {
-            this.state({
+            this.setState({
                 searching: true,
                 searchValue: "",
                 searchResults: []
@@ -139,10 +177,18 @@ class Search extends React.Component {
                 )
             })
         }  
+
+        handleOnChangeText = (text) => {
+            if (text == "") {
+                this.hideSearch()
+            }
+
+            this.performSearch(text)
+        }
     
 
         render() {
-         
+         this.state.searching != "" ? () => this.setState({ currTab: 0}) : null
     return (
 
         <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -160,20 +206,56 @@ class Search extends React.Component {
             bounces={false}
             showsVerticalScrollIndicator={false}>
             <Tabs 
-            
-            
+            page={this.state.currTab}
+            onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
             renderTabBar={(props) => <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <View style={{width: '90%'}}>
+                <Animated.View style={{width: this.state.scrollableTabbarWidth.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0%', '90%']
+                })}}>
                 <ScrollableTab {...props} style={{  shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: '#FFFFFF', backgroundColor: COLOR}} tabsContainerStyle={{flex: 1, justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 5, width: 5, borderRadius: 10,marginLeft: 30, elevation: 0, borderRadius: 8}}/>
-                </View>
+                </Animated.View>
           
-                <View style={{width: '10%', alignItems: 'center', justifyContent: 'center'}}>
-                    <MaterialIcon name="search" size={20} />
-                </View>
+                <Animated.View style={{width: this.state.searchContainerWidth.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0%', '100%']
+                }), flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                   {this.state.searchShowing === true ? null : <MaterialIcon onPress={() => this.showSearch()} style={{padding: 20, width: '100%'}} name="search" size={20} /> } 
+                   {this.state.searchShowing === true ?
+                   <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                    <Searchbar 
+                    style={{width: Dimensions.get('window').width - 20, marginVertical: 10, alignSelf: 'center'}} 
+                    placeholder="Search programs or trainers"
+                    iconColor="#1089ff"
+                    value={this.state.searchValue}
+                    onChangeText={text => this.handleOnChangeText(text)}
+                    inputStyle={styles.inputStyle}
+                    theme={{
+                        roundness: 8,
+                        colors: {
+                            primary: '#1089ff',
+                        }
+                    }}
+                      /> 
+                   </View>
+
+                    : 
+                    null}
+                </Animated.View>
             </View>
             }>
               
-              <Tab heading="Popular" {...TAB_PROPS}>
+              
+              <Tab heading="Search" {...TAB_PROPS}>
+                <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
+                    {
+                        this.renderSearchResults()
+                    }
+                </ScrollView>
+    
+              </Tab>
+
+           <Tab heading="Popular" {...TAB_PROPS}>
                 <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
                     {
                         this.state.popularPrograms.map(program => {
@@ -209,8 +291,11 @@ class Search extends React.Component {
                     }
                 </ScrollView>
               </Tab>
+              
+        
 
             </Tabs>
+                
           </ScrollView>
   
        

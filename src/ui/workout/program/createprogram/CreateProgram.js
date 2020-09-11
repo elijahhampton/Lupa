@@ -218,7 +218,6 @@ class CreateProgram extends React.Component {
         if (this.state.programComplete == false) {
             //delete from database
             this.LUPA_CONTROLLER_INSTANCE.deleteProgram(this.props.lupa_data.Users.currUserData.user_uuid, this.state.currProgramUUID)
-
             if (typeof (this.state.currProgramUUID) != 'undefined' || this.state.currProgramUUID != '' || this.state.currProgramUUID == null) {
                 //delete from redux
                 this.props.deleteProgram(this.state.currProgramUUID)

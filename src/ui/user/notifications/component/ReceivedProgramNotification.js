@@ -55,7 +55,7 @@ function ReceivedProgramNotification({ notificationData }) {
         else
         {
             setProgramModalVisible(true)
-            LUPA_CONTROLLER_INSTANCE.addProgramView(programData.program_structure_uuid);
+            LUPA_CONTROLLER_INSTANCE.addProgramView(notificationData.data.program_structure_uuid);
         }
     }
 
@@ -82,7 +82,7 @@ function ReceivedProgramNotification({ notificationData }) {
                    </View>
                   
                    </TouchableWithoutFeedback>
-                   <ProgramInformationPreview isVisible={programModalVisible} programData={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
+                   <ProgramInformationPreview isVisible={programModalVisible} program={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
                    <ProgramOptionsModal program={notificationData.data} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
                    <Divider />
                    </>

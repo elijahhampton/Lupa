@@ -340,12 +340,17 @@ export default class UserController {
                             });
     
                             programDataList = snapshot.program_data
-                            value.program_purchase_metadata = {
-                                date_purchased: new Date(),
-                            }
-                            value.program_metadata = {
-                                workouts_completed: 0
-                            }
+                            
+                            /* Update metadata no matter who the user is because trainers might want to do
+                            the program as well.  Date purchased will serve as date created for trainers (not to be explicitly used that way) */
+                                value.program_metadata = {
+                                    workouts_completed: 0
+                                }
+
+                                value.program_purchase_metadata = {
+                                    date_purchased: new Date(),
+                                }
+                           
                             programDataList.push(value);
                      
                             await currentUserDocument.update({
@@ -353,7 +358,7 @@ export default class UserController {
                             });
                         }
                         else if (optionalData == 'remove') {
-    
+
                         }
                     } catch (error) {
                         alert(error)
@@ -488,34 +493,15 @@ export default class UserController {
                 userResult = result.data();
             });
 
-            if (typeof (userResult.programs) != 'undefined') {
-                if (userResult.programs.length > 0) {
-                    for (let i = 0; i < userResult.programs.length; i++) {
-                        docData = getLupaProgramInformationStructure()
-                        await LUPA_DB.collection('programs').doc(userResult.programs[i]).get().then(snapshot => {
-                            docData = snapshot.data()
-                        })
-
-                        if (typeof (docData) == 'undefined' || docData.program_name == "") {
-
-                        }
-                        else {
-                            userPrograms.push(docData)
-                        }
-                    }
-                }
+            if (typeof(userResult) == 'undefined') {
+                userResult = getLupaUserStructure();
+                return Promise.resolve(userResult)
             }
-
         } catch (error) {
             LOG_ERROR('UserController.ts', 'Caught exception in getUserInformationByUUID', error)
-            const userData = getLupaUserStructure()
-            return Promise.resolve(userData)
+            userResult = getLupaUserStructure();
+            return Promise.resolve(userResult)
         }
-
-        Object.defineProperty(userResult, 'programs', {
-            value: userPrograms,
-            writable: true
-        })
 
         return Promise.resolve(userResult);
     }
@@ -955,19 +941,26 @@ export default class UserController {
      * Used for deleting programs that were in the process of creation
      */
     deleteProgram = async (user_uuid, programUUID) => {
-        let tempData = {}
-        let updatedProgramList = []
+        let tempData = {};
 
         try {
+            /**
+             * TODO:
+             * Need to delete the last program that was created or the program with the UUID
+             * programUUID from the user's document field program_data.
+             */
+            
             /* await USER_COLLECTION.doc(user_uuid).get().then(snapshot => {
-                 tempData = snapshot.data()
+                 tempData = snapshot.data();
              })
-     
-             updatedProgramList = this.arrayRemove(tempData.programs, programUUID)
+             
+             let userProgramData = await tempData.program_data;
+
+             await userProgramData.pop();
      
              await USER_COLLECTION.doc(user_uuid).update({
-                 programs: updatedProgramList
-             })*/
+                 program_data: userProgramData
+             });*/
 
             //delete program from lupa programs
             await PROGRAMS_COLLECTION.doc(programUUID).delete();

@@ -138,7 +138,7 @@ function FeaturedProgramCard({ currProgram, keyProp }) {
                         </View>
                     </View>
                 </Card.Actions>
-                <ProgramInformationPreview isVisible={programModalVisible} programData={currProgram} closeModalMethod={() => setProgramModalVisible(false)} />
+                <ProgramInformationPreview isVisible={programModalVisible} program={currProgram} closeModalMethod={() => setProgramModalVisible(false)} />
             <ProgramOptionsModal program={currProgram} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
             </Card>
     )

@@ -39,7 +39,7 @@ function LiveWorkoutPreview({ program, isVisible, closeModal }) {
                                                                 <FeatherIcon thin={true}  onPress={closeModal} name="x" color="white" size={20} style={{ alignSelf: 'center' }} />
                                                             </View>
 
-        <ProgramInformationPreview isVisible={programInformationPreviewIsVisible} programData={program} closeModalMethod={() => setProgramInformationVisible(false)} /> 
+        <ProgramInformationPreview isVisible={programInformationPreviewIsVisible} program={program} closeModalMethod={() => setProgramInformationVisible(false)} /> 
         </Modal>
     )
 }

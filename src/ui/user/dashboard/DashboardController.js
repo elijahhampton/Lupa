@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import TrainerDashboard from './components/TrainerDashboard';
 import UserDashboard from './components/UserDashboard';
 
-function DashboardController(props) {
+function DashboardController({ navigation, route }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     });

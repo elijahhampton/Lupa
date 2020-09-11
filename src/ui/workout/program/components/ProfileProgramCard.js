@@ -91,7 +91,7 @@ function ProfileProgramCard(props) {
 
       </TouchableWithoutFeedback>
 
-      <ProgramInformationPreview isVisible={programModalVisible} programData={props.programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
+      <ProgramInformationPreview isVisible={programModalVisible} program={props.programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
       <ProgramOptionsModal program={props.programData} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
       </View>
     )
