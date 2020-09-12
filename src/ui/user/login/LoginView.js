@@ -5,195 +5,179 @@
  * 
  * Login View
  */
-import React from "react";
+import React, { useEffect, useReducer, useCallback, useState } from "react";
 
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
   Dimensions,
   SafeAreaView,
+  Platform,
   KeyboardAvoidingView
 } from "react-native";
 
 import {
   Snackbar,
-  Divider
+  Divider, Button
 } from 'react-native-paper';
 
 import {
-  Input, 
   Button as ElementsButton 
 } from "react-native-elements";
 
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import LupaController from '../../../controller/lupa/LupaController';
 import { UserAuthenticationHandler } from "../../../controller/firebase/firebase";
-import { ScrollView } from "react-native-gesture-handler";
 
 import ThinFeatherIcon from "react-native-feather1s";
 import { storeAsyncData, retrieveAsyncData } from "../../../controller/lupa/storage/async";
 import { LOG_ERROR } from "../../../common/Logger";
 import { getLupaUserStructure } from "../../../controller/firebase/collection_structures";
 import { Constants } from "react-native-unimodules";
-/**
- * Maps the redux state to props.
- */
-mapStateToProps = (state, action) => {
-  return {
-    lupa_data: state
-  }
-}
-
-/**
- * Allows redux actions to be emitted through props.
- */
-mapDispatchToProps = dispatch => {
-  return {
-    updateUser: (currUserData) => {
-      dispatch({
-        type: 'UPDATE_CURRENT_USER',
-        payload: currUserData
-      })
-    },
-    updatePacks: (currUserPacksData) => {
-      dispatch({
-        type: 'UPDATE_CURRENT_USER_PACKS',
-        payload: currUserPacksData,
-      })
-    },
-    updateUserPrograms: (currUserProgramsData) => {
-      dispatch({
-        type: 'UPDATE_CURRENT_USER_PROGRAMS',
-        payload: currUserProgramsData,
-      })
-    },
-    updateUserServices: (currUserServicesData) => {
-      dispatch({
-        type: 'UPDATE_CURRENT_USER_SERVICES',
-        payload: currUserServicesData,
-      })
-    },
-    updateLupaWorkouts: (lupaWorkoutsData) => {
-      dispatch({
-        type: 'UPDATE_LUPA_WORKOUTS',
-        payload: lupaWorkoutsData,
-      })
-    },
-    updateLupaAssessments: (lupaAssessmentData) => {
-      dispatch({
-        type: 'UPDATE_LUPA_ASSESSMENTS',
-        payload: lupaAssessmentData
-      })
-    }
-  }
-}
+import Input from '../../common/Input/Input'
+import { useNavigation } from '@react-navigation/native';
 
 const INPUT_PLACEHOLDER_COLOR = "rgb(99, 99, 102)"
 
-/**
- * The LoginView class contains the view the user sees upong logging on.
- */
-class LoginView extends React.PureComponent {
-  constructor(props) {
-    super(props);
+const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
 
-    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    this.userAuthenticationHandler = new UserAuthenticationHandler();
+const formReducer = (state, action) => {
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues
+    };
+  }
+  return state;
+};
 
-    this.state = {
-      username: '',
-      password: '',
-      securePasswordEntry: true,
-      showSnack: false,
-      loginRejectReason: "",
+function LoginView(props) {
+  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+  const userAuthenticationHandler = new UserAuthenticationHandler();
 
+  const [securePasswordEntryEnabled, useSecurePasswordEntry] = useState(true);
+  const [snackIsVisible, showSnack] = useState(false);
+  const [loginRejectedReason, setLoginRejectedReason] = useState('');
+
+  const navigation = useNavigation();
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    async function retrievePreviousSignInData() {
+      try {
+        await retrieveAsyncData('PREVIOUS_LOGIN_EMAIL').then(res => {
+          dispatchFormState({
+            type: FORM_INPUT_UPDATE,
+            value: res,
+            isValid: true,
+            input: 'email'
+          })
+        });
+  
+        await retrieveAsyncData('PREVIOUS_LOGIN_PASSWORD').then(res => {
+          dispatchFormState({
+            type: FORM_INPUT_UPDATE,
+            value: '',
+            isValid: true,
+            input: 'password'
+          })
+        });
+      } catch(error) {
+        alert(error)
+        LOG_ERROR('LoginView.js', 'Unhandled error in LoginView.js componentDidMount', error);
+        dispatchFormState({
+          type: FORM_INPUT_UPDATE,
+          value: '',
+          isValid: true,
+          input: 'email'
+        })
+
+        dispatchFormState({
+          type: FORM_INPUT_UPDATE,
+          value: inputValue,
+          isValid: true,
+          input: 'password'
+        })
+      }
     }
 
+    retrievePreviousSignInData();
+  }, []);
+
+   /**
+   * Introduce the application by setting up redux, indexing the application, 
+   * and navigating the user into the application.
+   */
+  const _introduceApp = async () => {
+    await _setupRedux();
+    LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+    navigation.navigate('App');
   }
 
-  componentDidMount = async () => {
-    try {
-      await retrieveAsyncData('PREVIOUS_LOGIN_EMAIL').then(res => {
-        this.setState({ username: res })
-      });
+  /**
+   * Handles user authentication once the user presses the login button.
+   */
+  const onLogin = async (e) => {
+    e.preventDefault();
 
-      await retrieveAsyncData('PREVIOUS_LOGIN_PASSWORD').then(res => {
-        this.setState({ password: res})
-      });
-    } catch(error) {
-      LOG_ERROR('LoginView.js', 'Unhandled error in LoginView.js componentDidMount', error);
+    const attemptedUsername = formState.inputValues.email.trim();
+    const attemptedPassword = formState.inputValues.password.trim();
+
+    let successfulLogin = false;
+    await userAuthenticationHandler.loginUser(attemptedUsername, attemptedPassword).then(result => {
+      successfulLogin = result;
+    })
+
+    if (typeof(successfulLogin) != 'boolean') {
+      setLoginRejectedReason('Invalid Username or Password.  Try again.')
+      showSnack(true);
+      return;
+    }
+
+    if (successfulLogin) {
+      _introduceApp();
+      storeAsyncData('PREVIOUS_LOGIN_EMAIL', attemptedUsername);
+      storeAsyncData('PREVIOUS_LOGIN_PASSWORD', attemptedPassword);
+    } else {
+      setLoginRejectedReason('Invalid Username or Password.  Try again.')
+      showSnack(true);
     }
   }
 
   /**
    * DISPATCHES PAYLOAD INTO REDUX ONLOGIN CONTAINING USER INFORMATION AND LUPA DATA 
    */
-  _updateUserInRedux = (userObject) => {
-    this.props.updateUser(userObject);
-  }
-  _updatePacksInRedux = (packsData) => {
-    this.props.updatePacks(packsData);
-  }
-  _updateUserProgramsDataInRedux = (programsData) => {
-    this.props.updateUserPrograms(programsData);
-  }
-  _updateLupaWorkoutsDataInRedux = (lupaWorkoutsData) => {
-    this.props.updateLupaWorkouts(lupaWorkoutsData);
-  }
-  _updateLupaAssessmentDataInRedux = (lupaAssessmentData) => {
-    this.props.updateLupaAssessments(lupaAssessmentData);
-  }
-  _handleShowPassword = () => {
-    this.setState({
-      securePasswordEntry: !this.state.securePasswordEntry
-    })
+  const updateUserInRedux = (userObject) => {
+    dispatch({ type: 'UPDATE_CURRENT_USER', payload: userObject});
   }
 
-  /**
-   * Handles user authentication once the user presses the login button.
-   */
-  onLogin = async (e) => {
-    e.preventDefault();
-
-    const attemptedUsername = this.state.username.trim()
-    const attemptedPassword = this.state.password.trim()
-
-    let successfulLogin = false;
-    await this.userAuthenticationHandler.loginUser(attemptedUsername, attemptedPassword).then(result => {
-      successfulLogin = result;
-    })
-
-    if (typeof(successfulLogin) != 'boolean') {
-      this.setState({
-        loginRejectReason: 'Invalid Username or Password.  Try again.',
-        showSnack: true
-      })
-      return;
-    }
-
-    if (successfulLogin) {
-      this._introduceApp();
-      storeAsyncData('PREVIOUS_LOGIN_EMAIL', attemptedUsername);
-      storeAsyncData('PREVIOUS_LOGIN_PASSWORD', attemptedPassword);
-    } else {
-      this.setState({
-        loginRejectReason: 'Invalid Username or Password.  Try again.',
-        showSnack: true
-      })
-    }
+  const updateUserProgramsDataInRedux = (programsData) => {
+    dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: programsData });
   }
 
-  /**
-   * Introduce the application by setting up redux, indexing the application, 
-   * and navigating the user into the application.
-   */
-  _introduceApp = async () => {
-    await this._setupRedux();
-    this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-    this.props.navigation.navigate('App');
+  const updateLupaWorkoutsDataInRedux = (lupaWorkoutsData) => {
+    dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkoutsData });
+  }
+
+  const toggleSecurePasswordEntry = () => {
+    useSecurePasswordEntry(!securePasswordEntryEnabled);
   }
 
   /**
@@ -202,141 +186,148 @@ class LoginView extends React.PureComponent {
    */
   _setupRedux = async () => {
     let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = [];
-    await this.LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+    await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
-    })
+    });
+
     let userPayload = {
       userData: currUserData,
       healthData: {}
     }
-    await this._updateUserInRedux(userPayload);
+
+    await updateUserInRedux(userPayload);
 
     if (currUserData.isTrainer) {
-      await this.LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
         currUserPrograms = result;
       })
-      await this._updateUserProgramsDataInRedux(currUserPrograms);
+      await updateUserProgramsDataInRedux(currUserPrograms);
     }
 
-
-    lupaWorkouts =  this.LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-    this._updateLupaWorkoutsDataInRedux(lupaWorkouts);
+    lupaWorkouts =  LUPA_CONTROLLER_INSTANCE.loadWorkouts();
+    updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
-
-  /**
-   * Handle toggling the visibility of the snackbar.
-   */
-  _onToggleSnackBar = () => this.setState(state => ({ showSnack: !state.showSnack }));
 
   /**
    * Emits a set state action when the snackbar is dismissed.
    */
-  _onDismissSnackBar = () => {
-    this.setState({ showSnack: false });
+  const onDismissSnackBar = () => {
+    showSnack(false);
   }
 
-  render() {
-    return (
-      <View style={{ flex: 1, backgroundColor: '#FFFFFF', justifyContent: 'space-between' }}>
-       <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={{flex: 1 ,backgroundColor: 'transparent'}}>
-        <View style={{flex: 1, justifyContent: 'space-between'}} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never" showsVerticalScrollIndicator={false} shouldRasterizeIOS={true}>
-        <View style={styles.headerText}>
-          <Text style={styles.welcomeBackText}>
-            Welcome back,
-                        </Text>
-          <Text style={styles.signInText}>
-            sign in to continue
-                        </Text>
-          <View style={styles.noAccountTextContainer}>
-            <Text style={{ fontSize: 13, fontWeight: '500', color: 'rgb(142, 142, 147)' }}>
-              Don't have an account?
-        </Text>
-            <Text>
-              {" "}
-            </Text>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
-              <Text style={{ fontSize: 13, fontWeight: '500', color: '#1565C0' }}>
-                Sign up
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      email: '',
+      password: '',
+      username: '',
+    },
+    inputValidies: {
+      email: false,
+      password: false,
+      username: '',
+    },
+    formIsValid: false,
+  })
+
+  const inputChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
+    dispatchFormState({
+      type: FORM_INPUT_UPDATE,
+      value: inputValue,
+      isValid: inputValidity,
+      input: inputIdentifier
+    })
+  },
+  [dispatchFormState]
+  );
+
+  //next method
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', justifyContent: 'space-between' }}>
+     <View style={{flex: 1, justifyContent: 'space-between'}} keyboardDismissMode="interactive" keyboardShouldPersistTaps="never">
+     <View style={styles.headerText}>
+       <Text style={styles.welcomeBackText}>
+         Welcome back,
+                     </Text>
+       <Text style={styles.signInText}>
+         sign in to continue
+                     </Text>
+
+     </View>
+
+     <View style={{ flex: 1, justifyContent: 'flex-start', marginVertical: 20 }}>
+       <View style={{ width: '100%', margin: 5 }}>
+       <Input
+       id="email"
+       label="Email"
+       placeholder="Email"
+       editable={true}
+       onInputChange={inputChangeHandler}
+       autoCapitalize='none'
+       email
+       secureTextEntry={false}
+       required
+       initialValue=''
+      initiallyValid={true}
+       />
+       </View>
+
+       <View style={{ width: '100%', margin: 5}}>
+       <Input
+       id="password"
+       label="Password"
+       placeholder="Enter your password" 
+       placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
+       editable={true}
+       onInputChange={inputChangeHandler}
+       autoCapitalize='none'
+       password
+       initiallyValid={true}
+       secureTextEntry={securePasswordEntryEnabled}
+       minLength={8}
+       required
+       />
+       </View>
+
+       <Button onPress={onLogin} uppercase={false} mode="contained" style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', height: 45, alignItems: 'center', justifyContent: 'center', marginTop: 20, width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+          <Text>
+            Login
           </Text>
-            </TouchableOpacity>
-          </View>
+       </Button>
 
-        </View>
+       <Button color="#23374d" uppercase={false} mode="text" style={{marginVertical: 5}}>
+         <Text>
+           Forgot Password?
+         </Text>
+       </Button>
+       </View>
 
-        <View style={{ flex: 1, justifyContent: 'flex-start', marginVertical: 20 }}>
-          <View style={{ width: '100%', margin: 5 }}>
-              <Input 
-              placeholder="Enter an email address" 
-              placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
-              autoCapitalize='none'
-              inputStyle={styles.inputStyle} 
-              inputContainerStyle={{ borderBottomColor: "rgb(209, 209, 214)", borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-              containerStyle={{ marginVertical: 20, width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: 'transparent'  }} 
-              value={this.state.username} 
-              editable={true}
-              onChangeText={text => this.setState({username: text})}
-              returnKeyType="default"
-              keyboardType="default"
-              leftIcon={<ThinFeatherIcon thin={false} name="mail" size={15} />}
-              leftIconContainerStyle={styles.leftIconContainerStyle}
-              />
-          </View>
+       <View style={{position: 'absolute', bottom: 0, alignSelf: 'center', width: '100%', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+       <Button color="#23374d" uppercase={false} mode="text" onPress={() => navigation.navigate('SignUp')}>
+         <Text>
+           Don't have an account?  Join us
+         </Text>
+       </Button>
+       </View>
 
-          <View style={{ width: '100%', margin: 5}}>
+       </View>
 
-             <Input 
-             placeholder="Enter a password" 
-             placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
-             autoCapitalize='none'
-             secureTextEntry={this.state.securePasswordEntry}
-             inputStyle={styles.inputStyle} 
-             inputContainerStyle={{ borderBottomColor: "rgb(209, 209, 214)", borderTopColor: "transparent", borderRightColor: "transparent", borderLeftColor: "transparent", borderBottomWidth: 2, padding: 0 }} 
-             containerStyle={{ marginVertical: 30, width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: 'transparent'  }} 
-             value={this.state.password} 
-             editable={true}
-             onChangeText={text => this.setState({password: text})}
-             returnKeyType='done'
-             keyboardType='default'
-             returnKeyLabel='done'
-             rightIcon={<ThinFeatherIcon thin={true} name={this.state.securePasswordEntry ? "eye-off" : "eye"} onPress={this._handleShowPassword} size={20}/>} 
-             leftIcon={<ThinFeatherIcon thin={false} name="lock" size={15} />}
-              leftIconContainerStyle={styles.leftIconContainerStyle}
-              />
-          </View>
-          </View>
-
-          <View style={{position: 'absolute', bottom: 0, alignSelf: 'center', width: '100%', flex: 1, justifyContent: 'center' }}>
-          <ElementsButton
-  title="Login"
-  type="solid"
-  raised
-  style={{backgroundColor: '#1565C0', padding: 10, borderRadius: 0}}
-  buttonStyle={{backgroundColor: '#1565C0'}}
-  onPress={this.onLogin}
-  containerStyle={{borderRadius: 12}}
-/>
-<Divider />
-          </View>
-
-          </View>
-          </KeyboardAvoidingView>
-          <Snackbar
-          style={{backgroundColor: '#212121'}}
-          theme={{ colors: { accent: '#2196F3' }}}
-          visible={this.state.showSnack}
-          onDismiss={this._onDismissSnackBar}
-          action={{
-            label: 'Okay',
-            onPress: () => this.setState({ showSnack: false }),
-          }}
-        >
-          {this.state.loginRejectReason}
-        </Snackbar>
-        
-        <SafeAreaView style={{backgroundColor: '#1565C0'}} />
-      </View>
-    );
-  }
+       <Snackbar
+       style={{backgroundColor: '#212121'}}
+       theme={{ colors: { accent: '#2196F3' }}}
+       visible={snackIsVisible}
+       onDismiss={onDismissSnackBar}
+       action={{
+         label: 'Okay',
+         onPress: () => showSnack(false),
+       }}
+     >
+       {loginRejectedReason}
+     </Snackbar>
+     
+   </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -352,13 +343,12 @@ const styles = StyleSheet.create({
   headerText: {
     padding: 10,
     alignItems: 'center',
-    margin: Constants.statusBarHeight
   },
   welcomeBackText: {
     fontSize: 28, fontWeight: '700', color: 'black',  
   },
   signInText: {
-    fontSize: 28, fontWeight: '700', color: '#1565C0',  
+    fontSize: 28, fontWeight: '700', color: '#23374d',  
   },
   noAccountTextContainer: {
     flexDirection: 'row', margin: 5
@@ -372,4 +362,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginView);
+export default LoginView;

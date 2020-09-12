@@ -80,7 +80,7 @@ function LiveWorkoutFullScreenContentModal({ isVisible, closeModal, contentURI, 
             return (
                 <>
                     <Video
-                        source={require('../../videos/pushuppreview.mov')}
+                        source={{ uri: uri }}
                         rate={1.0}
                         volume={0}
                         isMuted={true}
@@ -117,7 +117,7 @@ function LiveWorkoutFullScreenContentModal({ isVisible, closeModal, contentURI, 
     return (
         <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType="fade">
             {renderContent()}
-            <FeatherIcon  size={22} name="minimize" style={{position: 'absolute', top: 0, left: 0, margin: Constants.statusBarHeight }} color="white" onPress={closeModal}/>
+            <FeatherIcon  size={22} name="x" style={{position: 'absolute', top: 50, left: 30, }} color="black" onPress={closeModal}/>
         </Modal>
     )
 }

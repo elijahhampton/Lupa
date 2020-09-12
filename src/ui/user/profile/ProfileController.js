@@ -13,6 +13,7 @@ import TrainerProfile from './TrainerProfile';
 import UserProfile from './UserProfile';
 import LUPA_DB from '../../../controller/firebase/firebase';
 import { render } from 'react-dom';
+import LOG from '../../../common/Logger';
 
 const ProfileController = ({ route }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -62,40 +63,41 @@ const ProfileController = ({ route }) => {
     }
 
     useEffect(() => {
+        let currUserSubscription;
+        let receivedUUID;
        async function fetchData() {
             const uuid = await _getId();
             
-            const currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(documentSnapshot => {
+            currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(documentSnapshot => {
                 const userData = documentSnapshot.data()
                 setUserData(userData)
-
-                try {
-                    if (uuid == currUserData.user_uuid) {
-                        setIsCurrentUser(true)
-                    } else {
-                        setIsCurrentUser(false);
-                    }
-                } catch(error) {
-                    setReady(false);
-                    setIsCurrentUser(false);
-                    alert(error);
-                }
-    
-               
-                setReady(true);
             });
 
-            return () => currUserSubscription()
+            if (uuid == userData.user_uuid) {
+                setIsCurrentUser(true)
+            } else {
+             
+                setIsCurrentUser(false);
+            }
+
         }
 
         try {
             fetchData();
+
+          
         } catch(error) {
             setReady(false);
+            setIsCurrentUser(false)
             alert(error);
         }
-        return () => fetchData();
-    }, []);
+
+
+       
+        setReady(true);
+        LOG('ProfileController.js', 'Running useEffect.')
+        return () => currUserSubscription()
+    }, [userData.user_uuid]);
 
     return renderProfile()
 }
