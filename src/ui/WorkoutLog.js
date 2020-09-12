@@ -27,23 +27,27 @@ function WorkoutLog(props) {
     const [userWorkouts, setUserWorkouts] = useState([])
     const navigation = useNavigation();
 
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
+
     const handleWorkoutOnPress = (workout) => {
         navigation.push('LiveWorkout', {
-                uuid: workout.workout_structure_uuid,
+                uuid: workout.program_structure_uuid,
                 workoutType: 'WORKOUT',
         })
     }
 
     const renderWorkouts = () => {
         return userWorkouts.map((workout, index, arr) => {
-            if (typeof(workout) == 'undefined' || workout.workout_structure_uuid == false) {
+            if (typeof(workout) == 'undefined' ||  typeof(workout.completedWorkout) == 'undefined' || typeof(workout.program_structure_uuid) == false) {
                 return;
             }
             
             return (
                 <TouchableWithoutFeedback key={index} onPress={() => handleWorkoutOnPress(workout)} style={{margin: 10}}>
                     <Text>
-                        {renderWorkouts()}
+                        {workout.program_name}
                     </Text>
                 </TouchableWithoutFeedback>
             )
@@ -52,12 +56,18 @@ function WorkoutLog(props) {
     }
 
     useEffect(() => {
-        const workoutsObserver = LUPA_DB.collection('users').doc().onSnapshot(documentQuery => {
-            try {
-                const data = documentQuery.data();
-                setUserWorkouts(data.workouts);
-            } catch(error) {
-                setUserWorkouts([])
+        let documents = []
+        const workoutsObserver = LUPA_DB.collection('workouts').onSnapshot(documentQuery => {
+            if (documentQuery.size > 0) {
+                documentQuery.forEach(doc => {
+                    const documentData = doc.data();
+                    if (documentData.program_owner == currUserData.user_uuid) {
+                        documents.push(documentData);
+                    }
+                });
+
+                setUserWorkouts(documents);
+                documents = [];
             }
         });
 
@@ -66,7 +76,9 @@ function WorkoutLog(props) {
 
     return (
         <SafeAreaView style={styles.root}>
-                {renderWorkouts()}
+            <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
+            {renderWorkouts()}
+            </ScrollView>
         </SafeAreaView>
     )
 }
@@ -74,7 +86,6 @@ function WorkoutLog(props) {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        alignItems: 'center',
         backgroundColor: '#FFFFFF',
     }
 })

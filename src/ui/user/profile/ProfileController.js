@@ -55,8 +55,7 @@ const ProfileController = ({ route }) => {
                 case true:
                    return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} uuid={userUUID} />
                 case false:
-                    return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} />
-                  // return <UserProfile userData={userData} isCurrentUser={isCurrentUser} />
+                   return <UserProfile userData={userData} isCurrentUser={isCurrentUser} />
                 default:
                     return <View style={{flex: 1}} />
         }

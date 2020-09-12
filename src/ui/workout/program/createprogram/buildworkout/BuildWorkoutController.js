@@ -460,6 +460,7 @@ class BuildWorkoutController extends React.Component {
     getCurrentDayContent = () => {
         const currDay = this.getCurrentDay()
         try {
+
             switch (currDay) {
                 case 'Monday':
                     if (this.state.workoutDays.Monday.length === 0) {
@@ -804,6 +805,22 @@ class BuildWorkoutController extends React.Component {
         )
     }
 
+    renderAddExercisesHeaderText = () => {
+        if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
+            return (
+                <Caption style={{color: 'white'}}>
+                Choose a day of the week and add exercises. Select your added exercises for further options.
+            </Caption>
+            )
+        } else {
+            return (
+                <Caption style={{color: 'white'}}>
+                Add exercises and select your added exercises for further options.
+            </Caption>
+            )
+        }
+    }
+
 
     renderBottomView = () => {
         let items = []
@@ -817,6 +834,8 @@ class BuildWorkoutController extends React.Component {
             items.push(item)
         })
 
+        
+
                 return (
                     <View style={{ flex: 1.5 }}>
 
@@ -824,7 +843,7 @@ class BuildWorkoutController extends React.Component {
                             <View style={{ flex: 2 }}>
                                 <Divider />
                                 <Text style={{ padding: 10, fontSize: 15, fontWeight: '400', fontFamily: 'Avenir', alignSelf: 'center' }}>
-                                    Choose a day of the week and add exercises from the exercise library.
+                                    Add exercises from the exercise library.
                         </Text>
                                 <DropDownPicker
                                     items={items}
@@ -940,6 +959,37 @@ class BuildWorkoutController extends React.Component {
         )
     }
 
+    renderDropdownPicker = () => {
+        if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
+            this.props.programData.program_workout_days.map((day, index, arr) => {
+                let item = {
+                    label: day,
+                    value: day,
+                    index: index
+                }
+    
+                items.push(item)
+            })
+
+            return (
+                <DropDownPicker
+               items={items}
+               defaultValue={this.getCurrentDay()}
+               containerStyle={{ marginVertical: 10, height: 45, width: Dimensions.get('window').width }}
+               style={{ backgroundColor: '#fafafa', marginHorizontal: 20 }}
+               itemStyle={{
+                    fontSize: 12,
+                   justifyContent: 'flex-start'
+               }}
+               dropDownStyle={{ backgroundColor: '#fafafa' }}
+               onChangeItem={item => this.setState({ currDayIndex: item.index })}
+           />
+            )
+        } else {
+            //we don't need to do anything here because the currDayIndex is already 0
+        }
+    }
+
     renderComponentDisplay = () => {
         let items = [];
 
@@ -962,45 +1012,20 @@ class BuildWorkoutController extends React.Component {
                     <Text style={{  color: 'white', fontWeight: 'bold', fontFamily: 'Avenir-Heavy', fontSize: 25}}>
                         Add Exercises
                     </Text>
-                    <View>
+                   {/* <View>
                         <FeatherIcon name="search" size={24} color="white" />
-                    </View>
+                   </View> */}
                     </View>
                    
-                    <Caption style={{color: 'white'}}>
-                        Choose a day of the week and add exercises. Select your added exercises for further options.
-                    </Caption>
+                    {this.renderAddExercisesHeaderText()}
                     </View>
                    
         
                 
                 </Appbar.Header>
 
-                {
-                    
-                     this.props.programData.program_workout_days.map((day, index, arr) => {
-                        let item = {
-                            label: day,
-                            value: day,
-                            index: index
-                        }
-            
-                        items.push(item)
-                    })
-                }
+                {this.renderDropdownPicker()}
 
-                <DropDownPicker
-                                    items={items}
-                                    defaultValue={this.getCurrentDay()}
-                                    containerStyle={{ marginVertical: 10, height: 45, width: Dimensions.get('window').width }}
-                                    style={{ backgroundColor: '#fafafa', marginHorizontal: 20 }}
-                                    itemStyle={{
-                                         fontSize: 12,
-                                        justifyContent: 'flex-start'
-                                    }}
-                                    dropDownStyle={{ backgroundColor: '#fafafa' }}
-                                    onChangeItem={item => this.setState({ currDayIndex: item.index })}
-                                />
             <Divider />
                <View style={styles.content}>
                    <View style={{flex: 4}}>
@@ -1017,14 +1042,19 @@ class BuildWorkoutController extends React.Component {
                <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
      
 
-                    <View style={{justifyContent: 'flex-start', width: '100%'}}>
-    <Button icon={() => <FeatherIcon name="plus" color="#1089ff" />} onPress={this.handleAddCustomWorkout}color="#1089ff" style={{alignSelf: 'flex-start'}}>
-        <Text style={{fontSize: 12}}>
-        
-            Add a custom exercise
-        </Text>
-    </Button>
-</View>
+                  {
+                      this.props.lupa_data.Users.currUserData.isTrainer === true ?
+                      <View style={{justifyContent: 'flex-start', width: '100%'}}>
+                      <Button icon={() => <FeatherIcon name="plus" color="#1089ff" />} onPress={this.handleAddCustomWorkout}color="#1089ff" style={{alignSelf: 'flex-start'}}>
+                          <Text style={{fontSize: 12}}>
+                          
+                              Add a custom exercise
+                          </Text>
+                      </Button>
+                  </View>
+                      :
+                      null
+                  } 
 
 
                         <SectionList 

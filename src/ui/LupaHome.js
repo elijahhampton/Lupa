@@ -113,7 +113,8 @@ export class LupaHome extends Component {
           )}
           overScrollMode="never">
           <Tabs 
-          
+          style={{backgroundColor: '#FFFFFF'}}
+          tabBarUnderlineStyle={{backgroundColor: '#FFFFFF'}}
           renderTabBar={(props) => <Animated.View
             style={[{
               transform: [{translateY: tabY}],

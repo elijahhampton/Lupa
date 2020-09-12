@@ -161,16 +161,16 @@ function UserProfile({ userData, isCurrentUser }) {
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
                 <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()}/>
-                <Appbar.Content title={userData.username} titleStyle={styles.appbarTitle} />
+                <Appbar.Content title={userData.email} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView>
             <View style={styles.userInformationContainer}>
                 <View style={styles.infoContainer}>
                     {renderDisplayName()}
                     {renderBio()}
-                    <View style={{paddingVertical: 10}}>
-                    {renderLocation()}
-                    </View>
+                    <Caption>
+                        This user has not specified any fitness interest.
+                    </Caption>
                 </View>
 
                 <View style={styles.avatarContainer}>
