@@ -59,13 +59,8 @@ const SwitchNavigator = () => {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async (uuid) => {
-    try {
       //setup redux
       await _setupRedux(uuid)
-    } catch (err) {
-      SplashScreen.hide()
-      showAuthentication()
-    }
 
     SplashScreen.hide()
     //navigate to app
@@ -81,6 +76,7 @@ const SwitchNavigator = () => {
  * as well as Lupa application data (assessments, workouts);
  */
   const _setupRedux = async (uuid) => {
+    try {
     let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = [];
 
     // Load user data
@@ -106,6 +102,11 @@ const SwitchNavigator = () => {
     // Load application workouts
     lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
     dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
+  } catch(error) {
+    LUPA_AUTH.signOut();
+    showAuthentication();
+    alert(error);
+  }
   }
 
   useEffect(() => {
