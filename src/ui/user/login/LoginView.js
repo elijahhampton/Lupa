@@ -87,7 +87,7 @@ function LoginView(props) {
             type: FORM_INPUT_UPDATE,
             value: res,
             isValid: true,
-            input: 'email'
+            input: 'loginEmail'
           })
         });
   
@@ -96,7 +96,7 @@ function LoginView(props) {
             type: FORM_INPUT_UPDATE,
             value: '',
             isValid: true,
-            input: 'password'
+            input: 'loginPassword'
           })
         });
       } catch(error) {
@@ -106,7 +106,7 @@ function LoginView(props) {
           type: FORM_INPUT_UPDATE,
           value: '',
           isValid: true,
-          input: 'email'
+          input: 'loginEmail'
         })
 
         dispatchFormState({
@@ -137,10 +137,10 @@ function LoginView(props) {
   const onLogin = async (e) => {
     e.preventDefault();
 
-    const attemptedUsername = formState.inputValues.email.trim();
-    const attemptedPassword = formState.inputValues.password.trim();
+    const attemptedUsername = await formState.inputValues.loginEmail.trim()
+    const attemptedPassword = await formState.inputValues.loginPassword.trim();
 
-    let successfulLogin = false;
+   let successfulLogin = false;
     await userAuthenticationHandler.loginUser(attemptedUsername, attemptedPassword).then(result => {
       successfulLogin = result;
     })
@@ -217,14 +217,12 @@ function LoginView(props) {
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
-      email: '',
-      password: '',
-      username: '',
+      loginEmail: '',
+      loginPassword: '',
     },
     inputValidies: {
-      email: false,
-      password: false,
-      username: '',
+      loginEmail: false,
+      loginPassword: false,
     },
     formIsValid: false,
   })
@@ -259,7 +257,7 @@ function LoginView(props) {
      <View style={{ flex: 1, justifyContent: 'flex-start', marginVertical: 20 }}>
        <View style={{ width: '100%', margin: 5 }}>
        <Input
-       id="email"
+       id="loginEmail"
        label="Email"
        placeholder="Email"
        editable={true}
@@ -275,7 +273,7 @@ function LoginView(props) {
 
        <View style={{ width: '100%', margin: 5}}>
        <Input
-       id="password"
+       id="loginPassword"
        label="Password"
        placeholder="Enter your password" 
        placeholderTextColor={INPUT_PLACEHOLDER_COLOR}

@@ -95,8 +95,6 @@ class Featured extends React.Component {
     }
 
     async componentDidMount() {
-        await this.checkNewUser();
-        await this.setupComponent();
 
         const query = LUPA_DB.collection('vlogs').where('vlog_state', '==', this.props.lupa_data.Users.currUserData.location.state)//.orderBy('time_created', 'asc');
 
@@ -125,34 +123,11 @@ class Featured extends React.Component {
     }
 
     async componentWillUnmount() {
-        return await vlogCollectionObserver();
+        return () => vlogCollectionObserver();
     }
 
     sortVlogs = (vlogs) => {
 
-    }
-
-    setupComponent = async () => {
-        // await this.loadFeaturedPrograms();
-        // await this.loadFeaturedTrainers();
-        // await this.loadTopPicks();
-        //await this.loadRecentlyAddedPrograms();
-    }
-
-    checkNewUser = async () => {
-        let showInviteFriendsModal
-        await retrieveAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email).then(value => {
-            showInviteFriendsModal = value
-        })
-
-        if (showInviteFriendsModal === 'false') {
-            storeAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email, 'true'); this.setState({ inviteFriendsIsVisible: true })
-            return;
-        } else if (typeof (showInviteFriendsModal) != 'string') {
-            storeAsyncData('FIRST_LOGIN_' + this.props.lupa_data.Users.currUserData.email, 'true');
-            this.setState({ inviteFriendsIsVisible: true })
-            return;
-        }
     }
 
     loadFeaturedTrainers = async () => {

@@ -504,23 +504,30 @@ class BuildWorkoutController extends React.Component {
 
                     return (
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                        {
-                        this.state.workoutDays.Monday.map((workout, index, arr) => {
-                            return (
-                                <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
-                        <View style={{flex: 1}} >
-                   <Surface style={{flex: 1, backgroundColor: '#212121'}}>
-                        <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
-      </Surface>
-                   </View>
-                   <Text style={{padding: 3}}>
-          Push up
-      </Text>
+                            {
+
+                           this.state.workoutDays.Tuesday.map((exercise, index, arr) => {
+                                return (
+                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <View style={[{flex: 1, width: '100%'}]}>
+                            <View style={{flex: 1}} >
+                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+          </Surface>
+                       </View>
+                       <Text style={{padding: 3, alignSelf: 'center'}}>
+             {exercise.workout_name}
+          </Text>
+                            </View>
+                            </TouchableWithoutFeedback>
+                            
+                                )
+
+
+                            })
+
+                            }
                         </View>
-                            )
-                        })
-                        }
-                    </View>
                     )
                 case 'Wednesday':
                     if (this.state.workoutDays.Wednesday.length === 0) {
@@ -531,23 +538,30 @@ class BuildWorkoutController extends React.Component {
 
                     return (
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                        {
-                        this.state.workoutDays.Monday.map((workout, index, arr) => {
-                            return (
-                                <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
-                        <View style={{flex: 1}} >
-                   <Surface style={{flex: 1, backgroundColor: '#212121'}}>
-                        <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
-      </Surface>
-                   </View>
-                   <Text style={{padding: 3}}>
-          Push up
-      </Text>
+                            {
+
+                           this.state.workoutDays.Wednesday.map((exercise, index, arr) => {
+                                return (
+                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <View style={[{flex: 1, width: '100%'}]}>
+                            <View style={{flex: 1}} >
+                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+          </Surface>
+                       </View>
+                       <Text style={{padding: 3, alignSelf: 'center'}}>
+             {exercise.workout_name}
+          </Text>
+                            </View>
+                            </TouchableWithoutFeedback>
+                            
+                                )
+
+
+                            })
+
+                            }
                         </View>
-                            )
-                        })
-                        }
-                    </View>
                     )
                 case 'Thursday':
                     if (this.state.workoutDays.Thursday.length === 0) {
@@ -558,23 +572,30 @@ class BuildWorkoutController extends React.Component {
 
                     return (
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                            {
-                            this.state.workoutDays.Monday.map((workout, index, arr) => {
-                                return (
-                                    <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
-                            <View style={{flex: 1}} >
-                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
-                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
-          </Surface>
-                       </View>
-                       <Text style={{padding: 3}}>
-              Push up
-          </Text>
-                            </View>
-                                )
-                            })
-                            }
+                        {
+
+                       this.state.workoutDays.Thursday.map((exercise, index, arr) => {
+                            return (
+                                <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                <View style={[{flex: 1, width: '100%'}]}>
+                        <View style={{flex: 1}} >
+                   <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                        <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+      </Surface>
+                   </View>
+                   <Text style={{padding: 3, alignSelf: 'center'}}>
+         {exercise.workout_name}
+      </Text>
                         </View>
+                        </TouchableWithoutFeedback>
+                        
+                            )
+
+
+                        })
+
+                        }
+                    </View>
                     )
                 case 'Friday':
                     if (this.state.workoutDays.Friday.length === 0) {
@@ -585,20 +606,27 @@ class BuildWorkoutController extends React.Component {
                     return (
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
-                            this.state.workoutDays.Monday.map((workout, index, arr) => {
+
+                           this.state.workoutDays.Friday.map((exercise, index, arr) => {
                                 return (
-                                    <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
+                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <View style={[{flex: 1, width: '100%'}]}>
                             <View style={{flex: 1}} >
                        <Surface style={{flex: 1, backgroundColor: '#212121'}}>
                             <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
           </Surface>
                        </View>
-                       <Text style={{padding: 3}}>
-              Push up
+                       <Text style={{padding: 3, alignSelf: 'center'}}>
+             {exercise.workout_name}
           </Text>
                             </View>
+                            </TouchableWithoutFeedback>
+                            
                                 )
+
+
                             })
+
                             }
                         </View>
                     )
@@ -611,23 +639,30 @@ class BuildWorkoutController extends React.Component {
 
                     return (
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                            {
-                            this.state.workoutDays.Monday.map((workout, index, arr) => {
-                                return (
-                                    <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
-                            <View style={{flex: 1}} >
-                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
-                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
-          </Surface>
-                       </View>
-                       <Text style={{padding: 3}}>
-              Push up
-          </Text>
-                            </View>
-                                )
-                            })
-                            }
+                        {
+
+                       this.state.workoutDays.Saturday.map((exercise, index, arr) => {
+                            return (
+                                <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                <View style={[{flex: 1, width: '100%'}]}>
+                        <View style={{flex: 1}} >
+                   <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                        <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+      </Surface>
+                   </View>
+                   <Text style={{padding: 3, alignSelf: 'center'}}>
+         {exercise.workout_name}
+      </Text>
                         </View>
+                        </TouchableWithoutFeedback>
+                        
+                            )
+
+
+                        })
+
+                        }
+                    </View>
                     )
                 case 'Sunday':
                     if (this.state.workoutDays.Sunday.length === 0) {
@@ -638,23 +673,30 @@ class BuildWorkoutController extends React.Component {
 
                     return (
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                        {
-                        this.state.workoutDays.Monday.map((workout, index, arr) => {
-                            return (
-                                <View style={{width: '95%', height: 100, alignSelf: 'center',  marginTop: 5, marginBottom: 10}}>
-                        <View style={{flex: 1}} >
-                   <Surface style={{flex: 1, backgroundColor: '#212121'}}>
-                        <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
-      </Surface>
-                   </View>
-                   <Text style={{padding: 3}}>
-          Push up
-      </Text>
+                            {
+
+                           this.state.workoutDays.Sunday.map((exercise, index, arr) => {
+                                return (
+                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <View style={[{flex: 1, width: '100%'}]}>
+                            <View style={{flex: 1}} >
+                       <Surface style={{flex: 1, backgroundColor: '#212121'}}>
+                            <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+          </Surface>
+                       </View>
+                       <Text style={{padding: 3, alignSelf: 'center'}}>
+             {exercise.workout_name}
+          </Text>
+                            </View>
+                            </TouchableWithoutFeedback>
+                            
+                                )
+
+
+                            })
+
+                            }
                         </View>
-                            )
-                        })
-                        }
-                    </View>
                     )
                 default:
                     return (

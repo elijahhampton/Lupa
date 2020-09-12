@@ -91,12 +91,17 @@ const SwitchNavigator = () => {
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload })
 
     // Load user program data if the user is a trainer
-    if (currUserData.isTrainer) {
-      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-        currUserPrograms = result;
-      });
-  
-      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+    if (typeof(currUserData.isTrainer) == 'undefined') {
+      LUPA_AUTH.signOut();
+      showAuthentication();
+    } else {
+      if (currUserData.isTrainer) {
+        await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+          currUserPrograms = result;
+        });
+    
+        await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+      }
     }
 
     // Load application workouts
