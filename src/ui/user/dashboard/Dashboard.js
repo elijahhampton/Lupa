@@ -231,4 +231,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps)(Dashboard);
+export default Dashboard;

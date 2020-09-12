@@ -569,7 +569,7 @@ class LiveWorkout extends React.Component {
                     <Divider style={{width: '100%'}} />
                     <View style={{ flex: 2, flexDirection: 'row' }}>
                        
-                        <View style={{ width: '70%', justifyContent: 'space-evenly' }}>
+                        <View style={{ width: '100%',  justifyContent: 'space-evenly' }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20 }}>
                                 <View style={{ alignItems: 'flex-start', marginRight: 10 }}>
                                     <Text style={{ paddingVertical: 3 }}>
@@ -603,8 +603,11 @@ class LiveWorkout extends React.Component {
                             </Text>
                                     </View>
                                 </View>
+
+                               
                             </View>
-                            <View style={{ marginLeft: 20, borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 30, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={{alignItems: 'center', justifyContent: 'space-evenly', flexDirection: 'row', width: '100%' }}>
+                            <View style={{ marginLeft: 20, borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 30, paddingVertical: 5, alignItems: 'center', justifyContent: 'center'}}>
                                 <Text style={{ fontFamily: 'Avenir-Heavy' }}>
                                     Workout Day:
                     </Text>
@@ -623,6 +626,18 @@ class LiveWorkout extends React.Component {
                                 </Menu>
 
                             </View>
+
+                            <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
+                                    <Text style={{ paddingVertical: 3 }}>
+                                        Rest Time
+                        </Text>
+                                    <View style={{ borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Text style={{ fontFamily: 'Avenir-Light' }}>
+                                           60
+                            </Text>
+                                    </View>
+                                </View>
+                                </View>
                         </View>
 
                         <View style={{ width: '30%', alignItems: 'center', justifyContent: 'center' }}>

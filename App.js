@@ -66,6 +66,7 @@ const SwitchNavigator = () => {
       SplashScreen.hide()
       showAuthentication()
     }
+
     SplashScreen.hide()
     //navigate to app
     navigation.navigate('App')

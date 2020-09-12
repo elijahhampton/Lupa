@@ -41,7 +41,7 @@ function MyPrograms(props) {
             * TODO: There is a problem where programs are deleted from the users program_data if
             * if they do not publish the program.  For now we will check to not render programs that don't have completedPrograms as true 
             */
-            if (typeof(program) == 'undefined' || program.completedProgram == false) {
+            if (typeof(program) == 'undefined' || program.completedProgram == false || typeof(program.completedProgram) == 'undefined') {
                 return;
             }
             

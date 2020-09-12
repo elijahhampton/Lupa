@@ -564,4 +564,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProgramInformationPreview);
+export default ProgramInformationPreview;

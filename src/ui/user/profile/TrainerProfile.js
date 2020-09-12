@@ -296,17 +296,17 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     useEffect(() => {
-
+        let isSubscribed = true;
         async function loadProfileData() {
             try {
                 setProfileImage(userData.photo_url)
-            //    await fetchVlogs(userData.user_uuid);
+                await fetchVlogs(userData.user_uuid);
         if (isCurrentUser) {
             setUserPrograms(currUserPrograms)
         } else {
-            //fetchPrograms(userData.user_uuid);
+            fetchPrograms(userData.user_uuid);
         }
-      // checkCurrFitnessLocation()
+       checkCurrFitnessLocation()
                 setReady(true)
             } catch(error) {
                 setReady(false)
@@ -346,7 +346,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         return;
                     }
                 }
-                console.log('false')
                 setShowLocationMessage(false);
             }
         } catch (err)
@@ -358,9 +357,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         }
 
         loadProfileData()
-       
+        
+
         LOG('TrainerProfile.js', 'Running useEffect.')
-    }, [ready, resultsLength])
+
+        return () => isSubscribed = false;
+    }, [profileImage])
 
     const renderScheduler = () => {
         if (isCurrentUser) {
@@ -382,6 +384,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderCloseLocationMessage = () => {
+        if (isCurrentUser) {
+            return;
+        }
+
         return (
             <Surface style={{backgroundColor: 'transparent', width: Dimensions.get('window').width - 20, elevation: 0, padding: 20, borderRadius: 8, marginVertical: 10, alignSelf: 'center'}}>
             <Caption style={{color: '#1089ff'}}>

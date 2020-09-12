@@ -16,6 +16,8 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { Avatar } from 'react-native-elements'
 import { Video } from 'expo-av';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import LiveWorkoutFullScreenContentModal from '../../workout/modal/LiveWorkoutFullScreenContentModal';
+import DoubleClick from 'react-native-double-tap';
 
 function VlogFeedCard({ vlogData }) {
     const currUserData = useSelector(state => {
@@ -24,9 +26,12 @@ function VlogFeedCard({ vlogData }) {
 
     const [cardContentHeight, setCardContentHeight] = useState(0);
     const [vlogOwnerData, setVlogOwnerData] = useState(getLupaUserStructure());
-   const [optionsMenuVisible, setOptionsMenuVisible] = useState(false);
+    const [optionsMenuVisible, setOptionsMenuVisible] = useState(false);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [shouldPlay, setShouldPlay] = useState(false);
+    const [isMuted, setMuted] = useState(false);
+    const [showFullScreenContent, setFullScreenContentVisible] = useState(false);
+
     useEffect(() => {
         LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(vlogData.vlog_owner).then(data => {
             setVlogOwnerData(data);
@@ -34,11 +39,12 @@ function VlogFeedCard({ vlogData }) {
     }, [])
 
     return (
+        <DoubleClick singleTap={() => setShouldPlay(!shouldPlay)} doubleTap={() => setFullScreenContentVisible(true)}>
         <Card theme={{roundness: 10}} style={{marginVertical: 10, alignSelf: 'center', width: Dimensions.get('window').width - 20, borderRadius: 20, elevation: 5}}>
                        {/* <Card.Cover resizeMode="cover" theme={{roundness: 10}} style={{elevation: 0, height: 180, width: Dimensions.get('window').width - 20, borderRadius: 0}} source={{uri: vlogData.vlog_media.uri}} /> */}
-                      <TouchableWithoutFeedback onPress={() => setShouldPlay(!shouldPlay)}>
-                      <Video useNativeControls={false} isMuted={false} isLooping={false} resizeMode="cover" style={{height: 300, width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 0}} source={{uri: vlogData.vlog_media.uri}} shouldPlay={shouldPlay} />
-                      </TouchableWithoutFeedback>
+       
+                      <Video  useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="cover" style={{height: 300, width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 0}} source={{uri: vlogData.vlog_media.uri}} shouldPlay={shouldPlay} />
+        
                       
                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, position: 'absolute', bottom: cardContentHeight + 15, right: 0, }}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
@@ -49,10 +55,10 @@ function VlogFeedCard({ vlogData }) {
                         
                         </View>
                        
-                        {/*<View style={{backgroundColor: 'rgba(142, 142, 147, 0.5)', borderWidth: 1, borderColor: 'white', borderRadius: 20}}>
-                        <Feather1s color="white"  name="volume-x" size={20} style={{backgroundColor: 'transparent', padding: 5}} />
+                        <View style={{backgroundColor: 'rgba(142, 142, 147, 0.5)', borderWidth: 1, borderColor: 'white', borderRadius: 20}}>
+                        <Feather1s  onPress={() => setMuted(!isMuted)} color="white"  name={isMuted === true ? 'volume-x' : 'volume-2'} size={20} style={{backgroundColor: 'transparent', padding: 5}} />
                        
-    </View>*/}
+    </View>
                         
     </View>
                        
@@ -86,7 +92,10 @@ function VlogFeedCard({ vlogData }) {
                                     {Math.round(new Date().getTime() - vlogData.time_created.seconds)} hour ago
                                 </Caption>
                         </Card.Content>
+
+                        <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} contentType={vlogData.vlog_media.media_type} contentURI={vlogData.vlog_media.uri} />
                     </Card>
+                    </DoubleClick>
     )
 }
 
