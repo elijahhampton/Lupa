@@ -134,10 +134,10 @@ function AddTagsModal(props) {
 }
 
 const MIN_TITLE_LENGTH = 6
-const MAX_TITLE_LENGTH = 25
+const MAX_TITLE_LENGTH = 40
 
 const MIN_DESCRIPTION_LENGTH = 12
-const MAX_DESCRIPTION_LENGTH = 100
+const MAX_DESCRIPTION_LENGTH = 150
 
 function ProgramInformation(props) {
   let [snackBarVisible, setSnackBarVisibility] = useState(false);

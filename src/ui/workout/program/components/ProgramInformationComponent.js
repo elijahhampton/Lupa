@@ -68,10 +68,10 @@ function ProgramInformationComponent({ program }) {
                                 </Surface>
                             </View>
                                 <View style={{paddingHorizontal: 20, width: '80%'}} >
-                                    <Text style={{fontSize: 15, color: '#212121'}}>
+                                    <Text style={{fontSize: 15, color: '#212121', fontFamily: 'Avenir-Medium'}}>
                                         {program.program_name}
                                     </Text>
-                                    <Text style={{fontSize: 10,flexWrap: 'wrap'}} numberOfLines={3}>
+                                    <Text style={{fontSize: 12,flexWrap: 'wrap', fontWeight: '300'}} numberOfLines={3}>
                                     {program.program_description}
                                     </Text>
                                 </View>

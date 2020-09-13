@@ -81,7 +81,7 @@ export class LupaHome extends Component {
         }}>
           <Header style={{backgroundColor: COLOR,}} noShadow={true} hasTabs>
             <Left style={{flexDirection: 'row', alignItems: 'center'}}>
-              <MenuIcon customStyle={{}} onPress={() => this.props.navigation.openDrawer()}/>
+              <MenuIcon onPress={() => this.props.navigation.openDrawer()}/>
             </Left>
 
             <Body>

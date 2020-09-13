@@ -235,7 +235,6 @@ class CreateWorkout extends React.Component {
         let updatedProgramData = this.state.programData;
         updatedProgramData.program_name = workoutName;
         updatedProgramData.program_workout_days = workoutDays;
-        alert(workoutDays)
         updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
         updatedProgramData.program_structure_uuid = this.state.currWorkoutUUID;
         this.setState({ programData: updatedProgramData, ...this.state })

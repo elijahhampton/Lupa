@@ -82,7 +82,7 @@ class LiveWorkout extends React.Component {
                 workout_reps: 0,
                 superset: []
             },
-            currentWrkoutOriginalReps: 0,
+            currentWorkoutOriginalReps: 0,
             currentWorkoutStructure: [],
             workoutDays: [],
             currentWorkoutDay: "",
@@ -109,7 +109,7 @@ class LiveWorkout extends React.Component {
             restTimerStarted: false,
             restTimerVisible: false,
             descriptionDialogVisible: false,
-            restTime: 30
+            restTime: 3
         }
     }
 
@@ -138,7 +138,7 @@ class LiveWorkout extends React.Component {
     }
 
     componentWillUnmount() {
-        Fire.shared.off();
+       return () => Fire.shared.off();
     }
 
     setupLiveWorkout = async () => {
@@ -466,47 +466,27 @@ class LiveWorkout extends React.Component {
         if (this.state.currentWorkoutIndex === this.state.currentWorkoutStructure.length - 1) {
             this.setState({
                 showFinishedDayDialog: true
-            })
+            });
+
             return;
         }
 
-        this.setState({ restTimerVisible: true, restTimerStarted: true });
-        this.state.currentWorkout.workout_sets -= 1;
+        this.setState({ restTimerVisible: true, restTimerStarted: true,  });
 
-        if (this.state.currentWorkout.workout_sets === 1) {
+        if (this.state.currentWorkout.workout_sets == 1) {
             this.setState(prevState => {
                 return {
                     currentWorkout: this.state.currentWorkoutStructure[prevState.currentWorkoutIndex + 1],
                     currentWorkoutIndex: prevState.currentWorkoutIndex + 1
                 }
+            });
+        } else {
+            let currentWorkout = this.state.currentWorkout
+            currentWorkout.workout_sets = currentWorkout.workout_sets -  1;
+            this.setState({
+                currentWorkout: currentWorkout
             })
-        } 
-        
-      /*  if (this.state.currentWorkout.workout_reps == 0) {
-           
         }
-
-            if (this.state.currentWorkout.workout_reps != 0) {
-                let currentWorkout = this.state.currentWorkout;
-                currentWorkout.workout_reps -= 1;
-                this.setState({ currentWorkout: currentWorkout });
-                return;
-            } else if (this.state.currentWorkout.workout_reps == 0 &&  this.state.currentWorkout.workout_sets != 0) {
-                let currentWorkout = this.state.currentWorkout;
-                currentWorkout.workout_sets -= 1;
-                currentWorkout.workout_reps = this.state.currentWorkoutOriginalReps;
-                this.setState({ currentWorkout: currentWorkout });
-            } else if (this.state.currentWorkout.workout_reps == 0 &&  this.state.currentWorkout.workout_sets == 0) {
-                this.setState(prevState => {
-                    return {
-                        currentWorkout: this.state.currentWorkoutStructure[prevState.currentWorkoutIndex + 1],
-                        currentWorkoutIndex: prevState.currentWorkoutIndex + 1
-                    }
-                })
-            }*/
-
-
-        
     }
 
     renderWorkoutReps = () => {
@@ -580,26 +560,28 @@ class LiveWorkout extends React.Component {
                         </View>
                     </View>
                     <Divider style={{width: '100%'}} />
-                    <View style={{ flex: 2, flexDirection: 'row' }}>
-                       
-                        <View style={{ width: '100%',  justifyContent: 'space-evenly' }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20 }}>
-                                <View style={{ alignItems: 'flex-start', marginRight: 10 }}>
+                    <View style={{ flex: 2 ,justifyContent: 'space-evenly'}}>
+                                
+
+                    <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly',  paddingHorizontal: 20}}>
                                     <Text style={{ paddingVertical: 3 }}>
                                         Sets
                         </Text>
-                                    <View style={{ borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: 'Avenir-Light' }}>
                                             {this.renderWorkoutSets()}
                             </Text>
                                     </View>
                                 </View>
+                                
+ 
+                    
 
-                                <View style={{ alignItems: 'flex-start', marginRight: 10 }}>
+                                <View style={{ alignItems: 'flex-start', paddingHorizontal: 20}}>
                                     <Text style={{ paddingVertical: 3 }}>
                                         Reps
                         </Text>
-                                    <View style={{ borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: 'Avenir-Light' }}>
                                             {this.renderWorkoutReps()}
                             </Text>
@@ -610,39 +592,23 @@ class LiveWorkout extends React.Component {
                                     <Text style={{ paddingVertical: 3 }}>
                                         Tempo
                         </Text>
-                                    <View style={{ borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: 'Avenir-Light' }}>
                                            {this.renderWorkoutTempo()}
                             </Text>
                                     </View>
                                 </View>
-
-                               
-                            </View>
-                            <View style={{alignItems: 'center', justifyContent: 'space-evenly', flexDirection: 'row', width: '100%' }}>
-                           
-
-                            <TouchableWithoutFeedback onPress={this.openRestTimesRBSheet}>
-
-                            <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-                                    <Text style={{ paddingVertical: 3 }}>
-                                        Rest Time
-                        </Text>
-                                    <View style={{ borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Text style={{ fontFamily: 'Avenir-Light' }}>
-                                           {this.state.restTime}
-                            </Text>
-                                    </View>
-                                </View>
-                                </TouchableWithoutFeedback>
-                                </View>
-                                
-                        </View>
-
-                        <View style={{ width: '30%', alignItems: 'center', justifyContent: 'center' }}>
-                            {/* Nada */}
-                        </View>
-
+                       
+<View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
+        <Text style={{ paddingVertical: 3 }}>
+            Rest Time
+</Text>
+        <View style={{backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: 'Avenir-Light' }}>
+               {this.state.restTime}
+</Text>
+        </View>
+    </View>
                     </View>
 
                     <TouchableOpacity style={{ position: 'absolute', bottom: 0, right: 0, }} onPress={() => this.advanceExercise()}>

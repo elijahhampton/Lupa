@@ -92,6 +92,7 @@ function LiveWorkoutFullScreenContentModal({ isVisible, closeModal, contentURI, 
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}
+                        useNativeControls={true}
                     >
                         {renderVideoIcon()}
                     </Video>

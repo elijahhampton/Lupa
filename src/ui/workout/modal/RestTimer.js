@@ -11,12 +11,12 @@ const RestTimer = ({isVisible, closeModal, timerHasStarted, restTime}) => {
     const [timerFinished, setTimerFinished] = useState(false)
   
 
-    handleCountdown = () => {
+    handleCountdown =  () => {
         if (timerHasStarted) {
-            setTimeout(() => {
+            setTimeout(async () => {
                 let updatedSecondsLeft = secondsLeft;
                 updatedSecondsLeft -= 1;
-                setSecondsLeft(updatedSecondsLeft);
+                await setSecondsLeft(updatedSecondsLeft);
                 
                 if (updatedSecondsLeft == 0) {
                     setTimerFinished(true)

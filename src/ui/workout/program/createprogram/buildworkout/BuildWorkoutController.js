@@ -65,6 +65,8 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+let items = []
+
 class BuildWorkoutController extends React.Component {
     constructor(props) {
         super(props);
@@ -823,7 +825,7 @@ class BuildWorkoutController extends React.Component {
 
 
     renderBottomView = () => {
-        let items = []
+     
         this.props.programData.program_workout_days.map((day, index, arr) => {
             let item = {
                 label: day,

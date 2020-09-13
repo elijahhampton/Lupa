@@ -97,18 +97,19 @@ class Featured extends React.Component {
     async componentDidMount() {
 
         const query = LUPA_DB.collection('vlogs').where('vlog_state', '==', this.props.lupa_data.Users.currUserData.location.state)//.orderBy('time_created', 'asc');
-
         vlogCollectionObserver = query.onSnapshot(querySnapshot => {
             console.log(`Received query snapshot of size ${querySnapshot.size}`);
             querySnapshot.forEach(doc => {
                 let data = doc.data();
-                const updatedState = this.state.feedVlogs;
+                const updatedState = [];
                 if (typeof (updatedState) != 'undefined') {
                     updatedState.push(data);
                     updatedState.push(data);
                     updatedState.push(data);
 
                 }
+
+                updatedState.concat(this.state.feedVlogs)
 
                 this.sortVlogs(updatedState);
                 this.setState({ feedVlogs: updatedState });
@@ -213,7 +214,7 @@ class Featured extends React.Component {
                     <>
                         <TouchableOpacity style={{}}>
                             <View style={{ margin: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center' }}>
-                                <Surface style={{ margin: 10, borderRadius: 5, width: 150, height: 170, backgroundColor: '#FFFFFF', elevation: 0, borderRadius: 5 }}>
+                                <Surface style={{ margin: 10, borderRadius: 5, width: 150, height: 170, backgroundColor: '#EEEEEE', elevation: 0, borderRadius: 5 }}>
                                     <Image source={{ uri: element.program_image }} style={{
                                         width: '100%',
                                         height: '100%',
@@ -248,7 +249,7 @@ class Featured extends React.Component {
                                 </View>
                             </View>
                         </TouchableOpacity>
-                        <Divider />
+                       
                     </>
                 )
             })
@@ -353,29 +354,27 @@ class Featured extends React.Component {
                     />
 
                 </Appbar>
-                <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
                     {
-
-                        <View style={{ backgroundColor: '#FFFFFF' }}>
-
-
-
-                            <View style={{ backgroundColor: '#FFFFFF' }}>
-                                <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ backgroundColor: '#EEEEEE' }}>
+                            <View style={{ backgroundColor: '#EEEEEE' }}>
+                                <View style={{ backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center' }}>
                                     {
                                         this.state.feedVlogs.length === 0 ?
-                                            <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
-                                                <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: '#FFFFFF' }} >
+                                            <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#EEEEEE' }}>
+                                                <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: '#EEEEEE' }} >
                                                     There are not any vlogs in your area.  Check back later.
                                 </Caption>
-
                                             </View>
 
                                             :
 
                                             this.state.feedVlogs.map((vlog, index, arr) => {
                                                 return (
+                                                    <>
                                                     <VlogFeedCard key={index} vlogData={vlog} />
+                                                    <Divider style={{width: Dimensions.get('window').width}} />
+                                                    </>
                                                 )
                                             })
                                     }
@@ -392,17 +391,17 @@ class Featured extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#EEEEEE",
     },
     mainGraphicText: {
 
-        color: '#FFFFFF',
+        color: '#EEEEEE',
         fontSize: 25,
         alignSelf: 'flex-start'
     },
     subGraphicText: {
 
-        color: '#FFFFFF',
+        color: '#EEEEEE',
         alignSelf: 'flex-start',
         textAlign: 'left',
     },
@@ -438,7 +437,7 @@ const styles = StyleSheet.create({
         fontSize: RFValue(15), fontFamily: 'Avenir-Heavy', fontSize: 15,
     },
     searchContainerStyle: {
-        backgroundColor: "#FFFFFF", width: Dimensions.get('window').width, alignSelf: 'center'
+        backgroundColor: "#EEEEEE", width: Dimensions.get('window').width, alignSelf: 'center'
     },
     inputContainerStyle: {
         backgroundColor: 'white',
@@ -453,7 +452,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#EEEEEE',
         elevation: 0,
         marginVertical: 20
     }

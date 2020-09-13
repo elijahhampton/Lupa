@@ -60,15 +60,15 @@ const SwitchNavigator = () => {
 
   const introduceApp = async (uuid) => {
       //setup redux
-      await _setupRedux(uuid)
+      await _setupRedux(uuid);
 
-    SplashScreen.hide()
+    SplashScreen.hide();
     //navigate to app
-    navigation.navigate('App')
+    navigation.navigate('App');
   }
 
   const showAuthentication = () => {
-    navigation.navigate('Auth')
+    navigation.navigate('Auth');
   }
 
   /**
