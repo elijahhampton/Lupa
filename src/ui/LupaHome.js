@@ -8,7 +8,8 @@ import Featured from "./Featured";
 import { MenuIcon } from "./icons";
 import CreateWorkout from "./workout/createworkout/CreateWorkout";
 import Feather1s from "react-native-feather1s/src/Feather1s";
-
+import WorkoutLog from "./WorkoutLog";
+import { connect } from 'react-redux';
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
 const COLOR = "#FFFFFF";
@@ -18,6 +19,12 @@ const TAB_PROPS = {
   textStyle: {color: "rgba(35, 55, 77, 0.75)", fontFamily: 'Avenir-Heavy'},
   activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold'}
 };
+
+const mapStateToProps = (state, action) => {
+  return {
+    lupa_data: state,
+  }
+}
 
 export class LupaHome extends Component {
   scroll = new Animated.Value(0);
@@ -34,6 +41,22 @@ export class LupaHome extends Component {
   handleOnRefresh() {
     this.setState({ refreshing: true })
     this.setState({ refreshing: false })
+  }
+
+  renderAppropriateSecondaryTab = () => {
+    if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
+      return (
+        <Tab heading="My Programs" {...TAB_PROPS}>
+        <MyPrograms />
+      </Tab>
+      )
+    } else {
+      return (
+        <Tab heading="Workout log" {...TAB_PROPS}>
+        <WorkoutLog />
+      </Tab>
+      )
+    }
   }
 
   render() {
@@ -90,7 +113,8 @@ export class LupaHome extends Component {
           )}
           overScrollMode="never">
           <Tabs 
-          
+          style={{backgroundColor: '#FFFFFF'}}
+          tabBarUnderlineStyle={{backgroundColor: '#FFFFFF'}}
           renderTabBar={(props) => <Animated.View
             style={[{
               transform: [{translateY: tabY}],
@@ -108,9 +132,7 @@ export class LupaHome extends Component {
             <Tab heading="Home" {...TAB_PROPS} >
             <Featured navigation={this.props.navigation} />
             </Tab>
-            <Tab heading="My Programs" {...TAB_PROPS}>
-              <MyPrograms />
-            </Tab>
+           {this.renderAppropriateSecondaryTab()}
           </Tabs>
         </Animated.ScrollView>
 
@@ -120,4 +142,4 @@ export class LupaHome extends Component {
   }
 }
 
-export default LupaHome;
+export default connect(mapStateToProps)(LupaHome);

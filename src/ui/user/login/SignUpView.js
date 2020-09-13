@@ -85,7 +85,8 @@ const SignUp = props => {
   })
 
   const signupHandler = async () => {
-    const attemptedEmail = formState.inputValues.username.trim();
+    const attemptedEmail = formState.inputValues.email.trim();
+    const attemptedPassword = formState.inputValues.password.trim();
 
     if (agreedToTerms === false) {
       Alert.alert(
@@ -123,7 +124,7 @@ const SignUp = props => {
     if (emailExist == true) {
       return;
     } else {
-      await dispatch(authActions.signup(formState.inputValues.username.trim(), formState.inputValues.email.trim(), formState.inputValues.password.trim()))
+      await dispatch(authActions.signup(attemptedEmail, attemptedPassword))
       navigation.navigate('Onboarding')
       _setupRedux()
     }
@@ -192,7 +193,7 @@ const SignUp = props => {
             </View>
 
             <Input
-              id="username"
+              id="email"
               label="E-Mail"
               keyboardType="email-address"
               required
@@ -201,6 +202,7 @@ const SignUp = props => {
               errorMessage="Please enter a valid email address"
               onInputChange={inputChangeHandler}
               initialValue=''
+              initallyValid={true}
               signUpInput
             />
 

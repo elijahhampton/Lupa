@@ -265,6 +265,18 @@ export default class ProgramController {
         const docRef = WORKOUT_COLLECTION.doc(workoutUUID);
         docRef.update({
             program_workout_structure: workoutData,
+            completedWorkout: true,
+        });
+
+        let userDataWorkouts = []
+        USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(documentSnapshot => {
+            const data = documentSnapshot.data();
+            userDataWorkouts = data.workouts;
+        });
+
+        userDataWorkouts.push(workoutUUID);
+        USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({
+            workouts: userDataWorkouts
         })
     }
 

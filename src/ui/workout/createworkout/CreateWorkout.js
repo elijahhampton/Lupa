@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import {
+    Appbar,
     Button
 } from 'react-native-paper';
 
@@ -23,6 +24,7 @@ import { connect, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native'
 import LOG from '../../../common/Logger';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
+import App from '../../../../App';
 
 const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
@@ -84,8 +86,13 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
     const getComponentDisplay = () => {
         if (componentReady && isPublished === false) {
             return (
-                <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
-                        
+                <SafeAreaView style={{flex: 1,  backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
+                        <Appbar.Header style={{backgroundColor: 'transparent'}}>
+                            <Appbar.Action icon={() => <Feather1s color='white' name="arrow-left" size={20} />} />
+                        </Appbar.Header>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center',}}>
+
+             
                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
                        <View style={{ paddingHorizontal: 10, paddingVertical: 20, alignItems: 'flex-start',}}>
                        <View style={{flexDirection: 'row', alignItems :'center', justifyContent: 'space-evenly'}}>
@@ -106,16 +113,21 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
   
 
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handlePublishWorkout}>
-                            Save
+                        <Button onPress={isPublished === false ? () => handlePublishWorkout() : null} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handlePublishWorkout}>
+                            {isPublished === true ? 'Saved!' : 'Save'}
                         </Button>
                         </View>
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                         <Button onPress={closeModal} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}}>
-                            Edit
+                            Start Workout
                         </Button>
                         </View>
-    
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handleOnComplete}>
+                            Complete
+                        </Button>
+                        </View>
+                        </View>
                 </SafeAreaView>
             )
         } else if (componentReady === true && isPublished === true) {
@@ -223,8 +235,9 @@ class CreateWorkout extends React.Component {
         let updatedProgramData = this.state.programData;
         updatedProgramData.program_name = workoutName;
         updatedProgramData.program_workout_days = workoutDays;
+        alert(workoutDays)
         updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
-
+        updatedProgramData.program_structure_uuid = this.state.currWorkoutUUID;
         this.setState({ programData: updatedProgramData, ...this.state })
         this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, updatedProgramData);
         this.goToIndex(1);

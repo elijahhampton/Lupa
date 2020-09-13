@@ -390,7 +390,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
                 <ThinFeatherIcon  name="arrow-left" size={20} onPress={() => navigation.pop()}/>
-                <Appbar.Content title={userData.username} titleStyle={styles.appbarTitle} />
+                <Appbar.Content title={userData.email} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
             <View>

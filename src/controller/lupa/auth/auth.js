@@ -16,20 +16,20 @@ const sendVerificationEmail = () => {
       });
 }
 
-export const signup = (username, email, password) => {
+export const signup = (email, password) => {
     const authHandler = new UserAuthenticationHandler()
     let USER_UUID;
     
     return async dispatch => {
              //Authenticate user in firebase
-  await LUPA_AUTH.createUserWithEmailAndPassword(email.trim(), password.trim()).then( userCredential => {
+  await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then( userCredential => {
     USER_UUID = userCredential.user.uid
     //Catch error on signup
 }).catch(error => {
    alert(error)
   });
   
-  await authHandler.signUpUser(USER_UUID, username, email, password);
+  await authHandler.signUpUser(USER_UUID, "", email, password);
 
   //user is gined in now
   //LUPA_AUTH.currentUser.getTokenId()

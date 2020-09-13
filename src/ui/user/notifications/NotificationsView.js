@@ -16,6 +16,7 @@ import LupaController from '../../../controller/lupa/LupaController'
 import LUPA_DB from '../../../controller/firebase/firebase'
 import ReceivedProgramNotification from './component/ReceivedProgramNotification'
 import { NOTIFICATION_TYPES } from '../../../model/notifications/common/types'
+import Feather1s from 'react-native-feather1s/src/Feather1s'
 
 
 function NotificationsView(props) {
@@ -86,7 +87,7 @@ function NotificationsView(props) {
     return (
         <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <Appbar.Header style={styles.appbar}>
-            <Appbar.BackAction  onPress={() => navigation.pop()} />
+            <Appbar.Action icon={() => <Feather1s thin={true} name="arrow-left" size={20} />} onPress={() => navigation.pop()} />
             <Appbar.Content title="Notifications" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
             </Appbar.Header>
             <View style={{flex: 1}}>

@@ -59,13 +59,8 @@ const SwitchNavigator = () => {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async (uuid) => {
-    try {
       //setup redux
       await _setupRedux(uuid)
-    } catch (err) {
-      SplashScreen.hide()
-      showAuthentication()
-    }
 
     SplashScreen.hide()
     //navigate to app
@@ -81,6 +76,7 @@ const SwitchNavigator = () => {
  * as well as Lupa application data (assessments, workouts);
  */
   const _setupRedux = async (uuid) => {
+    try {
     let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = [];
 
     // Load user data
@@ -95,17 +91,27 @@ const SwitchNavigator = () => {
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload })
 
     // Load user program data if the user is a trainer
-    if (currUserData.isTrainer) {
-      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-        currUserPrograms = result;
-      });
-  
-      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+    if (typeof(currUserData.isTrainer) == 'undefined') {
+      LUPA_AUTH.signOut();
+      showAuthentication();
+    } else {
+      if (currUserData.isTrainer) {
+        await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+          currUserPrograms = result;
+        });
+    
+        await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+      }
     }
 
     // Load application workouts
     lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
     dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
+  } catch(error) {
+    LUPA_AUTH.signOut();
+    showAuthentication();
+    alert(error);
+  }
   }
 
   useEffect(() => {

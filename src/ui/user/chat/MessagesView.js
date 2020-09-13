@@ -25,6 +25,7 @@ import LupaController from '../../../controller/lupa/LupaController';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { connect } from 'react-redux';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -161,7 +162,7 @@ class MessagesView extends React.Component {
                         primary: 'white'
                     }
                 }}>
-                    <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
+                     <Appbar.Action icon={() => <Feather1s thin={true} name="arrow-left" size={20} />} onPress={() => this.props.navigation.pop()} />
                     <Appbar.Content title="Messages" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                     <Appbar.Action onPress={() => alert('ap')} icon="delete" disabled={!this.state.viewReady && this.state.currMessagesIndex == undefined} color={!this.state.viewReady ? "black" : "grey"} />
                     <Appbar.Action onPress={() => alert('message')} icon="send" disabled={this.state.viewReady} color={this.state.viewReady ? "black" : "grey"} />

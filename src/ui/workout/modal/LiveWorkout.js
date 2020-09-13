@@ -27,6 +27,8 @@ import {
     Dialog,
 } from 'react-native-paper';
 
+import {Picker} from '@react-native-community/picker';
+
 import ShareProgramModal from '../program/modal/ShareProgramModal'
 
 import { ListItem, Input } from 'react-native-elements'
@@ -61,6 +63,7 @@ class LiveWorkout extends React.Component {
         this.interactionRBSheet = React.createRef();
         this.shareProgramRBSheet = React.createRef()
         this.interactionInput = React.createRef();
+        this.restTimesRBSheet = React.createRef();
 
         this.state = {
             workoutStructure: ['Workout Name', 'Workout Name', 'Workout Name'],
@@ -106,6 +109,7 @@ class LiveWorkout extends React.Component {
             restTimerStarted: false,
             restTimerVisible: false,
             descriptionDialogVisible: false,
+            restTime: 30
         }
     }
 
@@ -450,12 +454,36 @@ class LiveWorkout extends React.Component {
         this.props.navigation.pop()
     }
 
+    openRestTimesRBSheet = () => {
+        this.restTimesRBSheet.current.open();
+    }
+
+    closeRestTimesRBSheet = () => {
+        this.restTimesRBSheet.current.close();
+    }
+
     advanceExercise = () => {
         if (this.state.currentWorkoutIndex === this.state.currentWorkoutStructure.length - 1) {
             this.setState({
                 showFinishedDayDialog: true
             })
             return;
+        }
+
+        this.setState({ restTimerVisible: true, restTimerStarted: true });
+        this.state.currentWorkout.workout_sets -= 1;
+
+        if (this.state.currentWorkout.workout_sets === 1) {
+            this.setState(prevState => {
+                return {
+                    currentWorkout: this.state.currentWorkoutStructure[prevState.currentWorkoutIndex + 1],
+                    currentWorkoutIndex: prevState.currentWorkoutIndex + 1
+                }
+            })
+        } 
+        
+      /*  if (this.state.currentWorkout.workout_reps == 0) {
+           
         }
 
             if (this.state.currentWorkout.workout_reps != 0) {
@@ -469,14 +497,13 @@ class LiveWorkout extends React.Component {
                 currentWorkout.workout_reps = this.state.currentWorkoutOriginalReps;
                 this.setState({ currentWorkout: currentWorkout });
             } else if (this.state.currentWorkout.workout_reps == 0 &&  this.state.currentWorkout.workout_sets == 0) {
-                this.setState({ restTimerVisible: true, restTimerStarted: true });
                 this.setState(prevState => {
                     return {
                         currentWorkout: this.state.currentWorkoutStructure[prevState.currentWorkoutIndex + 1],
                         currentWorkoutIndex: prevState.currentWorkoutIndex + 1
                     }
                 })
-            }
+            }*/
 
 
         
@@ -512,7 +539,7 @@ class LiveWorkout extends React.Component {
                 <SafeAreaView style={{ flex: 1 }}>
                     <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height })} style={{ flex: 2.5, alignItems: 'center', justifyContent: 'center' }}>
 
-                        <Surface style={{ backgroundColor: 'black', height: '55%', borderRadius: 8, width: Dimensions.get('window').width - 20 }}>
+                        <Surface style={{ backgroundColor: 'black', height: '80%', borderRadius: 8, width: Dimensions.get('window').width - 20 }}>
                             <Video
                                 source={require('../../videos/pushuppreview.mov')}
                                 rate={1.0}
@@ -531,20 +558,6 @@ class LiveWorkout extends React.Component {
                             />
                             {/*this.renderContent()*/}
                         </Surface>
-                        <View style={{ paddingVertical: 10, width: Dimensions.get('window').width - 20, justifyContent: 'space-between' }}>
-                            <Text style={{ fontFamily: 'Avenir-Heavy' }}>
-                                {this.state.programData.program_name}
-                        </Text>
-                        <>
-                            <Text style={{ fontFamily: 'Avenir-Light', paddingVertical: 3 }} numberOfLines={2}>
-                               {this.state.programData.program_description}
-                               
-                    </Text>
-                    <Text onPress={() => this.setState({ descriptionDialogVisible: true })} style={{color: '#1089ff', fontFamily: 'Avenir-Light'}}>
-                                   Read full description
-                               </Text>
-                    </>
-                        </View>
                     </View>
 
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
@@ -607,25 +620,9 @@ class LiveWorkout extends React.Component {
                                
                             </View>
                             <View style={{alignItems: 'center', justifyContent: 'space-evenly', flexDirection: 'row', width: '100%' }}>
-                            <View style={{ marginLeft: 20, borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 30, paddingVertical: 5, alignItems: 'center', justifyContent: 'center'}}>
-                                <Text style={{ fontFamily: 'Avenir-Heavy' }}>
-                                    Workout Day:
-                    </Text>
-                                <Menu visible={this.state.dayMenuVisible} anchor={
-                                    <Button onPress={() => this.setState({ dayMenuVisible: true })} color="#1089ff" icon={() => <FeatherIcon name="chevron-down" size={20} />} uppercase={false} style={{ alignSelf: 'flex-start' }}>
-                                        {this.state.programData.program_workout_days[0]}
-                    </Button>
-                                }>
-                                    {
+                           
 
-                                        this.state.programData.program_workout_days.map((day, index, arr) => {
-                                            return <Menu.Item onPress={() => this.loadCurrentDayWorkouts(day)} title={day} titleStyle={{ fontFamily: 'Avenir' }} key={index} />
-                                        })
-                                    }
-
-                                </Menu>
-
-                            </View>
+                            <TouchableWithoutFeedback onPress={this.openRestTimesRBSheet}>
 
                             <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
                                     <Text style={{ paddingVertical: 3 }}>
@@ -633,11 +630,13 @@ class LiveWorkout extends React.Component {
                         </Text>
                                     <View style={{ borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: 'Avenir-Light' }}>
-                                           60
+                                           {this.state.restTime}
                             </Text>
                                     </View>
                                 </View>
+                                </TouchableWithoutFeedback>
                                 </View>
+                                
                         </View>
 
                         <View style={{ width: '30%', alignItems: 'center', justifyContent: 'center' }}>
@@ -923,6 +922,56 @@ class LiveWorkout extends React.Component {
         )
     }
 
+    renderRestTimerRBSheetPicker = () => {
+        const restTimes = new Array()
+        for (let i = 1; i <= 100; i++) {
+            restTimes.push(i)
+        }
+        return (
+            <RBSheet
+                ref={this.restTimesRBSheet}
+                height={250}
+                dragFromTopOnly={true}
+                closeOnDragDown={true}
+                customStyles={{
+                    wrapper: {
+
+                    },
+                    container: {
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20
+                    },
+                    draggableIcon: {
+                        backgroundColor: 'rgb(220, 220, 220)',
+                    }
+                }}
+            >
+                <View style={{flex: 1}}>
+                    <View style={{width: '100%'}}>
+                    <Button color="#1089ff" style={{alignSelf: 'flex-end'}} mode="text" onPress={this.closeRestTimesRBSheet}>
+                        <Text>
+                            Done
+                        </Text>
+                    </Button>
+                    </View>
+                  
+                <Picker
+  selectedValue={this.state.restTime}
+  style={{height: '100%', width: '100%'}}
+  onValueChange={(itemValue, itemIndex) =>
+    this.setState({restTime: itemValue})
+  }>
+      {
+          restTimes.map(time => {
+              return <Picker.Item label={time.toString()} value={time} />
+          })
+      }
+</Picker>
+                </View>
+            </RBSheet>
+        )
+    }
+
     renderFeedbackDialog = () => {
         return (
             <Dialog visible={this.state.feedbackDialogIsVisible} style={{ position: 'absolute', top: Constants.statusBarHeight + 50, width: Dimensions.get('window').width - 20, alignSelf: 'center' }}>
@@ -973,7 +1022,8 @@ class LiveWorkout extends React.Component {
                 {this.renderFeedbackDialog()}
                 {this.renderFinishedDialog()}
                 {this.renderDescriptionDialog()}
-                <RestTimer isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
+                {this.renderRestTimerRBSheetPicker()}
+                <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <LiveWorkoutFullScreenContentModal isVisible={this.state.showFullScreenContent} closeModal={() => this.setState({ showFullScreenContent: false })} contentType={'VIDEO' /*this.state.contentTypeDisplayed*/} contentURI={this.state.currentDisplayedMediaURI} />
             </>
         )
