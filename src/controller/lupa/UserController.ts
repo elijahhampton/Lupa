@@ -2,7 +2,7 @@
  *
  */
 
-import LUPA_DB, { LUPA_AUTH, FIRESTORE_INSTANCE, LUPA_DB_FIREBASE, Fire, FirebaseStorageBucket } from '../firebase/firebase.js';
+import LUPA_DB, { LUPA_AUTH, Fire, FirebaseStorageBucket } from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
 const PROGRAMS_COLLECTION = LUPA_DB.collection('programs');
@@ -109,21 +109,6 @@ export default class UserController {
             }
             resolve(results);
         })
-    }
-
-    isUsernameTaken = async (val) => {
-        let isTaken;
-
-        await USER_COLLECTION.where('username', '==', val).get().then(docs => {
-            if (docs.length == 0) {
-                isTaken = false;
-                return Promise.resolve(isTaken);
-            }
-            else {
-                isTaken = true;
-                return Promise.resolve(isTaken);
-            }
-        });
     }
 
 
@@ -611,9 +596,6 @@ export default class UserController {
         return Promise.resolve(trainers);
     }
 
-
-    /**************** *******************/
-
     indexProgramsIntoAlgolia = async () => {
         let records = [], program = undefined;
 
@@ -705,43 +687,6 @@ export default class UserController {
             });
         });
     }
-
-    /**
-     * Add User to Firebase
-     */
-    addUserToDatabase = (usernameIn, passwordIn = "", emailIn = "", firstNameIn = "", lastNameIn = "", statisticsIn = [],
-        specializationsIn = [], experienceIn = [], packsByNameIn = [], recommendedWorkoutsIn = [], isTrainerIn = false, sessionsIn = [],
-        timeCreatedIn = new Date().getTime(), genderIn = "undefined", locationIn = "undefined", ratingIn = 0, eventsByNameIn = []) => {
-
-        let newUserData = {
-            email: emailIn,
-            eventsByName: eventsByNameIn,
-            experience: experienceIn,
-            firstName: firstNameIn,
-            gender: genderIn,
-            isTrainer: isTrainerIn,
-            lastName: lastNameIn,
-            location: locationIn,
-            packsByName: packsByNameIn,
-            password: passwordIn,
-            rating: ratingIn,
-            recommendedWorkouts: recommendedWorkoutsIn,
-            timeCreated: timeCreatedIn,
-            username: usernameIn,
-            specializations: specializationsIn,
-            statistics: statisticsIn,
-            sessions: sessionsIn,
-        }
-
-        try {
-            USER_COLLECTION.doc(usernameIn).set(newUserData);
-            return true;
-        } catch (Exception) {
-            alert(Exception)
-            return false;
-        }
-    }
-
 
     searchPrograms = (startsWith = '') => {
         let currHit = undefined;
