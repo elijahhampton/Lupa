@@ -41,7 +41,6 @@ function VlogFeedCard({ vlogData }) {
 
     return (
         <DoubleClick singleTap={() => setShouldPlay(!shouldPlay)} doubleTap={() => setFullScreenContentVisible(true)}>
-
             <Card style={{ backgroundColor: '#EEEEEE', marginVertical: 0, alignSelf: 'center', width: Dimensions.get('window').width - 0, borderRadius: 0, elevation: 0 }}>
                 <Card.Content>
                     <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
@@ -49,15 +48,13 @@ function VlogFeedCard({ vlogData }) {
                             <Avatar containerStyle={{ borderWidth: 1.5, borderColor: 'white', }} rounded source={{ uri: vlogOwnerData.photo_url }} size={40} />
                             <View style={{ paddingHorizontal: 10 }}>
                                 <Text style={{fontFamily: 'Avenir-Medium'}}>
-                                    Elijah Hampton
+                                    {vlogOwnerData.display_name}
                             </Text>
                                 <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 10 }}>
                                     {Math.round(new Date().getTime() - vlogData.time_created.seconds)} hour ago
                                 </Caption>
                             </View>
                         </View>
-
-
                         <Menu
                             visible={optionsMenuVisible}
                             onDismiss={() => setOptionsMenuVisible(false)}
@@ -67,30 +64,23 @@ function VlogFeedCard({ vlogData }) {
                     </View>
                 </Card.Content>
                 <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="contain" style={{ marginVertical: 0, height: 300, width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 0 }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
-
-
                 <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingHorizontal: 10, position: 'absolute', bottom: cardContentHeight + 15, right: 0, }}>
                     <View style={{ backgroundColor: 'rgba(142, 142, 147, 0.5)', borderWidth: 1, borderColor: 'white', borderRadius: 0 }}>
                         <Feather1s onPress={() => setMuted(!isMuted)} color="white" name={isMuted === true ? 'volume-x' : 'volume-2'} size={20} style={{ backgroundColor: 'transparent', padding: 5 }} />
                     </View>
                 </View>
-
-
                 <Card.Content style={{paddingVertical: 10, justifyContent: 'center', backgroundColor: '#EEEEEE', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: RFValue(18), fontFamily: 'Avenir-Light', fontWeight: '500' }}>
-                            {  vlogData.vlog_title}
+                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Medium'}}>
+                            {vlogData.vlog_title}
                         </Text>
                     </View>
-
-
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                        <Text numberOfLines={2} style={{ width: '100%', fontSize: RFValue(16), fontFamily: 'Avenir-Light' }}>
+                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 15, fontFamily: 'Avenir-Light' }}>
                             {vlogData.vlog_text}
                         </Text>
                     </View>
                 </Card.Content>
-
                 <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} contentType={vlogData.vlog_media.media_type} contentURI={vlogData.vlog_media.uri} />
             </Card>
         </DoubleClick>

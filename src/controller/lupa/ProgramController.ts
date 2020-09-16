@@ -9,6 +9,7 @@ import { getLupaWorkoutInformationStructure } from '../../model/data_structures/
 import { getPurchaseMetaDataStructure } from '../../model/data_structures/programs/purchaseMetaData'
 import { getLupaUserStructure } from '../firebase/collection_structures';
 
+
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
 const WORKOUT_COLLECTION = LUPA_DB.collection('workouts');
@@ -53,7 +54,15 @@ export default class ProgramController {
 
     loadWorkouts = () => {
         const WORKOUTS = require('../../model/data_structures/workout/json/workouts.json')
-        return WORKOUTS.lupa_workouts;
+        const allWorkouts = {
+            lupa_workouts: WORKOUTS.lupa_workouts,
+            lower_workouts: WORKOUTS.lower_workouts,
+            upper_workouts: WORKOUTS.upper_workouts,
+            core_workouts: WORKOUTS.core_workouts
+        };
+
+        console.log(allWorkouts)
+        return allWorkouts;
     }
 
     /**
@@ -183,6 +192,7 @@ export default class ProgramController {
         programData.completedProgram = true;
         programData.program_metadata.workouts_completed = 0;
         programData.program_metadata.date_created = new Date().toDateString()
+        programData.program_image = imageURL;
         programDataList.push(programData);
 
         USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({
@@ -238,10 +248,32 @@ export default class ProgramController {
         // not sure if we will need this yet or what it will do
     }
 
-    publishWorkout = async (uuid) => {
+    publishWorkout = async (uuid, dateString) => {
+        try {
         await WORKOUT_COLLECTION.doc(uuid).update({
             completedProgram: true
         });
+console.log('a')
+        let workoutData = getLupaWorkoutInformationStructure();
+        await WORKOUT_COLLECTION.doc(uuid).get().then(documentSnapshot => {
+            workoutData = documentSnapshot.data();
+        })
+console.log('b')
+        let userWorkoutData = {}
+        const userUUID = await LUPA_AUTH.currentUser.uid
+        await USERS_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
+            userWorkoutData = documentSnapshot.data().workouts;
+        })
+console.log('c')
+        userWorkoutData[dateString] = [workoutData];
+console.log('e')
+        await USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({
+            workouts: userWorkoutData
+        })
+        console.log('f')
+    } catch(error) {
+        alert(error)
+    }
     }
 
     updateProgramData = (programUUID, programData) => {
@@ -268,7 +300,7 @@ export default class ProgramController {
             completedWorkout: true,
         });
 
-        let userDataWorkouts = []
+      /*  let userDataWorkouts = []
         USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(documentSnapshot => {
             const data = documentSnapshot.data();
             userDataWorkouts = data.workouts;
@@ -277,7 +309,7 @@ export default class ProgramController {
         userDataWorkouts.push(workoutUUID);
         USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({
             workouts: userDataWorkouts
-        })
+        })*/
     }
 
     /**

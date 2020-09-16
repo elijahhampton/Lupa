@@ -33,7 +33,8 @@ export class LupaHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      refreshing: false
+      refreshing: false,
+      currTab: 0,
     }
     this.headerY = Animated.multiply(Animated.diffClamp(this.scroll, 0, NAVBAR_HEIGHT), -1);
   }
@@ -53,7 +54,7 @@ export class LupaHome extends Component {
     } else {
       return (
         <Tab heading="Workout log" {...TAB_PROPS}>
-        <WorkoutLog />
+        <WorkoutLog navigation={this.props.navigation} />
       </Tab>
       )
     }
@@ -68,7 +69,9 @@ export class LupaHome extends Component {
       <View>
         {Platform.OS === "ios" && 
         <View style={{backgroundColor: COLOR, height: 30, width: "100%", position: "absolute", zIndex: 2}}/>}
-        <Animated.View style={{
+        <Animated.View 
+        
+        style={{
           width: "100%",
           position: "absolute",
           transform: [{
@@ -85,11 +88,7 @@ export class LupaHome extends Component {
             </Left>
 
             <Body>
-            <Title style={{}}>
-              <Text style={{color: "black", fontSize: 25, fontFamily: 'Avenir'}}>
-                Lupa
-              </Text>
-            </Title>
+            <Image source={require('./icons/logo.jpg')} style={{marginTop: 5, width: 35, height: 35}} />
             </Body>
 
             <Right>
@@ -101,6 +100,7 @@ export class LupaHome extends Component {
         </Animated.View>
         
         <Animated.ScrollView
+        scrollEnabled={this.state.currTab == 0}
         refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
           scrollEventThrottle={1}
           bounces={false}
@@ -113,6 +113,7 @@ export class LupaHome extends Component {
           )}
           overScrollMode="never">
           <Tabs 
+          onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
           style={{backgroundColor: '#FFFFFF'}}
           tabBarUnderlineStyle={{backgroundColor: '#FFFFFF'}}
           renderTabBar={(props) => <Animated.View

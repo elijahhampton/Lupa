@@ -85,9 +85,9 @@ function CreateNewPost(props) {
 
         switch (postMediaType) {
             case 'IMAGE':
-                return <Image resizeMethod="scale" resizeMode="cover" source={{uri: postMediaURI}} style={{ width: '100%', height: '100%',  borderRadius: 19 }} />
+                return <Image resizeMethod="scale" resizeMode="cover" source={{uri: postMediaURI}} style={{ width: '100%', height: '100%',  borderRadius: 0 }} />
             case 'VIDEO':
-                return <Video resizeMode="cover"  source={{uri: postMediaURI}} style={{ width: '100%', height: '100%',  borderRadius: 19 }} loop={false} />
+                return <Video resizeMode="cover"  source={{uri: postMediaURI}} style={{ width: '100%', height: '100%',  borderRadius: 0 }} loop={false} />
         }
     }
 

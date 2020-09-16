@@ -114,7 +114,7 @@ class LiveWorkout extends React.Component {
     }
 
     async componentDidMount() {
-        await this.setupLiveWorkout();
+        await this.setupLiveWorkout()
         await this.setupFire();
     }
 
@@ -138,12 +138,12 @@ class LiveWorkout extends React.Component {
     }
 
     componentWillUnmount() {
-       return () => Fire.shared.off();
+       Fire.shared.off();
     }
 
     setupLiveWorkout = async () => {
         if (this.props.route.params.programData) {
-            await this.setState({ programData: this.props.route.params.programData })
+            await this.setState({ programData: this.props.route.params.programData });
         } else if (this.props.route.params.uuid) {
             try {
                 switch(this.props.route.params.workoutType) {
@@ -161,23 +161,21 @@ class LiveWorkout extends React.Component {
                         this.setState({ ready: false, componentDidErr: true })
                 }
     
-                await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
-                    this.setState({ programOwnerData: data })
-                })
-    
-                await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
-                    this.setState({ currUserFollowing: data })
-                })
-    
-    
-                await this.loadWorkoutDays()
             } catch (err) {
                 alert(err)
                 await this.setState({ ready: false, componentDidErr: true })
             }
         }
 
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
+            this.setState({ programOwnerData: data })
+        })
 
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
+            this.setState({ currUserFollowing: data })
+        })
+
+        await this.loadWorkoutDays()
 
         await this.setState({ ready: true })
 
@@ -189,7 +187,7 @@ class LiveWorkout extends React.Component {
     }
 
     loadCurrentDayWorkouts = (day) => {
-      /*  if (!this.state.ready) {
+       /* if (!this.state.ready) {
             return;
         }*/
 
@@ -480,7 +478,7 @@ class LiveWorkout extends React.Component {
                     currentWorkoutIndex: prevState.currentWorkoutIndex + 1
                 }
             });
-        } else {
+        } else if (this.state.currentWorkout.workout_sets > 1) {
             let currentWorkout = this.state.currentWorkout
             currentWorkout.workout_sets = currentWorkout.workout_sets -  1;
             this.setState({

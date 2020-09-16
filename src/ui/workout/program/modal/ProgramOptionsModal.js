@@ -186,7 +186,8 @@ const styles = StyleSheet.create({
         padding: 3
     },
     appBar: {
-        elevation: 0
+        elevation: 0,
+        backgroundColor: '#FFFFFF'
     }
 })
 

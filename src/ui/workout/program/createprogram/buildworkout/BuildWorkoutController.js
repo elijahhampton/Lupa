@@ -45,14 +45,6 @@ import { Video } from 'expo-av';
 import AddSets from './component/AddSets';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-const CATEGORY_TAGS = [
-    'Body Weight',
-    'Barbell',
-    'Dumbbell',
-    'Cables',
-    'Other'
-]
-
 const PLACEMENT_TYPES = {
     SUPERSET: 'superset',
     EXERCISE: 'exercise',
@@ -122,19 +114,23 @@ class BuildWorkoutController extends React.Component {
             libraryData: [
                 {
                   title: "Lower",
-                  data: this.props.lupa_data.Application_Workouts.applicationWorkouts,
+                  data: this.props.lupa_data.Application_Workouts.applicationWorkouts.lower_workouts,
                 },
                 {
                   title: "Upper",
-                  data: []
+                  data: this.props.lupa_data.Application_Workouts.applicationWorkouts.lupa_workouts //WRONG
                 },
                 {
                   title: "Core",
-                  data: []
+                  data: this.props.lupa_data.Application_Workouts.applicationWorkouts.core_workouts
                 },
               ],
             currView: 0
         }
+    }
+
+    componentDidMount() {
+        console.log(Object.keys( this.props.lupa_data.Application_Workouts.applicationWorkouts))
     }
 
     goToIndex = (index) => {
@@ -146,8 +142,136 @@ class BuildWorkoutController extends React.Component {
     }
 
     getCurrentDay = () => {
-        const currIndex = this.state.currDayIndex;
-        return this.props.programData.program_workout_days[currIndex]
+        const currIndex = this.state.currDayIndex
+        try {
+            return this.props.programData.program_workout_days[currIndex]
+        } catch(error) {
+            return this.props.program_workout_days[currIndex];
+        }
+    }
+
+    deleteWorkout = async () => {
+        await this.addedWorkoutOptionsRef.current.close();
+        const workoutToDelete = this.state.currPressedPopulatedWorkout;
+        const workoutDay = this.getCurrentDay();
+
+        let updatedWorkouts = []
+        let newState = {}
+
+        switch(workoutDay) {
+            case 'Monday':
+                for (let i = 0; i < this.state.workoutDays.Monday.length; i++) {
+                    if (this.state.workoutDays.Monday[i].workout_uid == workoutToDelete.workout_uid) {
+                        updatedWorkouts = this.state.workoutDays.Monday;
+                        updatedWorkouts.splice(i, 1);
+                
+                        newState = {
+                            Monday: updatedWorkouts,
+                            ...this.state.workoutDays
+                        }
+
+                        this.setState({ workoutDays: newState })
+                    }
+                }
+                break;
+                case 'Tuesday':
+                    for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++) {
+                        if (this.state.workoutDays.Tuesday[i].workout_uid == workoutToDelete.workout_uid) {
+    
+                            updatedWorkouts = this.state.workoutDays.Tuesday;
+                            updatedWorkouts.splice(i, 1);
+                    
+                            newState = {
+                                Tuesday: updatedWorkouts,
+                                ...this.state.workoutDays
+                            }
+    
+                            this.setState({ workoutDays: newState })
+                        }
+                    }
+                    break;
+            case 'Wednesday':
+                for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++) {
+                    if (this.state.workoutDays.Wednesday[i].workout_uid == workoutToDelete.workout_uid) {
+
+                        updatedWorkouts = this.state.workoutDays.Wednesday;
+                        updatedWorkouts.splice(i, 1);
+                
+                        newState = {
+                            Wednesday: updatedWorkouts,
+                            ...this.state.workoutDays
+                        }
+
+                        this.setState({ workoutDays: newState })
+                    }
+                }
+                break;
+            case 'Thursday':
+                for (let i = 0; i < this.state.workoutDays.Thursday.length; i++) {
+                    if (this.state.workoutDays.Thursday[i].workout_uid == workoutToDelete.workout_uid) {
+
+                        updatedWorkouts = this.state.workoutDays.Thursday;
+                        updatedWorkouts.splice(i, 1);
+                
+                        newState = {
+                            Thursday: updatedWorkouts,
+                            ...this.state.workoutDays
+                        }
+
+                        this.setState({ workoutDays: newState })
+                    }
+                }
+                break;
+            case 'Friday':
+                for (let i = 0; i < this.state.workoutDays.Friday.length; i++) {
+                    if (this.state.workoutDays.Friday[i].workout_uid == workoutToDelete.workout_uid) {
+
+                        updatedWorkouts = this.state.workoutDays.Friday;
+                        updatedWorkouts.splice(i, 1);
+                
+                        newState = {
+                            Friday: updatedWorkouts,
+                            ...this.state.workoutDays
+                        }
+
+                        this.setState({ workoutDays: newState })
+                    }
+                }
+                break;
+            case 'Saturday':
+                for (let i = 0; i < this.state.workoutDays.Saturday.length; i++) {
+                    if (this.state.workoutDays.Saturday[i].workout_uid == workoutToDelete.workout_uid) {
+
+                        updatedWorkouts = this.state.workoutDays.Saturday;
+                        updatedWorkouts.splice(i, 1);
+                
+                        newState = {
+                            Saturday: updatedWorkouts,
+                            ...this.state.workoutDays
+                        }
+
+                        this.setState({ workoutDays: newState })
+                    }
+                }
+                break;
+            case 'Sunday':
+                for (let i = 0; i < this.state.workoutDays.Sunday.length; i++) {
+                    if (this.state.workoutDays.Sunday[i].workout_uid == workoutToDelete.workout_uid) {
+
+                        updatedWorkouts = this.state.workoutDays.Sunday;
+                        updatedWorkouts.splice(i, 1);
+                
+                        newState = {
+                            Sunday: updatedWorkouts,
+                            ...this.state.workoutDays
+                        }
+
+                        this.setState({ workoutDays: newState })
+                    }
+                }
+                break;
+            default: 
+        }
     }
 
     captureWorkout = (workoutObject, placementType) => {
@@ -477,7 +601,7 @@ class BuildWorkoutController extends React.Component {
 
                            this.state.workoutDays.Monday.map((exercise, index, arr) => {
                                 return (
-                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
                             <View style={{flex: 1}} >
                        <Surface style={{flex: 1, backgroundColor: '#212121'}}>
@@ -511,7 +635,7 @@ class BuildWorkoutController extends React.Component {
 
                            this.state.workoutDays.Tuesday.map((exercise, index, arr) => {
                                 return (
-                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
                             <View style={{flex: 1}} >
                        <Surface style={{flex: 1, backgroundColor: '#212121'}}>
@@ -545,7 +669,7 @@ class BuildWorkoutController extends React.Component {
 
                            this.state.workoutDays.Wednesday.map((exercise, index, arr) => {
                                 return (
-                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
                             <View style={{flex: 1}} >
                        <Surface style={{flex: 1, backgroundColor: '#212121'}}>
@@ -579,7 +703,7 @@ class BuildWorkoutController extends React.Component {
 
                        this.state.workoutDays.Thursday.map((exercise, index, arr) => {
                             return (
-                                <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                 <View style={[{flex: 1, width: '100%'}]}>
                         <View style={{flex: 1}} >
                    <Surface style={{flex: 1, backgroundColor: '#212121'}}>
@@ -612,7 +736,7 @@ class BuildWorkoutController extends React.Component {
 
                            this.state.workoutDays.Friday.map((exercise, index, arr) => {
                                 return (
-                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
                             <View style={{flex: 1}} >
                        <Surface style={{flex: 1, backgroundColor: '#212121'}}>
@@ -646,7 +770,7 @@ class BuildWorkoutController extends React.Component {
 
                        this.state.workoutDays.Saturday.map((exercise, index, arr) => {
                             return (
-                                <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                 <View style={[{flex: 1, width: '100%'}]}>
                         <View style={{flex: 1}} >
                    <Surface style={{flex: 1, backgroundColor: '#212121'}}>
@@ -680,7 +804,7 @@ class BuildWorkoutController extends React.Component {
 
                            this.state.workoutDays.Sunday.map((exercise, index, arr) => {
                                 return (
-                                    <TouchableWithoutFeedback onPress={() => this.handleOpenAddedWorkoutOptionsSheet(workout)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
+                                    <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
                             <View style={{flex: 1}} >
                        <Surface style={{flex: 1, backgroundColor: '#212121'}}>
@@ -892,15 +1016,19 @@ class BuildWorkoutController extends React.Component {
                 {
                 this.state.currPressedPopulatedWorkout.superset.map(exercise => {
                              return (
+                                
+
                                 <View style={{width: 100, height: 100}}>
+                                <View style={[{flex: 1, width: '100%'}]}>
                                 <View style={{flex: 1}} >
                            <Surface style={{flex: 1, backgroundColor: '#212121'}}>
                                 <Video source={require('../../../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
               </Surface>
                            </View>
-                           <Text style={{padding: 3}}>
-                  Push up
+                           <Text style={{padding: 3, alignSelf: 'center'}}>
+                 {exercise.workout_name}
               </Text>
+                                </View>
                                 </View>
                              )
                          })
@@ -936,18 +1064,21 @@ class BuildWorkoutController extends React.Component {
                 <FeatherIcon name="plus" size={20} style={{paddingHorizontal: 10}} />
                     <Text style={{fontFamily: 'Avenir-Medium', fontSize: 15}}>
                     
-                        Add super set
+                        Add Superset
                     </Text>
                 </View>
                 </TouchableWithoutFeedback>
 
-                <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <TouchableWithoutFeedback style={{marginVertical: 10}} onPress={() => this.deleteWorkout()}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                 <FeatherIcon color="#e53935" name="trash" size={20} style={{paddingHorizontal: 10}} />
                     <Text style={{ color: '#e53935', fontFamily: 'Avenir-Medium', fontSize: 15}}>
                     
                         Remove Workout
                     </Text>
                 </View>
+                </TouchableWithoutFeedback>
+                
             <Divider style={{alignSelf: 'center', width: Dimensions.get('window').width}} />
              <View style={{width: '100%'}}>
                  <Text style={{alignSelf: 'flex-end', paddingVertical: 5, fontSize: 18, fontWeight: 'bold'}}>
@@ -1000,11 +1131,18 @@ class BuildWorkoutController extends React.Component {
               return ( <View style={styles.container}>
                 <Appbar.Header style={[styles.appbar, {height: 'auto',  paddingVertical: 10}]}>
                     <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Button color="white" uppercase={false} onPress={() => this.state.bottomViewIndex === 0 ? this.props.goToIndex(0) : this.setState({ bottomViewIndex: 0 })}>
+                  {
+                  this.props.toolIsFirstScreen === true ? 
+                  <Button color="white" uppercase={false} onPress={() => this.props.navigation.pop()}>
+                  Cancel
+              </Button>
+                  : 
+                  <Button color="white" uppercase={false} onPress={() => this.state.bottomViewIndex === 0 ? this.props.goToIndex(0) : this.setState({ bottomViewIndex: 0 })}>
                         Back
                     </Button>
+                    }
 
-                    <Button color="white" uppercase={false} onPress={() => this.goToIndex(1)}>
+                    <Button style={{alignSelf: 'flex-end'}} color="white" uppercase={false} onPress={() => this.goToIndex(1)}>
                         Add Sets
                     </Button>
                     </View>
@@ -1061,7 +1199,7 @@ class BuildWorkoutController extends React.Component {
 
                         <SectionList 
                          sections={this.state.libraryData}
-                         keyExtractor={(item, index) => Math.random().toString()}
+                         keyExtractor={(item, index) => item.workout_name}
                          renderItem={({ item }) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || item.workout_name == undefined) {
                                 return;
@@ -1071,6 +1209,7 @@ class BuildWorkoutController extends React.Component {
                                 <TouchableOpacity onPress={() => this.captureWorkout(item, this.state.currPlacementType)}>
 
                                 <SingleWorkout
+                                    showSelectStyle={this.state.placementType == PLACEMENT_TYPES.SUPERSET}
                                     workout={item}
                                 />
                             </TouchableOpacity>

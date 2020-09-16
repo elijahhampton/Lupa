@@ -110,8 +110,16 @@ class Featured extends React.Component {
                 }
 
                 updatedState.concat(this.state.feedVlogs)
+                
+                if (updatedState.length === 0) {
+                    LUPA_DB.collection('vlogs').get().then(docs => {
+                        docs.forEach(doc => {
+                            const data = doc.data();
+                            updatedState.push(data);
+                        });
+                    })//.orderBy('time_created', 'asc');
+                }
 
-                this.sortVlogs(updatedState);
                 this.setState({ feedVlogs: updatedState });
             })
 

@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import {
-    TouchableWithoutFeedback,
     View,
     ImageBackground,
     Dimensions,
     Text,
     TouchableOpacity,
     Image,
-    StyleSheet, Pressable
 } from 'react-native'
 
 import {
     Surface,
-    Caption,
-    Button,
-    Divider,
-    Avatar
+    Chip,
 } from 'react-native-paper'
 
 import LupaController from '../../../../controller/lupa/LupaController'
@@ -32,6 +27,7 @@ function ProgramInformationComponent({ program }) {
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const [newCurrUserData, setNewCurrUserData] = useState(getLupaUserStructure())
+    const [userPurchased, setUserPurchased] = useState(false)
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -52,35 +48,45 @@ function ProgramInformationComponent({ program }) {
     useEffect(() => {
         const currUserSubscription = LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).onSnapshot(documentSnapshot => {
             let userData = documentSnapshot.data()
-                setNewCurrUserData(userData)
-            });
-    
-            return () => currUserSubscription()
+            setNewCurrUserData(userData)
+
+            
+        });
+
+        async function checkUserPurchased() {
+            await newCurrUserData.programs.includes(program.program_structure_uuid) ? setUserPurchased(true) : setUserPurchased(false)
+        }
+
+        checkUserPurchased()
+
+        return () => currUserSubscription()
     }, [])
 
     return (
-        <TouchableOpacity onPress={handleCardOnPress}>
-        <View style={{width: Dimensions.get('window').width, marginVertical: 10}}>
-                            <Surface style={{ elevation: 0, justifyContent: 'center', flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto',}} >             
-                            <View style={{width: 60, height: 60, alignItems: 'flex-start', justifyContent: 'center' }}>
-                                <Surface style={{width: '100%', height: '100%', elevation: 0, borderRadius: 3}}>
-                                    <Image style={{width: '100%', height: '100%', borderRadius: 3}} source={{uri: program.program_image}} />
-                                </Surface>
-                            </View>
-                                <View style={{paddingHorizontal: 20, width: '80%'}} >
-                                    <Text style={{fontSize: 15, color: '#212121', fontFamily: 'Avenir-Medium'}}>
-                                        {program.program_name}
-                                    </Text>
-                                    <Text style={{fontSize: 12,flexWrap: 'wrap', fontWeight: '300'}} numberOfLines={3}>
-                                    {program.program_description}
-                                    </Text>
-                                </View>
-                          </Surface>
+        <TouchableOpacity key={program.program_structure_uuid} style={{ backgroundColor: 'white' }} onPress={handleCardOnPress}>
+            <View style={{ backgroundColor: 'white', width: Dimensions.get('window').width, marginVertical: 10 }}>
+                <Surface style={{ elevation: 0, justifyContent: 'center', flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto', }} >
+                    <View style={{ width: 60, height: 60, alignItems: 'flex-start', justifyContent: 'center' }}>
+                        <Surface style={{ width: '100%', height: '100%', elevation: 0, borderRadius: 3 }}>
+                            <Image style={{ width: '100%', height: '100%', borderRadius: 3 }} source={{ uri: program.program_image }} />
+                        </Surface>
+                    </View>
+                    <View style={{ paddingHorizontal: 20, width: '80%' }} >
+                        <Text style={{ fontSize: 15, color: '#212121', fontFamily: 'Avenir-Medium' }}>
+                            {program.program_name}
+                        </Text>
+                        <Text style={{ fontSize: 12, flexWrap: 'wrap', fontWeight: '300' }} numberOfLines={2}>
+                            {program.program_description}
+                        </Text>
+                        
+                        {userPurchased === true ? <Text style={{ alignSelf: 'flex-end', paddingVertical: 10, color: '#1089ff', fontFamily: 'Avenir-Heavy', fontSize: 12}}> PURCHASED </Text> : null }
+                    </View>
+                </Surface>
 
-                          <ProgramOptionsModal isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} program={program} />
-                          <ProgramInformationPreview isVisible={programModalVisible} closeModalMethod={() => setProgramModalVisible(false)} program={program}  />
-                          </View>
-                          </TouchableOpacity>
+                <ProgramOptionsModal isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} program={program} />
+                <ProgramInformationPreview isVisible={programModalVisible} closeModalMethod={() => setProgramModalVisible(false)} program={program} />
+            </View>
+        </TouchableOpacity>
     )
 }
 

@@ -28,14 +28,18 @@ class SingleWorkout extends React.Component {
 
         this.state = {
             isPressed: false,
+            showSelectStyle: false
         }
 
         this.animatedViewRef = React.createRef();
         
     }
 
-    shouldComponentUpdate = (nextProps, nextState) => {
-        return true;
+    static getDerivedStateFromProps = (props, state) => {
+            return {
+                showSelectStyle: props.showSelectStyle,
+
+            }
     }
 
 
@@ -63,7 +67,7 @@ return (
     <View style={[{marginVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
    <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5}}>
    <View style={{flexDirection: 'row', alignItems: 'flex-start',}}>
-   <Surface style={{height: 70, width: 100, backgroundColor: '#212121'}}>
+   <Surface style={{borderWidth: 1, height: 70, width: 100, backgroundColor: '#212121'}}>
                             <Video source={require('../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
           </Surface>
     <View style={{paddingHorizontal: 10,}}>
@@ -78,9 +82,6 @@ return (
    </View>
 
    </View>
-
-   
-
     </View>
 
 )
@@ -91,6 +92,9 @@ return (
 }
 
 const styles = StyleSheet.create({
+    selectStyle: {
+        borderColor: '#1089ff', shadowColor: '#1089ff',
+    },
     videoContainer: {
         backgroundColor: "rgb(58,58,60)",
         borderRadius: 60,

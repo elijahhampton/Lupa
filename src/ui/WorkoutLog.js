@@ -25,42 +25,66 @@ import { useNavigation } from '@react-navigation/native'
 import LUPA_DB from '../controller/firebase/firebase'
 import {Calendar, CalendarList } from 'react-native-calendars'
 import RBSheet from 'react-native-raw-bottom-sheet'
+import { getLupaWorkoutInformationStructure } from '../model/data_structures/workout/workout_collection_structures'
+import { connect } from 'react-redux'
+const mapStateToProps = (state, action) => {
+    return {
+        lupa_data: state
+    }
+}
 
-function WorkoutLog(props) {
-    const [userWorkouts, setUserWorkouts] = useState([])
-    const navigation = useNavigation();
-    const calendarRBSheet = createRef();
-    const currUserData = useSelector(state => {
-        return state.Users.currUserData;
-    })
+class WorkoutLog extends React.Component {
+    constructor(props) {
+        super(props);
 
-    const handleWorkoutOnPress = (workout) => {
-        navigation.push('LiveWorkout', {
+        this.calendarRBSheet = createRef();
+
+        this.state = {
+            currentDay: "",
+            currentWorkout: getLupaWorkoutInformationStructure(),
+            userWorkouts: [],
+            selectedDate: new Date(),
+        }
+    }
+
+
+    handleWorkoutOnPress = (workout) => {
+        this.props.navigation.push('LiveWorkout', {
                 uuid: workout.program_structure_uuid,
                 workoutType: 'WORKOUT',
         })
     }
 
-    const renderWorkouts = () => {
-        return userWorkouts.map((workout, index, arr) => {
-            if (typeof(workout) == 'undefined' ||  typeof(workout.completedWorkout) == 'undefined' || typeof(workout.program_structure_uuid) == false) {
-                return;
-            }
-            
+    renderWorkoutMessage = () => {
+        if (typeof(this.state.currentWorkout) == 'undefined' || typeof(this.state.currentWorkout.program_structure_uuid) == "undefined") {
             return (
-                <TouchableWithoutFeedback key={index} onPress={() => handleWorkoutOnPress(workout)} style={{margin: 10}}>
-                    <Text>
-                        {workout.program_name}
-                    </Text>
-                </TouchableWithoutFeedback>
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <Text style={{fontSize: 18, paddingHorizontal: 20}}>
+                    You did not create a workout on this day.
+                </Text>
+               </View>
             )
-        })
+        } else {
+           return (
+               <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <Text style={{fontSize: 18, paddingHorizontal: 20}}>
+                    Do you want to launch the workout you created on this day?
+                </Text>
+
+                <Button color="#1089ff" style={{fontWeight: '300', }} mode="text">
+                    <Text>
+                        Launch Workout
+                    </Text>
+                </Button>
+               </View>
+           )
+        }
     }
 
-    const renderCalendarListRBSheet = () => {
+    renderCalendarListRBSheet = () => {
         return (
             <RBSheet
-                ref={calendarRBSheet}
+                ref={this.calendarRBSheet}
                 height={500}
                 dragFromTopOnly={true}
                 closeOnDragDown={true}
@@ -77,55 +101,52 @@ function WorkoutLog(props) {
                     }
                 }}
                 >
+                  
+
+                    <View style={{flex: 1}}>
                     <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 20, alignSelf: 'center'}}>
-                        August 16, 2020
+                        {this.state.currentDay}
                     </Text>
+                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                           {this.renderWorkoutMessage()}
+                        </View>
+                    </View>
             </RBSheet>
         )
     }
 
-    const openRBSheet = () => {
-        calendarRBSheet.current.open()
+    openRBSheet = () => {
+        this.calendarRBSheet.current.open()
     }
 
-    const handleCalendarRBSheetOnOpen = (day) => {
-        //alter state
-       // alert('hi');
+    setRBSheetData = async (day) => {
+        const dateString = day.month + "-" + day.day + "-" + day.year;
+        const userWorkouts = this.props.lupa_data.Users.currUserData.workouts;
 
-        //open RBSheet
-        setSelectedDate(new Date(day))
-        openRBSheet();
+        if (typeof(userWorkouts[dateString]) != 'undefined') {
+            await this.setState({
+                selectedDate: new Date(day),
+                currentWorkout: userWorkouts[dateString],
+                currentDay: dateString
+            })
+        } else {
+            await this.setState({
+                selectedDate: new Date(day),
+                currentWorkout: getLupaWorkoutInformationStructure(),
+                currentDay: dateString
+            })
+        }
     }
 
-    useEffect(() => {
-       // openRBSheet();
+    handleCalendarRBSheetOnOpen = async (day) => {
+        await this.setRBSheetData(day)
+        this.openRBSheet();
+    }
 
-        let documents = []
-        const workoutsObserver = LUPA_DB.collection('workouts').onSnapshot(documentQuery => {
-            if (documentQuery.size > 0) {
-                documentQuery.forEach(doc => {
-                    const documentData = doc.data();
-                    if (documentData.program_owner == currUserData.user_uuid) {
-                        documents.push(documentData);
-                    }
-                });
-
-                setUserWorkouts(documents);
-                documents = [];
-            }
-        });
-
-        return () => workoutsObserver();
-    }, []) 
-
-    const [selectedDate, setSelectedDate] = useState(new Date())
-
+render() {
     return (
-        <View style={styles.root}>
-           {/* <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
-            {renderWorkouts()}
-            </ScrollView>
-    */}
+     
+        
 <View style={{ height: Dimensions.get('window').height}}>
 
     <CalendarList
@@ -133,27 +154,23 @@ function WorkoutLog(props) {
   // the value of date key has to be an empty array []. If there exists no value for date key it is
   // considered that the date in question is not yet loaded
   horizontal={false}
-  items={{
-    '2012-05-22': [{name: 'item 1 - any js object'}],
-    '2012-05-23': [{name: 'item 2 - any js object', height: 80}],
-    '2012-05-24': [],
-    '2012-05-25': [{name: 'item 3 - any js object'}, {name: 'any js object'}]
-  }}
+  items={{}}
   // Callback that gets called when items for a certain month should be loaded (month became visible)
   loadItemsForMonth={(month) => {console.log('trigger items loading')}}
   // Callback that fires when the calendar is opened or closed
   onCalendarToggled={(calendarOpened) => {console.log(calendarOpened)}}
   // Callback that gets called on day press
-  onDayPress={(day) => handleCalendarRBSheetOnOpen(day)}
-  onDayLongPress={day => handleCalendarRBSheetOnOpen(day)}
+  onDayPress={(day) => this.handleCalendarRBSheetOnOpen(day)}
+  onDayLongPress={day => this.handleCalendarRBSheetOnOpen(day)}
   // Callback that gets called when day changes while scrolling agenda list
-  onDayChange={(day)=> {handleCalendarRBSheetOnOpen(day)}}
+  onDayChange={(day)=> {this.handleCalendarRBSheetOnOpen(day)}}
   // Initially selected day
-  selected={selectedDate}
+  selected={this.state.selectedDate}
   // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-  minDate={new Date()}
+  minDate={'2015-05-30'}
   // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
   maxDate={'2090-05-30'}
+
   // Max amount of months allowed to scroll to the past. Default = 50
   pastScrollRange={50}
   // Max amount of months allowed to scroll to the future. Default = 50
@@ -196,20 +213,21 @@ function WorkoutLog(props) {
   refreshControl={null}
   // Agenda theme
   // Agenda container style
-  style={{height: Dimensions.get('window').height, backgroundColor: 'red'}}
+  style={{height: Dimensions.get('window').height}}
 />
-{renderCalendarListRBSheet()}
+{this.renderCalendarListRBSheet()}
 </View>
-        </View>
+      
 
     )
+}
 }
 
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: 'blue',
+        backgroundColor: '#FFFFFF',
     }
 })
 
-export default WorkoutLog;
+export default connect(mapStateToProps)(WorkoutLog);

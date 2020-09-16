@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: 'transparent',
         elevation: 0,
+        paddingHorizontal: 20
     },
     appbarTitle: {
         fontSize: 12,

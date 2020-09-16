@@ -665,8 +665,8 @@ export default class LupaController {
       PROGRAMS_CONTROLLER_INSTANCE.publishProgram(uuid);
     }
 
-    publishWorkout = (uuid) => {
-      PROGRAMS_CONTROLLER_INSTANCE.publishWorkout(uuid);
+    publishWorkout = (uuid, dateString) => {
+      PROGRAMS_CONTROLLER_INSTANCE.publishWorkout(uuid, dateString);
     }
 
     saveProgram = async (programUUID) => {

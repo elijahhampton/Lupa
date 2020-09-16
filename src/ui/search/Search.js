@@ -15,7 +15,7 @@ import {
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
 
 import LupaController from '../../controller/lupa/LupaController'
-import { Appbar, Button, FAB, Searchbar, Surface } from 'react-native-paper'
+import { Appbar, Button, Chip, FAB, Searchbar, Surface } from 'react-native-paper'
 import {
     SearchBar
 } from 'react-native-elements'
@@ -66,16 +66,17 @@ class Search extends React.Component {
             scrollableTabbarWidth: new Animated.Value(1),
             previousSearches: [],
             currTab: 1,
+            noResultsViewHeight: 0,
         }
 
     }
 
     componentDidMount() {
         let docData = getLupaProgramInformationStructure();
-        let popularProgramResults = [];
-        let locationBasedResults = []
 
         this.popularProgramsObserver = LUPA_DB.collection('programs').where('completedProgram', '==', true).onSnapshot(querySnapshot => {
+            let popularProgramResults = [];
+            let locationBasedResults = [];
             querySnapshot.forEach(doc => {
                 docData = doc.data();
                 if (docData.program_location.address.includes(this.props.lupa_data.Users.currUserData.location.city) || docData.program_location.address.includes(this.props.lupa_data.Users.currUserData.location.state)) {
@@ -89,10 +90,23 @@ class Search extends React.Component {
             this.setState({ popularPrograms: popularProgramResults, locationResults: locationBasedResults})
         });
 
+        this.mostRecentProgramsObserver = LUPA_DB.collection('programs').orderBy('program_start_date', 'asc').onSnapshot(querySnapshot => {
+            let mostRecentResults = []
+            querySnapshot.forEach(doc => {
+                docData = doc.data();
+                mostRecentResults.push(docData);
+            });
+        })
     }
 
     componentWillUnmount() {
-        return() => this.popularProgramsObserver();
+        let subscriptions = [
+            this.popularProgramsObserver,
+            this.mostRecentProgramsObserver
+        ]
+        return subscriptions.map((subscription) => {
+            return () => subscription()
+        })
     }
 
     handleOnRefresh() {
@@ -245,14 +259,34 @@ class Search extends React.Component {
             </View>
             }>
               
-              
               <Tab heading="Search" {...TAB_PROPS}>
-                <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
+                  <View style={{flex: 1}}>
+                <ScrollView onLayout={event => this.setState({ noResultsViewHeight: event.nativeEvent.layout.height })} contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
+                    {
+                        this.state.searchResults.length === 0 ?
+                        <View style={{flex: 1, height: this.state.noResultsViewHeight, alignItems: 'center', justifyContent: 'center'}}>
+                            <Text style={{fontFamily: 'Avenir-Light', fontSize: 20}}>
+                                <Text>
+                                Not seeing any results?
+                                </Text>
+                                <Text>
+                                    {" "}
+                                </Text>
+                                <Text onPress={this.showSearch} style={{color: '#1089ff'}}>
+
+                                Search fitness programs and trainers.
+                                </Text>
+                            </Text>
+                        </View>
+                       
+                        :
+                        null
+                    }
                     {
                         this.renderSearchResults()
                     }
                 </ScrollView>
-    
+                  </View>
               </Tab>
 
            <Tab heading="Popular" {...TAB_PROPS}>

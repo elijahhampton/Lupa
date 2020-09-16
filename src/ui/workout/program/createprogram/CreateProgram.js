@@ -29,8 +29,7 @@ import { Button, Caption, Appbar } from 'react-native-paper'
 import { Constants } from 'react-native-unimodules';
 import BuildWorkoutController from './buildworkout/BuildWorkoutController';
 import LOG, { LOG_ERROR } from '../../../../common/Logger';
-import AppStateContext from '../../../util/AppState';
-import ShareProgramModal from '../modal/ShareProgramModal'
+
 const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 

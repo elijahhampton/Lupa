@@ -47,7 +47,7 @@ function UserDashboard(props) {
         <View style={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#E5E5E5', flexDirection: 'row', alignItems: 'center', alignItems: 'center', justifyContent: 'space-evenly', marginVertical: 20, padding: 20, backgroundColor: 'white'}}>
           <View style={{flex: 3}}>
           <Text style={{color: '#1089ff', fontSize: 18, flexWrap: 'wrap',  fontFamily: 'Avenir-Light'}}>
-                Invite your friends to Lupa and get 1 free program.
+                Invite your friends and get 1 free program.
             </Text>
           </View>
           

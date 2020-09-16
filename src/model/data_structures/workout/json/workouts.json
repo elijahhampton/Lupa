@@ -195,5 +195,259 @@
     "workout_reps": 0,
       "superset": []
 }
+],
+"lower_workouts": [
+    {
+        "workout_name": "Forward Lunge",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Box Jumps",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Box Jump",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Deadlife",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Dumbbell Squat",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Barbell Squat",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Lateral Lunge",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Leg Raise",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Side Plank",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    }
+],
+"upper_workouts:": [
+    
+    {
+        "workout_name": "",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Chest Press",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Bench Press",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Dumbbell Row",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Pull-up",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Shoulder Shrug",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Barbell Curl",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    }
+],
+"core_workouts": [
+    {
+        "workout_name": "Plank",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Sit-up",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    },
+    {
+        "workout_name": "Push-up",
+        "workout_description": "",
+        "workout_media": {
+            "uri:": "",
+            "media_type": ""
+        },
+        "workout_uid": "",
+        "workout_cue": "",
+        "workout_sets": 0,
+        "workout_reps": 0,
+          "superset": []
+    }
 ]
 }

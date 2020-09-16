@@ -24,7 +24,7 @@ import { connect, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native'
 import LOG from '../../../common/Logger';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
-import App from '../../../../App';
+import moment from 'moment';
 
 const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
@@ -48,11 +48,14 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
 
     const handlePublishWorkout =  async() => {
         setComponentReady(false);
+
+        const dateString = `${new Date().getMonth()}-${new Date().getDate()}-${new Date().getFullYear()}`;
+        
         //publish program
-        await LUPA_CONTROLLER_INSTANCE.publishWorkout(uuid)
+        await LUPA_CONTROLLER_INSTANCE.publishWorkout(uuid, dateString)
 
         //update current user
-        await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('workouts', uuid, 'add');
+        //await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('workouts', uuid, 'add');
 
         await LUPA_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(uuid).then(data => {
             dispatch({ type: 'ADD_CURRENT_USER_WORKOUT', payload: data})
@@ -84,7 +87,7 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
     }
 
     const getComponentDisplay = () => {
-        if (componentReady && isPublished === false) {
+        if (componentReady) {
             return (
                 <SafeAreaView style={{flex: 1,  backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
                         <Appbar.Header style={{backgroundColor: 'transparent'}}>
@@ -114,7 +117,7 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
 
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                         <Button onPress={isPublished === false ? () => handlePublishWorkout() : null} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handlePublishWorkout}>
-                            {isPublished === true ? 'Saved!' : 'Save'}
+                            {isPublished === true ? 'Saved!' : 'Save to Workout Log'}
                         </Button>
                         </View>
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
@@ -130,36 +133,7 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
                         </View>
                 </SafeAreaView>
             )
-        } else if (componentReady === true && isPublished === true) {
-            return (
-                <SafeAreaView style={{flex: 1, padding: 20, justifyContent: 'center', alignItems: 'center',  backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
-                       <View style={{paddingHorizontal: 10, width: '100%',  marginHorizontal: 10, paddingVertical: 20, alignItems: 'flex-start',}}>
-                       <Text style={{fontFamily: 'Avenir-Light', paddingVertical: 5,  fontSize: 20, color: 'white',}}>
-                            Saved.
-                        </Text>
-                        <Text style={{color: 'white', fontFamily: 'Avenir', fontWeight: 'bold'}}>
-                            You're all set.  Would you like to hop in a workout now?
-                        </Text>
-                       </View>
-                       
-
-  
-
-                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handleStartLiveWorkout}>
-                            Start Workout
-                        </Button>
-                        </View>
-
-                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handleOnComplete}>
-                            Complete
-                        </Button>
-                        </View>
-                   
-                </SafeAreaView>
-            )
-        }else {
+        } else {
             return (
                 <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
                     <ActivityIndicator animating={true} color="white" />
@@ -186,6 +160,18 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+
+let weekday = new Array(7);
+weekday[0] = "Sunday";
+weekday[1] = "Monday";
+weekday[2] = "Tuesday";
+weekday[3] = "Wednesday";
+weekday[4] = "Thursday";
+weekday[5] = "Friday";
+weekday[6] = "Saturday";
+
+const DAY = weekday[new Date().getDay()];
+
 class CreateWorkout extends React.Component {
     constructor(props) {
         super(props);
@@ -194,7 +180,7 @@ class CreateWorkout extends React.Component {
 
         this.state = {
             currPage: 0,
-            workoutData: getLupaWorkoutInformationStructure(),
+            workoutData: getLupaWorkoutInformationStructure(getLupaWorkoutInformationStructure('', '', {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid)),
             currWorkoutUUID: "",
             workoutComplete: false, 
             creatingWorkout: false,
@@ -204,9 +190,31 @@ class CreateWorkout extends React.Component {
 
     componentDidMount = async () => {
         const UUID = Math.random().toString()
+        var d = new Date();
+        let weekday = new Array(7);
+        weekday[0] = "Sunday";
+        weekday[1] = "Monday";
+        weekday[2] = "Tuesday";
+        weekday[3] = "Wednesday";
+        weekday[4] = "Thursday";
+        weekday[5] = "Friday";
+        weekday[6] = "Saturday";
+        
+        const DAY = await weekday[d.getDay()];
+
         await this.setState({ currWorkoutUUID: UUID }) 
-        await this.setState({ programData: getLupaWorkoutInformationStructure('', UUID, {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [], this.props.lupa_data.Users.currUserData.user_uuid) })
-        this.LUPA_CONTROLLER_INSTANCE.createNewWorkout(UUID);
+        await this.setState({ programData: getLupaWorkoutInformationStructure('', UUID, {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid) })
+        await this.LUPA_CONTROLLER_INSTANCE.createNewWorkout(UUID);
+
+        let updatedProgramData = this.state.programData;
+
+       
+
+        updatedProgramData.program_workout_days = [DAY];
+        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
+        updatedProgramData.program_structure_uuid = this.state.currWorkoutUUID;
+        this.setState({ programData: updatedProgramData, ...this.state })
+        this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, updatedProgramData);
     }
 
     async componentWillUnmount() {
@@ -231,37 +239,15 @@ class CreateWorkout extends React.Component {
         this.setState({ currPage: index });
     }
 
-    saveProgramInformation = (workoutName, workoutDays) => {
-        let updatedProgramData = this.state.programData;
-        updatedProgramData.program_name = workoutName;
-        updatedProgramData.program_workout_days = workoutDays;
-        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
-        updatedProgramData.program_structure_uuid = this.state.currWorkoutUUID;
-        this.setState({ programData: updatedProgramData, ...this.state })
-        this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, updatedProgramData);
-        this.goToIndex(1);
-    }
-
     saveProgramWorkoutData = async (workoutData) => {
         await this.LUPA_CONTROLLER_INSTANCE.updateWorkoutData(this.state.currWorkoutUUID, workoutData)
         this.setState({ workoutComplete: true, creatingWorkout: true });
     }
 
-    renderComponentDisplay = () => {
-        const currPage = this.state.currPage;
-        switch(currPage) {
-            case 0:
-                return <WorkoutInformation saveWorkoutInformation={this.saveProgramInformation} goToIndex={this.goToIndex} />
-            case 1:
-                return <BuildWorkoutTool saveProgramWorkoutData={this.saveProgramWorkoutData} navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
-            default:
-        }
-    }
-
     render() {
         return (
             <SafeAreaView style={styles.root}>
-                {this.renderComponentDisplay()}
+                <BuildWorkoutTool program_workout_days={DAY} toolIsFirstScreen={true} saveProgramWorkoutData={this.saveProgramWorkoutData} navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
                 <CreatingWorkoutModal uuid={this.state.currWorkoutUUID} isVisible={this.state.creatingWorkout} closeModal={this.handleSuccessfulReset} />
             </SafeAreaView>
         )
