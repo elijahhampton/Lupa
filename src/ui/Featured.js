@@ -98,30 +98,28 @@ class Featured extends React.Component {
 
         const query = LUPA_DB.collection('vlogs').where('vlog_state', '==', this.props.lupa_data.Users.currUserData.location.state)//.orderBy('time_created', 'asc');
         vlogCollectionObserver = query.onSnapshot(querySnapshot => {
-            console.log(`Received query snapshot of size ${querySnapshot.size}`);
+            const updatedState = [];
+
             querySnapshot.forEach(doc => {
                 let data = doc.data();
-                const updatedState = [];
-                if (typeof (updatedState) != 'undefined') {
-                    updatedState.push(data);
-                    updatedState.push(data);
-                    updatedState.push(data);
 
+                if (typeof (data) != 'undefined') {
+                    updatedState.push(data);
                 }
+            });
 
-                updatedState.concat(this.state.feedVlogs)
-                
-                if (updatedState.length === 0) {
-                    LUPA_DB.collection('vlogs').get().then(docs => {
-                        docs.forEach(doc => {
-                            const data = doc.data();
-                            updatedState.push(data);
-                        });
-                    })//.orderBy('time_created', 'asc');
-                }
+            updatedState.concat(this.state.feedVlogs)
 
-                this.setState({ feedVlogs: updatedState });
-            })
+            if (updatedState.length === 0) {
+                LUPA_DB.collection('vlogs').get().then(docs => {
+                    docs.forEach(doc => {
+                        const data = doc.data();
+                        updatedState.push(data);
+                    });
+                })//.orderBy('time_created', 'asc');
+            }
+
+            this.setState({ feedVlogs: updatedState });
 
         }, err => {
             alert(err)
@@ -135,206 +133,37 @@ class Featured extends React.Component {
         return () => vlogCollectionObserver();
     }
 
-    sortVlogs = (vlogs) => {
-
-    }
-
-    loadFeaturedTrainers = async () => {
-        await this.LUPA_CONTROLLER_INSTANCE.getAllTrainers().then(result => {
-            this.setState({ featuredTrainers: result })
-        })
-    }
-
-    loadTopPicks = async () => {
-        await this.LUPA_CONTROLLER_INSTANCE.getTopPicks().then(result => {
-            this.setState({ topPicks: result })
-        })
-    }
-
-    loadRecentlyAddedPrograms = async () => {
-        await this.LUPA_CONTROLLER_INSTANCE.getRecentlyAddedPrograms().then(result => {
-            this.setState({ recentlyAddedPrograms: result })
-        })
-    }
-
-    handleOnRefresh = async () => {
-        this.setState({ refreshing: true })
-        await this.setupComponent()
-        this.setState({ refreshing: false, lastRefresh: new Date().getTime() })
-
-    }
-
-    loadFeaturedPrograms = async () => {
-        let featuredProgramsIn = []
-
-        try {
-            await this.LUPA_CONTROLLER_INSTANCE.getFeaturedPrograms().then(result => {
-                featuredProgramsIn = result;
-            });
-
-        } catch (error) {
-            alert(error)
-            featuredProgramsIn = []
-        }
-
-        await this.setState({
-            featuredPrograms: featuredProgramsIn,
-        })
-    }
-
-    renderCarouselItem = ({ currProgram, index }) => {
-        if (typeof (currProgram) == null || currProgram == null || currProgram.program_name == "") {
-            return null;
-        }
-
-        return (
-            <FeaturedProgramCard currProgram={currProgram} keyProp={currProgram.program_name} />
-        );
-    }
-
-    renderFeaturedTrainers = () => {
-        try {
-            return this.state.featuredTrainers.map(user => {
-                if (typeof (user) != 'object'
-                    || user == undefined || user.user_uuid == undefined ||
-                    user.user_uuid == "" || typeof (user.user_uuid) != 'string' || typeof (user.display_name) == 'undefined' || user.display_name == "") {
-                    return null;
-                }
-
-                return (
-                    <CircularUserCard user={user} />
-                )
-            })
-        } catch (error) {
-            alert(error)
-            return null;
-        }
-    }
-
-    renderRecentlyAddedPrograms = () => {
-        try {
-            return this.state.featuredPrograms.map((element, index, arr) => {
-                if (index >= 4) {
-                    return;
-                }
-
-                return (
-                    <>
-                        <TouchableOpacity style={{}}>
-                            <View style={{ margin: 5, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center' }}>
-                                <Surface style={{ margin: 10, borderRadius: 5, width: 150, height: 170, backgroundColor: '#EEEEEE', elevation: 0, borderRadius: 5 }}>
-                                    <Image source={{ uri: element.program_image }} style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        borderRadius: 5
-                                    }}
-                                        resizeMode='cover'
-                                    />
-                                </Surface>
-
-                                <View style={{ flex: 1, padding: 10, height: 150, justifyContent: 'space-evenly', alignSelf: 'flex-start' }}>
-                                    <Text style={{ color: '#1089ff', fontSize: 12, fontWeight: '600' }}>
-                                        Emily Loefstedt
-        </Text>
-                                    <Text style={{ color: '#212121', fontSize: 15, fontWeight: '700' }}>
-                                        {element.program_name}
-                                    </Text>
-
-                                    <Text numberOfLines={3} style={{ color: 'black', fontSize: 12, fontWeight: '300', fontFamily: 'avenir-roman' }}>
-                                        {element.program_description}
-                                    </Text>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        {
-                                            element.program_tags.map(tag => {
-                                                return (
-                                                    <Caption>
-                                                        {tag} {" "}
-                                                    </Caption>
-                                                )
-                                            })
-                                        }
-                                    </View>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                       
-                    </>
-                )
-            })
-        } catch (err) {
-            alert(err)
-            return null
-        }
-    }
-
-    performSearch = async searchQuery => {
-        let searchResultsIn = []
-
-        //If no search query then set state and return
-        if (searchQuery == "" || searchQuery == "") {
-            await this.setState({
-                searching: true,
-                searchValue: "",
-                searchResults: [],
-            })
-
-            return;
-        }
-
-        await this.setState({
-            searchResults: [],
-            searching: true,
-        })
-
-        await this.setState({
-            searchValue: searchQuery,
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
-            searchResultsIn = searchData;
-        })
-
-        await this.setState({ searchResults: searchResultsIn, searching: false });
-    }
-
-    renderSearchResults = () => {
-        return this.state.searchResults.map(result => {
-            return (
-                <LargeProgramSearchResultCard program={result} />
-            )
-        })
-    }
-
-    handleOnScroll = (event) => {
-        this.setState({ featuredProgramsCurrentIndex: event.nativeEvent.contentOffset.x }, () => {
-
-        })
-    }
-
-
-    showLiveWorkoutPreview = () => {
-        this.setState({ showLiveWorkoutPreview: true })
-    }
-
-    hideLiveWorkoutPreview = () => {
-        this.setState({ showLiveWorkoutPreview: false })
-    }
-
-    showTopPicksModal = () => {
-        this.setState({ showTopPicksModalIsVisible: true })
-    }
-
-    closeTopPicksModal = () => {
-        this.setState({ showTopPicksModalIsVisible: false })
-    }
-
     checkSearchBarState = () => {
         if (this.state.searchBarFocused === true) {
             this.props.navigation.push('Search')
             this.searchBarRef.current.blur();
         }
+    }
+
+    renderVlogs = () => {
+        if (this.state.feedVlogs.length === 0) {
+            return (
+                <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#EEEEEE' }}>
+                    <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: '#EEEEEE' }} >
+                        There are not any vlogs in your area.  Check back later.
+                    </Caption>
+                </View>
+            )
+        }
 
 
+        return this.state.feedVlogs.map((vlog, index, arr) => {
+            if (index == arr.length) {
+                return  <VlogFeedCard key={index} vlogData={vlog} />
+            }
+
+            return (
+                <>
+                    <VlogFeedCard key={index} vlogData={vlog} />
+                    <Divider style={{ width: Dimensions.get('window').width }} />
+                </>
+            )
+        })
     }
 
     render() {
@@ -345,7 +174,6 @@ class Featured extends React.Component {
                     <Searchbar
                         ref={this.searchBarRef}
                         placeholder="Search programs or trainers"
-                        onChangeText={text => this.performSearch(text)}
                         placeholderTextColor="rgba(35, 55, 77, 0.5)"
                         value={this.state.searchValue}
                         inputStyle={styles.inputStyle}
@@ -367,25 +195,7 @@ class Featured extends React.Component {
                         <View style={{ backgroundColor: '#EEEEEE' }}>
                             <View style={{ backgroundColor: '#EEEEEE' }}>
                                 <View style={{ backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center' }}>
-                                    {
-                                        this.state.feedVlogs.length === 0 ?
-                                            <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#EEEEEE' }}>
-                                                <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: '#EEEEEE' }} >
-                                                    There are not any vlogs in your area.  Check back later.
-                                </Caption>
-                                            </View>
-
-                                            :
-
-                                            this.state.feedVlogs.map((vlog, index, arr) => {
-                                                return (
-                                                    <>
-                                                    <VlogFeedCard key={index} vlogData={vlog} />
-                                                    <Divider style={{width: Dimensions.get('window').width}} />
-                                                    </>
-                                                )
-                                            })
-                                    }
+                                    {this.renderVlogs()}
                                 </View>
                             </View>
                         </View>

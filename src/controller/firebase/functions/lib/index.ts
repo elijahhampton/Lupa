@@ -45,6 +45,8 @@ exports.receivedNotification = functions.firestore
   const dataAfter = change.after.data();
   const dataBefore = change.before.data();
 console.log('A')
+console.log(dataBefore)
+console.log(dataBefore)
   //Check to see if the size of the notification array has changed
   if (dataBefore.notifications.length < dataAfter.notifications.length)
   {
@@ -85,7 +87,7 @@ console.log('B')
   }
   console.log("E")
   return false;
-})
+});
 
 /**
  * Handles sending payment data to firebase server.
@@ -111,66 +113,4 @@ exports.payWithStripe = functions.https.onRequest((request, response) => {
             
         });
         
-})
-
-//sk_live_xUnU9OwzS35AS93Rk8OT9VY900vCEcnODR
-
-/**
- * Sends a notification to a user when they receive a new session invite.
- */
-/*
-exports.sessionCreated = functions.firestore
-.document('sessions/{sessionUUID}')
-.onCreate((snapshot, context) => {
-    console.log('HI')
-    // Get an object representing the document
-      // e.g. {'name': 'Marie', 'age': 66}
-      //Session document data before update
-      const sessionDocumentData = snapshot.data();
-
-      //get necessary information
-      const sessionName = sessionDocumentData.name;
-      const sessionDescription = sessionDocumentData.description;
-      const sessionDate = sessionDocumentData.date;
-      const sessionLocation = sessionDocumentData.locationData;
-
-      //get participant's information
-      let otherParticipant;
-      const sessionRequester = sessionDocumentData.requesterUUID;
-      let uuidOne = sessionDocumentData.attendeeOne;
-      let uuidTwo = sessionDocumentData.attendeeTwo;
-      sessionRequester == uuidOne ? otherParticipant = uuidTwo : otherParticipant = uuidOne;
-
-            const payload = {
-                data: {
-                    title: "New Session Invite",
-                  body: "You have a new session invite.  Navigate to your dashboard for the details.",
-                  time: new Date().getTime().toString()
-                },
-                notification: {
-                  title: "New Session Invite",
-                  body: "You have a new session invite.  Navigate to your dashboard for the details.",
-                  time: new Date().getTime().toString()
-                },
-              };
-
-              admin
-                .messaging()
-                .sendToDevice(
-                    [sessionDocumentData.attendeeTwoData.tokens.fb_messaging_token], 
-                    payload,
-                    {
-                        // Required for background/quit data-only messages on iOS
-                        contentAvailable: true,
-                        // Required for background/quit data-only messages on Android
-                        priority: 'high',
-                    }
-                )
-                .then(function(response) {
-                  console.log("Notification sent successfully:", response);
-                })
-                .catch(function(error) {
-                  console.log("Notification sent failed:", error);
-
 });
-});*/

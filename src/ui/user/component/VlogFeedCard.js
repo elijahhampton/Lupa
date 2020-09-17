@@ -3,11 +3,9 @@ import React, { useState, useEffect } from 'react'
 import {
     View,
     Text,
-    StyleSheet,
     Dimensions
 } from 'react-native';
 
-import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Card, Caption, Menu, Chip } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
@@ -15,10 +13,8 @@ import LupaController from '../../../controller/lupa/LupaController';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { Avatar } from 'react-native-elements'
 import { Video } from 'expo-av';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import LiveWorkoutFullScreenContentModal from '../../workout/modal/LiveWorkoutFullScreenContentModal';
 import DoubleClick from 'react-native-double-tap';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 function VlogFeedCard({ vlogData }) {
     const currUserData = useSelector(state => {
@@ -37,7 +33,24 @@ function VlogFeedCard({ vlogData }) {
         LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(vlogData.vlog_owner).then(data => {
             setVlogOwnerData(data);
         });
-    }, [])
+    }, []);
+
+    const renderVlogMedia = () => {
+        if (typeof(vlogData.vlog_media.uri) == 'undefined' || vlogData.vlog_media.uri == "") {
+            return null;
+        };
+
+        return (
+            <>
+            <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="contain" style={{ marginVertical: 0, height: 300, width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 0 }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
+                <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingHorizontal: 10, position: 'absolute', bottom: cardContentHeight + 15, right: 0, }}>
+                    <View style={{ backgroundColor: 'rgba(142, 142, 147, 0.5)', borderWidth: 1, borderColor: 'white', borderRadius: 0 }}>
+                        <Feather1s onPress={() => setMuted(!isMuted)} color="white" name={isMuted === true ? 'volume-x' : 'volume-2'} size={20} style={{ backgroundColor: 'transparent', padding: 5 }} />
+                    </View>
+                </View>
+                </>
+        )
+    }
 
     return (
         <DoubleClick singleTap={() => setShouldPlay(!shouldPlay)} doubleTap={() => setFullScreenContentVisible(true)}>
@@ -47,9 +60,9 @@ function VlogFeedCard({ vlogData }) {
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Avatar containerStyle={{ borderWidth: 1.5, borderColor: 'white', }} rounded source={{ uri: vlogOwnerData.photo_url }} size={40} />
                             <View style={{ paddingHorizontal: 10 }}>
-                                <Text style={{fontFamily: 'Avenir-Medium'}}>
+                                <Text style={{ fontFamily: 'Avenir-Medium' }}>
                                     {vlogOwnerData.display_name}
-                            </Text>
+                                </Text>
                                 <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 10 }}>
                                     {Math.round(new Date().getTime() - vlogData.time_created.seconds)} hour ago
                                 </Caption>
@@ -63,15 +76,10 @@ function VlogFeedCard({ vlogData }) {
                         </Menu>
                     </View>
                 </Card.Content>
-                <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="contain" style={{ marginVertical: 0, height: 300, width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 0 }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
-                <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingHorizontal: 10, position: 'absolute', bottom: cardContentHeight + 15, right: 0, }}>
-                    <View style={{ backgroundColor: 'rgba(142, 142, 147, 0.5)', borderWidth: 1, borderColor: 'white', borderRadius: 0 }}>
-                        <Feather1s onPress={() => setMuted(!isMuted)} color="white" name={isMuted === true ? 'volume-x' : 'volume-2'} size={20} style={{ backgroundColor: 'transparent', padding: 5 }} />
-                    </View>
-                </View>
-                <Card.Content style={{paddingVertical: 10, justifyContent: 'center', backgroundColor: '#EEEEEE', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                {renderVlogMedia()}
+                <Card.Content style={{ paddingVertical: 10, justifyContent: 'center', backgroundColor: '#EEEEEE', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Medium'}}>
+                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Medium' }}>
                             {vlogData.vlog_title}
                         </Text>
                     </View>
