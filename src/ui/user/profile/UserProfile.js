@@ -34,6 +34,8 @@ function UserProfile({ userData, isCurrentUser }) {
     const [currPage, setCurrPage] = useState(0);
     const [userVlogs, setUserVlogs] = useState([])
     const [postType, setPostType] = useState("VLOG");
+    const [trailingInterestLength, setTrainingInterestLength] = useState(0);
+    const [trainingInterestTextVisible, showTrailingInterestText] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [ready, setReady] = useState(false);
 
@@ -42,6 +44,10 @@ function UserProfile({ userData, isCurrentUser }) {
             try {
                 setProfileImage(userData.photo_url)
                 await fetchVlogs(userData.user_uuid);
+                setTrainingInterestLength(userData.interest.length - 3)
+                if (userData.interest.length > 3) {
+                    showTrailingInterestText(true)
+                }
                 setReady(true)
             } catch(error) {
                 setReady(false)
@@ -143,6 +149,13 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     const renderBio = () => {
+        if (userData.bio.length == 0) {
+            return (
+                <Text style={styles.bioText}>
+                {userData.display_name} has not setup a bio.
+            </Text>
+            )
+        }
         return (
             <Text style={styles.bioText}>
                 {userData.bio}
@@ -159,20 +172,26 @@ function UserProfile({ userData, isCurrentUser }) {
             )
         } else {
             return (
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{paddingVertical: 5, flexDirection: 'row', alignItems: 'center'}}>
                      <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
-                     <Text>
+                     <Text style={styles.bioText}>
                          Interest: {" "}
                      </Text>
                      {
-                        userData.interest.map(interest => {
+                        userData.interest.map((interest, index, arr) => {
+                            if (index  == 3) {
+                                return;
+                            }
+
                             return (
-                                <Caption style={{fontSize: 10}}>
+                                <Text style={{fontFamily: 'Avenir-Medium', fontSize: 10, color: 'rgb(58, 58, 61)'}}>
                                     {interest} {" "}
-                                </Caption>
+                                </Text>
+                                
                             )
                         })
                     }
+                    {trainingInterestTextVisible === true ? <Caption style={{fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff'}}> and 3 more... </Caption> : null }
                      </View>
                    
                 </View>
@@ -241,8 +260,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     bioText: {
-        fontFamily: 'Avenir-Light',
-        fontSize: 11,
+        fontFamily: 'Avenir',
+        fontSize: 12,
     },
     certificationText: {
         fontFamily: 'Avenir-Light',
