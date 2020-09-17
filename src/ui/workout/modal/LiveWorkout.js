@@ -167,6 +167,7 @@ class LiveWorkout extends React.Component {
             }
         }
 
+
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
             this.setState({ programOwnerData: data })
         })
@@ -187,7 +188,7 @@ class LiveWorkout extends React.Component {
     }
 
     loadCurrentDayWorkouts = (day) => {
-       /* if (!this.state.ready) {
+      /*  if (!this.state.ready) {
             return;
         }*/
 
@@ -776,7 +777,7 @@ class LiveWorkout extends React.Component {
                                 </Text>
                             </View>
                             </View>
-
+            
                         <Text style={[styles.RBSheetText, { paddingVertical: 10 }]} numberOfLines={4} ellipsizeMode="tail">
                             {this.state.programData.program_description}
                         </Text>
@@ -850,6 +851,16 @@ class LiveWorkout extends React.Component {
         this.setState({ feedback: text })
     }
 
+    handleCompleteWorkout = () => {
+        const lastCompletedWorkoutData = {
+            dateCompleted: new Date(),
+            workoutUUID: this.state.programData.program_structure_uuid
+        }
+
+        this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('last_completed_workout', lastCompletedWorkoutData)
+        this.hideDialog();
+    }
+
     renderFinishedDialog = () => {
         return (
             <Portal>
@@ -861,7 +872,7 @@ class LiveWorkout extends React.Component {
             </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button color="#1089ff" onPress={this.hideDialog}>Done</Button>
+            <Button color="#1089ff" onPress={this.handleCompleteWorkout}>Done</Button>
             <Button color="#1089ff" onPress={this.hideDialog}>Create Vlog</Button>
           </Dialog.Actions>
         </Dialog>
@@ -969,23 +980,40 @@ class LiveWorkout extends React.Component {
         )
     }
 
+    renderLiveWorkoutTitle = () => {
+        if (this.state.ready) {
+            if (this.props.route.params.programData) {
+                return this.props.route.params.programData.program_name;
+            } else if (this.props.route.params.uuid) {
+                if (this.props.route.params.workoutType == 'WORKOUT') {
+                    return null;
+                } else if (this.props.route.params.workoutType == 'PROGRAM') {
+                    return this.state.programData.program_name;
+                }
+            }
+        } else {
+            return null;
+        }
+       
+    }
+
     render() {
         return (
             <>
                 <Appbar.Header style={{ backgroundColor: '#1089ff'}}>
                     <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.pop()} />} />
 
-                    <Appbar.Content title={this.state.programData.program_name} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                    <Appbar.Content title={this.renderLiveWorkoutTitle()} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
 
                     <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="maximize" size={20} onPress={() => this.setState({ showFullScreenContent: true })} />} />
                     {this.props.route.params.workoutType === 'PROGRAM' ? <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="list" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />} /> : null }
                 </Appbar.Header>
                 {this.renderComponentDisplay()}
-                {this.renderLiveWorkoutOptions()}
+                {typeof(this.props.route.params.programData) == 'undefined' ? null : this.renderLiveWorkoutOptions()}
                 {this.renderInteractionBottomSheet()}
                 {this.renderFeedbackDialog()}
                 {this.renderFinishedDialog()}
-                {this.renderDescriptionDialog()}
+                {typeof(this.props.route.params.programData) == 'undefined' ? null : this.renderDescriptionDialog()}
                 {this.renderRestTimerRBSheetPicker()}
                 <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <LiveWorkoutFullScreenContentModal isVisible={this.state.showFullScreenContent} closeModal={() => this.setState({ showFullScreenContent: false })} contentType={'VIDEO' /*this.state.contentTypeDisplayed*/} contentURI={this.state.currentDisplayedMediaURI} />

@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF'
     },
     appbar: {
-        elevation: 3
+        elevation: 0
     },
     fab: {
         position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#1089ff'

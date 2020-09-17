@@ -1254,7 +1254,7 @@ class BuildWorkoutController extends React.Component {
 const styles = StyleSheet.create({
     appbar: {
         backgroundColor: '#1089ff',
-        elevation: 3,
+        elevation: 0,
         flexDirection: 'column',
     },
     container: {

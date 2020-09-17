@@ -60,22 +60,6 @@ class LupaMapView extends React.Component {
             results = [];
         }
 
-        for (let i = 0; i < results.length; i++) {
-            console.log("     ")
-            console.log("     ")
-            console.log("     ")
-            console.log("     ")
-            console.log("     ")
-            console.log("     ")
-            console.log(results[i]);
-            console.log("     ")
-            console.log("     ")
-            console.log("     ")
-            console.log("     ")
-            console.log("     ")
-            console.log("     ")
-        }
-
         await this.setState({
             surroundingGymLocations: results
         });

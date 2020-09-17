@@ -117,11 +117,11 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
 
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                         <Button onPress={isPublished === false ? () => handlePublishWorkout() : null} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handlePublishWorkout}>
-                            {isPublished === true ? 'Saved!' : 'Save to Workout Log'}
+                            {isPublished === true ? 'Saved to Workout Log!' : 'Save to Workout Log'}
                         </Button>
                         </View>
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <Button onPress={closeModal} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}}>
+                        <Button onPress={handleStartLiveWorkout} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}}>
                             Start Workout
                         </Button>
                         </View>
@@ -180,7 +180,7 @@ class CreateWorkout extends React.Component {
 
         this.state = {
             currPage: 0,
-            workoutData: getLupaWorkoutInformationStructure(getLupaWorkoutInformationStructure('', '', {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid)),
+            workoutData: getLupaWorkoutInformationStructure('', '', {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid),
             currWorkoutUUID: "",
             workoutComplete: false, 
             creatingWorkout: false,
@@ -203,17 +203,12 @@ class CreateWorkout extends React.Component {
         const DAY = await weekday[d.getDay()];
 
         await this.setState({ currWorkoutUUID: UUID }) 
-        await this.setState({ programData: getLupaWorkoutInformationStructure('', UUID, {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid) })
+        let updatedProgramData = getLupaWorkoutInformationStructure(this.props.lupa_data.Users.currUserData.user_uuid, UUID, {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid)
+        await this.setState({ programData: updatedProgramData })
         await this.LUPA_CONTROLLER_INSTANCE.createNewWorkout(UUID);
 
-        let updatedProgramData = this.state.programData;
-
-       
-
-        updatedProgramData.program_workout_days = [DAY];
-        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
-        updatedProgramData.program_structure_uuid = this.state.currWorkoutUUID;
-        this.setState({ programData: updatedProgramData, ...this.state })
+        updatedProgramData = this.state.programData;
+        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid
         this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, updatedProgramData);
     }
 

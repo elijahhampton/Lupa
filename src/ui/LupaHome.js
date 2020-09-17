@@ -137,7 +137,7 @@ export class LupaHome extends Component {
           </Tabs>
         </Animated.ScrollView>
 
-        <FAB onPress={() => this.props.navigation.push('CreatePost')} icon="rss" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
+       {this.props.lupa_data.Users.currUserData.isTrainer === false ? <FAB onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} /> : null} 
       </View>
     );
   }

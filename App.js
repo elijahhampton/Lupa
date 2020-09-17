@@ -37,7 +37,7 @@ import CreateWorkout from './src/ui/workout/createworkout/CreateWorkout';
 import { localNotificationService } from './src/controller/firebase/service/LocalNotificationsService'
 import { fcmService } from './src/controller/firebase/service/FCMService';
 import Search from './src/ui/search/Search';
-
+import MyData from './src/ui/user/component/MyData';
 
 const App = () => {
   return (
@@ -203,6 +203,7 @@ function AppNavigator() {
       <StackApp.Screen name="Notifications" component={NotificationsView} />
       <StackApp.Screen name="Messages" component={MessagesView} />
       <StackApp.Screen name="Search" component={Search} />
+      <StackApp.Screen name="MyData" component={MyData} />
       <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />
     </StackApp.Navigator>
   )

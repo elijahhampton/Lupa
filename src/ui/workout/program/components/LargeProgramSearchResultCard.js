@@ -66,17 +66,4 @@ function LargeProgramSearchResultCard({ program }) {
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        elevation: 3,  
-        borderRadius: 10, 
-        width: (Dimensions.get('window').width / 2) - 20, 
-        margin: 10,
-        height: 300
-    },
-    image: {
-        width: '100%', borderTopLeftRadius: 10, borderTopRightRadius: 10, height: 200
-    },
-})
-
 export default LargeProgramSearchResultCard

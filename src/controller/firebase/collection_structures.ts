@@ -124,7 +124,7 @@ var lupa_user : LupaUserStructure = {
     isTrainer: false,
     packs: [],
     photo_url: "",
-    time_created: "",
+    time_created: new Date(),
     preferred_workout_times: {
         Monday: [],
         Tuesday: [],
@@ -156,6 +156,10 @@ var lupa_user : LupaUserStructure = {
     scheduler_times: {},
     workouts: [],
     program_data: [],
+    last_workout_completed: {
+        dateCompleted: "",
+        workoutUUID: "",
+    }
 }
 
 export const getLupaUserStructure = (

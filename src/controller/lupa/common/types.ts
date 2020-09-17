@@ -109,6 +109,7 @@ export type LupaUserStructure = {
     scheduler_times: Object,
     workouts: Array<String>,
     program_data: Array<Object>
+    last_workout_completed: Object,
 };
 
 /* LupaWorkoutDataStructure */

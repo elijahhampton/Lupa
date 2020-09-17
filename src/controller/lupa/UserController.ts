@@ -248,6 +248,16 @@ export default class UserController {
         let currentUserDocument = await USER_COLLECTION.doc(this.getCurrentUser().uid);
 
         switch (fieldToUpdate) {
+            case 'interest':
+                currentUserDocument.update({
+                    interest: value
+                })
+                break;
+            case 'last_completed_workout':
+                currentUserDocument.update({
+                    last_completed_workout: value
+                });
+                break;
             case 'scheduler_times':
                 if (optionalData == 'add') {
                     let schedulerObject = {}, updatedSchedulerTimes = {}, newDateObject = {}

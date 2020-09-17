@@ -155,7 +155,7 @@ function AddSets({ structureID, workoutDays, programWorkoutDays, goToIndex, save
 const styles = StyleSheet.create({
     appbar: {
         backgroundColor: '#1089ff',
-        elevation: 3,
+        elevation: 0,
         flexDirection: 'column',
     },
 })

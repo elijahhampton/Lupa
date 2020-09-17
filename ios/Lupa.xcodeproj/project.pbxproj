@@ -11,14 +11,12 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		270A5C4065EE4F5BB03ABB6E /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 42C4AEF54F524C6E8744F6A9 /* Feather.ttf */; };
 		3DE4DAD41476765101945408 /* libPods-Lupa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D43FF9D506E70904424FA7E9 /* libPods-Lupa.a */; };
 		782E4B252447D6040005F03A /* TPSStripe in Resources */ = {isa = PBXBuildFile; fileRef = 782E4B242447D6040005F03A /* TPSStripe */; };
 		7835BE2324FCB0B000D9947E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7835BE2224FCB0B000D9947E /* LaunchScreen.storyboard */; };
 		7875A55824548CF100C15E04 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 7875A55724548CF100C15E04 /* Fonts */; };
 		78D64B80244544B3007C6E72 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78D64B7F244544B3007C6E72 /* MapKit.framework */; };
 		78E385D424829D1A00CA4937 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 78E385D324829D1A00CA4937 /* GoogleService-Info.plist */; };
-		7B5E504EB33B490DB897A8CE /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D8A366CCAB57422A80CE329E /* MaterialIcons.ttf */; };
 		D9C3B6873E1141C28E785DE2 /* feather1s.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D24126DAECBB4FDD8B46B0D6 /* feather1s.ttf */; };
 /* End PBXBuildFile section */
 
@@ -306,8 +304,6 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				782E4B252447D6040005F03A /* TPSStripe in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				270A5C4065EE4F5BB03ABB6E /* Feather.ttf in Resources */,
-				7B5E504EB33B490DB897A8CE /* MaterialIcons.ttf in Resources */,
 				D9C3B6873E1141C28E785DE2 /* feather1s.ttf in Resources */,
 				7875A55824548CF100C15E04 /* Fonts in Resources */,
 			);
@@ -468,7 +464,7 @@
 				CODE_SIGN_ENTITLEMENTS = Lupa/lupa.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 47;
+				CURRENT_PROJECT_VERSION = 49;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				HEADER_SEARCH_PATHS = (
@@ -597,6 +593,7 @@
 				INFOPLIST_FILE = Lupa/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 0.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -618,7 +615,7 @@
 				CODE_SIGN_ENTITLEMENTS = Lupa/lupa.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 47;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -746,6 +743,7 @@
 				INFOPLIST_FILE = Lupa/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 0.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

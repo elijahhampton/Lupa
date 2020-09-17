@@ -27,6 +27,7 @@ import {Calendar, CalendarList } from 'react-native-calendars'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getLupaWorkoutInformationStructure } from '../model/data_structures/workout/workout_collection_structures'
 import { connect } from 'react-redux'
+
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state
@@ -43,20 +44,33 @@ class WorkoutLog extends React.Component {
             currentDay: "",
             currentWorkout: getLupaWorkoutInformationStructure(),
             userWorkouts: [],
+            forceUpdate: false,
             selectedDate: new Date(),
         }
     }
 
+    componentDidMount() {
+        this.setMarkedDate()
+    }
 
-    handleWorkoutOnPress = (workout) => {
+
+    handleLaunchWorkout = async () => {
+        await this.calendarRBSheet.current.close();
+
+        const currentWorkout = this.state.currentWorkout;
+
+        if (typeof(currentWorkout) == 'undefined') {
+            return;
+        }
+
         this.props.navigation.push('LiveWorkout', {
-                uuid: workout.program_structure_uuid,
-                workoutType: 'WORKOUT',
-        })
+                programData: currentWorkout
+        });
     }
 
     renderWorkoutMessage = () => {
-        if (typeof(this.state.currentWorkout) == 'undefined' || typeof(this.state.currentWorkout.program_structure_uuid) == "undefined") {
+        const currentWorkout = this.state.currentWorkout;
+        if (this.state.workoutLoaded === false) {
             return (
                 <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
                 <Text style={{fontSize: 18, paddingHorizontal: 20}}>
@@ -64,20 +78,26 @@ class WorkoutLog extends React.Component {
                 </Text>
                </View>
             )
-        } else {
+        } else if (this.state.workoutLoaded === true) {
            return (
                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
-                <Text style={{fontSize: 18, paddingHorizontal: 20}}>
-                    Do you want to launch the workout you created on this day?
+                
+                
+                <Text onPress={this.handleLaunchWorkout} style={{fontSize: 18, paddingHorizontal: 20, color: '#1089ff'}}>
+                   It looks like you created a workout on this day.  Click here to launch it.
                 </Text>
 
-                <Button color="#1089ff" style={{fontWeight: '300', }} mode="text">
-                    <Text>
-                        Launch Workout
-                    </Text>
-                </Button>
+               
                </View>
            )
+        } else {
+            return (
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <Text style={{fontSize: 18, paddingHorizontal: 20}}>
+                    You did not create a workout on this day.
+                </Text>
+               </View>
+            )
         }
     }
 
@@ -85,7 +105,7 @@ class WorkoutLog extends React.Component {
         return (
             <RBSheet
                 ref={this.calendarRBSheet}
-                height={500}
+                height={400}
                 dragFromTopOnly={true}
                 closeOnDragDown={true}
                 customStyles={{
@@ -101,8 +121,6 @@ class WorkoutLog extends React.Component {
                     }
                 }}
                 >
-                  
-
                     <View style={{flex: 1}}>
                     <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 20, alignSelf: 'center'}}>
                         {this.state.currentDay}
@@ -116,37 +134,85 @@ class WorkoutLog extends React.Component {
     }
 
     openRBSheet = () => {
-        this.calendarRBSheet.current.open()
+        if (this.state.workoutLoaded === true) {
+            this.calendarRBSheet.current.open()
+        }
     }
 
     setRBSheetData = async (day) => {
+        if (typeof(this.state.currentWorkout) == 'undefined') {
+            return;
+        }
+
         const dateString = day.month + "-" + day.day + "-" + day.year;
+        const checkedMarkedDateString = this.generateMarkedDateString(day.year, day.month, day.day)
+
         const userWorkouts = this.props.lupa_data.Users.currUserData.workouts;
 
-        if (typeof(userWorkouts[dateString]) != 'undefined') {
+        if (Object.keys(this.state.markedDates).includes(checkedMarkedDateString)) {
             await this.setState({
+                currentWorkout: userWorkouts[dateString][0],
                 selectedDate: new Date(day),
-                currentWorkout: userWorkouts[dateString],
-                currentDay: dateString
-            })
+                currentDay: dateString,
+                workoutLoaded: true,
+            });
         } else {
             await this.setState({
                 selectedDate: new Date(day),
                 currentWorkout: getLupaWorkoutInformationStructure(),
-                currentDay: dateString
-            })
+                currentDay: dateString,
+                workoutLoaded: false,
+            });
         }
+
+        await this.setState({ forceUpdate: !this.state.forceUpdate })
+        this.openRBSheet();
     }
 
     handleCalendarRBSheetOnOpen = async (day) => {
         await this.setRBSheetData(day)
-        this.openRBSheet();
+    }
+
+    generateMarkedDateString = (year, month, day) => {
+        let dateString = year + "-";
+        let newMonth;
+        let newDay;
+        if (month.toString().length == 1) {
+            newMonth = "0" + month;
+        } else {
+            newMonth = month;
+        }
+
+        dateString =  dateString +  newMonth + "-"
+
+        if (day.toString().length == 1) {
+            newDay = "0" + day;
+        } else {
+            newDay = day;
+        }
+        
+        dateString = dateString + newDay;
+
+        return dateString;
+    }
+
+    setMarkedDate = async () => {
+        //year month day
+
+        ///monday day year
+        let updatedMarkedDates = {}
+        let userWorkouts = this.props.lupa_data.Users.currUserData.workouts;
+        for (key in userWorkouts) {
+            let keySplit = key.split("-");
+            let updatedKey = this.generateMarkedDateString(keySplit[2], keySplit[0], keySplit[1])
+            updatedMarkedDates[updatedKey] = { marked: true }
+        }
+
+        await this.setState({ markedDates: updatedMarkedDates})
     }
 
 render() {
     return (
-     
-        
 <View style={{ height: Dimensions.get('window').height}}>
 
     <CalendarList
@@ -154,7 +220,7 @@ render() {
   // the value of date key has to be an empty array []. If there exists no value for date key it is
   // considered that the date in question is not yet loaded
   horizontal={false}
-  items={{}}
+  items={this.props.lupa_data.Users.currUserData.workouts}
   // Callback that gets called when items for a certain month should be loaded (month became visible)
   loadItemsForMonth={(month) => {console.log('trigger items loading')}}
   // Callback that fires when the calendar is opened or closed
@@ -190,25 +256,13 @@ render() {
   // Hide knob button. Default = false
   hideKnob={false}
   // By default, agenda dates are marked if they have at least one item, but you can override this if needed
-  markedDates={{
-    '2020-05-16': {
-        selected: true, 
-        marked: true
-    },
-    '2020-05-17': {
-        marked: true
-    },
-    '2020-05-18': {
-        disabled: true
-    }
-  }}
+  markedDates={this.state.markedDates}
   // If disabledByDefault={true} dates flagged as not disabled will be enabled. Default = false
   disabledByDefault={true}
   // If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the refreshing prop correctly.
   onRefresh={() => console.log('refreshing...')}
   // Set this true while waiting for new data from a refresh
-  refreshing={false}
-  markingType="multi-period"
+  markingType="period"
   // Add a custom RefreshControl component, used to provide pull-to-refresh functionality for the ScrollView.
   refreshControl={null}
   // Agenda theme

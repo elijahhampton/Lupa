@@ -25,6 +25,7 @@ import TrainerInformation from './TrainerInformation';
 
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
 import { useNavigation } from '@react-navigation/native';
+import LUPA_DB, { LUPA_AUTH } from '../../../../controller/firebase/firebase';
 
 
 const getView = (viewNumber, toggleNext, closeModalMethod) => {
@@ -35,6 +36,8 @@ const getView = (viewNumber, toggleNext, closeModalMethod) => {
         case 1:
             return <BasicInformation setNextDisabled={toggleNext} />
         case 2:
+            return <PickInterest setNextDisabled={toggleText} />
+        case 3:
             return <WelcomeContentDriver closeModalMethod={closeModalMethod} />
     }
 }
@@ -42,8 +45,6 @@ const getView = (viewNumber, toggleNext, closeModalMethod) => {
 const WelcomeModal = (props) => {
     const [viewNumber, setViewNumber] = useState(0);
     const [isNextEnabled, setIsNextEnabled] = useState(false);
-
-    const navigation = useNavigation()
 
     return (
             <SafeAreaView style={styles.container}>

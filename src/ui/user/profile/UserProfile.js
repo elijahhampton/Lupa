@@ -150,6 +150,36 @@ function UserProfile({ userData, isCurrentUser }) {
         )
     }
 
+    const renderInterest = () => {
+        if (userData.interest.length == 0) {
+            return (
+                <Caption>
+                        This user has not specified any fitness interest.
+                    </Caption>
+            )
+        } else {
+            return (
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                     <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
+                     <Text>
+                         Interest: {" "}
+                     </Text>
+                     {
+                        userData.interest.map(interest => {
+                            return (
+                                <Caption style={{fontSize: 10}}>
+                                    {interest} {" "}
+                                </Caption>
+                            )
+                        })
+                    }
+                     </View>
+                   
+                </View>
+            )
+        }
+    }
+
     /**
      * Navigates to the follower view.
      */
@@ -168,9 +198,7 @@ function UserProfile({ userData, isCurrentUser }) {
                 <View style={styles.infoContainer}>
                     {renderDisplayName()}
                     {renderBio()}
-                    <Caption>
-                        This user has not specified any fitness interest.
-                    </Caption>
+                    {renderInterest()}
                 </View>
 
                 <View style={styles.avatarContainer}>

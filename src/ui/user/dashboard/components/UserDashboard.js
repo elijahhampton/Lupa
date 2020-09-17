@@ -13,6 +13,7 @@ import {
     Button,
     Appbar,
     Menu,
+    Caption,
     Divider,
     Surface,
 } from 'react-native-paper';
@@ -36,14 +37,65 @@ function UserDashboard(props) {
     const [programsModalIsOpen, setProgramModalIsOpen] = useState(false);
     const [trainersModalIsOpen, setTrainersModalIsOpen] = useState(false);
 
+    const handleStartLiveWorkout = () => {
+        navigation.push('LiveWorkout', {
+            uuid: currUserData.last_workout_completed.workoutUUID,
+            workoutType: 'WORKOUT'
+        })
+    }
+
+    const renderLastCompletedWorkoutStatus = () => {
+        try {
+        if (typeof(currUserData.last_workout_completed) == 'undefined') {
+            alert('hi')
+            return (
+                <Caption>
+                You have not completed any workouts recently.
+            </Caption>
+            )
+        } else {
+            return (
+                <View style={{width: '100%'}}>
+                    <Text style={{fontWeight: '300'}}>
+                        The last workout you completed was on {new Date(currUserData.last_workout_completed.dateCompleted).toDateString()}.  Would you like to launch it now?
+                    </Text>
+
+                    
+                    <Button onPress={handleStartLiveWorkout} color="#1089ff" mode="contained" style={{marginTop: 20, width: '100%', alignSelf: 'flex-start'}}>
+                        Start Live Workout
+                    </Button>
+                </View>
+            )
+        }
+    } catch(error) {
+        return (
+            <Caption>
+            You have not completed any workouts recently.
+        </Caption>
+        )
+    }
+    }
+
     const renderComponent = () => {
         return currUserData.program_data.length !== 0 ?
-        <ScrollView contentContainerStyle={{marginTop: 5, backgroundColor: '#FFFFFF',}}>
+        <ScrollView contentContainerStyle={{marginTop: 5, backgroundColor: '#EEEEEE',}}>
                    <View style={{marginVertical: 10, backgroundColor: 'transparent'}} />
-        <ListItem onPress={() => setProgramModalIsOpen(true)} title={"Programs " + '(' + currUserData.programs.length + ')'} rightIcon={() => <FeatherIcon name="chevron-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} topDivider bottomDivider style={{elevation: 3}}/>
+        <ListItem onPress={() => setProgramModalIsOpen(true)} title={"Programs " + '(' + currUserData.programs.length + ')'} rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} topDivider bottomDivider />
 
-        <ListItem onPress={() => setTrainersModalIsOpen(true)} title="Trainers" rightIcon={() => <FeatherIcon name="chevron-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} bottomDivider style={{elevation: 3}}/>
+        <ListItem onPress={() => {}} title="My Data" rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} bottomDivider />
         
+        <View style={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#E5E5E5', marginVertical: 20, padding: 20, backgroundColor: 'white'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <Text style={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }}>
+                Last Completed Workout
+            </Text>
+            <FeatherIcon name="activity" size={18} />
+            </View>
+
+
+            {renderLastCompletedWorkoutStatus()}
+        </View>
+
         <View style={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#E5E5E5', flexDirection: 'row', alignItems: 'center', alignItems: 'center', justifyContent: 'space-evenly', marginVertical: 20, padding: 20, backgroundColor: 'white'}}>
           <View style={{flex: 3}}>
           <Text style={{color: '#1089ff', fontSize: 18, flexWrap: 'wrap',  fontFamily: 'Avenir-Light'}}>
@@ -86,9 +138,9 @@ function UserDashboard(props) {
     return (
         <View style={{
             flex: 1,
-            backgroundColor: '#FFFFFF'
+            backgroundColor: '#EEEEEE'
         }}>
-            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 3,}}>
+            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
             <MenuIcon onPress={() => navigation.openDrawer()} />
                 <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
@@ -97,7 +149,6 @@ function UserDashboard(props) {
             {renderComponent()}
 
             <DashboardPrograms isVisible={programsModalIsOpen} closeModal={() => setProgramModalIsOpen(false)} />
-            <DashboardTrainers isVisible={trainersModalIsOpen} closeModal={() => setTrainersModalIsOpen(false)}/>
         </View>
     )
 }

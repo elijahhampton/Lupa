@@ -325,6 +325,12 @@ class Search extends React.Component {
                     }
                 </ScrollView>
               </Tab>
+
+              <Tab heading="Trainers" {...TAB_PROPS} >
+              <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
+                    
+                </ScrollView>
+              </Tab>
               
         
 

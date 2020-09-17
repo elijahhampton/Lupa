@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState} from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 
 import {
     View,
@@ -38,7 +38,7 @@ function CreateNewPost(props) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
-    
+
     const [titleText, setTitleText] = useState("")
     const [postText, setPostText] = useState("");
     const [postMediaURI, setPostMediaURI] = useState("");
@@ -49,7 +49,7 @@ function CreateNewPost(props) {
     const [ready, setReady] = useState(false)
 
     const handleCaptureNewMediaURI = (uri, mediaType) => {
-        if (typeof(uri) == 'undefined' || uri == null) {
+        if (typeof (uri) == 'undefined' || uri == null) {
             return null;
         }
         setPostMediaURI(uri);
@@ -77,17 +77,17 @@ function CreateNewPost(props) {
     }
 
     const renderMedia = () => {
-        if (typeof(postMediaURI) == 'undefined' || postMediaURI == null) {
+        if (typeof (postMediaURI) == 'undefined' || postMediaURI == null) {
             return (
-                <View style={{flex: 1, backgroundColor: 'black'}} />
+                <View style={{ flex: 1, backgroundColor: 'black' }} />
             )
         }
 
         switch (postMediaType) {
             case 'IMAGE':
-                return <Image resizeMethod="scale" resizeMode="cover" source={{uri: postMediaURI}} style={{ width: '100%', height: '100%',  borderRadius: 0 }} />
+                return <Image resizeMethod="scale" resizeMode="cover" source={{ uri: postMediaURI }} style={{ width: '100%', height: '100%', borderRadius: 0 }} />
             case 'VIDEO':
-                return <Video resizeMode="cover"  source={{uri: postMediaURI}} style={{ width: '100%', height: '100%',  borderRadius: 0 }} loop={false} />
+                return <Video resizeMode="cover" source={{ uri: postMediaURI }} style={{ width: '100%', height: '100%', borderRadius: 0 }} loop={false} />
         }
     }
 
@@ -98,8 +98,7 @@ function CreateNewPost(props) {
             allowsEditing: true,
             cancelButtonTitle: 'Cancel'
         }, async (response) => {
-            if (!response.didCancel)
-            {   
+            if (!response.didCancel) {
                 handleCaptureNewMediaURI(response.uri, 'IMAGE')
             }
         });
@@ -109,7 +108,7 @@ function CreateNewPost(props) {
         //Get a vlog structure
         const vlogStructure = getLupaVlogStructure(titleText, postText, postMediaURI, postMediaType, currUserData.user_uuid, currUserData.location.longitude, currUserData.location.latitude, currUserData.location.city, currUserData.location.state, currUserData.location.country, new Date().getTime(), new Date());
 
-        
+
         //save vlog to firestore
         LUPA_CONTROLLER_INSTANCE.publishVlog(vlogStructure);
 
@@ -136,51 +135,37 @@ function CreateNewPost(props) {
         }
     }, [])
     return (
-        <View style={{flex: 1}}>
-    <Appbar.Header  style={{backgroundColor: 'white', elevation: 3}}>
-    <Appbar.Action onPress={handleClose}  style={{alignSelf: 'flex-start'}} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />} />
-    <Appbar.Content title="New Vlog" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
-    <Button mode="contained" theme={{roundness: 5}} uppercase={false} color="#1089ff" onPress={saveVlog}>
-        Post
+        <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
+            <Appbar.Header style={{ backgroundColor: 'white', elevation: 0 }}>
+                <Appbar.Action onPress={handleClose} style={{ alignSelf: 'flex-start' }} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />} />
+                <Appbar.Content title="New Vlog" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                <Button mode="contained" theme={{ roundness: 5 }} uppercase={false} color="#1089ff" onPress={saveVlog}>
+                    Post
     </Button>
-    </Appbar.Header>
+            </Appbar.Header>
 
-                <View style={{flex: 1, justifyContent: 'space-between', backgroundColor: 'white', paddingTop: Constants.statusBarHeight}}>
+            <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'white', paddingTop: Constants.statusBarHeight }}>
 
-                        <View style={{flex: 1,  elevation: 0}}>
-                        <TextInput keyboardType="default" returnKeyLabel="done" returnKeyType="done" ref={titleTextInputRef} value={titleText} maxLength={30} onChangeText={text => setTitleText(text)}    style={{marginVertical: 10, fontSize: 25, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Title..." />
-
-
-                            <TextInput inputAccessoryViewID="textInputAccessory" keyboardType="default" returnKeyLabel="done" returnKeyType="done" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)}   style={{marginVertical: 20, fontSize: 15, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Share techniques and advice..." />
-                            <InputAccessoryView nativeID={"textInputAccessory"}>
-                            <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                            <ThinFeatherIcon style={{paddingHorizontal: 20}} name="video" size={20} onPress={handleAddVideo}/>
-                            <ThinFeatherIcon style={{paddingHorizontal: 20}} name="aperture" size={20} onPress={handleOpenCameraRoll} />
-                            </View>
-                            </InputAccessoryView>
-
-                            {addedPostMedia === true ?
-                            <View style={{backgroundColor: 'black', width: '90%', alignSelf: 'center', height: 250, borderRadius: 3}}>
-                            {renderMedia()}
-                            </View>
-                            :
-                            null
-                            }
-                            
-                          
-                            
+                <View style={{ flex: 1, elevation: 0 }}>
+                    <TextInput keyboardType="default" returnKeyLabel="done" returnKeyType="done" ref={titleTextInputRef} value={titleText} maxLength={30} onChangeText={text => setTitleText(text)} style={{ marginVertical: 10, fontSize: 25, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Title..." placeholderTextColor="#212121" />
+                    <TextInput inputAccessoryViewID="textInputAccessory" keyboardType="default" returnKeyLabel="done" returnKeyType="done" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)} style={{ marginVertical: 20, fontSize: 18, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Share techniques and advice..." placeholderTextColor="#212121" />
+                    <InputAccessoryView nativeID={"textInputAccessory"}>
+                        <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            <ThinFeatherIcon style={{ paddingHorizontal: 20 }} name="video" size={20} onPress={handleAddVideo} />
+                            <ThinFeatherIcon style={{ paddingHorizontal: 20 }} name="aperture" size={20} onPress={handleOpenCameraRoll} />
                         </View>
-                   
+                    </InputAccessoryView>
 
-                    
-                    
-
-              
-        
-               
+                    {addedPostMedia === true ?
+                        <View style={{ backgroundColor: 'black', width: '90%', alignSelf: 'center', height: 250, borderRadius: 3 }}>
+                            {renderMedia()}
+                        </View>
+                        :
+                        null
+                    }
+                </View>
             </View>
-            <FAB onPress={saveVlog} icon="check" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} />
-           </View>
+        </View>
     )
 }
 

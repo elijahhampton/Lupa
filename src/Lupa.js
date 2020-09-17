@@ -26,6 +26,7 @@ import getLocationFromCoordinates from './modules/location/mapquest/mapquest'
 import Geolocation from '@react-native-community/geolocation';
 import LOG from "./common/Logger";
 import CreateNewPost from "./ui/user/profile/modal/CreateNewPost";
+import PickInterest from "./ui/user/modal/WelcomeModal/PickInterest";
 
 Geolocation.setRNConfiguration({
   authorizationLevel: 'whenInUse',
