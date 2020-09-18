@@ -19,11 +19,15 @@ import LupaController from '../controller/lupa/LupaController'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import ProgramOptionsModal from './workout/program/modal/ProgramOptionsModal'
 import { getLupaProgramInformationStructure } from '../model/data_structures/programs/program_structures'
+import { useNavigation } from '@react-navigation/native'
+import LUPA_DB from '../controller/firebase/firebase'
 
 function MyPrograms(props) {
     const [programOptionsModalIsVisible, setProgramOptionsModalIsVisible] = useState(false)
     const [currentProgram, setCurrentProgram] = useState(getLupaProgramInformationStructure())
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+    const [programs, setProgramsList] = useState([])
+    const navigation = useNavigation();
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -35,8 +39,25 @@ function MyPrograms(props) {
         setProgramOptionsModalIsVisible(true)
     }
 
+    useEffect(() => {
+        const currUserProgramsObserver = LUPA_DB.collection('programs').onSnapshot(querySnapshot => {
+           let userPrograms = []
+            querySnapshot.docs.forEach(doc => {
+                let document = doc.data();
+
+                if (typeof(document) != 'undefined' && document.completedProgram === true && document.program_owner == currUserData.program_owner) {
+                    userPrograms.push(document);
+                }
+            });
+
+            setProgramsList(userPrograms);
+        });
+
+        return () => currUserProgramsObserver();
+    }, [])
+
     const renderPrograms = () => {
-        return currUserData.program_data.map((program, index, arr) => {
+        return programs.map((program, index, arr) => {
             /*
             * TODO: There is a problem where programs are deleted from the users program_data if
             * if they do not publish the program.  For now we will check to not render programs that don't have completedPrograms as true 
@@ -63,6 +84,23 @@ function MyPrograms(props) {
 
     return (
         <SafeAreaView style={styles.root}>
+           {
+               programs.length === 0 ?
+               <View style={{height: 200,  alignItems: 'center', justifyContent: 'center', width: '100%', paddingHorizontal: 20}}>
+                <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                    <Text>
+                        You haven't created any programs.{" "}
+                    </Text>
+                    <Text onPress={() => navigation.push('CreateProgram', {
+
+                    })} style={{color: '#1089ff', fontWeight: '400'}}>
+                        Get started with your first.
+                    </Text>
+                </Text>
+            </View>
+               :
+               null
+           } 
                 {renderPrograms()}
             <ProgramOptionsModal program={currentProgram} closeModal={() => setProgramOptionsModalIsVisible(false)} isVisible={programOptionsModalIsVisible} />
         </SafeAreaView>
@@ -73,7 +111,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#EEEEEE',
     }
 })
 

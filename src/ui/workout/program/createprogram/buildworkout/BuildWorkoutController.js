@@ -144,6 +144,9 @@ class BuildWorkoutController extends React.Component {
     getCurrentDay = () => {
         const currIndex = this.state.currDayIndex
         try {
+            if (!this.props.lupa_data.Users.currUserData.isTrainer) {
+                return this.props.program_workout_days[currIndex]
+            }
             return this.props.programData.program_workout_days[currIndex]
         } catch(error) {
             return this.props.program_workout_days[currIndex];
@@ -275,11 +278,12 @@ class BuildWorkoutController extends React.Component {
     }
 
     captureWorkout = (workoutObject, placementType) => {
-
+//alert('oeoe')
         const workoutDay = this.getCurrentDay()
 
         switch (this.state.currPlacementType) {
             case PLACEMENT_TYPES.SUPERSET:
+                
                 const updatedWorkout = {
                     workout_name: workoutObject.workout_name,
                     workout_description: workoutObject.workout_description,
@@ -426,9 +430,11 @@ class BuildWorkoutController extends React.Component {
                         superset: new Array(),
                     }
 
-
+    
                     let updatedWorkoutData = [], newWorkoutData = {}
+                    alert(workoutDay)
                     switch (workoutDay) {
+                    
                         case 'Monday':
 
                             updatedWorkoutData = this.state.workoutDays.Monday
@@ -477,6 +483,7 @@ class BuildWorkoutController extends React.Component {
                             this.setState({ workoutDays: newWorkoutData })
                             break;
                         case 'Friday':
+                            alert('dsfsd')
                             updatedWorkoutData = this.state.workoutDays.Friday
                             updatedWorkoutData.push(updatedWorkout)
 
@@ -510,6 +517,7 @@ class BuildWorkoutController extends React.Component {
                             this.setState({ workoutDays: newWorkoutData })
                             break;
                         default:
+                            alert('umm')
                             updatedWorkoutData = this.state.workoutDays.Monday
 
                             updatedWorkoutData.push(updatedWorkout)
@@ -520,6 +528,8 @@ class BuildWorkoutController extends React.Component {
                             }
 
                             this.setState({ workoutDays: newWorkoutData })
+
+                    
                     }
 
                     const num = this.state.numWorkoutsAdded + 1;

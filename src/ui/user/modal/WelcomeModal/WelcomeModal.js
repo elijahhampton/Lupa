@@ -22,7 +22,7 @@ import WelcomeLupaIntroduction from './WelcomeLupaIntroduction';
 import WelcomeContentDriver from '../WelcomeContentDriver';
 import BasicInformation from './BasicInformation';
 import TrainerInformation from './TrainerInformation';
-
+import PickInterest from './PickInterest'
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions';
 import { useNavigation } from '@react-navigation/native';
 import LUPA_DB, { LUPA_AUTH } from '../../../../controller/firebase/firebase';
@@ -36,7 +36,7 @@ const getView = (viewNumber, toggleNext, closeModalMethod) => {
         case 1:
             return <BasicInformation setNextDisabled={toggleNext} />
         case 2:
-            return <PickInterest setNextDisabled={toggleText} />
+            return <PickInterest setNextDisabled={toggleNext} />
         case 3:
             return <WelcomeContentDriver closeModalMethod={closeModalMethod} />
     }
@@ -54,7 +54,7 @@ const WelcomeModal = (props) => {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                         <Pagination dotsLength={3} activeDotIndex={viewNumber} />
                         {
-                            viewNumber != 2 ? <Button disabled={isNextEnabled} color="#212121" mode="text" onPress={() => setViewNumber(viewNumber + 1)}> Next </Button> : null
+                            viewNumber != 3 ? <Button disabled={isNextEnabled} color="#212121" mode="text" onPress={() => setViewNumber(viewNumber + 1)}> Next </Button> : null
                         }
                     </View>
             </SafeAreaView>

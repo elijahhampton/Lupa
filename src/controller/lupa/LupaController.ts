@@ -910,6 +910,12 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE.updateCurrentUser('hourly_payment_rate', rate, "", "");
     }
 
+    submitCertificationNumber = (userUUID, certificationNumber) => {
+      //send email ?
+
+      //update user
+      USER_CONTROLLER_INSTANCE.updateCurrentUser('isTrainer', true, userUUID, "")
+    }
 
     publishVlog = (vlogStructure) => {
       if (typeof(vlogStructure) == 'undefined' || vlogStructure == null) {

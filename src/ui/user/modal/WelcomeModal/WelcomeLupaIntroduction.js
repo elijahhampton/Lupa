@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createRef, useState } from 'react';
 
 import {
     Text,
@@ -8,9 +8,10 @@ import {
     Dimensions,
     SafeAreaView,
     Modal,
+    Alert,
     TouchableOpacity,
     StatusBar,
-    TextInput,
+     KeyboardAvoidingView
 } from 'react-native';
 
 import {
@@ -18,7 +19,9 @@ import {
     ActivityIndicator,
     Checkbox,
     Button,
+    TextInput,
     Caption,
+     Paragraph
 } from 'react-native-paper';
 
 import Map from '../../../images/map.png'
@@ -27,14 +30,16 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import Geolocation from '@react-native-community/geolocation';
-
+import RBSheet from 'react-native-raw-bottom-sheet'
 import getLocationFromCoordinates from '../../../../modules/location/mapquest/mapquest';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
 
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions'
 
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+
 const OPTIONS = [
     {
         key: 0,
@@ -46,10 +51,10 @@ const OPTIONS = [
         optionTitle: 'Certified Trainer (NASM only)',
         optionSubtitle: 'Certified trainers can create and sell full scale workout programs.'
     },
-    {
+   /* {
         key: 2,
         optionTitle: 'I would like to learn more first',
-    }
+    }*/
 ]
 //Activity Indicator to show while fetching location data
 const ActivityIndicatorModal = (props) => {
@@ -84,10 +89,91 @@ const GEOLOCATION_CONFIG = {
     authorizationLevel: 'always',
 }
 
+function TrainerCeritifcationModal({ isVisible, closeModal }) {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    const [certificationNumber, setCertificationNumber] = useState("")
+    const [verificationSubmitted, setVerificationSubmitted] = useState(false);
+
+    const dispatch = useDispatch();
+
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
+
+    const handleOnSubmit = () => {
+        handleOnClose();
+        const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true, []);
+        dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload })
+        LUPA_CONTROLLER_INSTANCE.submitCertificationNumber(currUserData.user_uuid, certificationNumber);
+    }
+
+    handleOnClose = () => {
+        if (certificationNumber.length === 0 || certificationNumber.length < 5) {
+            alert('You must enter a valid NASM certification number!')
+            return;
+        }
+
+        closeModal();
+    }
+    return (
+        <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType="slide">
+            <SafeAreaView style={{flex: 1}}>
+                <KeyboardAvoidingView style={{flex: 1, justifyContent: 'space-evenly'}}>
+                    <Feather1s style={{position: 'absolute', top: 0, left: 0, marginLeft: 22}} name="x" size={24} onPress={closeModal} />
+                    <Image style={{width: 180, height: 180, alignSelf: 'center'}} source={require('../../../images/certificate.jpeg')} />
+
+                    <View style={{width: Dimensions.get('window').width, padding: 20}}>
+                        <View style={{width: '100%', justifyContent: 'center', alignItems: 'center',}}>
+                        <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+                            Verify your certificate
+                        </Text>
+                        <Paragraph style={{color: 'rgb(137, 137, 138)', textAlign: 'center', fontWeight: '600'}}>
+                            After entering in your certification number it will take up 24 hours to verify your account.
+                        </Paragraph>
+                        </View>
+ 
+    <TextInput
+    value={certificationNumber} 
+    onChangeText={text => setCertificationNumber(text)}
+    keyboardAppearance="light"
+    keyboardType="default"
+    returnKeyLabel="done"
+    returnKeyType="done"
+    theme={{
+        colors: {
+            primary: '#1089ff'
+        }
+    }} style={{marginVertical: 10}} mode="flat" label="Certification Number" placeholder="Please enter a valid NASM certification number." />
+
+                    </View>
+
+        <View style={{width: Dimensions.get('window').width - 50, alignSelf: 'center', borderRadius: 20, backgroundColor: 'rgb(245, 246, 247)', padding: 20, justifyContent: 'center', alignItems: 'flex-start'}}>
+        <View style={{marginVertical: 20}}>
+                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                            Why should I verify certification?
+                        </Text>
+                        <Text style={{color: 'rgb(187, 194, 202)', fontFamily: 'Avenir-Medium'}}>
+                            Lupa only allows certified trainers to create fitness programs and create distrituable fitness contnet.
+                        </Text>
+                    </View>
+
+                    <Button onPress={handleOnSubmit} color="#1089ff" theme={{roundness: 5}} mode="contained" style={{alignSelf: 'center', height: 45, alignItems: 'center', justifyContent: 'center', width: '90%'}}>
+                        Submit Verification
+                    </Button>
+        </View>
+        </KeyboardAvoidingView>
+            </SafeAreaView> 
+        </Modal>
+
+    )
+}
+
 class WelcomeLupaIntroduction extends React.Component {
     constructor(props) {
         super(props);
 
+        this.trainerCerticationRBSheet = createRef();
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
         this.state = {
@@ -99,6 +185,7 @@ class WelcomeLupaIntroduction extends React.Component {
             trainerCheck: 'unchecked',
             learnCheck: 'unchecked',
             permissionsRequested: false,
+            verificationModalVisible: false,
         }
 
         this.handleCheckOption = this.handleCheckOption.bind(this);
@@ -147,8 +234,11 @@ class WelcomeLupaIntroduction extends React.Component {
             if (this.state.trainerCheck == 'checked') {
                 this.setState({ trainerCheck: 'unchecked' })
            } else {
-            this.setState({ trainerCheck: 'checked', userCheck: 'unchecked', learnCheck: 'unchecked' })
+            this.setState({ trainerCheck: 'checked', userCheck: 'unchecked', learnCheck: 'unchecked' });
+            this.showVerificationModal()
            }
+
+
                break;
            case 2:
             if (this.state.learnCheck == 'checked') {
@@ -178,6 +268,14 @@ class WelcomeLupaIntroduction extends React.Component {
                     default:
         }
     }
+
+   showVerificationModal = () => {
+       this.setState({ verificationModalVisible: true })
+   }
+
+   hideVerificationModal = () => {
+       this.setState({ verificationModalVisible: false })
+   }
     
     render() {
         this.state.permissionsRequested == true && this.state.userCheck == 'checked' || this.state.trainerCheck == 'checked' || this.state.learnCheck == 'checked' ? this.enableNext() : this.disableNext()
@@ -200,7 +298,7 @@ class WelcomeLupaIntroduction extends React.Component {
                         {
                             OPTIONS.map((option, index, arr) => {
                                 return (
-                                    <>
+                            
                                     <TouchableOpacity onPress={() => this.handleCheckOption(index)} style={{alignSelf: 'flex-start', paddingLeft: 20}}>
                                     <View key={index} style={{ flexDirection: 'row', alignItems: 'center'}}>
                                     <Text style={styles.optionText}>
@@ -212,15 +310,7 @@ class WelcomeLupaIntroduction extends React.Component {
                                     {option.optionSubtitle}
                                 </Caption>
                                 </TouchableOpacity>
-
-                                {this.state.trainerCheck === 'checked' && option.key === 1 ?
-                                 <View style={{height: 'auto'}}>
-                                    <TextInput style={{padding: 10, marginHorizontal: 10, borderWidth: 1, borderRadius: 1, borderColor: 'rgb(218, 221, 234)'}} returnKeyType="done" returnKeyLabel="done" enablesReturnKeyAutomatically={true} placeholderTextColor="#1089ff" placeholder='Enter your certification number here.' />
-                                </View>
-                                :
-                                null
-                                }
-                                </>
+                             
                                 )
                             })
                         }
@@ -246,7 +336,8 @@ style={{ justifyContent: 'center', alignItems: 'center', borderRadius: 25, width
 </LinearGradient>
 </TouchableOpacity >
                 </View>
-
+                    
+                <TrainerCeritifcationModal isVisible={this.state.verificationModalVisible} closeModal={this.hideVerificationModal} />
                 <ActivityIndicatorModal isVisible={this.state.showLoadingIndicator} />
             </SafeAreaView>
         )

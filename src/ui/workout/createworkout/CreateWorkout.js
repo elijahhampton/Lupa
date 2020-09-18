@@ -206,10 +206,11 @@ class CreateWorkout extends React.Component {
         let updatedProgramData = getLupaWorkoutInformationStructure(this.props.lupa_data.Users.currUserData.user_uuid, UUID, {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid)
         await this.setState({ programData: updatedProgramData })
         await this.LUPA_CONTROLLER_INSTANCE.createNewWorkout(UUID);
-
+ 
         updatedProgramData = this.state.programData;
         updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid
         this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, updatedProgramData);
+
     }
 
     async componentWillUnmount() {
@@ -242,7 +243,7 @@ class CreateWorkout extends React.Component {
     render() {
         return (
             <SafeAreaView style={styles.root}>
-                <BuildWorkoutTool program_workout_days={DAY} toolIsFirstScreen={true} saveProgramWorkoutData={this.saveProgramWorkoutData} navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
+                <BuildWorkoutTool program_workout_days={[DAY]} toolIsFirstScreen={true} saveProgramWorkoutData={this.saveProgramWorkoutData} navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
                 <CreatingWorkoutModal uuid={this.state.currWorkoutUUID} isVisible={this.state.creatingWorkout} closeModal={this.handleSuccessfulReset} />
             </SafeAreaView>
         )

@@ -248,6 +248,11 @@ export default class UserController {
         let currentUserDocument = await USER_COLLECTION.doc(this.getCurrentUser().uid);
 
         switch (fieldToUpdate) {
+            case 'isTrainer':
+                currentUserDocument.update({
+                    isTrainer: value
+                })
+                break;
             case 'interest':
                 currentUserDocument.update({
                     interest: value

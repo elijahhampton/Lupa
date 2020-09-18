@@ -47,7 +47,6 @@ function UserDashboard(props) {
     const renderLastCompletedWorkoutStatus = () => {
         try {
         if (typeof(currUserData.last_workout_completed) == 'undefined') {
-            alert('hi')
             return (
                 <Caption>
                 You have not completed any workouts recently.
@@ -77,10 +76,19 @@ function UserDashboard(props) {
     }
 
     const renderComponent = () => {
+        let NUM_PROGRAMS = 0;
+        for (let i = 0; i < currUserData.program_data.length; i++) {
+            if (typeof(currUserData.program_data[i].completedProgram === false)) {
+                continue;
+            }
+
+            NUM_PROGRAMS++;
+        }
+
         return currUserData.program_data.length !== 0 ?
         <ScrollView contentContainerStyle={{marginTop: 5, backgroundColor: '#EEEEEE',}}>
                    <View style={{marginVertical: 10, backgroundColor: 'transparent'}} />
-        <ListItem onPress={() => setProgramModalIsOpen(true)} title={"Programs " + '(' + currUserData.programs.length + ')'} rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} topDivider bottomDivider />
+        <ListItem onPress={() => setProgramModalIsOpen(true)} title={"Programs " + '(' + NUM_PROGRAMS + ')'} rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} topDivider bottomDivider />
 
         <ListItem onPress={() => {}} title="My Data" rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} bottomDivider />
         

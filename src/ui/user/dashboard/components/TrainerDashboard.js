@@ -194,7 +194,7 @@ function TrainerDashboard(props) {
         componentReady === true ?
         <View style={{
             flex: 1,
-            backgroundColor: '#FFFFFF'
+            backgroundColor: '#EEEEEE'
         }}>
              <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
@@ -205,10 +205,10 @@ function TrainerDashboard(props) {
  <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-evenly', backgroundColor: '#EEEEEE'}}>
 
  <View>
-                        <Text style={{padding: 10,   fontSize: 18}}>
+                        <Text style={{padding: 10, fontSize: 18, fontWeight: '600'}}>
                            Purchase History
                         </Text>
-                        <DataTable>
+                        <DataTable style={{backgroundColor: '#EEEEEE'}}>
         <DataTable.Header>
           <DataTable.Title>User</DataTable.Title>
           <DataTable.Title >Purchase Date</DataTable.Title>
@@ -219,88 +219,12 @@ function TrainerDashboard(props) {
       </DataTable>
                         </View>
 
-                    {/*    <Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#FFFFFF' }} />
-
-<View style={{ }}>
-    <Text style={{ padding: 10, fontSize: 18 }}>
-        Interactions
-        </Text>
-
-    <LineChart
-        bezier
-        data={{
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jul", "Aug", "Sep"],
-            datasets: [
-                {
-                    data: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                    ]
-                }
-            ]
-        }}
-        width={Dimensions.get('window').width} // from react-native
-        height={200}
-        yAxisLabel="N"
-        withHorizontalLabels={true}
-        yAxisSuffix=""
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-            strokeWidth: 0.5,
-            backgroundColor: "rgb(247, 247, 246)",
-            backgroundGradientFrom: "rgb(247, 247, 246)",
-            backgroundGradientTo: "rgb(247, 247, 246)",
-            decimalPlaces: 0, // optional, defaults to 2dp
-            color: (opacity = 0) => `rgba(33, 150, 243, ${opacity})`,
-            labelColor: (opacity = 0) => `rgba(33, 150, 243, ${opacity})`,
-            style: {
-                borderRadius: 0
-            },
-            propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#FFFFFF"
-            },
-            propsForBackgroundLines: {
-                backgroundColor: 'transparent',
-                color: 'transparent',
-                stroke: 'transparent',
-            }
-        }}
-        style={{
-            borderRadius: 0
-        }}
-    />*
-
-    <Caption style={{alignSelf: 'flex-end', paddingRight: 20}}>
-        Updated {new Date().getTime() - Math.round(lastUpdated)} seconds ago
-    </Caption>
-
-    <Divider style={{ marginHorizontal: 30, marginVertical: 5 }} />
-
-    <Button color="#1089ff" uppercase={false} mode="text" style={{ alignSelf: 'flex-end' }} onPress={() => navigation.push('TrainerInsights')}>
-        Trainer Insights
-<FeatherIcon name="arrow-right" size={12} />
-    </Button> 
-    </View>*/}
-
-<Divider style={{ marginVertical: 10, height: 8, backgroundColor: '#FFFFFF' }} />
-
-
 
 
 <View style={{padding: 10}}>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                 <View style={{flex: 1}}>
-                                <Text style={{  fontSize: 18}}>
+                                <Text style={{  fontSize: 18, fontWeight: '600'}}>
                             Overview
                         </Text>
                                 </View>

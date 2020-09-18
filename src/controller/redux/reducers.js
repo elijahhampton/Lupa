@@ -8,6 +8,8 @@ handleUserAttributeUpdate = (state, payload) => {
 
   switch(payload.attribute)
   {
+    case 'isTrainer':
+      updatedState.isTrainer = payload.value;
     case 'photo_url':
       updatedState.display_name = payload.value;
       break;
@@ -22,16 +24,6 @@ handleUserAttributeUpdate = (state, payload) => {
       break;
     case 'bio':
       updatedState.bio = payload.value;
-      break;
-    case 'bookmarked_programs':
-      if (updatedState.bookmarked_programs.includes(payload.value))
-      {
-        updatedState.bookmarked_programs.splice(updatedState.bookmarked_programs.indexOf(payload.value), 1);
-      }
-      else
-      {
-        updatedState.bookmarked_programs.push(payload.value)
-      }
       break;
     default:
   }

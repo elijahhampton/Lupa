@@ -135,7 +135,7 @@ const WelcomeContentDriver = (props) => {
     const renderCuratedTrainers = () => {
         return curatedTrainers.map(trainer => {
             return (
-                <View style={{backgroundColor: '#EEEEEE', width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center'}}>
                 <View style={{borderRadius: 12, alignSelf: 'center', width: Dimensions.get('window').width - 20, marginHorizontal: 20, backgroundColor: 'transparent', justifyContent: 'space-between',  padding: 20}}>
                     <View style={{backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',  }}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>

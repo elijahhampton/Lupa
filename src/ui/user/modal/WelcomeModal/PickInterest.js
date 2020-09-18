@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     Text,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { Checkbox } from 'react-native-paper';
+import { Constants } from 'react-native-unimodules';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 const interestList = [
@@ -26,7 +27,7 @@ const interestList = [
     'Injury Prevention',
 ]
 
-function PickInterest(props) {
+function PickInterest({ setNextDisabled }) {
     const [pickedInterest, setPickedInterest] = useState([])
     const [stateUpdate, forceStateUpdate] = useState(false)
 
@@ -48,11 +49,26 @@ function PickInterest(props) {
         forceStateUpdate(!stateUpdate)
     }
 
+    const enableNext = () => {
+        setNextDisabled(false);
+    }
+
+    const disableNext = () => {
+        setNextDisabled(true);
+    }
+
+    useEffect(() => {
+        if (pickedInterest.length >= 1) {
+            enableNext();
+        }
+
+    }, [])
+
     return (
         <SafeAreaView style={styles.container}>
        
             <View style={{padding: 20, alignSelf: 'center', alignItems: 'flex-start', justifyContent: 'center'}}>
-                <Text style={{ fontFamily: 'Avenir-Roman', fontSize: 18, marginVertical: 20 }}>
+                <Text style={{ fontFamily: 'Avenir-Medium', textAlign: 'center', fontSize: 25, marginVertical: Constants.statusBarHeight}}>
                     What fitness skills and goals are you interested in?
                 </Text>
                 <Text style={{fontFamily: 'Avenir-Medium', color: 'rgb(165, 164, 171)'}}>

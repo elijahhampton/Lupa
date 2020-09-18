@@ -16,6 +16,12 @@ import { Video } from 'expo-av';
 import LiveWorkoutFullScreenContentModal from '../../workout/modal/LiveWorkoutFullScreenContentModal';
 import DoubleClick from 'react-native-double-tap';
 
+function formatDateString(dateString) {
+    const stringKeys = dateString.split(" ");
+    let updatedString = stringKeys[1] + " " + stringKeys[2] + " " + stringKeys[3]
+    return updatedString;
+}
+
 function VlogFeedCard({ vlogData }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -64,7 +70,7 @@ function VlogFeedCard({ vlogData }) {
                                     {vlogOwnerData.display_name}
                                 </Text>
                                 <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 10 }}>
-                                    {Math.round(new Date().getTime() - vlogData.time_created.seconds)} hour ago
+                                    {formatDateString(new Date(vlogData.time_created).toString())}
                                 </Caption>
                             </View>
                         </View>

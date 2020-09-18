@@ -31,6 +31,7 @@ import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controll
 
 import { connect } from 'react-redux';
 import { LOG_ERROR } from '../../../../common/Logger';
+import { Constants } from 'react-native-unimodules';
 
 mapStateToProps = (state) => {
     return { 
@@ -187,11 +188,11 @@ class BasicInformation extends React.Component {
        this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true ? this.enableNext() : this.disableNext()
         return (
             <KeyboardAvoidingView style={{flex: 1}}>
-                <SafeAreaView style={[styles.flexFull, {}]}>
+                <SafeAreaView style={[styles.flexFull, { }]}>
     
                    
     <View>
-    <Text style={{ textAlign: 'left', fontFamily: 'Avenir-Roman', fontSize: 18, marginVertical: 20 }}>
+    <Text style={{ fontFamily: 'Avenir-Medium', textAlign: 'center', fontSize: 25, marginVertical: Constants.statusBarHeight}} >
        Add your display name and choose an avatar.
     </Text>
                         </View>

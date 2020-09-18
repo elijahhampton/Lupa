@@ -36,7 +36,7 @@ import {
 
 import LupaController from '../controller/lupa/LupaController';
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { MenuIcon } from './icons';
@@ -133,6 +133,11 @@ class Featured extends React.Component {
         return () => vlogCollectionObserver();
     }
 
+    handleOnRefresh = () => {
+        this.setState({ refreshing: true })
+        this.setState({ refreshing: false })
+      }
+
     checkSearchBarState = () => {
         if (this.state.searchBarFocused === true) {
             this.props.navigation.push('Search')
@@ -153,7 +158,7 @@ class Featured extends React.Component {
 
 
         return this.state.feedVlogs.map((vlog, index, arr) => {
-            if (index == arr.length) {
+            if (index == arr.length - 1) {
                 return  <VlogFeedCard key={index} vlogData={vlog} />
             }
 
@@ -190,7 +195,7 @@ class Featured extends React.Component {
                     />
 
                 </Appbar>
-                <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
+                <ScrollView  refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
                     {
                         <View style={{ backgroundColor: '#EEEEEE' }}>
                             <View style={{ backgroundColor: '#EEEEEE' }}>
@@ -200,7 +205,7 @@ class Featured extends React.Component {
                             </View>
                         </View>
                     }
-                </View>
+                </ScrollView>
             </View>
         );
     }
