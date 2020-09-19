@@ -5,5 +5,6 @@ export  type LupaWorkoutInformationStructure = {
     workout_days: Array<String>,
     program_owner: String,
     program_workout_structure: Object,
+    program_workout_days: Array<String>,
 }
 

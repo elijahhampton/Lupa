@@ -158,7 +158,6 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   useEffect(() => {
       const currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(async documentSnapshot => {
         let userData = await documentSnapshot.data()
-        console.log(userData)
         setItems(userData.scheduler_times);
     })
 

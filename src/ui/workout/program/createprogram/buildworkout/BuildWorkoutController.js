@@ -129,10 +129,6 @@ class BuildWorkoutController extends React.Component {
         }
     }
 
-    componentDidMount() {
-        console.log(Object.keys( this.props.lupa_data.Application_Workouts.applicationWorkouts))
-    }
-
     goToIndex = (index) => {
         this.setState({ currView: index })
     }
@@ -278,7 +274,6 @@ class BuildWorkoutController extends React.Component {
     }
 
     captureWorkout = (workoutObject, placementType) => {
-//alert('oeoe')
         const workoutDay = this.getCurrentDay()
 
         switch (this.state.currPlacementType) {
@@ -315,7 +310,6 @@ class BuildWorkoutController extends React.Component {
                                 }
 
                                 this.setState({ workoutDays: newState })
-                                console.log(this.state.workoutDays.Monday)
                             }
                         }
                         break;
@@ -432,7 +426,6 @@ class BuildWorkoutController extends React.Component {
 
     
                     let updatedWorkoutData = [], newWorkoutData = {}
-                    alert(workoutDay)
                     switch (workoutDay) {
                     
                         case 'Monday':
@@ -483,7 +476,6 @@ class BuildWorkoutController extends React.Component {
                             this.setState({ workoutDays: newWorkoutData })
                             break;
                         case 'Friday':
-                            alert('dsfsd')
                             updatedWorkoutData = this.state.workoutDays.Friday
                             updatedWorkoutData.push(updatedWorkout)
 
@@ -517,7 +509,6 @@ class BuildWorkoutController extends React.Component {
                             this.setState({ workoutDays: newWorkoutData })
                             break;
                         default:
-                            alert('umm')
                             updatedWorkoutData = this.state.workoutDays.Monday
 
                             updatedWorkoutData.push(updatedWorkout)
@@ -1250,7 +1241,7 @@ class BuildWorkoutController extends React.Component {
             </View>
               );
             case 1:
-                return  <AddSets saveProgramWorkoutData={this.handleSaveProgramData} goToIndex={this.goToIndex} programWorkoutDays={this.props.programData.program_workout_days} workoutDays={this.state.workoutDays} structureID={this.props.currProgramUUID} />
+                return  <AddSets saveProgramWorkoutData={this.handleSaveProgramData} goToIndex={this.goToIndex} programWorkoutDays={this.props.lupa_data.Users.currUserData.isTrainer === false ? this.props.program_workout_days : this.props.programData.program_workout_days} workoutDays={this.state.workoutDays} structureID={this.props.currProgramUUID} />
         }
     }
 

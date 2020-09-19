@@ -68,7 +68,6 @@ function NotificationsView(props) {
 
     const renderNotifications = () => {
         return userNotifications.map((notification, index, arr) => {
-            console.log(notification)
             switch(notification.type) {
                 case NOTIFICATION_TYPES.RECEIVED_PROGRAM:
                     return <ReceivedProgramNotification notificationData={notification} />

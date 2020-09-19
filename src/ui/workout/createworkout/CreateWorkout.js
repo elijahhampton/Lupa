@@ -26,7 +26,7 @@ import LOG from '../../../common/Logger';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import moment from 'moment';
 
-const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
+const CreatingWorkoutModal = ({ uuid, closeModal, isVisible, workoutDataProp }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     const [workoutData, setWorkoutData] = useState(getLupaWorkoutInformationStructure())
@@ -41,6 +41,7 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
         if (uuid == null || typeof(uuid) == 'undefined') {
             setComponentReady(false);
         }
+
     
         LOG('CreateWorkout.js', 'Running useEffect.');
         setComponentReady(true);
@@ -48,36 +49,23 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible }) => {
 
     const handlePublishWorkout =  async() => {
         setComponentReady(false);
-
-        const dateString = `${new Date().getMonth()}-${new Date().getDate()}-${new Date().getFullYear()}`;
+        //TODO: new Date().getMonth() + 1 because the month count starts at 0 - need to handle the case for December(12)
+        const dateString = `${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getFullYear()}`;
         
         //publish program
         await LUPA_CONTROLLER_INSTANCE.publishWorkout(uuid, dateString)
 
-        //update current user
-        //await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('workouts', uuid, 'add');
+        dispatch({ type: 'ADD_CURRENT_USER_WORKOUT', payload: workoutDataProp})
 
-        await LUPA_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(uuid).then(data => {
-            dispatch({ type: 'ADD_CURRENT_USER_WORKOUT', payload: data})
-            setWorkoutData(data);
-        })
         setComponentReady(true);
         setIsPublished(true);
     }
 
-    const handleShareProgramOnPress = () => {
-        closeModal()
-        navigation.navigate('Train')
-        navigation.navigate('ShareProgramModal', {
-            programData: programData
-        })
-    }
-
-    const handleStartLiveWorkout = () => {
+    const handleStartLiveWorkout = async () => {
         handleOnComplete();
+
         navigation.navigate('LiveWorkout', {
-            uuid: uuid,
-            workoutType: 'WORKOUT',
+            programData: workoutDataProp
         })
     }
 
@@ -203,13 +191,17 @@ class CreateWorkout extends React.Component {
         const DAY = await weekday[d.getDay()];
 
         await this.setState({ currWorkoutUUID: UUID }) 
-        let updatedProgramData = getLupaWorkoutInformationStructure(this.props.lupa_data.Users.currUserData.user_uuid, UUID, {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid)
-        await this.setState({ programData: updatedProgramData })
+        let updatedProgramData = getLupaWorkoutInformationStructure(this.props.lupa_data.Users.currUserData.user_uuid, UUID, {Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []}, [DAY], this.props.lupa_data.Users.currUserData.user_uuid, [DAY])
+
+        let newState = {
+            program_owner: this.props.lupa_data.Users.currUserData.user_uuid,
+            program_workout_days: [DAY]
+        }
+
+        await this.setState({ programData: Object.assign(newState, updatedProgramData, {})})
         await this.LUPA_CONTROLLER_INSTANCE.createNewWorkout(UUID);
- 
-        updatedProgramData = this.state.programData;
-        updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid
-        this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, updatedProgramData);
+        
+        this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, this.state.programData);
 
     }
 
@@ -236,15 +228,22 @@ class CreateWorkout extends React.Component {
     }
 
     saveProgramWorkoutData = async (workoutData) => {
+        const oldState = this.state.programData
+
+        const updatedState = {
+            ...this.state.programData,
+            program_workout_structure: workoutData
+        }
+    
         await this.LUPA_CONTROLLER_INSTANCE.updateWorkoutData(this.state.currWorkoutUUID, workoutData)
-        this.setState({ workoutComplete: true, creatingWorkout: true });
+        this.setState({programData: Object.assign(oldState, updatedState, {}), workoutComplete: true, creatingWorkout: true });
     }
 
     render() {
         return (
             <SafeAreaView style={styles.root}>
                 <BuildWorkoutTool program_workout_days={[DAY]} toolIsFirstScreen={true} saveProgramWorkoutData={this.saveProgramWorkoutData} navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
-                <CreatingWorkoutModal uuid={this.state.currWorkoutUUID} isVisible={this.state.creatingWorkout} closeModal={this.handleSuccessfulReset} />
+                <CreatingWorkoutModal workoutDataProp={this.state.programData} uuid={this.state.currWorkoutUUID} isVisible={this.state.creatingWorkout} closeModal={this.handleSuccessfulReset} />
             </SafeAreaView>
         )
     }

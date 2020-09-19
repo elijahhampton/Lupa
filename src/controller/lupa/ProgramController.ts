@@ -261,13 +261,15 @@ console.log('a')
 console.log('b')
         let userWorkoutData = {}
         const userUUID = await LUPA_AUTH.currentUser.uid
+        console.log(userUUID)
         await USERS_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
             userWorkoutData = documentSnapshot.data().workouts;
         })
 console.log('c')
         userWorkoutData[dateString] = [workoutData];
+        console.log(userWorkoutData)
 console.log('e')
-        await USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({
+        await USERS_COLLECTION.doc(userUUID).update({
             workouts: userWorkoutData
         })
         console.log('f')

@@ -107,7 +107,7 @@ export type LupaUserStructure = {
     hourly_payment_rate: Number,
     vlogs: Array<String>,
     scheduler_times: Object,
-    workouts: Array<String>,
+    workouts: Object,
     program_data: Array<Object>
     last_workout_completed: Object,
 };

@@ -23,6 +23,7 @@ var lupa_workout_information_structure : LupaWorkoutInformationStructure = {
         Saturday: [],
         Sunday: []
     },
+    program_workout_days: [],
 }
 
 export const getLupaWorkoutInformationStructure = (
@@ -36,13 +37,16 @@ export const getLupaWorkoutInformationStructure = (
     Friday: [],
     Saturday: [],
     Sunday: []
-}, workoutDays, workoutOwner) => {
+}, workoutDays, 
+workoutOwner,
+programWorkoutDays) => {
     lupa_workout_information_structure.workout_name =  workoutName;
     lupa_workout_information_structure.workout_structure_uuid =  workoutUUID;
     lupa_workout_information_structure.workout_data = workoutData;
     lupa_workout_information_structure.workout_days = workoutDays;
     lupa_workout_information_structure.program_owner = workoutOwner;
     lupa_workout_information_structure.program_workout_structure = workoutData;
+    lupa_workout_information_structure.program_workout_days = programWorkoutDays;
 
     return lupa_workout_information_structure;
 }

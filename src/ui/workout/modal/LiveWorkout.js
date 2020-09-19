@@ -22,6 +22,7 @@ import {
     Surface,
     TextInput,
     Portal,
+    Title,
     Avatar,
     Appbar,
     Dialog,
@@ -46,6 +47,8 @@ import { getLupaUserStructure } from '../../../controller/firebase/collection_st
 import CircularUserCard from '../../user/component/CircularUserCard';
 import LiveWorkoutFullScreenContentModal from './LiveWorkoutFullScreenContentModal';
 import RestTimer from './RestTimer';
+import { useNavigation } from '@react-navigation/native';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -53,6 +56,54 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+function WorkoutFinishedModal({ isVisible, closeModal }) {
+   const navigation = useNavigation();
+  
+    return (
+        <Modal visible={isVisible} animated={true} animationType="fade">
+            <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+             <View style={{flex: 2, justifyContent: 'space-evenly', backgroundColor: '#1089ff'}}>
+             <View style={{padding: 20,}}>
+              <Title style={{color: 'white', fontWeight: '800'}}>
+                  Congratulations
+                </Title>
+                <Paragraph style={{color: 'white', fontWeight: '600'}}>
+                  It looks like you've completed a workout for today.
+                </Paragraph>
+              </View>
+  
+              <Button onPress={() => navigation.navigate('LupaHome')} color="white" mode="outlined" style={{width: Dimensions.get('window').width - 20, alignSelf: 'center', borderColor: 'white'}}>
+            Exit Workout and Go Home
+          </Button>
+  
+          
+             </View>
+  
+             </View>
+              
+  
+              <View style={{flex: 3, alignItems: 'center', justifyContent: 'space-evenly'}}>
+           
+              <View style={{width: Dimensions.get('window').width - 50, alignSelf: 'center', borderRadius: 20, backgroundColor: 'rgb(245, 246, 247)', padding: 20, justifyContent: 'center', alignItems: 'flex-start'}}>
+          <View style={{marginVertical: 20}}>
+                          <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                              Your statistics have been updated in your dashboard!
+                          </Text>
+                        
+                      </View>
+  
+                      <Button onPress={() => navigation.navigate('Dashboard')}  color="#1089ff" theme={{roundness: 5}} mode="contained" style={{alignSelf: 'center', height: 45, alignItems: 'center', justifyContent: 'center', width: '90%'}}>
+                          View Statistics
+                      </Button>
+          </View>
+        
+              </View>
+  
+             
+            <SafeAreaView />
+        </Modal>
+    )
+  }
 
 class LiveWorkout extends React.Component {
     constructor(props) {
@@ -116,10 +167,15 @@ class LiveWorkout extends React.Component {
     async componentDidMount() {
         await this.setupLiveWorkout()
         await this.setupFire();
+        await this.setState({ ready: true })
     }
 
 
     setupFire = async () => {
+        if (this.state.ready === false) {
+            return;
+        }
+
         let privateChatUUID;
 
         //check for shared chat uuid between users
@@ -144,18 +200,33 @@ class LiveWorkout extends React.Component {
     setupLiveWorkout = async () => {
         if (this.props.route.params.programData) {
             await this.setState({ programData: this.props.route.params.programData });
+
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.route.params.programData.program_owner).then(data => {
+                this.setState({ programOwnerData: data })
+            });
         } else if (this.props.route.params.uuid) {
             try {
+                let programData = getLupaProgramInformationStructure();
                 switch(this.props.route.params.workoutType) {
                     case 'PROGRAM':
                         await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
+                            programData = data;
                             this.setState({ programData: data })
                         })
+
+                        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(programData.program_owner).then(data => {
+                            this.setState({ programOwnerData: data })
+                        });
                         break;
                     case 'WORKOUT':
                         await this.LUPA_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(this.props.route.params.uuid).then(data => {
+                            programData = data;
                             this.setState({ programData: data })
                         })
+
+                        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(programData.program_owner).then(data => {
+                            this.setState({ programOwnerData: data })
+                        });
                         break;
                     default:
                         this.setState({ ready: false, componentDidErr: true })
@@ -168,17 +239,11 @@ class LiveWorkout extends React.Component {
         }
 
 
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.state.programData.program_owner).then(data => {
-            this.setState({ programOwnerData: data })
-        })
-
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
             this.setState({ currUserFollowing: data })
         })
 
         await this.loadWorkoutDays()
-
-        await this.setState({ ready: true })
 
     }
 
@@ -255,6 +320,52 @@ class LiveWorkout extends React.Component {
 
     closeLiveWorkoutOptionsModal = () => {
         this.setState({ liveWorkoutOptionsVisible: false })
+    }
+
+    showWarningDialog = () => {
+        this.setState({ warningDialogShowing: true })
+    }
+
+    hideWarningDialog = () => {
+        this.setState({ warningDialogShowing: false })
+    }
+
+    handleCloseWarningDialog = () => {
+        this.hideWarningDialog();
+        this.props.navigation.pop();
+    }
+
+    renderFinishWorkoutWarningDialog = () => {
+        return (
+ <Portal>
+
+
+    <Dialog visible={this.state.warningDialogShowing} style={{padding: 20, backgroundColor: 'white', width: '80%'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <FeatherIcon size={18} style={{paddingHorizontal: 10}} name="alert-triangle" />
+
+            <Title>
+                Warning
+            </Title>
+           
+            </View>
+          
+            <Paragraph>
+                You are about to leave your workout before completing it.  Your workout data and progress will not be saved.
+            </Paragraph>
+            <Dialog.Actions>
+                <Button color="#1089ff" onPress={this.hideWarningDialog}>
+                    Resume
+                </Button>
+                <Button color="#e53935" onPress={this.handleCloseWarningDialog}>
+                    Exit
+                </Button>
+            </Dialog.Actions>
+</Dialog>
+</Portal>
+      
+
+        )
     }
 
     renderPreviewContent = (type, uri) => {
@@ -861,25 +972,6 @@ class LiveWorkout extends React.Component {
         this.hideDialog();
     }
 
-    renderFinishedDialog = () => {
-        return (
-            <Portal>
-        <Dialog visible={this.state.showFinishedDayDialog}>
-          <Dialog.Title>Congratulations!</Dialog.Title>
-          <Dialog.Content>
-            <Paragraph>
-                It looks like you finished the entire workout for today.
-            </Paragraph>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button color="#1089ff" onPress={this.handleCompleteWorkout}>Done</Button>
-            <Button color="#1089ff" onPress={this.hideDialog}>Create Vlog</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-        )
-    }
-
     renderDescriptionDialog = () => {
         return (
             <Portal>
@@ -1001,22 +1093,26 @@ class LiveWorkout extends React.Component {
         return (
             <>
                 <Appbar.Header style={{ backgroundColor: '#1089ff'}}>
-                    <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} onPress={() => this.props.navigation.pop()} />} />
+                    <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} onPress={this.showWarningDialog} />} />
 
                     <Appbar.Content title={this.renderLiveWorkoutTitle()} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
 
                     <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="maximize" size={20} onPress={() => this.setState({ showFullScreenContent: true })} />} />
                     {this.props.route.params.workoutType === 'PROGRAM' ? <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="list" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />} /> : null }
                 </Appbar.Header>
+                
                 {this.renderComponentDisplay()}
+                {this.renderFinishWorkoutWarningDialog()}
                 {typeof(this.props.route.params.programData) == 'undefined' ? null : this.renderLiveWorkoutOptions()}
                 {this.renderInteractionBottomSheet()}
                 {this.renderFeedbackDialog()}
-                {this.renderFinishedDialog()}
                 {typeof(this.props.route.params.programData) == 'undefined' ? null : this.renderDescriptionDialog()}
                 {this.renderRestTimerRBSheetPicker()}
+           
                 <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
+                <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
                 <LiveWorkoutFullScreenContentModal isVisible={this.state.showFullScreenContent} closeModal={() => this.setState({ showFullScreenContent: false })} contentType={'VIDEO' /*this.state.contentTypeDisplayed*/} contentURI={this.state.currentDisplayedMediaURI} />
+            
             </>
         )
     }

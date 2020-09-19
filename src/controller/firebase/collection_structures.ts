@@ -154,7 +154,7 @@ var lupa_user : LupaUserStructure = {
     hourly_payment_rate: 15,
     vlogs: [],
     scheduler_times: {},
-    workouts: [],
+    workouts: {},
     program_data: [],
     last_workout_completed: {
         dateCompleted: "",

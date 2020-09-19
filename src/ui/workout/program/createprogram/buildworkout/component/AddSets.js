@@ -51,8 +51,8 @@ function AddSets({ structureID, workoutDays, programWorkoutDays, goToIndex, save
         return programWorkoutDays[currIndex]
     }
 
-    const saveWorkoutData = () => {
-        saveProgramWorkoutData(workoutDays);
+    const saveWorkoutData = async () => {
+        await saveProgramWorkoutData(workoutDays);
     }
 
     const renderWorkoutData = () => {

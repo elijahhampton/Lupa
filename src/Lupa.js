@@ -10,6 +10,9 @@ import {
   Text,
   StyleSheet,
   AsyncStorage,
+  Dimensions,
+  Modal,
+  SafeAreaView,
   View,
   StatusBar,
 
@@ -27,6 +30,8 @@ import Geolocation from '@react-native-community/geolocation';
 import LOG from "./common/Logger";
 import CreateNewPost from "./ui/user/profile/modal/CreateNewPost";
 import PickInterest from "./ui/user/modal/WelcomeModal/PickInterest";
+import { Paragraph, Title, Button,} from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 
 Geolocation.setRNConfiguration({
   authorizationLevel: 'whenInUse',

@@ -195,7 +195,7 @@ class Featured extends React.Component {
                     />
 
                 </Appbar>
-                <ScrollView  refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
+                <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
                     {
                         <View style={{ backgroundColor: '#EEEEEE' }}>
                             <View style={{ backgroundColor: '#EEEEEE' }}>
@@ -205,7 +205,7 @@ class Featured extends React.Component {
                             </View>
                         </View>
                     }
-                </ScrollView>
+                </View>
             </View>
         );
     }

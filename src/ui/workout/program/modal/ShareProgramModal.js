@@ -62,7 +62,6 @@ function ShareProgramModal({ navigation, route }) {
         }
 
         setSelectedUsers(updatedList)
-        console.log(updatedList)
     }
 
     const waitListIncludesUser = (userObject) => {

@@ -34,7 +34,9 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+
 class WorkoutLog extends React.Component {
+    WORKOUT_LOG_OBSERVER = undefined;
     constructor(props) {
         super(props);
 
@@ -49,8 +51,41 @@ class WorkoutLog extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.setMarkedDate()
+    async componentDidMount() {
+       this.WORKOUT_LOG_OBSERVER = await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(async querySnapshot => {
+            const data = querySnapshot.data();
+            const workouts = data.workouts;
+            
+            if (typeof(data) == 'undefined') {
+                await this.setState({ userWorkouts: {} });
+            } else {
+                await this.setState({ userWorkouts: workouts })
+            }
+      
+            await this.setMarkedDate(workouts)
+        });
+    }
+
+
+    componentWillUnmount() {
+        return () => this.WORKOUT_LOG_OBSERVER();
+    }
+
+    setMarkedDate = async (userWorkouts) => {
+        if (Object.keys(userWorkouts).length === 0) {
+            this.setState({ markedDates: {} })
+            return;
+        }
+
+        let updatedMarkedDates = {}
+
+        for (key in userWorkouts) {
+            let keySplit = key.split("-");
+            let updatedKey = this.generateMarkedDateString(keySplit[2], keySplit[0], keySplit[1])
+            updatedMarkedDates[updatedKey] = { marked: true, selected: true, dotColor: 'blue' }
+        }
+
+        await this.setState({ markedDates: updatedMarkedDates})
     }
 
 
@@ -147,18 +182,18 @@ class WorkoutLog extends React.Component {
         const dateString = day.month + "-" + day.day + "-" + day.year;
         const checkedMarkedDateString = this.generateMarkedDateString(day.year, day.month, day.day)
 
-        const userWorkouts = this.props.lupa_data.Users.currUserData.workouts;
+        const userWorkouts = this.state.userWorkouts
 
         if (Object.keys(this.state.markedDates).includes(checkedMarkedDateString)) {
             await this.setState({
                 currentWorkout: userWorkouts[dateString][0],
-                selectedDate: new Date(day),
+                selectedDate: new Date(),
                 currentDay: dateString,
                 workoutLoaded: true,
             });
         } else {
             await this.setState({
-                selectedDate: new Date(day),
+                selectedDate: new Date(),
                 currentWorkout: getLupaWorkoutInformationStructure(),
                 currentDay: dateString,
                 workoutLoaded: false,
@@ -196,21 +231,6 @@ class WorkoutLog extends React.Component {
         return dateString;
     }
 
-    setMarkedDate = async () => {
-        //year month day
-
-        ///monday day year
-        let updatedMarkedDates = {}
-        let userWorkouts = this.props.lupa_data.Users.currUserData.workouts;
-        for (key in userWorkouts) {
-            let keySplit = key.split("-");
-            let updatedKey = this.generateMarkedDateString(keySplit[2], keySplit[0], keySplit[1])
-            updatedMarkedDates[updatedKey] = { marked: true }
-        }
-
-        await this.setState({ markedDates: updatedMarkedDates})
-    }
-
 render() {
     return (
 <View style={{ height: Dimensions.get('window').height}}>
@@ -233,9 +253,9 @@ render() {
   // Initially selected day
   selected={this.state.selectedDate}
   // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-  minDate={'2015-05-30'}
+  minDate={new Date()}
   // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-  maxDate={'2090-05-30'}
+  maxDate={'2025-05-30'}
 
   // Max amount of months allowed to scroll to the past. Default = 50
   pastScrollRange={50}
@@ -262,7 +282,7 @@ render() {
   // If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the refreshing prop correctly.
   onRefresh={() => console.log('refreshing...')}
   // Set this true while waiting for new data from a refresh
-  markingType="period"
+  markingType="multi-period"
   // Add a custom RefreshControl component, used to provide pull-to-refresh functionality for the ScrollView.
   refreshControl={null}
   // Agenda theme
