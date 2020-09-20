@@ -152,6 +152,13 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderBio = () => {
+        if (userData.bio.length == 0) {
+            return (
+                <Caption style={styles.bioText}>
+                {userData.display_name} has not setup a bio.
+            </Caption>
+            )
+        }
         return (
             <Text style={styles.bioText}>
                 {userData.bio}
@@ -397,7 +404,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             <View style={styles.userInformationContainer}>
                 <View style={styles.infoContainer}>
                     {renderDisplayName()}
-                    {renderBio()}
                     <View style={{paddingVertical: 10}}>
                     {renderLocation()}
                     {renderCertification()}
@@ -408,6 +414,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                     {renderAvatar()}
                     {renderFollowers()}
                 </View>
+            </View>
+            <View style={{padding: 10, }}>
+                <Text style={{fontFamily: 'Avenir-Medium', fontSize: 13}}>
+                    Learn more
+                </Text>
+                {renderBio()}
             </View>
             {renderInteractions()}
             </View>

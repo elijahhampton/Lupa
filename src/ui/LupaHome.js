@@ -39,7 +39,7 @@ export class LupaHome extends Component {
     this.headerY = Animated.multiply(Animated.diffClamp(this.scroll, 0, NAVBAR_HEIGHT), -1);
   }
 
-  handleOnRefresh() {
+  handleOnRefresh = () => {
     this.setState({ refreshing: true })
     this.setState({ refreshing: false })
   }
@@ -105,13 +105,15 @@ export class LupaHome extends Component {
           scrollEventThrottle={1}
           bounces={false}
           showsVerticalScrollIndicator={false}
+          
           style={{zIndex: 0, height: "100%", elevation: -1}}
-          contentContainerStyle={{paddingTop: 50, backgroundColor: COLOR}}
+          contentContainerStyle={{paddingTop: 50, backgroundColor: COLOR, flex: 1}}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: this.scroll}}}],
             {useNativeDriver: true},
           )}
           overScrollMode="never">
+          
           <Tabs 
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
           style={{backgroundColor: '#FFFFFF'}}
@@ -125,7 +127,7 @@ export class LupaHome extends Component {
               backgroundColor: COLOR,
               justifyContent: 'flex-start',
             }, Platform.OS === "ios" ? {paddingTop: 30} : null]}>
-            <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: '#EEEEEE', backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
+            <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: '#FFFFFF', backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
        
           </Animated.View>
           }>
@@ -137,7 +139,7 @@ export class LupaHome extends Component {
           </Tabs>
         </Animated.ScrollView>
 
-       {this.props.lupa_data.Users.currUserData.isTrainer === false ? <FAB onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16}} /> : null} 
+      { this.state.currTab == 0 ? <FAB  onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" /> : null }
       </View>
     );
   }

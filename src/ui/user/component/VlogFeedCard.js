@@ -60,7 +60,7 @@ function VlogFeedCard({ vlogData }) {
 
     return (
         <DoubleClick singleTap={() => setShouldPlay(!shouldPlay)} doubleTap={() => setFullScreenContentVisible(true)}>
-            <Card style={{ backgroundColor: '#EEEEEE', marginVertical: 0, alignSelf: 'center', width: Dimensions.get('window').width - 0, borderRadius: 0, elevation: 0 }}>
+            <Card style={{ backgroundColor: '#FFFFFF', marginVertical: 0, alignSelf: 'center', width: Dimensions.get('window').width - 0, borderRadius: 0, elevation: 0 }}>
                 <Card.Content>
                     <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -77,15 +77,15 @@ function VlogFeedCard({ vlogData }) {
                         <Menu
                             visible={optionsMenuVisible}
                             onDismiss={() => setOptionsMenuVisible(false)}
-                            anchor={<Feather1s onPress={() => setOptionsMenuVisible(true)} name="more-vertical" size={20} color="#212121" />}>
+                            anchor={<Feather1s onPress={() => setOptionsMenuVisible(true)} name="more-vertical" size={20} color="#212121" style={{ padding: 8}} />}>
                             <Menu.Item title="Delete Vlog" onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
                         </Menu>
                     </View>
                 </Card.Content>
                 {renderVlogMedia()}
-                <Card.Content style={{ paddingVertical: 10, justifyContent: 'center', backgroundColor: '#EEEEEE', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+                <Card.Content style={{ paddingVertical: 10, justifyContent: 'center', backgroundColor: '#FFFFFF', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                    <View style={{width: '100%' }}>
+                        <Text style={{ fontSize: 13, fontFamily: 'Avenir-Medium',}}>
                             {vlogData.vlog_title}
                         </Text>
                     </View>

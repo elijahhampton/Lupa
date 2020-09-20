@@ -50,8 +50,18 @@ const CreatingWorkoutModal = ({ uuid, closeModal, isVisible, workoutDataProp }) 
     const handlePublishWorkout =  async() => {
         setComponentReady(false);
         //TODO: new Date().getMonth() + 1 because the month count starts at 0 - need to handle the case for December(12)
-        const dateString = `${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getFullYear()}`;
-        
+        let year, month, day;
+        year = new Date().getFullYear();
+        month = new Date().getMonth() + 1;
+        if (month.toString().length == 1) {
+            month = "0" + month.toString();
+        }
+        day = new Date().getDate()
+        if (day.toString().length == 1) {
+            day = "0" + day.toString();
+        }
+
+        const dateString = `${year}-${month}-${day}`;
         //publish program
         await LUPA_CONTROLLER_INSTANCE.publishWorkout(uuid, dateString)
 

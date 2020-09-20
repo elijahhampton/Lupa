@@ -148,8 +148,8 @@ class Featured extends React.Component {
     renderVlogs = () => {
         if (this.state.feedVlogs.length === 0) {
             return (
-                <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#EEEEEE' }}>
-                    <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: '#EEEEEE' }} >
+                <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+                    <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: '#FFFFFF' }} >
                         There are not any vlogs in your area.  Check back later.
                     </Caption>
                 </View>
@@ -193,13 +193,12 @@ class Featured extends React.Component {
                         onFocus={() => this.setState({ searchBarFocused: true })}
                         onBlur={() => this.setState({ searchBarFocused: false })}
                     />
-
                 </Appbar>
-                <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
+                <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                     {
-                        <View style={{ backgroundColor: '#EEEEEE' }}>
-                            <View style={{ backgroundColor: '#EEEEEE' }}>
-                                <View style={{ backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ backgroundColor: '#FFFFFF' }}>
+                            <View style={{ backgroundColor: '#FFFFFF' }}>
+                                <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
                                     {this.renderVlogs()}
                                 </View>
                             </View>
@@ -214,17 +213,17 @@ class Featured extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#EEEEEE",
+        backgroundColor: "#FFFFFF",
     },
     mainGraphicText: {
 
-        color: '#EEEEEE',
+        color: '#FFFFFF',
         fontSize: 25,
         alignSelf: 'flex-start'
     },
     subGraphicText: {
 
-        color: '#EEEEEE',
+        color: '#FFFFFF',
         alignSelf: 'flex-start',
         textAlign: 'left',
     },
@@ -260,7 +259,7 @@ const styles = StyleSheet.create({
         fontSize: RFValue(15), fontFamily: 'Avenir-Heavy', fontSize: 15,
     },
     searchContainerStyle: {
-        backgroundColor: "#EEEEEE", width: Dimensions.get('window').width, alignSelf: 'center'
+        backgroundColor: "#FFFFFF", width: Dimensions.get('window').width, alignSelf: 'center'
     },
     inputContainerStyle: {
         backgroundColor: 'white',
@@ -275,8 +274,9 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#EEEEEE',
+        backgroundColor: '#FFFFFF',
         elevation: 0,
+        flexDirection: 'column',
         marginVertical: 20
     }
 });

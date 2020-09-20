@@ -3,6 +3,7 @@ import React, { useState, useEffect} from 'react';
 import {
     View,
     Text,
+    Dimensions,
     StyleSheet,
     ScrollView,
     SafeAreaView,
@@ -10,7 +11,8 @@ import {
 } from 'react-native';
 
 import {
-    Surface, Appbar, Caption,
+    Surface, Appbar, Caption, Divider,
+    Button
 } from 'react-native-paper';
 
 import {
@@ -27,6 +29,9 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../controller/lupa/LupaController';
 import LOG from '../../../common/Logger';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+import VlogFeedCard from '../component/VlogFeedCard';
+import { useSelector } from 'react-redux';
 
 function UserProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
@@ -38,6 +43,10 @@ function UserProfile({ userData, isCurrentUser }) {
     const [trainingInterestTextVisible, showTrailingInterestText] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [ready, setReady] = useState(false);
+
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
 
     useEffect(() => {
         async function loadProfileData() {
@@ -151,9 +160,9 @@ function UserProfile({ userData, isCurrentUser }) {
     const renderBio = () => {
         if (userData.bio.length == 0) {
             return (
-                <Text style={styles.bioText}>
+                <Caption style={styles.bioText}>
                 {userData.display_name} has not setup a bio.
-            </Text>
+            </Caption>
             )
         }
         return (
@@ -199,6 +208,77 @@ function UserProfile({ userData, isCurrentUser }) {
         }
     }
 
+    const renderVlogs = () => {
+        return userVlogs.map((vlog, index, arr) => {
+             if (typeof(vlog) == 'undefined') {
+                 return;
+             }
+
+            return <VlogFeedCard vlogData={vlog} />
+        })
+    }
+
+    const renderInteractions = () => {
+        if (isCurrentUser) { return; }
+
+        return (
+        <View style={{marginVertical: 10, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <Button onPress={() => navigation.push('PrivateChat', {
+                    currUserUUID: currUserData.user_uuid,
+                    otherUserUUID: userData.user_uuid
+                })} 
+                theme={{roundness: 5}} 
+                color="#23374d" 
+                icon={() => <FeatherIcon name="mail" />} 
+                uppercase={false} 
+                mode="contained" 
+                style={{ elevation: 0}}>
+                    <Text>
+                        Send a message
+                    </Text>
+                </Button>
+
+               {renderFollowButton()}
+            </View>
+        )
+    }
+
+    const renderFollowButton = () => {
+        if (currUserData.following.includes(userData.user_uuid)) {
+            return (
+            <Button 
+            onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)} 
+            icon={() => <FeatherIcon name="user" />} 
+            theme={{roundness: 5}} 
+            uppercase={false} 
+            color="#23374d" 
+            mode="contained" 
+            style={{elevation: 0}}>
+                    <Text style={{ color: 'white' }}>
+                        Unfollow
+                    </Text>
+                </Button>
+            )
+        } else {
+            return (
+                <Button 
+                onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)} 
+                icon={() => <FeatherIcon name="user" />} 
+                theme={{roundness: 5}} 
+                uppercase={false} 
+                color="#E5E5E5" 
+                mode="contained" 
+                style={{elevation: 0}}>
+                    <Text style={{}}>
+                        Follow
+                    </Text>
+                </Button>
+            )
+        }
+    }
+
+
+
     /**
      * Navigates to the follower view.
      */
@@ -213,10 +293,11 @@ function UserProfile({ userData, isCurrentUser }) {
                 <Appbar.Content title={userData.email} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView>
+                <View>
+
             <View style={styles.userInformationContainer}>
                 <View style={styles.infoContainer}>
                     {renderDisplayName()}
-                    {renderBio()}
                     {renderInterest()}
                 </View>
 
@@ -226,13 +307,22 @@ function UserProfile({ userData, isCurrentUser }) {
                 </View>
             </View>
 
+            <View style={{padding: 10, }}>
+                <Text style={{fontFamily: 'Avenir-Medium', fontSize: 13}}>
+                    Learn more
+                </Text>
+                {renderBio()}
+            </View>
+            {renderInteractions()}
+            </View>
+            <Divider />
             <Tabs page={currPage} tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF' locked={true} >
               <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
-                    <View style={{flex: 1}}>
-                        
+                    <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+                    {renderVlogs()}
                     </View>
               </Tab>
-            </Tabs>
+    </Tabs> 
             </ScrollView>
         </SafeAreaView>
     )
@@ -241,7 +331,7 @@ function UserProfile({ userData, isCurrentUser }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'rgb(248, 248, 248)'
+        backgroundColor: 'white'
     },
     userInformationContainer: {
         flexDirection: 'row',
@@ -277,7 +367,7 @@ const styles = StyleSheet.create({
     },
     displayNameText: {
         paddingVertical: 5,
-        fontSize: 15,
+        fontSize: 20,
         fontFamily: 'Avenir-Black'
     },
     inactiveTabHeading: {

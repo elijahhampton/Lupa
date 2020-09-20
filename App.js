@@ -38,6 +38,7 @@ import { localNotificationService } from './src/controller/firebase/service/Loca
 import { fcmService } from './src/controller/firebase/service/FCMService';
 import Search from './src/ui/search/Search';
 import MyData from './src/ui/user/component/MyData';
+import PickInterest from './src/ui/user/modal/WelcomeModal/PickInterest';
 
 const App = () => {
   return (
@@ -205,7 +206,8 @@ function AppNavigator() {
       <StackApp.Screen name="Search" component={Search} />
       <StackApp.Screen name="MyData" component={MyData} />
       <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />
-    </StackApp.Navigator>
+      <StackApp.Screen name="PickInterest" component={PickInterest} />
+   </StackApp.Navigator>
   )
 }
 export default App;

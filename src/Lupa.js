@@ -64,18 +64,18 @@ class Lupa extends React.Component {
     .then((result) => {
       switch (result) {
         case RESULTS.UNAVAILABLE:
-          alert('Location Services Unavailable')
+         // alert('Location Services Unavailable')
           this.setState({ locationPermissionStatus: 'unavailable' })
           break;
         case RESULTS.DENIED:
-          alert('Location Services Denied')
+        //  alert('Location Services Denied')
           this.setState({ locationPermissionStatus: 'denied' })
           break;
         case RESULTS.GRANTED:
-          this.setState({ locationPermissionStatus: 'granted' })
+        //  this.setState({ locationPermissionStatus: 'granted' })
           break;
         case RESULTS.BLOCKED:
-          alert('Location Services Blocked')
+       //   alert('Location Services Blocked')
           this.setState({ locationPermissionStatus: 'blocked' })
           break;
         default:

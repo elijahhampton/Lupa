@@ -57,10 +57,6 @@
 		7875A55724548CF100C15E04 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
 		78C4477B24B1150E00FB21BE /* libYoga.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libYoga.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		78D64B7F244544B3007C6E72 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		78DC5823245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Black.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Black.ttf"; sourceTree = "<group>"; };
-		78DC5825245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Regular.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Regular.ttf"; sourceTree = "<group>"; };
-		78DC5827245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Medium.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Medium.ttf"; sourceTree = "<group>"; };
-		78DC5829245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ARSMaquettePro-Bold.ttf"; path = "../src/ui/common/Font/ars-marquette-font/ARSMaquettePro-Bold.ttf"; sourceTree = "<group>"; };
 		78E385D324829D1A00CA4937 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7A8B5D53827C44BEAE239AB1 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		810E237337384BB6A2CFD56A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -156,10 +152,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				78DC5829245A41E800BBB6B9 /* ARSMaquettePro-Bold.ttf */,
-				78DC5827245A41E000BBB6B9 /* ARSMaquettePro-Medium.ttf */,
-				78DC5825245A41DA00BBB6B9 /* ARSMaquettePro-Regular.ttf */,
-				78DC5823245A3F7F00BBB6B9 /* ARSMaquettePro-Black.ttf */,
 				7875A55724548CF100C15E04 /* Fonts */,
 				782E4B242447D6040005F03A /* TPSStripe */,
 				13B07FAE1A68108700A75B9A /* Lupa */,
@@ -338,7 +330,7 @@
 		};
 		2E11852915BD6DF7E5524464 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
@@ -383,7 +375,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Stripe.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates-Cpp.bundle",
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Lupa/Pods-Lupa-resources.sh\"\n";
 			showEnvVarsInLog = 0;
@@ -464,7 +456,7 @@
 				CODE_SIGN_ENTITLEMENTS = Lupa/lupa.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 57;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				HEADER_SEARCH_PATHS = (
@@ -615,7 +607,7 @@
 				CODE_SIGN_ENTITLEMENTS = Lupa/lupa.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 57;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

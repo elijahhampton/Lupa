@@ -7,6 +7,7 @@ import {
     StyleSheet,
     ScrollView,
 } from 'react-native';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 import { Checkbox } from 'react-native-paper';
 import { Constants } from 'react-native-unimodules';
@@ -27,11 +28,19 @@ const interestList = [
     'Injury Prevention',
 ]
 
-function PickInterest({ setNextDisabled }) {
+function PickInterest({ setNextDisabled, navigation, route }) {
     const [pickedInterest, setPickedInterest] = useState([])
     const [stateUpdate, forceStateUpdate] = useState(false)
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    const renderExitButton = () => {    
+        if (route.params.navFrom) {
+            if (route.params.navFrom == 'Drawer') {
+                return <Feather1s name="x" style={{position: 'absolute', top: 0, right: 0, margin: 20}} />
+            }
+        }
+    }
 
     const handleOnPickInterest = (interest) => {
         if (pickedInterest.includes(interest)) {
@@ -89,7 +98,7 @@ function PickInterest({ setNextDisabled }) {
                     })
                 }
             </View>
-            
+            {renderExitButton()}
         </SafeAreaView>
     )
 }

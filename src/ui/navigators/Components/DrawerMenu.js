@@ -59,6 +59,12 @@ function DrawerMenu(props) {
     })
   }
 
+  const navigateToPickInterest = () => {
+    navigation.push('PickInterest', {
+      navFrom: 'Drawer'
+    });
+  }
+
   /**
    * Logs the user out.
    */
@@ -87,6 +93,25 @@ function DrawerMenu(props) {
           <Avatar.Image source={{uri: currUserData.photo_url}} size={40} />
         </View>
       </TouchableOpacity>
+      <Divider />
+
+<TouchableOpacity onPress={navigateToProfile}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="file-text" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           Profile
+          </Text>
+        </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={navigateToPickInterest}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="file-text" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           Interest
+          </Text>
+        </View>
+        </TouchableOpacity>
 
         <Divider />
 
@@ -120,7 +145,7 @@ function DrawerMenu(props) {
 
         <Divider />
         <Caption style={{padding: 10}}>
-          Version 0.7 (56)
+          Version 0.7 (57)
         </Caption>
 
 
