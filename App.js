@@ -206,7 +206,7 @@ function AppNavigator() {
       <StackApp.Screen name="Search" component={Search} />
       <StackApp.Screen name="MyData" component={MyData} />
       <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />
-      <StackApp.Screen name="PickInterest" component={PickInterest} />
+      <StackApp.Screen name="PickInterest" component={PickInterest} initialParams={{ isOnboarding: false }} />
    </StackApp.Navigator>
   )
 }

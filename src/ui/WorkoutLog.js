@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Dimensions,
     ScrollView,
-     SectionList, useWindowDimensions
+    SectionList, useWindowDimensions
 } from 'react-native'
 
 import {
@@ -15,8 +15,8 @@ import {
     Button,
     Caption,
     IconButton,
-     Divider,
-     Surface
+    Divider,
+    Surface
 } from 'react-native-paper'
 
 import { useSelector } from 'react-redux'
@@ -27,7 +27,7 @@ import { getLupaProgramInformationStructure } from '../model/data_structures/pro
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import LUPA_DB from '../controller/firebase/firebase'
-import {Agenda, Calendar, CalendarList } from 'react-native-calendars'
+import { Agenda, Calendar, CalendarList } from 'react-native-calendars'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getLupaWorkoutInformationStructure } from '../model/data_structures/workout/workout_collection_structures'
 import { connect } from 'react-redux'
@@ -59,19 +59,19 @@ class WorkoutLog extends React.Component {
     }
 
     async componentDidMount() {
-       this.WORKOUT_LOG_OBSERVER = await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(async querySnapshot => {
+        this.WORKOUT_LOG_OBSERVER = await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(async querySnapshot => {
             const data = querySnapshot.data();
             const workouts = data.workouts;
-            
-            if (typeof(data) == 'undefined') {
+
+            if (typeof (data) == 'undefined') {
                 await this.setState({ userWorkouts: {}, items: {} });
             } else {
                 await this.setState({ userWorkouts: workouts, items: workouts })
             }
-      
+
             await this.setMarkedDate(workouts)
-          //  const dateString = day.month + "-" + day.day + "-" + day.year;
-            let day  = {
+            //  const dateString = day.month + "-" + day.day + "-" + day.year;
+            let day = {
                 month: new Date().getMonth() + 1,
                 day: new Date().getDate(),
                 year: new Date().getFullYear(),
@@ -100,19 +100,19 @@ class WorkoutLog extends React.Component {
             updatedMarkedDates[updatedKey] = { marked: true, selected: true, dotColor: 'blue' }
         }
 
-        await this.setState({ markedDates: updatedMarkedDates})
+        await this.setState({ markedDates: updatedMarkedDates })
     }
 
 
     handleLaunchWorkout = async () => {
         const currentWorkout = this.state.currentWorkout;
 
-        if (typeof(currentWorkout) == 'undefined') {
+        if (typeof (currentWorkout) == 'undefined') {
             return;
         }
 
         this.props.navigation.push('LiveWorkout', {
-                programData: currentWorkout
+            programData: currentWorkout
         });
     }
 
@@ -125,7 +125,7 @@ class WorkoutLog extends React.Component {
                 closeOnDragDown={true}
                 customStyles={{
                     wrapper: {
-                        
+
                     },
                     container: {
                         borderTopLeftRadius: 0,
@@ -135,10 +135,10 @@ class WorkoutLog extends React.Component {
                         backgroundColor: 'rgb(220, 220, 220)',
                     }
                 }}
-                >
-                    <View style={{flex: 1}}>
-                   
-                    </View>
+            >
+                <View style={{ flex: 1 }}>
+
+                </View>
             </RBSheet>
         )
     }
@@ -151,244 +151,109 @@ class WorkoutLog extends React.Component {
         this.calendarRBSheet.current.close();
     }
 
-    renderWorkoutInformation = (item={}) => {
+    renderWorkoutInformation = (item = {}, day) => {
         //we dont actually use the items object.. it is just a check to see if there
         //are actually any workouts for this day or any day really
         if (Object.keys(item).length === 0) {
-            alert('hi')
             return (
-                <View style={{flex: 1, backgroundColor: 'blue'}}>
-                    <Text>
-                        Hi
-                    </Text>
-                </View>
+                <View style={{ flex: 1, backgroundColor: 'white' }} />
+
             )
         }
 
         let weekday = new Array(7);
-weekday[0] = "Sunday";
-weekday[1] = "Monday";
-weekday[2] = "Tuesday";
-weekday[3] = "Wednesday";
-weekday[4] = "Thursday";
-weekday[5] = "Friday";
-weekday[6] = "Saturday";
+        weekday[0] = "Sunday";
+        weekday[1] = "Monday";
+        weekday[2] = "Tuesday";
+        weekday[3] = "Wednesday";
+        weekday[4] = "Thursday";
+        weekday[5] = "Friday";
+        weekday[6] = "Saturday";
 
-const DAY = weekday[new Date().getDay()];
+        let DAY = 0
+        if (new Date(day.dateString).getDay() === 6) {
+            DAY = weekday[0];
+        } else {
+            DAY = weekday[new Date(day.dateString).getDay() + 1]
+        }
+
 
         return (
-                <ScrollView contentContainerStyle={{flex: 1, padding: 10}}>
-                <View style={{height: 40, width: Dimensions.get('window').width, marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 18, alignSelf: 'center'}}>
-            {this.renderCommonDateTitle(this.state.currentDay)}
-        </Text>
-        <Button mode="text" color="#1089ff" onPress={this.handleLaunchWorkout}>
-            Launch
+            <ScrollView contentContainerStyle={{ flex: 1, padding: 10 }}>
+                <View style={{ height: 40, width: Dimensions.get('window').width, marginVertical: 10, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'Avenir-Heavy', fontSize: 18, alignSelf: 'center' }}>
+                        {this.renderCommonDateTitle(this.state.currentDay)}
+                    </Text>
+                    <Button mode="text" color="#1089ff" onPress={this.handleLaunchWorkout}>
+                        Launch
         </Button>
-            </View>
-                <Text style={{fontFamily: 'Avenir-Medium', fontWeight: '700', fontSize: 15}}>
-                   Workout Information
+                </View>
+                <Text style={{ fontFamily: 'Avenir-Medium', fontWeight: '700', fontSize: 15 }}>
+                    Workout Information
                </Text>
 
-               <View style={{marginVertical: 10, padding: 10, borderRadius: 10, backgroundColor: 'rgb(245, 246, 247)', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-               <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontFamily: 'Avenir-Roman'}}>
-                        Monday
-                    </Text>
-                    <Surface style={{width: 30, height: 30, borderRadius: 35, alignItems: 'center', justifyContent: 'center'}}>
-                    <FeatherIcon name="activity" size={15} color="#1089ff" />
-                    </Surface>
-                  
+                <View style={{ marginVertical: 10, padding: 10, borderRadius: 10, backgroundColor: 'rgb(245, 246, 247)', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+                    <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={{ fontFamily: 'Avenir-Roman' }}>
+                            {DAY}
+                        </Text>
+
+
                     </View>
                     {
-                        this.state.currentWorkout.program_workout_structure.Monday.length === 0 ? 
-                        <Caption> No workouts were added for this day </Caption>
-                        :
-                        this.state.currentWorkout.program_workout_structure.Monday.map((exercise, index, arr) => {
-                            return this.renderBasicExerciseInformation(exercise);
-                        })
-                      
+                        this.state.currentWorkout.program_workout_structure[DAY].length === 0 ?
+                            <Caption> No workouts were added for this day </Caption>
+                            :
+                            this.state.currentWorkout.program_workout_structure[DAY].map((exercise, index, arr) => {
+                                return this.renderBasicExerciseInformation(exercise);
+                            })
+
                     }
-                 
-               </View>
 
-               <View style={{marginVertical: 10, padding: 10, borderRadius: 10, backgroundColor: 'rgb(245, 246, 247)', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-               <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontFamily: 'Avenir-Roman'}}>
-                        Tuesday
-                    </Text>
-                    <Surface style={{width: 30, height: 30, borderRadius: 35, alignItems: 'center', justifyContent: 'center'}}>
-                    <FeatherIcon name="activity" size={15} color="#1089ff" />
-                    </Surface>
-                  
-                    </View>
-                    {
-                        this.state.currentWorkout.program_workout_structure.Tuesday.length === 0 ? 
-                        <Caption> No workouts were added for this day </Caption>
-                        :
-                        this.state.currentWorkout.program_workout_structure.Tuesday.map((exercise, index, arr) => {
-                            return this.renderBasicExerciseInformation(exercise);
-                        })
-                      
-                    }
-                 
-               </View>
-
-               <View style={{marginVertical: 10, padding: 10, borderRadius: 10, backgroundColor: 'rgb(245, 246, 247)', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-               <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontFamily: 'Avenir-Roman'}}>
-                        Wednesday
-                    </Text>
-                    <Surface style={{width: 30, height: 30, borderRadius: 35, alignItems: 'center', justifyContent: 'center'}}>
-                    <FeatherIcon name="activity" size={15} color="#1089ff" />
-                    </Surface>
-                  
-                    </View>
-                    {
-                        this.state.currentWorkout.program_workout_structure.Wednesday.length === 0 ? 
-                        <Caption> No workouts were added for this day </Caption>
-                        :
-                        this.state.currentWorkout.program_workout_structure.Wednesday.map((exercise, index, arr) => {
-                            return this.renderBasicExerciseInformation(exercise);
-                        })
-                      
-                    }
-                 
-               </View>
-
-               <View style={{marginVertical: 10, padding: 10, borderRadius: 10, backgroundColor: 'rgb(245, 246, 247)', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-               <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontFamily: 'Avenir-Roman'}}>
-                        Thursday
-                    </Text>
-                    <Surface style={{width: 30, height: 30, borderRadius: 35, alignItems: 'center', justifyContent: 'center'}}>
-                    <FeatherIcon name="activity" size={15} color="#1089ff" />
-                    </Surface>
-                  
-                    </View>
-                    {
-                        this.state.currentWorkout.program_workout_structure.Thursday.length === 0 ? 
-                        <Caption> No workouts were added for this day </Caption>
-                        :
-                        this.state.currentWorkout.program_workout_structure.Thursday.map((exercise, index, arr) => {
-                            return this.renderBasicExerciseInformation(exercise);
-                        })
-                      
-                    }
-                 
-               </View>
-
-               <View style={{marginVertical: 10, padding: 10, borderRadius: 10, backgroundColor: 'rgb(245, 246, 247)', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-               <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontFamily: 'Avenir-Roman'}}>
-                        Friday
-                    </Text>
-                    <Surface style={{width: 30, height: 30, borderRadius: 35, alignItems: 'center', justifyContent: 'center'}}>
-                    <FeatherIcon name="activity" size={15} color="#1089ff" />
-                    </Surface>
-                  
-                    </View>
-                    {
-                        this.state.currentWorkout.program_workout_structure.Friday.length === 0 ? 
-                        <Caption> No workouts were added for this day </Caption>
-                        :
-                        this.state.currentWorkout.program_workout_structure.Friday.map((exercise, index, arr) => {
-                            return this.renderBasicExerciseInformation(exercise);
-                        })
-                      
-                    }
-                 
-               </View>
-
-
-               <View style={{marginVertical: 10, padding: 10, borderRadius: 10, backgroundColor: 'rgb(245, 246, 247)', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-               <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontFamily: 'Avenir-Roman'}}>
-                        Saturday
-                    </Text>
-                    <Surface style={{width: 30, height: 30, borderRadius: 35, alignItems: 'center', justifyContent: 'center'}}>
-                    <FeatherIcon name="activity" size={15} color="#1089ff" />
-                    </Surface>
-                  
-                    </View>
-                    {
-                        this.state.currentWorkout.program_workout_structure.Saturday.length === 0 ? 
-                        <Caption> No workouts were added for this day </Caption>
-                        :
-                        this.state.currentWorkout.program_workout_structure.Saturday.map((exercise, index, arr) => {
-                            return this.renderBasicExerciseInformation(exercise);
-                        })
-                      
-                    }
-                 
-               </View>
-
-               <View style={{marginVertical: 10, padding: 10, borderRadius: 10, backgroundColor: 'rgb(245, 246, 247)', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                    <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontFamily: 'Avenir-Roman'}}>
-                        Sunday
-                    </Text>
-                    <TouchableWithoutFeedback onPress={this.openRBSheet} style={{margin: 10, width: 30, height: 30}}>
-                    <Surface style={{width: 30, height: 30, borderRadius: 35, alignItems: 'center', justifyContent: 'center'}}>
-                    <FeatherIcon name="activity" size={15} color="#1089ff" />
-                    </Surface>
-                    </TouchableWithoutFeedback>
-                    
-                  
-                    </View>
-
-                    {
-                        this.state.currentWorkout.program_workout_structure.Sunday.length === 0 ? 
-                        <Caption> No workouts were added for this day </Caption>
-                        :
-                        this.state.currentWorkout.program_workout_structure.Sunday.map((exercise, index, arr) => {
-                            return this.renderBasicExerciseInformation(exercise);
-                        })
-                    }     
-               </View>
-                </ScrollView>
+                </View>
+            </ScrollView>
         )
     }
 
     renderEmptyData = () => {
         return (
-            <View style={{flex: 1, justifyContent: 'space-evenly'}}>
-                 <View style={{width: Dimensions.get('window').width - 50, alignSelf: 'center', borderRadius: 20, backgroundColor: 'rgb(245, 246, 247)', padding: 20, justifyContent: 'center', alignItems: 'flex-start'}}>
-        <View style={{marginVertical: 20}}>
-                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+            <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
+                <View style={{ width: Dimensions.get('window').width - 50, alignSelf: 'center', borderRadius: 20, backgroundColor: 'rgb(245, 246, 247)', padding: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
+                    <View style={{ marginVertical: 20 }}>
+                        <Text style={{ color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800' }}>
                             You didnt create a workout on this day.
                         </Text>
-                        <Text style={{color: 'rgb(187, 194, 202)', fontFamily: 'Avenir-Medium'}}>
+                        <Text style={{ color: 'rgb(187, 194, 202)', fontFamily: 'Avenir-Medium' }}>
                             Create a workout and log it to save it to your workout log.
                         </Text>
                     </View>
 
-                    <Button onPress={() => this.props.navigation.push('CreateWorkout')} color="#1089ff" theme={{roundness: 5}} mode="contained" style={{alignSelf: 'center', height: 45, alignItems: 'center', justifyContent: 'center', width: '100%'}}>
+                    <Button onPress={() => this.props.navigation.push('CreateWorkout')} color="#1089ff" theme={{ roundness: 5 }} mode="contained" style={{ alignSelf: 'center', height: 45, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
                         Log a Workout
                     </Button>
-        </View>
+                </View>
             </View>
         )
     }
 
     renderBasicExerciseInformation = (exercise) => {
         return (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{fontFamily: 'Avenir-Light'}}>
-                                    {exercise.workout_name}
-                                </Text>
-                                <View style={{marginHorizontal: 10, flexDirection: 'row', alignItems: 'center'}}>
-                                <Caption>
-                                    Sets {exercise.workout_sets}
-                                </Caption>
-                                    <Caption>
-                                      {" "}  / {" "}
-                                    </Caption>
-                                
-                                <Caption>
-                                    Reps {exercise.workout_reps}
-                                </Caption>
-                                </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontFamily: 'Avenir-Light' }}>
+                    {exercise.workout_name}
+                </Text>
+                <View style={{ marginHorizontal: 10, flexDirection: 'row', alignItems: 'center' }}>
+                    <Caption>
+                        Sets {exercise.workout_sets}
+                    </Caption>
+                    <Caption>
+                        {" "}  / {" "}
+                    </Caption>
+
+                    <Caption>
+                        Reps {exercise.workout_reps}
+                    </Caption>
+                </View>
 
 
             </View>
@@ -405,42 +270,42 @@ const DAY = weekday[new Date().getDay()];
             case 1:
                 month = "January"
                 break;
-                case 2:
-                    month = "February"
-                    break;
-                    case 3:
-                        month = "March";
-                        break;
-                        case 4:
-                            month = "April"
-                            break;
-                            case 5:
-                                month = "May"
-                                break;
-                                case 6:
-                                    month = "June"
-                                    break;
-                                    case 7:
-                                        month = "July";
-                                        break;
-                                        case 8:
-                                            month = "August";
-                                            break;
-                                            case 9:
-                                                month = "September"
-                                                break;
-                                                case 10:
-                                                    month = "October"
-                                                    break;
-                                                    case 11:
-                                                        month = "November"
-                                                        break;
-                                                        case 12:
-                                                            month = "December;"
-                                                            break;
-                                                        default:
-                                                          
-                                                
+            case 2:
+                month = "February"
+                break;
+            case 3:
+                month = "March";
+                break;
+            case 4:
+                month = "April"
+                break;
+            case 5:
+                month = "May"
+                break;
+            case 6:
+                month = "June"
+                break;
+            case 7:
+                month = "July";
+                break;
+            case 8:
+                month = "August";
+                break;
+            case 9:
+                month = "September"
+                break;
+            case 10:
+                month = "October"
+                break;
+            case 11:
+                month = "November"
+                break;
+            case 12:
+                month = "December;"
+                break;
+            default:
+
+
         }
         let string = month + " " + day + ", " + year
         return string
@@ -450,12 +315,12 @@ const DAY = weekday[new Date().getDay()];
     handleCalendarRBSheetOnOpen = async (day) => {
         const dateString = day.month + "-" + day.day + "-" + day.year;
         const checkedMarkedDateString = this.generateMarkedDateString(day.year, day.month, day.day)
-    
+
         const userWorkouts = this.state.userWorkouts
 
         if (Object.keys(this.state.markedDates).includes(checkedMarkedDateString)) {
             await this.setState({
-            
+
                 currentWorkout: userWorkouts[checkedMarkedDateString][0],
                 selectedDate: new Date(),
                 currentDay: dateString,
@@ -483,79 +348,79 @@ const DAY = weekday[new Date().getDay()];
             newMonth = month;
         }
 
-        dateString =  dateString +  newMonth + "-"
+        dateString = dateString + newMonth + "-"
 
         if (day.toString().length == 1) {
             newDay = "0" + day;
         } else {
             newDay = day;
         }
-        
+
         dateString = dateString + newDay;
 
         return dateString;
     }
 
-render() {
-    return (
-<>
-    <Agenda
-  // The list of items that have to be displayed in agenda. If you want to render item as empty date
-  // the value of date key has to be an empty array []. If there exists no value for date key it is
-  // considered that the date in question is not yet loaded
-  horizontal={false}
-  items={this.state.items}
-  // Callback that gets called when items for a certain month should be loaded (month became visible)
-  loadItemsForMonth={(month) => {console.log('trigger items loading')}}
-  // Callback that fires when the calendar is opened or closed
-  onCalendarToggled={(calendarOpened) => {console.log(calendarOpened)}}
-  // Callback that gets called on day press
-  onDayPress={(day) => this.handleCalendarRBSheetOnOpen(day)}
-  onDayLongPress={day => this.handleCalendarRBSheetOnOpen(day)}
-  // Callback that gets called when day changes while scrolling agenda list
-  onDayChange={(day)=> {this.handleCalendarRBSheetOnOpen(day)}}
-  // Initially selected day
-  selected={this.state.selectedDate}
-  // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-  minDate={'2020-08-31'}
-  // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-  maxDate={'2025-05-30'}
+    render() {
+        return (
+            <>
+                <Agenda
+                    // The list of items that have to be displayed in agenda. If you want to render item as empty date
+                    // the value of date key has to be an empty array []. If there exists no value for date key it is
+                    // considered that the date in question is not yet loaded
+                    horizontal={false}
+                    items={this.state.items}
+                    // Callback that gets called when items for a certain month should be loaded (month became visible)
+                    loadItemsForMonth={(month) => { console.log('Triffer items loading for month: '  + month.month) }}
+                    // Callback that fires when the calendar is opened or closed
+                    onCalendarToggled={(calendarOpened) => { console.log('Calendar opened: ' + calendarOpened) }}
+                    // Callback that gets called on day press
+                    onDayPress={(day) => this.handleCalendarRBSheetOnOpen(day)}
+                    onDayLongPress={day => this.handleCalendarRBSheetOnOpen(day)}
+                    // Callback that gets called when day changes while scrolling agenda list
+                    onDayChange={(day) => { this.handleCalendarRBSheetOnOpen(day) }}
+                    // Initially selected day
+                    selected={this.state.selectedDate}
+                    // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
+                    minDate={'2020-08-31'}
+                    // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
+                    maxDate={'2025-05-30'}
 
-  // Max amount of months allowed to scroll to the past. Default = 50
-  pastScrollRange={50}
-  // Max amount of months allowed to scroll to the future. Default = 50
-  futureScrollRange={50}
-  // Specify how each item should be rendered in agenda
-  renderItem={(item, firstItemInDay) => {return (<View />);}}
-  // Specify how each date should be rendered. day can be undefined if the item is not first in that day.
-  renderDay={(day, item) =>  { return this.renderWorkoutInformation(item) }}
-  // Specify how empty date content with no items should be rendered
-  renderEmptyDate={() => { return <View /> }}
-  // Specify how agenda knob should look like
-  renderKnob={() => {return (<View style={{width: 80, height: 10, backgroundColor: '#E5E5E5', borderRadius: 10}} />);}}
-  // Specify what should be rendered instead of ActivityIndicator
-  renderEmptyData = {() => {return this.renderEmptyData()}}
-  // Specify your item comparison function for increased performance
-  rowHasChanged={(r1, r2) => {return true}}
-  // Hide knob button. Default = false
-  hideKnob={false}
-  // By default, agenda dates are marked if they have at least one item, but you can override this if needed
-  markedDates={this.state.markedDates}
-  // If disabledByDefault={true} dates flagged as not disabled will be enabled. Default = false
-  disabledByDefault={true}
-  // If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the refreshing prop correctly.
-  onRefresh={() => console.log('refreshing...')}
-  // Set this true while waiting for new data from a refresh
-  markingType="multi-period"
-  // Add a custom RefreshControl component, used to provide pull-to-refresh functionality for the ScrollView.
-  refreshControl={null}
-  // Agenda theme
-  // Agenda container style
-/>
-{this.renderCalendarListRBSheet()}
-</>
-    )
-}
+                    // Max amount of months allowed to scroll to the past. Default = 50
+                    pastScrollRange={50}
+                    // Max amount of months allowed to scroll to the future. Default = 50
+                    futureScrollRange={50}
+                    // Specify how each item should be rendered in agenda
+                    renderItem={(item, firstItemInDay) => { return (<View />); }}
+                    // Specify how each date should be rendered. day can be undefined if the item is not first in that day.
+                    renderDay={(day, item) => { return this.renderWorkoutInformation(item, day) }}
+                    // Specify how empty date content with no items should be rendered
+                    renderEmptyDate={() => { return <View /> }}
+                    // Specify how agenda knob should look like
+                    renderKnob={() => { return (<View style={{ width: 80, height: 10, backgroundColor: '#E5E5E5', borderRadius: 10 }} />); }}
+                    // Specify what should be rendered instead of ActivityIndicator
+                    renderEmptyData={() => { return this.renderEmptyData() }}
+                    // Specify your item comparison function for increased performance
+                    rowHasChanged={(r1, r2) => { return true }}
+                    // Hide knob button. Default = false
+                    hideKnob={false}
+                    // By default, agenda dates are marked if they have at least one item, but you can override this if needed
+                    markedDates={this.state.markedDates}
+                    // If disabledByDefault={true} dates flagged as not disabled will be enabled. Default = false
+                    disabledByDefault={true}
+                    // If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the refreshing prop correctly.
+                    onRefresh={() => console.log('refreshing...')}
+                    // Set this true while waiting for new data from a refresh
+                    markingType="multi-period"
+                    // Add a custom RefreshControl component, used to provide pull-to-refresh functionality for the ScrollView.
+                    refreshControl={null}
+                // Agenda theme
+                // Agenda container style
+                />
+                {this.renderCalendarListRBSheet()}
+            </>
+        )
+    }
 }
 
 const styles = StyleSheet.create({

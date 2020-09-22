@@ -1,3 +1,4 @@
+import { BaseRouter } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -13,7 +14,7 @@ import { Checkbox } from 'react-native-paper';
 import { Constants } from 'react-native-unimodules';
 import LupaController from '../../../../controller/lupa/LupaController';
 
-const interestList = [
+const SKILL_BASED_INTEREST = [
     'Agility',
     'Balance',
     'Speed',
@@ -21,6 +22,9 @@ const interestList = [
     'Coordination',
     'Reaction Time',
     'Weight Loss',
+]
+
+const PHYSIOLOGICAL_BASED_INTEREST = [
     'Test Preparation',
     'Sport Specific',
     'Bodybuilding',
@@ -28,18 +32,16 @@ const interestList = [
     'Injury Prevention',
 ]
 
-function PickInterest({ setNextDisabled, navigation, route }) {
+function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
     const [pickedInterest, setPickedInterest] = useState([])
     const [stateUpdate, forceStateUpdate] = useState(false)
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    const renderExitButton = () => {    
-        if (route.params.navFrom) {
-            if (route.params.navFrom == 'Drawer') {
-                return <Feather1s name="x" style={{position: 'absolute', top: 0, right: 0, margin: 20}} />
-            }
-        }
+    const renderExitButton = () => { 
+        if (route.params.isOnboarding === false ) {
+            return <Feather1s onPress={() => navigation.pop()} name="x" size={24} style={{position: 'absolute', top: 0, left: 0, margin: 15, marginTop: 30}} />
+        } 
     }
 
     const handleOnPickInterest = (interest) => {
@@ -75,7 +77,7 @@ function PickInterest({ setNextDisabled, navigation, route }) {
 
     return (
         <SafeAreaView style={styles.container}>
-       
+       <ScrollView>
             <View style={{padding: 20, alignSelf: 'center', alignItems: 'flex-start', justifyContent: 'center'}}>
                 <Text style={{ fontFamily: 'Avenir-Medium', textAlign: 'center', fontSize: 25, marginVertical: Constants.statusBarHeight}}>
                     What fitness skills and goals are you interested in?
@@ -84,9 +86,13 @@ function PickInterest({ setNextDisabled, navigation, route }) {
                     You can select a few:
                 </Text>
             </View>
+            <View>
+            <Text style={{paddingLeft: 20, fontFamily: 'Avenir-Medium'}}>
+                Skill Based
+            </Text>
             <View style={[styles.container, styles.interestListContainer]}>
                 {
-                    interestList.map((interest, index, arr) => {
+                    SKILL_BASED_INTEREST.map((interest, index, arr) => {
                         return (
                             <View key={interest}  style={[styles.interestContainer, {backgroundColor: pickedInterest.includes(interest) ? 'rgba(16, 136, 255, 0.2)' : '#FFFFFF' }]}>
                             <Text style={styles.interestText}>
@@ -98,7 +104,30 @@ function PickInterest({ setNextDisabled, navigation, route }) {
                     })
                 }
             </View>
+            </View>
+            
+            <View>
+            <Text style={{paddingLeft: 20, fontFamily: 'Avenir-Medium'}}>
+                Physiological Based
+            </Text>
+            <View style={[styles.container, styles.interestListContainer]}>
+                {
+                    PHYSIOLOGICAL_BASED_INTEREST.map((interest, index, arr) => {
+                        return (
+                            <View key={interest}  style={[styles.interestContainer, {backgroundColor: pickedInterest.includes(interest) ? 'rgba(16, 136, 255, 0.2)' : '#FFFFFF' }]}>
+                            <Text style={styles.interestText}>
+                                {interest}
+                            </Text>
+                            <Checkbox.Android color="#1088ff" onPress={() => handleOnPickInterest(interest)} status={pickedInterest.includes(interest) ? 'checked' : 'unchecked'} key={interest} />
+                        </View>
+                        )
+                    })
+                }
+            </View>
+            </View>
+
             {renderExitButton()}
+            </ScrollView>
         </SafeAreaView>
     )
 }
@@ -110,8 +139,10 @@ const styles = StyleSheet.create({
     },
     interestListContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        flexWrap: 'wrap'
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        marginBottom: 20,
     },
     interestContainer: {
         flexDirection: 'row',
@@ -122,7 +153,8 @@ const styles = StyleSheet.create({
         width: '45%',
         borderColor: 'rgb(209, 209, 214)',
         marginVertical: 10,
-        borderRadius: 5
+        marginHorizontal: 10,
+        borderRadius: 5,
     },
     interestText: {
         fontSize: 13,

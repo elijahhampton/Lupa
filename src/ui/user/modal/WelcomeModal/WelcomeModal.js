@@ -36,7 +36,7 @@ const getView = (viewNumber, toggleNext, closeModalMethod) => {
         case 1:
             return <BasicInformation setNextDisabled={toggleNext} />
         case 2:
-            return <PickInterest setNextDisabled={toggleNext} />
+            return <PickInterest setNextDisabled={toggleNext} isOnboarding={true} />
         case 3:
             return <WelcomeContentDriver closeModalMethod={closeModalMethod} />
     }

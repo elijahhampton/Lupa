@@ -67,9 +67,10 @@
 	<string>Allow Lupa to access your reminders</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>MaterialIcons.ttf</string>
-		<string>Ionicons.ttf</string>
 		<string>FeatherIcons.ttf</string>
+		<string>Roboto.ttf</string>
+		<string>rubicon-icon-font.ttf</string>
+		<string>feather1s.ttf</string>
 		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
@@ -80,14 +81,12 @@
 		<string>FontAwesome5_Solid.ttf</string>
 		<string>Fontisto.ttf</string>
 		<string>Foundation.ttf</string>
+		<string>Ionicons.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
+		<string>MaterialIcons.ttf</string>
 		<string>Octicons.ttf</string>
-		<string>Roboto_medium.ttf</string>
-		<string>Roboto.ttf</string>
-		<string>rubicon-icon-font.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>feather1s.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

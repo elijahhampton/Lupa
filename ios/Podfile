@@ -23,7 +23,6 @@ target 'Lupa' do
 # https://firebase.google.com/docs/ios/setup#available-pods
 
   # React Native and its dependencies
-  pod 'RNVectorIcons', :path => "../node_modules/react-native-vector-icons"
   pod 'FBLazyVector', :path => "#{rnPrefix}/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "#{rnPrefix}/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "#{rnPrefix}/Libraries/RCTRequired"
@@ -69,5 +68,11 @@ target 'Lupa' do
   # react-native-cli autolinking
   use_native_modules!
   pod 'tipsi-stripe', :path => '../node_modules/tipsi-stripe'
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
 end

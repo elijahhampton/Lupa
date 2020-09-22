@@ -8,13 +8,13 @@ import {
     Dimensions,
     SafeAreaView,
     TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
     Surface, Button, Divider
 } from 'react-native-paper';
 
-import { ScrollView } from 'react-native-gesture-handler';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { useNavigation } from '@react-navigation/native';
 
@@ -67,8 +67,8 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                                 <Image source={{uri: result.program_image }}  style={{width: '100%', height: '100%', borderRadius: 8}} />
                             </View>
                             <View style={{flex: 3, height: '100%', justifyContent: 'space-between' }}>
-                                <View style={{justifyContent: 'space-between', flexDirection: 'row',}}>
-                                <View style={{paddingHorizontal: 10}} >
+                                <View style={{justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: 5}}>
+                                <View style={{width: '90%'}} >
                                     <Text style={{fontSize: 15, color: '#212121'}}>
                                         {result.program_name}
                                     </Text>
