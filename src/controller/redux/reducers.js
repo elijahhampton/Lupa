@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase';
 
 import { ADD_WORKOUT_TO_PROGRAM_ACTION, ADD_CURRENT_USER_SERVICE_ACTION, UPDATE_CURRENT_USER_SERVICES_ACTION, UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PROGRAMS_ACTION, UPDATE_LUPA_WORKOUTS_ACTION } from './actionTypes';
 
@@ -103,6 +104,16 @@ const formReducer = (state = initialState, action) => {
     }
     default:
       return state
+  }
+}
+
+const paymentsReducer = (state = initialState, action) => {
+  switch(action.type) {
+    case 'ADD_CARD_TO_ACCOUNT_SUCCESS':
+      LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).update({
+        stripe_metadata: action.value
+      })
+      return state;
   }
 }
 

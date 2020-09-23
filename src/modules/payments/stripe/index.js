@@ -1,4 +1,6 @@
 import stripe from 'tipsi-stripe';
+import LOG, { LOG_ERROR } from '../../../common/Logger';
+import LUPA_DB, { LUPA_AUTH } from '../../../controller/firebase/firebase';
 
 export function initStripe() {
     stripe.setOptions({
@@ -13,6 +15,113 @@ export {
 export const STRIPE_ENDPOINT = 'https://us-central1-lupa-cd0e3.cloudfunctions.net/payWithStripe'
 export const CURRENCY = 'usd';
 export const LUPA_ERR_TOKEN_UNDEFINED = "TOKEN_UNDEFINED";
+
+
+/**
+ * Create stripe customer account
+ * @param {*} email 
+ * @param {*} uuid 
+ */
+export const createStripeCustomerAccount = (email, uuid) => {
+    LUPA_AUTH.currentUser.getIdToken(true).then(idToken => {
+      // Send firebase idToken to your backend via HTTPS
+      axios({
+        method: 'post',
+        url: 'https://us-central1-lupa-cd0e3.cloudfunctions.net/createStripeCustomerAccount',
+        headers: {
+          'Authorization': 'Bearer ' + idToken
+        },
+        data: JSON.stringify({
+          email: email,
+          user_uuid: uuid,
+          user_type: 'non-trainer'
+        })
+      })
+      .then(res  => {
+        if (res.status === 200) {
+          // grab stripe account id and send it to the callback 
+          //to be saved in firebase and/or your local storage
+          let stripeID = res.data.stripeID;
+  
+          return saveUserStripeIDToDatabase(uid, stripeID);
+        }
+      })
+      .catch(err => console.log('error while doing get req createStripeAccount:', err));
+  
+    }).catch(error => {
+      // Handle error
+      console.log('Error retrieving IdToken!', err);
+    });
+  }
+
+  const saveUserStripeIDToDatabase = async (uuid, stripe_account_id) => {
+
+    //Obtain the users information by their UUID
+    let userData;
+    await LUPA_DB.collection('users').doc(uuid).get().then(snapshot => {
+        userData = snapshot.data();
+    });
+
+    //Change the stripe_id
+    let stripeMetadata = userData.stripe_metadata;
+    stripeMetadata.stripe_id = stripe_account_id;
+
+    //update the user's stripe_metadata
+    LUPA_DB.collection('users').doc(uid).update({
+        stripe_metadata: stripeMetadata
+    });
+  }
+
+// then AFTER creating the user account you create a token of a card using tipsi-stripe
+/**
+ * Creates token from a card
+ */
+export function createTokenFromCard(params, stripeID) {
+    return stripe.createTokenWithCard(params).then(token => {
+        addCardToStripeAccount(token.tokenId, stripeID)
+    }).catch(error => {
+        LOG_ERROR('index.js', 'Error in modules/payments/index.js while creating token from card', error )
+    });
+  }
+
+  export const addCardToStripeAccount = (tokenId, stripeID) => {
+    return (dispatch) => {
+  
+      LUPA_AUTH.currentUser.getIdToken(true).then(idToken => {
+  
+        axios({
+          method: 'post',
+          url: 'https://us-central1-lupa-cd0e3.cloudfunctions.net/addCardToStripeAccount',
+          headers: {
+            'Authorization': 'Bearer ' + idToken
+          },
+          data: {
+            tokenId: tokenId,
+            stripeID: stripeID,
+          }
+        })
+        .then(res  => {
+          if (res.status === 200) {
+              //Obtain the users information by their UUID
+    let userData;
+    await LUPA_DB.collection('users').doc(uuid).get().then(snapshot => {
+        userData = snapshot.data();
+    });
+
+    //Change the stripe_id
+    let stripeMetadata = userData.stripe_metadata;
+    stripeMetadata.card_added_to_stripe = true;
+
+
+            return dispatch({ type: 'ADD_CARD_TO_ACCOUNT_SUCCESS', payload: stripeMetadata });
+          }
+        })
+        .catch(err => console.log('error while doing get req addCardToStripeAccount:', err));
+  
+      })
+      .catch(error => console.log('Error retrieving users ID token', error));
+    }
+  }
 
 /*
 

@@ -97,17 +97,6 @@ console.log('B')
 exports.payWithStripe = functions.https.onRequest((request, response) => {
     // Set your secret key: remember to change this to your live secret key in production
     // See your keys here: https://dashboard.stripe.com/account/apikeys
-
-    /*const customer = stripe.customers.create({
-      name: '',
-      description: '',
-      email: '',
-      metadata: {
-        uuid: '',
-      }
-    });
-
-    const customerID = customer.id;*/
     
     stripe.charges.create({
         amount: request.body.amount * 100,
@@ -124,4 +113,66 @@ exports.payWithStripe = functions.https.onRequest((request, response) => {
             
         });
         
+});
+
+/**
+ * Handles creating a customer account with stripe
+ * 
+ * @trigger onRequest (HTTPS)
+ */
+exports.createStripeCustomerAccount = functions.https.onRequest((request, response) => {
+  // Set your secret key: remember to change this to your live secret key in production
+  // See your keys here: https://dashboard.stripe.com/account/apikeys
+  
+  const customer = stripe.customers.create({
+    email: request.body.email,
+    metadata: {
+      user_uuid: request.body.user_uuid,
+      type: request.body.user_type
+    }
+  });
+      
+});
+
+/**
+ * Handles adding a card to a stripe account
+ * 
+ * @trigger onRequest (HTTPS)
+ */
+exports.addCardToStripeAccount = functions.https.onRequest((request, response) => {
+  // Set your secret key: remember to change this to your live secret key in production
+  // See your keys here: https://dashboard.stripe.com/account/apikeys
+  
+    const tokenId   = request.body.tokenId;
+    const stripeID  = request.body.stripeID;
+
+    return stripe.customers.update(stripeID, { source: tokenId })
+    .then(customer => {
+
+      const { last4, id } = customer.sources.data[0];
+
+      //check this
+      let stripeMetadata = {
+        stripe_id: id,
+        card_last_four: last4,
+        card_added_to_stripe: true
+      }
+
+      return admin.firestore().collection('users').doc(admin.firestore().currentUser.uid).update({
+        stripe_metadata: stripeMetadata
+      }).catch(
+        err => {
+          stripeMetadata.card_added_to_stripe = false;
+
+          admin.firestore().collection('users').doc(admin.firestore().currentUser.uid).update({
+            stripe_metadata: stripeMetadata
+          })
+
+          response.status(400).send({
+            error: err,
+            description: 'Error while updating firebase from cloud function in *addCardToStripeAccount*'
+          })
+        });
+    })
+    .catch(error => console.log('Error while adding card to serviceUser', error));
 });
