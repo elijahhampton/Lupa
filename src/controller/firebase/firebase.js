@@ -9,9 +9,6 @@ import axios from 'axios';
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from './collection_structures';
 
 import * as EmailValidator from 'email-validator'
-import { Platform } from 'react-native';
-import LOG from '../../common/Logger';
-import { openContactForm } from 'react-native-contacts';
 import { fcmService } from './service/FCMService';
 
 //Initialize firebase

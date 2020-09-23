@@ -163,10 +163,9 @@ class Featured extends React.Component {
             }
 
             return (
-                <>
+              
                     <VlogFeedCard key={index} vlogData={vlog} />
-                    <Divider style={{ width: Dimensions.get('window').width }} />
-                </>
+                   
             )
         })
     }

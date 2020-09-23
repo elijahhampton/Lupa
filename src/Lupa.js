@@ -20,7 +20,7 @@ import {
 import LupaController from './controller/lupa/LupaController';
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 import { connect, useSelector } from 'react-redux'
-import { generateMessagingToken, requestNotificationPermissions, registerAppWithFCM, } from "./controller/firebase/firebase";
+import LUPA_DB, { generateMessagingToken, requestNotificationPermissions, registerAppWithFCM, } from "./controller/firebase/firebase";
 import { fcmService } from './controller/firebase/service/FCMService'
 import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal'
 import WelcomeContentDriver from "./ui/user/modal/WelcomeContentDriver";
@@ -42,6 +42,17 @@ const mapStateToProps = (state, action) => {
   return {
     lupa_data: state
   }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateUser: (currUserData) => {
+      dispatch({
+        type: 'UPDATE_CURRENT_USER',
+        payload: currUserData
+      })
+    },
+}
 }
 
 class Lupa extends React.Component {
@@ -116,6 +127,8 @@ class Lupa extends React.Component {
   componentWillUnmount() {
     LOG('Lupa.js', 'Clearing subscription to Geolocation');
     Geolocation.clearWatch(this.watchID);
+
+    return () => this.CURRENT_USER_OBSERVER();
   }
 
   render() {
@@ -135,4 +148,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default connect(mapStateToProps)(Lupa);
+export default connect(mapStateToProps, mapDispatchToProps)(Lupa);

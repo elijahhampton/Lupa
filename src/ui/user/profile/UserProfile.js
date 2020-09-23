@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
     View,
@@ -58,13 +58,13 @@ function UserProfile({ userData, isCurrentUser }) {
                     showTrailingInterestText(true)
                 }
                 setReady(true)
-            } catch(error) {
+            } catch (error) {
                 setReady(false)
                 alert(error);
                 setUserVlogs([])
             }
         }
-        
+
         loadProfileData()
         LOG('UserProfile.js', 'Running useEffect.')
     }, [ready])
@@ -75,28 +75,27 @@ function UserProfile({ userData, isCurrentUser }) {
             setUserVlogs(vlogs);
         })
     }
-    
+
     /**
      * Allows the current user to choose an image from their camera roll and updates the profile picture in FB and redux.
      */
     const _chooseProfilePictureFromCameraRoll = async () => {
-        
+
         ImagePicker.showImagePicker({
             allowsEditing: true
         }, async (response) => {
-            if (!response.didCancel)
-            {   
+            if (!response.didCancel) {
                 setProfileImage(response.uri);
 
                 let imageURL;
                 //update in FB storage
-                 LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
+                LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
                     imageURL = result;
                 });
-        
+
                 //update in Firestore
                 LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
-        
+
             }
         });
         //TODO
@@ -107,8 +106,8 @@ function UserProfile({ userData, isCurrentUser }) {
     const renderAvatar = () => {
         if (isCurrentUser) {
             return (
-                <Surface style={{marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65}}>
-                     <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
+                <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
+                    <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
                 </Surface>
             )
         }
@@ -118,38 +117,38 @@ function UserProfile({ userData, isCurrentUser }) {
 
     const renderFollowers = () => {
         return (
-            <View style={{marginVertical: 10, flex: 1, width: '100%',  flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-            <TouchableOpacity onPress={navigateToFollowers}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Text>
-                {userData.followers.length}
-            </Text>
-            <Text style={styles.userAttributeText}>
-                Followers
+            <View style={{ marginVertical: 10, flex: 1, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                <TouchableOpacity onPress={navigateToFollowers}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>
+                            {userData.followers.length}
+                        </Text>
+                        <Text style={styles.userAttributeText}>
+                            Followers
         </Text>
-        </View>
+                    </View>
 
-    </TouchableOpacity>
-    <TouchableOpacity onPress={navigateToFollowers}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Text>
-                {userData.following.length}
-            </Text>
-            <Text style={styles.userAttributeText}>
-                Following
+                </TouchableOpacity>
+                <TouchableOpacity onPress={navigateToFollowers}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>
+                            {userData.following.length}
+                        </Text>
+                        <Text style={styles.userAttributeText}>
+                            Following
         </Text>
-        </View>
-    </TouchableOpacity>
+                    </View>
+                </TouchableOpacity>
             </View>
         )
     }
 
     const renderLocation = () => {
         return (
-            <View style={{paddingVertical: 2, flexDirection: 'row', alignItems: 'center'}}>
-            <FeatherIcon name="map-pin" style={{paddingRight: 5}} />
-            <Text style={[styles.userAttributeText, {color: '#23374d'}]}>{userData.location.city}, {userData.location.state}</Text>
-        </View>
+            <View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
+                <FeatherIcon name="map-pin" style={{ paddingRight: 5 }} />
+                <Text style={[styles.userAttributeText, { color: '#23374d' }]}>{userData.location.city}, {userData.location.state}</Text>
+            </View>
         )
     }
 
@@ -161,8 +160,8 @@ function UserProfile({ userData, isCurrentUser }) {
         if (userData.bio.length == 0) {
             return (
                 <Caption style={styles.bioText}>
-                {userData.display_name} has not setup a bio.
-            </Caption>
+                    {userData.display_name} has not setup a bio.
+                </Caption>
             )
         }
         return (
@@ -176,33 +175,33 @@ function UserProfile({ userData, isCurrentUser }) {
         if (userData.interest.length == 0) {
             return (
                 <Caption>
-                        This user has not specified any fitness interest.
-                    </Caption>
+                    This user has not specified any fitness interest.
+                </Caption>
             )
         } else {
             return (
-                <View style={{paddingVertical: 5, flexDirection: 'row', alignItems: 'center'}}>
-                     <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
-                     <Text style={styles.bioText}>
-                         Interest: {" "}
-                     </Text>
-                     {
-                        userData.interest.map((interest, index, arr) => {
-                            if (index  == 3) {
-                                return;
-                            }
+                <View style={{ paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <Text style={styles.bioText}>
+                            Interest: {" "}
+                        </Text>
+                        {
+                            userData.interest.map((interest, index, arr) => {
+                                if (index == 3) {
+                                    return;
+                                }
 
-                            return (
-                                <Text style={{fontFamily: 'Avenir-Medium', fontSize: 10, color: 'rgb(58, 58, 61)'}}>
-                                    {interest} {" "}
-                                </Text>
-                                
-                            )
-                        })
-                    }
-                    {trainingInterestTextVisible === true ? <Caption style={{fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff'}}> and 3 more... </Caption> : null }
-                     </View>
-                   
+                                return (
+                                    <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: 'rgb(58, 58, 61)' }}>
+                                        {interest} {" "}
+                                    </Text>
+
+                                )
+                            })
+                        }
+                        {trainingInterestTextVisible === true ? <Caption style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff' }}> and 3 more... </Caption> : null}
+                    </View>
+
                 </View>
             )
         }
@@ -210,9 +209,9 @@ function UserProfile({ userData, isCurrentUser }) {
 
     const renderVlogs = () => {
         return userVlogs.map((vlog, index, arr) => {
-             if (typeof(vlog) == 'undefined') {
-                 return;
-             }
+            if (typeof (vlog) == 'undefined') {
+                return;
+            }
 
             return <VlogFeedCard vlogData={vlog} />
         })
@@ -222,23 +221,23 @@ function UserProfile({ userData, isCurrentUser }) {
         if (isCurrentUser) { return; }
 
         return (
-        <View style={{marginVertical: 10, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+            <View style={{ marginVertical: 10, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
                 <Button onPress={() => navigation.push('PrivateChat', {
                     currUserUUID: currUserData.user_uuid,
                     otherUserUUID: userData.user_uuid
-                })} 
-                theme={{roundness: 5}} 
-                color="#23374d" 
-                icon={() => <FeatherIcon name="mail" />} 
-                uppercase={false} 
-                mode="contained" 
-                style={{ elevation: 0}}>
+                })}
+                    theme={{ roundness: 5 }}
+                    color="#23374d"
+                    icon={() => <FeatherIcon name="mail" />}
+                    uppercase={false}
+                    mode="contained"
+                    style={{ elevation: 0 }}>
                     <Text>
                         Send a message
                     </Text>
                 </Button>
 
-               {renderFollowButton()}
+                {renderFollowButton()}
             </View>
         )
     }
@@ -246,14 +245,14 @@ function UserProfile({ userData, isCurrentUser }) {
     const renderFollowButton = () => {
         if (currUserData.following.includes(userData.user_uuid)) {
             return (
-            <Button 
-            onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)} 
-            icon={() => <FeatherIcon name="user" />} 
-            theme={{roundness: 5}} 
-            uppercase={false} 
-            color="#23374d" 
-            mode="contained" 
-            style={{elevation: 0}}>
+                <Button
+                    onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}
+                    icon={() => <FeatherIcon name="user" />}
+                    theme={{ roundness: 5 }}
+                    uppercase={false}
+                    color="#23374d"
+                    mode="contained"
+                    style={{ elevation: 0 }}>
                     <Text style={{ color: 'white' }}>
                         Unfollow
                     </Text>
@@ -261,14 +260,14 @@ function UserProfile({ userData, isCurrentUser }) {
             )
         } else {
             return (
-                <Button 
-                onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)} 
-                icon={() => <FeatherIcon name="user" />} 
-                theme={{roundness: 5}} 
-                uppercase={false} 
-                color="#E5E5E5" 
-                mode="contained" 
-                style={{elevation: 0}}>
+                <Button
+                    onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)}
+                    icon={() => <FeatherIcon name="user" />}
+                    theme={{ roundness: 5 }}
+                    uppercase={false}
+                    color="#E5E5E5"
+                    mode="contained"
+                    style={{ elevation: 0 }}>
                     <Text style={{}}>
                         Follow
                     </Text>
@@ -289,40 +288,40 @@ function UserProfile({ userData, isCurrentUser }) {
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()}/>
+                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 <Appbar.Content title={userData.email} titleStyle={styles.appbarTitle} />
             </Appbar.Header>
             <ScrollView>
                 <View>
 
-            <View style={styles.userInformationContainer}>
-                <View style={styles.infoContainer}>
-                    {renderDisplayName()}
-                    {renderInterest()}
-                </View>
+                    <View style={styles.userInformationContainer}>
+                        <View style={styles.infoContainer}>
+                            {renderDisplayName()}
+                            {renderInterest()}
+                        </View>
 
-                <View style={styles.avatarContainer}>
-                    {renderAvatar()}
-                    {renderFollowers()}
-                </View>
-            </View>
-
-            <View style={{padding: 10, }}>
-                <Text style={{fontFamily: 'Avenir-Medium', fontSize: 13}}>
-                    Learn more
-                </Text>
-                {renderBio()}
-            </View>
-            {renderInteractions()}
-            </View>
-            <Divider />
-            <Tabs page={currPage} tabBarUnderlineStyle={{height: 2, backgroundColor: '#1089ff'}} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} tabContainerStyle={{backgroundColor: '#FFFFFF'}} tabBarBackgroundColor='#FFFFFF' locked={true} >
-              <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading}  heading="Vlogs">
-                    <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-                    {renderVlogs()}
+                        <View style={styles.avatarContainer}>
+                            {renderAvatar()}
+                            {renderFollowers()}
+                        </View>
                     </View>
-              </Tab>
-    </Tabs> 
+
+                    <View style={{ padding: 10, }}>
+                        <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 13 }}>
+                            Learn more
+                </Text>
+                        {renderBio()}
+                    </View>
+                    {renderInteractions()}
+                </View>
+                <Divider />
+                <Tabs page={currPage} tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF' locked={true} >
+                    <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
+                        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                            {renderVlogs()}
+                        </View>
+                    </Tab>
+                </Tabs>
             </ScrollView>
         </SafeAreaView>
     )
@@ -382,7 +381,7 @@ const styles = StyleSheet.create({
     userAttributeText: {
         fontSize: 10,
         fontFamily: 'Avenir-Light',
-   
+
     }
 })
 

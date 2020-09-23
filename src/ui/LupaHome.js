@@ -65,6 +65,8 @@ export class LupaHome extends Component {
       <List>{new Array(20).fill(null).map((_, i) => <Item
         key={i}><Text>Item {i}</Text></Item>)}</List>);
     const tabY = Animated.add(this.scroll, this.headerY);
+
+    const currTab = this.state.currTab;
     return (
       <View>
         {Platform.OS === "ios" && 
@@ -100,14 +102,14 @@ export class LupaHome extends Component {
         </Animated.View>
         
         <Animated.ScrollView
-        scrollEnabled={this.state.currTab == 0}
+        scrollEnabled={currTab === 0 ? true : false}
         refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
           scrollEventThrottle={1}
           bounces={false}
           showsVerticalScrollIndicator={false}
           
           style={{zIndex: 0, height: "100%", elevation: -1}}
-          contentContainerStyle={{paddingTop: 50, backgroundColor: COLOR, flex: 1}}
+          contentContainerStyle={{paddingTop: 50, backgroundColor: COLOR}}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: this.scroll}}}],
             {useNativeDriver: true},

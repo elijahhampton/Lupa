@@ -104,8 +104,13 @@ function ProgramInformationPreview(props) {
      * Sends request to server to complete payment
      */
     const makePayment = async (token, amount) => {
+        //Create an idemptoencyKey to prevent double transactions
         const idempotencyKey = await Math.random().toString()
 
+        //Get a copy of the current user data to pass some fields into the request
+        const userData = currUserData;
+
+        //Make the payment request to firebase with axios
         axios({
             headers: {
                 Accept: 'application/json',

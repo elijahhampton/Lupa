@@ -97,6 +97,17 @@ console.log('B')
 exports.payWithStripe = functions.https.onRequest((request, response) => {
     // Set your secret key: remember to change this to your live secret key in production
     // See your keys here: https://dashboard.stripe.com/account/apikeys
+
+    /*const customer = stripe.customers.create({
+      name: '',
+      description: '',
+      email: '',
+      metadata: {
+        uuid: '',
+      }
+    });
+
+    const customerID = customer.id;*/
     
     stripe.charges.create({
         amount: request.body.amount * 100,
