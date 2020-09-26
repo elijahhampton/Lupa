@@ -1,8 +1,10 @@
 import stripe from 'tipsi-stripe';
-
+import LOG, { LOG_ERROR } from '../../../common/Logger';
+import LUPA_DB, { LUPA_AUTH } from '../../../controller/firebase/firebase';
+import axios from 'axios';
 export function initStripe() {
     stripe.setOptions({
-        publishableKey: 'pk_live_0qnly0beDBvvr3pkYIL8VYcF00ydAsthgS'
+        publishableKey: 'pk_test_99QhW2YbrvHJHLEItYbZ5rH7009Ha858ta'
     })
 }
 
@@ -13,6 +15,107 @@ export {
 export const STRIPE_ENDPOINT = 'https://us-central1-lupa-cd0e3.cloudfunctions.net/payWithStripe'
 export const CURRENCY = 'usd';
 export const LUPA_ERR_TOKEN_UNDEFINED = "TOKEN_UNDEFINED";
+
+
+/**
+ * Create stripe customer account
+ * @param {*} email 
+ * @param {*} uuid 
+ */
+export const createStripeCustomerAccount = (email, uuid) => {
+  console.log('A')
+  console.log(email)
+    LUPA_AUTH.currentUser.getIdToken(true).then(idToken => {
+      // Send firebase idToken to your backend via HTTPS
+  console.log('B')
+  fetch('https://us-central1-lupa-cd0e3.cloudfunctions.net/createStripeCustomerAccount', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + idToken
+    },
+    body: JSON.stringify({
+      email: email,
+          user_uuid: uuid,
+          user_type: 'non-trainer'
+    }),
+  })
+    .then((response) => response.json())
+    .then((responseJson) => {
+    //  console.log('AAAAAAAAAAA')
+     // console.log(responseJson)
+    //  saveUserStripeIDToDatabase(uuid, responseJson.id)
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+    }).catch(error => {
+      // Handle error
+      alert(error);
+    });
+  }
+
+  const saveUserStripeIDToDatabase = async (uuid, stripe_account_id) => {
+
+    //Obtain the users information by their UUID
+    let userData;
+    await LUPA_DB.collection('users').doc(uuid).get().then(snapshot => {
+        userData = snapshot.data();
+    });
+
+    //Change the stripe_id
+    let stripeMetadata = userData.stripe_metadata;
+    stripeMetadata.stripe_id = stripe_account_id;
+
+    //update the user's stripe_metadata
+    LUPA_DB.collection('users').doc(uid).update({
+        stripe_metadata: stripeMetadata
+    });
+  }
+
+// then AFTER creating the user account you create a token of a card using tipsi-stripe
+/**
+ * Creates token from a card
+ */
+export async function createTokenFromCard(params, stripeID) {
+    return await stripe.createTokenWithCard(params).then(token => {
+        addCardToStripeAccount(token.tokenId, stripeID);
+    }).catch(error => {
+        LOG_ERROR('index.js', 'Error in modules/payments/index.js while creating token from card', error )
+    });
+  }
+
+  export const addCardToStripeAccount = async (tokenId, stripeID) => {
+    //alert('A'+stripeID + "   " + 'B'+tokenId)
+      alert('okay')
+      console.log('OOOOO')
+      const user_uuid = LUPA_AUTH.currentUser.uid;
+     return await LUPA_AUTH.currentUser.getIdToken(true).then(async idToken => {
+       console.log('OOOOH: ' + idToken)
+      fetch('https://us-central1-lupa-cd0e3.cloudfunctions.net/addCardToStripeAccount', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + idToken
+        },
+        body: JSON.stringify({
+            tokenId: tokenId,
+            stripeID: stripeID,
+            user_uuid: user_uuid
+        }),
+      })
+        .then(async (response) => {
+          if (response.status === 200) {
+          return dispatch({ type: 'ADD_CARD_TO_ACCOUNT_SUCCESS', payload: stripeMetadata });
+        }
+        })
+        .catch(err => alert('error while doing get req addCardToStripeAccount:', err));
+  
+  }).catch(err => alert('oo'))
+}
 
 /*
 

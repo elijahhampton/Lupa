@@ -5,6 +5,7 @@ import {
     StyleSheet,
     Text
 } from 'react-native';
+import { ListItem } from 'react-native-elements';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useSelector } from 'react-redux/lib/hooks/useSelector';
@@ -52,3 +53,5 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF'
     }
 })
+
+export default AccountSettings;

@@ -128,6 +128,11 @@ accountList = [
         title: 'Lupa Trainer',
         description: '',
     },
+    {
+        key: 'Payments',
+        title: 'Payments',
+        description: '',
+    }
 ]
 
 notificationsList = [
@@ -281,50 +286,19 @@ class SettingsModal extends React.Component {
 
 
       handleListItemOnPress = (key) => {
+          const { navigation } = this.props;
         switch(key) {
             case 'Account':
-               this.props.navigation.push('AccountSettings');
+               navigation.push('AccountSettings');
                break;
             case 'LupaTrainer':
                 break;
+            case 'Payments':
+                navigation.push('PaymentSettings');
             default:
         }
     }
 
-    _navigateToPaymentSettings = () => {
-        this.props.navigation.navigate('PaymentSettingsView');
-    }
-
-    _handleGoalsModalOpen = () => {
-        this.setState({ goalsModalIsOpen: true })
-    }
-
-    _handleGoalsModalOnClose = () => {
-        this.setState({ goalsModalIsOpen: false })
-    }
-
-    getAccountListDescription = (description_property) => {
-        switch(description_property)
-        {
-            case 'display_name':
-                return this.state.userData.display_name;
-            case 'username':
-                return this.state.userData.username;
-            case 'email':
-                return this.state.userData.email;
-        }
-    }
-
-    getIconName = (property) => {
-        switch(property)
-        {
-            case 'change_password':
-            case 'recover_password':
-                return 'lock'
-            default:
-                return ''
-        }
-    }
 
     render() {
         return (
@@ -338,7 +312,7 @@ class SettingsModal extends React.Component {
                         {
                             accountList.map(item => {
                                 return (
-                                    <ListItem onPress={() => this.handleListItemOnPress(item.key)} title={item.title} titleStyle={styles.titleStyle} description={this.getAccountListDescription(item.property)} bottomDivider rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}/>
+                                    <ListItem onPress={() => this.handleListItemOnPress(item.key)} title={item.title} titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}/>
                                 )
                             })
                         }

@@ -159,6 +159,11 @@ var lupa_user : LupaUserStructure = {
     last_workout_completed: {
         dateCompleted: "",
         workoutUUID: "",
+    },
+    stripe_metadata: {
+        stripe_id: "",
+        card_last_four: "",
+        card_added_to_stripe: false,
     }
 }
 

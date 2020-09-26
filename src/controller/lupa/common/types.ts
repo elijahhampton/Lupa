@@ -102,14 +102,13 @@ export type LupaUserStructure = {
     waitlistedPrograms: Array<String>,
     notifications: Array<Object>,
     programs: Array<String>,
-    services: Array<String>,
-    workout_log: Array<Object>,
     hourly_payment_rate: Number,
     vlogs: Array<String>,
     scheduler_times: Object,
     workouts: Object,
     program_data: Array<Object>
     last_workout_completed: Object,
+    stripe_metadata: Object,
 };
 
 /* LupaWorkoutDataStructure */
