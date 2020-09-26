@@ -158,15 +158,8 @@ class Featured extends React.Component {
 
 
         return this.state.feedVlogs.map((vlog, index, arr) => {
-            if (index == arr.length - 1) {
-                return  <VlogFeedCard key={index} vlogData={vlog} />
-            }
-
             return (
-                <>
                     <VlogFeedCard key={index} vlogData={vlog} />
-                  
-                    </>
                    
             )
         })

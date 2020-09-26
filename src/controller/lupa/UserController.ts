@@ -23,6 +23,7 @@ import LOG, { LOG_ERROR } from '../../common/Logger';
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
 import ProgramController from './ProgramController';
+import moment from 'moment';
 
 export default class UserController {
     private static _instance: UserController;
@@ -1369,6 +1370,7 @@ export default class UserController {
             let variationProgramData = programData;
             variationProgramData.date_purchased = new Date()
             variationProgramData.workouts_completed = 0;
+            variationProgramData.program_started = false;
             await this.updateCurrentUser('program_data', variationProgramData, 'add');
             
             //add the user as one of the program participants
@@ -1582,6 +1584,130 @@ export default class UserController {
         }
 
         return Promise.resolve(vlogsData);
+    }
+
+    startProgram = async (userUUID, programUUID) => {
+        //Obtain the users document given the UUID
+        let userData = getLupaUserStructure();
+        await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
+
+        //Search for the correct program in the user's program data
+        let userProgramData = userData.program_data;
+        let foundProgram = getLupaProgramInformationStructure();
+        let found = false;
+        let foundIndex = 0;
+        for (let i = 0; i < userProgramData.length; i++) {
+            if (userProgramData[i].program_structure_uuid == programUUID) {
+                found = true;
+                foundProgram = userProgramData[i];
+                foundIndex = i;
+                continue;
+            }
+        }
+
+        //If we can't find it we just return from this function
+        //if we find it then we need to set program_started to true, reset the start date, and end date
+        //according to the program_duration
+        if (found === false) {
+            return;
+        }
+
+        //Give the program a start date of today and an end date based on the program duration
+        let newStartDate = moment().format(); // 2020-09-23T21:09:59-04:00
+        let newEndDate = moment().add(foundProgram.program_duration, 'weeks');
+        foundProgram.program_start_date = newStartDate;
+        foundProgram.program_end_date = newEndDate;
+
+        //set the program as started
+        foundProgram.program_started = true;
+
+        //replace the program at the saved index and update the users program data
+        userProgramData[foundIndex] = foundProgram;
+        await USER_COLLECTION.doc(userUUID).update({
+            program_data: userProgramData
+        })
+    }
+
+    resetProgram = async (userUUID, programUUID) => {
+      //Obtain the users document given the UUID
+      let userData = getLupaUserStructure();
+      await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
+          userData = documentSnapshot.data();
+      });
+
+      //Search for the correct program in the user's program data
+      let userProgramData = userData.program_data;
+      let foundProgram = getLupaProgramInformationStructure();
+      let found = false;
+      let foundIndex = 0;
+      for (let i = 0; i < userProgramData.length; i++) {
+          if (userProgramData[i].program_structure_uuid == programUUID) {
+              found = true;
+              foundProgram = userProgramData[i];
+              foundIndex = i;
+              continue;
+          }
+      }
+
+      //If we can't find it we just return from this function
+      //if we find it then we need to set program_started to true, reset the start date, and end date
+      //according to the program_duration
+        if (found === false) {
+          return;
+        } 
+        
+        //Give the program a start date of today and an end date based on the program duration
+        let newStartDate = moment().format(); // 2020-09-23T21:09:59-04:00
+        let newEndDate = moment().add(foundProgram.program_duration, 'weeks').format()
+        foundProgram.program_start_date = newStartDate;
+        foundProgram.program_end_date = newEndDate;
+        
+        //replace the program at the saved index and update the users program data
+        userProgramData[foundIndex] = foundProgram;
+        await USER_COLLECTION.doc(userUUID).update({
+            program_data: userProgramData
+        })
+    }
+    
+
+    stopProgram = async (userUUID, programUUID) => {
+      //Obtain the users document given the UUID
+      let userData = getLupaUserStructure();
+      await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
+          userData = documentSnapshot.data();
+      });
+
+      //Search for the correct program in the user's program data
+      let userProgramData = userData.program_data;
+      let foundProgram = getLupaProgramInformationStructure();
+      let found = false;
+      let foundIndex = 0;
+      for (let i = 0; i < userProgramData.length; i++) {
+          if (userProgramData[i].program_structure_uuid == programUUID) {
+              found = true;
+              foundProgram = userProgramData[i];
+              foundIndex = i;
+              continue;
+          }
+      }
+
+      //If we can't find it we just return from this function
+      //if we find it then we need to set program_started to true, reset the start date, and end date
+      //according to the program_duration
+        if (found === false) {
+          return;
+        } 
+
+        //set the found program's field program_started to false
+        foundProgram.program_started = false;
+    
+        //replace the program at the saved index and update the users program data
+        userProgramData[foundIndex] = foundProgram;
+        await USER_COLLECTION.doc(userUUID).update({
+            program_data: userProgramData
+        })
     }
 
 }

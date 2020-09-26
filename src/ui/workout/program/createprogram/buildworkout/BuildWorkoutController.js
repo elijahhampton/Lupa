@@ -45,6 +45,9 @@ import { Video } from 'expo-av';
 import AddSets from './component/AddSets';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
+import {Picker} from '@react-native-community/picker';
+import { getProgramWorkoutStructureEntry } from '../../../../../model/data_structures/programs/program_structures';
+
 const PLACEMENT_TYPES = {
     SUPERSET: 'superset',
     EXERCISE: 'exercise',
@@ -57,8 +60,6 @@ const mapStateToProps = (state, action) => {
     }
 }
 
-let items = []
-
 class BuildWorkoutController extends React.Component {
     constructor(props) {
         super(props);
@@ -66,6 +67,8 @@ class BuildWorkoutController extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
         this.workoutLibraryRef = createRef()
         this.addedWorkoutOptionsRef = createRef();
+        this.weekDayRBSheetRef = createRef();
+        this.dayOfTheWeekRBSheetRef = createRef();
 
         this.state = {
             mediaCaptureType: "",
@@ -91,23 +94,20 @@ class BuildWorkoutController extends React.Component {
             mondayCarouselIndex: 0,
             tuesdayCarouselIndex: 0,
             wednesdayCarouselIndex: 0,
+            height: 'auto',
             thursdayCarouselIndex: 0,
+            items: [],
+            weeks: [],
             fridayCarouselIndex: 0,
             saturdayCarouselIndex: 0,
             sundayCarouselIndex: 0,
             searchValue: '',
             bottomViewIndex: 0,
-            workoutDays: {
-                Monday: [],
-                Tuesday: [],
-                Wednesday: [],
-                Thursday: [],
-                Friday: [],
-                Saturday: [],
-                Sunday: []
-            },
+            workoutDays: [],
             numWorkoutsAdded: 0,
             currDayIndex: 0,
+            currWeekIndex: 0,
+            ready: false,
             currPlacementType: PLACEMENT_TYPES.EXERCISE,
             currSuperSetWorkoutIndex: 0,
             customWorkoutModalVisible: false,
@@ -127,6 +127,28 @@ class BuildWorkoutController extends React.Component {
               ],
             currView: 0
         }
+    }
+
+    async componentDidMount() {
+        const programDuration = this.props.programData.program_duration;
+
+
+        let items = [], weeks = [], workoutDays = new Array(programDuration);
+        for (let i = 0; i < programDuration; i++) {
+            await weeks.push(i);
+            workoutDays[i] = {
+                Monday: [],
+    Tuesday: [],
+    Wednesday:  [],
+    Thursday:  [],
+    Friday:  [],
+    Saturday:  [],
+    Sunday:  []
+            }
+        }
+
+        await this.setState({ ready: true, weeks: weeks, workoutDays: workoutDays })
+
     }
 
     goToIndex = (index) => {
@@ -275,6 +297,9 @@ class BuildWorkoutController extends React.Component {
 
     captureWorkout = (workoutObject, placementType) => {
         const workoutDay = this.getCurrentDay()
+        const currWeek = this.getCurrentWeek();
+ 
+        const programDuration = this.props.programData.program_duration;
 
         switch (this.state.currPlacementType) {
             case PLACEMENT_TYPES.SUPERSET:
@@ -291,7 +316,6 @@ class BuildWorkoutController extends React.Component {
                     workout_tags: workoutObject.workout_tags,
                     workout_uid: Math.random().toString(),
                     workout_day: workoutDay, //add the section so it is easy to delete
-                    superset: new Array(),
                 }
 
                 let workoutToUpdate = this.state.currPressedPopulatedWorkout;
@@ -300,100 +324,72 @@ class BuildWorkoutController extends React.Component {
 
                 switch (workoutDay) {
                     case 'Monday':
-                        for (let i = 0; i < this.state.workoutDays.Monday.length; i++) {
-                            if (this.state.workoutDays.Monday[i].workout_uid == workoutToUpdate.workout_uid) {
-                                newWorkoutData = this.state.workoutDays.Monday;
-                                newWorkoutData[i] = workoutToUpdate
-                                newState = {
-                                    Monday: newWorkoutData,
-                                    ...this.state.workoutDays
-                                }
-
-                                this.setState({ workoutDays: newState })
+                        for (let i = 0; i < this.state.workoutDays[currWeek].Monday.length; i++) {
+                            if (this.state.workoutDays[currWeek].Monday[i].workout_uid == workoutToUpdate.workout_uid) {
+                                newWorkoutData = this.state.workoutDays
+                                newWorkoutData[currWeek].Monday[i] = workoutToUpdate
+                               
+                                this.setState({ workoutDays: newWorkoutData })
                             }
                         }
                         break;
                         case 'Tuesday':
-                        for (let i = 0; i < this.state.workoutDays.Tuesday.length; i++) {
-                            if (this.state.workoutDays.Tuesday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
-                                newWorkoutData = this.state.workoutDays.Tuesday;
-                                newWorkoutData[i] = workoutToUpdate
-                                newState = {
-                                    Tuesday: newWorkoutData,
-                                    ...this.state.workoutDays
-                                }
-
-                                this.setState({ workoutDays: newState })
+                        for (let i = 0; i < this.state.workoutDays[currWeek].Tuesday.length; i++) {
+                            if (this.state.workoutDays[currWeek].Tuesday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
+                                newWorkoutData = this.state.workoutDays
+                                newWorkoutData[currWeek].Tuesday[i] = workoutToUpdate
+                               
+                                this.setState({ workoutDays: newWorkoutData })
                             }
                         }
                         break;
                         case 'Wednesday':
-                        for (let i = 0; i < this.state.workoutDays.Wednesday.length; i++) {
-                            if (this.state.workoutDays.Wednesday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
-                                newWorkoutData = this.state.workoutDays.Wednesday;
-                                newWorkoutData[i] = workoutToUpdate
-                                newState = {
-                                    Wednesday: newWorkoutData,
-                                    ...this.state.workoutDays
-                                }
-
-                                this.setState({ workoutDays: newState })
+                        for (let i = 0; i < this.state.workoutDays[currWeek].Wednesday.length; i++) {
+                            if (this.state.workoutDays[currWeek].Wednesday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
+                                newWorkoutData = this.state.workoutDays
+                                newWorkoutData[currWeek].Wednesday[i] = workoutToUpdate
+                               
+                                this.setState({ workoutDays: newWorkoutData })
                             }
                         }
                         break;
                         case 'Thursday':
-                        for (let i = 0; i < this.state.workoutDays.Thursday.length; i++) {
-                            if (this.state.workoutDays.Thursday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
-                                newWorkoutData = this.state.workoutDays.Thursday;
-                                newWorkoutData[i] = workoutToUpdate
-                                newState = {
-                                    Thursday: newWorkoutData,
-                                    ...this.state.workoutDays
-                                }
-
-                                this.setState({ workoutDays: newState })
+                        for (let i = 0; i < this.state.workoutDays[currWeek].Thursday.length; i++) {
+                            if (this.state.workoutDays[currWeek].Thursday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
+                                newWorkoutData = this.state.workoutDays
+                                newWorkoutData[currWeek].Thursday[i] = workoutToUpdate
+                               
+                                this.setState({ workoutDays: newWorkoutData })
                             }
                         }
                         break;
                         case 'Friday':
-                        for (let i = 0; i < this.state.workoutDays.Friday.length; i++) {
-                            if (this.state.workoutDays.Friday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
-                                newWorkoutData = this.state.workoutDays.Friday;
-                                newWorkoutData[i] = workoutToUpdate
-                                newState = {
-                                    Friday: newWorkoutData,
-                                    ...this.state.workoutDays
-                                }
-
-                                this.setState({ workoutDays: newState })
+                        for (let i = 0; i < this.state.workoutDays[currWeek].Friday.length; i++) {
+                            if (this.state.workoutDays[currWeek].Friday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
+                                newWorkoutData = this.state.workoutDays
+                                newWorkoutData[currWeek].Friday[i] = workoutToUpdate
+                               
+                                this.setState({ workoutDays: newWorkoutData })
                             }
                         }
                         break;
                         case 'Saturday':
-                        for (let i = 0; i < this.state.workoutDays.Saturday.length; i++) {
-                            if (this.state.workoutDays.Saturday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
-                                newWorkoutData = this.state.workoutDays.Saturday;
-                                newWorkoutData[i] = workoutToUpdate
-                                newState = {
-                                    Saturday: newWorkoutData,
-                                    ...this.state.workoutDays
-                                }
-
-                                this.setState({ workoutDays: newState })
+                        for (let i = 0; i < this.state.workoutDays[currWeek].Saturday.length; i++) {
+                            if (this.state.workoutDays[currWeek].Saturday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
+                                newWorkoutData = this.state.workoutDays
+                                newWorkoutData[currWeek].Saturday[i] = workoutToUpdate
+                               
+                                this.setState({ workoutDays: newWorkoutData })
                             }
                         }
                         break;
                         case 'Sunday':
-                        for (let i = 0; i < this.state.workoutDays.Sunday.length; i++) {
-                            if (this.state.workoutDays.Sunday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
-                                newWorkoutData = this.state.workoutDays.Sunday;
-                                newWorkoutData[i] = workoutToUpdate
-                                newState = {
-                                    Sunday: newWorkoutData,
-                                    ...this.state.workoutDays
-                                }
-
-                                this.setState({ workoutDays: newState })
+                        for (let i = 0; i < this.state.workoutDays[currWeek].Sunday.length; i++) {
+                            if (this.state.workoutDays[currWeek].Sunday[i].workout_workout_uid == workoutToUpdate.workout_uid) {
+                                newWorkoutData = this.state.workoutDays
+                                newWorkoutData[currWeek].Sunday[i] = workoutToUpdate
+                               
+                                this.setState({ workoutDays: newWorkoutData })
                             }
                         }
                         break;
@@ -425,100 +421,38 @@ class BuildWorkoutController extends React.Component {
                     }
 
     
-                    let updatedWorkoutData = [], newWorkoutData = {}
+                    let updatedWorkoutData = [], newWorkoutData = this.state.workoutDays;
                     switch (workoutDay) {
-                    
                         case 'Monday':
-
-                            updatedWorkoutData = this.state.workoutDays.Monday
-                            updatedWorkoutData.push(updatedWorkout)
-
-                            newWorkoutData = {
-                                Monday: updatedWorkoutData,
-                                ...this.state.workoutDays,
-                            }
-
+                            newWorkoutData[currWeek].Monday.push(updatedWorkout)
                             this.setState({ workoutDays: newWorkoutData })
-
-                    
                             break;
                         case 'Tuesday':
-                            updatedWorkoutData = this.state.workoutDays.Tuesday
-                            updatedWorkoutData.push(updatedWorkout)
-
-                            newWorkoutData = {
-                                Tuesday: updatedWorkoutData,
-                                ...this.state.workoutDays,
-                            }
-
-                            this.setState({ workoutDays: newWorkoutData });
+                            newWorkoutData[currWeek].Tuesday.push(updatedWorkout)
+                            this.setState({ workoutDays: newWorkoutData })
                             break;
                         case 'Wednesday':
-                            updatedWorkoutData = this.state.workoutDays.Wednesday
-                            updatedWorkoutData.push(updatedWorkout)
-
-                            newWorkoutData = {
-                                Wednesday: updatedWorkoutData,
-                                ...this.state.workoutDays,
-                            }
-
-                            this.setState({ workoutDays: newWorkoutData });
+                            newWorkoutData[currWeek].Wednesday.push(updatedWorkout)
+                            this.setState({ workoutDays: newWorkoutData })
                             break;
                         case 'Thursday':
-                            updatedWorkoutData = this.state.workoutDays.Thursday
-                            updatedWorkoutData.push(updatedWorkout)
-
-                            newWorkoutData = {
-                                Thursday: updatedWorkoutData,
-                                ...this.state.workoutDays,
-                            }
-
+                            newWorkoutData[currWeek].Thursday.push(updatedWorkout)
                             this.setState({ workoutDays: newWorkoutData })
                             break;
                         case 'Friday':
-                            updatedWorkoutData = this.state.workoutDays.Friday
-                            updatedWorkoutData.push(updatedWorkout)
-
-                            newWorkoutData = {
-                                Friday: updatedWorkoutData,
-                                ...this.state.workoutDays,
-                            }
-
+                            newWorkoutData[currWeek].Friday.push(updatedWorkout)
                             this.setState({ workoutDays: newWorkoutData })
                             break;
                         case 'Saturday':
-                            updatedWorkoutData = this.state.workoutDays.Saturday
-                            updatedWorkoutData.push(updatedWorkout)
-
-                            newWorkoutData = {
-                                Saturday: updatedWorkoutData,
-                                ...this.state.workoutDays,
-                            }
-
+                            newWorkoutData[currWeek].Saturday.push(updatedWorkout)
                             this.setState({ workoutDays: newWorkoutData })
                             break;
                         case 'Sunday':
-                            updatedWorkoutData = this.state.workoutDays.Sunday
-                            updatedWorkoutData.push(updatedWorkout)
-
-                            newWorkoutData = {
-                                Sunday: updatedWorkoutData,
-                                ...this.state.workoutDays,
-                            }
-
+                            newWorkoutData[currWeek].Sunday.push(updatedWorkout)
                             this.setState({ workoutDays: newWorkoutData })
                             break;
                         default:
-                            updatedWorkoutData = this.state.workoutDays.Monday
 
-                            updatedWorkoutData.push(updatedWorkout)
-
-                            newWorkoutData = {
-                                Monday: updatedWorkoutData,
-                                ...this.state.workoutDays,
-                            }
-
-                            this.setState({ workoutDays: newWorkoutData })
 
                     
                     }
@@ -586,21 +520,24 @@ class BuildWorkoutController extends React.Component {
 
     getCurrentDayContent = () => {
         const currDay = this.getCurrentDay()
+        const currWeek = this.getCurrentWeek();
+        let workoutDays = this.state.workoutDays;
+     
         try {
 
             switch (currDay) {
                 case 'Monday':
-                    if (this.state.workoutDays.Monday.length === 0) {
+                    if (this.state.workoutDays[currWeek].Monday.length === 0) {
                         return (
                            null
                         )
                     }
-                    
+
                     return (
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
 
-                           this.state.workoutDays.Monday.map((exercise, index, arr) => {
+                           this.state.workoutDays[currWeek].Monday.map((exercise, index, arr) => {
                                 return (
                                     <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
@@ -621,10 +558,13 @@ class BuildWorkoutController extends React.Component {
                             })
 
                             }
+                            <Text>
+                                {this.state.currWeekIndex}
+                            </Text>
                         </View>
                     )
                 case 'Tuesday':
-                    if (this.state.workoutDays.Tuesday.length === 0) {
+                    if (this.state.workoutDays[currWeek].Tuesday.length === 0) {
                         return (
                             null
                         )
@@ -634,7 +574,7 @@ class BuildWorkoutController extends React.Component {
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
 
-                           this.state.workoutDays.Tuesday.map((exercise, index, arr) => {
+                           this.state.workoutDays[currWeek].Tuesday.map((exercise, index, arr) => {
                                 return (
                                     <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
@@ -658,7 +598,7 @@ class BuildWorkoutController extends React.Component {
                         </View>
                     )
                 case 'Wednesday':
-                    if (this.state.workoutDays.Wednesday.length === 0) {
+                    if (this.state.workoutDays[currWeek].Wednesday.length === 0) {
                         return (
                            null
                         )
@@ -668,7 +608,7 @@ class BuildWorkoutController extends React.Component {
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
 
-                           this.state.workoutDays.Wednesday.map((exercise, index, arr) => {
+                           this.state.workoutDays[currWeek].Wednesday.map((exercise, index, arr) => {
                                 return (
                                     <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
@@ -692,7 +632,7 @@ class BuildWorkoutController extends React.Component {
                         </View>
                     )
                 case 'Thursday':
-                    if (this.state.workoutDays.Thursday.length === 0) {
+                    if (this.state.workoutDays[currWeek].Thursday.length === 0) {
                         return (
                             null
                         )
@@ -702,7 +642,7 @@ class BuildWorkoutController extends React.Component {
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                         {
 
-                       this.state.workoutDays.Thursday.map((exercise, index, arr) => {
+                       this.state.workoutDays[currWeek].Thursday.map((exercise, index, arr) => {
                             return (
                                 <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                 <View style={[{flex: 1, width: '100%'}]}>
@@ -726,7 +666,7 @@ class BuildWorkoutController extends React.Component {
                     </View>
                     )
                 case 'Friday':
-                    if (this.state.workoutDays.Friday.length === 0) {
+                    if (this.state.workoutDays[currWeek].Friday.length === 0) {
                         return (
                            null
                         )
@@ -735,7 +675,7 @@ class BuildWorkoutController extends React.Component {
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
 
-                           this.state.workoutDays.Friday.map((exercise, index, arr) => {
+                           this.state.workoutDays[currWeek].Friday.map((exercise, index, arr) => {
                                 return (
                                     <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
@@ -759,7 +699,7 @@ class BuildWorkoutController extends React.Component {
                         </View>
                     )
                 case 'Saturday':
-                    if (this.state.workoutDays.Saturday.length === 0) {
+                    if (this.state.workoutDays[currWeek].Saturday.length === 0) {
                         return (
                            null
                         )
@@ -769,7 +709,7 @@ class BuildWorkoutController extends React.Component {
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                         {
 
-                       this.state.workoutDays.Saturday.map((exercise, index, arr) => {
+                       this.state.workoutDays[currWeek].Saturday.map((exercise, index, arr) => {
                             return (
                                 <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                 <View style={[{flex: 1, width: '100%'}]}>
@@ -793,7 +733,7 @@ class BuildWorkoutController extends React.Component {
                     </View>
                     )
                 case 'Sunday':
-                    if (this.state.workoutDays.Sunday.length === 0) {
+                    if (this.state.workoutDays[currWeek].Sunday.length === 0) {
                         return (
                           null
                         )
@@ -803,7 +743,7 @@ class BuildWorkoutController extends React.Component {
                         <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             {
 
-                           this.state.workoutDays.Sunday.map((exercise, index, arr) => {
+                           this.state.workoutDays[currWeek].Sunday.map((exercise, index, arr) => {
                                 return (
                                     <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={{width: this.state.addedWorkoutsScrollViewWidth - 10, height: 100, marginTop: 5, marginBottom: 10}}>
                                     <View style={[{flex: 1, width: '100%'}]}>
@@ -948,54 +888,6 @@ class BuildWorkoutController extends React.Component {
         }
     }
 
-
-    renderBottomView = () => {
-     
-        this.props.programData.program_workout_days.map((day, index, arr) => {
-            let item = {
-                label: day,
-                value: day,
-                index: index
-            }
-
-            items.push(item)
-        })
-
-        
-
-                return (
-                    <View style={{ flex: 1.5 }}>
-
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <View style={{ flex: 2 }}>
-                                <Divider />
-                                <Text style={{ padding: 10, fontSize: 15, fontWeight: '400', fontFamily: 'Avenir', alignSelf: 'center' }}>
-                                    Add exercises from the exercise library.
-                        </Text>
-                                <DropDownPicker
-                                    items={items}
-                                    defaultValue={this.getCurrentDay()}
-                                    containerStyle={{ height: 40, width: Dimensions.get('window').width }}
-                                    style={{ backgroundColor: '#fafafa', marginHorizontal: 20 }}
-                                    itemStyle={{
-                                        justifyContent: 'flex-start'
-                                    }}
-                                    dropDownStyle={{ backgroundColor: '#fafafa' }}
-                                    onChangeItem={item => this.setState({ currDayIndex: item.index })}
-                                />
-
-                                {this.renderExerciseNumberCaption()}
-                                {this.renderExerciseSuperSetNumberCaption()}
-
-
-                            </View>
-
-                            <FAB small={false} label="Open Library" onPress={() => this.handleOpenLibraryOnPress(PLACEMENT_TYPES.EXERCISE)} style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 12 }} color="white" icon="plus" />
-                        </View>
-                    </View>
-                )
-    }
-
     handleAddSuperSet =  async () => {
         await this.setState({ currPlacementType: PLACEMENT_TYPES.SUPERSET });
         this.addedWorkoutOptionsRef.current.close();
@@ -1094,38 +986,116 @@ class BuildWorkoutController extends React.Component {
     }
 
     renderDropdownPicker = () => {
-        if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
-            this.props.programData.program_workout_days.map((day, index, arr) => {
-                let item = {
-                    label: day,
-                    value: day,
-                    index: index
-                }
-    
-                items.push(item)
-            })
-
+      
+        if (this.props.lupa_data.Users.currUserData.isTrainer === true && this.state.ready) {
+        
             return (
-                <DropDownPicker
-               items={items}
-               defaultValue={this.getCurrentDay()}
-               containerStyle={{ marginVertical: 10, height: 45, width: Dimensions.get('window').width }}
-               style={{ backgroundColor: '#fafafa', marginHorizontal: 20 }}
-               itemStyle={{
-                    fontSize: 12,
-                   justifyContent: 'flex-start'
-               }}
-               dropDownStyle={{ backgroundColor: '#fafafa' }}
-               onChangeItem={item => this.setState({ currDayIndex: item.index })}
-           />
+     
+                <RBSheet
+                ref={this.weekDayRBSheetRef}
+                height={300}
+                closeOnPressMask={true}
+                customStyles={{
+                    wrapper: {
+
+                    },
+                    container: {
+                        borderRadius: 20
+                    },
+                    draggableIcon: {
+                        backgroundColor: '#000000'
+                    }
+                }}
+                dragFromTopOnly={true}
+
+            >
+                <View style={{flex: 1}}>
+                <View style={{width: '100%'}}>
+                    <Button color="#1089ff" style={{alignSelf: 'flex-end'}} mode="text" onPress={this.closeWeekDayPicker}>
+                        <Text>
+                            Done
+                        </Text>
+                    </Button>
+                    </View>
+                  
+                <Picker
+  selectedValue={this.getCurrentDay()}
+  style={{height: '100%', width: '100%'}}
+  onValueChange={(itemValue, itemIndex) =>
+    this.setState({currDayIndex: itemIndex})
+  }>
+      {
+          this.props.programData.program_workout_days.map(day => {
+              return <Picker.Item label={day} value={day} />
+          })
+      }
+</Picker>
+</View>
+<SafeAreaView />
+            </RBSheet>
+                   
             )
         } else {
             //we don't need to do anything here because the currDayIndex is already 0
         }
     }
 
+    getCurrentWeek = () => {
+        return this.state.currWeekIndex
+    }
+
+    renderDayOfTheWeekDropdownPicker = () => {
+        if (this.props.lupa_data.Users.currUserData.isTrainer === true && this.state.ready) {
+                return (
+                    <RBSheet
+                ref={this.dayOfTheWeekRBSheetRef}
+                height={300}
+                closeOnPressMask={true}
+                customStyles={{
+                    wrapper: {
+
+                    },
+                    container: {
+                        borderRadius: 20
+                    },
+                    draggableIcon: {
+                        backgroundColor: '#000000'
+                    }
+                }}
+                dragFromTopOnly={true}
+            >
+                <View style={{flex: 1}}>
+                <View style={{width: '100%'}}>
+                    <Button color="#1089ff" style={{alignSelf: 'flex-end'}} mode="text" onPress={this.closeWeekPicker}>
+                        <Text>
+                            Done
+                        </Text>
+                    </Button>
+                    </View>
+                <Picker
+  selectedValue={this.getCurrentWeek()}
+  style={{height: '100%', width: '100%'}}
+  onValueChange={(itemValue, itemIndex) => this.setState({currWeekIndex: itemIndex})}>
+      {
+          this.state.weeks.map((week, index, arr) => {
+              return <Picker.Item label={(week + 1).toString()} value={index} />
+          })
+      }
+</Picker>
+</View>
+<SafeAreaView />
+            </RBSheet>
+                   
+                )
+        } else  {
+            return null;
+        }
+        return null;
+    }
+
+    
+
     renderComponentDisplay = () => {
-        let items = [];
 
         switch(this.state.currView) {
             case 0:
@@ -1160,16 +1130,21 @@ class BuildWorkoutController extends React.Component {
                    
                     {this.renderAddExercisesHeaderText()}
                     </View>
-                   
-        
-                
+            
                 </Appbar.Header>
-
+                
+                   
+                  {/* <View style={{height: this.state.height, justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'flex-start'}}>
                 {this.renderDropdownPicker()}
+                {this.renderDayOfTheWeekDropdownPicker()}
+                </View> */}
+      
 
             <Divider />
                <View style={styles.content}>
+              
                    <View style={{flex: 4}}>
+                       
                    <View style={{}}>
                
                         <View style={{flex: 1}}>
@@ -1181,7 +1156,6 @@ class BuildWorkoutController extends React.Component {
                    </View>
               
                <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-     
 
                   {
                       this.props.lupa_data.Users.currUserData.isTrainer === true ?
@@ -1238,16 +1212,40 @@ class BuildWorkoutController extends React.Component {
                 
                 <CreateCustomWorkoutModal isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} captureWorkout={this.captureWorkout} />
                 {this.renderWorkoutOptionsSheet()}
+                {this.renderDropdownPicker()}
+           {this.renderDayOfTheWeekDropdownPicker()}
+            <SafeAreaView style={{borderTopColor: '#E5E5E5', borderTopWidth: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    <Button onPress={this.openWeekDayPicker} uppercase={false} color="#1089ff" style={{elevation: 8}} mode="contained" icon={() => <FeatherIcon color="white" name="chevron-up" />}>
+                        {this.getCurrentDay()}
+                    </Button>
+                </View>
+
+                <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    <Button onPress={this.openWeekPicker} uppercase={false} color="#1089ff" style={{elevation: 8}} mode="contained" icon={() => <FeatherIcon color="white" name="chevron-up" />}>
+                        Week {this.state.currWeekIndex + 1}
+                    </Button>
+                </View>
+            </SafeAreaView>
             </View>
               );
             case 1:
-                return  <AddSets saveProgramWorkoutData={this.handleSaveProgramData} goToIndex={this.goToIndex} programWorkoutDays={this.props.lupa_data.Users.currUserData.isTrainer === false ? this.props.program_workout_days : this.props.programData.program_workout_days} workoutDays={this.state.workoutDays} structureID={this.props.currProgramUUID} />
+                return  <AddSets programData={this.props.programData} saveProgramWorkoutData={this.handleSaveProgramData} goToIndex={this.goToIndex} programWorkoutDays={this.props.lupa_data.Users.currUserData.isTrainer === false ? this.props.program_workout_days : this.props.programData.program_workout_days} workoutDays={this.state.workoutDays} structureID={this.props.currProgramUUID} />
         }
     }
 
+    openWeekDayPicker = () => this.weekDayRBSheetRef.current.open();
+    closeWeekDayPicker = () => this.weekDayRBSheetRef.current.close();
+
+    openWeekPicker = () => this.dayOfTheWeekRBSheetRef.current.open();
+    closeWeekPicker = () => this.dayOfTheWeekRBSheetRef.current.close();
+
     render() {
         return (
-            this.renderComponentDisplay()
+            <>
+           { this.renderComponentDisplay()}
+
+            </>
         )
     }
 }

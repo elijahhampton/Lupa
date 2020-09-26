@@ -49,6 +49,7 @@ import LiveWorkoutFullScreenContentModal from './LiveWorkoutFullScreenContentMod
 import RestTimer from './RestTimer';
 import { useNavigation } from '@react-navigation/native';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
+import moment from 'moment'
 
 const mapStateToProps = (state, action) => {
     return {
@@ -135,6 +136,7 @@ class LiveWorkout extends React.Component {
             },
             currentWorkoutOriginalReps: 0,
             currentWorkoutStructure: [],
+            currentWeek: 0,
             workoutDays: [],
             currentWorkoutDay: "",
             currentDayIndex: 0,
@@ -165,9 +167,9 @@ class LiveWorkout extends React.Component {
     }
 
     async componentDidMount() {
-        await this.setupLiveWorkout()
+        await this.setupLiveWorkout();
         await this.setupFire();
-        await this.setState({ ready: true })
+        await this.setState({ ready: true });
     }
 
 
@@ -252,39 +254,48 @@ class LiveWorkout extends React.Component {
         this.loadCurrentDayWorkouts(this.state.programData.program_workout_days[0])
     }
 
-    loadCurrentDayWorkouts = (day) => {
-      /*  if (!this.state.ready) {
-            return;
-        }*/
+    loadCurrentDayWorkouts = async (day) => {
+        if (this.state.programData.type == 'PROGRAM') {
+            let endDate = moment(this.state.programData.program_end_date)
+            let weekDifference = endDate.diff(moment(), 'weeks') ;
+            const currWeek = this.state.programData.program_duration - weekDifference;
+
+            /****************************** ****************************/
+            //TODO: Here we need to handle the case where the week is 0, i.e. the program has ended
+            // beause the weekDIfference  = 0. (Need to also check that the day is the day, Sept 27 = Sept 27 so we don't end the program too early)
+            /****************************** ****************************/
+            await this.setState({ currentWeek: currWeek - 1 });
+        }
 
         let workoutStructure;
+       
         switch (day) {
             case 'Monday':
-                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Monday)
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Monday)
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Tuesday':
-                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Tuesday)
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Tuesday)
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Wednesday':
-                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Wednesday)
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Wednesday)
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Thursday':
-                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Thursday)
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Thursday)
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Friday':
-                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Friday)
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Friday)
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Saturday':
-                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Saturday)
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Saturday)
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Sunday':
-                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure.Sunday)
+                workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Sunday)
                 this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             default:
@@ -573,6 +584,7 @@ class LiveWorkout extends React.Component {
     }
 
     advanceExercise = () => {
+        const currentWeek = this.state.currentWeek;
         if (this.state.currentWorkoutIndex === this.state.currentWorkoutStructure.length - 1) {
             this.setState({
                 showFinishedDayDialog: true
@@ -592,7 +604,7 @@ class LiveWorkout extends React.Component {
             });
         } else if (this.state.currentWorkout.workout_sets > 1) {
             let currentWorkout = this.state.currentWorkout
-            currentWorkout.workout_sets = currentWorkout.workout_sets -  1;
+            currentWorkout.workout_sets = currentWorkout.workout_sets-  1;
             this.setState({
                 currentWorkout: currentWorkout
             })
@@ -604,7 +616,7 @@ class LiveWorkout extends React.Component {
             return "-"
         }
 
-        return this.state.currentWorkout.workout_reps;
+        return this.state.currentWorkout.workout_reps
     }
 
     renderWorkoutSets = () => {
@@ -612,7 +624,7 @@ class LiveWorkout extends React.Component {
             return "-"
         }
 
-        return this.state.currentWorkout.workout_sets;
+        return this.state.currentWorkout.workout_sets
     }
 
     renderWorkoutTempo = () => {
@@ -657,6 +669,9 @@ class LiveWorkout extends React.Component {
                             </Text>
                             <Text style={{ fontFamily: 'Avenir-Light' }}>
                                 {this.state.currentWorkout.workout_description == '' ? 'No description found for this workout.' : this.state.currentWorkout.workout_description}
+                            </Text>
+                            <Text>
+                                Week: {this.state.currentWeek + 1}
                             </Text>
                         </View>
 
@@ -1092,13 +1107,13 @@ class LiveWorkout extends React.Component {
     render() {
         return (
             <>
-                <Appbar.Header style={{ backgroundColor: '#1089ff'}}>
+               <Appbar.Header style={{ backgroundColor: '#1089ff'}}>
                     <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} onPress={this.showWarningDialog} />} />
 
                     <Appbar.Content title={this.renderLiveWorkoutTitle()} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
 
                     <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="maximize" size={20} onPress={() => this.setState({ showFullScreenContent: true })} />} />
-                    {this.props.route.params.workoutType === 'PROGRAM' ? <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="list" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />} /> : null }
+                    {this.state.programData.type === 'PROGRAM' ? <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="list" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />} /> : null }
                 </Appbar.Header>
                 
                 {this.renderComponentDisplay()}
@@ -1112,7 +1127,7 @@ class LiveWorkout extends React.Component {
                 <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
                 <LiveWorkoutFullScreenContentModal isVisible={this.state.showFullScreenContent} closeModal={() => this.setState({ showFullScreenContent: false })} contentType={'VIDEO' /*this.state.contentTypeDisplayed*/} contentURI={this.state.currentDisplayedMediaURI} />
-            
+             
             </>
         )
     }

@@ -1,4 +1,4 @@
-import { LupaProgramInformationStructure } from "./common/types";
+import { LupaProgramInformationStructure, ProgramWorkoutStructureEntry} from "./common/types";
 
 var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_name: "",
@@ -29,6 +29,7 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
         Saturday: [],
         Sunday: []
     },
+    program_workout_structure: [], //we use this
     program_workout_days: [],
     program_image: "",
     program_tags: [],
@@ -47,7 +48,9 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
         date_purchased: new Date(), //remove
         gross_pay: 0,
         net_pay: 0,
-    }
+    },
+    type: 'PROGRAM',
+    isPublic: false,
 }
 
 export const getLupaProgramInformationStructure = (
@@ -117,7 +120,21 @@ export const getLupaProgramInformationStructure = (
         num_interactions: 0,
         views: 0,
         shares: 0,
-    }
+    },
 
     return lupa_program_information_structure;
+}
+
+var lupa_program_workout_structure_entry : ProgramWorkoutStructureEntry = {
+    Monday: [],
+    Tuesday: [],
+    Wednesday:  [],
+    Thursday:  [],
+    Friday:  [],
+    Saturday:  [],
+    Sunday:  []
+}
+
+export const getProgramWorkoutStructureEntry = () => {
+    return lupa_program_workout_structure_entry;
 }

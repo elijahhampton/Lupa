@@ -8,7 +8,7 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 import { getPurchaseMetaDataStructure } from '../../model/data_structures/programs/purchaseMetaData'
 import { getLupaUserStructure } from '../firebase/collection_structures';
-
+import moment from 'moment';
 
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
@@ -117,7 +117,6 @@ export default class ProgramController {
               })
         })
 
-        console.log('getToPciks()')
 
         return Promise.resolve(topPicks)
     }
@@ -139,7 +138,6 @@ export default class ProgramController {
                   }
               })
         })
-        console.log('getToPciks()')
         return Promise.resolve(recentlyAddedPrograms)
     }
 
@@ -165,6 +163,12 @@ export default class ProgramController {
         })
     }
 
+    markProgramCompleted = (uuid) => {
+        PROGRAM_COLLECTION.doc(uuid).update({
+            completedProgram: true
+        })
+    }
+
     publishProgram = async (uuid) => {
         let programData = getLupaProgramInformationStructure()
 
@@ -181,7 +185,8 @@ export default class ProgramController {
 
         await PROGRAM_COLLECTION.doc(uuid).update({
             program_image: imageURL,
-            completedProgram: true
+            completedProgram: true,
+            isPublic: true,
         })
 
         await USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(snapshot => {
@@ -192,7 +197,15 @@ export default class ProgramController {
         programData.completedProgram = true;
         programData.program_metadata.workouts_completed = 0;
         programData.program_metadata.date_created = new Date().toDateString()
+
+         //Give the program a start date of today and an end date based on the program duration
+         let newStartDate = moment().format(); // 2020-09-23T21:09:59-04:00
+         let newEndDate = moment().add(programData.program_duration, 'weeks');
+         programData.program_start_date = newStartDate;
+         programData.program_end_date = newEndDate;
+        programData.isPublic = true;
         programData.program_image = imageURL;
+        programData.program_started = false;
         programDataList.push(programData);
 
         USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({

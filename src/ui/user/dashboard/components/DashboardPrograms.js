@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     View,
@@ -17,6 +17,8 @@ import {
 
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { useNavigation } from '@react-navigation/native';
+import LUPA_DB from '../../../../controller/firebase/firebase';
+import LupaController from '../../../../controller/lupa/LupaController';
 
 /**
  * Renders a user's programs along with program options.
@@ -27,19 +29,13 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
 
     const [cardContentHeight, setCardContentHeight] = useState(0)
     const [cardExpanded, setCardExpanded]  = useState(false);
-    const PROGRAMS = useSelector(state => {
-        return state.Users.currUserData.program_data
-    })
+    const [programs, setPrograms] = useState([])
 
-    const handleOnPress = () => {
-        if (cardExpanded === false) {
-            setCardExpanded(true);
-            setCardContentHeight('auto')
-        } else {
-            setCardExpanded(false);
-            setCardContentHeight(0)
-        }
-    }
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
 
     const navigateLiveWorkout = (programData) => {
         closeModal();
@@ -48,6 +44,32 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
             programData: programData
         })
     }
+    
+    const handleToggleStartProgram = async (programData) => {
+        if (programData.program_started === false) {
+            await LUPA_CONTROLLER_INSTANCE.handleStartProgram(currUserData.user_uuid, programData.program_structure_uuid);
+        } else {
+            await LUPA_CONTROLLER_INSTANCE.handleStopProgram(currUserData.user_uuid, programData.program_structure_uuid);
+        }
+    }
+
+    const handleResetProgram = async (programData) => {
+        await LUPA_CONTROLLER_INSTANCE.handleResetProgram(currUserData.user_uuid, programData.program_structure_uuid);
+    }
+
+    useEffect(() => {
+        let programsList = []
+        const programDataObserver = LUPA_DB.collection('users').doc(currUserData.user_uuid).onSnapshot(documentSnapshot => {
+            const data = documentSnapshot.data().program_data;
+            if (typeof(data) == 'undefined' || data.completedProgram === false) {
+
+            } else {
+                setPrograms(data);
+            }
+        });
+
+        return () => programDataObserver();
+    }, [])
 
     return (
         <Modal animated={true} animationType="slide" visible={isVisible} presentationStyle="fullScreen" onDismiss={closeModal}>
@@ -55,13 +77,13 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                 <Feather1s name="arrow-left" size={20} onPress={closeModal} style={{paddingLeft: 20}} />
                 <ScrollView>
                 {
-                    PROGRAMS.map((result, index, arr) => {
+                    programs.map((result, index, arr) => {
                         if (typeof(result) == 'undefined' || typeof(result.program_structure_uuid) == 'undefined' || result.program_image == "") {
                             return;
                         }
                         return (
                             <View style={{backgroundColor: 'white'}}>
-                            <TouchableOpacity key={index} onPress={handleOnPress}>
+
                             <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 120, backgroundColor: 'transparent'}} >
                             <View style={{flex: 1.5, alignItems: 'center', justifyContent: 'center' }}>
                                 <Image source={{uri: result.program_image }}  style={{width: '100%', height: '100%', borderRadius: 8}} />
@@ -77,20 +99,27 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                                     </Text>
                                 </View>
 
-                                <Feather1s name={cardExpanded === true ? 'chevron-up' : 'chevron-down'} size={20} />
+                             
                                 </View>
-
-                                <Button onPress={() => navigateLiveWorkout(result)} color="#1089ff" style={{alignSelf: 'flex-start'}} uppercase={false} mode="#1089ff">
-                                    Launch Live Workout
-                                </Button>
+                            
+                              
                             </View>
                           </Surface>
-                          </TouchableOpacity>
-                            <View style={{width: Dimensions.get('window').width - 20, height: cardContentHeight}}>
-                                <Text style={{margin: 10}}>
-                                    Workouts Completed: {result.program_metadata.workouts_completed}
-                                </Text>
-                            </View>
+
+                          <View style={{marginVertical: 10, flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                                <Button onPress={() => navigateLiveWorkout(result)} disabled={!result.program_started} mode="contained" onPress={() => navigateLiveWorkout(result)} color="#1089ff" style={{alignSelf: 'flex-start'}} uppercase={false}>
+                                    Launch
+                                </Button>
+
+                                <Button onPress={() => handleResetProgram(result)} disabled={!result.program_started} mode="contained" color="#1089ff" style={{alignSelf: 'flex-start'}} uppercase={false}>
+                                   Reset Program
+                                </Button>
+
+                                <Button onPress={() => handleToggleStartProgram(result)} mode="contained" color={result.program_started === false ? "#1089ff" : '#e53935'} style={{alignSelf: 'flex-start'}} uppercase={false}>
+                                    {result.program_started === false ? 'Start Program' : 'Stop Program'}
+                                </Button>
+                                </View>
+
                             <Divider />
                           </View>
                         )

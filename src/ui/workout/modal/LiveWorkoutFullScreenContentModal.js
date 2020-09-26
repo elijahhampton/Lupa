@@ -6,16 +6,20 @@ import {
     Text,
     StyleSheet,
     Modal,
+    SafeAreaView, ScrollView
 } from 'react-native';
 import { Video } from 'expo-av'
 import ThinFeatherIcon from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Constants } from 'react-native-unimodules';
+import VlogFeedCard from '../../user/component/VlogFeedCard';
+import { Appbar, Divider } from 'react-native-paper';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
-function LiveWorkoutFullScreenContentModal({ isVisible, closeModal, contentURI, contentType }) {
+function LiveWorkoutFullScreenContentModal({ isVisible, closeModal, vlogData }) {
     const [playVideo, setPlayVideo] = useState(false);
     
-    const renderContent = () => {
+   /* const renderContent = () => {
         if (contentType == null || typeof(contentType) == 'undefined') {
             return (
                 <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
@@ -113,12 +117,16 @@ function LiveWorkoutFullScreenContentModal({ isVisible, closeModal, contentURI, 
             )
         }
 
-    }
+    }*/
 
     return (
-        <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType="fade">
-            {renderContent()}
-            <FeatherIcon  size={22} name="x" style={{position: 'absolute', top: 50, left: 30, }} color="black" onPress={closeModal}/>
+        <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType="slide">
+            <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
+                <Appbar.Action icon={() =>  <Feather1s  size={22} name="x" color="black" onPress={closeModal}/>} />
+            </Appbar.Header>
+           <ScrollView>
+           <VlogFeedCard vlogData={vlogData} />
+           </ScrollView>
         </Modal>
     )
 }

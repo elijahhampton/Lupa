@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 
 import {
     View,
@@ -26,9 +26,15 @@ import { Video } from 'expo-av';
 import Slider from "react-native-slider";
 import { Pagination } from 'react-native-snap-carousel'
 
-
-function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperSetIndex }) {
+import {Picker} from '@react-native-community/picker';
+import RBSheet from 'react-native-raw-bottom-sheet'
+let weeks = []
+function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
     const [updateState, forceUpdateState] = useState(false);
+
+    const [currProgramWeek, setCurrProgramWeek] = useState(0)
+
+    const programWeekPicker = createRef();
 
     const handleChangeRepsSliderValue = (workoutRef, value) => {
         workoutRef.workout_reps = value;
@@ -60,6 +66,9 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
         forceUpdateState(!updateState)
     }
 
+    const openProgramWeekPicker = () => programWeekPicker.current.open();
+    const closeProgramWeekPicker = () => programWeekPicker.current.close();
+
     const renderComponentDisplay = () => {
         switch(workout.superset.length == 0)
         {
@@ -86,21 +95,22 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
                                             <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
 
 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
+        
         <View style={{marginHorizontal: 5}}>
             <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
                 Sets
             </Text>
-            <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{height: 30, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
         <View style={{alignItems: 'center', justifyContent: 'center'}}>
             <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseSets(workout)} />
         </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
+        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
         <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 30, fontFamily: 'Avenir-Light'}}>
+            <Text style={{fontSize: 30, fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
                 {workout.workout_sets}
             </Text>
         </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
+        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
         <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseSets(workout)}/>
     </View>
         </View>
@@ -109,17 +119,17 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
             <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
                 Reps
             </Text>
-            <View style={{height: 50, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{height: 30, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
         <View style={{alignItems: 'center', justifyContent: 'center'}}>
             <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseReps(workout)} />
         </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
+        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
         <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 30, fontFamily: 'Avenir-Light'}}>
+            <Text style={{fontSize: 30,  fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
                 {workout.workout_reps}
             </Text>
         </View>
-        <View style={{height: 50, backgroundColor: '#212121', width: 1}} />
+        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
         <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseReps(workout)}/>
     </View>
         </View>
@@ -152,7 +162,7 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
                                 scrollEventThrottle={3}
                                 contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
                         >
-                        <View style={{flex: 1, height: 300, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{flex: 1, height: 380, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
                                     <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
                                     <View style={{flex: 1}}>
 
@@ -221,7 +231,7 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
                                     {
                                         workout.superset.map((superset, index, arr) => {
                                             return (
-                                                <View style={{flex: 1, height: 300, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                                                <View style={{flex: 1, height: 380, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
                                     <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
                                                 <View style={{flex: 1}}>
 
@@ -299,7 +309,7 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
                                         })
                                     }
                         </ScrollView>
-                        <Pagination dotsLength={5} />
+                        <Pagination  dotsLength={5} />
                         <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
                     </View>
                 )
@@ -310,9 +320,59 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, currDay, captureSuperS
         }
     }
 
+    renderProgramWeekPicker = () => {
+        weeks = new Array(programDuration).fill(0)
+        for (let i = 0; i < programDuration; i++) {
+            weeks[i] = i
+        }
+
+        return (
+            <RBSheet
+                ref={programWeekPicker}
+                height={250}
+                dragFromTopOnly={true}
+                closeOnDragDown={true}
+                customStyles={{
+                    wrapper: {
+
+                    },
+                    container: {
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0
+                    },
+                    draggableIcon: {
+                        backgroundColor: 'rgb(220, 220, 220)',
+                    }
+                }}
+            >
+                <View style={{flex: 1}}>
+                    <View style={{width: '100%'}}>
+                    <Button color="#1089ff" style={{alignSelf: 'flex-end'}} mode="text" onPress={closeProgramWeekPicker}>
+                        <Text>
+                            Done
+                        </Text>
+                    </Button>
+                    </View>
+                  
+                    <Picker
+        selectedValue={currProgramWeek}
+        style={{height: '100%', width: '100%'}}
+        onValueChange={(itemValue, itemIndex) => setCurrProgramWeek(itemValue)}>
+            {
+                weeks.map(weekNum => {
+                    return <Picker.Item label={(weekNum + 1).toString()} value={weekNum} key={weekNum} />
+                })
+            }
+      </Picker>
+                </View>
+            </RBSheet>
+        )
+    }
 
     return (
-        renderComponentDisplay()
+        <>
+        {renderComponentDisplay()}
+      </>
     )
 }
 

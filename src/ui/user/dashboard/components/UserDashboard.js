@@ -90,7 +90,7 @@ function UserDashboard(props) {
                    <View style={{marginVertical: 10, backgroundColor: 'transparent'}} />
         <ListItem onPress={() => setProgramModalIsOpen(true)} title={"Programs " + '(' + NUM_PROGRAMS + ')'} rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} topDivider bottomDivider />
 
-        <ListItem onPress={() => {}} title="My Data" rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} bottomDivider />
+        <ListItem onPress={() => navigation.push('MyData')} title="My Data" rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} bottomDivider />
         
         <View style={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#E5E5E5', marginVertical: 20, padding: 20, backgroundColor: 'white'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -104,6 +104,7 @@ function UserDashboard(props) {
             {renderLastCompletedWorkoutStatus()}
         </View>
 
+        {/*
         <View style={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#E5E5E5', flexDirection: 'row', alignItems: 'center', alignItems: 'center', justifyContent: 'space-evenly', marginVertical: 20, padding: 20, backgroundColor: 'white'}}>
           <View style={{flex: 3}}>
           <Text style={{color: '#1089ff', fontSize: 18, flexWrap: 'wrap',  fontFamily: 'Avenir-Light'}}>
@@ -117,6 +118,7 @@ function UserDashboard(props) {
             </View>
 
         </View>
+        */}
 
         </ScrollView>
         :

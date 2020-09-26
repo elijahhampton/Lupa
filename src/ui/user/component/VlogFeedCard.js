@@ -3,10 +3,15 @@ import React, { useState, useEffect } from 'react'
 import {
     View,
     Text,
-    Dimensions
+    Dimensions,
+    TouchableOpacity,
 } from 'react-native';
 
+<<<<<<< HEAD
 import { Card, Caption, Surface, Menu, Chip, Divider } from 'react-native-paper';
+=======
+import { Card, Caption, Menu, Chip, Surface } from 'react-native-paper';
+>>>>>>> mvp-runthrough-3
 import { useSelector } from 'react-redux';
 import { Avatar } from 'react-native-elements';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
@@ -15,8 +20,14 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { Video } from 'expo-av';
 import LiveWorkoutFullScreenContentModal from '../../workout/modal/LiveWorkoutFullScreenContentModal';
 import DoubleClick from 'react-native-double-tap';
+<<<<<<< HEAD
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather'
+=======
+
+import FeatherIcon from 'react-native-vector-icons/Feather'
+
+>>>>>>> mvp-runthrough-3
 function formatDateString(dateString) {
     const stringKeys = dateString.split(" ");
     let updatedString = stringKeys[1] + " " + stringKeys[2] + " " + stringKeys[3]
@@ -76,7 +87,7 @@ function VlogFeedCard({ vlogData }) {
                 </Card.Content>
          
                 <Card.Content>
-                    <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{paddingVertical: 10, width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
                             <Avatar rounded  containerStyle={{borderWidth: 1, borderColor: '#EEEEEE'}} source={{ uri: vlogOwnerData.photo_url }} size={45} />
                             <View style={{ paddingHorizontal: 10 }}>
@@ -101,12 +112,33 @@ function VlogFeedCard({ vlogData }) {
                        
                     </View>
                 </Card.Content>
+<<<<<<< HEAD
       
                
                 <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} contentType={vlogData.vlog_media.media_type} contentURI={vlogData.vlog_media.uri} />
             </Card>
         </TouchableOpacity>
 
+=======
+           
+                <Card.Content style={{justifyContent: 'center', backgroundColor: '#FFFFFF', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+                    <View style={{width: '100%' }}>
+                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy',}}>
+                            {vlogData.vlog_title}
+                        </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 15, fontFamily: 'Avenir-Roman' }}>
+                            {vlogData.vlog_text}
+                        </Text>
+                    </View>
+                </Card.Content>
+
+                {renderVlogMedia()}
+                <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} vlogData={vlogData} />
+            </Card>
+            </TouchableOpacity>
+>>>>>>> mvp-runthrough-3
     )
 }
 

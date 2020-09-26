@@ -986,4 +986,20 @@ export default class LupaController {
 
       PROGRAMS_CONTROLLER_INSTANCE.addProgramInteraction(programUUID);
     }
+
+    handleStartProgram = async (userUUID, programUUID) => {
+      await USER_CONTROLLER_INSTANCE.startProgram(userUUID, programUUID)
+    }
+
+    handleResetProgram = async (userUUID, programUUID) => {
+      await USER_CONTROLLER_INSTANCE.resetProgram(userUUID, programUUID)
+    }
+
+    handleStopProgram = async (userUUID, programUUID) => {
+      await USER_CONTROLLER_INSTANCE.stopProgram(userUUID, programUUID)
+    }
+
+    markProgramCompleted = (uuid) => {
+      PROGRAMS_CONTROLLER_INSTANCE.markProgramCompleted(uuid);
+    }
 }

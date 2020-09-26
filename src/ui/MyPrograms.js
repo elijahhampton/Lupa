@@ -6,6 +6,7 @@ import {
     Text,
     StyleSheet,
     ScrollView,
+    Dimensions
 } from 'react-native'
 
 import {
@@ -45,9 +46,12 @@ function MyPrograms(props) {
             querySnapshot.docs.forEach(doc => {
                 let document = doc.data();
 
-                if (typeof(document) != 'undefined' && document.completedProgram === true && document.program_owner == currUserData.program_owner) {
+                if (typeof(document) == 'undefined' || document.completedProgram == false || document.program_owner != currUserData.user_uuid) {
+
+                } else {
                     userPrograms.push(document);
                 }
+                
             });
 
             setProgramsList(userPrograms);
@@ -67,7 +71,7 @@ function MyPrograms(props) {
             }
             
             return (
-                <Card key={program.program_structure_uuid} style={{elevation: 3, width: '92%', marginVertical: 10}} onPress={() => handleCardOnPress(program)}>
+                <Card key={program.program_structure_uuid} style={{elevation: 3, width: Dimensions.get('window').width - 20, marginVertical: 10}} onPress={() => handleCardOnPress(program)}>
                 <Card.Cover source={{ uri: program.program_image }} />
                 <Card.Actions style={{justifyContent: 'space-between', paddingVertical: 10}}>
                     <Text style={{fontSize: 15, fontFamily: 'HelveticaNeue'}}>
@@ -99,9 +103,14 @@ function MyPrograms(props) {
                 </Text>
             </View>
                :
-               null
+               <ScrollView 
+                contentContainerStyle={{
+                    alignItems: 'center', 
+                }}>
+                    {renderPrograms()}
+               </ScrollView>
            } 
-                {renderPrograms()}
+
             <ProgramOptionsModal program={currentProgram} closeModal={() => setProgramOptionsModalIsVisible(false)} isVisible={programOptionsModalIsVisible} />
         </SafeAreaView>
     )

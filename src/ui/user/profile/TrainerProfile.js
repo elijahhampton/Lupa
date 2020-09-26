@@ -52,6 +52,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const [showLocationMessage, setShowLocationMessage] = useState(false);
     const [resultsLength, setResultsLength] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
+    const [forceUpdate, setForceUpdate] = useState(false);
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -62,7 +63,18 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     })
 
     const captureMarkedDate = (dateObject) => {
-        setMarkedDates(prevState => prevState.concat(dateObject));
+        let updatedMarkedDates = markedDates;
+
+        if (markedDates.includes(dateObject)) {
+            updatedMarkedDates.splice(updatedMarkedDates.indexOf(dateObject), 1);
+            setMarkedDates(updatedMarkedDates);
+
+        } else {
+            updatedMarkedDates.push(dateObject);
+            setMarkedDates(updatedMarkedDates)
+        }
+
+        setForceUpdate(!forceUpdate);
     }
 
     /**
@@ -170,12 +182,20 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     const renderVlogs = () => {
         return userVlogs.map((vlog, index, arr) => {
+            if (typeof(vlog) == 'undefined') {
+                return null;
+            }
+
             return <VlogFeedCard vlogData={vlog} />
         })
     }
 
     const renderPrograms = () => {
         return userPrograms.map((program, index, arr) => {
+            if (typeof(program) == 'undefined') {
+                return null;
+            }
+
             return (
                 <ProfileProgramCard programData={program} />
             )
@@ -277,9 +297,32 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const fetchPrograms = async (uuid) => {
+        alert('hi')
+        let programs = [];
+        let profilePrograms = [];
         await LUPA_CONTROLLER_INSTANCE.getAllUserPrograms(uuid).then(data => {
-            setUserPrograms(data);
+            programs = data;
         })
+
+        for (let i = 0; i < programs.length; i++) {
+           if (programs[i].isPublic === true) {
+                profilePrograms.push(programs[i]);
+            }
+        }
+
+        setUserPrograms(profilePrograms);
+    }
+
+    const setTrainerPrograms = () => {
+        let profilePrograms = [];
+        const trainerPrograms = currUserPrograms;
+        for (let i = 0; i < trainerPrograms.length; i++) {
+            if (trainerPrograms[i].isPublic === true) {
+                 profilePrograms.push(trainerPrograms[i]);
+             }
+         }
+
+         setUserPrograms(profilePrograms);
     }
 
     async function loadProfileData() {
@@ -287,11 +330,11 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             setProfileImage(userData.photo_url)
             await fetchVlogs(userData.user_uuid);
             if (isCurrentUser) {
-                setUserPrograms(currUserPrograms)
+                setTrainerPrograms()
             } else {
                 fetchPrograms(userData.user_uuid);
             }
-            checkCurrFitnessLocation()
+          //  checkCurrFitnessLocation()
             setReady(true)
         } catch (error) {
             setReady(false)

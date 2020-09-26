@@ -22,6 +22,19 @@ export type LupaProgramInformationStructure = {
     completedProgram: Boolean,
     program_metadata: ProgramMetaData,
     program_purchase_metadata: PurchaseMetaData,
+    type: String,
+    isPublic: Boolean,
+    program_workout_structure: Array<ProgramWorkoutStructureEntry>,
+}
+
+export type ProgramWorkoutStructureEntry = {
+    Monday: Array<Object>,
+    Tuesday: Array<Object>,
+    Wednesday:  Array<Object>,
+    Thursday:  Array<Object>,
+    Friday:  Array<Object>,
+    Saturday:  Array<Object>,
+    Sunday:  Array<Object>
 }
 
 export type PurchaseMetaData = {

@@ -39,6 +39,7 @@ var lupa_program_information_structure = {
         cooldown: [],
         homework: []
     },
+    program_workout_structure: [],
     program_image: "",
     program_tags: [],
     program_owner: "",
