@@ -108,12 +108,15 @@ const formReducer = (state = initialState, action) => {
 }
 
 const paymentsReducer = (state = initialState, action) => {
+  const newState ={ ...state}
   switch(action.type) {
     case 'ADD_CARD_TO_ACCOUNT_SUCCESS':
       LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).update({
         stripe_metadata: action.value
       })
       return state;
+    default:
+      return newState;
   }
 }
 
@@ -253,6 +256,7 @@ const LupaReducer = combineReducers({
   Users: userReducer,
   Application_Workouts: workoutsReducer,
   FormReducer: formReducer,
+  Payments: paymentsReducer,
 });
 
 export default LupaReducer;

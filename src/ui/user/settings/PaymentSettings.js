@@ -23,7 +23,7 @@ function PaymentSettings({ navigation, route }) {
 
     const renderCardInformation = () => {
         let ret = true;
-        if (ret/*typeof(currUserData.stripe_metadata.card_last_four) == 'undefined || currUserData.stripe_metadata.card_last_four == "" */) {
+        if (typeof(currUserData.stripe_metadata.card_last_four) == 'undefined' || typeof(currUserData.stripe_metadata.card_last_four) == "undefined") {
             return (
                 <View style={{padding: 10, alignItems: 'flex-start'}}>
                     <Caption>
@@ -38,6 +38,12 @@ function PaymentSettings({ navigation, route }) {
                     </View>
 
                 </View>
+            )
+        } else {
+            return (
+            <Text>
+                One card on file with last four: {currUserData.stripe_metadata.card_last_four}
+            </Text>
             )
         }
     }

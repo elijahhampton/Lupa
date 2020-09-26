@@ -18,7 +18,9 @@ import { useSelector } from 'react-redux';
 
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import LupaColor from '../../../common/LupaColor';
-import { createStripeCustomerAccount, createTokenFromCard } from '../../../../modules/payments/stripe';
+import { createStripeCustomerAccount, createTokenFromCard, initStripe } from '../../../../modules/payments/stripe';
+import { LOG_ERROR } from '../../../../common/Logger';
+import FullScreenLoadingIndicator from '../../../common/FullScreenLoadingIndicator';
 
 function UpdateCard({ closeModal, isVisible }) {
     const currUserData = useSelector(state => {
@@ -42,19 +44,34 @@ function UpdateCard({ closeModal, isVisible }) {
     const [cvc, setCvc] = useState("");
     const [cvcInputFocused, setCvcInputFocused] = useState("");
 
-    const handleUpdateCard = () => {
-        const params = {
-            // mandatory
-            number: cardNumber,
-            expMonth: expMonth,
-            expYear: expYear,
-            cvc: cvc,
-            currency: 'usd',
-            object: 'card',
-            name: currUserData.display_name
-          }
+    const [fullScreenIndicatorIsVisible, setFullScreenIndicatorVisible] = useState(false)
 
-        createTokenFromCard(params, currUserData.stripe_metadata.stripe_id)
+    const handleUpdateCard = () => {
+        setFullScreenIndicatorVisible(true)
+        try {
+            initStripe();
+
+            const params = {
+                // mandatory
+                number: cardNumber,
+                expMonth: Number(expMonth),
+                expYear: Number(expYear),
+                cvc: cvc,
+                currency: 'usd',
+                object: 'card',
+                name: currUserData.display_name
+              }
+    
+              //TODO: REFRESH STRIPE ID IN REDUX
+            createTokenFromCard(params, currUserData.stripe_metadata.stripe_id)
+        } catch(error) {
+            LOG_ERROR('UpdateCard.js', 'Caught unhandled exception in createTokenFromCard', error)
+            setFullScreenIndicatorVisible();
+            closeModal();
+        }
+
+        closeModal();
+        setFullScreenIndicatorVisible(false)
     }
 
     return (
@@ -144,6 +161,7 @@ function UpdateCard({ closeModal, isVisible }) {
                     </Button>
                 </ScrollView>
             </View>
+            <FullScreenLoadingIndicator isVisible={fullScreenIndicatorIsVisible} />
         </Modal>
     )
 }

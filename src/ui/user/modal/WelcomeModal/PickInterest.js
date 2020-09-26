@@ -38,12 +38,6 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    const renderExitButton = () => { 
-        if (route.params.isOnboarding === false ) {
-            return <Feather1s onPress={() => navigation.pop()} name="x" size={24} style={{position: 'absolute', top: 0, left: 0, margin: 15, marginTop: 30}} />
-        } 
-    }
-
     const handleOnPickInterest = (interest) => {
         if (pickedInterest.includes(interest)) {
             let updatedPickedInterest = pickedInterest;
@@ -126,7 +120,6 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
             </View>
             </View>
 
-            {renderExitButton()}
             </ScrollView>
         </SafeAreaView>
     )
