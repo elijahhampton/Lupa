@@ -1,4 +1,3 @@
-import { BaseRouter } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -10,8 +9,9 @@ import {
 } from 'react-native';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 
-import { Checkbox } from 'react-native-paper';
+import { Checkbox, Button } from 'react-native-paper';
 import { Constants } from 'react-native-unimodules';
+import { useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 
 const SKILL_BASED_INTEREST = [
@@ -33,18 +33,16 @@ const PHYSIOLOGICAL_BASED_INTEREST = [
 ]
 
 function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
-    const [pickedInterest, setPickedInterest] = useState([])
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
+    const [pickedInterest, setPickedInterest] = useState(currUserData.interest)
     const [stateUpdate, forceStateUpdate] = useState(false)
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    const renderExitButton = () => { 
-        if (route.params.isOnboarding === false ) {
-            return <Feather1s onPress={() => navigation.pop()} name="x" size={24} style={{position: 'absolute', top: 0, left: 0, margin: 15, marginTop: 30}} />
-        } 
-    }
-
     const handleOnPickInterest = (interest) => {
+
         if (pickedInterest.includes(interest)) {
             let updatedPickedInterest = pickedInterest;
             updatedPickedInterest.splice(updatedPickedInterest.indexOf(interest), 1);
@@ -61,11 +59,31 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
     }
 
     const enableNext = () => {
-        setNextDisabled(false);
+        if (setNextDisabled) {
+            setNextDisabled(false);
+        }
     }
 
     const disableNext = () => {
-        setNextDisabled(true);
+        if (setNextDisabled) {
+            setNextDisabled(true);
+        }
+    }
+
+    renderSaveOption = () => {
+        if (route.params.isOnboarding === false) {
+            return (
+                <Button color="#1089ff" style={{position: 'absolute', top: 0, right: 0, margin: 15}} mode="text" onPress={() => handleOnPickInterest(pickedInterest)}> 
+                    Save
+                </Button>
+            )
+        }
+    }
+
+    const renderExitButton = () => { 
+        if (route.params.isOnboarding === false ) {
+            return <Feather1s onPress={() => navigation.pop()} name="x" size={24} style={{position: 'absolute', top: 0, left: 0, margin: 15}} />
+        } 
     }
 
     useEffect(() => {
@@ -127,6 +145,7 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
             </View>
 
             {renderExitButton()}
+            {renderSaveOption()}
             </ScrollView>
         </SafeAreaView>
     )

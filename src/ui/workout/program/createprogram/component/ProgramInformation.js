@@ -39,6 +39,7 @@ import SelectProgramImage from './SelectProgramImage'
 import { Input} from 'react-native-elements';
 import LupaMapView from '../../../../user/modal/LupaMapView'
 import { copyFileAssets } from 'react-native-fs';
+import { getLupaProgramInformationStructure } from '../../../../../model/data_structures/programs/program_structures';
 
 const months = ["January", "February", "March", "April",
   "May", "June", "July", "August", "September", "October",
@@ -324,7 +325,7 @@ function ProgramInformation(props) {
 
   const getNextView = () => {
     //check program values
-    let retVal = checkInputs()
+    let retVal =false // checkInputs()
     if (retVal) {
       return;
     }

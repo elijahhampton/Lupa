@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react'
 import {
     View,
     Text,
-    Dimensions
+    Dimensions,
+    TouchableOpacity,
 } from 'react-native';
 
-import { Card, Caption, Menu, Chip } from 'react-native-paper';
+import { Card, Caption, Menu, Chip, Surface } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -15,6 +16,8 @@ import { Avatar } from 'react-native-elements'
 import { Video } from 'expo-av';
 import LiveWorkoutFullScreenContentModal from '../../workout/modal/LiveWorkoutFullScreenContentModal';
 import DoubleClick from 'react-native-double-tap';
+
+import FeatherIcon from 'react-native-vector-icons/Feather'
 
 function formatDateString(dateString) {
     const stringKeys = dateString.split(" ");
@@ -47,21 +50,17 @@ function VlogFeedCard({ vlogData }) {
         };
 
         return (
-            <View style={{width: Dimensions.get('window').width, height: 300, alignSelf: 'center'}}>
-            <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="contain" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center', borderRadius: 0 }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
-            </View>
+            <Surface style={{padding: 10, elevation: 0, width: Dimensions.get('window').width, height: 300, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+            <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="cover" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center', borderRadius: 5 }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
+            </Surface>
         )
     }
 
     return (
+        <TouchableOpacity onPress={() => setFullScreenContentVisible(true)}>
             <Card style={{ backgroundColor: '#FFFFFF', marginVertical: 5, alignSelf: 'center', width: Dimensions.get('window').width - 0, borderRadius: 0, elevation: 0 }}>
-                
-
-
-               
-         
                 <Card.Content>
-                    <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{paddingVertical: 10, width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
                             <Avatar containerStyle={{ borderWidth: 1.5, borderColor: 'white', }} rounded source={{ uri: vlogOwnerData.photo_url }} size={30} />
                             <View style={{ paddingHorizontal: 10 }}>
@@ -76,26 +75,29 @@ function VlogFeedCard({ vlogData }) {
                         <Menu
                             visible={optionsMenuVisible}
                             onDismiss={() => setOptionsMenuVisible(false)}
-                            anchor={<Feather1s onPress={() => setOptionsMenuVisible(true)} name="more-vertical" size={20} color="#212121" style={{ padding: 8}} />}>
+                            anchor={<FeatherIcon  onPress={() => setOptionsMenuVisible(true)} name="more-vertical" size={20} color="#212121" style={{ padding: 8}} />}>
                             <Menu.Item title="Delete Vlog" onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
                         </Menu>
                     </View>
                 </Card.Content>
-                {renderVlogMedia()}
-                <Card.Content style={{ paddingVertical: 10, justifyContent: 'center', backgroundColor: '#FFFFFF', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+           
+                <Card.Content style={{justifyContent: 'center', backgroundColor: '#FFFFFF', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
                     <View style={{width: '100%' }}>
-                        <Text style={{ fontSize: 13, fontFamily: 'Avenir-Medium',}}>
+                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy',}}>
                             {vlogData.vlog_title}
                         </Text>
                     </View>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 15, fontFamily: 'Avenir-Light' }}>
+                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 15, fontFamily: 'Avenir-Roman' }}>
                             {vlogData.vlog_text}
                         </Text>
                     </View>
                 </Card.Content>
-                <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} contentType={vlogData.vlog_media.media_type} contentURI={vlogData.vlog_media.uri} />
+
+                {renderVlogMedia()}
+                <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} vlogData={vlogData} />
             </Card>
+            </TouchableOpacity>
     )
 }
 

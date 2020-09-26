@@ -29,7 +29,7 @@ import { Button, Caption, Appbar } from 'react-native-paper'
 import { Constants } from 'react-native-unimodules';
 import BuildWorkoutController from './buildworkout/BuildWorkoutController';
 import LOG, { LOG_ERROR } from '../../../../common/Logger';
-
+import moment from 'moment'
 const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
@@ -37,6 +37,8 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     const [changedUUID, setChangedUUID] = useState(0);
     const [componentReady, setComponentReady] = useState(true)
     const [isPublished, setIsPublished] = useState(false);
+    
+    const [isSaved, setSaved] = useState(false);
 
     const navigation = useNavigation();
     const dispatch = useDispatch()
@@ -50,21 +52,34 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
         setComponentReady(true);
     }, [uuid])
 
+    const saveProgram = async () => {
+        setComponentReady(false);
+         //update current user
+         await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', uuid, 'add');
+         await LUPA_CONTROLLER_INSTANCE.markProgramCompleted(uuid);
+         await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(data => {
+             dispatch({ type: 'ADD_CURRENT_USER_PROGRAM', payload: data})
+             setProgramData(data);
+         })
+         setSaved(true);
+         setComponentReady(true);
+    }
+
     const handlePublishProgram =  async() => {
         setComponentReady(false);
+
+        if (!isSaved) {
+            //save program
+            saveProgram()
+        }
+
         //publish program
         await LUPA_CONTROLLER_INSTANCE.publishProgram(uuid)
 
-        //update current user
-        await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', uuid, 'add');
-
-        await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(data => {
-            dispatch({ type: 'ADD_CURRENT_USER_PROGRAM', payload: data})
-            setProgramData(data);
-        })
         setComponentReady(true);
         setIsPublished(true);
     }
+
 
     const handleShareProgramOnPress = () => {
         closeModal()
@@ -80,7 +95,7 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
     }
 
     const getComponentDisplay = () => {
-        if (componentReady && isPublished === false) {
+        if ((componentReady && isPublished === false) || (componentReady && isSaved === false)) {
             return (
                 <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
                         
@@ -104,10 +119,23 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
   
 
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handlePublishProgram}>
-                            Publish
+                        <Button disabled={isPublished} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handlePublishProgram}>
+                           {isPublished === true ? 'Published' : 'Save and Publish' }
                         </Button>
                         </View>
+
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button disabled={isSaved} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={saveProgram}>
+                           {isSaved === true ? 'Saved' : 'Save'}
+                        </Button>
+                        </View>
+
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handleShareProgramOnPress}>
+                            Share with friends
+                        </Button>
+                        </View>
+
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                         <Button onPress={closeModal} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}}>
                             Edit
@@ -118,18 +146,35 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
             )
         } else if (componentReady === true && isPublished === true) {
             return (
-                <SafeAreaView style={{flex: 1, padding: 20, justifyContent: 'center', alignItems: 'center',  backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
-                       <View style={{paddingHorizontal: 10, width: '100%',  marginHorizontal: 10, paddingVertical: 20, alignItems: 'flex-start',}}>
+                <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'  }}>
+                        
+                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                       <View style={{ paddingHorizontal: 10, paddingVertical: 20, alignItems: 'flex-start',}}>
+                       <View style={{flexDirection: 'row', alignItems :'center', justifyContent: 'space-evenly'}}>
+                       <View style={{marginRight: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderColor: '#1089ff', borderWidth: 1.5, width: 25, height: 25, borderRadius: 40}}>
+                        <FeatherIcon name="check" size={15} color="#1089ff" />
+                        </View>
                        <Text style={{fontFamily: 'Avenir-Light', paddingVertical: 5,  fontSize: 20, color: 'white',}}>
-                            Published.
-                        </Text>
-                        <Text style={{color: 'white', fontFamily: 'Avenir', fontWeight: 'bold'}}>
-                            You're all set.  Share with your friends or view your program in app.
+                            Your program has been published.
                         </Text>
                        </View>
+                       </View>
                        
+                       </View>
 
   
+
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button disabled={isPublished} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handlePublishProgram}>
+                        {isPublished === true ? 'Published ' : 'Save and Publish' }
+                        </Button>
+                        </View>
+
+                        <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Button disabled={isSaved} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={saveProgram}>
+                        {isSaved === true ? 'Saved' : 'Save'}
+                        </Button>
+                        </View>
 
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                         <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handleShareProgramOnPress}>
@@ -138,11 +183,11 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
                         </View>
 
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                        <Button uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}} onPress={handleOnComplete}>
-                            Complete
+                        <Button onPress={closeModal} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}}>
+                            Exit
                         </Button>
                         </View>
-                   
+    
                 </SafeAreaView>
             )
         }else {
@@ -233,14 +278,14 @@ class CreateProgram extends React.Component {
     saveProgramInformation = async (programName, programDescription, numProgramSpots, programStartDate,
         programEndDate, programDuration, programTime, programPrice, programLocationData, programType,
         allowWaitlist, programImage, programTags, programAutomatedMessage, programDays) => {
-        let updatedProgramData = this.state.programData;
+        let updatedProgramData = {}
 
         updatedProgramData.program_structure_uuid = this.state.currProgramUUID;
         updatedProgramData.program_name = programName;
         updatedProgramData.program_description = programDescription;
         updatedProgramData.program_slots = numProgramSpots;
-        updatedProgramData.program_start_date = programStartDate;
-        updatedProgramData.program_end_date = programEndDate;
+        updatedProgramData.program_start_date = moment().format();
+        updatedProgramData.program_end_date = moment().add(programDuration, 'weeks').format()
         updatedProgramData.program_workout_days = programDays;
         updatedProgramData.program_duration = programDuration;
         updatedProgramData.program_time = programTime;
@@ -254,6 +299,7 @@ class CreateProgram extends React.Component {
         updatedProgramData.program_owner = this.props.lupa_data.Users.currUserData.user_uuid;
         updatedProgramData.program_automated_message = programAutomatedMessage
         updatedProgramData.completedProgram = false;
+        updatedProgramData.type = 'PROGRAM'
         updatedProgramData.program_purchase_metadata = {
             num_purchases: 0,
             purchase_list: [],
@@ -266,6 +312,9 @@ class CreateProgram extends React.Component {
             views: 0,
             shares: 0,
         };
+
+        let newState = {}
+        this.setState({ programData: updatedProgramData })
 
         await this.LUPA_CONTROLLER_INSTANCE.updateProgramData(this.state.currProgramUUID, updatedProgramData);
         this.goToIndex(1)

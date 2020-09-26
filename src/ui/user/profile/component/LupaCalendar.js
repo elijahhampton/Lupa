@@ -64,21 +64,25 @@ function getMonthString(monthNum) {
 const HEIGHT = 800
 
 function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
-  const [markedDates, setMarkedDates] = useState({})
-  const [items, setItems] = useState({})
+  const [markedDates, setMarkedDates] = useState({});
+  const [items, setItems] = useState({});
+
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const addMarkedDate = (day) => {
-    if (Object.keys(markedDates).includes(day.dateString)) {
-      let updatedMarkedDates = markedDates;
+    let updatedMarkedDates = markedDates;
+    if (Object.keys(updatedMarkedDates).includes(day.dateString)) {
       delete updatedMarkedDates[day.dateString]
-    setMarkedDates(updatedMarkedDates)
-    return;
+      setMarkedDates(updatedMarkedDates)
+      captureMarkedDates(day.dateString);
+      setForceUpdate(!forceUpdate)
+    } else {
+      let dateObject = markedDates;
+      dateObject[day.dateString] = { startingDay: markedDates.length === 0 ?  true : false, color: '#1089ff', selected: true, marked: true }
+      setMarkedDates(dateObject);
+      captureMarkedDates(day.dateString);
+      setForceUpdate(!forceUpdate)
     }
-
-    let dateObject = markedDates;
-    dateObject[day.dateString] = { startingDay: markedDates.length === 0 ?  true : false, color: '#1089ff', selected: true, marked: true }
-    setMarkedDates(dateObject);
-    captureMarkedDates(day.dateString);
   }
 
   const handleDeleteTimeBlock = (day, time) => {
@@ -167,7 +171,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   return (
     <View style={styles.container}>
           <Agenda
-    markingType="multi-period"
+    markingType="period"
   // The list of items that have to be displayed in agenda. If you want to render item as empty date
   // the value of date key has to be an empty array []. If there exists no value for date key it is
   // considered that the date in question is not yet loaded
@@ -180,10 +184,11 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   onCalendarToggled={(calendarOpened) => {console.log(calendarOpened)}}
   // Callback that gets called on day press
   onDayPress={(day)=> addMarkedDate(day)}
+  
   // Callback that gets called when day changes while scrolling agenda list
   onDayChange={(day)=>{console.log('day changed')}}
   // Initially selected day
-  selected={Date()}
+  selected={null}
   // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
   minDate={Date()}
   // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
@@ -266,11 +271,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
 
   // Agenda container style
   style={{height: HEIGHT}}
->
-  <Text>
-    Hi
-  </Text>
-</Agenda>
+/>
     </View>
     );
 }

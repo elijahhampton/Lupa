@@ -102,7 +102,7 @@ export class LupaHome extends Component {
         </Animated.View>
         
         <Animated.ScrollView
-        scrollEnabled={currTab === 0 ? true : false}
+        scrollEnabled={currTab != 0 && this.props.lupa_data.Users.currUserData.isTrainer === false ? false : true}
         refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
           scrollEventThrottle={1}
           bounces={false}

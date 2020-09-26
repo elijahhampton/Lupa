@@ -24,6 +24,7 @@ var lupa_workout_information_structure : LupaWorkoutInformationStructure = {
         Sunday: []
     },
     program_workout_days: [],
+    type: 'WORKOUT',
 }
 
 export const getLupaWorkoutInformationStructure = (
