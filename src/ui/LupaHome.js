@@ -84,7 +84,7 @@ export class LupaHome extends Component {
           zIndex: 1,
           backgroundColor: COLOR
         }}>
-          <Header style={{backgroundColor: COLOR,}} noShadow={true} hasTabs>
+          <Header style={{backgroundColor: COLOR}} noShadow={false} hasTabs>
             <Left style={{flexDirection: 'row', alignItems: 'center'}}>
               <MenuIcon onPress={() => this.props.navigation.openDrawer()}/>
             </Left>
@@ -119,7 +119,7 @@ export class LupaHome extends Component {
           <Tabs 
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
           style={{backgroundColor: '#FFFFFF'}}
-          tabBarUnderlineStyle={{backgroundColor: '#FFFFFF'}}
+          tabBarUnderlineStyle={{backgroundColor: '#FFFFFF', height: 1}}
           renderTabBar={(props) => <Animated.View
             style={[{
               transform: [{translateY: tabY}],
@@ -129,7 +129,7 @@ export class LupaHome extends Component {
               backgroundColor: COLOR,
               justifyContent: 'flex-start',
             }, Platform.OS === "ios" ? {paddingTop: 30} : null]}>
-            <ScrollableTab {...props} style={{ height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: '#FFFFFF', backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 2, elevation: 0, borderRadius: 8}}/>
+            <ScrollableTab {...props} style={{borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',  height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 1, elevation: 0, borderRadius: 8}}/>
        
           </Animated.View>
           }>

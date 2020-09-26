@@ -163,8 +163,10 @@ class Featured extends React.Component {
             }
 
             return (
-              
+                <>
                     <VlogFeedCard key={index} vlogData={vlog} />
+                  
+                    </>
                    
             )
         })

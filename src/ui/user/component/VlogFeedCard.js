@@ -6,16 +6,17 @@ import {
     Dimensions
 } from 'react-native';
 
-import { Card, Caption, Menu, Chip } from 'react-native-paper';
+import { Card, Caption, Surface, Menu, Chip, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+import { Avatar } from 'react-native-elements';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import LupaController from '../../../controller/lupa/LupaController';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
-import { Avatar } from 'react-native-elements'
 import { Video } from 'expo-av';
 import LiveWorkoutFullScreenContentModal from '../../workout/modal/LiveWorkoutFullScreenContentModal';
 import DoubleClick from 'react-native-double-tap';
-
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import FeatherIcon from 'react-native-vector-icons/Feather'
 function formatDateString(dateString) {
     const stringKeys = dateString.split(" ");
     let updatedString = stringKeys[1] + " " + stringKeys[2] + " " + stringKeys[3]
@@ -47,55 +48,65 @@ function VlogFeedCard({ vlogData }) {
         };
 
         return (
-            <View style={{width: Dimensions.get('window').width, height: 300, alignSelf: 'center'}}>
-            <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="contain" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center', borderRadius: 0 }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
-            </View>
+            <Surface style={{elevation: 15, borderRadius: 10, width: Dimensions.get('window').width - 20, height: 200, alignSelf: 'center'}}>
+            <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="stretch" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center', borderRadius: 10 }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
+            </Surface>
         )
     }
 
     return (
-            <Card style={{ backgroundColor: '#FFFFFF', marginVertical: 5, alignSelf: 'center', width: Dimensions.get('window').width - 0, borderRadius: 0, elevation: 0 }}>
-                
+        <TouchableOpacity onPress={() => setFullScreenContentVisible(true)}>
+              <Divider style={{width: '100%', height: 0.5,  backgroundColor: 'rgb(174, 174, 178)',}} />
+                <Card style={{ marginVertical: 10, backgroundColor: '#FFFFFF',  alignSelf: 'center', width: Dimensions.get('window').width - 0, borderRadius: 0, elevation: 0}}>
+            
+           
+            {renderVlogMedia()}
 
-
-               
-         
-                <Card.Content>
-                    <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
-                            <Avatar containerStyle={{ borderWidth: 1.5, borderColor: 'white', }} rounded source={{ uri: vlogOwnerData.photo_url }} size={30} />
-                            <View style={{ paddingHorizontal: 10 }}>
-                                <Text style={{ fontFamily: 'Avenir-Medium' }}>
-                                    {vlogOwnerData.display_name}
-                                </Text>
-                                <Text style={{ fontFamily: 'Avenir-Light', fontSize: 10 }}>
-                                    {formatDateString(new Date(vlogData.time_created).toString())}
-                                </Text>
-                            </View>
-                        </View>
-                        <Menu
-                            visible={optionsMenuVisible}
-                            onDismiss={() => setOptionsMenuVisible(false)}
-                            anchor={<Feather1s onPress={() => setOptionsMenuVisible(true)} name="more-vertical" size={20} color="#212121" style={{ padding: 8}} />}>
-                            <Menu.Item title="Delete Vlog" onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
-                        </Menu>
-                    </View>
-                </Card.Content>
-                {renderVlogMedia()}
-                <Card.Content style={{ paddingVertical: 10, justifyContent: 'center', backgroundColor: '#FFFFFF', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
+            <Card.Content style={{paddingVertical: 10, justifyContent: 'center', backgroundColor: '#FFFFFF', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
                     <View style={{width: '100%' }}>
-                        <Text style={{ fontSize: 13, fontFamily: 'Avenir-Medium',}}>
+                        <Text style={{ fontSize: 15, fontFamily: 'HelveticaNeue', fontWeight: '500' , paddingVertical: 3,}}>
                             {vlogData.vlog_title}
                         </Text>
                     </View>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 15, fontFamily: 'Avenir-Light' }}>
+                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 15, fontWeight: '300', fontFamily: 'HelveticaNeue' }}>
                             {vlogData.vlog_text}
                         </Text>
                     </View>
                 </Card.Content>
+         
+                <Card.Content>
+                    <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
+                            <Avatar rounded  containerStyle={{borderWidth: 1, borderColor: '#EEEEEE'}} source={{ uri: vlogOwnerData.photo_url }} size={45} />
+                            <View style={{ paddingHorizontal: 10 }}>
+                                <View style={{width: '70%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <Text style={{ fontFamily: 'Avenir-Medium' }}>
+                                    {vlogOwnerData.display_name}
+                                </Text>
+
+                                <Menu
+                            visible={optionsMenuVisible}
+                            onDismiss={() => setOptionsMenuVisible(false)}
+                            anchor={<FeatherIcon onPress={() => setOptionsMenuVisible(true)} name="more-horizontal" size={18} color="#212121" style={{ padding: 8}} />}>
+                            <Menu.Item title="Delete Vlog" onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
+                        </Menu>
+                                </View>
+                                
+                                <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 12, color: '#1089ff' }}>
+                                    TRAINER
+                                </Text>
+                            </View>
+                        </View>
+                       
+                    </View>
+                </Card.Content>
+      
+               
                 <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} contentType={vlogData.vlog_media.media_type} contentURI={vlogData.vlog_media.uri} />
             </Card>
+        </TouchableOpacity>
+
     )
 }
 
