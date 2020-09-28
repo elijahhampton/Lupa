@@ -27,6 +27,7 @@ import {
     List,
     Switch,
     Appbar,
+     Avatar
 } from 'react-native-paper';
 
 import { ListItem } from 'react-native-elements'
@@ -42,6 +43,9 @@ import { connect, useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { Constants } from 'react-native-unimodules';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import UpdateCard from '../../settings/modal/UpdateCard';
 
 function EditBioModal(props) {
     //lupa controller instance
@@ -218,6 +222,7 @@ class SettingsModal extends React.Component {
             reload: false,
             editBioVisible: false,
             isEditingDisplayName: false,
+            updateCardModalVisible: false,
         }
     }
 
@@ -301,40 +306,68 @@ class SettingsModal extends React.Component {
 
 
     render() {
+        const currUserData = this.props.lupa_data.Users.currUserData;
         return (
                 <Container style={styles.root}>
                             <Appbar.Header statusBarHeight={false} style={{backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                                <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
+                                <Appbar.Action icon={() => <Feather1s name="arrow-left" size={20} />} onPress={() => this.props.navigation.pop()} />
                                 <Appbar.Content title="Settings" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 </Appbar.Header>
+                <TouchableOpacity onPress={() => this.props.navigation.push('AccountSettings')}>
+                <Appbar theme={{colors: { primary: '#FFFFFF'}}} style={{paddingHorizontal: 15, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    <Avatar.Image size={40} source={{uri: currUserData.photo_url }} />
+                    <View style={{marginHorizontal: 10}}>
+                        <Text>
+                            {currUserData.display_name}
+                        </Text>
+                        <Text>
+                            {currUserData.email}
+                        </Text>
+                    </View>
+                    </View>
+
+                    <Feather1s name="arrow-right" size={20} />
+                   
+                </Appbar>
+                </TouchableOpacity>
+
                     <SafeAreaView style={{flex: 1}}>
+                        
                     <ScrollView>
                         {
-                            accountList.map(item => {
-                                return (
-                                    <ListItem onPress={() => this.handleListItemOnPress(item.key)} title={item.title} titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}/>
-                                )
-                            })
+                            currUserData.isTrainer ?
+                            <View>
+                            <Text style={styles.listItemTitleStyle}>
+                                Lupa Trainer
+                            </Text>
+                            <ListItem onPress={() => {}} title="Update Certification" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />}/>
+                        </View>
+                            :
+                            null
                         }
 
-                        <View style={{padding: 10, marginVertical: 20}}>
-   
-                            <Text style={{paddingVertical: 15}}>
-                                <Text style={{fontSize: 15,  fontFamily: 'Helvetica-Light'}}>
-                                    Privacy Policy
-                                </Text>
-                                <FeatherIcon name="arrow-right" size={15} />
-                                </Text>
-
-                                <Text>
-                                <Text style={{fontSize: 15,  fontFamily: 'Helvetica-Light'}}>
-                                    Terms and Conditions
-                                </Text>
-                                <FeatherIcon name="arrow-right" size={15} />
-                                </Text>
+                        <View>
+                            <Text style={styles.listItemTitleStyle}>
+                                Payments
+                            </Text>
+                            <ListItem onPress={() => this.setState({ updateCardModalVisible: true })} title="Update Card" subtitle={currUserData.stripe_metadata.card_last_four == "" ? "You have not saved a card." : `**** **** **** ${currUserData.stripe_metadata.card_last_four}`} titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />}/>
                         </View>
-        <EditBioModal isVisible={this.state.editBioVisible} closeModalMethod={() => this.setState({ editBioVisible: false })} />
+
+                        <View>
+                            <Text style={styles.listItemTitleStyle}>
+                                Lupa
+                            </Text>
+                            <ListItem onPress={() => {}} title="Privacy Policy" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />}/>
+                            <ListItem onPress={() => {}} title="Terms and Conditions" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />}/>
+                        </View>
+
+
+                <EditBioModal isVisible={this.state.editBioVisible} closeModalMethod={() => this.setState({ editBioVisible: false })} />
+                <UpdateCard isVisible={this.state.updateCardModalVisible} closeModal={() => this.setState({ updateCardModalVisible: false })} />
+                 
                 </ScrollView>
+
                 </SafeAreaView>
                 </Container>
         )
@@ -344,7 +377,7 @@ class SettingsModal extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#FFFFFF"
+        backgroundColor: "#EEEEEE"
     },
     pageTitle: {
         color: '#2196F3'
@@ -368,8 +401,12 @@ const styles = StyleSheet.create({
     },
     titleStyle: {
         fontSize: 13, 
-        fontWeight: '400', 
+        fontWeight: '600', 
         color: '#212121',
+    },
+    listItemTitleStyle: {
+        color: 'rgb(99, 99, 102)',
+        padding: 10
     },
     descriptionStyle: {
         color: '#212121'

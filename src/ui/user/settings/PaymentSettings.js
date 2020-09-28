@@ -55,7 +55,19 @@ function PaymentSettings({ navigation, route }) {
 </Appbar.Header> 
  
 <ScrollView>
-        {renderCardInformation()}
+<View style={{padding: 10, alignItems: 'flex-start'}}>
+                    <Caption>
+                        You have not added a card to receive payments.
+                    </Caption>
+
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                    <Caption style={{color: '#1089ff'}} onPress={() => setUpdateCardModalVisible(true)}>
+                        Add Card
+                    </Caption>
+                    <Feather1s name="plus" color="#1089ff" />
+                    </View>
+
+                </View>
 </ScrollView>
 <UpdateCard isVisible={updateCardModalVisible} closeModal={() => setUpdateCardModalVisible(false)} />
         </View>
