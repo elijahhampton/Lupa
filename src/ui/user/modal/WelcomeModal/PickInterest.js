@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -36,6 +37,7 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
+
     const [pickedInterest, setPickedInterest] = useState(currUserData.interest)
     const [stateUpdate, forceStateUpdate] = useState(false)
 
@@ -73,7 +75,7 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
     renderSaveOption = () => {
         if (route.params.isOnboarding === false) {
             return (
-                <Button color="#1089ff" style={{position: 'absolute', top: 0, right: 0, margin: 15}} mode="text" onPress={() => handleOnPickInterest(pickedInterest)}> 
+                <Button color="#1089ff" style={{position: 'absolute', top: 0, right: 0, margin: 15}} mode="text" onPress={() =>  navigation.pop()}> 
                     Save
                 </Button>
             )
