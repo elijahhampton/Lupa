@@ -16,7 +16,7 @@ var lupa__exercise_structure : LupaExerciseStructure = {
     superset: [],
 }
 
-export const getLupaExerciseStructure = (exerciseName, exerciseDescription, exerciseDay, exerciseUUID) => {
+export function getLupaExerciseStructure(exerciseName, exerciseDescription, exerciseDay, exerciseUUID) {
     lupa__exercise_structure.workout_name = exerciseName;
     lupa__exercise_structure.workout_description = exerciseDescription;
     lupa__exercise_structure.workout_uid = exerciseUUID;
