@@ -157,7 +157,7 @@ class MessagesView extends React.Component {
     render() {
         return (
             <View style={styles.root}>
-                <Appbar.Header style={{elevation: 0, alignItems: "center"}} theme={{
+                <Appbar.Header style={{elevation: 0, alignItems: "center", borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)'}} theme={{
                     colors: {
                         primary: 'white'
                     }

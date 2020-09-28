@@ -47,6 +47,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import {Picker} from '@react-native-community/picker';
 import { getProgramWorkoutStructureEntry } from '../../../../../model/data_structures/programs/program_structures';
+import { getLupaExerciseStructure } from '../../../../../model/data_structures/workout/exercise_collections';
 
 const PLACEMENT_TYPES = {
     SUPERSET: 'superset',
@@ -77,20 +78,7 @@ class BuildWorkoutController extends React.Component {
             workoutSchemeModalIsVisible: false,
             addedWorkoutsScrollViewWidth: 0,
             cameraIsVisible: false,
-            currPressedPopulatedWorkout: {
-                workout_name: "",
-                workout_description: "",
-                workout_media: {
-                    uri: "",
-                    media_type: ""
-                },
-                workout_sets: 0,
-                workout_reps: 0,
-                workout_tags: [],
-                workout_uid: 0,
-                workout_day: "", //add the section so it is easy to delete
-                superset: [],
-            },
+            currPressedPopulatedWorkout: getLupaExerciseStructure(),
             mondayCarouselIndex: 0,
             tuesdayCarouselIndex: 0,
             wednesdayCarouselIndex: 0,
@@ -304,19 +292,7 @@ class BuildWorkoutController extends React.Component {
         switch (this.state.currPlacementType) {
             case PLACEMENT_TYPES.SUPERSET:
                 
-                const updatedWorkout = {
-                    workout_name: workoutObject.workout_name,
-                    workout_description: workoutObject.workout_description,
-                    workout_media: {
-                        uri: "",
-                        media_type: ""
-                    },
-                    workout_sets: 0,
-                    workout_reps: 0,
-                    workout_tags: workoutObject.workout_tags,
-                    workout_uid: Math.random().toString(),
-                    workout_day: workoutDay, //add the section so it is easy to delete
-                }
+            const updatedWorkout = getLupaExerciseStructure(workoutObject.workout_name, workoutObject.workout_description, workoutDay, Math.random().toString())
 
                 let workoutToUpdate = this.state.currPressedPopulatedWorkout;
                 workoutToUpdate.superset.push(updatedWorkout);
@@ -405,20 +381,7 @@ class BuildWorkoutController extends React.Component {
                         return;
                     }
 
-                    const updatedWorkout = {
-                        workout_name: workoutObject.workout_name,
-                        workout_description: workoutObject.workout_description,
-                        workout_media: {
-                            uri: "",
-                            media_type: ""
-                        },
-                        workout_sets: 0,
-                        workout_reps: 0,
-                        workout_tags: workoutObject.workout_tags,
-                        workout_uid: Math.random().toString(),
-                        workout_day: workoutDay, //add the section so it is easy to delete
-                        superset: new Array(),
-                    }
+                    const updatedWorkout = getLupaExerciseStructure(workoutObject.workout_name, workoutObject.workout_description, workoutDay, Math.random().toString())
 
     
                     let updatedWorkoutData = [], newWorkoutData = this.state.workoutDays;
@@ -558,9 +521,6 @@ class BuildWorkoutController extends React.Component {
                             })
 
                             }
-                            <Text>
-                                {this.state.currWeekIndex}
-                            </Text>
                         </View>
                     )
                 case 'Tuesday':
@@ -1160,7 +1120,7 @@ class BuildWorkoutController extends React.Component {
                   {
                       this.props.lupa_data.Users.currUserData.isTrainer === true ?
                       <View style={{justifyContent: 'flex-start', width: '100%'}}>
-                      <Button icon={() => <FeatherIcon name="plus" color="#1089ff" />} onPress={this.handleAddCustomWorkout}color="#1089ff" style={{alignSelf: 'flex-start'}}>
+                      <Button icon={() => <FeatherIcon name="plus" color="#1089ff" />} onPress={() => this.setState({ customWorkoutModalVisible: true })}color="#1089ff" style={{alignSelf: 'flex-start'}}>
                           <Text style={{fontSize: 12}}>
                           
                               Add a custom exercise

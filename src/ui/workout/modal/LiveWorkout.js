@@ -50,12 +50,20 @@ import RestTimer from './RestTimer';
 import { useNavigation } from '@react-navigation/native';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import moment from 'moment'
+import { getLupaExerciseStructure } from '../../../model/data_structures/workout/exercise_collections';
 
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
     }
 }
+
+const restTimesArr = [
+    '10',
+    '30',
+    '90',
+    '120'
+]
 
 function WorkoutFinishedModal({ isVisible, closeModal }) {
    const navigation = useNavigation();
@@ -119,21 +127,7 @@ class LiveWorkout extends React.Component {
 
         this.state = {
             workoutStructure: ['Workout Name', 'Workout Name', 'Workout Name'],
-            currentWorkout: {
-                workout_name: "",
-                workout_description: "",
-                workout_media: {
-                    uri: "",
-                    media_type: ""
-                },
-                workout_steps: [],
-                workout_tags: [],
-                workout_uid: "",
-                workout_cue: "",
-                workout_sets: 0,
-                workout_reps: 0,
-                superset: []
-            },
+            currentWorkout: getLupaExerciseStructure(),
             currentWorkoutOriginalReps: 0,
             currentWorkoutStructure: [],
             currentWeek: 0,
@@ -272,31 +266,31 @@ class LiveWorkout extends React.Component {
         switch (day) {
             case 'Monday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Monday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], restTime: workoutStructure[0].workout_rest_time, currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Tuesday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Tuesday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], restTime: workoutStructure[0].workout_rest_time, currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Wednesday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Wednesday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], restTime: workoutStructure[0].workout_rest_time, currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Thursday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Thursday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], restTime: workoutStructure[0].workout_rest_time, currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Friday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Friday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], restTime: workoutStructure[0].workout_rest_time, currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Saturday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Saturday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], restTime: workoutStructure[0].workout_rest_time, currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             case 'Sunday':
                 workoutStructure = this.generateWorkoutStructure(this.state.programData.program_workout_structure[this.state.currentWeek].Sunday)
-                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
+                this.setState({ currentWorkoutDay: day, currentWorkoutStructure: workoutStructure, currentWorkout: workoutStructure[0], restTime: workoutStructure[0].workout_rest_time, currentWorkoutOriginalReps: workoutStructure[0].workout_reps, currentWorkoutIndex: 0 })
                 break;
             default:
         }
@@ -628,7 +622,11 @@ class LiveWorkout extends React.Component {
     }
 
     renderWorkoutTempo = () => {
-        return "0 - 0 - 0"
+        return this.state.currentWorkout.workout_tempo
+    }
+
+    renderWorkoutRestTime = () => {
+        return this.state.currentWorkout.workout_rest_time
     }
 
    showDialog = () => this.setState({ showFinishedDayDialog: true }) 
@@ -1005,10 +1003,8 @@ class LiveWorkout extends React.Component {
     }
 
     renderRestTimerRBSheetPicker = () => {
-        const restTimes = new Array()
-        for (let i = 1; i <= 100; i++) {
-            restTimes.push(i)
-        }
+        restTimesArr.push(this.state.currentWorkout.workout_rest_time);
+        
         return (
             <RBSheet
                 ref={this.restTimesRBSheet}
@@ -1044,7 +1040,7 @@ class LiveWorkout extends React.Component {
     this.setState({restTime: itemValue})
   }>
       {
-          restTimes.map(time => {
+          restTimesArr.map(time => {
               return <Picker.Item label={time.toString()} value={time} />
           })
       }

@@ -71,7 +71,7 @@ class Search extends React.Component {
 
     }
 
-    componentDidMount() {
+    componentDidMounta() {
         let docData = getLupaProgramInformationStructure();
 
         this.popularProgramsObserver = LUPA_DB.collection('programs').where('completedProgram', '==', true).onSnapshot(querySnapshot => {

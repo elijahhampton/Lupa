@@ -7,37 +7,24 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-<<<<<<< HEAD
-import { Card, Caption, Surface, Menu, Chip, Divider } from 'react-native-paper';
-=======
-import { Card, Caption, Menu, Chip, Surface } from 'react-native-paper';
->>>>>>> mvp-runthrough-3
+import { Avatar, Card, Caption, Surface, Menu, Chip, Divider } from 'react-native-paper';
 import { useSelector } from 'react-redux';
-import { Avatar } from 'react-native-elements';
+
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import LupaController from '../../../controller/lupa/LupaController';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { Video } from 'expo-av';
 import LiveWorkoutFullScreenContentModal from '../../workout/modal/LiveWorkoutFullScreenContentModal';
 import DoubleClick from 'react-native-double-tap';
-<<<<<<< HEAD
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather'
-=======
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
-import FeatherIcon from 'react-native-vector-icons/Feather'
-
->>>>>>> mvp-runthrough-3
-function formatDateString(dateString) {
-    const stringKeys = dateString.split(" ");
-    let updatedString = stringKeys[1] + " " + stringKeys[2] + " " + stringKeys[3]
-    return updatedString;
-}
-
-function VlogFeedCard({ vlogData }) {
+function VlogFeedCard({ vlogData, showTopDivider }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     });
+
+    const navigation = useNavigation();
 
     const [cardContentHeight, setCardContentHeight] = useState(0);
     const [vlogOwnerData, setVlogOwnerData] = useState(getLupaUserStructure());
@@ -54,91 +41,82 @@ function VlogFeedCard({ vlogData }) {
     }, []);
 
     const renderVlogMedia = () => {
-        if (typeof(vlogData.vlog_media.uri) == 'undefined' || vlogData.vlog_media.uri == "") {
+        try {
+            if (typeof(vlogData) == 'undefined' || typeof(vlogData.vlog_media.uri) == 'undefined' || vlogData.vlog_media.uri == "") {
+                return null;
+            };
+    
+            return (
+                <Surface style={{elevation: 0, borderRadius: 10, width: Dimensions.get('window').width, height: 350, alignSelf: 'center'}}>
+                <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="stretch" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center' }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
+                </Surface>
+            )
+        } catch(error) {
             return null;
-        };
-
-        return (
-            <Surface style={{elevation: 15, borderRadius: 10, width: Dimensions.get('window').width - 20, height: 200, alignSelf: 'center'}}>
-            <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="stretch" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center', borderRadius: 10 }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
-            </Surface>
-        )
+        }
     }
 
     return (
-        <TouchableOpacity onPress={() => setFullScreenContentVisible(true)}>
-              <Divider style={{width: '100%', height: 0.5,  backgroundColor: 'rgb(174, 174, 178)',}} />
-                <Card style={{ marginVertical: 10, backgroundColor: '#FFFFFF',  alignSelf: 'center', width: Dimensions.get('window').width - 0, borderRadius: 0, elevation: 0}}>
-            
-           
-            {renderVlogMedia()}
+        <TouchableOpacity style={{width: '100%'}} onPress={() => setFullScreenContentVisible(true)}>
+       {showTopDivider === true ? <Divider style={{width: '100%', height: 7,  backgroundColor: '#EEEEEE',}} /> : null } 
+      
+        <Card style={{ paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center', marginVertical: 15,   width: '100%', borderRadius: 0, elevation: 0}}>
 
-            <Card.Content style={{paddingVertical: 10, justifyContent: 'center', backgroundColor: '#FFFFFF', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
-                    <View style={{width: '100%' }}>
-                        <Text style={{ fontSize: 15, fontFamily: 'HelveticaNeue', fontWeight: '500' , paddingVertical: 3,}}>
-                            {vlogData.vlog_title}
-                        </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 15, fontWeight: '300', fontFamily: 'HelveticaNeue' }}>
-                            {vlogData.vlog_text}
-                        </Text>
-                    </View>
-                </Card.Content>
-         
-                <Card.Content>
-                    <View style={{paddingVertical: 10, width: '100%', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
-                            <Avatar rounded  containerStyle={{borderWidth: 1, borderColor: '#EEEEEE'}} source={{ uri: vlogOwnerData.photo_url }} size={45} />
-                            <View style={{ paddingHorizontal: 10 }}>
-                                <View style={{width: '70%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <Text style={{ fontFamily: 'Avenir-Medium' }}>
+        <View style={{ width: Dimensions.get('window').width}}>
+     
+
+
+        <View style={{paddingHorizontal: 10, paddingVertical: 10, width: '100%',flexDirection: 'row',  alignItems: 'center', justifyContent: 'space-between'}}>
+        <View style={{  flexDirection: 'row', alignItems: 'center',  }}>
+        <TouchableOpacity onPress={() => navigation.push('Profile', {
+            userUUID: vlogData.vlog_owner
+        })}>
+        <Avatar.Image containerStyle={{borderWidth: 1, borderColor: '#EEEEEE'}} source={{ uri: vlogOwnerData.photo_url }} size={35} />
+        </TouchableOpacity>
+       
+        <View style={{marginHorizontal: 10}}>
+        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 16 }}>
                                     {vlogOwnerData.display_name}
                                 </Text>
+                                </View>
+                                {
+                                    currUserData.isTrainer === true ?
+                                    <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 14, color: '#1089ff' }}>
+                                    Trainer
+                                </Text>
+                                    :
+                                    null
+                                }
+        </View>
+        </View>
 
-                                <Menu
+
+
+        <Menu
                             visible={optionsMenuVisible}
                             onDismiss={() => setOptionsMenuVisible(false)}
-                            anchor={<FeatherIcon onPress={() => setOptionsMenuVisible(true)} name="more-horizontal" size={18} color="#212121" style={{ padding: 8}} />}>
+                            anchor={<FeatherIcon onPress={() => setOptionsMenuVisible(true)} name="more-vertical" size={18} color="#212121" />}>
                             <Menu.Item title="Delete Vlog" onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
                         </Menu>
-                                </View>
-                                
-                                <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 12, color: '#1089ff' }}>
-                                    TRAINER
-                                </Text>
-                            </View>
-                        </View>
-                       
-                    </View>
-                </Card.Content>
-<<<<<<< HEAD
-      
-               
-                <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} contentType={vlogData.vlog_media.media_type} contentURI={vlogData.vlog_media.uri} />
-            </Card>
-        </TouchableOpacity>
+        </View>
 
-=======
-           
-                <Card.Content style={{justifyContent: 'center', backgroundColor: '#FFFFFF', borderRadius: 0 }} onLayout={event => setCardContentHeight(event.nativeEvent.layout.height)}>
-                    <View style={{width: '100%' }}>
-                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy',}}>
+        <View style={{paddingHorizontal: 10, paddingVertical: 5, width: '100%', }}>
+                        <Text style={{ fontSize: 15,  fontWeight: '500' , paddingVertical: 3,}}>
                             {vlogData.vlog_title}
                         </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 15, fontFamily: 'Avenir-Roman' }}>
+                        <Text numberOfLines={2} style={{ width: '100%', fontSize: 13, fontWeight: '300', fontFamily: 'HelveticaNeue' }}>
                             {vlogData.vlog_text}
                         </Text>
                     </View>
-                </Card.Content>
 
-                {renderVlogMedia()}
-                <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} vlogData={vlogData} />
-            </Card>
-            </TouchableOpacity>
->>>>>>> mvp-runthrough-3
+        {renderVlogMedia()}
+        </View>
+
+
+        </Card>
+        <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} vlogData={vlogData} />
+        </TouchableOpacity>
     )
 }
 

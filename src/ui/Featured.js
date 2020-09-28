@@ -158,8 +158,12 @@ class Featured extends React.Component {
 
 
         return this.state.feedVlogs.map((vlog, index, arr) => {
+            if (index == 0) {
+                return   <VlogFeedCard key={index} vlogData={vlog} showTopDivider={false} />
+            }
+
             return (
-                    <VlogFeedCard key={index} vlogData={vlog} />
+                    <VlogFeedCard key={index} vlogData={vlog} showTopDivider={true} />
                    
             )
         })
@@ -172,11 +176,11 @@ class Featured extends React.Component {
                 <Appbar style={styles.appbar}>
                     <Searchbar
                         ref={this.searchBarRef}
-                        placeholder="Search programs or trainers"
-                        placeholderTextColor="rgba(35, 55, 77, 0.5)"
+                        placeholder="Search fitness programs"
+                        placeholderTextColor="#000000"
                         value={this.state.searchValue}
                         inputStyle={styles.inputStyle}
-                        style={{ backgroundColor: 'white', height: 50, marginVertical: 10, width: Dimensions.get('window').width - 20 }}
+                        style={{elevation: 2, backgroundColor: 'white', height: 50, marginVertical: 0, width: Dimensions.get('window').width - 20 }}
                         iconColor="#1089ff"
                         theme={{
                             roundness: 8,
@@ -259,7 +263,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     inputStyle: {
-        fontSize: 15, fontWeight: '800', fontFamily: 'Avenir-Roman'
+        fontSize: 15, fontWeight: '600', fontFamily: 'Avenir-Roman'
     },
     iconContainer: {
         width: '10%', alignItems: 'center', justifyContent: 'center'

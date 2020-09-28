@@ -372,7 +372,7 @@ function ProgramInformationPreview(props) {
                        <Surface style={{marginHorizontal: 20, width: '90%', borderRadius: 10, height: 300, alignItems: 'center', justifyContent: 'center'}}>
                        <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: getProgramImage()}} />
                        <Chip textStyle={{color: 'white', fontFamily: 'Avenir-Heavy', fontWeight: '600'}} style={{paddingHorizontal: 10, borderRadius: 0, borderBottomLeftRadius: 8, elevation: 8, position: 'absolute', top: 0, right: 0, alignSelf: 'center', backgroundColor: '#1089ff', width: 'auto'}}>
-                           $50.00
+                           {programData.program_price}
                        </Chip>
                        </Surface>
                        
