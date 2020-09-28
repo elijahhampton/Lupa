@@ -150,7 +150,7 @@ function UserDashboard(props) {
             flex: 1,
             backgroundColor: '#EEEEEE'
         }}>
-            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
+            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',}}>
             <MenuIcon onPress={() => navigation.openDrawer()} />
                 <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>

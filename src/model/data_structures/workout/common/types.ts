@@ -8,3 +8,16 @@ export  type LupaWorkoutInformationStructure = {
     program_workout_days: Array<String>,
     type: String,
 }
+
+export type LupaExerciseStructure = {
+    workout_name: String,
+    workout_description: String,
+    workoutMedia: Object,
+    workout_sets: Number,
+    workout_reps: Number,
+    superset: Array<Object>,
+    workout_uid: String,
+    workout_tempo: String,
+    workout_rest_time: Number,
+    workout_day: String,
+}

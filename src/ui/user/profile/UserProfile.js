@@ -158,15 +158,19 @@ function UserProfile({ userData, isCurrentUser }) {
 
     const renderBio = () => {
         if (userData.bio.length == 0) {
-            return (
-                <Caption style={styles.bioText}>
-                    {userData.display_name} has not setup a bio.
-                </Caption>
-            )
+            return isCurrentUser === true ?
+            <Caption style={styles.bioText}>
+            You have not setup a bio.
+          </Caption>
+          :
+          <Caption style={styles.bioText}>
+             {userData.display_name} has not setup a bio.
+        </Caption>
         }
+
         return (
             <Text style={styles.bioText}>
-                {userData.bio}
+             {userData.bio}
             </Text>
         )
     }
@@ -221,28 +225,29 @@ function UserProfile({ userData, isCurrentUser }) {
         if (isCurrentUser) { return; }
 
         return (
-            <View style={{ marginVertical: 10, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                <Button onPress={() => navigation.push('PrivateChat', {
-                    currUserUUID: currUserData.user_uuid,
-                    otherUserUUID: userData.user_uuid
-                })}
-                    theme={{ roundness: 5 }}
-                    color="#23374d"
-                    icon={() => <FeatherIcon name="mail" />}
-                    uppercase={false}
-                    mode="contained"
-                    style={{ elevation: 0 }}>
-                    <Text>
-                        Send a message
-                    </Text>
-                </Button>
+            <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+            <Button onPress={() => navigation.push('PrivateChat', {
+                currUserUUID: currUserData.user_uuid,
+                otherUserUUID: userData.user_uuid
+            })}
+                theme={{ roundness: 5 }}
+                color="#23374d"
+                icon={() => <FeatherIcon name="mail" />}
+                uppercase={false}
+                mode="outlined"
+                style={{ elevation: 0, width: '80%' }}>
+                <Text>
+                    Send a message
+                </Text>
+            </Button>
 
-                {renderFollowButton()}
-            </View>
+        </View>
         )
     }
 
     const renderFollowButton = () => {
+        if (isCurrentUser) { return; }
+
         if (currUserData.following.includes(userData.user_uuid)) {
             return (
                 <Button
@@ -250,7 +255,7 @@ function UserProfile({ userData, isCurrentUser }) {
                     icon={() => <FeatherIcon name="user" />}
                     theme={{ roundness: 5 }}
                     uppercase={false}
-                    color="#23374d"
+                    color="#E5E5E5"
                     mode="contained"
                     style={{ elevation: 0 }}>
                     <Text style={{ color: 'white' }}>
@@ -262,10 +267,10 @@ function UserProfile({ userData, isCurrentUser }) {
             return (
                 <Button
                     onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)}
-                    icon={() => <FeatherIcon name="user" />}
+                    icon={() => <FeatherIcon size={15} name="user" color="white" />}
                     theme={{ roundness: 5 }}
                     uppercase={false}
-                    color="#E5E5E5"
+                    color="#1089ff"
                     mode="contained"
                     style={{ elevation: 0 }}>
                     <Text style={{}}>
@@ -290,6 +295,7 @@ function UserProfile({ userData, isCurrentUser }) {
             <Appbar.Header style={styles.appbar}>
                 <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 <Appbar.Content title={userData.email} titleStyle={styles.appbarTitle} />
+            {renderFollowButton()}
             </Appbar.Header>
             <ScrollView>
                 <View>
@@ -307,16 +313,24 @@ function UserProfile({ userData, isCurrentUser }) {
                     </View>
 
                     <View style={{ padding: 10, }}>
+                        <View style={{width: '100%', flexDirection: 'row',alignItems: 'center', justifyContent: "space-between"}}>
                         <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 13 }}>
                             Learn more
                 </Text>
+
+                <Text style={{color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 13 }}>
+                            Edit Profile
+                       
+                </Text>
+                        </View>
+
                         {renderBio()}
                     </View>
                     {renderInteractions()}
                 </View>
                 <Divider />
                 <Tabs page={currPage} tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF' locked={true} >
-                    <Tab activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
+                    <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}  activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}
                         </View>
@@ -379,8 +393,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Medium',
     },
     userAttributeText: {
-        fontSize: 10,
-        fontFamily: 'Avenir-Light',
+        fontSize: 12,
+        fontFamily: 'Avenir',
 
     }
 })

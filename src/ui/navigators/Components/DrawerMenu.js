@@ -93,7 +93,7 @@ function DrawerMenu(props) {
           <Avatar.Image source={{uri: currUserData.photo_url}} size={40} />
         </View>
       </TouchableOpacity>
-      <Divider />
+
 
 <TouchableOpacity onPress={navigateToProfile}>
         <View style={styles.navigationButtonContaner}>
@@ -113,7 +113,7 @@ function DrawerMenu(props) {
         </View>
         </TouchableOpacity>
 
-        <Divider />
+
 
         <TouchableOpacity onPress={navigateToTrainerInformation}>
         <View style={styles.navigationButtonContaner}>
@@ -143,9 +143,9 @@ function DrawerMenu(props) {
           </Text>
         </View>
 
-        <Divider />
+
         <Caption style={{padding: 10}}>
-          Version 0.7 (63)
+          Version 0.7 (64)
         </Caption>
 
 
