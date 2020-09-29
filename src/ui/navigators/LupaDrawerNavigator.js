@@ -36,11 +36,11 @@ const PlaceHolder = () => {
 }
 
 const ACTIVE_COLOR = "#23374d"
-const INACTIVE_COLOR = "#212121"
+const INACTIVE_COLOR = "#23374d"
 
 const tabBarOptions = {
   showLabel: true,
-  activeTintColor: 'black',
+  activeTintColor: '#1089ff',
   inactiveTintColor: 'rgb(58, 58, 60)',
   labelStyle: {
     fontSize: 12,
@@ -67,11 +67,11 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Dashboard':
-              return focused === true ? <FeatherIcon name='clipboard' size={20} color="#1089ff" /> : <ThinFeatherIcon name='clipboard' size={20} color="#212121" />
+              return focused === true ? <ThinFeatherIcon name='clipboard' size={20} color="#1089ff" /> : <ThinFeatherIcon name='clipboard' size={20} color="#212121" />
             case 'Train':
-              return focused === true ? <FeatherIcon name='home' size={20} color="#1089ff" /> : <ThinFeatherIcon name='home' size={20} color="#212121" />
+              return focused === true ? <ThinFeatherIcon name='home' size={20} color="#1089ff" /> : <ThinFeatherIcon name='home' size={20} color="#212121" />
             case 'Create':
-              return focused === true ? <FeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <ThinFeatherIcon name='plus-circle' size={20} color="#212121" />
+              return focused === true ? <ThinFeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <ThinFeatherIcon name='plus-circle' size={20} color="#212121" />
           }
 
         },

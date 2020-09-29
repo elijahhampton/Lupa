@@ -39,6 +39,8 @@ import { fcmService } from './src/controller/firebase/service/FCMService';
 import Search from './src/ui/search/Search';
 import MyData from './src/ui/user/component/MyData';
 import PickInterest from './src/ui/user/modal/WelcomeModal/PickInterest';
+import CreateCustomWorkoutModal from './src/ui/workout/program/createprogram/buildworkout/modal/CreateCustomWorkoutModal';
+import VlogFeedCardExpanded from './src/ui/workout/modal/VlogFeedCardExpanded';
 
 const App = () => {
   return (
@@ -207,7 +209,9 @@ function AppNavigator() {
       <StackApp.Screen name="MyData" component={MyData} />
       <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />
       <StackApp.Screen name="PickInterest" component={PickInterest} initialParams={{ isOnboarding: false }} />
-   </StackApp.Navigator>
+      <StackApp.Screen name="CreateCustomWorkout" component={CreateCustomWorkoutModal} />
+      <StackApp.Screen name="VlogContent" component={VlogFeedCardExpanded} />
+      </StackApp.Navigator>
   )
 }
 export default App;

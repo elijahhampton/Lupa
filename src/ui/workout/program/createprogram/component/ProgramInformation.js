@@ -147,7 +147,7 @@ function ProgramInformation(props) {
   const [titleInputFocused, setTitleInputFocused] = useState(false)
   const [descriptionInputFocused, setDescriptionInputFocused] = useState(false)
   const [programPriceInputFocused, setProgramPriceInputFocused] = useState(false)
-
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const _onToggleSnackBar = () => setSnackBarVisibility(!snackBarVisible)
 
@@ -316,16 +316,21 @@ function ProgramInformation(props) {
   }
 
   const addProgramDay = (day) => {
-    let newProgramDayArr = []
-    newProgramDayArr = newProgramDayArr.concat(programDays)
-    newProgramDayArr.push(day)
+    let newProgramDayArr = programDays
+
+    if (newProgramDayArr.includes(day)) {
+      newProgramDayArr.splice(newProgramDayArr.indexOf(day), 1);
+    } else {
+      newProgramDayArr.push(day);
+    }
 
     setProgramDays(newProgramDayArr)
+    setForceUpdate(!forceUpdate)
   }
 
   const getNextView = () => {
     //check program values
-    let retVal = checkInputs();
+    let retVal = false// checkInputs();
     
     if (retVal) {
       return;

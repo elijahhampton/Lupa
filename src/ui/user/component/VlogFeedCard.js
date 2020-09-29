@@ -14,7 +14,6 @@ import { getLupaUserStructure } from '../../../controller/firebase/collection_st
 import LupaController from '../../../controller/lupa/LupaController';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { Video } from 'expo-av';
-import LiveWorkoutFullScreenContentModal from '../../workout/modal/LiveWorkoutFullScreenContentModal';
 import DoubleClick from 'react-native-double-tap';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -47,7 +46,7 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
             };
     
             return (
-                <Surface style={{elevation: 0, borderRadius: 10, width: Dimensions.get('window').width, height: 350, alignSelf: 'center'}}>
+                <Surface style={{elevation: 0, borderRadius: 10, width: Dimensions.get('window').width, height: 400, alignSelf: 'center'}}>
                 <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="stretch" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center' }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
                 </Surface>
             )
@@ -57,8 +56,10 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
     }
 
     return (
-        <TouchableOpacity style={{width: '100%'}} onPress={() => setFullScreenContentVisible(true)}>
-       {showTopDivider === true ? <Divider style={{width: '100%', height: 7,  backgroundColor: '#EEEEEE',}} /> : null } 
+        <TouchableOpacity style={{width: '100%'}} onPress={() => navigation.push('VlogContent', {
+            vlogData: vlogData
+        })}>
+       {showTopDivider === true ? <Divider style={{width: '100%', height: 1,  backgroundColor: '#EEEEEE',}} /> : null } 
       
         <Card style={{ paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center', marginVertical: 15,   width: '100%', borderRadius: 0, elevation: 0}}>
 
@@ -97,7 +98,7 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
                             visible={optionsMenuVisible}
                             onDismiss={() => setOptionsMenuVisible(false)}
                             anchor={<FeatherIcon onPress={() => setOptionsMenuVisible(true)} name="more-vertical" size={18} color="#212121" />}>
-                            <Menu.Item title="Delete Vlog" onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
+                            <Menu.Item title="Delete Vlog" titleStyle={{fontSize: 15}} onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
                         </Menu>
         </View>
 
@@ -115,7 +116,6 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
 
 
         </Card>
-        <LiveWorkoutFullScreenContentModal isVisible={showFullScreenContent} closeModal={() => setFullScreenContentVisible(false)} vlogData={vlogData} />
         </TouchableOpacity>
     )
 }

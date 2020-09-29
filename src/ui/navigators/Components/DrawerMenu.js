@@ -93,7 +93,7 @@ function DrawerMenu(props) {
           <Avatar.Image source={{uri: currUserData.photo_url}} size={40} />
         </View>
       </TouchableOpacity>
-
+<Divider />
 
 <TouchableOpacity onPress={navigateToProfile}>
         <View style={styles.navigationButtonContaner}>

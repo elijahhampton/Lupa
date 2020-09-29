@@ -22,8 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../../../../controller/lupa/LupaController'
 import ImagePicker from 'react-native-image-picker'
 
-function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureWorkout }) {
-    const navigation = useNavigation();
+function CreateCustomWorkoutModal({ route, navigation }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const [workoutName, setWorkoutName] = useState("");
@@ -54,7 +53,7 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
     const handleTakeVideo = () => {
         navigation.navigate('LupaCamera', {
             currWorkoutPressed: customWorkout,
-            currProgramUUID: programUUID,
+            currProgramUUID: route.params.programUUID,
             mediaCaptureType: "VIDEO",
             captureURI: handleCaptureNewMediaURI,
             outlet: 'CreateProgram',
@@ -103,8 +102,9 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
             workout_uid: Math.random().toString(),
             superset: []
         })
-        captureWorkout(customWorkout)
-        closeModal()
+
+        route.params.captureWorkout(customWorkout)
+        navigation.pop();
     }
 
     const renderMedia = () => {
@@ -126,10 +126,9 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
     }
 
     return (
-        <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType="slide">
             <SafeAreaView style={{ flex: 1 }}>
                 <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <ThinFeatherIcon name="arrow-left" onPress={closeModal} size={20} style={{ marginRight: 20 }} />
+                    <ThinFeatherIcon name="arrow-left" onPress={() => navigation.pop()} size={20} style={{ marginRight: 20 }} />
                     <Button color="#1089ff"  mode="text" onPress={handleOnSave}>
                         Add
                     </Button>
@@ -232,9 +231,6 @@ function CreateCustomWorkoutModal({ isVisible, programUUID, closeModal, captureW
                 </View>
 
             </SafeAreaView>
-
-          
-        </Modal>
     )
 }
 

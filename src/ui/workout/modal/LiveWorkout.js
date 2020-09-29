@@ -45,7 +45,6 @@ import { getLupaProgramInformationStructure } from '../../../model/data_structur
 import RBSheet from "react-native-raw-bottom-sheet";
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import CircularUserCard from '../../user/component/CircularUserCard';
-import LiveWorkoutFullScreenContentModal from './LiveWorkoutFullScreenContentModal';
 import RestTimer from './RestTimer';
 import { useNavigation } from '@react-navigation/native';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
@@ -1122,7 +1121,7 @@ class LiveWorkout extends React.Component {
            
                 <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
-                <LiveWorkoutFullScreenContentModal isVisible={this.state.showFullScreenContent} closeModal={() => this.setState({ showFullScreenContent: false })} contentType={'VIDEO' /*this.state.contentTypeDisplayed*/} contentURI={this.state.currentDisplayedMediaURI} />
+               
              
             </>
         )

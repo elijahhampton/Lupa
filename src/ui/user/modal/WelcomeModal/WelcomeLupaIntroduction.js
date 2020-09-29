@@ -39,6 +39,7 @@ import _requestPermissionsAsync from '../../../../controller/lupa/permissions/pe
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { LOG_ERROR } from '../../../../common/Logger';
 
 const OPTIONS = [
     {
@@ -102,18 +103,25 @@ function TrainerCeritifcationModal({ isVisible, closeModal }) {
     })
 
     const handleOnSubmit = () => {
-        handleOnClose();
-        const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true, []);
-        dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload })
-        LUPA_CONTROLLER_INSTANCE.submitCertificationNumber(currUserData.user_uuid, certificationNumber);
-    }
-
-    handleOnClose = () => {
         if (certificationNumber.length === 0 || certificationNumber.length < 5) {
             alert('You must enter a valid NASM certification number!')
             return;
         }
+        
+        try {
+            LUPA_CONTROLLER_INSTANCE.submitCertificationNumber(currUserData.user_uuid, certificationNumber);
+        } catch(error) {
+            LOG_ERROR('WelcomeLupaIntroduction.js', 'Caught unhandled exception in handleOnSubmit()', error);
+            handleOnClose();
+        }
 
+        const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true, []);
+        dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload });
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('isTrainer', true);
+        handleOnClose();
+    }
+
+    handleOnClose = () => {
         closeModal();
     }
     return (

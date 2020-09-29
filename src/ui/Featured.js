@@ -56,7 +56,6 @@ import LargeProgramSearchResultCard from './workout/program/components/LargeProg
 import LUPA_DB from '../controller/firebase/firebase';
 import VlogFeedCard from './user/component/VlogFeedCard';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
-import LiveWorkoutFullScreenContentModal from './workout/modal/LiveWorkoutFullScreenContentModal';
 
 const mapStateToProps = (state, action) => {
     return {

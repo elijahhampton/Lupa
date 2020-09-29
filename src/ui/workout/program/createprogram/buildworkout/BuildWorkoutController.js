@@ -560,7 +560,9 @@ class BuildWorkoutController extends React.Component {
                             <View style={styles.flexOne}>
                                 {
                                     this.props.lupa_data.Users.currUserData.isTrainer === true ?
-                                            <Button icon={() => <FeatherIcon name="plus" color="#1089ff" />} onPress={() => this.setState({ customWorkoutModalVisible: true })} color="#1089ff" style={{ alignSelf: 'flex-start' }}>
+                                            <Button icon={() => <FeatherIcon name="plus" color="#1089ff" />} onPress={() => this.props.navigation.push('CreateCustomWorkout', {
+                                                programUUID: this.props.programData.program_structure_uuid
+                                            })} color="#1089ff" style={{ alignSelf: 'flex-start' }}>
                                                 <Text>
                                                     Add a custom exercise
                                                 </Text>
@@ -597,7 +599,7 @@ class BuildWorkoutController extends React.Component {
                             </ScrollView>
                         </View>
                     </View>
-                    <CreateCustomWorkoutModal isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} captureWorkout={this.captureWorkout} />
+                   
                     {this.renderWorkoutOptionsSheet()}
                     {this.renderDropdownPicker()}
                     {this.renderDayOfTheWeekDropdownPicker()}
