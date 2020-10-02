@@ -96,9 +96,14 @@ console.log('B')
 exports.payWithStripe = functions.https.onRequest((request, response) => {
     // Set your secret key: remember to change this to your live secret key in production
     // See your keys here: https://dashboard.stripe.com/account/apikeys
+
+    const actualAmount = request.body.amount * 100;
+
+   // const LUPA_SPLIT = Math.floor(actualAmount / 0.60);
+    //const TRAINER_SPLIT  = Math.floor(actualAmount /  .40);
     
     stripe.charges.create({
-        amount: request.body.amount * 100,
+        amount: request.body.amount * 100, //LUPA_SPLIT
         currency: request.body.currency,
         source: request.body.token.tokenId,
     },
@@ -111,6 +116,8 @@ exports.payWithStripe = functions.https.onRequest((request, response) => {
         .catch(err =>{
             
         });
+
+        stripe.
         
 });
 

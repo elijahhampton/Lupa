@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, createRef, useEffect } from 'react';
 
 import {
   View,
@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  Button as NativeButton,
   Modal,
   SafeAreaView,
 } from 'react-native';
@@ -17,7 +18,9 @@ import {
   Button,
   Caption,
   Divider,
-  Paragraph
+  Paragraph, 
+  Dialog, 
+  Portal, Checkbox
 } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
@@ -28,6 +31,11 @@ import { useSelector } from 'react-redux';
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import moment from 'moment';
+import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
+
+import RBSheet from 'react-native-raw-bottom-sheet'
+import getBookingStructure from '../../../../model/data_structures/user/booking';
+import LupaController from '../../../../controller/lupa/LupaController';
 
 function getMonthString(monthNum) {
   switch(monthNum) {
@@ -64,104 +72,225 @@ function getMonthString(monthNum) {
 const HEIGHT = 800
 
 function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
+  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+  const currUserData = useSelector(state => {
+    return state.Users.currUserData;
+  });
+
   const [markedDates, setMarkedDates] = useState({});
+  const [displayDate, setDisplayDate] = useState(new Date());
+  const [entryDate, setEntryDate] = useState('');
   const [items, setItems] = useState({});
+  const [userData, setUserData] = useState(getLupaUserStructure())
 
   const [forceUpdate, setForceUpdate] = useState(false);
+  const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
+
+  const startTimePickerRef = createRef();
+  const endTimePickerRef = createRef();
+
+  const [startTime, setStartTime] = useState(new Date(1598051730000))
+  const [startTimeFormatted, setStartTimeFormatted] = useState(new Date(1598051730000))
+  const [endTimeFormatted, setEndTimeFormatted] = useState(new Date(1598051730000))
+  const [endTime, setEndTime] = useState(new Date(1598051730000))
+  const openStartTimePicker = () => startTimePickerRef.current.open();
+    const closeStartTimePicker = () => startTimePickerRef.current.close();
+
+    const openEndTimePicker = () => endTimePickerRef.current.open();
+    const closeEndTimePicker = () => endTimePickerRef.current.close();
+
+    const [startTimeIsSet, setStartTimeIsSet] = useState(false);
+    const [endTimeIsSet, setEndTimeIsSet] = useState(false);
+
+    const [bookingRequestDialogVisible, setBookingRequestDialogVisible] = useState(false);
+
+    const handleOnPickStartTime = () => {
+      setStartTimeIsSet(true);
+      closeStartTimePicker();
+    }
+
+    const handleOnPickEndTime = () => {
+      setEndTimeIsSet(true);
+      closeEndTimePicker();
+    }
 
   const addMarkedDate = (day) => {
-    let updatedMarkedDates = markedDates;
-    if (Object.keys(updatedMarkedDates).includes(day.dateString)) {
-      delete updatedMarkedDates[day.dateString]
-      setMarkedDates(updatedMarkedDates)
-      captureMarkedDates(day.dateString);
-      setForceUpdate(!forceUpdate)
-    } else {
-      let dateObject = markedDates;
-      dateObject[day.dateString] = { startingDay: markedDates.length === 0 ?  true : false, color: '#1089ff', selected: true, marked: true }
-      setMarkedDates(dateObject);
-      captureMarkedDates(day.dateString);
-      setForceUpdate(!forceUpdate)
-    }
-  }
-
-  const handleDeleteTimeBlock = (day, time) => {
-    LUPA_CONTROLLER_INSTANCE.deleteSchedulertimeBlock(day, time);
+    let updatedMarkedDates = {}
+    updatedMarkedDates[day.dateString] = {marked: true, color: '#1089ff', selected: true}
+    setDisplayDate(moment(day.dateString).format('LL').toString())
+    setEntryDate(day.dateString.toString());
+    setMarkedDates(updatedMarkedDates)
   }
 
   const renderTimeBlocks = (timeBlock, year, month, day) => {
-    const startTimePeriod = timeBlock.startTimePeriod;
-    const endTimePeriod = timeBlock.endTimePeriod;
+  if (typeof(timeBlock) == 'undefined') {
+    return;
+  }
 
-    let startTime = "", endTime = "";
-    if (startTimePeriod == "AM") {
-      startTime = Math.abs(12 - Number(timeBlock.startTime.substr(0, 2)));
-    } else {
-      startTime = timeBlock.startTime.substr(0, 2)
-    }
-
-    if (endTimePeriod == "PM") {  
-      endTime = Math.abs(12 - Number(timeBlock.endTime.substr(0, 2)));
-    } else {
-      endTime = timeBlock.endTime.substr(0, 2)
-    }
-
-
-    const updatedStartTime = moment(`${year}-0${month}-${day} ${timeBlock.startTime.split(":")[0]}:${timeBlock.startTime.split(":")[1]}`, 'YYYY-MM-DD hh:mm a')
-    const updatedEndTime = moment(`${year}-${month}-${day} ${timeBlock.endTime.split(":")[0]}:${timeBlock.endTime.split(":")[1]}`, 'YYYY-MM-DD hh:mm a')
-    let start = moment(updatedStartTime)
-    let end = moment(updatedEndTime);
-
-    let blocks = []
-    while (start.isSameOrBefore(end)) {
-      let parsedTime = start.toString()
-      let time = parsedTime.split(" ")[4]
-
-      let updatedTimeFirst = "";
-      let updatedTimeSecond = "";
-
-      if (time.split(":")[0].toString().includes('0')) {
-        updatedTimeFirst = time.split(":")[0].toString().charAt(1);
-      } else {
-        updatedTimeFirst = time.split(":")[0].toString();
-      }
-
-      updatedTimeSecond = time.split(":")[1].toString()
-
-      updatedTimeOne = updatedTimeFirst + ":" + updatedTimeSecond;
-      updatedTimeTwo =  (Number(updatedTimeFirst.charAt(0)) + 1).toString() + ":" + updatedTimeSecond;
-      blocks.push(
-          [updatedTimeOne, updatedTimeTwo]
-      );
-     
-      start.add(1, 'hour')
-    }
-
-    return blocks.map(timeBlock => {
+    return timeBlock.map(timeBlock => {
       return(
-        <View style={[isCurrentUser === true ? styles.userTimeOptions : null  ,{padding: 10, paddingHorizontal: 20, borderRadius: 10, backgroundColor: '#E5E5E5', marginVertical: 5, alignItems: 'center',  width: Dimensions.get('window').width - 20, alignSelf: 'center'}]}>
-   
-<Text>
-        <Text style={styles.timeBlockNumbers}>
-          {timeBlock[0]}
-        </Text>
-        <Text>
-          {" "}-{" "}
-        </Text>
-        <Text style={styles.timeBlockNumbers}>
-          {timeBlock[1]}
-        </Text>
-      </Text>
+        <Surface style={{elevation: 0,borderRadius: 3, alignItems: 'center', backgroundColor: 'white', borderWidth: 0.5, borderColor: '#E5E5E5', padding: 20,  marginVertical: 15, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
 
-      {isCurrentUser === true ? <FeatherIcon name="x" color="black" size={24} /> : null}
-        </View>
+          <Text style={{fontFamily: 'Avenir-Heavy',  alignSelf: 'flex-start', fontSize: 15}}>
+            {moment(timeBlock.startTime).format('LT').toString()} - {moment(timeBlock.endTime).format('LT').toString()}
+          </Text>
+          
+        </Surface>
       );
     })
   }
 
+  const handleCloseRequestBookingDialog = () => {
+    onCloseRequestBookingDialog();
+    setBookingRequestDialogVisible(false);
+  }
+
+  const handleOpenRequestBookingDialog = () => {
+    setBookingRequestDialogVisible(true)
+  }
+
+  const onCloseRequestBookingDialog = () => {
+    //reset state
+  }
+
+  const handleOnRequestBooking = () => {
+    const trainerUUID = uuid;
+    const requesterUUID = currUserData.user_uuid;
+    const isSet = false;
+
+    //create a booking structure
+    
+    const booking = getBookingStructure(moment(startTime).format('LT').toString(), moment(endTime).format('LT').toString(), trainerUUID, requesterUUID, isSet, entryDate)
+
+    //send to backend
+     LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking);
+
+  }
+
+  const renderBookingRequestDialog = () => {
+   
+    return (
+      <Portal>
+        <Dialog visible={bookingRequestDialogVisible} style={{alignSelf: 'center', width: Dimensions.get('window').width - 20}}>
+          <Dialog.Title>
+            Book ____
+          </Dialog.Title>
+          <Dialog.Content>
+          <Caption>
+          You are about to book a session with Elijah Hampton on {displayDate.toString()}. Choose a time block from the requested interval.
+        </Caption>
+
+      <View style={{marginTop: 30, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
+      <View style={{marginVertical: 10}}>
+        <Text>
+          Start Time
+        </Text>
+      <NativeButton title={startTimeIsSet ? startTimeFormatted.toString() : 'Choose a start time'} onPress={openStartTimePicker} />
+      </View>
+
+      <View  style={{marginVertical: 10}}>
+        <Text>
+          End Time
+        </Text>
+        <NativeButton title={endTimeIsSet ? endTimeFormatted.toString() : 'Choose an end time'} onPress={openEndTimePicker} />
+      </View>
+
+      </View>
+
+
+          </Dialog.Content>
+
+          <Dialog.Actions>
+            <Button color="#1089ff" onPress={handleCloseRequestBookingDialog}>
+              Cancel
+            </Button>
+
+            <Button color="#1089ff" onPress={handleOnRequestBooking}>
+              Request
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      
+      </Portal>
+    )
+  }
+
+  const renderStartTimePicker = () => {
+    return (
+      <RBSheet
+      ref={startTimePickerRef}
+      height={300}
+      customStyles={
+        wrapper={
+
+        },
+        container={
+          
+        }
+      }>
+        <View style={{flex: 1}}>
+        <DateTimePicker
+        value={startTime}
+        mode='time'
+        is24Hour={false}
+        display="default"
+        onChange={onChangeStartTime}
+      />
+        </View>
+        <SafeAreaView>
+          <Button onPress={handleOnPickStartTime} color="#1089ff" mode="contained" style={{elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+            Done
+          </Button>
+        </SafeAreaView>
+      </RBSheet>
+    )
+  }
+  
+  const renderEndTimePicker = () => {
+return (
+<RBSheet
+ref={endTimePickerRef}
+height={300}>
+  <View style={{flex: 1}}>
+  <DateTimePicker
+        value={endTime}
+        mode='time'
+        is24Hour={false}
+        display="default"
+        onChange={onChangeEndTime}
+      />
+  </View>
+  <View>
+          <Button onPress={handleOnPickEndTime} color="#1089ff" mode="contained" style={{elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+            Done
+          </Button>
+          <SafeAreaView />
+        </View>
+</RBSheet>
+)
+  }
+
+
+  const onChangeStartTime = (event, date) => {
+    const currentDate = date;
+    const currentDateFormatted = moment(new Date(date)).format('LT').toString()
+    setStartTime(currentDate);
+    setStartTimeFormatted(currentDateFormatted)
+  };
+
+  const onChangeEndTime = (event, date) => {
+    const currentDate = date;
+    const currentDateFormatted = moment(new Date(date)).format('LT').toString()
+    setEndTime(currentDate);
+    setEndTimeFormatted(currentDateFormatted)
+  }
+
+
   useEffect(() => {
       const currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(async documentSnapshot => {
         let userData = await documentSnapshot.data()
+        setUserData(userData);
         setItems(userData.scheduler_times);
     })
 
@@ -188,7 +317,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   // Callback that gets called when day changes while scrolling agenda list
   onDayChange={(day)=>{console.log('day changed')}}
   // Initially selected day
-  selected={null}
+  selected={new Date()}
   // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
   minDate={Date()}
   // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
@@ -204,26 +333,10 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
     if (typeof(day) == 'undefined' || typeof(item) == 'undefined') {
       return;
     }
-
-    const times = item.times;
-    const list = times.map(time => {
-      return (
-        <View style={{paddingHorizontal: 20, width: Dimensions.get('window').width}}>
-                  <View>
-                    {renderTimeBlocks(time, day.year, day.month, day.day)}
-
-                  </View>
-
-                {/*  <View>
-                  {isCurrentUser === true ? <Feather1s name="x" size={20} onPress={() => handleDeleteTimeBlock(day, time)}/> : null}
-                </View>*/}
-
-          </View>
-      )
-    });
-
+ 
     return (
       <View style={{height: HEIGHT, backgroundColor: 'white', width: '100%'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
         <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
         <Text style={{ fontSize: 20, fontFamily: 'Avenir-Light'}}>
       {day.day}
@@ -232,20 +345,103 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
       {getMonthString(day.month)}
       </Text>
         </View>
-        
+
+        {
+          isCurrentUser === true ?
+          <Button onPress={() => setEditHoursModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="plus" />}>
+          <Text style={{fontSize: 12}}>
+          Update Available Hours
+          </Text>
+        </Button>
+     
+          :
+          <Button onPress={() => setBookingRequestDialogVisible(true)} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
+          <Text style={{fontSize: 12}}>
+          Book Me
+          </Text>
+        </Button>
+        }
+             </View>
+       
+      
+        {renderTimeBlocks(items[entryDate])}
 <View>
-{list}
+     
 </View>
-<Divider style={{marginVertical: 5}} />
 </View>
     )
   }}
   // Specify how empty date content with no items should be rendered
-  renderEmptyDate={() => {return (<View />);}}
+  renderEmptyDate={() => {
+    return (
+<View style={{height: HEIGHT, backgroundColor: 'white', width: '100%'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+        <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
+        <Text style={{ fontSize: 20, fontFamily: 'Avenir-Light'}}>
+  
+</Text>
+<Text style={{fontSize: 10}}>
+      {getMonthString(day.month)}
+      </Text>
+        </View>
+
+        {
+          isCurrentUser === true ?
+          <Button onPress={() => setEditHoursModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="plus" />}>
+          <Text style={{fontSize: 12}}>
+          Update Available Hours
+          </Text>
+        </Button>
+     
+          :
+          null
+        }
+          </View>
+      
+        
+<View>
+
+</View>
+<Divider style={{marginVertical: 5}} />
+</View>
+  )}}
   // Specify how agenda knob should look like
   //renderKnob={() => {return (<View />);}}
   // Specify what should be rendered instead of ActivityIndicator
-  renderEmptyData = {() => {return <View />}}
+  renderEmptyData = {() => {
+    return (
+<View style={{height: HEIGHT, backgroundColor: 'white', width: '100%'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+        <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
+        <Text style={{ fontSize: 20, fontFamily: 'Avenir-Light'}}>
+  
+</Text>
+<Text style={{fontSize: 10}}>
+      
+      </Text>
+        </View>
+
+        {
+          isCurrentUser === true ?
+          <Button onPress={() => setEditHoursModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="plus" />}>
+          <Text style={{fontSize: 12}}>
+          Update Available Hours
+          </Text>
+        </Button>
+     
+          :
+          null
+        }
+        
+          </View>
+      
+        
+<View>
+
+</View>
+<Divider style={{marginVertical: 5}} />
+</View>
+  )}}
   // Specify your item comparison function for increased performance
   rowHasChanged={() => {return true}}
   // Hide knob button. Default = false
@@ -272,6 +468,10 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   // Agenda container style
   style={{height: HEIGHT}}
 />
+{renderBookingRequestDialog()}
+{renderStartTimePicker()}
+{renderEndTimePicker()}
+<SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} displayDate={displayDate} entryDate={entryDate} />
     </View>
     );
 }

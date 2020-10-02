@@ -77,16 +77,24 @@ class BuildWorkoutController extends React.Component {
             customWorkoutModalVisible: false,
             libraryData: [
                 {
-                    title: "Lower",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.lower_workouts,
+                    title: "Balance",
+                    data:this.props.lupa_data.Application_Workouts.applicationWorkouts._55.balance_workouts,
                 },
                 {
-                    title: "Upper",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.lupa_workouts //WRONG
+                    title: "Flexibility",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.flexibility_workouts //WRONG
                 },
                 {
                     title: "Core",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.core_workouts
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.core_workouts
+                },
+                {
+                    title: "Resistance",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.resistance_workouts
+                },
+                {
+                    title: "Plyometric",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.plyometric_workouts
                 },
             ],
             currView: 0
@@ -115,6 +123,9 @@ class BuildWorkoutController extends React.Component {
 
         await this.setState({ ready: true, weeks: weeks, workoutDays: workoutDays })
 
+        console.log('CCCCCCCCCCC')
+        console.log(Object.keys(this.props.lupa_data.Application_Workouts.applicationWorkouts._55))
+        
     }
 
     /**
@@ -508,6 +519,41 @@ class BuildWorkoutController extends React.Component {
         return null;
     }
 
+    /**
+     * Renders workout library as section list.
+     */
+    renderSectionList = () => {
+        try {
+            return (
+                <SectionList
+                                    sections={this.state.libraryData}
+                                    keyExtractor={(item, index) => item.index}
+                                    initialNumToRender={5}
+                                    removeClippedSubviews={true}
+                               
+                                    renderItem={({ item }) => {
+                                        if (typeof (item) == 'undefined' || item.workout_name == "" || typeof(item.workout_name) == 'undefined') {
+                                            return;
+                                        }
+                                        return (
+                                            <TouchableOpacity key={item.workout_name} onPress={() => this.captureWorkout(item, this.state.currPlacementType)}>
+                                                <SingleWorkout
+                                                    showSelectStyle={this.state.placementType == PLACEMENT_TYPES.SUPERSET}
+                                                    workout={item}
+                                                />
+                                            </TouchableOpacity>
+                                        )
+                                    }}
+                                    renderSectionHeader={({ section: { title } }) => (
+                                        <Text style={styles.sectionHeader}>{title}</Text>
+                                    )}
+                                />
+            )
+        } catch(error) {
+            alert(error)
+        }
+    }
+
 
 
     /**
@@ -570,26 +616,7 @@ class BuildWorkoutController extends React.Component {
                                         :
                                         null
                                 }
-                                <SectionList
-                                    sections={this.state.libraryData}
-                                    keyExtractor={(item, index) => item.workout_name}
-                                    renderItem={({ item }) => {
-                                        if (typeof (item) == 'undefined' || item.workout_name == "" || item.workout_name == undefined) {
-                                            return;
-                                        }
-                                        return (
-                                            <TouchableOpacity onPress={() => this.captureWorkout(item, this.state.currPlacementType)}>
-                                                <SingleWorkout
-                                                    showSelectStyle={this.state.placementType == PLACEMENT_TYPES.SUPERSET}
-                                                    workout={item}
-                                                />
-                                            </TouchableOpacity>
-                                        )
-                                    }}
-                                    renderSectionHeader={({ section: { title } }) => (
-                                        <Text style={styles.sectionHeader}>{title}</Text>
-                                    )}
-                                />
+                                {this.renderSectionList()}
                             </View>
                         </View>
                         <View style={styles.midSectionDivider} />

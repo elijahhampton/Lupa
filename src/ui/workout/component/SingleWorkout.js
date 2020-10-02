@@ -22,7 +22,7 @@ import FeatherIcon from "react-native-vector-icons/Feather"
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 
-class SingleWorkout extends React.Component {
+class SingleWorkout extends React.PureComponent {
     constructor(props) {
         super(props);
 

@@ -35,27 +35,11 @@ import {
 } from 'react-native-paper';
 
 import LupaController from '../controller/lupa/LupaController';
-import FeatherIcon from 'react-native-vector-icons/Feather'
 import { connect, useDispatch } from 'react-redux';
-import FeaturedProgramCard from './workout/program/components/FeaturedProgramCard';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { MenuIcon } from './icons';
-import { SearchBar } from 'react-native-elements'
-import LiveWorkoutPreview from './workout/program/modal/LiveWorkoutPreview';
-import InviteFriendsModal from './user/modal/InviteFriendsModal'
-import { retrieveAsyncData, storeAsyncData } from '../controller/lupa/storage/async';
-import ThinFeatherIcon from "react-native-feather1s";
-import CircularUserCard from './user/component/CircularUserCard';
-import { ShowTrainersModal, ShowTopPicksModal } from './modal/ExplorePageModals';
-import { titleCase } from './common/Util';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
-import { Constants } from 'react-native-unimodules';
-import { TouchableWithoutFeedback, TouchableHighlight } from 'react-native-gesture-handler';
-import ProgramInformationComponent from './workout/program/components/ProgramInformationComponent';
-import LargeProgramSearchResultCard from './workout/program/components/LargeProgramSearchResultCard'
 import LUPA_DB from '../controller/firebase/firebase';
 import VlogFeedCard from './user/component/VlogFeedCard';
-import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { FlatList } from 'react-native-gesture-handler';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -162,7 +146,7 @@ class Featured extends React.Component {
             }
 
             return (
-                    <VlogFeedCard key={index} vlogData={vlog} showTopDivider={true} />
+                    <VlogFeedCard key={index} clickable={true} vlogData={vlog} showTopDivider={true} />
                    
             )
         })
@@ -191,17 +175,11 @@ class Featured extends React.Component {
                         onBlur={() => this.setState({ searchBarFocused: false })}
                     />
                 </Appbar>
-                <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                    {
-                        <View style={{ backgroundColor: '#FFFFFF' }}>
-                            <View style={{ backgroundColor: '#FFFFFF' }}>
-                                <View style={{ backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
+              
+                                <View style={{flex: 1, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
                                     {this.renderVlogs()}
                                 </View>
-                            </View>
-                        </View>
-                    }
-                </View>
+
             </View>
         );
     }

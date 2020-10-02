@@ -149,7 +149,7 @@ const SignUp = props => {
   * as well as Lupa application data (assessments, workouts);
   */
   const _setupRedux = async () => {
-    let currUserData = getLupaUserStructure(), currUserPrograms = getLupaProgramInformationStructure(), lupaWorkouts = [];
+    let currUserData = getLupaUserStructure(), currUserPrograms = getLupaProgramInformationStructure(), lupaWorkouts = {};
 
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
@@ -167,8 +167,11 @@ const SignUp = props => {
       await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms })
     }
 
-    lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-    dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts })
+    await LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
+      lupaWorkouts = result;
+    });
+
+    await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts })
   }
 
   const { navigation } = props

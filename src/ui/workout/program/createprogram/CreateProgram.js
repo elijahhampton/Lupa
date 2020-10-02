@@ -83,6 +83,7 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
 
     const handleShareProgramOnPress = () => {
         closeModal()
+        saveProgram();
         navigation.navigate('Train')
         navigation.navigate('ShareProgramModal', {
             programData: programData

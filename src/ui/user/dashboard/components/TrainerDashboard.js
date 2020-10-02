@@ -15,19 +15,27 @@ import {
     Appbar,
     Surface,
     DataTable,
-    Caption
+    Caption, Avatar
 } from 'react-native-paper';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
-
+import { useSelector } from 'react-redux'
 import { LineChart } from 'react-native-chart-kit'
 import { useNavigation } from '@react-navigation/native';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { MenuIcon } from '../../../icons';
 import LupaController from '../../../../controller/lupa/LupaController';
 import LOG from '../../../../common/Logger';
-
+import LUPA_DB from '../../../../controller/firebase/firebase';
+import getBookingStructure from '../../../../model/data_structures/user/booking';
+import moment from 'moment';
 function TrainerDashboard(props) {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    });
+
     const navigation = useNavigation();
 
     const [refreshing, setRefreshing] = useState(false);
@@ -48,7 +56,7 @@ function TrainerDashboard(props) {
     const [currPurchaseHistoryStartIndex, setCurrPurchaseHistoryStartIndex] = useState(0);
     const [currPurchaseHistoryEndIndex, setCurrPurchaseHistoryEndIndex] = useState(3);
     const [currPage, setCurrPage] = useState(1)
-    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    const [userBookings, setUserBookings] = useState([]);
 
     useEffect(() => {
         async function fetchDashboardData() {
@@ -63,10 +71,20 @@ function TrainerDashboard(props) {
             }
         }
 
+        let bookingData = []
+        const currUserObserver = LUPA_DB.collection('bookings').where('trainer_uuid', '==', currUserData.user_uuid).onSnapshot(documentSnapshot => {
+           documentSnapshot.forEach(doc => {
+            bookingData.push(doc.data());
+           })
+
+            setUserBookings(['a', 'b', 'c']);
+        });
+
         LOG('TrainerDashboard.js', 'Running useEffect')
         setComponentReady(false);
         fetchDashboardData();
         setComponentReady(true)
+        return () => currUserObserver();
     }, [componentReady]);
 
     const handleOnRefresh =  React.useCallback(() => {
@@ -92,6 +110,7 @@ function TrainerDashboard(props) {
             )
         }
 
+        //TODO: Possible Bug
         return data.purchaseMetaData.purchase_history.slice(currPurchaseHistoryStartIndex, currPurchaseHistoryEndIndex).map((purchaseHistory, index, arr) => {
    
             return (
@@ -178,6 +197,30 @@ function TrainerDashboard(props) {
         }
     }
 
+    const renderBookings = () => {
+        if (userBookings.length === 0) {
+            return (
+                <Caption>
+                You don't have any scheduled bookings.
+            </Caption>
+            )
+        }
+
+        return userBookings.map((booking, index, arr) => {
+            return (
+                <View style={{alignItems: 'center', marginHorizontal: 10}}>
+                    <Avatar.Text style={{marginVertical: 5}} label="EH"  size={35} />
+                    <Text style={{fontSize: 10}}>
+                       2:00
+                    </Text>
+                    <Text style={{fontSize: 10}}>
+                    {moment(booking.booking_entry_date).format('LL').toString().split(',')[0]}
+                    </Text>
+                </View>
+            )
+        });
+    }
+
     const renderViews = () => {
         if (typeof(data) == 'undefined') {
             return 0;
@@ -198,14 +241,24 @@ function TrainerDashboard(props) {
         }}>
              <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)'}}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
-                <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Roman', fontWeight: '600', fontSize: 20}} />
                 <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
               <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
 </Appbar.Header> 
- <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{flexGrow: 2, justifyContent: 'space-evenly', backgroundColor: '#EEEEEE'}}>
+ <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{backgroundColor: '#EEEEEE'}}>
+<View style={{marginVertical: 15, padding: 10}}>
+<Text style={{fontSize: 13, paddingVertical: 10, fontWeight: '600'}}>
+                           Bookings
+                        </Text>
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        {renderBookings()}
+                        </View>
+                      
+</View>
 
- <View>
-                        <Text style={{padding: 10, fontSize: 18, fontWeight: '600'}}>
+
+ <View style={{marginVertical: 15}}>
+                        <Text style={{padding: 10, fontSize: 13, fontWeight: '600'}}>
                            Purchase History
                         </Text>
                         <DataTable style={{backgroundColor: '#EEEEEE'}}>
@@ -220,11 +273,12 @@ function TrainerDashboard(props) {
                         </View>
 
 
+<View style={{marginVertical: 15}}>
 
 <View style={{padding: 10}}>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                 <View style={{flex: 1}}>
-                                <Text style={{  fontSize: 18, fontWeight: '600'}}>
+                                <Text style={{  fontSize: 13, fontWeight: '600'}}>
                             Overview
                         </Text>
                                 </View>
@@ -298,9 +352,13 @@ function TrainerDashboard(props) {
                                         {renderViews()}
                                         </Text>
                                     </View>
+                                    
                                 </Surface>
 
+                        
+
                             </ScrollView>
+                        </View>
                         </View>
 
 </ScrollView>

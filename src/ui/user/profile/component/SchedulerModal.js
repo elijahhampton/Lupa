@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createRef, useState } from 'react';
 
 import {
     Modal,
@@ -6,26 +6,42 @@ import {
     TextInput,
     Text,
     SafeAreaView,
+    Button as NativeButton, Dimensions
 } from 'react-native';
-import { Divider, Appbar, FAB, Caption, Menu, Provider } from 'react-native-paper';
+import { Divider, Appbar, FAB, Caption, Menu, Provider, Button } from 'react-native-paper';
 import ThinFeatherIcon from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import LupaController from '../../../../controller/lupa/LupaController';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import moment from 'moment';
 
-function SchedulerModal({ closeModal, isVisible, selectedDates }) {
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useSelector } from 'react-redux';
+
+function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+
+  const startTimePickerRef = createRef();
+  const endTimePickerRef = createRef();
+
+  const [startTime, setStartTime] = useState(new Date(1598051730000))
+  const [startTimeFormatted, setStartTimeFormatted] = useState(new Date(1598051730000))
+  const [endTimeFormatted, setEndTimeFormatted] = useState(new Date(1598051730000))
+  const [endTime, setEndTime] = useState(new Date(1598051730000))
+
     const [addedTimes, setAddedTimes] = useState([]);
 
-    const [startTime, setStartTime] = useState("");
-    const [endTime, setEndTime] = useState("");
+    const [markedDates, setMarkedDates] = useState([])
 
     const [startTimePeriod, setStartTimePeriod] = useState("AM")
     const [endTimePeriod, setEndTimePeriod] = useState("PM")
 
     const [startTimeMenuVisible, setStartTimeMenuVisible] = useState(false);
     const [endTimeMenuVisible, setEndTimeMenuVisible] = useState(false);
+
+    const [editHoursModalVisible, setEditHoursModalVisible] = useState(false)
 
     const [allowTextChange, setAllowTextChange] = useState(0);
 
@@ -37,15 +53,37 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
   
     const closeEndTimeMenu = () => setEndTimeMenuVisible(false);
 
+    const currUserData = useSelector(state => {
+      return state.Users.currUserData;
+    })
+
     const addTimes = () => {
       const timeBlock = {
         startTime: startTime,
-        startTimePeriod: startTimePeriod,
         endTime: endTime,
-        endTimePeriod: endTimePeriod
       }
 
       setAddedTimes(prevState => prevState.concat(timeBlock));
+    }
+
+    const handleOnSave = () => {
+      const timeBlock = {
+        startTime: startTime,
+        endTime: endTime,
+      }
+
+      let currentSchedulerTimes  = currUserData.scheduler_times;
+      if (typeof(currentSchedulerTimes[entryDate]) == 'undefined') {
+        currentSchedulerTimes[entryDate] = [timeBlock]
+      } else {
+        let times  =  currentSchedulerTimes[entryDate];
+        times.push(timeBlock);
+        currentSchedulerTimes[entryDate] = times;
+      }
+
+      LUPA_CONTROLLER_INSTANCE.updateCurrentUser('scheduler_times', currentSchedulerTimes, 'update')
+
+      closeModal();
     }
 
     const renderAddedTimes = () => {
@@ -64,19 +102,7 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
     }
 
     const renderSelectedDates = () => {
-      if (selectedDates.length == 0 || typeof(selectedDates) == 'undefined' || selectedDates == null) {
-        return (<Caption>
-          You haven't selected any dates.  Return to the calendar and select your desired dates.
-        </Caption>
-        )
-      }
-      return selectedDates.map((date, index, arr) => {
-        return (
-          <Text style={{margin: 10}}>
-          {date}
-        </Text>
-        )
-      })
+      
     }
 
     const handleSaveTimes = () => {
@@ -109,79 +135,150 @@ function SchedulerModal({ closeModal, isVisible, selectedDates }) {
       return startTime;
     }
 
+    const onChangeStartTime = (event, date) => {
+      const currentDate = date;
+      const currentDateFormatted = moment(new Date(date)).format('LT').toString()
+      setStartTime(currentDate);
+      setStartTimeFormatted(currentDateFormatted)
+    };
+
+    const onChangeEndTime = (event, date) => {
+      const currentDate = date;
+      const currentDateFormatted = moment(new Date(date)).format('LT').toString()
+      setEndTime(currentDate);
+      setEndTimeFormatted(currentDateFormatted)
+    }
+
+    const renderStartTimePicker = () => {
+      return (
+        <RBSheet
+        ref={startTimePickerRef}
+        height={300}
+        customStyles={
+          wrapper={
+
+          },
+          container={
+            
+          }
+        }>
+          <View style={{flex: 1}}>
+          <DateTimePicker
+          testID="dateTimePicker"
+          value={startTime}
+          mode='time'
+          is24Hour={false}
+          display="default"
+          onChange={onChangeStartTime}
+        />
+          </View>
+          <View>
+            <Button onPress={handleOnPickStartTime} color="#1089ff" mode="contained" style={{elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+              Done
+            </Button>
+            <SafeAreaView />
+          </View>
+        </RBSheet>
+      )
+    }
+    
+    const renderEndTimePicker = () => {
+return (
+  <RBSheet
+  ref={endTimePickerRef}
+  height={300}>
+    <View style={{flex: 1}}>
+    <DateTimePicker
+          testID="dateTimePicker"
+          value={endTime}
+          mode='time'
+          is24Hour={false}
+          display="default"
+          onChange={onChangeEndTime}
+        />
+    </View>
+    <View>
+            <Button onPress={handleOnPickEndTime} color="#1089ff" mode="contained" style={{elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+              Done
+            </Button>
+            <SafeAreaView />
+          </View>
+  </RBSheet>
+)
+    }
+
+    const openStartTimePicker = () => startTimePickerRef.current.open();
+    const closeStartTimePicker = () => startTimePickerRef.current.close();
+
+    const openEndTimePicker = () => endTimePickerRef.current.open();
+    const closeEndTimePicker = () => endTimePickerRef.current.close();
+
+    const [startTimeIsSet, setStartTimeIsSet] = useState(false);
+    const [endTimeIsSet, setEndTimeIsSet] = useState(false);
+
+    const handleOnPickStartTime = () => {
+      setStartTimeIsSet(true);
+      closeStartTimePicker();
+    }
+
+    const handleOnPickEndTime = () => {
+      setEndTimeIsSet(true);
+      closeEndTimePicker();
+    }
+
+    handleOnSaveTimeBlock = () => {
+
+    }
+
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animated={true} animationType="slide">
-            <Appbar.Header style={{backgroundColor: '#FFFFFF'}}>
+            <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0,         borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',}}>
                 <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}  onPress={closeModal}/>
-                <Appbar.Content title="Add Hours" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                <Appbar.Content title="Update Availability" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                <Button color="#1089ff" onPress={handleOnSave}>
+                  Save
+                </Button>
             </Appbar.Header>
-            <ScrollView contentContainerStyle={{marginTop: 10}}>
-              <View style={{marginVertical: 10, paddingHorizontal: 20,}}>
-              <Caption> Add blocks of time your are available for the dates you selected.</Caption>
-               <Caption> Note: You must use one hour intervals. </Caption>
+              <View style={{padding: 10}}>
+                <Text style={{fontWeight: '600'}}>
+                  {displayDate}
+                </Text>
+                <Caption>
+                  Add a time block you are available for this date.
+                </Caption>
               </View>
-              <ScrollView centerContent horizontal>
-                {renderSelectedDates()}
-              </ScrollView>
               <Divider />
               {renderAddedTimes()}
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{}}>
-            <Text style={{paddingVertical: 5}}>
-              Start time
-            </Text>
-            <TextInput returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" maxLength={4} value={startTime} onChangeText={text => setStartTime(text)} placeholder="08:00" style={{borderWidth: 1, padding: 10, borderRadius: 3, borderColor: '#EEEEEE'}} />
-            </View>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly',  width: '100%'}}>
+         <View style={{alignItems: 'center'}}>
+         <NativeButton title="Select start time" onPress={openStartTimePicker} />
+        {
+          startTimeIsSet &&
+          <Caption>
+           {startTimeFormatted}
+         </Caption>
+  
+        }
+               </View>
+         
+        
 
-   
-            <Menu
-          visible={startTimeMenuVisible}
-          onDismiss={closeStartTimeMenu}
-          anchor={ 
-          <TouchableOpacity onPress={openStartTimeMenu}>
-              <Text  style={{paddingHorizontal: 10, fontSize: 15}}>
-          {startTimePeriod}
-          <FeatherIcon name="chevron-down" size={12} />
-        </Text>
-        </TouchableOpacity>}>
-          <Menu.Item onPress={() => setStartTimePeriod("AM")} title="AM" />
-          <Menu.Item onPress={() => setStartTimePeriod("PM")} title="PM" />
-        </Menu> 
-   
-           
-          </View>
-
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{}}>
-            <Text style={{paddingVertical: 5}}>
-              End time
-            </Text>
-            <TextInput returnKeyLabel="done" returnKeyType="done" keyboardType="numeric" maxLength={4} value={endTime} onChangeText={text => setEndTime(text)} placeholder="11:00" style={{borderWidth: 1, padding: 10, borderRadius: 3, borderColor: '#EEEEEE'}} />
-            </View>
-    
-            <Menu
-          visible={endTimeMenuVisible}
-          onDismiss={closeEndTimeMenu}
-          anchor={ 
-          <TouchableOpacity onPress={openEndTimeMenu}>
-              <Text  style={{paddingHorizontal: 10, fontSize: 15}}>
-          {endTimePeriod}
-          <FeatherIcon name="chevron-down" size={12} />
-        </Text>
-        </TouchableOpacity>}>
-          <Menu.Item onPress={() => setEndTimePeriod("AM")} title="AM" />
-          <Menu.Item onPress={() => setEndTimePeriod("PM")} title="PM" />
-        </Menu>
-          </View>
-
-
-          <FeatherIcon name="check"  size={24} onPress={addTimes} />
+        <View style={{alignItems: 'center'}}>
+        <NativeButton title="Select end time" onPress={openEndTimePicker} />
+        {
+          endTimeIsSet &&
+          <Caption>
+                 {endTimeFormatted}
+         </Caption>
+  
+        }
+        </View>
+        
          
 </View>
-</ScrollView>
-<FAB onPress={handleSaveTimes} icon="check" style={{position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#1089ff'}} />
-      
+<SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} selectedDates={markedDates} />
+      {renderStartTimePicker()}
+      {renderEndTimePicker()}
       </Modal>
     )
 }

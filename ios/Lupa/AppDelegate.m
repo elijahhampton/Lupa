@@ -35,6 +35,12 @@
     [FIRApp configure];
   }
  // [RNFirebaseNotifications configure];  //Add This Line
+
+ // Workaround until this lands:
+  // https://github.com/react-native-community/datetimepicker/issues/203
+  if (@available(iOS 13.4, *)) {
+    [UIDatePicker appearance].preferredDatePickerStyle = UIDatePickerStyleWheels;
+  }
   
 
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];

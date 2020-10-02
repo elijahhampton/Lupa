@@ -141,6 +141,7 @@ var lupa_user : LupaUserStructure = {
     following: [],
     sessionsCompleted: 0,
     bio: "",
+    bookings: [],
     recommended_workouts: [],
     certification: "",
     homegym: {},

@@ -367,6 +367,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '#FFFFFF',
+        borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',
        // borderBottomColor: 'rgb(199, 199, 204)', 
        // borderBottomWidth: 0.8,
         elevation: 0,

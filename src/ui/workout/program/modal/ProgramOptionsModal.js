@@ -25,6 +25,9 @@ const TRAINER_OPTIONS = [
         optionTitle: 'Share Program',
     },
     {
+        optionTitle: 'Post to Profile',
+    },
+    {
         optionTitle: 'Delete Program',
         customTextStyle: {
            color: '#e53935',
@@ -61,7 +64,6 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
     const navigation = useNavigation()
 
     const handleDefaultOptionsOnPress = (optionTitle) => {
-        closeModal()
 
         if (optionTitle == 'Share Program') {
             shareProgramOnPress(program);
@@ -70,10 +72,15 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         if (optionTitle == 'Delete Program') {
             LUPA_CONTROLLER_INSTANCE.eraseProgram(program.program_structure_uuid);
         }
+
+        if (optionTitle == 'Post to Profile') {
+            LUPA_CONTROLLER_INSTANCE.markProgramPublic(program.program_structure_uuid);
+        }
+
+        closeModal()
     }
 
     const handleCurrUserOptions = (optionTitle) => {
-        closeModal()
 
         if (optionTitle == 'View Trainer Profile') {
             navigation.navigate('Profile', {
@@ -87,6 +94,8 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                 workoutType: 'PROGRAM',
             });
         }
+
+        closeModal()
     }
 
     const shareProgramOnPress = (program) => {
@@ -154,7 +163,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                         primary: '#FFFFFF'
                     }
                 }}>
-                    <Appbar.Action onPress={closeModal} icon={() => <Feather1s thin={true} name="arrow-left" size={20} />} />
+                    <Appbar.Action onPress={closeModal} icon={() => <Feather1s thin={true} name="x" size={20} />} />
                     <Appbar.Content title="Program Options" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 </Appbar.Header>
             <View style={styles.container}>

@@ -78,18 +78,18 @@ function VlogFeedCardExpanded({ route, navigation }) {
             return vlogOwnerPrograms.map((program, index, arr) => {
                 return (
                     <View style={{alignItems: 'center', justifyContent: 'center', width: '100%'}}>
-                    <View style={{width: Dimensions.get('window').width  - 20, height: 300, borderRadius: 10, borderWidth: 0.5, borderColor: 'black'}}>
+                    <View style={{width: Dimensions.get('window').width  - 80, height: 200, borderRadius: 10, borderWidth: 0.5, borderColor: 'black'}}>
                         <Image source={{ uri: program.program_image }} style={{flex: 1, width: '100%', borderRadius: 10,  height: '100%'}} />
                         <Chip textStyle={{color: 'white', fontFamily: 'Avenir-Heavy', fontWeight: '600'}} style={{paddingHorizontal: 10, elevation: 8, position: 'absolute', top: 0, right: 0, alignSelf: 'center', borderRadius: 0, borderTopRightRadius: 10, borderBottomLeftRadius: 10, backgroundColor: '#1089ff', width: 'auto'}}>
                            ${program.program_price}
                        </Chip>
                     </View>
 
-                    <View style={{width: '100%', padding: 10}}>
-                    <Text style={{fontFamily: 'Avenir-Medium', fontSize: 18}}>
+                    <View style={{width: Dimensions.get('window').width - 80, padding: 10}}>
+                    <Text style={{fontWeight: '400', fontSize: 15}}>
                         {program.program_name}
                     </Text>
-                    <Text style={{fontFamily: 'Avenir-Light', fontSize: 16}}>
+                    <Text style={{fontWeight: '300', fontSize: 13}}>
                         {program.program_duration} Weeks
                     </Text>
                     </View>
@@ -107,12 +107,12 @@ function VlogFeedCardExpanded({ route, navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
+            <Appbar.Header style={{backgroundColor: 'white', borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', elevation: 0}}>
                 <Appbar.Action icon={() =>  <Feather1s  size={22} name="x" color="black" onPress={() => navigation.pop()}/>} />
                 <Appbar.Content title="Vlog"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
             </Appbar.Header>
            <ScrollView>
-           <VlogFeedCard vlogData={route.params.vlogData} />
+           <VlogFeedCard vlogData={route.params.vlogData} clickable={false} />
 
             <Divider style={{marginVertical: 10, marginHorizontal: 10}} />
 

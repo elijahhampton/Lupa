@@ -102,11 +102,12 @@ export class LupaHome extends Component {
         </Animated.View>
         
         <Animated.ScrollView
-          scrollEnabled={currTab != 0 && this.props.lupa_data.Users.currUserData.isTrainer === false ? false : true}
-          refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
+        scrollEnabled={currTab != 0 && this.props.lupa_data.Users.currUserData.isTrainer === false ? false : true}
+        refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
           scrollEventThrottle={1}
           bounces={false}
           showsVerticalScrollIndicator={false}
+          
           style={{zIndex: 0, height: "100%", elevation: -1}}
           contentContainerStyle={{paddingTop: 50, backgroundColor: COLOR}}
           onScroll={Animated.event(
@@ -114,6 +115,7 @@ export class LupaHome extends Component {
             {useNativeDriver: true},
           )}
           overScrollMode="never">
+          
           <Tabs 
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
           style={{backgroundColor: '#FFFFFF'}}

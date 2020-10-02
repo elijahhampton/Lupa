@@ -52,17 +52,99 @@ export default class ProgramController {
         return Promise.resolve(programDataList)
     }
 
-    loadWorkouts = () => {
-        const WORKOUTS = require('../../model/data_structures/workout/json/workouts.json')
+    loadWorkouts = async () => {
+        let documentData = {}
+        let balanceWorkouts = [], 
+            flexibilityWorkouts = [], 
+            coreFlexibility = [], 
+            resistanceWorkouts = [], 
+            plyometricWorkouts = []
+
+        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Balance').get().then(collectionSnapshot => {
+            collectionSnapshot.forEach(doc => {
+                if (typeof(doc) == 'undefined') {
+                    //delete doc
+                } else {
+                    documentData = doc.data();
+                    balanceWorkouts.push(documentData);
+                }
+            });
+        });
+
+        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Flexibility').get().then(collectionSnapshot => {
+            collectionSnapshot.forEach(doc => {
+                if (typeof(doc) == 'undefined') {
+                    //delete doc
+                } else {
+                    documentData = doc.data();
+                    flexibilityWorkouts.push(documentData);
+                }
+            });
+        });
+
+        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Resistance').get().then(collectionSnapshot => {
+            collectionSnapshot.forEach(doc => {
+                if (typeof(doc) == 'undefined') {
+                    //delete doc
+                } else {
+                    documentData = doc.data();
+                    resistanceWorkouts.push(documentData);
+                }
+            });
+        });
+
+        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Core').get().then(collectionSnapshot => {
+            collectionSnapshot.forEach(doc => {
+                if (typeof(doc) == 'undefined') {
+                    //delete doc
+                } else {
+                    documentData = doc.data();
+                    coreFlexibility.push(documentData);
+                }
+            });
+        });
+
+        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Plyometric').get().then(collectionSnapshot => {
+            collectionSnapshot.forEach(doc => {
+                if (typeof(doc) == 'undefined') {
+                    //delete doc
+                } else {
+                    documentData = doc.data();
+                    plyometricWorkouts.push(documentData);
+                }
+            });
+        });
+
+        const allWorkouts = {
+            balance_workouts: balanceWorkouts,
+            flexibility_workouts: flexibilityWorkouts,
+            core_workouts: coreFlexibility,
+            resistance_workouts: resistanceWorkouts,
+            plyometric_workouts: plyometricWorkouts,
+        }
+
+        console.log(allWorkouts.balance_workouts.length)
+        console.log('AAAAAAAAAAA')
+        console.log(allWorkouts.flexibility_workouts.length)
+        console.log('AAAAAAAAAAA')
+        console.log(allWorkouts.core_workouts.length)
+        console.log('AAAAAAAAAAA')
+        console.log(allWorkouts.resistance_workouts.length)
+        console.log('AAAAAAAAAAA')
+        console.log(allWorkouts.plyometric_workouts.length)
+
+
+       /* const WORKOUTS = require('../../model/data_structures/workout/json/workouts.json')
+        
+        
         const allWorkouts = {
             lupa_workouts: WORKOUTS.lupa_workouts,
             lower_workouts: WORKOUTS.lower_workouts,
             upper_workouts: WORKOUTS.upper_workouts,
             core_workouts: WORKOUTS.core_workouts
-        };
+        };*/
 
-        console.log(allWorkouts)
-        return allWorkouts;
+        return Promise.resolve(allWorkouts);
     }
 
     /**
@@ -166,6 +248,12 @@ export default class ProgramController {
     markProgramCompleted = (uuid) => {
         PROGRAM_COLLECTION.doc(uuid).update({
             completedProgram: true
+        })
+    }
+
+    markProgramPublic = (uuid) => {
+        PROGRAM_COLLECTION.doc(uuid).update({
+            isPublic: true
         })
     }
 

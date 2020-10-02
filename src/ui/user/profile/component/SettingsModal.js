@@ -314,7 +314,7 @@ class SettingsModal extends React.Component {
                                 <Appbar.Content title="Settings" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 </Appbar.Header>
                 <TouchableOpacity onPress={() => this.props.navigation.push('AccountSettings')}>
-                <Appbar theme={{colors: { primary: '#FFFFFF'}}} style={{paddingHorizontal: 15, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Appbar theme={{colors: { primary: '#FFFFFF'}}} style={{borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', paddingHorizontal: 15, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                     <Avatar.Image size={40} source={{uri: currUserData.photo_url }} />
                     <View style={{marginHorizontal: 10}}>

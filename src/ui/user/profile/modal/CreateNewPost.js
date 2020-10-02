@@ -108,7 +108,6 @@ function CreateNewPost(props) {
         //Get a vlog structure
         const vlogStructure = getLupaVlogStructure(titleText, postText, postMediaURI, postMediaType, currUserData.user_uuid, currUserData.location.longitude, currUserData.location.latitude, currUserData.location.city, currUserData.location.state, currUserData.location.country, new Date().getTime(), new Date());
 
-
         //save vlog to firestore
         LUPA_CONTROLLER_INSTANCE.publishVlog(vlogStructure);
 

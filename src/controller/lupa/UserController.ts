@@ -259,12 +259,34 @@ export default class UserController {
                     interest: value
                 })
                 break;
+            case 'bookings':
+                let bookings = []
+                
+                if (optionalData == 'add') {
+                    await currentUserDocument.get().then(result => {
+                        bookings = result.data().bookings;
+                    });
+    
+                    bookings.push(value);
+    
+                    currentUserDocument.update({
+                        bookings: bookings
+                    });
+                }
+
             case 'last_completed_workout':
                 currentUserDocument.update({
                     last_completed_workout: value
                 });
                 break;
             case 'scheduler_times':
+                if (optionalData == 'update') {
+                    currentUserDocument.update({
+                        scheduler_times: value
+                    });
+                    break;
+                }
+
                 if (optionalData == 'add') {
                     let schedulerObject = {}, updatedSchedulerTimes = {}, newDateObject = {}
                     await currentUserDocument.get().then(result => {
@@ -523,44 +545,51 @@ export default class UserController {
     }
 
     addFollowerToUUID = async (uuidOfAccountBeingFollowed, uuidOfFollower) => {
-        let result;
-        let accountToUpdate = USER_COLLECTION.doc(uuidOfAccountBeingFollowed);
-        await accountToUpdate.get().then(snapshot => {
+        let result = getLupaUserStructure();
+        await USER_COLLECTION.doc(uuidOfAccountBeingFollowed).get().then(snapshot => {
             result = snapshot.data();
         })
+        
 
         //Get the current followers
-        let currentFollowers = result.followers;
-
+        let currentFollowers = [];
+        if (typeof(result.followers) == 'undefined') {
+            alert('hi')
+            currentFollowers = []
+        } else {
+            alert('bye')
+            currentFollowers = result.followers;
+        }
+        
         //add the follower to the current followers
         currentFollowers.push(uuidOfFollower);
 
         //update followers
-        accountToUpdate.set({
+        await USER_COLLECTION.doc(uuidOfAccountBeingFollowed).update({
             followers: currentFollowers
-        }, {
-            merge: true,
         });
     }
 
     followAccountFromUUID = async (uuidOfUserToFollow, uuidOfUserFollowing) => {
-        let result;
-        let accountToUpdate = USER_COLLECTION.doc(uuidOfUserFollowing);
-        await accountToUpdate.get().then(snapshot => {
+        let result = getLupaUserStructure();
+        await USER_COLLECTION.doc(uuidOfUserFollowing).get().then(snapshot => {
             result = snapshot.data();
         });
 
         //get the current following
-        let currentFollowing = result.following;
+        let currentFollowing = [];
+        if (typeof(result.following) == 'undefined') {
+            currentFollowing = []
+        } else {
+            currentFollowing = result.following;
+        }
 
         //add the following to the current followers
         currentFollowing.push(uuidOfUserToFollow);
 
         //update following
-        accountToUpdate.set({
+        await USER_COLLECTION.doc(uuidOfUserFollowing).update({
             following: currentFollowing
-        }, {
-            merge: true,
         });
     }
 
@@ -1708,6 +1737,133 @@ export default class UserController {
         await USER_COLLECTION.doc(userUUID).update({
             program_data: userProgramData
         })
+    }
+
+    createBookingRequestFromTrainer = (booking) => {
+
+    }
+
+    checkUserStructure(a, b){
+        return Object.keys(a).length === Object.keys(b).length
+        && Object.keys(a).every(k => b.hasOwnProperty(k))
+    }
+    
+    /**
+     * TODO: Look into checkuseStructure() usage
+     * @param booking 
+     */
+    createBookingRequest = async (booking) => {
+        const requesterUUID = booking.requester_uuid;
+        const trainerUUID = booking.trainer_uuid;
+
+        //create booking
+        LUPA_DB.collection('bookings').doc(booking.booking_uid).set(booking);
+
+        //add the booking uuid to both users booking fields
+        //the requester
+        this.updateCurrentUser('bookings', booking.booking_uid, 'add');
+
+        let userData = getLupaUserStructure();
+        await USER_COLLECTION.doc(booking.trainer_uuid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        })
+
+        if (!this.checkUserStructure(userData, getLupaUserStructure())) {
+            userData = Object.assign(getLupaUserStructure(), userData)
+        }
+
+        
+        let trainerBookings = userData.bookings;
+        trainerBookings.push(booking.booking_uid);
+
+        USER_COLLECTION.doc(booking.trainer_uuid).update({
+            bookings: trainerBookings
+        })
+
+        //send notification to trainer. here we just need to add the notification to the users notification list and
+        //allow firebase fucntions to do the rest
+
+        //create notification
+        const receivedProgramNotificationStructure = {
+            notification_uuid: Math.random().toString(),
+            data: booking,
+            from: requesterUUID,
+            to: trainerUUID,
+            read: false,
+            type: NOTIFICATION_TYPES.BOOKING_REQUEST,
+            actions: ['Accept', 'View', 'Delete'],
+            timestamp: new Date().getTime()
+        }
+
+        //add notification to users notification array
+            let userNotifications = [];
+
+            await USER_COLLECTION.doc(trainerUUID).get().then(snapshot => {
+                userNotifications = snapshot.data().notifications;
+            })
+
+            await userNotifications.push(receivedProgramNotificationStructure);
+            
+            await USER_COLLECTION.doc(trainerUUID).update({
+                notifications: userNotifications,
+            })
+    }
+
+    handleAcceptedBooking = async (booking_uid) => {
+        const bookingID = booking_uid;
+        let booking  = {}
+        await LUPA_DB.collection('bookings').doc(bookingID).get().then(documentSnapshot => {
+            booking = documentSnapshot.data();
+        });
+
+        booking.is_set = true;
+
+        LUPA_DB.collection('bookings').doc(bookingID).update({
+            is_set: true
+        })
+
+
+        //send a notification that the booking request has been accepted to the requesters
+        //by adding the notification data to their queue
+
+        //create notification
+        const generalNotificationStructure = {
+            notification_uuid: Math.random().toString(),
+            data: booking,
+            from: booking.trainer_uuid,
+            to: booking.requester_uuid,
+            message: 'Your session request has been approved.',
+            read: false,
+            type: NOTIFICATION_TYPES.RECEIVED_NOTIFICATION,
+            actions: [],
+            timestamp: new Date().getTime()
+        }
+
+        //add notification to users notification array
+            let userNotifications = [];
+
+            await USER_COLLECTION.doc(booking.requester_uuid).get().then(snapshot => {
+                userNotifications = snapshot.data().notifications;
+            })
+
+            await userNotifications.push(generalNotificationStructure);
+            
+            await USER_COLLECTION.doc(booking.requester_uuid).update({
+                notifications: userNotifications,
+            });
+    }
+
+    handleCanceledBooking = () => {
+        
+    }
+
+    fetchBookingData = async (uuid) => {
+        let bookingData = {}
+        await LUPA_DB.collection('bookings').doc(uuid).get().then(documentSnapshot => {
+            bookingData = documentSnapshot.data();
+        });
+
+        return Promise.resolve(bookingData);
     }
 
 }

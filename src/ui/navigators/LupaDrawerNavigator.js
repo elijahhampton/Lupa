@@ -66,9 +66,9 @@ function LupaBottomTabNavigator() {
 
           switch (route.name)
           {
-            case 'Dashboard':
+            case 'Manage':
               return focused === true ? <ThinFeatherIcon name='clipboard' size={20} color="#1089ff" /> : <ThinFeatherIcon name='clipboard' size={20} color="#212121" />
-            case 'Train':
+            case 'Explore':
               return focused === true ? <ThinFeatherIcon name='home' size={20} color="#1089ff" /> : <ThinFeatherIcon name='home' size={20} color="#212121" />
             case 'Create':
               return focused === true ? <ThinFeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <ThinFeatherIcon name='plus-circle' size={20} color="#212121" />
@@ -77,7 +77,7 @@ function LupaBottomTabNavigator() {
         },
       })} >
              
-             <Tab.Screen name="Train" component={LupaHomeNavigator} />
+             <Tab.Screen name="Explore" component={LupaHomeNavigator} />
             {
                 currUserData.isTrainer === true ?
                 <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
@@ -94,7 +94,7 @@ function LupaBottomTabNavigator() {
                   }
                 })}  />
               }
-            <Tab.Screen name="Dashboard" component={DashboardNavigator} />
+            <Tab.Screen name="Manage" component={DashboardNavigator} />
     </Tab.Navigator>
   );
 }

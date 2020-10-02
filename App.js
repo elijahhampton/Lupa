@@ -119,6 +119,7 @@ const SwitchNavigator = () => {
 
   useEffect(() => {
     async function getUserAuthState() {
+      
       try {
         await LUPA_AUTH.onAuthStateChanged(user => {
           if (typeof (user) == 'undefined' || user == null) {

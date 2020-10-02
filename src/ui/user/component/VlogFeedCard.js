@@ -18,7 +18,7 @@ import DoubleClick from 'react-native-double-tap';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
-function VlogFeedCard({ vlogData, showTopDivider }) {
+function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     });
@@ -47,7 +47,7 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
     
             return (
                 <Surface style={{elevation: 0, borderRadius: 10, width: Dimensions.get('window').width, height: 400, alignSelf: 'center'}}>
-                <Video useNativeControls={false} isMuted={isMuted} isLooping={false} resizeMode="stretch" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center' }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
+                <Video useNativeControls={false} isMuted={isMuted} isLooping={true} resizeMode="stretch" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center' }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
                 </Surface>
             )
         } catch(error) {
@@ -55,11 +55,20 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
         }
     }
 
-    return (
-        <TouchableOpacity style={{width: '100%'}} onPress={() => navigation.push('VlogContent', {
+    const handleOnDoubleTap = () => {
+        if (clickable == false) {
+            return;
+        }
+
+        navigation.push('VlogContent', {
             vlogData: vlogData
-        })}>
-       {showTopDivider === true ? <Divider style={{width: '100%', height: 1,  backgroundColor: '#EEEEEE',}} /> : null } 
+        })
+    }
+
+    return (
+            <DoubleClick disabled={clickable === true ? false : true} style={{width: '100%'}} singleTap={() => setShouldPlay(!shouldPlay)} doubleTap={() => handleOnDoubleTap()}>
+
+       {showTopDivider === true ? <Divider style={{width: Dimensions.get('window').width, alignSelf: 'center', height: 1, backgroundColor: '#EEEEEE',}} /> : null } 
       
         <Card style={{ paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center', marginVertical: 15,   width: '100%', borderRadius: 0, elevation: 0}}>
 
@@ -72,19 +81,19 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
         <TouchableOpacity onPress={() => navigation.push('Profile', {
             userUUID: vlogData.vlog_owner
         })}>
-        <Avatar.Image containerStyle={{borderWidth: 1, borderColor: '#EEEEEE'}} source={{ uri: vlogOwnerData.photo_url }} size={35} />
+        <Avatar.Image containerStyle={{borderWidth: 1, borderColor: '#EEEEEE'}} source={{ uri: vlogOwnerData.photo_url }} size={30} />
         </TouchableOpacity>
        
         <View style={{marginHorizontal: 10}}>
         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 16 }}>
+                                <Text style={{ fontFamily: 'Avenir-Heavy', fontSize: 13 }}>
                                     {vlogOwnerData.display_name}
                                 </Text>
                                 </View>
                                 {
                                     currUserData.isTrainer === true ?
-                                    <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 14, color: '#1089ff' }}>
-                                    Trainer
+                                    <Text style={{ fontFamily: 'Avenir-Roman', fontSize: 10, color: '#1089ff' }}>
+                                    NASM
                                 </Text>
                                     :
                                     null
@@ -97,8 +106,14 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
         <Menu
                             visible={optionsMenuVisible}
                             onDismiss={() => setOptionsMenuVisible(false)}
-                            anchor={<FeatherIcon onPress={() => setOptionsMenuVisible(true)} name="more-vertical" size={18} color="#212121" />}>
-                            <Menu.Item title="Delete Vlog" titleStyle={{fontSize: 15}} onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
+                            anchor={<FeatherIcon onPress={() => setOptionsMenuVisible(true)} name="more-horizontal" size={18} color="#212121" />}>
+                            {
+                                currUserData.user_uuid === vlogData.vlog_owner ?
+                                <Menu.Item title="Delete Vlog" titleStyle={{fontSize: 15}} onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
+                                :
+                                currUserData.following.includes(vlogOwnerData.vlog_owner) ?  <Menu.Item title={`Unfollow ${vlogOwnerData.display_name}`} titleStyle={{fontSize: 15}} onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(vlogOwnerData.vlog_owner, currUserData.user_uuid)} /> : <Menu.Item title={`Follow ${vlogOwnerData.display_name}`} titleStyle={{fontSize: 15}} onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(vlogOwnerData.vlog_owner, currUserData.user_uuid)} />
+                            }
+                           
                         </Menu>
         </View>
 
@@ -114,9 +129,8 @@ function VlogFeedCard({ vlogData, showTopDivider }) {
         {renderVlogMedia()}
         </View>
 
-
         </Card>
-        </TouchableOpacity>
+        </DoubleClick>
     )
 }
 

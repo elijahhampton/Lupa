@@ -674,64 +674,72 @@ class LiveWorkout extends React.Component {
 
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                             
-                            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Profile', { userUUID: this.props.lupa_data.Users.currUserData.user_uuid })}>
-                            <Surface style={{ marginVertical: 5, elevation: 8, width: 45, height: 45, borderRadius: 65 }}>
-                                {this.props.lupa_data.Users.currUserData.photo_url == '' ? <Avatar.Text size={45} label="EH" labelStyle={{ color: 'white', fontSize: 15, fontFamily: 'Avenir' }} style={{ backgroundColor: '#1089ff' }} /> : <Avatar.Image style={{ flex: 1 }} size={45} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} />}
-                            </Surface>
-                            </TouchableWithoutFeedback>
+                       <Text>
+                           Week: {this.state.currentWeek + 1}
+                       </Text>
                         </View>
                     </View>
                     <Divider style={{width: '100%'}} />
-                    <View style={{ flex: 2 ,justifyContent: 'space-evenly'}}>
-                                
-
-                    <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly',  paddingHorizontal: 20}}>
+                    <View style={{ flex: 2.5, justifyContent: 'flex-start',  alignItems: 'center'}}>
+                                <View style={{marginVertical: 10, flexDirection: 'row',  justifyContent: 'space-evenly', alignItems: 'center'}}>
+                                <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly', paddingHorizontal: 20}}>
                                     <Text style={{ paddingVertical: 3 }}>
                                         Sets
                         </Text>
-                                    <View style={{backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{width: 160, backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: 'Avenir-Light' }}>
                                             {this.renderWorkoutSets()}
                             </Text>
                                     </View>
                                 </View>
-                                
- 
-                    
 
                                 <View style={{ alignItems: 'flex-start', paddingHorizontal: 20}}>
                                     <Text style={{ paddingVertical: 3 }}>
                                         Reps
                         </Text>
-                                    <View style={{backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{width: 160, backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: 'Avenir-Light' }}>
                                             {this.renderWorkoutReps()}
                             </Text>
                                     </View>
                                 </View>
+                                </View>
 
+                   
+                                
+ 
+                                <View style={{marginVertical: 10, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
                                 <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
                                     <Text style={{ paddingVertical: 3 }}>
                                         Tempo
                         </Text>
-                                    <View style={{backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Text style={{ fontFamily: 'Avenir-Light' }}>
+                                    <View style={{width: 160, backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Text style={{flexWrap: 'nowrap', fontFamily: 'Avenir-Light' }}>
                                            {this.renderWorkoutTempo()}
                             </Text>
                                     </View>
                                 </View>
-                       
-<View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
+
+                                <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
         <Text style={{ paddingVertical: 3 }}>
             Rest Time
 </Text>
-        <View style={{backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{width: 160, backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontFamily: 'Avenir-Light' }}>
                {this.state.restTime}
 </Text>
         </View>
     </View>
+
+                                </View>
+
+                                
+
+
+                       
                     </View>
+
+                 
 
                     <TouchableOpacity style={{ position: 'absolute', bottom: 0, right: 0, }} onPress={() => this.advanceExercise()}>
                         <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: '#1089ff', width: 80, height: 80, borderTopLeftRadius: 100 }}>
@@ -1107,8 +1115,22 @@ class LiveWorkout extends React.Component {
 
                     <Appbar.Content title={this.renderLiveWorkoutTitle()} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
 
-                    <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="maximize" size={20} onPress={() => this.setState({ showFullScreenContent: true })} />} />
-                    {this.state.programData.type === 'PROGRAM' ? <Appbar.Action disabled={this.state.ready === false} icon={() => <ThinFeatherIcon thin={false} name="list" size={20} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })} />} /> : null }
+
+                   
+
+                    {this.state.programData.type === 'PROGRAM' ? 
+                     <TouchableWithoutFeedback style={{ position: 'absolute', bottom: 0, left: 0, marginLeft: 20 }} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })}>
+                     <Surface style={{ marginVertical: 5, elevation: 8, width: 35, height: 35, borderRadius: 65 }}>
+                         {this.props.lupa_data.Users.currUserData.photo_url == '' ?
+                         null 
+                         : 
+                         <Avatar.Image style={{ flex: 1 }} size={35} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} />
+                         }
+                     </Surface>
+                     </TouchableWithoutFeedback>
+                    : 
+                    null 
+                    }
                 </Appbar.Header>
                 
                 {this.renderComponentDisplay()}

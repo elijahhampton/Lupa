@@ -17,6 +17,8 @@ import LUPA_DB from '../../../controller/firebase/firebase'
 import ReceivedProgramNotification from './component/ReceivedProgramNotification'
 import { NOTIFICATION_TYPES } from '../../../model/notifications/common/types'
 import Feather1s from 'react-native-feather1s/src/Feather1s'
+import ReceivedBookingRequestNotification from './component/ReceivedBookingRequestNotification'
+import ReceivedNotification from './component/ReceivedNotification'
 
 
 function NotificationsView(props) {
@@ -33,11 +35,14 @@ function NotificationsView(props) {
 
     useEffect(() => {
         try {
+            if (typeof(currUserData.user_uuid) == 'undefined') {
+                return;
+            }
+            
             const currUserSubscription = LUPA_DB.collection('users').doc(currUserData.user_uuid).onSnapshot(documentSnapshot => {
                 let userData = documentSnapshot.data()
                 setUserNotifications(userData.notifications)
             })
-
 
             return () => currUserSubscription()
         } catch(err) {
@@ -69,8 +74,12 @@ function NotificationsView(props) {
     const renderNotifications = () => {
         return userNotifications.map((notification, index, arr) => {
             switch(notification.type) {
+                case NOTIFICATION_TYPES.RECEIVED_NOTIFICATION:
+                    return <ReceivedNotification notificationData={notification} />
                 case NOTIFICATION_TYPES.RECEIVED_PROGRAM:
                     return <ReceivedProgramNotification notificationData={notification} />
+                case NOTIFICATION_TYPES.BOOKING_REQUEST:
+                    return <ReceivedBookingRequestNotification notificationData={notification} />
                 default:
                     
             }
@@ -86,7 +95,7 @@ function NotificationsView(props) {
     return (
         <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <Appbar.Header style={styles.appbar}>
-            <Appbar.Action icon={() => <Feather1s thin={true} name="arrow-left" size={20} />} onPress={() => navigation.pop()} />
+            <Appbar.Action icon={() => <Feather1s thin={true} name="x" size={20} />} onPress={() => navigation.pop()} />
             <Appbar.Content title="Notifications" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
             </Appbar.Header>
             <View style={{flex: 1}}>

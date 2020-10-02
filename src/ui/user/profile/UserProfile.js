@@ -212,6 +212,30 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     const renderVlogs = () => {
+        if (userVlogs.length === 0) {
+            return (
+                <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
+                    {
+                    isCurrentUser === true ?
+                    <Caption>
+                        <Caption>
+                        You haven't created any vlogs.
+                        </Caption>
+{" "}
+                        <Caption style={{color: '#1089ff'}} onPress={() => navigation.push('CreateNewPost')}>
+                        Start publishing by creating content.
+                        </Caption>
+                    </Caption>
+                    :
+                    <Caption>
+                        No Vlogs have been created by {userData.display_name}
+                    </Caption>
+                    }
+                    
+                </View>
+            )
+        }
+        
         return userVlogs.map((vlog, index, arr) => {
             if (typeof (vlog) == 'undefined') {
                 return;
@@ -225,61 +249,47 @@ function UserProfile({ userData, isCurrentUser }) {
         if (isCurrentUser) { return; }
 
         return (
-            <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-            <Button onPress={() => navigation.push('PrivateChat', {
-                currUserUUID: currUserData.user_uuid,
-                otherUserUUID: userData.user_uuid
-            })}
-                theme={{ roundness: 5 }}
-                color="#23374d"
-                icon={() => <FeatherIcon name="mail" />}
-                uppercase={false}
-                mode="outlined"
-                style={{ elevation: 0, width: '80%' }}>
-                <Text>
-                    Send a message
-                </Text>
-            </Button>
+            <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
 
-        </View>
+                {renderFollowButton()}
+
+            </View>
         )
     }
 
     const renderFollowButton = () => {
         if (isCurrentUser) { return; }
-
-        if (currUserData.following.includes(userData.user_uuid)) {
-            return (
-                <Button
-                    onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}
-                    icon={() => <FeatherIcon name="user" />}
-                    theme={{ roundness: 5 }}
-                    uppercase={false}
-                    color="#E5E5E5"
-                    mode="contained"
-                    style={{ elevation: 0 }}>
-                    <Text style={{ color: 'white' }}>
-                        Unfollow
-                    </Text>
-                </Button>
-            )
-        } else {
-            return (
-                <Button
-                    onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)}
-                    icon={() => <FeatherIcon size={15} name="user" color="white" />}
-                    theme={{ roundness: 5 }}
-                    uppercase={false}
-                    color="#1089ff"
-                    mode="contained"
-                    style={{ elevation: 0 }}>
-                    <Text style={{}}>
-                        Follow
-                    </Text>
-                </Button>
-            )
-        }
-    }
+   
+           if (currUserData.following.includes(userData.user_uuid)) {
+               return (
+                   <Button
+                       onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}
+                       icon={() => <FeatherIcon name="user" />}
+                       theme={{ roundness: 5 }}
+                       uppercase={false}
+                       color="#E5E5E5"
+                       mode="outlined"
+                       style={{ elevation: 0 }}>
+                           Unfollow {userData.display_name}
+                       </Button>
+               )
+           } else {
+               return (
+                   <Button
+                       onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)}
+                       icon={() => <FeatherIcon size={15} name="user" color="white" />}
+                       theme={{ roundness: 5 }}
+                       uppercase={false}
+                       color="#1089ff"
+                       mode="contained"
+                       style={{ elevation: 0, width: '100%',   alignItems: 'center', justifyContent: 'center'}}>
+                       <Text style={{fontSize: 13}}>
+                           Follow {userData.display_name}
+                       </Text>
+                   </Button>
+               )
+           }
+       }
 
 
 
@@ -328,7 +338,6 @@ function UserProfile({ userData, isCurrentUser }) {
                     </View>
                     {renderInteractions()}
                 </View>
-                <Divider />
                 <Tabs page={currPage} tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF' locked={true} >
                     <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}  activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>

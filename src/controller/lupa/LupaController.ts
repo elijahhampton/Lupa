@@ -727,9 +727,12 @@ export default class LupaController {
       return Promise.resolve(programsData);
     }
 
-    loadWorkouts = () => {
-      let workoutData = PROGRAMS_CONTROLLER_INSTANCE.loadWorkouts();
-      return workoutData;
+    loadWorkouts = async () => {
+      let workoutData = {}
+      await PROGRAMS_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
+        workoutData = result;
+      })
+      return Promise.resolve(workoutData)
     }
 
     getAllUserPrograms = async (uuid) => {
@@ -1001,5 +1004,31 @@ export default class LupaController {
 
     markProgramCompleted = (uuid) => {
       PROGRAMS_CONTROLLER_INSTANCE.markProgramCompleted(uuid);
+    }
+
+    markProgramPublic = (uuid) => {
+      PROGRAMS_CONTROLLER_INSTANCE.markProgramPublic(uuid);
+    }
+
+    createBookingRequest = (booking) => {
+      if (typeof(booking) == 'undefined') {
+        return;
+      };
+      
+      USER_CONTROLLER_INSTANCE.createBookingRequest(booking);
+    }
+
+    handleAcceptBooking = (booking_uid) => {
+      USER_CONTROLLER_INSTANCE.handleAcceptedBooking(booking_uid);
+    }
+
+    fetchBookingData = async (uuid) => {
+      let retVal = undefined;
+
+      await USER_CONTROLLER_INSTANCE.fetchBookingData(uuid).then(data => {
+        retVal = data;
+      });
+
+      return Promise.resolve(retVal);
     }
 }

@@ -185,7 +185,7 @@ function LoginView(props) {
    * as well as Lupa application data (assessments, workouts);
    */
   _setupRedux = async () => {
-    let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = [];
+    let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = {};
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
     });
@@ -204,8 +204,10 @@ function LoginView(props) {
       await updateUserProgramsDataInRedux(currUserPrograms);
     }
 
-    lupaWorkouts =  LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-    updateLupaWorkoutsDataInRedux(lupaWorkouts);
+    await LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
+      lupaWorkouts = result;
+    })
+    await updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
 
   /**
