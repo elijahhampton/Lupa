@@ -121,6 +121,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
     setDisplayDate(moment(day.dateString).format('LL').toString())
     setEntryDate(day.dateString.toString());
     setMarkedDates(updatedMarkedDates)
+    
   }
 
   const renderTimeBlocks = (timeBlock, year, month, day) => {
@@ -174,7 +175,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
       <Portal>
         <Dialog visible={bookingRequestDialogVisible} style={{alignSelf: 'center', width: Dimensions.get('window').width - 20}}>
           <Dialog.Title>
-            Book ____
+            Book {userData.display_name}
           </Dialog.Title>
           <Dialog.Content>
           <Caption>
@@ -286,6 +287,30 @@ height={300}>
     setEndTimeFormatted(currentDateFormatted)
   }
 
+  const renderSchedulerActions = () => {
+    if (currUserData.user_uuid == userData.user_uuid) {
+     return ( <Button onPress={() => setEditHoursModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="plus" />}>
+      <Text style={{fontSize: 12}}>
+      Update Available Hours
+      </Text>
+    </Button>
+     )
+    } else {
+      if (typeof(items[entryDate]) == 'undefined') {
+        return null;
+      }
+
+     return ( 
+     <Button onPress={() => setBookingRequestDialogVisible(true)} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
+      <Text style={{fontSize: 12}}>
+      Book Me
+      </Text>
+    </Button>
+     )
+    }
+
+  }
+
 
   useEffect(() => {
       const currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(async documentSnapshot => {
@@ -346,21 +371,9 @@ height={300}>
       </Text>
         </View>
 
-        {
-          isCurrentUser === true ?
-          <Button onPress={() => setEditHoursModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="plus" />}>
-          <Text style={{fontSize: 12}}>
-          Update Available Hours
-          </Text>
-        </Button>
-     
-          :
-          <Button onPress={() => setBookingRequestDialogVisible(true)} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
-          <Text style={{fontSize: 12}}>
-          Book Me
-          </Text>
-        </Button>
-        }
+      {renderSchedulerActions()}
+
+
              </View>
        
       
@@ -385,17 +398,7 @@ height={300}>
       </Text>
         </View>
 
-        {
-          isCurrentUser === true ?
-          <Button onPress={() => setEditHoursModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="plus" />}>
-          <Text style={{fontSize: 12}}>
-          Update Available Hours
-          </Text>
-        </Button>
-     
-          :
-          null
-        }
+        {renderSchedulerActions()}
           </View>
       
         
@@ -421,18 +424,9 @@ height={300}>
       </Text>
         </View>
 
-        {
-          isCurrentUser === true ?
-          <Button onPress={() => setEditHoursModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="plus" />}>
-          <Text style={{fontSize: 12}}>
-          Update Available Hours
-          </Text>
-        </Button>
-     
-          :
-          null
-        }
-        
+        {renderSchedulerActions()}
+
+
           </View>
       
         
@@ -458,6 +452,7 @@ height={300}>
   refreshControl={null}
   // Agenda theme
   theme={{
+    selectedDayTextColor: 'black',
     agendaDayTextColor: 'yellow',
     agendaDayNumColor: 'green',
     agendaTodayColor: 'red',

@@ -15,11 +15,27 @@ import {
     Divider,
 } from 'react-native-paper';
 import LiveWorkout from '../../../workout/modal/LiveWorkout';
+import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
+import LupaController from '../../../../controller/lupa/LupaController';
 
 const {windowWidth} = Dimensions.get('window').width
 
 
 function ReceivedNotification({ notificationData }) {
+    const [senderUserData, setSenderUserData] = useState(getLupaUserStructure());
+
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    useEffect(() => {
+        async function fetchData() {
+            let userData = getLupaUserStructure();
+            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.data.from).then(data => {
+                setSenderUserData(userData)
+            })
+        }
+
+        fetchData();
+    }, []);
 
     return (
                    <>

@@ -223,7 +223,7 @@ export default class LupaController {
 
     /* Algolia */
     indexApplicationData = () => {
-     //USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
+      USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
       USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
     }
 
@@ -1020,6 +1020,10 @@ export default class LupaController {
 
     handleAcceptBooking = (booking_uid) => {
       USER_CONTROLLER_INSTANCE.handleAcceptedBooking(booking_uid);
+    }
+
+    handleCancelBooking = (bookingData) => {
+      USER_CONTROLLER_INSTANCE.handleCancelBooking(bookingData);
     }
 
     fetchBookingData = async (uuid) => {

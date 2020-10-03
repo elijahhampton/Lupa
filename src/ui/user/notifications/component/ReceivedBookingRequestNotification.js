@@ -21,7 +21,7 @@ import { getLupaUserStructure } from '../../../../controller/firebase/collection
 import LupaController from '../../../../controller/lupa/LupaController';
 import { useNavigation } from '@react-navigation/native';
 import ProgramOptionsModal from '../../../workout/program/modal/ProgramOptionsModal';
-import { LUPA_AUTH } from '../../../../controller/firebase/firebase';
+import LUPA_DB, { LUPA_AUTH } from '../../../../controller/firebase/firebase';
 import getBookingStructure from '../../../../model/data_structures/user/booking';
 
 const {windowWidth} = Dimensions.get('window').width
@@ -36,20 +36,50 @@ function ReceivedBookingRequestNotification({ notificationData }) {
         return state.Users.currUserData;
     })
 
+    const renderBookingButtons = () => {
+        if (typeof(bookingData) == 'undefined') {
+            return (<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
+            <Button uppercase={false} color="#1089ff" onPress={() => LUPA_CONTROLLER_INSTANCE.handleAcceptBooking(notificationData.data.booking_uid)}>
+                Accept
+            </Button>
+
+            <Button uppercase={false} color="#1089ff">
+                Decline
+            </Button>
+        </View>
+            )
+        }
+        
+        return bookingData.is_set === true ?
+                            null
+                            :
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
+                            <Button uppercase={false} color="#1089ff" onPress={() => LUPA_CONTROLLER_INSTANCE.handleAcceptBooking(notificationData.data.booking_uid)}>
+                                Accept
+                            </Button>
+ 
+                            <Button uppercase={false} color="#1089ff">
+                                Decline
+                            </Button>
+                        </View>
+        
+    }
+
     useEffect(() => {
         async function fetchData() {
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.from).then(data => {
                 setSenderUserData(data)
             })
-
-            /*
-            await LUPA_CONTROLLER_INSTANCE.getBookingData(notificationData.data.booking_uid).then(data => {
-                setBookingData(data);
-            })
-            */
         }
 
+
+        const bookingsObserver = LUPA_DB.collection('bookings').doc(notificationData.data.booking_uid).onSnapshot(documentSnapshot => {
+            let bookingData = documentSnapshot.data();
+            setBookingData(bookingData)
+        })
+
         fetchData()
+        return () => bookingsObserver();
     }, []);
 
     return (
@@ -71,20 +101,7 @@ function ReceivedBookingRequestNotification({ notificationData }) {
        </Caption>
                            </View>
                        </View>
-                       {
-                           bookingData.is_set === true ?
-                            null
-                            :
-                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
-                            <Button uppercase={false} color="#1089ff" onPress={() => LUPA_CONTROLLER_INSTANCE.handleAcceptBooking(notificationData.data.booking_uid)}>
-                                Accept
-                            </Button>
- 
-                            <Button uppercase={false} color="#1089ff">
-                                Decline
-                            </Button>
-                        </View>
-                       }
+                       {renderBookingButtons()}
                       
                    </View>
                   

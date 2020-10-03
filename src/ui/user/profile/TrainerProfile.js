@@ -188,6 +188,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const closeOptionsMenu = () => setOptionsMenuVisible(false);
 
     const renderVlogs = () => {
+        if (!ready) { return null; }
         if (userVlogs.length === 0) {
             return (
                 <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
@@ -222,6 +223,8 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderPrograms = () => {
+        if (!ready) { return null; }
+        
         if (userPrograms.length === 0) {
             return (
                 <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
@@ -259,6 +262,8 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderInteractions = () => {
+        if (!ready) { return null }
+
         if (isCurrentUser) { return; }
 
         return (
@@ -271,6 +276,8 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderFollowButton = () => {
+        if (!ready) { return null }
+
      if (isCurrentUser) { return; }
 
         if (currUserData.following.includes(userData.user_uuid)) {
@@ -413,7 +420,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                // fetchPrograms(userData.user_uuid);
             }
           //  checkCurrFitnessLocation()
-            setReady(true)
         } catch (error) {
             setReady(false)
             alert(error);
@@ -464,12 +470,15 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     useEffect(() => {
         let isSubscribed = true;
         loadProfileData()
+        setReady(true)
         LOG('TrainerProfile.js', 'Running useEffect.')
 
         return () => isSubscribed = false;
-    }, [profileImage])
+    }, [profileImage, ready])
 
     const renderScheduler = () => {
+        if (!ready) { return null }
+
         if (isCurrentUser) {
             return;
         }
@@ -489,6 +498,8 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderCloseLocationMessage = () => {
+        if (!ready) { return null }
+        
         if (isCurrentUser) {
             return;
         }

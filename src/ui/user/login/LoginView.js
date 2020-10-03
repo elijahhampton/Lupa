@@ -40,6 +40,7 @@ import { getLupaUserStructure } from "../../../controller/firebase/collection_st
 import { Constants } from "react-native-unimodules";
 import Input from '../../common/Input/Input'
 import { useNavigation } from '@react-navigation/native';
+import { _DEFAULT_PROGRESS_UPDATE_INTERVAL_MILLIS } from "expo-av/build/AV";
 
 const INPUT_PLACEHOLDER_COLOR = "rgb(99, 99, 102)"
 
@@ -67,6 +68,14 @@ const formReducer = (state, action) => {
   }
   return state;
 };
+
+/**
+ * Ensures the user's model matches the current schema.
+ * */
+function checkUserSchema(userData, schema) {
+  return Object.keys(userData).length === Object.keys(schema).length
+  && Object.keys(userData).every(k => schema.hasOwnProperty(k));
+}
 
 function LoginView(props) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -190,6 +199,12 @@ function LoginView(props) {
       currUserData = result;
     });
 
+    //We need to ensure that the user's structure matches the current schema. If it
+    //does not we simply add the missing fields with the default properties.
+    if (!checkUserSchema(currUserData, getLupaUserStructure())) {
+      currUserData = Object.assign(getLupaUserStructure(), currUserData)
+    }
+
     let userPayload = {
       userData: currUserData,
       healthData: {}
@@ -206,7 +221,8 @@ function LoginView(props) {
 
     await LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
       lupaWorkouts = result;
-    })
+    });
+
     await updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
 

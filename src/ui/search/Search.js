@@ -164,7 +164,7 @@ class Search extends React.Component {
             searchResults: []
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
+        await this.LUPA_CONTROLLER_INSTANCE.searchTrainersAndPrograms(searchQuery).then(searchData => {
             this.setState({ searchResults: searchData })
         })
 
@@ -207,7 +207,7 @@ class Search extends React.Component {
 
         <View style={{flex: 1, backgroundColor: 'white'}}>
             <Appbar.Header style={styles.appbar}>
-                <Appbar.Action onPress={() => this.props.navigation.pop()} icon={() => <Feather1s name="arrow-left" size={20} color="#212121" />} />
+                <Appbar.Action onPress={() => this.props.navigation.pop()} icon={() => <Feather1s name="x" size={20} color="#212121" />} />
           
                 <Appbar.Content title="Search" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
               

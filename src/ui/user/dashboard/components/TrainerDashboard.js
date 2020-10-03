@@ -6,7 +6,8 @@ import {
     Dimensions,
     Text,
     ScrollView,
-    RefreshControl
+    RefreshControl,
+    ActionSheetIOS
 } from 'react-native';
 
 import {
@@ -15,7 +16,8 @@ import {
     Appbar,
     Surface,
     DataTable,
-    Caption, Avatar
+    Caption, 
+    Avatar
 } from 'react-native-paper';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
@@ -29,6 +31,7 @@ import LOG from '../../../../common/Logger';
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import getBookingStructure from '../../../../model/data_structures/user/booking';
 import moment from 'moment';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 function TrainerDashboard(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -71,13 +74,14 @@ function TrainerDashboard(props) {
             }
         }
 
-        let bookingData = []
-        const currUserObserver = LUPA_DB.collection('bookings').where('trainer_uuid', '==', currUserData.user_uuid).onSnapshot(documentSnapshot => {
-           documentSnapshot.forEach(doc => {
+      
+        const currUserObserver = LUPA_DB.collection('bookings').where('trainer_uuid', '==', currUserData.user_uuid).where('is_set', '==', true).onSnapshot(documentSnapshot => {
+            let bookingData = []
+            documentSnapshot.forEach(doc => {
             bookingData.push(doc.data());
            })
 
-            setUserBookings(['a', 'b', 'c']);
+            setUserBookings(bookingData);
         });
 
         LOG('TrainerDashboard.js', 'Running useEffect')
@@ -197,6 +201,23 @@ function TrainerDashboard(props) {
         }
     }
 
+    const openBookingsActionSheet = (booking) => {
+        ActionSheetIOS.showActionSheetWithOptions(
+            {
+              options: ["Cancel", "Cancel Booking"],
+              destructiveButtonIndex: 0,
+              cancelButtonIndex: 0
+            },
+            buttonIndex => {
+              if (buttonIndex === 0) {
+                // cancel action
+              } else if (buttonIndex === 1) {
+                LUPA_CONTROLLER_INSTANCE.handleCancelBooking(booking)
+              }
+            }
+          );
+    }
+
     const renderBookings = () => {
         if (userBookings.length === 0) {
             return (
@@ -208,15 +229,18 @@ function TrainerDashboard(props) {
 
         return userBookings.map((booking, index, arr) => {
             return (
-                <View style={{alignItems: 'center', marginHorizontal: 10}}>
+                <TouchableWithoutFeedback onPress={() => openBookingsActionSheet(booking)} style={{ marginHorizontal: 10}}>
+ <View style={{alignItems: 'center'}}>
                     <Avatar.Text style={{marginVertical: 5}} label="EH"  size={35} />
                     <Text style={{fontSize: 10}}>
-                       2:00
+                    {booking.start_time}
                     </Text>
                     <Text style={{fontSize: 10}}>
                     {moment(booking.booking_entry_date).format('LL').toString().split(',')[0]}
                     </Text>
                 </View>
+                </TouchableWithoutFeedback>
+               
             )
         });
     }
@@ -241,7 +265,7 @@ function TrainerDashboard(props) {
         }}>
              <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)'}}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
-                <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Roman', fontWeight: '600', fontSize: 20}} />
+                <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
                 <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
               <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
 </Appbar.Header> 
@@ -250,9 +274,9 @@ function TrainerDashboard(props) {
 <Text style={{fontSize: 13, paddingVertical: 10, fontWeight: '600'}}>
                            Bookings
                         </Text>
-                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <ScrollView horizontal contentContainerStyle={{flexDirection: 'row', alignItems: 'center'}}>
                         {renderBookings()}
-                        </View>
+                        </ScrollView>
                       
 </View>
 

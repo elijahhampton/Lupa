@@ -352,6 +352,7 @@ class SettingsModal extends React.Component {
                                 Payments
                             </Text>
                             <ListItem onPress={() => this.setState({ updateCardModalVisible: true })} title="Update Card" subtitle={currUserData.stripe_metadata.card_last_four == "" ? "You have not saved a card." : `**** **** **** ${currUserData.stripe_metadata.card_last_four}`} titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />}/>
+                            <ListItem onPress={() => this.setState({ updateCardModalVisible: true })} leftIcon={() => <Feather1s name="info" size={18} />} title="Learn More" subtitle={() => <Caption> Learn more about payments with Lupa.</Caption>} titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />}/>
                         </View>
 
                         <View>

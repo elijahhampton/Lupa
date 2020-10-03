@@ -207,7 +207,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                                      <View style={{flex: 1,}}>
 
                                         <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 20, padding: 10}}>
+                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
                                           {workout.workout_name}
                                         </Text>
 
@@ -330,7 +330,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                                      <View style={{flex: 1,}}>
 
                                         <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 20, padding: 10}}>
+                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
                                           {workout.workout_name}
                                         </Text>
 
@@ -438,7 +438,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                                                  <View style={{flex: 1,}}>
             
                                                     <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                                    <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 20, padding: 10}}>
+                                                    <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
                                                       {superset.workout_name}
                                                     </Text>
             

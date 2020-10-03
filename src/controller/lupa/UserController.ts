@@ -1853,8 +1853,45 @@ export default class UserController {
             });
     }
 
-    handleCanceledBooking = () => {
-        
+    handleCancelBooking = async (booking) => {
+        const booking_uid = booking.booking_uid;
+        const trainer_uid = booking.trainer_uuid;
+        const requester_uid = booking.requester_uuid;
+
+        let userData = getLupaUserStructure(), bookings = [];
+
+        //Delete the booking from the trainers list
+        await USER_COLLECTION.doc(trainer_uid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
+        if (!this.checkUserStructure(userData, getLupaUserStructure())) {
+            userData = Object.assign(getLupaUserStructure(), userData)
+        }
+
+        bookings = userData.bookings;
+        bookings.splice(bookings.indexOf(booking_uid, 1));
+        USER_COLLECTION.doc(trainer_uid).update({
+            bookings: bookings
+        });
+
+        //Delete the booking from the requesters list
+        await USER_COLLECTION.doc(requester_uid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
+        if (!this.checkUserStructure(userData, getLupaUserStructure())) {
+            userData = Object.assign(getLupaUserStructure(), userData)
+        }
+
+        bookings = userData.bookings;
+        bookings.splice(bookings.indexOf(booking_uid, 1));
+        USER_COLLECTION.doc(requester_uid).update({
+            bookings: bookings
+        });
+
+        //Delete the booking from the collection
+        await LUPA_DB.collection('bookings').doc(booking_uid).delete();
+
+
     }
 
     fetchBookingData = async (uuid) => {

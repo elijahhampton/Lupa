@@ -50,6 +50,11 @@ function MyPrograms(props) {
 
                 } else {
                     userPrograms.push(document);
+                    userPrograms.push(document);
+                    userPrograms.push(document);
+                    userPrograms.push(document);
+                    userPrograms.push(document);
+                    userPrograms.push(document);
                 }
                 
             });
@@ -86,11 +91,10 @@ function MyPrograms(props) {
 
     }
 
-    return (
-        <SafeAreaView style={styles.root}>
-           {
-               programs.length === 0 ?
-               <View style={{height: 200,  alignItems: 'center', justifyContent: 'center', width: '100%', paddingHorizontal: 20}}>
+    const renderComponentDisplay = () => {
+        if (programs.length === 0) {
+            return (
+                <View style={{height: 200,  alignItems: 'center', justifyContent: 'center', width: '100%', paddingHorizontal: 20}}>
                 <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
                     <Text>
                         You haven't created any programs.{" "}
@@ -102,17 +106,24 @@ function MyPrograms(props) {
                     </Text>
                 </Text>
             </View>
-               :
-               <ScrollView 
+            )
+        } else {
+            return (
+                <View 
                 contentContainerStyle={{
-                    alignItems: 'center', 
+                    flex: 1,
                 }}>
                     {renderPrograms()}
-               </ScrollView>
-           } 
+               </View>
+            )
+        }
+    }
 
+    return (
+        <View style={styles.root}>
+            {renderComponentDisplay()}
             <ProgramOptionsModal program={currentProgram} closeModal={() => setProgramOptionsModalIsVisible(false)} isVisible={programOptionsModalIsVisible} />
-        </SafeAreaView>
+        </View>
     )
 }
 

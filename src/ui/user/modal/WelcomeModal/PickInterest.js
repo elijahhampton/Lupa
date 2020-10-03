@@ -164,14 +164,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         borderWidth: 1,
         padding: 10,
-        width: '45%',
+        width: '42%',
         borderColor: 'rgb(209, 209, 214)',
         marginVertical: 10,
         marginHorizontal: 10,
         borderRadius: 5,
     },
     interestText: {
-        fontSize: 13,
+        fontSize: 11,
         fontFamily: 'Avenir-Medium'
     }
 });

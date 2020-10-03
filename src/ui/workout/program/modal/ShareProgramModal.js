@@ -17,6 +17,9 @@ import {
 
 import { useSelector } from 'react-redux'
 
+import { SearchBar } from 'react-native-elements'
+import FeatherIcon from 'react-native-vector-icons/Feather'
+
 import LupaController from '../../../../controller/lupa/LupaController'
 
 import UserSearchResult from '../../../user/profile/component/UserSearchResult'
@@ -27,6 +30,9 @@ import ThinFeatherIcon from 'react-native-feather1s'
 function ShareProgramModal({ navigation, route }) {
     const [followingUserObjects, setFollowingUserObjects] = useState([])
     const [selectedUsers, setSelectedUsers] = useState([])
+    const [searchResults, setSearchResults] = useState([])
+    const [searchValue, setSearchValue] = useState("")
+    const [searching, setSearching] = useState(false)
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData
@@ -101,6 +107,30 @@ function ShareProgramModal({ navigation, route }) {
         }
     }
 
+    const performSearch = async searchQuery => {
+      /*  let searchResultsIn = []
+
+        //If no search query then set state and return
+        if (searchQuery == "" || searchQuery == "") {
+            setSearching(true);
+            setSearchValue("");
+            setSearchResults([]);
+
+            return;
+        }
+
+        await setSearchResults([]);
+        await setSearching(true);
+        await setSearchValue(searchQuery);
+
+
+            await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
+                setSearchResults(searchData);
+            });
+
+            setSearching(false);*/
+    }
+
     return (
         <View style={styles.container}>
                     <Appbar.Header style={styles.appbar} theme={{
@@ -115,6 +145,18 @@ function ShareProgramModal({ navigation, route }) {
                 <View style={styles.contentContainer}>
                 <ProfileProgramCard programData={route.params.programData} />
                               <Divider />
+                              <View style={{flexDirection: 'row'}}>
+                <SearchBar placeholder="Search fitness programs"
+                    onChangeText={text => performSearch(text)}
+                    platform="ios"
+                    searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
+                    containerStyle={styles.searchContainerStyle}
+                    inputContainerStyle={styles.inputContainerStyle}
+                    inputStyle={styles.inputStyle}
+                    placeholderTextColor="#212121"
+                    value={searchValue} />
+        </View>
+  
                     <ScrollView shouldRasterizeIOS={true}>
                     {
                         mapFollowing()
@@ -141,7 +183,19 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1
-    }
+    },
+    searchContainerStyle: {
+        backgroundColor: "transparent", width: '100%'
+    },
+    inputContainerStyle: {
+        backgroundColor: '#eeeeee',
+    },
+    inputStyle: {
+        fontSize: 15, color: 'black',  fontFamily: 'Avenir-Roman'
+    },
+    iconContainer: {
+        width: '10%', alignItems: 'center', justifyContent: 'center'
+    },
 })
 
 
