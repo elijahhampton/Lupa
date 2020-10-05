@@ -12,15 +12,16 @@ import {
 } from 'react-native';
 import { Video } from 'expo-av'
 import {
-    TextInput as PaperInput, Divider, Surface, Caption, FAB, IconButton, Button
+    TextInput as PaperInput, Divider, Surface, Caption, FAB, IconButton, Button, Appbar
 } from 'react-native-paper';
-import { TextInput } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ThinFeatherIcon from 'react-native-feather1s'
 import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../../../../controller/lupa/LupaController'
 import ImagePicker from 'react-native-image-picker'
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 function CreateCustomWorkoutModal({ route, navigation }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -121,18 +122,23 @@ function CreateCustomWorkoutModal({ route, navigation }) {
             case 'VIDEO':
                 return <Video source={{uri: uri}} style={{  width: '100%', height: '100%', borderRadius: 80 }} loop={false} />
             default:
-                return <Image source={{uri: uri}} resizeMode="cover" style={{ width: '100%', height: '100%',  borderRadius: 0 }} />
+                return ( 
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}> 
+                <Feather1s name="film" size={60} color="rgb(102, 111, 120)" /> 
+                </View>
+                )
         }
     }
 
     return (
-            <SafeAreaView style={{ flex: 1 }}>
-                <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                <ScrollView>
+                <Appbar.Header style={{backgroundColor: 'white', elevation: 0, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <ThinFeatherIcon name="arrow-left" onPress={() => navigation.pop()} size={20} style={{ marginRight: 20 }} />
                     <Button color="#1089ff"  mode="text" onPress={handleOnSave}>
                         Add
                     </Button>
-                </View>
+                </Appbar.Header>
 
                 <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
                     <View style={{ paddingHorizontal: 10 }}>
@@ -140,7 +146,7 @@ function CreateCustomWorkoutModal({ route, navigation }) {
                             Create a custom workout
                 </Text>
                         <Text style={{ color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light' }}>
-                            Create a custom workout becuase custom shit is cool
+                           Add an exercise using your own photo or video.
                 </Text>
                     </View>
 
@@ -151,7 +157,7 @@ function CreateCustomWorkoutModal({ route, navigation }) {
                             Workout Name
                     </Text>
                    
-                        <PaperInput  mode="outlined" ref={titleInputFocused} keyboardType="default" returnKeyLabel="done" returnKeyType="done" value={workoutName} onChangeText={text => setWorkoutName(text)} placeholder="Name" style={[styles.textInput, { height: 45, borderBottomColor: titleInputFocused ? "#1089ff" : "#212121",}]} />
+                        <PaperInput theme={{colors: { primary: '#1089ff' }}} mode="outlined" ref={titleInputFocused} keyboardType="default" returnKeyLabel="done" returnKeyType="done" value={workoutName} onChangeText={text => setWorkoutName(text)} placeholder="Name" style={[styles.textInput, { height: 45, borderBottomColor: titleInputFocused ? "#1089ff" : "#212121",}]} />
                     </View>
                         </View>
 
@@ -165,7 +171,7 @@ function CreateCustomWorkoutModal({ route, navigation }) {
                             onChangeText={text => setWorkoutDescription(text)}
                             theme={{
                                 colors: {
-                                    primary: '#374e66'
+                                    primary: '#1089ff'
                                 }
                             }}
                             mode="flat"
@@ -180,7 +186,7 @@ function CreateCustomWorkoutModal({ route, navigation }) {
                     
 
                 </View>
-                <Divider />
+                <Divider style={{marginVertical: 10}} />
                 <View style={{ flex: 1 }}>
                     <>
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -198,7 +204,13 @@ function CreateCustomWorkoutModal({ route, navigation }) {
 
                     </View>
 
-                        <Surface style={{ paddingVertical: 5, backgroundColor: 'white', elevation: 0, }}>
+                       
+
+                    </>
+                   
+                </View>
+
+                <Surface style={{ paddingVertical: 5, backgroundColor: 'white', elevation: 0, }}>
                             <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
 
                                 <TouchableOpacity onPress={handleTakeVideo}>
@@ -225,18 +237,14 @@ function CreateCustomWorkoutModal({ route, navigation }) {
 
                             </View>
                         </Surface>
-
-                    </>
-                   
-                </View>
-
+</ScrollView>
             </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     root: {
-
+        backgroundColor: '#FFFFFF',
     },
     textInput: {
         margin: 3,

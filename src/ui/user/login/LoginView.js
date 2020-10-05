@@ -164,6 +164,7 @@ function LoginView(props) {
       _introduceApp();
       storeAsyncData('PREVIOUS_LOGIN_EMAIL', attemptedUsername);
       storeAsyncData('PREVIOUS_LOGIN_PASSWORD', attemptedPassword);
+     // storeAsyncData('RECENTLY_INTERACTED_USERS', [])
     } else {
       setLoginRejectedReason('Invalid Username or Password.  Try again.')
       showSnack(true);

@@ -113,7 +113,10 @@ function MyPrograms(props) {
                 contentContainerStyle={{
                     flex: 1,
                 }}>
+                    <ScrollView>
                     {renderPrograms()}
+                    </ScrollView>
+               
                </View>
             )
         }

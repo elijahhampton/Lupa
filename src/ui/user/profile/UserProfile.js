@@ -28,10 +28,11 @@ import ImagePicker from 'react-native-image-picker';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../controller/lupa/LupaController';
-import LOG from '../../../common/Logger';
+import LOG, { LOG_ERROR } from '../../../common/Logger';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import VlogFeedCard from '../component/VlogFeedCard';
 import { useSelector } from 'react-redux';
+import { retrieveAsyncData, storeAsyncData } from '../../../controller/lupa/storage/async';
 
 function UserProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
@@ -66,8 +67,28 @@ function UserProfile({ userData, isCurrentUser }) {
         }
 
         loadProfileData()
+
+      //  addToRecentlyInteractedList();
         LOG('UserProfile.js', 'Running useEffect.')
-    }, [ready])
+    }, [profileImage, ready])
+
+    const addToRecentlyInteractedList = async () => {
+        try {
+        let recentlyInteractedList = await retrieveAsyncData('RECENTLY_INTERACTED_USERS');
+    
+        if (typeof(recentlyInteractedList) == 'undefined' || typeof(recentlyInteractedList) != 'object') {
+  
+            recentlyInteractedList = [userData.user_uuid];
+        } else {
+            recentlyInteractedList.push(userData.user_uuid);
+        }
+    } catch(error) {
+        storeAsyncData('RECENTLY_INTERACTED_USERS', [])
+        LOG_ERROR('', '', error)
+    }
+
+        storeAsyncData('RECENTLY_INTERACTED_USERS', recentlyInteractedList)
+    }
 
 
     const fetchVlogs = async (uuid) => {
@@ -329,7 +350,7 @@ function UserProfile({ userData, isCurrentUser }) {
                 </Text>
 
                 <Text style={{color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 13 }}>
-                            Edit Profile
+                            Edit Bio
                        
                 </Text>
                         </View>

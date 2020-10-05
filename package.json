@@ -10,6 +10,7 @@
     "coverage": "jest --verbose --coverage && open ./coverage/lcov-report/index.html"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.12.0",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/datetimepicker": "^3.0.3",
     "@react-native-community/geolocation": "^2.0.2",

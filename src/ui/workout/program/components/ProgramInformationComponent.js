@@ -11,6 +11,7 @@ import {
 import {
     Surface,
     Chip,
+    Avatar
 } from 'react-native-paper'
 
 import LupaController from '../../../../controller/lupa/LupaController'
@@ -63,25 +64,26 @@ function ProgramInformationComponent({ program }) {
     }, [])
 
     return (
-        <TouchableOpacity key={program.program_structure_uuid} style={{ backgroundColor: 'white' }} onPress={handleCardOnPress}>
+        <TouchableOpacity key={program.program_structure_uuid} style={{ width: '100%' }} onPress={handleCardOnPress}>
             <View style={{ backgroundColor: 'white', width: Dimensions.get('window').width, marginVertical: 10 }}>
-                <Surface style={{ elevation: 0, justifyContent: 'center', flexDirection: 'row', width: Dimensions.get('window').width, height: 'auto', }} >
-                    <View style={{ width: 60, height: 60, alignItems: 'flex-start', justifyContent: 'center' }}>
-                        <Surface style={{ width: '100%', height: '100%', elevation: 0, borderRadius: 3 }}>
-                            <Image style={{ width: '100%', height: '100%', borderRadius: 3 }} source={{ uri: program.program_image }} />
-                        </Surface>
-                    </View>
-                    <View style={{ paddingHorizontal: 20, width: '80%' }} >
-                        <Text style={{ fontSize: 15, color: '#212121', fontFamily: 'Avenir-Medium' }}>
+                <View style={{ alignItems: 'center', flexDirection: 'row', height: 'auto', }} >
+                    <Avatar.Image style={{margin: 5}} source={{ uri: program.program_image }}  size={35} />
+                    <View style={{ paddingHorizontal: 10, width: '100%' }} >
+                       <Text>
+                            <Text style={{ fontSize: 15, color: '#212121', fontFamily: 'Avenir-Medium' }}>
                             {program.program_name}
+                            
                         </Text>
+                       {userPurchased === true ? <Text style={{ alignSelf: 'flex-end', paddingVertical: 10, color: '#1089ff', fontFamily: 'Avenir-Heavy', fontSize: 12}}> PURCHASED </Text> : null }
+                       </Text>
+                       
                         <Text style={{ fontSize: 12, flexWrap: 'wrap', fontWeight: '300' }} numberOfLines={2}>
                             {program.program_description}
                         </Text>
                         
-                        {userPurchased === true ? <Text style={{ alignSelf: 'flex-end', paddingVertical: 10, color: '#1089ff', fontFamily: 'Avenir-Heavy', fontSize: 12}}> PURCHASED </Text> : null }
+                       
                     </View>
-                </Surface>
+                </View>
 
                 <ProgramOptionsModal isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} program={program} />
                 <ProgramInformationPreview isVisible={programModalVisible} closeModalMethod={() => setProgramModalVisible(false)} program={program} />

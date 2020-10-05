@@ -16,11 +16,12 @@ import {
   Surface,
   IconButton,
   Button,
+  Snackbar,
   Caption,
   Divider,
   Paragraph, 
   Dialog, 
-  Portal, Checkbox
+  Portal, Checkbox, HelperText
 } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
@@ -90,6 +91,14 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   const startTimePickerRef = createRef();
   const endTimePickerRef = createRef();
 
+  const [snackBarMessage, setSnackBarMessage] = useState("")
+  const [snackBarVisible, setSnackBarVisible] = useState(false)
+
+  const onToggleSnackBar = () => setVisible(!snackBarVisible);
+
+  const onDismissSnackBar = () => setSnackBarVisible(false);
+
+
   const [startTime, setStartTime] = useState(new Date(1598051730000))
   const [startTimeFormatted, setStartTimeFormatted] = useState(new Date(1598051730000))
   const [endTimeFormatted, setEndTimeFormatted] = useState(new Date(1598051730000))
@@ -156,17 +165,32 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   }
 
   const handleOnRequestBooking = () => {
+    if (moment(endTime).isBefore(moment(startTime))) {
+      //invalid times
+      setSnackBarMessage('Invalid time period.')
+      setSnackBarVisible(true);
+      return;
+    } 
+
+   /* if (!moment(endTime).subtract(60, 'minutes').isSame(moment(startTime)) || !moment(endTime).subtract(90, 'minutes').isSame(moment(startTime))) {
+      //check time intervals
+      alert('uh')
+      setSnackBarMessage('Bookings must be in 60 or 90 minutes intervals.');
+      setSnackBarVisible(true);
+      return;
+    }*/
+
     const trainerUUID = uuid;
     const requesterUUID = currUserData.user_uuid;
     const isSet = false;
 
     //create a booking structure
-    
     const booking = getBookingStructure(moment(startTime).format('LT').toString(), moment(endTime).format('LT').toString(), trainerUUID, requesterUUID, isSet, entryDate)
 
     //send to backend
      LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking);
 
+     handleCloseRequestBookingDialog();
   }
 
   const renderBookingRequestDialog = () => {
@@ -198,6 +222,21 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
       </View>
 
       </View>
+
+
+      {
+      snackBarVisible && true ?
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+           <FeatherIcon name="alert-circle" color='#f44336' />
+           <HelperText style={{color: '#f44336'}}>
+     
+     {snackBarMessage}
+   </HelperText>
+      </View>
+    
+      :
+      null
+      }
 
 
           </Dialog.Content>
@@ -240,7 +279,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
       />
         </View>
         <SafeAreaView>
-          <Button onPress={handleOnPickStartTime} color="#1089ff" mode="contained" style={{elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+          <Button onPress={handleOnPickStartTime} color="#1089ff" mode="contained" style={{marginVertical: 10, elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
             Done
           </Button>
         </SafeAreaView>
@@ -263,7 +302,7 @@ height={300}>
       />
   </View>
   <View>
-          <Button onPress={handleOnPickEndTime} color="#1089ff" mode="contained" style={{elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+          <Button onPress={handleOnPickEndTime} color="#1089ff" mode="contained" style={{marginVertical: 15, elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
             Done
           </Button>
           <SafeAreaView />
@@ -301,7 +340,7 @@ height={300}>
       }
 
      return ( 
-     <Button onPress={() => setBookingRequestDialogVisible(true)} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
+     <Button onPress={handleOpenRequestBookingDialog} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
       <Text style={{fontSize: 12}}>
       Book Me
       </Text>
@@ -311,19 +350,42 @@ height={300}>
 
   }
 
-
   useEffect(() => {
       const currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(async documentSnapshot => {
         let userData = await documentSnapshot.data()
         setUserData(userData);
         setItems(userData.scheduler_times);
-    })
+    });
 
+    async function setBeginningEntryDate() {
+      const year = new Date().getFullYear();
+      let day = new Date().getDate();
+      if (day.toString().length === 1) {
+        day = "0" + day;
+      }
+  
+      //TODO: 
+      let month = new Date().getMonth() + 1;
+      if (month.toString().length === 1) {
+        month = "0" + month;
+      }
+  
+      const entryDateString = year + "-" + month + "-" + day;
+      await setEntryDate(entryDateString)
+    }
+
+  
+    setBeginningEntryDate()
   return () => currUserSubscription()
   }, []);
 
   return (
     <View style={styles.container}>
+         <Button onPress={handleOpenRequestBookingDialog} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
+      <Text style={{fontSize: 12}}>
+      Book Me
+      </Text>
+    </Button>
           <Agenda
     markingType="period"
   // The list of items that have to be displayed in agenda. If you want to render item as empty date
@@ -458,7 +520,7 @@ height={300}>
     agendaTodayColor: 'red',
     agendaKnobColor: 'rgb(199, 199, 204)',
     backgroundColor: 'rgb(248, 248, 248)',
-  }}å
+  }}
 
   // Agenda container style
   style={{height: HEIGHT}}
@@ -466,6 +528,7 @@ height={300}>
 {renderBookingRequestDialog()}
 {renderStartTimePicker()}
 {renderEndTimePicker()}
+
 <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} displayDate={displayDate} entryDate={entryDate} />
     </View>
     );

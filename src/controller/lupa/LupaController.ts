@@ -383,15 +383,9 @@ export default class LupaController {
                   //add the results we want from each into our final results array
         for (let i = 0; i < userResults.hits.length; ++i)
         {
-           if (userResults.hits[i].isTrainer == true)
-           {
-            if (userResults.hits[i]._highlightResult.display_name.matchLevel == "full"
-            || userResults.hits[i]._highlightResult.username.matchLevel == "full")
-            {
               userResults.hits[i].resultType = "User"
+              console.log('CCCCCC')
               finalResults.push(userResults.hits[i]);
-            }
-           }
         }
 
         for (let i = 0; i < programResults.hits.length; ++i)
@@ -399,6 +393,7 @@ export default class LupaController {
           programResults.hits[i].resultType = "Program"
             finalResults.push(programResults.hits[i]);
         }
+
         } catch(err)
         {
           alert(err)
@@ -418,19 +413,13 @@ export default class LupaController {
      * TODO: Save only necessary information into an object before pushing into final results array.
      */
     search = (searchQuery) => {
-     /* let finalResults = new Array();
+      let finalResults = new Array();
 
       const queries = [{
         indexName: 'dev_USERS',
         query: searchQuery,
         params: {
           hitsPerPage: 10
-        }
-      }, {
-        indexName: 'dev_PACKS',
-        query: searchQuery,
-        params: {
-          hitsPerPage: 10,
         }
       }];
 
@@ -439,11 +428,10 @@ export default class LupaController {
                 let finalResults = new Array();
       //  - 1st query targets index `categories`
       //  - 2nd and 3rd queries target index `products`
-      algoliaIndex.search(queries, (err, { results = {}}) => {
+      algoliaIndex.search(queries, async (err, { results = {}}) => {
         if (err) rejects(err);
 
         const userResults = results[0];
-        const packResults = results[1];
 
         try {
                   //add the results we want from each into our final results array
@@ -453,18 +441,13 @@ export default class LupaController {
           if (userResults.hits[i]._highlightResult.display_name.matchLevel == "full" || userResults.hits[i]._highlightResult.username.matchLevel == "full"
           || userResults.hits[i]._highlightResult.email.matchLevel == "full")
           {
-            finalResults.push(userResults.hits[i]);
+            const uuid = userResults.hits[i]._highlightResult.user_uuid.value;
+            await LUPA_DB.collection('users').doc(uuid).get().then(snapshot => {
+              finalResults.push(snapshot.data());
+            });
           }
         }
 
-        for (let i = 0; i < packResults.hits.length; ++i)
-        {
-          packResults.hits[i].resultType = "pack"
-          if (packResults.hits[i]._highlightResult.pack_title.matchLevel == "full")
-          {
-            finalResults.push(packResults.hits[i]);
-          }
-        }
         } catch(err)
         {
 
@@ -472,7 +455,7 @@ export default class LupaController {
 
         resolve(finalResults);
       });
-      })*/
+      })
 
     }
 

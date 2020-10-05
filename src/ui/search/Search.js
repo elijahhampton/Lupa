@@ -30,6 +30,7 @@ import { MenuIcon } from '../icons';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 import LUPA_DB from '../../controller/firebase/firebase';
 import { connect } from 'react-redux';
+import UserSearchResult from '../user/profile/component/UserSearchResult';
 
 const CATEGORY_SEPARATION = 15
 const NAVBAR_HEIGHT = 50;
@@ -186,9 +187,15 @@ class Search extends React.Component {
 
     renderSearchResults = () => {
             return this.state.searchResults.map(result => {
-                return (
-                    <LargeProgramSearchResultCard program={result} />
-                )
+                switch(result.resultType) {
+                
+                    case 'Program':
+                        return <LargeProgramSearchResultCard program={result} />
+                    case 'User':
+                        return <UserSearchResult userData={result} />
+                    default:
+                }
+              
             })
         }  
 
@@ -280,9 +287,6 @@ class Search extends React.Component {
                         </View>
                        
                         :
-                        null
-                    }
-                    {
                         this.renderSearchResults()
                     }
                 </ScrollView>

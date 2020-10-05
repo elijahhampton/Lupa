@@ -38,6 +38,7 @@ import { useDispatch, useSelector} from 'react-redux';
 
 import LupaController from '../../../../../controller/lupa/LupaController'
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../../../controller/redux/payload_utility';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 function EditBioModal(props) {
     //lupa controller instance
@@ -74,10 +75,10 @@ function EditBioModal(props) {
 
 
     return (
-    <Modal presentationStyle="fullScreen" visible={props.isVisible} style={{backgroundColor: 'white'}}>
+    <Modal presentationStyle="fullScreen" animated={true} animationType="slide" visible={props.isVisible} style={{backgroundColor: 'white'}}>
        <SafeAreaView style={{flex: 1}}>
-        <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center'}}>
-            <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
+        <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center', borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',}}>
+            <Appbar.Action icon={() => <Feather1s name="x" size={22} />} onPress={() => props.closeModalMethod()}/>
             <Appbar.Content title="Biography" titleStyle={{  color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}/>
             <Button theme={{colors: {
                 primary: 'rgb(33,150,243)'
@@ -89,15 +90,11 @@ function EditBioModal(props) {
             </Button>
         </Appbar.Header>
        <View style={{padding: 10}}>
-       <Text style={{  fontSize: 17}}>
-            Write a biography
-        </Text>
-        <Caption>
-           Who are you?  Why did you join Lupa?
+       <Caption>
+            Why are you using Lupa?
         </Caption>
        </View>
 
-       <Divider style={{marginVertical: 10}} />
 
         <View style={{flex: 1}}>
         <TextInput maxLength={180} value={bioText} onChangeText={text => setBioText(text)} multiline placeholder="Edit your biography" style={{width: Dimensions.get('window').width - 20, height: '30%', alignSelf: 'center'}} mode="outlined" theme={{

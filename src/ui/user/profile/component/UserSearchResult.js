@@ -3,6 +3,7 @@ import React from 'react';
 import {
     View,
     Text,
+    Dimensions,
     StyleSheet,
 } from 'react-native';
 
@@ -19,17 +20,14 @@ const userSearchResult = ({userData, hasButton, buttonTitle, buttonOnPress}) => 
     const navigation = useNavigation();
 
     return (
-        <TouchableWithoutFeedback onPress={typeof(buttonOnPress) == 'undefined' ?  () => navigation.navigate('Profile', {userUUID: userData.user_uuid}) : buttonOnPress }>
+        <TouchableWithoutFeedback style={{width: '100%'}} onPress={typeof(buttonOnPress) == 'undefined' ?  () => navigation.navigate('Profile', {userUUID: userData.user_uuid}) : buttonOnPress }>
         <View style={styles.root}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Avatar.Image size={40} source={{uri: userData.photo_url}} style={{margin: 5}}/>
+                    <Avatar.Image size={35} source={{uri: userData.photo_url}} style={{margin: 5}}/>
                     <View style={styles.userContent}>
-                        <Text style={{fontSize: 13, fontFamily: 'Avenir-Heavy'}}>
-                           {userData.username}
-                        </Text>
-                        <Caption style={{}}>
+                        <Text style={{}}>
                             {userData.display_name}
-                        </Caption>
+                        </Text>
                     </View>
                     </View>
                     {
@@ -54,7 +52,7 @@ const userSearchResult = ({userData, hasButton, buttonTitle, buttonOnPress}) => 
 
 const styles = StyleSheet.create({
     root: {
-        flexDirection: "row", alignItems: "center", width: "100%", padding: 5, justifyContent: 'space-between'
+        flexDirection: "row", alignItems: "center", width: Dimensions.get('window').width, padding: 5, justifyContent: 'space-between'
     },
     userContent: {
         flexDirection: "column", justifyContent: "flex-start", margin: 3

@@ -99,11 +99,9 @@ exports.payWithStripe = functions.https.onRequest((request, response) => {
 
     const actualAmount = request.body.amount * 100;
 
-   // const LUPA_SPLIT = Math.floor(actualAmount / 0.60);
-    //const TRAINER_SPLIT  = Math.floor(actualAmount /  .40);
     
     stripe.charges.create({
-        amount: request.body.amount * 100, //LUPA_SPLIT
+        amount: actualAmount, 
         currency: request.body.currency,
         source: request.body.token.tokenId,
     },
@@ -114,10 +112,17 @@ exports.payWithStripe = functions.https.onRequest((request, response) => {
             response.send(charge);
         })
         .catch(err =>{
-            
+            return;
         });
 
-        stripe.
+        const payoutToSellerAmount = Math.floor(actualAmount * .84);
+
+const sellerPayout = stripe.payouts.create({
+  amount: payoutToSellerAmount,
+  currency: 'usd',
+  destination: request.body.seller_stripe_id
+});
+
         
 });
 

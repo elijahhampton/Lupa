@@ -5,6 +5,7 @@ import {
     View,
     StyleSheet,
     SafeAreaView,
+    Text,
     Dimensions,
     ScrollView,
 } from 'react-native';
@@ -13,6 +14,8 @@ import {
     Appbar,
     FAB,
     Divider,
+    Chip,
+     Avatar
 } from 'react-native-paper';
 
 import { useSelector } from 'react-redux'
@@ -26,13 +29,16 @@ import UserSearchResult from '../../../user/profile/component/UserSearchResult'
 import ProfileProgramCard from '../components/ProfileProgramCard';
 
 import ThinFeatherIcon from 'react-native-feather1s'
+import { retrieveAsyncData, storeAsyncData } from '../../../../controller/lupa/storage/async';
 
 function ShareProgramModal({ navigation, route }) {
-    const [followingUserObjects, setFollowingUserObjects] = useState([])
     const [selectedUsers, setSelectedUsers] = useState([])
+    const [displaydUsers, setDisplayedUsers] = useState([])
     const [searchResults, setSearchResults] = useState([])
     const [searchValue, setSearchValue] = useState("")
     const [searching, setSearching] = useState(false)
+    const [recentlyInteractedUsers, setRecentlyInteractedUsers] = useState([])
+    const [forcedUpdate, setForcedUpdate] = useState(false);
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData
@@ -41,13 +47,25 @@ function ShareProgramModal({ navigation, route }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     useEffect(() => {
-        LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(currUserData.following).then(objs => {
-            setFollowingUserObjects(objs)
-        })
+        let recentlyInteractedUsersList = retrieveAsyncData('RECENTLY_INTERACTED_USERS');
+        if (typeof(recentlyInteractedUsersList) == 'undefined' || typeof(recentlyInteractedUsersList) != 'object') {
+            setRecentlyInteractedUsers([])
+            storeAsyncData('RECENTLY_INTERACTED_USERS', []);
+        } else {
+            try {
+            LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(recentlyInteractedUsersList).then(data => {
+                setRecentlyInteractedUsers(data)
+            })
+        } catch(error) {
+            setRecentlyInteractedUsers([])
+        }
+        }
     }, [])
 
     const handleAddToFollowList = (userObject) => {
         const updatedList = selectedUsers;
+        const updatedDisplayedUserlist = displaydUsers;
+
         var found = false;
         for(let i = 0; i < selectedUsers.length; i++)
         {
@@ -55,6 +73,7 @@ function ShareProgramModal({ navigation, route }) {
             {
 
               updatedList.splice(i, 1);
+              updatedDisplayedUserlist.splice(i, 1);
               found = true;
               break;
             }
@@ -64,10 +83,13 @@ function ShareProgramModal({ navigation, route }) {
         {
             
             updatedList.push(userObject.user_uuid);
+            updatedDisplayedUserlist.push(userObject);
             
         }
 
         setSelectedUsers(updatedList)
+        setDisplayedUsers(updatedDisplayedUserlist);
+        setForcedUpdate(!forcedUpdate)
     }
 
     const waitListIncludesUser = (userObject) => {
@@ -82,21 +104,6 @@ function ShareProgramModal({ navigation, route }) {
         return false;
     }
 
-    const mapFollowing = () => {
-        return followingUserObjects.map(user => {
-            return (
-                <View key={user.user_uuid} style={{backgroundColor: waitListIncludesUser(user) ? '#E0E0E0' : 'transparent'}}>
-                    <UserSearchResult 
-                        userData={user}
-                        hasButton={true}
-                        buttonTitle="Invite"
-                        buttonOnPress={() => handleAddToFollowList(user)}
-                        />
-                </View>
-            );
-        })
-    }
-
     const handleApply = () => {
         try {
             LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, selectedUsers, route.params.programData);
@@ -107,8 +114,30 @@ function ShareProgramModal({ navigation, route }) {
         }
     }
 
+    const mapSearchResults = () => {
+        return searchResults.map(user => {
+            return <UserSearchResult 
+            userData={user} 
+            hasButton={true}
+            buttonTitle="Share"
+            buttonOnPress={() => handleAddToFollowList(user)}
+            />
+        })
+    }
+
+    const mapRecentlyInteractedUsers = () => {
+        return recentlyInteractedUsers.map(user => {
+            return <UserSearchResult 
+            userData={user} 
+            hasButton={true}
+            buttonTitle="Share"
+            buttonOnPress={() => handleAddToFollowList(user)}
+            />
+        })
+    }
+
     const performSearch = async searchQuery => {
-      /*  let searchResultsIn = []
+        let searchResultsIn = []
 
         //If no search query then set state and return
         if (searchQuery == "" || searchQuery == "") {
@@ -124,15 +153,24 @@ function ShareProgramModal({ navigation, route }) {
         await setSearchValue(searchQuery);
 
 
-            await this.LUPA_CONTROLLER_INSTANCE.searchPrograms(searchQuery).then(searchData => {
+            await LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
                 setSearchResults(searchData);
             });
 
-            setSearching(false);*/
+    }
+
+    const renderSelectedUsers = () => {
+        return displaydUsers.map((user) => {
+            return (
+                <Chip avatar={() => <Avatar.Image source={{ uri: user.photo_url }} />}>
+                {user.display_name}
+            </Chip>
+            )
+        })
     }
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
                     <Appbar.Header style={styles.appbar} theme={{
                     colors: {
                         primary: '#FFFFFF'
@@ -144,8 +182,11 @@ function ShareProgramModal({ navigation, route }) {
 
                 <View style={styles.contentContainer}>
                 <ProfileProgramCard programData={route.params.programData} />
+                <ScrollView horizontal contentContainerStyle={{marginBottom: 10}}>
+                        {renderSelectedUsers()}
+                    </ScrollView>
                               <Divider />
-                              <View style={{flexDirection: 'row'}}>
+                              <View>
                 <SearchBar placeholder="Search fitness programs"
                     onChangeText={text => performSearch(text)}
                     platform="ios"
@@ -155,18 +196,22 @@ function ShareProgramModal({ navigation, route }) {
                     inputStyle={styles.inputStyle}
                     placeholderTextColor="#212121"
                     value={searchValue} />
+                   
         </View>
   
                     <ScrollView shouldRasterizeIOS={true}>
                     {
-                        mapFollowing()
+                        searching === true ?
+                        mapSearchResults()
+                        :
+                        mapRecentlyInteractedUsers()
                     }
                 </ScrollView>
                     </View>
 
-                    <FAB color="#FFFFFF" style={styles.fab} icon="check" onPress={handleApply} />
+            
                     <SafeAreaView />
-            </View>
+            </ScrollView>
     )
 }
 

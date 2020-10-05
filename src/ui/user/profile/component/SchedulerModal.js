@@ -27,8 +27,8 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
   const endTimePickerRef = createRef();
 
   const [startTime, setStartTime] = useState(new Date(1598051730000))
-  const [startTimeFormatted, setStartTimeFormatted] = useState(new Date(1598051730000))
-  const [endTimeFormatted, setEndTimeFormatted] = useState(new Date(1598051730000))
+  const [startTimeFormatted, setStartTimeFormatted] = useState(moment(new Date(1598051730000)).format('LT').toString())
+  const [endTimeFormatted, setEndTimeFormatted] = useState(moment(new Date(1598051730000)).format('LT').toString())
   const [endTime, setEndTime] = useState(new Date(1598051730000))
 
     const [addedTimes, setAddedTimes] = useState([]);
@@ -67,6 +67,10 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
     }
 
     const handleOnSave = () => {
+      if (typeof(entryDate) == 'undefined') {
+        return;
+      }
+      
       const timeBlock = {
         startTime: startTime,
         endTime: endTime,
@@ -81,6 +85,10 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
         currentSchedulerTimes[entryDate] = times;
       }
 
+      if (Object.keys(currentSchedulerTimes).includes("")) {
+        closeModal();
+        return;
+      }
       LUPA_CONTROLLER_INSTANCE.updateCurrentUser('scheduler_times', currentSchedulerTimes, 'update')
 
       closeModal();
@@ -164,7 +172,6 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
         }>
           <View style={{flex: 1}}>
           <DateTimePicker
-          testID="dateTimePicker"
           value={startTime}
           mode='time'
           is24Hour={false}
@@ -182,14 +189,13 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
       )
     }
     
-    const renderEndTimePicker = () => {
+const renderEndTimePicker = () => {
 return (
   <RBSheet
   ref={endTimePickerRef}
   height={300}>
     <View style={{flex: 1}}>
     <DateTimePicker
-          testID="dateTimePicker"
           value={endTime}
           mode='time'
           is24Hour={false}
@@ -241,7 +247,7 @@ return (
             </Appbar.Header>
               <View style={{padding: 10}}>
                 <Text style={{fontWeight: '600'}}>
-                  {displayDate}
+                  {moment(displayDate).format('LL').toString()}
                 </Text>
                 <Caption>
                   Add a time block you are available for this date.

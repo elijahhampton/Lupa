@@ -127,6 +127,7 @@ const SignUp = props => {
       await dispatch(authActions.signup(attemptedEmail, attemptedPassword))
       navigation.navigate('Onboarding')
       _setupRedux()
+     // storeAsyncData('RECENTLY_INTERACTED_USERS', [])
     }
   }
 

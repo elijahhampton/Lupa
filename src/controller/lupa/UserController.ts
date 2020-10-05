@@ -249,6 +249,11 @@ export default class UserController {
         let currentUserDocument = await USER_COLLECTION.doc(this.getCurrentUser().uid);
 
         switch (fieldToUpdate) {
+            case 'trainer_type':
+                currentUserDocument.update({
+                    trainer_type: value,
+                });
+                break;
             case 'isTrainer':
                 currentUserDocument.update({
                     isTrainer: value
@@ -280,6 +285,7 @@ export default class UserController {
                 });
                 break;
             case 'scheduler_times':
+                console.log(value)
                 if (optionalData == 'update') {
                     currentUserDocument.update({
                         scheduler_times: value
@@ -721,6 +727,7 @@ export default class UserController {
                         username: user.username,
                     }
 
+                    console.log('adding a user FROM CONTROLLER  ')
                     records.push(userData);
                 }
             });
@@ -1817,41 +1824,106 @@ export default class UserController {
         });
 
         booking.is_set = true;
+        const trainer_uuid = booking.trainer_uuid;
+        const requester_uuid = booking.requester_uuid;
 
         LUPA_DB.collection('bookings').doc(bookingID).update({
             is_set: true
         })
 
+        let GENERATED_CHAT_UUID = undefined;
 
-        //send a notification that the booking request has been accepted to the requesters
-        //by adding the notification data to their queue
-
-        //create notification
-        const generalNotificationStructure = {
-            notification_uuid: Math.random().toString(),
-            data: booking,
-            from: booking.trainer_uuid,
-            to: booking.requester_uuid,
-            message: 'Your session request has been approved.',
-            read: false,
-            type: NOTIFICATION_TYPES.RECEIVED_NOTIFICATION,
-            actions: [],
-            timestamp: new Date().getTime()
+        try {
+        //setup a chat between the two users
+        if (trainer_uuid.charAt(0) < requester_uuid.charAt(0)) {
+            GENERATED_CHAT_UUID = trainer_uuid + requester_uuid;
+        }
+        else {
+            GENERATED_CHAT_UUID = requester_uuid + trainer_uuid;
         }
 
-        //add notification to users notification array
-            let userNotifications = [];
+        let chats = []
+        await USER_COLLECTION.doc(trainer_uuid).get().then(result => {
+            chats = result.data().chats;
+        });
 
-            await USER_COLLECTION.doc(booking.requester_uuid).get().then(snapshot => {
-                userNotifications = snapshot.data().notifications;
-            })
+        let otherUserDocData;
+        let otherUserDoc = USER_COLLECTION.doc(requester_uuid);
 
-            await userNotifications.push(generalNotificationStructure);
-            
-            await USER_COLLECTION.doc(booking.requester_uuid).update({
-                notifications: userNotifications,
+        let chatID, chatExistUserOne = false;
+        await chats.forEach(element => {
+            if (element.user == requester_uuid) {
+                chatExistUserOne = true;
+                chatID = element.chatID;
+            }
+        });
+
+        if (!chatExistUserOne) {
+
+            //if already got it then return it
+            //if not then add it and return it
+            await this.updateCurrentUser('chats', GENERATED_CHAT_UUID, 'add', requester_uuid);
+
+            //Update other users chats
+            await USER_COLLECTION.doc(requester_uuid).get().then(snapshot => {
+                otherUserDocData = snapshot.data();
             });
+
+            let otherUserChats = otherUserDocData.chats;
+
+            let chatExistUserTwo;
+            chatExistUserOne = false;
+
+            await otherUserChats.forEach(element => {
+                if (element.user == trainer_uuid) {
+                    chatExistUserTwo = true;
+                    chatID = element.chatID;
+                }
+            });
+
+            //add to other user if they don't already have it
+            if (!chatExistUserTwo) {
+                let chatField = {
+                    user: trainer_uuid,
+                    chatID: GENERATED_CHAT_UUID,
+                }
+                otherUserChats.push(chatField);
+
+                await otherUserDoc.update({
+                    chats: otherUserChats
+                })
+            }
+
+        }
+    }catch (err) {
+        alert(err)
     }
+
+    /** **************/
+
+
+    try {
+        //init Fire
+        await Fire.shared.init(GENERATED_CHAT_UUID);
+
+        const message = {
+            _id: trainer_uuid,
+            timestamp: new Date().getTime(),
+            text: 'Your booking request has been accepted.',
+            user: {
+                _id: trainer_uuid,
+                name: await this.getAttributeFromUUID(trainer_uuid, 'display_name'),
+                avatar: await this.getAttributeFromUUID(trainer_uuid, 'photo_url')
+            }
+        }
+
+        await Fire.shared.append(message)
+
+    } catch (err) {
+        alert(err)
+    }
+        
+}
 
     handleCancelBooking = async (booking) => {
         const booking_uid = booking.booking_uid;

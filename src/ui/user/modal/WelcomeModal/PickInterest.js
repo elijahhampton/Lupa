@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { TabRouter, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -33,6 +33,12 @@ const PHYSIOLOGICAL_BASED_INTEREST = [
     'Injury Prevention',
 ]
 
+const TRAINER_PARADIGMS = [
+    'In Studio',
+    'In Home',
+    'Outdoor',
+]
+
 function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -40,6 +46,7 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
 
     const [pickedInterest, setPickedInterest] = useState(currUserData.interest)
     const [stateUpdate, forceStateUpdate] = useState(false)
+    const [trainerTypes, setTrainerTypes] = useState(currUserData.trainer_type);
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -60,6 +67,26 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
         forceStateUpdate(!stateUpdate)
     }
 
+    const handlePickTrainerTypes = (interest) => {
+        try {
+        if (trainerTypes.includes(interest)) {
+            let updatedTrainerTypes = trainerTypes;
+            updatedTrainerTypes.splice(updatedTrainerTypes.indexOf(interest), 1);
+            setTrainerTypes(updatedTrainerTypes)
+        } else {
+            let updatedTrainerTypes = trainerTypes;
+            updatedTrainerTypes.push(interest);
+            setTrainerTypes(updatedTrainerTypes)
+        }
+
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('trainer_type', trainerTypes);
+
+        forceStateUpdate(!stateUpdate)
+    } catch(error) {
+        alert(error);
+    }
+    }
+
     const enableNext = () => {
         if (setNextDisabled) {
             setNextDisabled(false);
@@ -72,10 +99,10 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
         }
     }
 
-    renderSaveOption = () => {
+    const renderSaveOption = () => {
         if (route.params.isOnboarding === false) {
             return (
-                <Button color="#1089ff" style={{position: 'absolute', top: 0, right: 0, margin: 15}} mode="text" onPress={() =>  navigation.pop()}> 
+                <Button color="#1089ff" style={{margin: 0, alignSelf: 'flex-end'}} mode="text" onPress={() =>  navigation.pop()}> 
                     Save
                 </Button>
             )
@@ -92,7 +119,9 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
     return (
         <SafeAreaView style={styles.container}>
        <ScrollView>
+
             <View style={{padding: 20, alignSelf: 'center', alignItems: 'flex-start', justifyContent: 'center'}}>
+            {renderSaveOption()}
                 <Text style={{ fontFamily: 'Avenir-Medium', textAlign: 'center', fontSize: 25, marginVertical: Constants.statusBarHeight}}>
                     What fitness skills and goals are you interested in?
                 </Text>
@@ -139,8 +168,31 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
                 }
             </View>
             </View>
-            
-            {renderSaveOption()}
+
+                {
+                    currUserData.isTrainer ?
+                    <View>
+                    <Text style={{paddingLeft: 20, fontFamily: 'Avenir-Medium'}}>
+                        Training Paradigm
+                    </Text>
+                    <View style={[styles.container, styles.interestListContainer]}>
+                        {
+                            TRAINER_PARADIGMS.map((interest, index, arr) => {
+                                return (
+                                    <View key={interest}  style={[styles.interestContainer, {backgroundColor: trainerTypes.includes(interest) ? 'rgba(16, 136, 255, 0.2)' : '#FFFFFF' }]}>
+                                    <Text style={styles.interestText}>
+                                        {interest}
+                                    </Text>
+                                    <Checkbox.Android color="#1088ff" onPress={() => handlePickTrainerTypes(interest)} status={trainerTypes.includes(interest) ? 'checked' : 'unchecked'} key={interest} />
+                                </View>
+                                )
+                            })
+                        }
+                    </View>
+                    </View>
+                    :
+                    null
+                }
             </ScrollView>
         </SafeAreaView>
     )

@@ -119,7 +119,8 @@ function ProgramInformationPreview(props) {
             method: 'POST',
             url: STRIPE_ENDPOINT,
             data: JSON.stringify({
-                amount: 0.50,
+                seller_stripe_id: programOwnerData.stripe_metadata.stripe_id,
+                amount: amount,
                 currency: CURRENCY,
                 token: token,
                 idempotencyKey: idempotencyKey,
@@ -137,7 +138,6 @@ function ProgramInformationPreview(props) {
      */
     const handlePurchaseProgram = async (amount) => {
         await setLoading(true)
-        /*
          //handle stripe
          await initStripe();
  
@@ -169,11 +169,6 @@ function ProgramInformationPreview(props) {
              await setPaymentSuccessful(false)
              return;
          }
-         */
-
-        /****  REMOVE THIS IF PAYMENTS ARE LIVE ******/
-        await setPaymentSuccessful(true)
-        await setPaymentComplete(true)
 
         //If the payment is complete and successful then update database
         if (paymentComplete == true && paymentSuccessful == true) {
@@ -441,7 +436,7 @@ function ProgramInformationPreview(props) {
                    <View style={styles.purchaseContainer}>
 
                     <Button 
-                        onPress={() => handlePurchaseProgram(0)} 
+                        onPress={() => handlePurchaseProgram(programData.program_price)} 
                         mode="outlined"
                         theme={{
                         roundness: 8,

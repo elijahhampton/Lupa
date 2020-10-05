@@ -165,7 +165,8 @@ var lupa_user : LupaUserStructure = {
         stripe_id: "",
         card_last_four: "",
         card_added_to_stripe: false,
-    }
+    },
+    trainer_type: [],
 }
 
 export const getLupaUserStructure = (

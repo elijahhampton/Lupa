@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux/lib/hooks/useSelector';
 import TrainerProfile from './TrainerProfile';
 import UserProfile from './UserProfile';
 import LUPA_DB from '../../../controller/firebase/firebase';
-import { render } from 'react-dom';
 import LOG from '../../../common/Logger';
 
 const ProfileController = ({ route }) => {

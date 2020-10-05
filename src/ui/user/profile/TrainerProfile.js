@@ -33,11 +33,13 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { useSelector } from 'react-redux';
 import LupaController from '../../../controller/lupa/LupaController';
 import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
-import LOG from '../../../common/Logger';
+import LOG, { LOG_ERROR } from '../../../common/Logger';
 import VlogFeedCard from '../component/VlogFeedCard'
 import { getStreetAddressFromCoordinates } from '../../../modules/location/mapquest/mapquest';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import BookNowModal from './modal/BookNowModal';
+import { retrieveAsyncData, storeAsyncData } from '../../../controller/lupa/storage/async';
+import EditBioModal from './settings/modal/EditBioModal'
 
 function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const navigation = useNavigation();
@@ -165,6 +167,30 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         return <Text key={userData.display_name} style={styles.displayNameText}>{userData.display_name}</Text>
     }
 
+    const renderTrainerType = () => {
+        return (<View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
+            <FeatherIcon name="activity" style={{ paddingRight: 5 }} />
+            {
+                userData.trainer_type.map((type, index, arr) => {
+                    if (index == arr.length - 1) {
+                        return (
+                            <Text style={[styles.userAttributeText, { color: '#23374d' }]}>
+                            {type}
+                        </Text>
+                        )
+                    }
+
+                    return (
+                        <Text style={[styles.userAttributeText, { color: '#23374d' }]}>
+                       {type} {" - "}
+                   </Text>
+                    );
+                })
+            }
+        </View>
+        )
+    }
+
     const renderBio = () => {
         if (userData.bio.length == 0) {
             return isCurrentUser === true ?
@@ -184,9 +210,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         )
     }
 
-    const openOptionsMenu = () => setOptionsMenuVisible(true)
-    const closeOptionsMenu = () => setOptionsMenuVisible(false);
-
     const renderVlogs = () => {
         if (!ready) { return null; }
         if (userVlogs.length === 0) {
@@ -198,7 +221,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         <Caption>
                         You haven't created any vlogs.
                         </Caption>
-{" "}
+                        {" "}
                         <Caption style={{color: '#1089ff'}} onPress={() => navigation.push('CreateNewPost')}>
                         Start publishing by creating content.
                         </Caption>
@@ -224,7 +247,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     const renderPrograms = () => {
         if (!ready) { return null; }
-        
+
         if (userPrograms.length === 0) {
             return (
                 <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
@@ -234,7 +257,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         <Caption>
                         You haven't created any programs.
                         </Caption>
-{" "}
+                        {" "}
                         <Caption style={{color: '#1089ff'}} onPress={() => navigation.push('CreateProgram')}>
                         Create your first program.
                         </Caption>
@@ -362,8 +385,9 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         </Text>
                         {
                             userData.interest.map((interest, index, arr) => {
-                                if (index == 3) {
-                                    return;
+                     
+                                if (index >= 3) {
+                                  return;
                                 }
 
                                 return (
@@ -374,7 +398,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                                 )
                             })
                         }
-                        {trainingInterestTextVisible === true ? <Caption style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff' }}> and 3 more... </Caption> : null}
+                        {trainingInterestTextVisible === true ? <Caption style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff' }}> and {trailingInterestLength} more... </Caption> : null}
                     </View>
 
                 </View>
@@ -417,7 +441,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             if (isCurrentUser) {
                 setTrainerPrograms()
             } else {
-               // fetchPrograms(userData.user_uuid);
+                fetchPrograms(userData.user_uuid);
             }
           //  checkCurrFitnessLocation()
         } catch (error) {
@@ -467,10 +491,34 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     }
 
+    const addToRecentlyInteractedList = async () => {
+    try {
+      let recentlyInteractedList = await retrieveAsyncData('RECENTLY_INTERACTED_USERS');
+    
+        if (typeof(recentlyInteractedList) == 'undefined' || typeof(recentlyInteractedList) != 'object' || recentlyInteractedList == null) {
+            recentlyInteractedList = [userData.user_uuid];
+        } else {
+            recentlyInteractedList.push(userData.user_uuid);
+        }
+    } catch(error) {
+        storeAsyncData('RECENTLY_INTERACTED_USERS', [])
+        LOG_ERROR('', '', error);
+    }
+
+        storeAsyncData('RECENTLY_INTERACTED_USERS', recentlyInteractedList)
+    }
+
     useEffect(() => {
         let isSubscribed = true;
         loadProfileData()
+        if (userData.interest.length > 3) {
+            let total = userData.interest.length
+            setTrainingInterestLength(total - 3)
+            showTrailingInterestText(true)
+        }
         setReady(true)
+
+       // addToRecentlyInteractedList();
         LOG('TrainerProfile.js', 'Running useEffect.')
 
         return () => isSubscribed = false;
@@ -523,6 +571,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         await setRefreshing(false);
     }
 
+    try {
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
@@ -548,6 +597,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                             <View style={{ paddingVertical: 10 }}>
                                 {renderLocation()}
                                 {renderCertification()}
+                                {renderTrainerType()}
                             </View>
                         </View>
 
@@ -563,9 +613,16 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                             Learn more
                 </Text>
 
-                <Text style={{color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 13 }}>
-                            Edit Profile
-                </Text>
+                {
+                isCurrentUser === true ?
+                <Text onPress={() => setEditHoursModalVisible(true)} style={{color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 13 }}>
+                Edit Bio
+    </Text>
+                :
+                null
+                }
+
+              
                         </View>
                         {renderBio()}
                     </View>
@@ -598,10 +655,15 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             </ScrollView>
 
             {renderFAB()}
-
+            
+            <EditBioModal isVisible={editHoursModalVisible} closeModalMethod={() => setEditHoursModalVisible(false)} />
             <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} selectedDates={markedDates} />
         </SafeAreaView>
     )
+            } catch(error) {
+        
+                alert(error)
+            }
 }
 
 const styles = StyleSheet.create({

@@ -110,6 +110,7 @@ export type LupaUserStructure = {
     program_data: Array<Object>
     last_workout_completed: Object,
     stripe_metadata: Object,
+    trainer_type: Array<String>
 };
 
 /* LupaWorkoutDataStructure */

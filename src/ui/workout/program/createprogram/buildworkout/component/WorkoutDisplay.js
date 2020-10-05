@@ -33,17 +33,17 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 let weeks = []
 
 const restTimes = [
-    '10',
+    '15',
     '30',
     '90',
-    '120'
+    '120',
+    '180',
+    '300',
 ]
 
 const exerciseTempos = [
-    '1-1-1',
-    '2-2-2',
-    '3-3-3',
-    '4-4-4'
+    '2-1-2',
+    '4-0-2',
 ]
 function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
     const [updateState, forceUpdateState] = useState(false);
@@ -202,17 +202,17 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
             case true:
                 return (
                     <>
-                    <View style={{flex: 1, height: 380, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                    <View style={{flex: 1, height: 420, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
                                     <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
                                      <View style={{flex: 1,}}>
 
-                                        <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
+                                        <View style={{paddingVertical: 5, paddingHorizontal: 10, alignItems: 'flex-start'}}>
+                                        <Text adjustsFontSizeToFit={true} style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
                                           {workout.workout_name}
                                         </Text>
 
 
-                                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
  {/* Rest Time */}
  <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
  <View >
