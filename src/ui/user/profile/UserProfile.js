@@ -325,8 +325,16 @@ function UserProfile({ userData, isCurrentUser }) {
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
                 <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
-                <Appbar.Content title={userData.email} titleStyle={styles.appbarTitle} />
-            {renderFollowButton()}
+                
+                {
+                    isCurrentUser === true ?
+                    null
+                    :
+                    <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
+                        currUserUUID: currUserData.user_uuid,
+                        otherUserUUID: userData.user_uuid,
+                    })} />
+                }
             </Appbar.Header>
             <ScrollView>
                 <View>

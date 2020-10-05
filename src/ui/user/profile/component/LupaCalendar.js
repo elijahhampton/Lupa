@@ -143,7 +143,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
         <Surface style={{elevation: 0,borderRadius: 3, alignItems: 'center', backgroundColor: 'white', borderWidth: 0.5, borderColor: '#E5E5E5', padding: 20,  marginVertical: 15, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
 
           <Text style={{fontFamily: 'Avenir-Heavy',  alignSelf: 'flex-start', fontSize: 15}}>
-            {moment(timeBlock.startTime).format('LT').toString()} - {moment(timeBlock.endTime).format('LT').toString()}
+            {timeBlock.startTime.toString()} - {timeBlock.endTime.toString()}
           </Text>
           
         </Surface>
@@ -381,11 +381,6 @@ height={300}>
 
   return (
     <View style={styles.container}>
-         <Button onPress={handleOpenRequestBookingDialog} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
-      <Text style={{fontSize: 12}}>
-      Book Me
-      </Text>
-    </Button>
           <Agenda
     markingType="period"
   // The list of items that have to be displayed in agenda. If you want to render item as empty date

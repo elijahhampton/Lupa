@@ -576,15 +576,20 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
                 <ThinFeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
-                <View>
-
             
-                <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
-                    currUserUUID: currUserData.user_uuid,
-                    otherUserUUID: userData.user_uuid,
-                })} />
 
-                </View>
+                {
+                    isCurrentUser === true ?
+                    null
+                    :
+                    <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
+                        currUserUUID: currUserData.user_uuid,
+                        otherUserUUID: userData.user_uuid,
+                    })} />
+                }
+               
+
+ 
 
              
             </Appbar.Header>

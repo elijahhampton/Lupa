@@ -70,10 +70,12 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
       if (typeof(entryDate) == 'undefined') {
         return;
       }
+
+      alert(startTime)
       
       const timeBlock = {
-        startTime: startTime,
-        endTime: endTime,
+        startTime: moment(startTime).format('LT').toString(),
+        endTime: moment(endTime).format('LT').toString(),
       }
 
       let currentSchedulerTimes  = currUserData.scheduler_times;

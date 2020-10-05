@@ -15,7 +15,7 @@ import {
     FAB,
     Divider,
     Chip,
-     Avatar
+     Avatar, Button
 } from 'react-native-paper';
 
 import { useSelector } from 'react-redux'
@@ -105,6 +105,11 @@ function ShareProgramModal({ navigation, route }) {
     }
 
     const handleApply = () => {
+        if (selectedUsers.length === 0) {
+          navigation.pop();
+          return;
+        }
+
         try {
             LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, selectedUsers, route.params.programData);
             navigation.pop()
@@ -178,6 +183,9 @@ function ShareProgramModal({ navigation, route }) {
                 }}>
                     <Appbar.Action onPress={() => navigation.pop()} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}/>
                     <Appbar.Content title="Share Program" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                    <Button color="#1089ff" mode="text" onPress={handleApply}>
+                        Save
+                    </Button>
                 </Appbar.Header>
 
                 <View style={styles.contentContainer}>
