@@ -50,11 +50,6 @@ function MyPrograms(props) {
 
                 } else {
                     userPrograms.push(document);
-                    userPrograms.push(document);
-                    userPrograms.push(document);
-                    userPrograms.push(document);
-                    userPrograms.push(document);
-                    userPrograms.push(document);
                 }
                 
             });

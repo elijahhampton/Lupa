@@ -53,7 +53,7 @@ export const createStripeCustomerAccount = (email, uuid) => {
 
     }).catch(error => {
       // Handle error
-      alert(error);
+
     });
   }
 

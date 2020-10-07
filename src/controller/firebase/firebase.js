@@ -252,7 +252,7 @@ usernameIsTaken = (username) => {
       return true;
     }
   } catch(error) {
-    alert(error);
+
     return false;
   }
   })
@@ -272,7 +272,7 @@ emailIsTaken = (email) => {
         return true;
       }
     } catch(error) {
-      alert(error);
+   
       return false;
     }
     })

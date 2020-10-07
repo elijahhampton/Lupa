@@ -236,7 +236,7 @@ export default class UserController {
             return Promise.resolve(data);
 
         } catch (error) {
-            alert(error)
+     
             let errdata = getLupaUserStructure()
             return Promise.resolve(errdata)
         }
@@ -371,7 +371,7 @@ export default class UserController {
 
                     }
                 } catch (error) {
-                    alert(error)
+                
                 }
                 break;
             case 'program_data':
@@ -405,7 +405,7 @@ export default class UserController {
 
                         }
                     } catch (error) {
-                        alert(error)
+                      
                     }
                     break;
             case UserCollectionFields.CHATS:
@@ -655,7 +655,7 @@ export default class UserController {
                 })
             })
         } catch (error) {
-            alert(error)
+       
             trainers = []
         }
 
@@ -1060,14 +1060,14 @@ export default class UserController {
                         }
                     }
                 } catch (error) {
-                    alert(error)
+        
                     LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
                     continue;
                 }
 
             }
         } catch (error) {
-            alert(error)
+  
             LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
             programsData = [];
         }
@@ -1322,7 +1322,7 @@ export default class UserController {
                 result = snapshot.data().chats;
             });
         } catch (error) {
-            alert(error);
+   
             return Promise.resolve([])
         }
 
@@ -1392,15 +1392,24 @@ export default class UserController {
         return Promise.resolve(featuredProfiles)
     }
 
-    purchaseProgram = async (currUserData, programData) => {
+    purchaseProgram = async (currentUserData, programData) => {
         let updatedProgramSnapshot;
         let GENERATED_CHAT_UUID, chats;
+
+        let currUserData = currentUserData;
+
+        if (typeof(currUserData) == 'undefined') {
+            const uuid = await LUPA_AUTH.currentUser.uid;
+            USER_COLLECTION.doc(uuid).get().then(documentSnapshot => {
+                currUserData = documentSnapshot.data();
+            })
+        }
 
 
         const currUserUUID = await currUserData.user_uuid
         const programOwnerUUID = programData.program_owner;
 
-        try {
+      
             //add the program and programData to users list
             await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
             let variationProgramData = programData;
@@ -1427,6 +1436,8 @@ export default class UserController {
                 program_participants: updatedParticipants,
                 program_purchase_metadata: updatedPurchaseMetadata,
             });
+
+            try {
 
             //setup trainer and user chat channel
             if (currUserUUID.charAt(0) < programOwnerUUID.charAt(0)) {
@@ -1490,7 +1501,11 @@ export default class UserController {
 
             }
         } catch (err) {
-            alert(err)
+            await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
+                updatedProgramSnapshot = snapshot.data();
+            })
+
+            return Promise.resolve(updatedProgramSnapshot);
         }
 
         /** **************/
@@ -1515,7 +1530,11 @@ export default class UserController {
             await Fire.shared.append(message)
 
         } catch (err) {
-            alert(err)
+            await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
+                updatedProgramSnapshot = snapshot.data();
+            })
+
+            return Promise.resolve(updatedProgramSnapshot);
         }
 
 
@@ -1608,7 +1627,7 @@ export default class UserController {
                 vlogsList = snapshot.data().vlogs;
             });
         } catch (error) {
-           // alert(error);
+         
             return Promise.resolve([])
         }
 

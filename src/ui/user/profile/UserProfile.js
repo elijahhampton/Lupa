@@ -33,10 +33,12 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import VlogFeedCard from '../component/VlogFeedCard';
 import { useSelector } from 'react-redux';
 import { retrieveAsyncData, storeAsyncData } from '../../../controller/lupa/storage/async';
+import EditBioModal from './settings/modal/EditBioModal';
 
 function UserProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
+    const [editBioModalIsVisible, setEditBioModalIsVisible] = useState(false);
     const [currPage, setCurrPage] = useState(0);
     const [userVlogs, setUserVlogs] = useState([])
     const [postType, setPostType] = useState("VLOG");
@@ -61,7 +63,7 @@ function UserProfile({ userData, isCurrentUser }) {
                 setReady(true)
             } catch (error) {
                 setReady(false)
-                alert(error);
+         
                 setUserVlogs([])
             }
         }
@@ -102,10 +104,14 @@ function UserProfile({ userData, isCurrentUser }) {
      */
     const _chooseProfilePictureFromCameraRoll = async () => {
 
-        ImagePicker.showImagePicker({
+        ImagePicker.launchImageLibrary({
             allowsEditing: true
         }, async (response) => {
             if (!response.didCancel) {
+                if (response.uri == "" || response.uri == null || typeof(response.uri) == 'undefined') {
+                    return;
+                }
+
                 setProfileImage(response.uri);
 
                 let imageURL;
@@ -116,7 +122,7 @@ function UserProfile({ userData, isCurrentUser }) {
 
                 //update in Firestore
                 LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
-
+      
             }
         });
         //TODO
@@ -324,7 +330,7 @@ function UserProfile({ userData, isCurrentUser }) {
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
+                <Feather1s name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 
                 {
                     isCurrentUser === true ?
@@ -375,6 +381,8 @@ function UserProfile({ userData, isCurrentUser }) {
                     </Tab>
                 </Tabs>
             </ScrollView>
+
+            <EditBioModal isVisible={editBioModalIsVisible} closeModalMethod={() => setEditBioModalIsVisible(false)} />
         </SafeAreaView>
     )
 }

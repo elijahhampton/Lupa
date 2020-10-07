@@ -103,13 +103,13 @@ function LoginView(props) {
         await retrieveAsyncData('PREVIOUS_LOGIN_PASSWORD').then(res => {
           dispatchFormState({
             type: FORM_INPUT_UPDATE,
-            value: '',
+            value: res,
             isValid: true,
             input: 'loginPassword'
           })
         });
       } catch(error) {
-        alert(error)
+
         LOG_ERROR('LoginView.js', 'Unhandled error in LoginView.js componentDidMount', error);
         dispatchFormState({
           type: FORM_INPUT_UPDATE,

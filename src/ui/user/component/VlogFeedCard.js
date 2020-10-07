@@ -4,6 +4,7 @@ import {
     View,
     Text,
     Dimensions,
+    Image,
     TouchableOpacity,
 } from 'react-native';
 
@@ -44,12 +45,22 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
             if (typeof(vlogData) == 'undefined' || typeof(vlogData.vlog_media.uri) == 'undefined' || vlogData.vlog_media.uri == "") {
                 return null;
             };
+
+            if (vlogData.vlog_media.media_type == "IMAGE") {
+                return (
+                <Surface style={{elevation: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 10, width: Dimensions.get('window').width, height: 400, alignSelf: 'center'}}>
+                <Image source={{uri: vlogData.vlog_media.uri}} style={{ marginVertical: 0,  width: '100%', height: '100%', flex: 1, alignSelf: 'center' }} />
+                   </Surface>
+                )
+            } else if (vlogData.vlog_media.media_type == 'VIDEO') {
+                return (
+                    <Surface style={{elevation: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 10, width: Dimensions.get('window').width, height: 400, alignSelf: 'center'}}>
+                    <Video useNativeControls={false} isMuted={isMuted} isLooping={true} resizeMode="stretch" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center' }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
+                    </Surface>
+                )
+            }
     
-            return (
-                <Surface style={{elevation: 0, borderRadius: 10, width: Dimensions.get('window').width, height: 400, alignSelf: 'center'}}>
-                <Video useNativeControls={false} isMuted={isMuted} isLooping={true} resizeMode="stretch" style={{ marginVertical: 0,  width: '100%', height: '100%', alignSelf: 'center' }} source={{ uri: vlogData.vlog_media.uri }} shouldPlay={shouldPlay} />
-                </Surface>
-            )
+      
         } catch(error) {
             return null;
         }

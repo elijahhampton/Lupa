@@ -92,9 +92,7 @@ const SignUp = props => {
       Alert.alert(
         'Terms and Service',
         'Please agree to the Terms and Service before creating an account.',
-        [{text: 'Okay', onPress: () => {
-          console.log('Okay')
-        }}
+        [{text: 'Okay', onPress: () => {}}
         ]
       )
     }
@@ -106,13 +104,8 @@ const SignUp = props => {
         Alert.alert(
           'Email address in use',
           'This email address you entered is already in use.',
-          [{text: 'Okay', onPress: () => {
-
-          }},
-          {
-            text: 'Recover Password',
-            onPress: () => alert('Too bad')
-          }
+          [{text: 'Okay', onPress: () => {}},
+          {text: 'Recover Password', onPress: () => {}}
           ]
         )
         return;
@@ -124,7 +117,12 @@ const SignUp = props => {
     if (emailExist == true) {
       return;
     } else {
+      try {
       await dispatch(authActions.signup(attemptedEmail, attemptedPassword))
+      } catch(error) {
+        return;
+      }
+      
       navigation.navigate('Onboarding')
       _setupRedux()
      // storeAsyncData('RECENTLY_INTERACTED_USERS', [])

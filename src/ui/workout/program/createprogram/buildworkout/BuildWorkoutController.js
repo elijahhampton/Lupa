@@ -78,11 +78,11 @@ class BuildWorkoutController extends React.Component {
             libraryData: [
                 {
                     title: "Balance",
-                    data:this.props.lupa_data.Application_Workouts.applicationWorkouts._55.balance_workouts,
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.balance_workouts,
                 },
                 {
                     title: "Flexibility",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.flexibility_workouts //WRONG
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.flexibility_workouts 
                 },
                 {
                     title: "Core",
@@ -105,27 +105,40 @@ class BuildWorkoutController extends React.Component {
      * Lifecycle method componentDidMount
      */
     async componentDidMount() {
+        let weeks = [], workoutDays = [];
         const programDuration = this.props.programData.program_duration;
-        let weeks = [], workoutDays = new Array(programDuration);
 
-        for (let i = 0; i < programDuration; i++) {
-            await weeks.push(i);
-            workoutDays[i] = {
-                Monday: [],
-                Tuesday: [],
-                Wednesday: [],
-                Thursday: [],
-                Friday: [],
-                Saturday: [],
-                Sunday: []
+        if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
+            workoutDays = new Array(programDuration);
+            for (let i = 0; i < programDuration; i++) {
+                await weeks.push(i);
+                workoutDays[i] = {
+                    Monday: [],
+                    Tuesday: [],
+                    Wednesday: [],
+                    Thursday: [],
+                    Friday: [],
+                    Saturday: [],
+                    Sunday: []
+                }
             }
+        } else {
+          workoutDays = new Array(1)
+          await weeks.push(0)
+          workoutDays[0] = {
+            Monday: [],
+            Tuesday: [],
+            Wednesday: [],
+            Thursday: [],
+            Friday: [],
+            Saturday: [],
+            Sunday: []
+          }
         }
 
+    
         await this.setState({ ready: true, weeks: weeks, workoutDays: workoutDays })
-
-        console.log('CCCCCCCCCCC')
-        console.log(Object.keys(this.props.lupa_data.Application_Workouts.applicationWorkouts._55))
-        
+        console.log(this.props.lupa_data.Application_Workouts.applicationWorkouts)
     }
 
     /**
@@ -247,6 +260,10 @@ class BuildWorkoutController extends React.Component {
         }
 
         try {
+            if (typeof(workoutDays[currWeek][currDay]) == 'undefined') {
+                return null;
+            }
+
             if (workoutDays[currWeek][currDay].length === 0) {
                 return null;
             }
@@ -275,7 +292,6 @@ class BuildWorkoutController extends React.Component {
             )
         } catch (error) {
             LOG_ERROR('BuildWorkoutController.js', 'Caught unhandled exception in getCurrentDayContent', error);
-            return null;
         }
     }
 
@@ -460,10 +476,35 @@ class BuildWorkoutController extends React.Component {
         }
     }
 
+    renderTrainerButtons = () => {
+        if (this.props.lupa_data.Users.currUserData.isTrainer === false) {
+            return;
+        }
+
+        return (
+            
+            <SafeAreaView style={styles.buildOptionsSafeAreaView}>
+                    <Button onPress={this.openWeekDayPicker} uppercase={false} color="#1089ff" style={styles.buildOptionsButton} mode="contained" icon={() => <FeatherIcon color="white" name="chevron-up" />}>
+                        {this.getCurrentDay()}
+                    </Button>
+
+           
+                    <Button onPress={this.openWeekPicker} uppercase={false} color="#1089ff" style={styles.buildOptionsButton} mode="contained" icon={() => <FeatherIcon color="white" name="chevron-up" />}>
+                        Week {this.state.currWeekIndex + 1}
+                    </Button>
+           
+            </SafeAreaView>
+        )
+    }
+
     /**
      * Returns the current week index.
      */
     getCurrentWeek = () => {
+        if (this.props.lupa_data.Users.currUserData.isTrainer != true) {
+            return 0;
+        }
+        
         return this.state.currWeekIndex
     }
 
@@ -550,7 +591,7 @@ class BuildWorkoutController extends React.Component {
                                 />
             )
         } catch(error) {
-            alert(error)
+       
         }
     }
 
@@ -560,6 +601,10 @@ class BuildWorkoutController extends React.Component {
      * Renders the component display basd on currView
      */
     renderComponentDisplay = () => {
+        if (!this.state.ready) {
+            return null;
+        }
+        
         switch (this.state.currView) {
             case 0:
                 return (
@@ -628,19 +673,9 @@ class BuildWorkoutController extends React.Component {
                     </View>
                    
                     {this.renderWorkoutOptionsSheet()}
-                    {this.renderDropdownPicker()}
-                    {this.renderDayOfTheWeekDropdownPicker()}
-                    <SafeAreaView style={styles.buildOptionsSafeAreaView}>
-                            <Button onPress={this.openWeekDayPicker} uppercase={false} color="#1089ff" style={styles.buildOptionsButton} mode="contained" icon={() => <FeatherIcon color="white" name="chevron-up" />}>
-                                {this.getCurrentDay()}
-                            </Button>
-
-                   
-                            <Button onPress={this.openWeekPicker} uppercase={false} color="#1089ff" style={styles.buildOptionsButton} mode="contained" icon={() => <FeatherIcon color="white" name="chevron-up" />}>
-                                Week {this.state.currWeekIndex + 1}
-                            </Button>
-                   
-                    </SafeAreaView>
+                   {this.renderTrainerButtons()}
+                   {            this.renderDropdownPicker()}
+           { this.renderDayOfTheWeekDropdownPicker()}
                 </View>
                 );
             case 1:

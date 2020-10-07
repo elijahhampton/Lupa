@@ -23,6 +23,11 @@ const SKILL_BASED_INTEREST = [
     'Coordination',
     'Reaction Time',
     'Weight Loss',
+    'Test Preparation',
+    'Sport Specific',
+    'Bodybuilding',
+    'Health/Fitness Coach',
+    'Injury Prevention',
 ]
 
 const PHYSIOLOGICAL_BASED_INTEREST = [
@@ -83,7 +88,7 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
 
         forceStateUpdate(!stateUpdate)
     } catch(error) {
-        alert(error);
+
     }
     }
 
@@ -100,13 +105,18 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
     }
 
     const renderSaveOption = () => {
-        if (route.params.isOnboarding === false) {
-            return (
-                <Button color="#1089ff" style={{margin: 0, alignSelf: 'flex-end'}} mode="text" onPress={() =>  navigation.pop()}> 
-                    Save
-                </Button>
-            )
+        if (typeof(route) != 'undefined') {
+            if (typeof(route.params) != 'undefined') {
+                if (route.params.isOnboarding === false) {
+                    return (
+                        <Button color="#1089ff" style={{margin: 0, alignSelf: 'flex-end'}} mode="text" onPress={() =>  navigation.pop()}> 
+                            Save
+                        </Button>
+                    )
+                }
+            }
         }
+       
     }
 
     useEffect(() => {
@@ -131,31 +141,11 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
             </View>
             <View>
             <Text style={{paddingLeft: 20, fontFamily: 'Avenir-Medium'}}>
-                Skill Based
+                Goal Based
             </Text>
             <View style={[styles.container, styles.interestListContainer]}>
                 {
                     SKILL_BASED_INTEREST.map((interest, index, arr) => {
-                        return (
-                            <View key={interest}  style={[styles.interestContainer, {backgroundColor: pickedInterest.includes(interest) ? 'rgba(16, 136, 255, 0.2)' : '#FFFFFF' }]}>
-                            <Text style={styles.interestText}>
-                                {interest}
-                            </Text>
-                            <Checkbox.Android color="#1088ff" onPress={() => handleOnPickInterest(interest)} status={pickedInterest.includes(interest) ? 'checked' : 'unchecked'} key={interest} />
-                        </View>
-                        )
-                    })
-                }
-            </View>
-            </View>
-            
-            <View>
-            <Text style={{paddingLeft: 20, fontFamily: 'Avenir-Medium'}}>
-                Physiological Based
-            </Text>
-            <View style={[styles.container, styles.interestListContainer]}>
-                {
-                    PHYSIOLOGICAL_BASED_INTEREST.map((interest, index, arr) => {
                         return (
                             <View key={interest}  style={[styles.interestContainer, {backgroundColor: pickedInterest.includes(interest) ? 'rgba(16, 136, 255, 0.2)' : '#FFFFFF' }]}>
                             <Text style={styles.interestText}>

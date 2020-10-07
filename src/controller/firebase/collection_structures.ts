@@ -113,7 +113,7 @@ var lupa_workout : LupaWorkoutStructure = {
 }
 
 var lupa_user : LupaUserStructure = {
-    user_uuid: "",
+    user_uuid: 0,
     display_name: "",
     username: "",
     email: "",

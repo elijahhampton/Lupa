@@ -18,7 +18,7 @@ import {
     Dimensions,
     Button as NativeButton,
     RefreshControl,
-    Platform,
+    Platform
 } from 'react-native';
 
 import {
@@ -78,7 +78,6 @@ class Featured extends React.Component {
     }
 
     async componentDidMount() {
-
         const query = LUPA_DB.collection('vlogs').where('vlog_state', '==', this.props.lupa_data.Users.currUserData.location.state)//.orderBy('time_created', 'asc');
         vlogCollectionObserver = query.onSnapshot(querySnapshot => {
             const updatedState = [];
@@ -133,7 +132,7 @@ class Featured extends React.Component {
             return (
                 <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
                     <Caption style={{ fontFamily: 'Avenir-Light', fontSize: 15, textAlign: 'center', backgroundColor: '#FFFFFF' }} >
-                        There are not any vlogs in your area.  Check back later.
+                        There are no any vlogs in your area.  Check back later.
                     </Caption>
                 </View>
             )
@@ -146,8 +145,7 @@ class Featured extends React.Component {
             }
 
             return (
-                    <VlogFeedCard key={index} clickable={true} vlogData={vlog} showTopDivider={true} />
-                   
+                    <VlogFeedCard key={index} clickable={true} vlogData={vlog} showTopDivider={true} />  
             )
         })
     }

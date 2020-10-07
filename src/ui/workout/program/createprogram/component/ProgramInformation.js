@@ -210,7 +210,7 @@ function ProgramInformation(props) {
     }
 
     if (programLocation == "Launch Map") {
-      setRejectedReason("You must select a location for your program.")
+      setRejectedReason("It's important to set a location for your program incase a user decides to book you in person..")
       setSnackBarVisibility(true)
       return true;
     }
@@ -330,7 +330,7 @@ function ProgramInformation(props) {
 
   const getNextView = () => {
     //check program values
-    let retVal = false// checkInputs();
+    let retVal = false //checkInputs();
     
     if (retVal) {
       return;

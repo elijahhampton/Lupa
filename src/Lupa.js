@@ -95,7 +95,6 @@ class Lupa extends React.Component {
     })
     .catch((error) => {
       // …
-      alert(error)
     });
 
     generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid)

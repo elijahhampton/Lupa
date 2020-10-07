@@ -83,7 +83,7 @@ const WelcomeContentDriver = (props) => {
                     await dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload })
                 },
                 async (error) => {
-                    alert(error)
+    
                     const errLocationData = {
                         city: 'San Francisco',
                         state: 'CA',
@@ -105,7 +105,7 @@ const WelcomeContentDriver = (props) => {
                 },
             );
         } catch (error) {
-            alert(error)
+       
             const errLocationData = {
                 city: 'San Francisco',
                 state: 'CA',
@@ -221,7 +221,7 @@ const WelcomeContentDriver = (props) => {
                 />
 
             </View>
-            {
+            {/*
                 locationDataSet === true ?
                     <View style={{ flex: 1.5, justifyContent: 'space-evenly', alignItems: 'center' }}>
                         <Text style={[styles.headerText, { fontSize: 15, color: 'black', paddingVertical: 5 }]}>
@@ -244,7 +244,7 @@ const WelcomeContentDriver = (props) => {
 
                     :
                     null
-            }
+            */  }
 
             <ActivityIndicatorModal isVisible={loadingIndicatorIsShowing} />
         </View>

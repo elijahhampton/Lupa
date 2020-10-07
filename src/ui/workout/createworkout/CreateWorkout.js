@@ -182,7 +182,8 @@ class CreateWorkout extends React.Component {
             currWorkoutUUID: "",
             workoutComplete: false, 
             creatingWorkout: false,
-            workoutComplete: false
+            workoutComplete: false,
+            ready: false
         }
     }
 
@@ -211,8 +212,9 @@ class CreateWorkout extends React.Component {
         await this.setState({ programData: Object.assign(newState, updatedProgramData, {})})
         await this.LUPA_CONTROLLER_INSTANCE.createNewWorkout(UUID);
         
-        this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, this.state.programData);
+       await this.LUPA_CONTROLLER_INSTANCE.updateWorkoutInformation(this.state.currWorkoutUUID, this.state.programData);
 
+        await this.setState({ ready: true })
     }
 
     async componentWillUnmount() {
@@ -249,11 +251,26 @@ class CreateWorkout extends React.Component {
         this.setState({programData: Object.assign(oldState, updatedState, {}), workoutComplete: true, creatingWorkout: true });
     }
 
+    renderComponentDisplay = () => {
+        if (!this.state.ready) {
+            return (
+                <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+                     <ActivityIndicator size="large" color="#23374d" animating={true} />
+                </View>
+            )
+        }
+        return (
+            <>
+             <BuildWorkoutTool program_workout_days={[DAY]} toolIsFirstScreen={true} saveProgramWorkoutData={this.saveProgramWorkoutData} navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
+                <CreatingWorkoutModal workoutDataProp={this.state.programData} uuid={this.state.currWorkoutUUID} isVisible={this.state.creatingWorkout} closeModal={this.handleSuccessfulReset} />
+            </>
+        )
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.root}>
-                <BuildWorkoutTool program_workout_days={[DAY]} toolIsFirstScreen={true} saveProgramWorkoutData={this.saveProgramWorkoutData} navigation={this.props.navigation} programData={this.state.workoutData} goToIndex={this.goToIndex} programUUID={this.state.currWorkoutUUID} />
-                <CreatingWorkoutModal workoutDataProp={this.state.programData} uuid={this.state.currWorkoutUUID} isVisible={this.state.creatingWorkout} closeModal={this.handleSuccessfulReset} />
+            {this.renderComponentDisplay()}
             </SafeAreaView>
         )
     }

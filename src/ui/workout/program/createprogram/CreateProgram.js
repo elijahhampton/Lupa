@@ -139,7 +139,7 @@ const CreatingProgramModal = ({ uuid, closeModal, isVisible }) => {
 
                         <View style={{marginVertical: 10, width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                         <Button onPress={closeModal} uppercase={false} color="#1089ff" mode="contained" theme={{roundness: 8}} style={{elevation: 8, width: Dimensions.get('window').width - 100, alignItems: 'center', justifyContent: 'center', height: 45, borderColor: 'white'}}>
-                            Edit
+                            Exit
                         </Button>
                         </View>
     

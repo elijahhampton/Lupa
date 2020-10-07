@@ -41,6 +41,7 @@ import MyData from './src/ui/user/component/MyData';
 import PickInterest from './src/ui/user/modal/WelcomeModal/PickInterest';
 import CreateCustomWorkoutModal from './src/ui/workout/program/createprogram/buildworkout/modal/CreateCustomWorkoutModal';
 import VlogFeedCardExpanded from './src/ui/workout/modal/VlogFeedCardExpanded';
+import FollowerModal from './src/ui/user/profile/modal/FollowerModal';
 
 const App = () => {
   return (
@@ -212,6 +213,7 @@ function AppNavigator() {
       <StackApp.Screen name="PickInterest" component={PickInterest} initialParams={{ isOnboarding: false }} />
       <StackApp.Screen name="CreateCustomWorkout" component={CreateCustomWorkoutModal} />
       <StackApp.Screen name="VlogContent" component={VlogFeedCardExpanded} />
+      <StackApp.Screen name="FollowerView" component={FollowerModal} />
       </StackApp.Navigator>
   )
 }

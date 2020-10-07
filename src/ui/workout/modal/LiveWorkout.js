@@ -665,10 +665,7 @@ class LiveWorkout extends React.Component {
                                 {this.state.currentWorkout.workout_name}
                             </Text>
                             <Text style={{ fontFamily: 'Avenir-Light' }}>
-                                {this.state.currentWorkout.workout_description == '' ? 'No description found for this workout.' : this.state.currentWorkout.workout_description}
-                            </Text>
-                            <Text>
-                                Week: {this.state.currentWeek + 1}
+                                {this.state.currentWorkout.workout_description == '' || typeof(this.state.currentWorkout.workout_description) == 'undefined' ? 'No description found for this workout.' : this.state.currentWorkout.workout_description}
                             </Text>
                         </View>
 

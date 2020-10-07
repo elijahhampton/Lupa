@@ -39,42 +39,48 @@ const ProfileController = ({ route }) => {
             id = currUserData.user_uuid
             setUserUUID(id)
         }
+
+            return id;
         } catch(error) {
-            alert(error);
-            return 0
+            
         }
+        
 
         return id;
     }
 
     const renderProfile = () => {
-        
+        if (typeof(route.params.userUUID) == 'undefined' || !ready) {
+            return <View style={{flex: 1}} />
+        }
+
+            try {
             switch(userData.isTrainer) {
-       
                 case true:
                    return <TrainerProfile userData={userData} isCurrentUser={isCurrentUser} uuid={userUUID} />
                 case false:
-                   return <UserProfile userData={userData} isCurrentUser={isCurrentUser} />
+                   return <UserProfile userData={userData} isCurrentUser={isCurrentUser} uuid={userUUID} />
                 default:
                     return <View style={{flex: 1}} />
         }
+    } catch(error) {
+        return <View style={{flex: 1}} />
+    }
     }
 
     useEffect(() => {
-        let currUserSubscription;
+        let currUserSubscription = function() {}
         let receivedUUID;
        async function fetchData() {
             const uuid = await _getId();
-            
             currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(documentSnapshot => {
                 const userData = documentSnapshot.data()
                 setUserData(userData)
             });
 
             if (uuid == userData.user_uuid) {
-                setIsCurrentUser(true)
+                setIsCurrentUser(true);
             } else {
-             
                 setIsCurrentUser(false);
             }
 
@@ -82,12 +88,9 @@ const ProfileController = ({ route }) => {
 
         try {
             fetchData();
-
-          
         } catch(error) {
             setReady(false);
             setIsCurrentUser(false)
-            alert(error);
         }
 
 
@@ -95,7 +98,7 @@ const ProfileController = ({ route }) => {
         setReady(true);
         LOG('ProfileController.js', 'Running useEffect.')
         return () => currUserSubscription()
-    }, [userData.user_uuid]);
+    }, [ready, userData.user_uuid]);
 
     return renderProfile()
 }

@@ -45,7 +45,7 @@ export default class ProgramController {
                 })
             }
         } catch(error) {
-            alert(error)
+          
             return Promise.resolve([]);
         }
 
@@ -122,27 +122,6 @@ export default class ProgramController {
             resistance_workouts: resistanceWorkouts,
             plyometric_workouts: plyometricWorkouts,
         }
-
-        console.log(allWorkouts.balance_workouts.length)
-        console.log('AAAAAAAAAAA')
-        console.log(allWorkouts.flexibility_workouts.length)
-        console.log('AAAAAAAAAAA')
-        console.log(allWorkouts.core_workouts.length)
-        console.log('AAAAAAAAAAA')
-        console.log(allWorkouts.resistance_workouts.length)
-        console.log('AAAAAAAAAAA')
-        console.log(allWorkouts.plyometric_workouts.length)
-
-
-       /* const WORKOUTS = require('../../model/data_structures/workout/json/workouts.json')
-        
-        
-        const allWorkouts = {
-            lupa_workouts: WORKOUTS.lupa_workouts,
-            lower_workouts: WORKOUTS.lower_workouts,
-            upper_workouts: WORKOUTS.upper_workouts,
-            core_workouts: WORKOUTS.core_workouts
-        };*/
 
         return Promise.resolve(allWorkouts);
     }
@@ -354,28 +333,28 @@ export default class ProgramController {
         await WORKOUT_COLLECTION.doc(uuid).update({
             completedProgram: true
         });
-console.log('a')
+
         let workoutData = getLupaWorkoutInformationStructure();
         await WORKOUT_COLLECTION.doc(uuid).get().then(documentSnapshot => {
             workoutData = documentSnapshot.data();
         })
-console.log('b')
+
         let userWorkoutData = {}
         const userUUID = await LUPA_AUTH.currentUser.uid
         console.log(userUUID)
         await USERS_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
             userWorkoutData = documentSnapshot.data().workouts;
         })
-console.log('c')
+
         userWorkoutData[dateString] = [workoutData];
         console.log(userWorkoutData)
-console.log('e')
+
         await USERS_COLLECTION.doc(userUUID).update({
             workouts: userWorkoutData
         })
-        console.log('f')
+ 
     } catch(error) {
-        alert(error)
+      
     }
     }
 

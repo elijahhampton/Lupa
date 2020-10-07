@@ -29,7 +29,7 @@ export const signup = (email, password) => {
 
       //Catch error on signup
     }).catch(error => {
-      alert(error)
+      alert('Oops! Something went wrong! Please try again.');
     });
 
     //Add the user's information to the database

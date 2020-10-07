@@ -91,7 +91,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             allowsEditing: true
         }, async (response) => {
             if (!response.didCancel) {
-                setProfileImage(response.uri);
+
+                if (response.uri == "" || response.uri == null || typeof(response.uri) == 'undefined') {
+                    return;
+                }
+
+                setProfileImage(response.uri)
 
                 let imageURL;
                 //update in FB storage
@@ -443,10 +448,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             } else {
                 fetchPrograms(userData.user_uuid);
             }
-          //  checkCurrFitnessLocation()
+            checkCurrFitnessLocation()
         } catch (error) {
             setReady(false)
-            alert(error);
+ 
             setUserVlogs([])
             setUserPrograms([])
         }
@@ -667,7 +672,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     )
             } catch(error) {
         
-                alert(error)
+          
             }
 }
 

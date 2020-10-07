@@ -69,7 +69,7 @@ function TrainerDashboard(props) {
                  });
             } catch(error) {
                 setData({})
-                alert(error);
+                
                 setComponentReady(false)
             }
         }

@@ -8,7 +8,8 @@ import {
     Dimensions,
     ScrollView,
     StyleSheet,
-    SafeAreaView
+    SafeAreaView,
+    TextInput
 } from 'react-native'
 
 import {
@@ -30,9 +31,11 @@ import { Pagination } from 'react-native-snap-carousel'
 import {Picker} from '@react-native-community/picker';
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 let weeks = []
 
 const restTimes = [
+    'Edit',
     '15',
     '30',
     '90',
@@ -42,6 +45,7 @@ const restTimes = [
 ]
 
 const exerciseTempos = [
+    'Edit',
     '2-1-2',
     '4-0-2',
 ]
@@ -56,6 +60,17 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
 
     const [pickedExerciseTempo, setPickedExerciseTempo] = useState(exerciseTempos[0]);
     const [pickedRestTime, setPickedRestTime] = useState(restTimes[0])
+
+    const [editTempoIsVisible, setEditTempo] = useState(false);
+    const [editRestTimeIsVisible, setEditRestTime] = useState(false);
+
+    const [inputRestTimeOneText, setRestTimeInputOneText] = useState("")
+    const [inputRestTimeTwoText, setRestTimeInputTwoText] = useState("")
+    const [inputRestTimeSupersetText, setRestTimeSupersetText] = useState("")
+
+    const [inputTempoOneText, setTempoInputOneText] = useState("");
+    const [inputTempoTwoText, setTempoInputTwoText] = useState("");
+    const [inputTempoSupersetText, setTempoSupersetText] = useState("");
 
     const handleChangeRepsSliderValue = (workoutRef, value) => {
         workoutRef.workout_reps = value;
@@ -88,11 +103,50 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
     }
 
     const changeExerciseRestTime = (workoutRef, restTime) => {
+        if (restTime == 'Edit') {
+            setEditRestTime(true);
+            return;
+        }
         workoutRef.workout_rest_time = restTime;
         setPickedRestTime(restTime)
     }
 
+    const handleOnChangeRestTimeOneInputText  = (text, workoutRef) => {
+        setRestTimeInputOneText(text);
+        workoutRef.workout_rest_time = inputRestTimeOneText;
+    }
+
+    const handleOnChangeRestTimeTwoInputText = (text, workoutRef) => {
+        setRestTimeInputTwoText(text);
+        workoutRef.workout_rest_time = inputRestTimeTwoText;
+    }
+
+    const handleOnChangeRestTimeSupersetInputText = (text, workoutRef) => {
+        setRestTimeSupersetText(text);
+        workoutre.workout_rest_time = inputRestTimeSupersetText;
+    }
+
+    const handleOnChangeTempoInputOneText  = (text, workoutRef) => {
+       setTempoInputOneText(text)
+        workoutRef.workout_tempo = inputTempoOneText;
+    }
+
+    const handleOnChangeTempoInputTwoText = (text, workoutRef) => {
+        setTempoInputTwoText(text)
+        workoutRef.workout_tempo = inputTempoTwoText;
+    }
+
+    const handleOnChangeTempoSupersetText = (text, workoutRef) => {
+        setTempoSupersetText(text)
+        workoutre.workout_tempo = inputRestTimeSupersetText;
+    }
+
     const changeExerciseTempo = (workoutRef, tempo) => {
+        if (tempo == 'Edit') {
+            setEditTempo(true);
+            return;
+        }
+
         workoutRef.workout_tempo = tempo;
         setPickedExerciseTempo(tempo);
     }
@@ -214,36 +268,71 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
 
                                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
  {/* Rest Time */}
- <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
- <View >
+ <View style={{alignItems: 'flex-start'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
                 Rest Time
             </Text>
-                <FeatherIcon name="chevron-up" />
-            </View>
+            {
+            editRestTimeIsVisible === true ?
+            null
+            :
+            <FeatherIcon name="chevron-up" />
+        }
 
-<Text style={{fontSize: 20}}>
-                    {workout.workout_rest_time}
-                </Text>
+            </View>
+            {
+                editRestTimeIsVisible === true ?
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                 <TextInput key={workout.workout_uid} value={inputRestTimeOneText} onChangeText={text => handleOnChangeRestTimeOneInputText(text, workout)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
+                 <FeatherIcon onPress={() => setEditRestTime(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
+            
+                </View>
+
+               
+                :
+
+                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
+
+                <Text style={{fontSize: 20}}>
+                                    {workout.workout_rest_time}
+                                </Text>
+                
+                                </TouchableWithoutFeedback>
+            }
+          
         </View>
- </TouchableWithoutFeedback>
 
           {/* Tempo */}
-          <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
-          <View>
+          <View style={{alignItems: 'flex-start'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
                 Tempo
             </Text>
+            {
+            editTempoIsVisible === true ?
+                null
+                :
                 <FeatherIcon name="chevron-up" />
+            }
             </View>
+            {
+                editTempoIsVisible === true ?
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <TextInput key={workout.workout_uid} value={inputTempoOneText} onChangeText={text => handleOnChangeTempoInputOneText(text, workout)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
+                <FeatherIcon onPress={() => setEditTempo(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
+           
+               </View>
 
-<Text style={{fontSize: 20}}>
-{workout.workout_tempo}
-                </Text>
+                :
+                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
+                <Text style={{fontSize: 20}}>
+                {workout.workout_tempo}
+                                </Text>
+                                </TouchableWithoutFeedback>
+            }
+       
         </View>
-          </TouchableWithoutFeedback>
                                         </View>
 
                                     
@@ -325,48 +414,83 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                                 scrollEventThrottle={3}
                                 contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
                         >
-                        <View style={{flex: 1, height: 380, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{flex: 1, height: 420, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
                                     <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
                                      <View style={{flex: 1,}}>
 
-                                        <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                        <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
+                                        <View style={{paddingVertical: 5, paddingHorizontal: 10, alignItems: 'flex-start'}}>
+                                        <Text adjustsFontSizeToFit={true} style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
                                           {workout.workout_name}
                                         </Text>
 
 
-                                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
  {/* Rest Time */}
- <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
- <View >
+ <View style={{alignItems: 'flex-start'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
                 Rest Time
             </Text>
-                <FeatherIcon name="chevron-up" />
-            </View>
+            {
+            editRestTimeIsVisible === true ?
+            null
+            :
+            <FeatherIcon name="chevron-up" />
+        }
 
-<Text style={{fontSize: 20}}>
-                    {workout.workout_rest_time}
-                </Text>
+            </View>
+            {
+                editRestTimeIsVisible === true ?
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                 <TextInput key={workout.workout_uid} value={inputRestTimeTwoText} onChangeText={text => handleOnChangeRestTimeTwoInputText(text, workout)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
+                 <FeatherIcon onPress={() => setEditRestTime(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
+            
+                </View>
+
+               
+                :
+
+                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
+
+                <Text style={{fontSize: 20}}>
+                                    {workout.workout_rest_time}
+                                </Text>
+                
+                                </TouchableWithoutFeedback>
+            }
+          
         </View>
- </TouchableWithoutFeedback>
 
           {/* Tempo */}
-          <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
-          <View>
+          <View style={{alignItems: 'flex-start'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
                 Tempo
             </Text>
+            {
+            editTempoIsVisible === true ?
+                null
+                :
                 <FeatherIcon name="chevron-up" />
+            }
             </View>
+            {
+                editTempoIsVisible === true ?
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <TextInput key={workout.workout_uid} value={inputTempoTwoText} onChangeText={text => handleOnChangeTempoInputTwoText(text, workout)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
+                <FeatherIcon onPress={() => setEditTempo(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
+           
+               </View>
 
-<Text style={{fontSize: 20}}>
-{workout.workout_tempo}
-                </Text>
+                :
+                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
+                <Text style={{fontSize: 20}}>
+                {workout.workout_tempo}
+                                </Text>
+                                </TouchableWithoutFeedback>
+            }
+       
         </View>
-          </TouchableWithoutFeedback>
                                         </View>
 
                                     
@@ -433,48 +557,83 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                                     {
                                         workout.superset.map((superset, index, arr) => {
                                             return (
-                                                <View style={{flex: 1, height: 380, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
+                                                <View style={{flex: 1, height: 420, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
                                                 <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
                                                  <View style={{flex: 1,}}>
             
-                                                    <View style={{paddingVertical: 5, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                                    <Text style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
-                                                      {superset.workout_name}
-                                                    </Text>
+                                                    <View style={{paddingVertical: 5, paddingHorizontal: 10, alignItems: 'flex-start'}}>
+                                                    <Text adjustsFontSizeToFit={true} style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
+                                          {superset.workout_name}
+                                        </Text>
             
             
                                                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
              {/* Rest Time */}
-             <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
-             <View >
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
-                            Rest Time
-                        </Text>
-                            <FeatherIcon name="chevron-up" />
-                        </View>
+             <View style={{alignItems: 'flex-start'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
+                Rest Time
+            </Text>
+            {
+            editRestTimeIsVisible === true ?
+            null
+            :
+            <FeatherIcon name="chevron-up" />
+        }
+
+            </View>
+            {
+                editRestTimeIsVisible === true ?
+                <View key='superSetRestTimeView' style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                 <TextInput key={superset.workout_uid} value={inputRestTimeSupersetText} onChangeText={text => handleOnChangeRestTimeSupersetInputText(text, superset)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
+                 <FeatherIcon onPress={() => setEditRestTime(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
             
-            <Text style={{fontSize: 20}}>
-                                {superset.workout_rest_time}
-                            </Text>
-                    </View>
-             </TouchableWithoutFeedback>
+                </View>
+
+               
+                :
+
+                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
+
+                <Text style={{fontSize: 20}}>
+                                    {superset.workout_rest_time}
+                                </Text>
+                
+                                </TouchableWithoutFeedback>
+            }
+          
+        </View>
             
                       {/* Tempo */}
-                      <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
-                      <View>
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
-                            Tempo
-                        </Text>
-                            <FeatherIcon name="chevron-up" />
-                        </View>
-            
-            <Text style={{fontSize: 20}}>
-            {superset.workout_tempo}
-                            </Text>
-                    </View>
-                      </TouchableWithoutFeedback>
+                      <View style={{alignItems: 'flex-start'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
+                Tempo
+            </Text>
+            {
+            editTempoIsVisible === true ?
+                null
+                :
+                <FeatherIcon name="chevron-up" />
+            }
+            </View>
+            {
+                editTempoIsVisible === true ?
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <TextInput key={workout.workout_uid} value={inputTempoSupersetText} onChangeText={text => handleOnChangeTempoSupersetText(text, superset)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
+                <FeatherIcon onPress={() => setEditTempo(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
+           
+               </View>
+
+                :
+                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
+                <Text style={{fontSize: 20}}>
+                {workout.workout_tempo}
+                                </Text>
+                                </TouchableWithoutFeedback>
+            }
+       
+        </View>
                                                     </View>
             
                                                 
