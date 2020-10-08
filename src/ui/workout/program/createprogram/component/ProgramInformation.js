@@ -40,6 +40,7 @@ import { Input} from 'react-native-elements';
 import LupaMapView from '../../../../user/modal/LupaMapView'
 import { copyFileAssets } from 'react-native-fs';
 import { getLupaProgramInformationStructure } from '../../../../../model/data_structures/programs/program_structures';
+import NumberFormat from 'react-number-format';
 
 const months = ["January", "February", "March", "April",
   "May", "June", "July", "August", "September", "October",
@@ -227,7 +228,7 @@ function ProgramInformation(props) {
       return true;
     }
 
-    if (programPrice.length <= 3 || programPrice.length >= 5) {
+    if (programPrice.length <= 3 || programPrice.length >= 5 || !programPrice.toString().includes('.')) {
       setRejectedReason('Please enter a valid price. (Ex. 9.99, 20.22, 0.50)')
       setSnackBarVisibility(true)
     }

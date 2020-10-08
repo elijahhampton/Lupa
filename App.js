@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import LupaStore from './src/controller/redux/index';
 
 import LupaController from './src/controller/lupa/LupaController';
-import LUPA_DB, { LUPA_AUTH, registerAppWithFCM, generateMessagingToken } from './src/controller/firebase/firebase';
+import LUPA_DB, { LUPA_AUTH, registerAppWithFCM, generateMessagingToken, UserAuthenticationHandler } from './src/controller/firebase/firebase';
 import { getLupaUserStructure, getLupaPackStructure } from './src/controller/firebase/collection_structures';
 import { getLupaProgramInformationStructure } from './src/model/data_structures/programs/program_structures';
 import CreateProgram from './src/ui/workout/program/createprogram/CreateProgram';
@@ -119,8 +119,7 @@ const SwitchNavigator = () => {
   }
 
   useEffect(() => {
-    async function getUserAuthState() {
-      
+    const getUserAuthState = async () => {
       try {
         await LUPA_AUTH.onAuthStateChanged(user => {
           if (typeof (user) == 'undefined' || user == null) {
@@ -128,22 +127,19 @@ const SwitchNavigator = () => {
             showAuthentication()
             return;
           }
-          console.log('A')
+
           fcmService.createNotificationListeners(onNotification, onOpenNotification);
-          console.log('B')
           localNotificationService.configure(onOpenNotification);
           introduceApp(user.uid)
         })
       } catch (err) {
         SplashScreen.hide()
         showAuthentication()
-        alert(err)
       }
     }
 
     function onOpenNotification(notify) {
       console.log('onOpenNotification')
-     console.log(notify)
     }
   
     function onNotification(notify) {
@@ -154,7 +150,6 @@ const SwitchNavigator = () => {
         playSound: true,
       }
 
-      console.log(notify)
       localNotificationService.showNotification(
         0,
         notify.notification.title,
