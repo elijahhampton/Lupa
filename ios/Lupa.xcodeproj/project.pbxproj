@@ -590,7 +590,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lupa.Lupa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rheasilvia.Lupa;
 				PRODUCT_NAME = lupa;
 				PROVISIONING_PROFILE_SPECIFIER = RheaSilviaDist;
 				VERSIONING_SYSTEM = "apple-generic";

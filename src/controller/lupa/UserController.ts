@@ -2,7 +2,11 @@
  *
  */
 
-import LUPA_DB, { LUPA_AUTH, FIRESTORE_INSTANCE, LUPA_DB_FIREBASE, Fire, FirebaseStorageBucket } from '../firebase/firebase.js';
+import LUPA_DB, {
+        LUPA_AUTH, 
+        Fire, 
+        FirebaseStorageBucket 
+    } from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
 const PROGRAMS_COLLECTION = LUPA_DB.collection('programs');
@@ -16,7 +20,7 @@ const tmpIndex = algoliaIndex.initIndex("tempDev_Users");
 const programsIndex = algoliaIndex.initIndex("dev_Programs");
 const tmpProgramsIndex = algoliaIndex.initIndex("tempDev_Programs");
 
-import { UserCollectionFields } from './common/types';
+import { LupaUserStructure, UserCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 
 import LOG, { LOG_ERROR } from '../../common/Logger';
@@ -54,7 +58,7 @@ export default class UserController {
      * @param attributes Array of attributes to base trainer generation.
      * @return Array of trainers.
      */
-    generateCuratedTrainers = async (uuid, attributes) => {
+    generateCuratedTrainers = async (uuid : String, attributes : Array<String>) : Promise<Object> => {
         let userData = getLupaUserStructure();
         await this.getUserInformationByUUID(uuid).then(data => {
             userData = data;
@@ -73,7 +77,7 @@ export default class UserController {
      * @param string URI of the profile image.
      * @return Returns a promise resolving the URL of the profile image in the storage bucket.
      */
-    saveUserProfileImage = async (string) => {
+    saveUserProfileImage = async (string: String) : Promise<String> => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -100,7 +104,7 @@ export default class UserController {
      * @param arrOfUUIDS Array of UUIDS for which to fetch user structure.
      * @return Array of user structures.
      */
-    getArrayOfUserObjectsFromUUIDS = async (arrOfUUIDS) => {
+    getArrayOfUserObjectsFromUUIDS = async (arrOfUUIDS: Array<String>) : Array<Object> => {
         let results = new Array();
         return new Promise(async (resolve, reject) => {
             for (let i = 0; i < arrOfUUIDS.length; ++i) {
@@ -112,23 +116,12 @@ export default class UserController {
         })
     }
 
-    isUsernameTaken = async (val) => {
-        let isTaken;
-
-        await USER_COLLECTION.where('username', '==', val).get().then(docs => {
-            if (docs.length == 0) {
-                isTaken = false;
-                return Promise.resolve(isTaken);
-            }
-            else {
-                isTaken = true;
-                return Promise.resolve(isTaken);
-            }
-        });
-    }
-
-
-    getAttributeFromUUID = async (uuid, attribute) => {
+    /**
+     * Returns an attribute from a user based on a uuid.
+     * @param uuid 
+     * @param attribute 
+     */
+    getAttributeFromUUID = async (uuid: String, attribute: String): Promise<any> => {
         let retValue;
 
         await USER_COLLECTION.doc(uuid).get().then(res => {
@@ -201,6 +194,7 @@ export default class UserController {
 
     /**
      * DEPRECATED - To be removed in version 0.8
+     * @deprecated
      */
     getCurrentUser = () => {
         return LUPA_AUTH.currentUser;
@@ -208,12 +202,18 @@ export default class UserController {
 
     /**
      * DEPRECATED - To be removed in version 0.8
+     * @deprecated
      */
     getCurrentUserUUID = async () => {
         return await LUPA_AUTH.currentUser.uid;
     }
 
-    getCurrentUserData = async (uuid = 0) => {
+    /**
+     * Returns data for the current user if no uuid is specified else 
+     * returns data from the uuid given.
+     * @param uuid 
+     */
+    getCurrentUserData = async (uuid = 0): Promise<Object> => {
         let data = {}
         try {
             let currentUserInformation = {}
@@ -243,7 +243,14 @@ export default class UserController {
 
     }
 
-    updateCurrentUser = async (fieldToUpdate, value, optionalData = "", optionalDataTwo = "") => {
+    /**
+     * Updates a specified field for the current user in the database.
+     * @param fieldToUpdate 
+     * @param value 
+     * @param optionalData 
+     * @param optionalDataTwo 
+     */
+    updateCurrentUser = async (fieldToUpdate: String, value: any, optionalData: any = "", optionalDataTwo: any = "") => {
         let currentUserHealthDocumentData;
 
         let currentUserDocument = await USER_COLLECTION.doc(this.getCurrentUser().uid);
@@ -525,7 +532,11 @@ export default class UserController {
         }
     }
 
-    getUserInformationByUUID = async uuid => {
+    /**
+     * Returns a user's information based on the uuid given.
+     * @param uuid 
+     */
+    getUserInformationByUUID = async (uuid: String) : Promise<Object> => {
         let userResult = getLupaUserStructure(), docData = getLupaProgramInformationStructure(), userPrograms = []
 
         if (uuid == "" || typeof (uuid) == 'undefined') {
@@ -550,7 +561,12 @@ export default class UserController {
         return Promise.resolve(userResult);
     }
 
-    addFollowerToUUID = async (uuidOfAccountBeingFollowed, uuidOfFollower) => {
+    /**
+     * 
+     * @param uuidOfAccountBeingFollowed 
+     * @param uuidOfFollower 
+     */
+    addFollowerToUUID = async (uuidOfAccountBeingFollowed: String, uuidOfFollower: String) => {
         let result = getLupaUserStructure();
         await USER_COLLECTION.doc(uuidOfAccountBeingFollowed).get().then(snapshot => {
             result = snapshot.data();
@@ -576,7 +592,12 @@ export default class UserController {
         });
     }
 
-    followAccountFromUUID = async (uuidOfUserToFollow, uuidOfUserFollowing) => {
+    /**
+     * 
+     * @param uuidOfUserToFollow 
+     * @param uuidOfUserFollowing 
+     */
+    followAccountFromUUID = async (uuidOfUserToFollow: String, uuidOfUserFollowing: String) => {
         let result = getLupaUserStructure();
         await USER_COLLECTION.doc(uuidOfUserFollowing).get().then(snapshot => {
             result = snapshot.data();
@@ -599,7 +620,12 @@ export default class UserController {
         });
     }
 
-    unfollowAccountFromUUID = async (uuidOfUserToUnfollow, uuidOfUserUnfollowing) => {
+    /**
+     * 
+     * @param uuidOfUserToUnfollow 
+     * @param uuidOfUserUnfollowing 
+     */
+    unfollowAccountFromUUID = async (uuidOfUserToUnfollow: String, uuidOfUserUnfollowing: String) => {
         let result;
         let accountToUpdate = USER_COLLECTION.doc(uuidOfUserUnfollowing);
 
@@ -618,7 +644,12 @@ export default class UserController {
         })
     }
 
-    removeFollowerFromUUID = async (uuidOfUserToRemove, uuidOfUserUnfollowing) => {
+    /**
+     * 
+     * @param uuidOfUserToRemove 
+     * @param uuidOfUserUnfollowing 
+     */
+    removeFollowerFromUUID = async (uuidOfUserToRemove: String, uuidOfUserUnfollowing: String) => {
         let result;
         let accountToUpdate = USER_COLLECTION.doc(uuidOfUserToRemove);
         await accountToUpdate.get().then(snapshot => {
@@ -639,7 +670,10 @@ export default class UserController {
         });
     }
 
-    getTrainers = async () => {
+    /**
+     * 
+     */
+    getTrainers = async (): Promise<Array<Object>> => {
         let trainers = []
         try {
             await USER_COLLECTION.where('isTrainer', '==', true).limit(5).get().then(docs => {
@@ -662,9 +696,9 @@ export default class UserController {
         return Promise.resolve(trainers);
     }
 
-
-    /**************** *******************/
-
+    /**
+     * 
+     */
     indexProgramsIntoAlgolia = async () => {
         let records = [], program = undefined;
 
@@ -698,6 +732,9 @@ export default class UserController {
         })
     }
 
+    /**
+     * 
+     */
     indexUsersIntoAlgolia = async () => {
         let records = [];
         await USER_COLLECTION.get().then(docs => {
@@ -795,7 +832,11 @@ export default class UserController {
     }
 
 
-    searchPrograms = (startsWith = '') => {
+    /**
+     * 
+     * @param startsWith 
+     */
+    searchPrograms = (startsWith = '') : Promise<Array<Object>> => {
         let currHit = undefined;
 
         return new Promise((resolve, reject) => {
@@ -822,7 +863,11 @@ export default class UserController {
         });
     }
 
-    getNearbyUsers = async (location) => {
+    /**
+     * 
+     * @param location 
+     */
+    getNearbyUsers = async (location): Promise<Array<String>> => {
         try {
             return new Promise((resolve, reject) => {
                 let nearbyUsers = [];
@@ -871,26 +916,6 @@ export default class UserController {
 
                     resolve(nearbyUsers);
 
-                    //parse all of ths hits for the city
-                    /*   for (var i = 0; i < hits.length; ++i) {
-                           let locationHighlightedResult = hits[i]._highlightResult;
-                           let compare = (locationHighlightedResult.location.city.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.city.toLowerCase())
-                           if (compare) {
-                               await nearbyUsers.push(hits[i]);
-                           }
-                       }*/
-
-                    //parse all of ths hits for the city
-                    /* for (var i = 0; i < hits.length; ++i) {
-                         let locationHighlightedResult = hits[i]._highlightResult;
-                        // let compare = (locationHighlightedResult.location.state.value.replace('<em>', '').replace('</em>', '').toLowerCase() == location.state.toLowerCase())
-                         if (true) {
-                             alert(hits[i])
-                             console.log(hits[i])
-                             await nearbyUsers.push(hits[i]);
-                         }
-                     }*/
-
                 })
             })
         } catch (err) {
@@ -899,7 +924,11 @@ export default class UserController {
 
     }
 
-    getNearbyTrainers = async (location) => {
+    /**
+     * 
+     * @param location 
+     */
+    getNearbyTrainers = async (location): Promise<Array<String>> => {
         return new Promise((resolve, reject) => {
             resolve([])
         })
@@ -983,7 +1012,7 @@ export default class UserController {
      * @param arr 
      * @param value 
      */
-    arrayRemove(arr, value) {
+    arrayRemove(arr, value): Array<any> {
         return arr.filter(function (ele) {
             return ele != value;
         });
@@ -1025,11 +1054,11 @@ export default class UserController {
      *  /**
      * Used for deleting workouts that were in the process of creation
      */
-     deleteWorkout = async (user_uuid, workoutUUID) => {
+     deleteWorkout = async (user_uuid: String, workoutUUID: String) => {
          await WORKOUTS_COLLECTION.doc(workoutUUID).delete();
      }
 
-    loadCurrentUserPrograms = async () => {
+    loadCurrentUserPrograms = async (): Promise<Array<Object>> => {
         let programUUIDS = [], programsData = [];
         let temp;
         let uuid = await this.getCurrentUser().uid;
@@ -1136,7 +1165,7 @@ export default class UserController {
      * @param programUUID 
      * @param url 
      */
-    saveProgramImage = async (programUUID, url) => {
+    saveProgramImage = async (programUUID: String, url: String): Promise<String> => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -1162,7 +1191,7 @@ export default class UserController {
      * 
      * @param workoutData 
      */
-    saveProgram = async (workoutData) => {
+    saveProgram = async (workoutData: Object) => {
         let imageURL;
         await this.saveProgramImage(workoutData.program_structure_uuid, workoutData.program_image).then(url => {
             imageURL = url;
@@ -1202,7 +1231,7 @@ export default class UserController {
      * @param userList 
      * @param program 
      */
-    handleSendUserProgram = async (currUserData, userList, program) => {
+    handleSendUserProgram = async (currUserData: Object, userList: Array<String>, program: Object) => {
         if (userList.length === 0) {
             return;
         }
@@ -1243,8 +1272,12 @@ export default class UserController {
 
     }
 
-    //user one is the sender
-    getPrivateChatUUID = async (currUserUUID, userTwo) => {
+    /**
+     * User one is the sender?
+     * @param currUserUUID 
+     * @param userTwo 
+     */
+    getPrivateChatUUID = async (currUserUUID: String, userTwo: String): Promise<String> => {
         let chats;
         let GENERATED_CHAT_UUID;
         if (currUserUUID.charAt(0) < userTwo.charAt(0)) {
@@ -1314,7 +1347,10 @@ export default class UserController {
     }
 
 
-    getAllCurrentUserChats = async () => {
+    /**
+     * 
+     */
+    getAllCurrentUserChats = async (): Promise<Array<Object>> => {
         let result = [];
 
         try {
@@ -1338,7 +1374,7 @@ export default class UserController {
      * @param graphicType 
      * @param uri 
      */
-    saveProgramWorkoutGraphic = async (workout, programUUID, graphicType, uri) => {
+    saveProgramWorkoutGraphic = async (workout: any, programUUID: String, graphicType: String, uri: String): Promise<String> => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -1360,7 +1396,11 @@ export default class UserController {
         })
     }
 
-    getUserNotificationsQueue = async (uuid) => {
+    /**
+     * 
+     * @param uuid 
+     */
+    getUserNotificationsQueue = async (uuid: String): Promise<Array<Object>> => {
         let notificationsQueue = [];
 
         try {
@@ -1374,7 +1414,10 @@ export default class UserController {
         return Promise.resolve(notificationsQueue);
     }
 
-    getFeaturedPrograms = async () => {
+    /**
+     * 
+     */
+    getFeaturedPrograms = async (): Promise<Array<Object>> => {
         let featuredProfiles = [];
         await PROGRAMS_COLLECTION.get().then(docs => {
             docs.forEach(doc => {
@@ -1392,7 +1435,12 @@ export default class UserController {
         return Promise.resolve(featuredProfiles)
     }
 
-    purchaseProgram = async (currentUserData, programData) => {
+    /**
+     * 
+     * @param currentUserData 
+     * @param programData 
+     */
+    purchaseProgram = async (currentUserData: Object, programData: Object) => {
         let updatedProgramSnapshot;
         let GENERATED_CHAT_UUID, chats;
 
@@ -1548,7 +1596,11 @@ export default class UserController {
         return Promise.resolve(updatedProgramSnapshot);
     }
 
-    saveVlogMedia = async (uri) => {
+    /**
+     * 
+     * @param uri 
+     */
+    saveVlogMedia = async (uri: String): Promise<Array<String>>  => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -1570,7 +1622,7 @@ export default class UserController {
         })
     }
 
-    saveVlog = async (vlogStructure) => {
+    saveVlog = async (vlogStructure: Object) => {
         let generatedURL;
         if (typeof (vlogStructure.vlog_media.uri) == 'undefined' || vlogStructure.vlog_media.uri == null || vlogStructure.vlog_media.uri == '') {
 
@@ -1599,7 +1651,7 @@ export default class UserController {
      * @param userID User UUID of vlogs to delete.
      * @param vlogID Vlog ID of which vlog to delete.
      */
-    deleteVlog = (userID, vlogID) => {
+    deleteVlog = (userID: String, vlogID: String) => {
         VLOGS_COLLECTION.doc(userID).delete();
 
         let updatedVlogs = [];
@@ -1618,7 +1670,7 @@ export default class UserController {
      * @param uuid User uuid for which to fetch vlogs.
      * @return promise Returns a promise resolving a list of vlogs.
      */
-    getAllUserVlogs = async (uuid) => {
+    getAllUserVlogs = async (uuid: String): Promise<Array<Object>>  => {
         let vlogsList = []
         let vlogsData = [];
 
@@ -1641,7 +1693,7 @@ export default class UserController {
         return Promise.resolve(vlogsData);
     }
 
-    startProgram = async (userUUID, programUUID) => {
+    startProgram = async (userUUID: String, programUUID: String) => {
         //Obtain the users document given the UUID
         let userData = getLupaUserStructure();
         await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
@@ -1685,7 +1737,7 @@ export default class UserController {
         })
     }
 
-    resetProgram = async (userUUID, programUUID) => {
+    resetProgram = async (userUUID: String, programUUID: String) => {
       //Obtain the users document given the UUID
       let userData = getLupaUserStructure();
       await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
@@ -1727,7 +1779,7 @@ export default class UserController {
     }
     
 
-    stopProgram = async (userUUID, programUUID) => {
+    stopProgram = async (userUUID: String, programUUID: String) => {
       //Obtain the users document given the UUID
       let userData = getLupaUserStructure();
       await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
@@ -1765,11 +1817,20 @@ export default class UserController {
         })
     }
 
-    createBookingRequestFromTrainer = (booking) => {
+    /**
+     * 
+     * @param booking 
+     */
+    createBookingRequestFromTrainer = (booking: Object) => {
 
     }
 
-    checkUserStructure(a, b){
+    /**
+     * 
+     * @param a 
+     * @param b 
+     */
+    checkUserStructure(a: Object, b: Object){
         return Object.keys(a).length === Object.keys(b).length
         && Object.keys(a).every(k => b.hasOwnProperty(k))
     }
@@ -1778,7 +1839,7 @@ export default class UserController {
      * TODO: Look into checkuseStructure() usage
      * @param booking 
      */
-    createBookingRequest = async (booking) => {
+    createBookingRequest = async (booking: Object) => {
         const requesterUUID = booking.requester_uuid;
         const trainerUUID = booking.trainer_uuid;
 
@@ -1835,7 +1896,7 @@ export default class UserController {
             })
     }
 
-    handleAcceptedBooking = async (booking_uid) => {
+    handleAcceptedBooking = async (booking_uid: String) => {
         const bookingID = booking_uid;
         let booking  = {}
         await LUPA_DB.collection('bookings').doc(bookingID).get().then(documentSnapshot => {
@@ -1944,7 +2005,7 @@ export default class UserController {
         
 }
 
-    handleCancelBooking = async (booking) => {
+    handleCancelBooking = async (booking: Object) => {
         const booking_uid = booking.booking_uid;
         const trainer_uid = booking.trainer_uuid;
         const requester_uid = booking.requester_uuid;
@@ -1985,7 +2046,7 @@ export default class UserController {
 
     }
 
-    fetchBookingData = async (uuid) => {
+    fetchBookingData = async (uuid: String): Promise<Object> => {
         let bookingData = {}
         await LUPA_DB.collection('bookings').doc(uuid).get().then(documentSnapshot => {
             bookingData = documentSnapshot.data();

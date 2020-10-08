@@ -1,6 +1,4 @@
 import UserController from './UserController';
-import PacksController from './PacksController';
-import SessionController from './SessionController';
 import ProgramController from './ProgramController';
 
 import LUPA_DB, { LUPA_AUTH} from '../firebase/firebase.js';
@@ -11,13 +9,10 @@ import { getLupaWorkoutInformationStructure } from '../../model/data_structures/
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
-const packsIndex = algoliaIndex.initIndex("dev_PACKS");
 const algoliaUsersIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
 const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 
 let USER_CONTROLLER_INSTANCE;
-let PACKS_CONTROLLER_INSTANCE;
-let SESSION_CONTROLLER_INSTANCE;
 let NOTIFICATIONS_CONTROLLER_INSTANCE;
 let PROGRAMS_CONTROLLER_INSTANCE;
 
@@ -27,8 +22,6 @@ export default class LupaController {
 
     private constructor() {
        USER_CONTROLLER_INSTANCE = UserController.getInstance();
-      PACKS_CONTROLLER_INSTANCE = PacksController.getInstance();
-       SESSION_CONTROLLER_INSTANCE = SessionController.getInstance();
        PROGRAMS_CONTROLLER_INSTANCE = ProgramController.getInstance();
     }
 
@@ -77,36 +70,6 @@ export default class LupaController {
       return Promise.resolve(url);
     }
 
-    savePackImage = async (string, uuid) => {
-      let url;
-      await PACKS_CONTROLLER_INSTANCE.savePackImage(string, uuid).then(data => {
-        url = data;
-      });
-
-      return Promise.resolve(url);
-    }
-
-    savePackEventImage = (string, uuid) => {
-      PACKS_CONTROLLER_INSTANCE.savePackEventImage(string, uuid);
-    }
-
-    getPackImageFromUUID = async (uuid) => {
-      let link;
-      await PACKS_CONTROLLER_INSTANCE.getPackImageFromUUID(uuid).then(result => {
-        link = result;
-      });
-
-      return Promise.resolve(link);
-    }
-
-    getPackEventImageFromUUID = async (uuid) => {
-      let link;
-      await PACKS_CONTROLLER_INSTANCE.getPackEventImageFromUUID(uuid).then(result => {
-        link = result;
-      });
-
-      return Promise.resolve(link);
-    }
     /***************************** */
 
     /***********  App IO *************/
@@ -156,14 +119,6 @@ export default class LupaController {
       return Promise.resolve(userData);
     }
 
-    updatePack = (packID, attribute, value, optionalData=[]) => {
-      PACKS_CONTROLLER_INSTANCE.updatePack(packID, attribute, value, optionalData);
-    }
-
-    updatePackEvent = (eventUUID, attribute, value, optionalData=[]) => {
-      PACKS_CONTROLLER_INSTANCE.updatePackEvent(eventUUID, attribute, value, optionalData);
-    }
-
     updateCurrentUser = (fieldToUpdate, value, optionalData) => {
       //validate data
 
@@ -188,28 +143,6 @@ export default class LupaController {
     }
 
 
-
-    completeSession = async (uuid) => {
-      await SESSION_CONTROLLER_INSTANCE.completeSession(uuid);
-    }
-
-    addUserSessionReview = async (sessionUUID, userReviewingUUID, userToReviewUUID, reviewText, dateSubmitted) => {
-      let retVal;
-      await SESSION_CONTROLLER_INSTANCE.addUserSessionReview(sessionUUID, userReviewingUUID, userToReviewUUID, reviewText, dateSubmitted).then(res => {
-        retVal = res;
-      });
-
-      return Promise.resolve(retVal);
-    }
-
-    createNewSession = async (attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp, locationData) => {
-      await SESSION_CONTROLLER_INSTANCE.createSession(attendeeOne, attendeeTwo, requesterUUID, date, time_periods, name, description, timestamp, locationData);
-    }
-
-    getUserSessions = (currUser=true, uid=undefined) => {
-      return SESSION_CONTROLLER_INSTANCE.getUserSessions(currUser, uid);
-    }
-
     getUserInformationFromArray = async (arrOfUUIDS) => {
       let result;
       await USER_CONTROLLER_INSTANCE.getArrayOfUserObjectsFromUUIDS(arrOfUUIDS).then(objs => {
@@ -231,51 +164,10 @@ export default class LupaController {
      // await  USER_CONTROLLER_INSTANCE.indexUsersIntoAlgolia();
     }
 
-    indexPacks = async () => {
-      //await PACKS_CONTROLLER_INSTANCE.indexPacksIntoAlgolia();
-    }
+
 
     indexPrograms = async () => {
       //await USER_CONTROLLER_INSTANCE.indexProgramsIntoAlgolia();
-    }
-
-    /** Pack Functions */
-    createNewPack = async (packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource, packVisibility) => {
-      //validate data
-      //call packs controller to create pack
-      const packData = await PACKS_CONTROLLER_INSTANCE.createPack(packLeader, title, description, location, image, members, invitedMembers, rating, sessionsCompleted, timeCreated, isSubscription, isDefault, packImageSource, packVisibility);
-
-      return Promise.resolve(packData);
-    }
-
-    createNewPackEvent = async (packUUID, title, description, date, eventImage) => {
-      //validate data
-      let payload;
-      //call pack controller to create new event
-      await PACKS_CONTROLLER_INSTANCE.createPackEvent(packUUID, title, description, date, eventImage).then(data => {
-        payload = data;
-      });
-
-      return Promise.resolve(payload);
-    }
-
-    inviteUserToPacks = (packs, userUUID) => {
-      //If the user didn't select any packs then there is no work to be done and we can just exit the function
-      if (packs.length == 0)
-      {
-        return;
-      }
-
-      PACKS_CONTROLLER_INSTANCE.inviteUserToPacks(packs, userUUID);
-    }
-
-    getSubscriptionPacksBasedOnLocation = async location => {
-      let subscriptionBasedPacks;
-      await PACKS_CONTROLLER_INSTANCE.getSubscriptionPacksBasedOnLocation(location).then(result => {
-        subscriptionBasedPacks = result;
-      });
-
-      return Promise.resolve(subscriptionBasedPacks);
     }
 
     /* User Functions */
@@ -308,14 +200,6 @@ export default class LupaController {
       return Promise.resolve(userResult)
     }
 
-    getPackInformationByUserUUID = async (uuid) => {
-      let userResult;
-      await PACKS_CONTROLLER_INSTANCE.getPackInformationByUserUUID(uuid).then(result => {
-        userResult = result;
-      });
-
-      return Promise.resolve(userResult)
-    }
 
     /**
      *
@@ -478,164 +362,6 @@ export default class LupaController {
       return Promise.resolve(trainers);
     }
 
-    /* Session Functions */
-    getSessionInformationByUUID = async (uuid) => {
-      let retVal;
-      await SESSION_CONTROLLER_INSTANCE.getSessionInformationByUUID(uuid).then(result => {
-        retVal = result;
-      });
-
-      return retVal;
-    }
-
-    updateSession = async (uuid, fieldToUpdate, value, optionalData="") => {
-      await SESSION_CONTROLLER_INSTANCE.updateSessionFieldByUUID(uuid, fieldToUpdate, value, optionalData);
-    }
-
-    /* Pack Functions */
-    /***************************Explore Page Pack Function  ****************************/
-
-    getActivePacksBasedOnLocation = async (location) => {
-      let explorePagePacks;
-      await PACKS_CONTROLLER_INSTANCE.getActivePacksBasedOnLocation(location).then(result => {
-        explorePagePacks = result;
-      });
-
-      return Promise.resolve(explorePagePacks);
-    }
-
-    getCommunityPacksBasedOnLocation = async (location) => {
-      let explorePagePacks;
-      await PACKS_CONTROLLER_INSTANCE.getCommunityPacksBasedOnLocation(location).then(result => {
-        explorePagePacks = result;
-      });
-
-      return Promise.resolve(explorePagePacks);
-    }
-
-    /***********************************************************************************/
-    getCurrentUserPacks = async () => {
-      let userPacks;
-
-      //Get all packs for the current user
-      await PACKS_CONTROLLER_INSTANCE.getCurrentUserPacks().then(currUserPacksData => {
-        userPacks = currUserPacksData;
-      });
-
-      return userPacks;
-    }
-
-    getSubscriptionPacks = async () => {
-      let result;
-      await PACKS_CONTROLLER_INSTANCE.getSubscriptionBasedPacks().then(packs => {
-        result = packs;
-      });
-
-      return result;
-    }
-
-    getExplorePagePacks = async () => {
-      let result;
-      await PACKS_CONTROLLER_INSTANCE.getExplorePagePacks().then(packs => {
-        result = packs;
-      });
-
-      return result;
-    }
-
-    getDefaultPacks = async () => {
-      let result;
-
-      await PACKS_CONTROLLER_INSTANCE.getDefaultPacks().then(packs => {
-        result = packs;
-      });
-
-      return result;
-    }
-
-    getCurrentUserDefaultPacks = async () => {
-      let defaultPacks = [];
-      await PACKS_CONTROLLER_INSTANCE.getCurrentUserDefaultPacks().then(result => {
-        defaultPacks = result;
-      });
-
-      return Promise.resolve(defaultPacks)
-
-    }
-
-    requestToJoinPack = (userUUID, packUUID) => {
-      PACKS_CONTROLLER_INSTANCE.requestToJoinPack(userUUID, packUUID);
-    }
-
-    acceptPackInviteByPackUUID = (packUUID, userUUID) => {
-      PACKS_CONTROLLER_INSTANCE.acceptPackInviteByPackUUID(packUUID, userUUID);
-    }
-
-    declinePackInviteByPackUUID = (packUUID, userUUID) => {
-      PACKS_CONTROLLER_INSTANCE.declinePackInviteByPackUUID(packUUID, userUUID);
-    }
-
-    getPackInvitesFromUUID = async (uuid) => {
-      let packInvites = [];
-      await PACKS_CONTROLLER_INSTANCE.getPackInvitesFromUUID(uuid).then(result => {
-        packInvites = result;
-      });
-
-      return Promise.resolve(packInvites);
-    }
-
-    getPackInformationByUUID = async (uuid) => {
-      let result = [];
-      await PACKS_CONTROLLER_INSTANCE.getPackInformationByUUID(uuid).then(packs => {
-        result = packs;
-      });
-
-      return Promise.resolve(result);
-    }
-
-    getPackEventsByUUID = async (id) => {
-      let result = new Array();
-
-      if (id != undefined)
-      {
-        await PACKS_CONTROLLER_INSTANCE.getPackEventsByUUID(id).then(packs => {
-          result = packs;
-        });
-      }
-
-      return Promise.resolve(result);
-    }
-
-    removeUserFromPackByUUID = (packUUID, userUUID) => {
-      PACKS_CONTROLLER_INSTANCE.removeUserFromPackByUUID(packUUID, userUUID);
-    }
-
-    setUserAsAttendeeForEvent = (packEventUUID, packEventTitle, userUUID) => {
-      PACKS_CONTROLLER_INSTANCE.attendPackEvent(packEventUUID, packEventTitle, userUUID);
-    }
-
-    removeUserAsAttendeeForEvent = (packEventUUID, packEventTitle, userUUID) => {
-      PACKS_CONTROLLER_INSTANCE.unattendPackEvent(packEventUUID, packEventTitle, userUUID);
-    }
-
-    userIsAttendingPackEvent = async (packEventUUID, packEventTitle, userUUID) => {
-      let result;
-      await PACKS_CONTROLLER_INSTANCE.isAttendingPackEvent(packEventUUID, packEventTitle, userUUID).then(bool => {
-        result = bool;
-      });
-
-      return Promise.resolve(result);
-    }
-
-    getPacksEventsFromArrayOfUUIDS = async (arr) => {
-      let packEventsData;
-      await PACKS_CONTROLLER_INSTANCE.getPacksEventsFromArrayOfUUIDS(arr).then(result => {
-        packEventsData = result;
-      });
-
-      return Promise.resolve(packEventsData);
-    }
-
     createNewProgram = async (uuid) => {
      USER_CONTROLLER_INSTANCE.createProgram(uuid)
     }
@@ -750,24 +476,6 @@ export default class LupaController {
       return Promise.resolve(result);
     }
 
-    getSuggestedTrainers = async () => {
-      let suggestedTrainers;
-
-      await SESSION_CONTROLLER_INSTANCE.getSuggestedTrainers().then(trainers => {
-        suggestedTrainers = trainers;
-      });
-
-      return Promise.resolve(suggestedTrainers);
-    }
-
-    getUpcomingSessions = async (isCurrentUser, user_uuid) => {
-      let upcomingSessions;
-      await SESSION_CONTROLLER_INSTANCE.getUpcomingSessions(true, user_uuid).then(sessions => {
-        upcomingSessions = sessions;
-      });
-
-      return Promise.resolve(upcomingSessions);
-    }
 
         /* designing programs */
         saveProgramWorkoutGraphic = async (workout, programUUID, graphicType, uri) => {
@@ -881,15 +589,6 @@ export default class LupaController {
       });
 
       return Promise.resolve(retVal);
-    }
-
-    getPacksWithoutParticipatingUUID = async (userUUID) => {
-      let data = []
-      await PACKS_CONTROLLER_INSTANCE.getPacksWithoutParticipatingUUID(userUUID).then(result => {
-        data = result;
-      });
-
-      return Promise.resolve(data);
     }
 
     changeTrainerHourlyRate = (rate) => {
