@@ -6,27 +6,8 @@ import {
 } from 'react-native';
 
 import {request, PERMISSIONS, RESULTS, check, requestMultiple} from 'react-native-permissions';
-import Contacts, { requestPermission } from 'react-native-contacts'; 
 import { requestNotificationPermissions } from '../../firebase/firebase';
 import { fcmService } from '../../firebase/service/FCMService';
-
-/**
-PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL;
-PERMISSIONS.IOS.CALENDARS;
-PERMISSIONS.IOS.CAMERA;
-PERMISSIONS.IOS.CONTACTS;
-PERMISSIONS.IOS.FACE_ID;
-PERMISSIONS.IOS.LOCATION_ALWAYS;
-PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
-PERMISSIONS.IOS.MEDIA_LIBRARY;
-PERMISSIONS.IOS.MICROPHONE;
-PERMISSIONS.IOS.MOTION;
-PERMISSIONS.IOS.PHOTO_LIBRARY;
-PERMISSIONS.IOS.REMINDERS;
-PERMISSIONS.IOS.SIRI;
-PERMISSIONS.IOS.SPEECH_RECOGNITION;
-PERMISSIONS.IOS.STOREKIT;
- */
 
 
 export const _checkCameraAndPhotoLibraryPermissions = () => {
@@ -120,32 +101,6 @@ export default _requestPermissionsAsync = () => {
 if (Platform.OS === 'android') {
   try {
     check(PERMISSIONS.ANDROID.CAMERA)
-    .then((result) => {
-      switch (result) {
-        case RESULTS.UNAVAILABLE:
-          //tell user it is not available on this device
-          
-          break;
-        case RESULTS.DENIED:
-         //request permission
-      
-          break;
-        case RESULTS.GRANTED:
-          // nothing to do
-          
-          break;
-        case RESULTS.BLOCKED:
-          // alert the user to change it from settings
-         //may need to handle the case here user says only while using?
-          break;
-      }
-    })
-    .catch((error) => {
-      // …
-     // alert('Oops.  It looks like there was an error while trying to anable the Location permission.  You can enable it from the Lupa tab in the Settings app.')
-    });
-  
-    check(PERMISSIONS.ANDROID.READ_CONTACTS)
     .then((result) => {
       switch (result) {
         case RESULTS.UNAVAILABLE:

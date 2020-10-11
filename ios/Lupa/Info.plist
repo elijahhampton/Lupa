@@ -41,16 +41,22 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Allow Lupa to access your Apple Music.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Lupa to access your camera.  Lupa utilizes your camera to allow you to add custom media to your own custom workouts as well for your avatar.</string>
+	<string>Allow Lupa to access your camera. Lupa uses your camera to allow you to add custom media to your own custom workouts that you create as well as to change visual elements such as your avatar.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Allow Lupa to access your contacts.  Lupa uses your contacts to allow you to invite your friends to participate in online fitness programs with you.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Allow Lupa to use your location.  Lupa uses your location to recommend you trainers and show you content near you.</string>
+	<string>Allow Lupa to use your location. Lupa uses your location to recommend you trainers, show you content near you, and detect trainers that are near you when are at a gym.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow Lupa to use your location.  Lupa uses your location to recommend you trainers and show you content near you.</string>
+	<string>Allow Lupa to use your location. Lupa uses your location to recommend you trainers, show you content near you, and detect trainers that are near you when are at a gym.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow Lupa to use your location.  Lupa uses your location to recommend you trainers and show you content near you.</string>
+	<string>Allow Lupa to use your location. Lupa uses your location to recommend you trainers, show you content near you, and detect trainers that are near you when are at a gym.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow Lupa to access your microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow Lupa to access your camera.  Lupa utilizes your camera to allow you to add custom media to your own custom workouts as well for your avatar.</string>
+	<string>Allow Lupa to access your photo library. Lupa uses your photo library to allow you to add custom media to your own custom workouts as well as to change visual elements such as your avatar.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>FeatherIcons.ttf</string>

@@ -386,6 +386,8 @@ function ProgramInformationPreview(props) {
                    <View style={styles.mapViewContainer}>
                        <View style={styles.mapViewSubContainer}>
                                 <MapView style={styles.mapView}
+                                scrollEnabled={false}
+                                shouldRasterizeIOS={true}
                     initialRegion={{
                         latitude: getLocationLatitude(),
                         longitude: getLocationLongitude(),

@@ -576,10 +576,8 @@ export default class UserController {
         //Get the current followers
         let currentFollowers = [];
         if (typeof(result.followers) == 'undefined') {
-            alert('hi')
             currentFollowers = []
         } else {
-            alert('bye')
             currentFollowers = result.followers;
         }
         
@@ -1651,8 +1649,8 @@ export default class UserController {
      * @param userID User UUID of vlogs to delete.
      * @param vlogID Vlog ID of which vlog to delete.
      */
-    deleteVlog = (userID: String, vlogID: String) => {
-        VLOGS_COLLECTION.doc(userID).delete();
+    deleteVlog = (userID: String, vlogID: String): void => {
+        VLOGS_COLLECTION.doc(vlogID).delete();
 
         let updatedVlogs = [];
         USER_COLLECTION.doc(userID).get().then(snapshot => {

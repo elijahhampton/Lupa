@@ -77,7 +77,7 @@ function ProgramInformationComponent({ program }) {
                        {userPurchased === true ? <Text style={{ alignSelf: 'flex-end', paddingVertical: 10, color: '#1089ff', fontFamily: 'Avenir-Heavy', fontSize: 12}}> PURCHASED </Text> : null }
                        </Text>
                        
-                        <Text style={{ fontSize: 12, flexWrap: 'wrap', fontWeight: '300' }} numberOfLines={2}>
+                        <Text style={{ fontSize: 12, flexWrap: 'wrap', fontWeight: '300', width: '88%' }} numberOfLines={2}>
                             {program.program_description}
                         </Text>
                         

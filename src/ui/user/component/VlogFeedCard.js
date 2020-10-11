@@ -122,7 +122,7 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
                                 currUserData.user_uuid === vlogData.vlog_owner ?
                                 <Menu.Item title="Delete Vlog" titleStyle={{fontSize: 15}} onPress={() => LUPA_CONTROLLER_INSTANCE.deleteVlog(currUserData.user_uuid, vlogData.vlog_uuid)} />
                                 :
-                                currUserData.following.includes(vlogOwnerData.vlog_owner) ?  <Menu.Item title={`Unfollow ${vlogOwnerData.display_name}`} titleStyle={{fontSize: 15}} onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(vlogOwnerData.vlog_owner, currUserData.user_uuid)} /> : <Menu.Item title={`Follow ${vlogOwnerData.display_name}`} titleStyle={{fontSize: 15}} onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(vlogOwnerData.vlog_owner, currUserData.user_uuid)} />
+                              null
                             }
                            
                         </Menu>
