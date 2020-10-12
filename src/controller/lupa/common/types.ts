@@ -58,7 +58,7 @@ export type LupaTrainerService = {
 
 /* LupaUserDataStructure */
 export type LupaUserStructure = {
-    user_uuid: String,
+    user_uuid: String | Number,
     display_name: String,
     username: String,
     age: any,
@@ -76,31 +76,18 @@ export type LupaUserStructure = {
     packs: Array<LupaPackStructure>,
     photo_url: String,
     time_created: Date,
-    preferred_workout_times: {
-        Monday: Array<any>,
-        Tuesday: Array<any>,
-        Wednesday: Array<any>,
-        Thursday: Array<any>,
-        Friday: Array<any>,
-        Saturday: Array<any>,
-        Sunday: Array<any>,
-    },
     interest: Array<String>,
     rating: Number,
-    experience: Object,
     followers: Array<String>,
     following: Array<String>,
     sessionsCompleted: Number,
     bio: String,
     bookings: Array<String>,
-    recommended_workouts: Array<String>,
     certification: String,
     homegym: Object,
     chats: any,
-    session_reviews: Array<Object>,
     trainer_tier: Number,
     tokens: Object,
-    waitlistedPrograms: Array<String>,
     notifications: Array<Object>,
     programs: Array<String>,
     hourly_payment_rate: Number,
@@ -110,7 +97,8 @@ export type LupaUserStructure = {
     program_data: Array<Object>
     last_workout_completed: Object,
     stripe_metadata: Object,
-    trainer_type: Array<String>
+    trainer_type: Array<String>,
+    isGuest: Boolean,
 };
 
 /* LupaWorkoutDataStructure */

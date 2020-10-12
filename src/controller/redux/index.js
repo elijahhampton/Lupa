@@ -1,15 +1,11 @@
 import  {createStore, applyMiddleware} from 'redux';
 import LupaReducer from './reducers';
 import thunk from 'redux-thunk';
-const LupaStore = createStore(LupaReducer, applyMiddleware(thunk));
+import { verifyAuth } from '../lupa/auth/auth';
 
-LupaStore.subscribe(() => {
-    
-});
-
-export function getCurrentStoreState() {
-    return LupaStore.getState();
-}
-
-export default LupaStore;
+export default function configureStore(persistedState) {
+    const store = createStore(LupaReducer, applyMiddleware(thunk));
+    store.dispatch(verifyAuth());
+    return store;
+  }
 
