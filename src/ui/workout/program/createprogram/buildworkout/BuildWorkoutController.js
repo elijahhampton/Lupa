@@ -78,7 +78,7 @@ class BuildWorkoutController extends React.Component {
             libraryData: [
                 {
                     title: "Balance",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.balance_workouts,
+                    data: [],
                 },
                 {
                     title: "Flexibility",

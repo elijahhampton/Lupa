@@ -150,25 +150,20 @@ function LoginView(props) {
     const attemptedPassword = await formState.inputValues.loginPassword.trim();
 
    let successfulLogin = false;
-    await userAuthenticationHandler.loginUser(attemptedUsername, attemptedPassword).then(result => {
-      successfulLogin = result;
-    })
+   await loginUser(attemptedUsername, attemptedPassword)
 
+   if (this.props.lupa_data.Auth.isAuthenticated === true) {
+    _introduceApp();
+    storeAsyncData('PREVIOUS_LOGIN_EMAIL', attemptedUsername);
+    storeAsyncData('PREVIOUS_LOGIN_PASSWORD', attemptedPassword);
+   } else {
     if (typeof(successfulLogin) != 'boolean') {
       setLoginRejectedReason('Invalid Username or Password.  Try again.')
       showSnack(true);
       return;
     }
 
-    if (successfulLogin) {
-      _introduceApp();
-      storeAsyncData('PREVIOUS_LOGIN_EMAIL', attemptedUsername);
-      storeAsyncData('PREVIOUS_LOGIN_PASSWORD', attemptedPassword);
-     // storeAsyncData('RECENTLY_INTERACTED_USERS', [])
-    } else {
-      setLoginRejectedReason('Invalid Username or Password.  Try again.')
-      showSnack(true);
-    }
+   }
   }
 
   /**

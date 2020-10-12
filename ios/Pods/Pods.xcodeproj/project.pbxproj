@@ -361,7 +361,6 @@
 		059B578E1C7F650294CA8D6AA991D78D /* pem_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CB431B81024AD9592C3594FEFB4EA8E /* pem_info.c */; settings = {COMPILER_FLAGS = "-DOPENSSL_NO_ASM -GCC_WARN_INHIBIT_ALL_WARNINGS -w -fno-objc-arc"; }; };
 		059E5D524091FF67F903337965FFDBCD /* handoff.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5E3AECBC6F508418AECC0EA9779A937A /* handoff.cc */; settings = {COMPILER_FLAGS = "-DOPENSSL_NO_ASM -GCC_WARN_INHIBIT_ALL_WARNINGS -w -fno-objc-arc"; }; };
 		05B2E7502D36C0F43AA9896C9DBB5EDB /* RCTSurfaceSizeMeasureMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4AA66DDB884FB137BC90CB1ABA267BDD /* RCTSurfaceSizeMeasureMode.mm */; settings = {COMPILER_FLAGS = "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32 -Wno-documentation"; }; };
-		05B49163AB7C3C184743493C62A82D3B /* react-native-contacts-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B95AAD65012F63183334D4EF70994B5 /* react-native-contacts-dummy.m */; };
 		05B711D901493882833793AB6EF540EE /* repair.cc in Sources */ = {isa = PBXBuildFile; fileRef = B14AC77264D9965063D9D9A28223BDB4 /* repair.cc */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		05BCDB2A1C384664EB0B3ACEDC86C74D /* compression_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5AFA62C2C9CF74618A88734F162DF99B /* compression_internal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		05DEF58329C833D6F9B3B11493E34528 /* cbb.c in Sources */ = {isa = PBXBuildFile; fileRef = 4A62AC667955551DB6F6911B9FFF39B5 /* cbb.c */; settings = {COMPILER_FLAGS = "-DOPENSSL_NO_ASM -GCC_WARN_INHIBIT_ALL_WARNINGS -w -fno-objc-arc"; }; };
@@ -584,6 +583,7 @@
 		10D4ACDF39840963D78E3892AFA2B610 /* RCTFollyConvert.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B706E3398E7EDD104F268FDA1A1735A /* RCTFollyConvert.mm */; settings = {COMPILER_FLAGS = "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32 -Wno-documentation"; }; };
 		10ECCA9F01E8EC5ED291073435A87B11 /* pkcs8.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E08B13306F856972926E6243624054 /* pkcs8.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		10FB620936F5FAAC9190907D8EEBDCE0 /* atm_gcc_sync.h in Headers */ = {isa = PBXBuildFile; fileRef = 80592DBF33BD885E7B3E9528AF26CC8A /* atm_gcc_sync.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		110AD15AAB9820DE2495386D5B9193EF /* RCTContacts.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC435187AB2BD5B9651A6E269A5EBEB /* RCTContacts.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		1113E3E56892D0B21EDEE03614ED4C99 /* RNFBFirestoreSerialize.m in Sources */ = {isa = PBXBuildFile; fileRef = 57907E402147875694CEBBB5CB9C84CB /* RNFBFirestoreSerialize.m */; };
 		1114934319D6BF34568779D811F5F367 /* YGNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A396E00F9B4898BD77806F2FF09C2E /* YGNode.cpp */; settings = {COMPILER_FLAGS = "-fno-omit-frame-pointer -fexceptions -Wall -Werror -std=c++1y -fPIC -fno-objc-arc"; }; };
 		1123450FC56AA33DE44DDDCF880E08E9 /* status.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A0FF0632CCC2AA0EEEB6D0AF2CD9200 /* status.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1305,7 +1305,6 @@
 		38A4617219EFF4C0764B806A67F343E7 /* STPEphemeralKeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4440C2524892C9F03D1357E2789507F7 /* STPEphemeralKeyManager.m */; };
 		38AD636B586BA3A11C633A28CD147808 /* format_request.h in Headers */ = {isa = PBXBuildFile; fileRef = 1965DD525FB8CFEF71B5E5AFDF271D64 /* format_request.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		38B1912A8877358CA29BE31B51DD1C01 /* STPLocalizationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 68858CF3320C7DBA89CE8E09419717EE /* STPLocalizationUtils.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		38CD168D9218965E8EBB76AA3A9145B8 /* RCTContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 65151AD6AA496EAC5D3F9AA51104743E /* RCTContacts.m */; };
 		38E36B153BBA7C743713CDC9754F750C /* RCTConvert+Text.h in Headers */ = {isa = PBXBuildFile; fileRef = D2CABBA7ACE2631207B47FFBBB4816EE /* RCTConvert+Text.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		38E7221EE0A7FD012E75A1D0B6F88F2E /* RNSVGRadialGradientManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 403A52F9EA0AF033A464B5F6F75CE853 /* RNSVGRadialGradientManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		38E88BD09B1A012B05FCF58BBC33A1C6 /* alts_handshaker_client.h in Headers */ = {isa = PBXBuildFile; fileRef = 46CC9BEC259494101C958F5615454562 /* alts_handshaker_client.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -2813,6 +2812,7 @@
 		87FD060172BEF63629857D0B8EA4961D /* status_metadata.h in Headers */ = {isa = PBXBuildFile; fileRef = E212B109A3389DBEC44671F5B5561096 /* status_metadata.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8807F1401745CE05924807BF901CE4E8 /* FIRFacebookAuthProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8B55BD0B2E64E0E2D6D143AAA7019A /* FIRFacebookAuthProvider.m */; };
 		880E86CFF7B08B74B6E80D1725B4EE93 /* Instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 4384E3049F20E727F28457E0DE50D438 /* Instance.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8812710BD75A25B6A90F6D6183993952 /* react-native-contacts-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B95AAD65012F63183334D4EF70994B5 /* react-native-contacts-dummy.m */; };
 		881652491EA6966987F408868450018E /* grpc_ares_ev_driver.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1714F72F57A4534FB92E90E5F72D48A4 /* grpc_ares_ev_driver.cc */; settings = {COMPILER_FLAGS = "-DGRPC_ARES=0 -DPB_FIELD_32BIT -DGRPC_SHADOW_BORINGSSL_SYMBOLS -fno-objc-arc"; }; };
 		881B6AF772EF1B7E46B55AE5ED144347 /* RCTEventAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 05C9A0ED72A477B29C2EE11F1A679406 /* RCTEventAnimation.m */; settings = {COMPILER_FLAGS = "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -Wno-comma -Wno-shorten-64-to-32 -Wno-nullability-completeness"; }; };
 		882ECC100B0E30223C57CD5EAF805131 /* FIRInstanceIDKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 747DFC928CF1FB5D067903B3EE7EF006 /* FIRInstanceIDKeychain.m */; };
@@ -3482,7 +3482,6 @@
 		AC7783DB781CE0A5624CA883C5A03739 /* NSMutableURLRequest+Stripe.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA77E250D94CC06D2D95E81BB402A4 /* NSMutableURLRequest+Stripe.m */; };
 		AC7906145D03CB239137D5CB60FFF0C4 /* GULLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = B693C5FEB0BAD18F96FA5160A6E5C95F /* GULLogger.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		AC8738051331910E2E4DC3D45843B0C8 /* FArraySortedDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA68D1A5CD8F5310A0F3C9BF477ED58 /* FArraySortedDictionary.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		AC8E04DA8F14C64AB3DA186F29C19F09 /* RCTContacts.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC435187AB2BD5B9651A6E269A5EBEB /* RCTContacts.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		AC903CFB49A2F9F9BBF8B061EC397724 /* alts_handshaker_client.h in Headers */ = {isa = PBXBuildFile; fileRef = 451BC0413B1C18D7D110D92839429A92 /* alts_handshaker_client.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		AC93B37ACE7482A69809FB2BDDF101BA /* proxy_mapper_registry.cc in Sources */ = {isa = PBXBuildFile; fileRef = AC926140297DEFE8992E27E42FC448C4 /* proxy_mapper_registry.cc */; settings = {COMPILER_FLAGS = "-DGRPC_ARES=0 -DPB_FIELD_32BIT -DGRPC_SHADOW_BORINGSSL_SYMBOLS -fno-objc-arc"; }; };
 		AC9E4F5D13B12C28234A1C5D44BC55CF /* alts_record_protocol_crypter_common.h in Headers */ = {isa = PBXBuildFile; fileRef = C2EC8D8417126EF73234CC493532C24A /* alts_record_protocol_crypter_common.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -3779,6 +3778,7 @@
 		BD5CBCE850DC458A4382BE09D1F4282F /* leveldb_transaction.cc in Sources */ = {isa = PBXBuildFile; fileRef = B7018026C3C6A315CBA33BDD26A68029 /* leveldb_transaction.cc */; settings = {COMPILER_FLAGS = "$(inherited) -Wreorder -Werror=reorder -Wno-comma -fno-objc-arc"; }; };
 		BD615FE9808EC8E4B7A133A98B739187 /* resolver_registry.h in Headers */ = {isa = PBXBuildFile; fileRef = 41AE11A8D792304920F1DB7E3E3A3DD8 /* resolver_registry.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		BD63F2DC8BFF9C102C908915ABE7E4C5 /* document_key.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1E086C2FB7B49ABDB49668CA2457D263 /* document_key.cc */; settings = {COMPILER_FLAGS = "$(inherited) -Wreorder -Werror=reorder -Wno-comma -fno-objc-arc"; }; };
+		BD655911FB94B713A55B492CFFEC3E08 /* RCTContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 65151AD6AA496EAC5D3F9AA51104743E /* RCTContacts.m */; };
 		BD737DB98E69B9E74279DFA433E10C55 /* log_format.h in Headers */ = {isa = PBXBuildFile; fileRef = 601AD0B07E3F8D0B54A3C0C53C6AC08B /* log_format.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		BD8A23099AEF126AB1768B89F01B3687 /* RCTSafeAreaView.h in Headers */ = {isa = PBXBuildFile; fileRef = ACED5CC8E6F34CEA137E8B7A60CD55CB /* RCTSafeAreaView.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		BD912E50C7039CAA6603C23A730136F4 /* RCTAnimationDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = CB226E3DB14F0832E978CC261A5C8E9A /* RCTAnimationDriver.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -5733,13 +5733,6 @@
 			remoteGlobalIDString = C3496D0495E700CF08A90C41EA8FA4BB;
 			remoteInfo = FBReactNativeSpec;
 		};
-		3705C4741F4EBB337E7AF57234CDB1AC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1BEE828C124E6416179B904A9F66D794;
-			remoteInfo = React;
-		};
 		3747442B03C9D1F4CFB57DEFC0BA5094 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
@@ -7209,6 +7202,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B6D5DD49633DFF0657B8C3F08EB3ABA9;
 			remoteInfo = ReactCommon;
+		};
+		C75D11FD078A183C160DDF46056ABAC2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7ACAA9BE580DD31A5CB9D97C45D9492D;
+			remoteInfo = "React-Core";
 		};
 		C7610A5567CE37807AF580083FF38DC1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -13268,13 +13268,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0BCD2B0F4DDB9A29B7216BFE53BCDB24 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0BFE58C7C2252E8B3FDC9A26557CFD6A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -13556,6 +13549,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		66C5E48569EE44F4BB64C87B21543448 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		673C1C0A7D394BE944E3DC4081B607DF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -24769,6 +24769,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		64DF57C305995B004E51C93D9C329DD0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				110AD15AAB9820DE2495386D5B9193EF /* RCTContacts.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6628854C0F8784A9E71CA150F4DA48C7 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -26253,14 +26261,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				502761868344F4ED3CD5A7BE4B14C3EC /* RNOS.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E22DB79EED91DC1857EA23383C728E09 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AC8E04DA8F14C64AB3DA186F29C19F09 /* RCTContacts.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27769,16 +27769,16 @@
 		};
 		6430AD0ABE9CD7D45335011DF1F4B5D9 /* react-native-contacts */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DE814C6643A70020E0D9AE3688F79F14 /* Build configuration list for PBXNativeTarget "react-native-contacts" */;
+			buildConfigurationList = 2B3165A66D200A61D707033234CA19D2 /* Build configuration list for PBXNativeTarget "react-native-contacts" */;
 			buildPhases = (
-				E22DB79EED91DC1857EA23383C728E09 /* Headers */,
-				EEDAE1D6FC967B14608198D3BFB08584 /* Sources */,
-				0BCD2B0F4DDB9A29B7216BFE53BCDB24 /* Frameworks */,
+				64DF57C305995B004E51C93D9C329DD0 /* Headers */,
+				B2B278428F60E876EBF751C56AD8DA73 /* Sources */,
+				673C1C0A7D394BE944E3DC4081B607DF /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				4F009A9ADBADB44A6C02F23740F4AE08 /* PBXTargetDependency */,
+				05D40CCA37389CB265C4D361751190C3 /* PBXTargetDependency */,
 			);
 			name = "react-native-contacts";
 			productName = "react-native-contacts";
@@ -31317,6 +31317,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B2B278428F60E876EBF751C56AD8DA73 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD655911FB94B713A55B492CFFEC3E08 /* RCTContacts.m in Sources */,
+				8812710BD75A25B6A90F6D6183993952 /* react-native-contacts-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B449A3ED42FC47CD17EE56AEDF4D9E91 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -32244,15 +32253,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EEDAE1D6FC967B14608198D3BFB08584 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				38CD168D9218965E8EBB76AA3A9145B8 /* RCTContacts.m in Sources */,
-				05B49163AB7C3C184743493C62A82D3B /* react-native-contacts-dummy.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		EEEC6E4C5C2C21B09F6B855B06A21FE9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -32556,6 +32556,12 @@
 			name = React;
 			target = 1BEE828C124E6416179B904A9F66D794 /* React */;
 			targetProxy = 90235F2505A0451053FED11C6C8ED73A /* PBXContainerItemProxy */;
+		};
+		05D40CCA37389CB265C4D361751190C3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "React-Core";
+			target = 7ACAA9BE580DD31A5CB9D97C45D9492D /* React-Core */;
+			targetProxy = C75D11FD078A183C160DDF46056ABAC2 /* PBXContainerItemProxy */;
 		};
 		070349F813844710A9D26BEDFCACDAB4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -33282,12 +33288,6 @@
 			name = "Stripe-Stripe";
 			target = 2C0B358979DDB18B955A5CBE02F51805 /* Stripe-Stripe */;
 			targetProxy = A74291E32C42D99BD8FA78574A91F117 /* PBXContainerItemProxy */;
-		};
-		4F009A9ADBADB44A6C02F23740F4AE08 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = React;
-			target = 1BEE828C124E6416179B904A9F66D794 /* React */;
-			targetProxy = 3705C4741F4EBB337E7AF57234CDB1AC /* PBXContainerItemProxy */;
 		};
 		4F54B5D7F5AC9526CA0197D324BD1EAE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -34977,29 +34977,6 @@
 			};
 			name = Debug;
 		};
-		0590319E8E0A6D6F3F233E8D30F864BE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 85CEDA84DC45CF694AA3D3F78E432EC2 /* react-native-contacts.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/react-native-contacts/react-native-contacts-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = react_native_contacts;
-				PRODUCT_NAME = "react-native-contacts";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
 		067110B0EE866D8F95BFD8AB7AC1A4FE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 170A491C4FEFA596C638252677EB79E5 /* react-native-maps.debug.xcconfig */;
@@ -35436,6 +35413,29 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		1E3BD1F37ACE2A446A0CBC57F116E7A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 85CEDA84DC45CF694AA3D3F78E432EC2 /* react-native-contacts.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/react-native-contacts/react-native-contacts-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = react_native_contacts;
+				PRODUCT_NAME = "react-native-contacts";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		1FC6D47A0E5FE618A08E39D52D9E6F33 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -36863,6 +36863,30 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		5C7ECB344D83A1EE4AC43651DD350A57 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E69FD072D7BC83A6019F2D30F9E6034A /* react-native-contacts.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/react-native-contacts/react-native-contacts-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = react_native_contacts;
+				PRODUCT_NAME = "react-native-contacts";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
 		};
 		5CA58C9CE124F233B8105E079667F581 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -40341,30 +40365,6 @@
 			};
 			name = Release;
 		};
-		F4D9ACBAAF14C819ACD78FCF4E46755A /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E69FD072D7BC83A6019F2D30F9E6034A /* react-native-contacts.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/react-native-contacts/react-native-contacts-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = react_native_contacts;
-				PRODUCT_NAME = "react-native-contacts";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		F580FDE15D7BB7BDD4085FA59C2399DB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69C3A08D2E1FE810F9BD5FA0BD126AE7 /* GoogleUtilities.debug.xcconfig */;
@@ -40934,6 +40934,15 @@
 			buildConfigurations = (
 				CF3F11504D6A02126A9409993073F4DF /* Debug */,
 				3BFCDE3359392B7EEDE9FCB88F12E284 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2B3165A66D200A61D707033234CA19D2 /* Build configuration list for PBXNativeTarget "react-native-contacts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E3BD1F37ACE2A446A0CBC57F116E7A9 /* Debug */,
+				5C7ECB344D83A1EE4AC43651DD350A57 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -41690,15 +41699,6 @@
 			buildConfigurations = (
 				F5D01C0282AC9ECD73252FC9E627A921 /* Debug */,
 				01C551EFBE70E083ACE25DFA02C32289 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DE814C6643A70020E0D9AE3688F79F14 /* Build configuration list for PBXNativeTarget "react-native-contacts" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0590319E8E0A6D6F3F233E8D30F864BE /* Debug */,
-				F4D9ACBAAF14C819ACD78FCF4E46755A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

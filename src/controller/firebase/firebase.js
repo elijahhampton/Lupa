@@ -296,43 +296,20 @@ loginUser = async (email, password) => {
   return result;
 }
 
-signUpUser = async (USER_UUID, username, email, password, ) => {
+signUpUser = async (USER_UUID, username, email, password) => {
 
   const userDoc = await LUPA_DB.collection('users').doc(USER_UUID);
 
   //Populate database with user data
   try {
       //Obtain a user structure
-      const userData = getLupaUserStructure(USER_UUID, username, email, 0, new Date());
+      const userData = getLupaUserStructure(USER_UUID, username, email, 0, new Date(), false);
 
       //Add user to users collection with UID.
       await LUPA_DB.collection('users').doc(USER_UUID).set(userData, { merge: true });
   } catch (err) {
     alert(err)
   }
-
-  try {
-  await LUPA_DB.collection('packs').where('pack_title', '==', "Announcements").limit(1).get().then(snapshot => {
-      let packID;
-      snapshot.forEach(doc => {
-          
-          let pack = doc.data();
-          packID = doc.id;
-          let packs = [packID];
-          userDoc.update({
-              packs: packs
-          })
-          let currentDoc = LUPA_DB.collection('packs').doc(packID);
-          let packMembers = pack.pack_members;
-          packMembers.push(USER_UUID);
-          currentDoc.update({
-              pack_members: packMembers
-          });
-      });
-  });
-} catch(err) {
-  alert(err)
-}
 
   return Promise.resolve(true);
 }

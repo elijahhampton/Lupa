@@ -585,8 +585,8 @@ PODS:
     - React
   - react-native-camera/RN (3.37.0):
     - React
-  - react-native-contacts (5.2.7):
-    - React
+  - react-native-contacts (6.0.0):
+    - React-Core
   - react-native-geolocation (2.0.2):
     - React
   - react-native-image-picker (2.3.3):
@@ -1191,7 +1191,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 512e560d0e985d0e8c479a54a4e5c147a9c83493
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-camera: 1f19162f082db0b7c73280699b70319bf1e2e16d
-  react-native-contacts: 23a5a68151740bae84d5d379545bf5c3579b0d94
+  react-native-contacts: 5eb5aca43a59bef667af6a7698872d7034ad2968
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-image-picker: a6c3d644751a388b0fc8b56822ff7cbd398a3008
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c

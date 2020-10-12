@@ -9,7 +9,10 @@ SafeAreaView,
     Modal,
     Dimensions,
     ScrollView,
+    Alert,
 } from 'react-native';
+
+import {request, PERMISSIONS, RESULTS, check, } from 'react-native-permissions';
 
 import {
     ActivityIndicator, Surface, Avatar, Chip, Button,
@@ -71,6 +74,31 @@ const WelcomeContentDriver = (props) => {
     const _getLocationAsync = async () => {
         let result;
 
+        await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+        .then((result) => {
+          switch (result) {
+            case RESULTS.UNAVAILABLE:
+              Alert.alert('It looks like your location services are disabled for Lupa.  Navigate to your settings to enable them and return to the app to continue.')
+             return;
+            case RESULTS.DENIED:
+                Alert.alert('It looks like your location services are disabled for Lupa.  Navigate to your settings to enable them and return to the app to continue.')
+                return;
+            case RESULTS.GRANTED:
+              // nothing to do
+            setLocationDataIsSet(true);
+              break;
+            case RESULTS.BLOCKED:
+              // alert the user to change it from settings
+              Alert.alert('It looks like your location services are disabled for Lupa.  Navigate to your settings to enable them and return to the app to continue.')
+              return;
+          }
+        })
+        .catch((error) => {
+          // …
+          Alert.alert('AIt looks like your location services are disabled for Lupa.  Navigate to your settings to enable them and return to the app to continue.')
+            return;
+        });
+
         setLoadingIndicatorIsShowing(true)
         try {
             await Geolocation.getCurrentPosition(
@@ -83,10 +111,10 @@ const WelcomeContentDriver = (props) => {
                     await dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload })
                 },
                 async (error) => {
-    
+                    setLocationDataIsSet(true);
                     const errLocationData = {
-                        city: 'San Francisco',
-                        state: 'CA',
+                        city: 'Unknown',
+                        state: 'Unknown',
                         country: 'USA',
                         latitude: '37.7749',
                         longitude: '122.4194',
@@ -105,10 +133,10 @@ const WelcomeContentDriver = (props) => {
                 },
             );
         } catch (error) {
-       
+       setLocationDataIsSet(true)
             const errLocationData = {
-                city: 'San Francisco',
-                state: 'CA',
+                city: 'Unknown',
+                state: 'Unknown',
                 country: 'USA',
                 latitude: '37.7749',
                 longitude: '122.4194',

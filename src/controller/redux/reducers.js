@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase';
+import { LOGIN_FAILURE, LOGIN_REQUEST, LOGOUT_SUCCESS, LOGIN_SUCCESS, LOGOUT_FAILURE, VERIFY_REQUEST, VERIFY_SUCCESS } from '../lupa/auth/auth';
 
 import { ADD_WORKOUT_TO_PROGRAM_ACTION, ADD_CURRENT_USER_SERVICE_ACTION, UPDATE_CURRENT_USER_SERVICES_ACTION, UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PROGRAMS_ACTION, UPDATE_LUPA_WORKOUTS_ACTION } from './actionTypes';
 
@@ -81,6 +82,73 @@ const initialAppWorkoutsReducerState = {
 }
 
 const initialState = {}
+
+const authenticationReducer = (state= {
+  isLoggingIn: false,
+  isLoggingOut: false,
+  isVerifying: false,
+  loginError: false,
+  logoutError: false,
+  isAuthenticated: false,
+  user: {}
+}, action) => {
+
+  switch (action.type) {
+    case LOGIN_REQUEST:
+      return {
+        ...state,
+        isLoggingIn: true,
+        loginError: false
+      };
+    case LOGIN_SUCCESS:
+      return {
+        ...state,
+        isLoggingIn: false,
+        isAuthenticated: true,
+        user: action.user
+      };
+    case LOGIN_FAILURE:
+      return {
+        ...state,
+        isLoggingIn: false,
+        isAuthenticated: false,
+        loginError: true
+      };
+    case LOGOUT_FAILURE:
+      return {
+        ...state,
+        isLoggingOut: true,
+        logoutError: false
+      };
+    case LOGOUT_SUCCESS:
+      return {
+        ...state,
+        isLoggingOut: false,
+        isAuthenticated: false,
+        user: {}
+      };
+    case LOGOUT_FAILURE:
+      return {
+        ...state,
+        isLoggingOut: false,
+        logoutError: true
+      };
+    case VERIFY_REQUEST:
+      return {
+        ...state,
+        isVerifying: true,
+        verifyingError: false
+      };
+    case VERIFY_SUCCESS:
+      return {
+        ...state,
+        isVerifying: false
+      };
+    default:
+      return state;
+  }
+
+}
 
 const formReducer = (state = initialState, action) => {
   switch(action.type) {
@@ -257,6 +325,7 @@ const LupaReducer = combineReducers({
   Application_Workouts: workoutsReducer,
   FormReducer: formReducer,
   Payments: paymentsReducer,
+  Auth: authenticationReducer
 });
 
 export default LupaReducer;
