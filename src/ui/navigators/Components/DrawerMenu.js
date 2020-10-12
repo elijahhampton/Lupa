@@ -70,7 +70,8 @@ function DrawerMenu(props) {
    */
   const _handleLogout = async () => {
     await LUPA_AUTH.signOut()
-    navigation.navigate('Auth')
+    navigation.reset();
+    navigation.navigate('GuestView')
   }
 
   return (

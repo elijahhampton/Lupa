@@ -35,7 +35,8 @@ import { connect, useDispatch } from 'react-redux';
 import Input from '../../common/Input/Input'
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import LUPA_DB from '../../../controller/firebase/firebase';
-import { setUncaughtExceptionCaptureCallback } from 'process';
+
+import FeatherIcon from 'react-native-feather1s'
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
 
@@ -183,7 +184,17 @@ const SignUp = props => {
         style={styles.keyboardAvoidingView}>
         <View style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 2 }}>
-            <View style={{ alignItems: 'center', marginTop: Constants.statusBarHeight, width: "100%", }}>
+            <View>
+            <Button color="#23374d" uppercase={false} mode="text" onPress={() => navigation.navigate('GuestView')}>
+         <Text>
+           See trainers 
+         </Text>
+         <FeatherIcon name="arrow-right"  />
+       </Button>
+            </View>
+
+
+            <View style={{ alignItems: 'center', width: "100%", }}>
               <View style={styles.headerText}>
                 <Text style={{ paddingVertical: 5, fontSize: 20, fontWeight: '700', color: 'black', alignSelf: 'center' }}>
                   Join us and start your fitness journey

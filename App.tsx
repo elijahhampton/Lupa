@@ -42,6 +42,10 @@ import PickInterest from './src/ui/user/modal/WelcomeModal/PickInterest';
 import CreateCustomWorkoutModal from './src/ui/workout/program/createprogram/buildworkout/modal/CreateCustomWorkoutModal';
 import VlogFeedCardExpanded from './src/ui/workout/modal/VlogFeedCardExpanded';
 import FollowerModal from './src/ui/user/profile/modal/FollowerModal';
+import { LupaUserStructure } from './src/controller/lupa/common/types';
+import GuestView from './src/ui/GuestView';
+import SignUp from './src/ui/user/login/SignUpView';
+import LoginView from './src/ui/user/login/LoginView';
 
 const App = () => {
   return (
@@ -81,15 +85,15 @@ const SwitchNavigator = () => {
  */
   const _setupRedux = async (uuid) => {
     try {
-    let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = [];
+    let currUserData = getLupaUserStructure(uuid), currUserPrograms = [], lupaWorkouts : Object;
 
     // Load user data
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
-    })
+    });
+
     let userPayload = {
       userData: currUserData,
-      healthData: {}
     }
 
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload })
@@ -124,17 +128,15 @@ const SwitchNavigator = () => {
         await LUPA_AUTH.onAuthStateChanged(user => {
           if (typeof (user) == 'undefined' || user == null) {
             SplashScreen.hide()
-            showAuthentication()
-            return;
+            navigation.navigate('GuestView')
           }
 
           fcmService.createNotificationListeners(onNotification, onOpenNotification);
           localNotificationService.configure(onOpenNotification);
-          introduceApp(user.uid)
         })
       } catch (err) {
         SplashScreen.hide()
-        showAuthentication()
+        navigation.navigate('GuestView')
       }
     }
 
@@ -188,6 +190,9 @@ function AppNavigator() {
     }}>
       <StackApp.Screen name='Loading' component={SwitchNavigator} />
       <StackApp.Screen name='Auth' component={AuthenticationNavigator} />
+      <StackApp.Screen name="SignUp" component={SignUp} />
+      <StackApp.Screen name="Login" component={LoginView} />
+      <StackApp.Screen name="GuestView" component={GuestView} />
       <StackApp.Screen name='App' component={Lupa} />
       <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{ animationEnabled: true }} />
       <StackApp.Screen name="CreateWorkout" component={CreateWorkout} options={{ animationEnabled: true }} />
