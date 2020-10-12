@@ -11,7 +11,6 @@ import AuthenticationNavigator from './src/ui/navigators/AuthenticationNavigator
 import Lupa from './src/Lupa';
 import SplashScreen from 'react-native-splash-screen'
 import { connect } from 'react-redux';
-import LupaStore from './src/controller/redux/index';
 
 import LupaController from './src/controller/lupa/LupaController';
 import LUPA_DB, { LUPA_AUTH, registerAppWithFCM, generateMessagingToken, UserAuthenticationHandler } from './src/controller/firebase/firebase';
@@ -46,6 +45,9 @@ import { LupaUserStructure } from './src/controller/lupa/common/types';
 import GuestView from './src/ui/GuestView';
 import SignUp from './src/ui/user/login/SignUpView';
 import LoginView from './src/ui/user/login/LoginView';
+import configureStore from './src/controller/redux';
+
+const LupaStore = configureStore();
 
 const App = () => {
   return (
@@ -87,6 +89,15 @@ const SwitchNavigator = () => {
     try {
     let currUserData = getLupaUserStructure(uuid), currUserPrograms = [], lupaWorkouts : Object;
 
+    if (uuid === 0) {
+      LUPA_AUTH.signOut();
+      await dispatch({ type: 'UPDATE_CURRENT_USER', payload: getLupaUserStructure() })
+      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+      navigation.navigate('GuestView');
+    }
+
+
+    try {
     // Load user data
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
@@ -101,7 +112,9 @@ const SwitchNavigator = () => {
     // Load user program data if the user is a trainer
     if (typeof(currUserData.isTrainer) == 'undefined') {
       LUPA_AUTH.signOut();
-      showAuthentication();
+      await dispatch({ type: 'UPDATE_CURRENT_USER', payload: getLupaUserStructure() })
+      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+      navigation.navigate('GuestView');
     } else {
       if (currUserData.isTrainer) {
         await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
@@ -112,14 +125,16 @@ const SwitchNavigator = () => {
       }
     }
 
-    // Load application workouts
-    lupaWorkouts = LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-    dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
   } catch(error) {
     LUPA_AUTH.signOut();
-    showAuthentication();
-    alert(error);
+    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: getLupaUserStructure() })
+    await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+    navigation.navigate('GuestView');
   }
+
+      // Load application workouts
+      lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
+      dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
   }
 
   useEffect(() => {
@@ -194,6 +209,7 @@ function AppNavigator() {
       <StackApp.Screen name="Login" component={LoginView} />
       <StackApp.Screen name="GuestView" component={GuestView} />
       <StackApp.Screen name='App' component={Lupa} />
+      <StackApp.Screen name="GuestView" component={GuestView} />
       <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{ animationEnabled: true }} />
       <StackApp.Screen name="CreateWorkout" component={CreateWorkout} options={{ animationEnabled: true }} />
       <StackApp.Screen name="CreatePost" component={CreateNewPost} />

@@ -125,31 +125,18 @@ var lupa_user : LupaUserStructure = {
     packs: [],
     photo_url: "",
     time_created: new Date(),
-    preferred_workout_times: {
-        Monday: [],
-        Tuesday: [],
-        Wednesday: [],
-        Thursday: [],
-        Friday: [],
-        Saturday: [],
-        Sunday: [],
-    },
     interest: [],
     rating: 0,
-    experience: {},
     followers: [],
     following: [],
     sessionsCompleted: 0,
     bio: "",
     bookings: [],
-    recommended_workouts: [],
     certification: "",
     homegym: {},
     chats: [],
-    session_reviews: [],
     trainer_tier: 0,
     tokens: {},
-    waitlistedPrograms: [],
     notifications: [],
     programs: [],
     hourly_payment_rate: 15,
@@ -167,6 +154,7 @@ var lupa_user : LupaUserStructure = {
         card_added_to_stripe: false,
     },
     trainer_type: [],
+    isGuest: true,
 }
 
 export const getLupaUserStructure = (
@@ -174,13 +162,15 @@ export const getLupaUserStructure = (
     username: String, 
     email : String,  
     age : {age: Number}, 
-    time_created: Date, ) => {
+    time_created: Date,
+    isGuest: Boolean, ) => {
     lupa_user.user_uuid = user_uuid;
     lupa_user.username = username;
     lupa_user.age = age;
     lupa_user.email = email;
     lupa_user.time_created = time_created;
     lupa_user.isTrainer = false;
+    lupa_user.isGuest = false;
     return lupa_user;
 }
 
