@@ -28,6 +28,21 @@ import DashboardPrograms from './DashboardPrograms';
 import DashboardTrainers from './DashboardTrainers';
 
 function UserDashboard(props) {
+
+    useEffect(() => {
+
+        const currUserObserver = LUPA_DB.collection('bookings').where('requester_uuid', '==', currUserData.user_uuid).where('status', '==', 2).onSnapshot(documentSnapshot => {
+            let bookingData = []
+            documentSnapshot.forEach(doc => {
+            bookingData.push(doc.data());
+           })
+
+            setUserBookings(bookingData);
+        });
+
+        return () => currUserObserver();
+
+    }, [])
     const navigation = useNavigation();
 
     const currUserData = useSelector(state => {
@@ -36,6 +51,7 @@ function UserDashboard(props) {
 
     const [programsModalIsOpen, setProgramModalIsOpen] = useState(false);
     const [trainersModalIsOpen, setTrainersModalIsOpen] = useState(false);
+    const [userBookings, setUserBookings] = useState([]);
 
     const handleStartLiveWorkout = () => {
         navigation.push('LiveWorkout', {
@@ -75,6 +91,33 @@ function UserDashboard(props) {
     }
     }
 
+    const renderBookings = () => {
+        if (userBookings.length === 0) {
+            return (
+                <Caption>
+                You don't have any scheduled bookings.
+            </Caption>
+            )
+        }
+
+        return userBookings.map((booking, index, arr) => {
+            return (
+                <TouchableWithoutFeedback onPress={() => openBookingsActionSheet(booking)} style={{ marginHorizontal: 10}}>
+ <View style={{alignItems: 'center'}}>
+                    <Avatar.Text style={{marginVertical: 5}} label="EH"  size={35} />
+                    <Text style={{fontSize: 10}}>
+                    {booking.start_time}
+                    </Text>
+                    <Text style={{fontSize: 10}}>
+                    {moment(booking.booking_entry_date).format('LL').toString().split(',')[0]}
+                    </Text>
+                </View>
+                </TouchableWithoutFeedback>
+               
+            )
+        });
+    }
+
     const renderComponent = () => {
         let NUM_PROGRAMS = 0;
         for (let i = 0; i < currUserData.program_data.length; i++) {
@@ -87,6 +130,16 @@ function UserDashboard(props) {
 
         return currUserData.program_data.length !== 0 ?
         <ScrollView contentContainerStyle={{marginTop: 5, backgroundColor: '#EEEEEE',}}>
+            <View style={{marginVertical: 15, padding: 10}}>
+<Text style={{fontSize: 13, paddingVertical: 10, fontWeight: '600'}}>
+                           Bookings
+                        </Text>
+                        <ScrollView horizontal contentContainerStyle={{flexDirection: 'row', alignItems: 'center'}}>
+                        {renderBookings()}
+                        </ScrollView>
+                      
+</View>
+
                    <View style={{marginVertical: 10, backgroundColor: 'transparent'}} />
         <ListItem onPress={() => setProgramModalIsOpen(true)} title={"Programs " + '(' + NUM_PROGRAMS + ')'} rightIcon={() => <FeatherIcon name="arrow-right" size={20} />} titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '500', }} topDivider bottomDivider />
 

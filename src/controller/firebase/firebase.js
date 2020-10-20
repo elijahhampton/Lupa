@@ -297,13 +297,20 @@ loginUser = async (email, password) => {
 }
 
 signUpUser = async (USER_UUID, username, email, password) => {
-
+  
   const userDoc = await LUPA_DB.collection('users').doc(USER_UUID);
 
   //Populate database with user data
   try {
       //Obtain a user structure
-      const userData = getLupaUserStructure(USER_UUID, username, email, 0, new Date(), false);
+      let userData = {}
+      if (USER_UUID.includes("-")) {
+        //We have a guest account
+        userData = getLupaUserStructure(USER_UUID, username, email, 0, new Date(), true);
+      } else {
+        //Authenticated user
+        userData = getLupaUserStructure(USER_UUID, username, email, 0, new Date(), false);
+      }
 
       //Add user to users collection with UID.
       await LUPA_DB.collection('users').doc(USER_UUID).set(userData, { merge: true });

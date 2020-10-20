@@ -135,7 +135,6 @@ var lupa_user : LupaUserStructure = {
     certification: "",
     homegym: {},
     chats: [],
-    trainer_tier: 0,
     tokens: {},
     notifications: [],
     programs: [],
@@ -153,8 +152,32 @@ var lupa_user : LupaUserStructure = {
         card_last_four: "",
         card_added_to_stripe: false,
     },
-    trainer_type: [],
     isGuest: true,
+    client_metadata: {
+        physicalActivityStatus: "Non Active",
+        hoursMovingPerDay: 0,
+        hasElevatedHeartRateDuringPhysicalActivity: false,
+        currentlyExercises: false,
+        daysPerWeekExercises: 0,
+        averageExerciseTime: 0,
+        hasNegativeExperienceWithExercise: false,
+        dislikedActivities: [],
+        hasSeenFitnessProfessionalBefore: false,
+        hasNegativeExperienceWithProfessional: false,
+        shortAndLongTermGoalResponse: "",
+        fitnessInjuriesResponse: "",
+    },
+    trainer_metadata: {
+        hasOwnExerciseSpace: false,
+        belongsToTrainerGym: false,
+        hasExperienceInSmallGroupSettings: false,
+        smallGroupExperienceYears: 0,
+        isInHomeTrainer: false,
+        exercise_location: {city: '', state: '', country: '', longitude: '', latitude: '',},
+        personalEquipmentList: [],
+        trainer_tier: 0,
+        trainer_interest: []
+    },
 }
 
 export const getLupaUserStructure = (

@@ -83,7 +83,8 @@ const initialAppWorkoutsReducerState = {
 
 const initialState = {}
 
-const authenticationReducer = (state= {
+const authenticationReducer = (
+  state = {
   isLoggingIn: false,
   isLoggingOut: false,
   isVerifying: false,
@@ -146,8 +147,7 @@ const authenticationReducer = (state= {
       };
     default:
       return state;
-  }
-
+    }
 }
 
 const formReducer = (state = initialState, action) => {

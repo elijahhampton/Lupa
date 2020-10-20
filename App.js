@@ -45,9 +45,12 @@ import { LupaUserStructure } from './src/controller/lupa/common/types';
 import GuestView from './src/ui/GuestView';
 import SignUp from './src/ui/user/login/SignUpView';
 import LoginView from './src/ui/user/login/LoginView';
-import configureStore from './src/controller/redux';
+import { getLupaStoreState, LupaStore } from './src/controller/redux/index';
+import { verifyAuth } from './src/controller/lupa/auth/auth';
+import { retrieveAsyncData, storeAsyncData } from './src/controller/lupa/storage/async';
+import DeviceInfo from 'react-native-device-info';
+import MyClients from './src/ui/user/trainer/MyClients';
 
-const LupaStore = configureStore();
 
 const App = () => {
   return (
@@ -65,20 +68,40 @@ const SwitchNavigator = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
 
+  const [finishedVerifying, setFinishedVerifying] = useState(false);
+
+  const LUPA_AUTH_STATE = useSelector(state => {
+    return state.Auth;
+  })
+
 
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async (uuid) => {
-      //setup redux
-      await _setupRedux(uuid);
-
+    //setup redux
+    await _setupRedux(uuid);
     SplashScreen.hide();
-    //navigate to app
-    navigation.navigate('App');
+    //navigate to app or guest view depending on the uuid
+    uuid == 0 ? navigation.navigate('GuestView') : navigation.navigate('App');
   }
 
   const showAuthentication = () => {
     navigation.navigate('Auth');
+  }
+
+  const handleGuestAccountUUID = async () => {
+    let deviceID = undefined;
+    retrieveAsyncData('UNIQUE_DEVICE_ID').then(deviceID => {
+      deviceID = deviceID;
+    });
+
+    if (typeof(deviceID) == 'undefined') {
+      const uniqueDeviceID = await DeviceInfo.getUniqueId();
+      storeAsyncData('UNIQUE_DEVICE_ID', uniqueDeviceID);
+      return uniqueDeviceID;
+    } else {
+      return deviceID;
+    }
   }
 
   /**
@@ -86,72 +109,76 @@ const SwitchNavigator = () => {
  * as well as Lupa application data (assessments, workouts);
  */
   const _setupRedux = async (uuid) => {
-    try {
-    let currUserData = getLupaUserStructure(uuid), currUserPrograms = [], lupaWorkouts : Object;
+    const userAuthenticationHandler = new UserAuthenticationHandler();
 
+    let currUserData = getLupaUserStructure(uuid), currUserPrograms = [], lupaWorkouts : Object, userPayload : Object = {}
+
+    //User is not signed in so we let the user continue as a guest
     if (uuid === 0) {
-      LUPA_AUTH.signOut();
-      await dispatch({ type: 'UPDATE_CURRENT_USER', payload: getLupaUserStructure() })
-      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
-      navigation.navigate('GuestView');
+      try {
+      // LUPA_AUTH.signOut();
+      const newGuestUUID = await handleGuestAccountUUID();
+      await userAuthenticationHandler.signUpUser(newGuestUUID, "", "", "");
+
+      // Load user data
+      await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(newGuestUUID).then(result => {
+        currUserData = result;
+      });
+
+      userPayload = {
+        userData: currUserData,
+      }
+
+      await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload });
+      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: [] });
+      return;
+    } catch(error) {
+      SplashScreen.hide();
+    }
     }
 
 
     try {
-    // Load user data
+    //we have an authenticated user and we shall continue normally
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
     });
 
-    let userPayload = {
+    userPayload = {
       userData: currUserData,
     }
 
-    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload })
-
     // Load user program data if the user is a trainer
-    if (typeof(currUserData.isTrainer) == 'undefined') {
-      LUPA_AUTH.signOut();
-      await dispatch({ type: 'UPDATE_CURRENT_USER', payload: getLupaUserStructure() })
-      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
-      navigation.navigate('GuestView');
-    } else {
-      if (currUserData.isTrainer) {
-        await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-          currUserPrograms = result;
-        });
-    
-        await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
-      }
+    if (currUserData.isTrainer) {
+      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+        currUserPrograms = result;
+      });
     }
 
-  } catch(error) {
-    LUPA_AUTH.signOut();
-    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: getLupaUserStructure() })
+    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload });
     await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
-    navigation.navigate('GuestView');
+      
+    // Load application workouts
+    lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
+    await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
+  } catch(error) {
+    alert(error)
   }
-
-      // Load application workouts
-      lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
-      dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
   }
 
   useEffect(() => {
+    
     const getUserAuthState = async () => {
-      try {
-        await LUPA_AUTH.onAuthStateChanged(user => {
-          if (typeof (user) == 'undefined' || user == null) {
-            SplashScreen.hide()
-            navigation.navigate('GuestView')
-          }
+      await verifyAuth()
 
-          fcmService.createNotificationListeners(onNotification, onOpenNotification);
-          localNotificationService.configure(onOpenNotification);
-        })
-      } catch (err) {
-        SplashScreen.hide()
-        navigation.navigate('GuestView')
+      const updatedAuthState = await getLupaStoreState().Auth;
+
+      if (updatedAuthState.isAuthenticated === true) {
+        fcmService.createNotificationListeners(onNotification, onOpenNotification);
+        localNotificationService.configure(onOpenNotification);
+        introduceApp(updatedAuthState.user.user.uid)
+      } else {
+        introduceApp(0);
       }
     }
 
@@ -179,8 +206,12 @@ const SwitchNavigator = () => {
     getUserAuthState()
 
     return () => {
-      fcmService.unRegister()
-      localNotificationService.unregister()
+      const updatedAuthState = getLupaStoreState().Auth;
+      if (updatedAuthState.isAuthenticated) {
+        fcmService.unRegister()
+        localNotificationService.unregister()
+      }
+ 
     }
   }, [])
 
@@ -207,11 +238,9 @@ function AppNavigator() {
       <StackApp.Screen name='Auth' component={AuthenticationNavigator} />
       <StackApp.Screen name="SignUp" component={SignUp} />
       <StackApp.Screen name="Login" component={LoginView} />
-      <StackApp.Screen name="GuestView" component={GuestView} />
       <StackApp.Screen name='App' component={Lupa} />
       <StackApp.Screen name="GuestView" component={GuestView} />
       <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{ animationEnabled: true }} />
-      <StackApp.Screen name="CreateWorkout" component={CreateWorkout} options={{ animationEnabled: true }} />
       <StackApp.Screen name="CreatePost" component={CreateNewPost} />
       <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{ animationEnabled: true }} />
       <StackApp.Screen name="PrivateChat" component={PrivateChat} />
@@ -230,6 +259,7 @@ function AppNavigator() {
       <StackApp.Screen name="CreateCustomWorkout" component={CreateCustomWorkoutModal} />
       <StackApp.Screen name="VlogContent" component={VlogFeedCardExpanded} />
       <StackApp.Screen name="FollowerView" component={FollowerModal} />
+      <StackApp.Screen name="MyClients" component={MyClients} />
       </StackApp.Navigator>
   )
 }

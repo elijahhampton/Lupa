@@ -435,9 +435,9 @@ function ProgramInformationPreview(props) {
                     </View>*/}
 
                    </ScrollView>
-                   <View style={styles.purchaseContainer}>
+                  {/* <View style={styles.purchaseContainer}>
 
-                    <Button 
+                  <Button 
                         onPress={() => handlePurchaseProgram(programData.program_price)} 
                         mode="outlined"
                         theme={{
@@ -448,8 +448,8 @@ function ProgramInformationPreview(props) {
                     }}
                     style={{width: '100%'}}>
                         Proceed to Checkout
-                    </Button>
-                   </View>
+                </Button>
+                </View>*/}
                    <FullScreenLoadingIndicator isVisible={loading} />
                    </SafeAreaView>
             </Modal>

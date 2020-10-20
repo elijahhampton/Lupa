@@ -9,13 +9,15 @@ import {
     Animated,
     RefreshControl,
     Dimensions,
-    Easing
+    Easing,
+    TouchableWithoutFeedback,
+    Image,
 } from 'react-native'
 
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
 
 import LupaController from '../../controller/lupa/LupaController'
-import { Appbar, Button, Chip, FAB, Searchbar, Surface } from 'react-native-paper'
+import { Avatar, Surface, Divider, Button } from 'react-native-paper'
 import {
     SearchBar
 } from 'react-native-elements'
@@ -43,6 +45,17 @@ const TAB_PROPS = {
   activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold'}
 };
 
+const GOALS = [
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h'
+]
+
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state
@@ -66,48 +79,12 @@ class Search extends React.Component {
             searchContainerWidth: new Animated.Value(0),
             scrollableTabbarWidth: new Animated.Value(1),
             previousSearches: [],
-            currTab: 1,
+            currTab: 0,
             noResultsViewHeight: 0,
+            goalIsPressed: true,
+            goalPressed: "",
         }
 
-    }
-
-    componentDidMounta() {
-        let docData = getLupaProgramInformationStructure();
-
-        this.popularProgramsObserver = LUPA_DB.collection('programs').where('completedProgram', '==', true).onSnapshot(querySnapshot => {
-            let popularProgramResults = [];
-            let locationBasedResults = [];
-            querySnapshot.forEach(doc => {
-                docData = doc.data();
-                if (docData.program_location.address.includes(this.props.lupa_data.Users.currUserData.location.city) || docData.program_location.address.includes(this.props.lupa_data.Users.currUserData.location.state)) {
-                    locationBasedResults.push(docData);
-                }
-
-
-                popularProgramResults.push(docData);
-            });
-
-            this.setState({ popularPrograms: popularProgramResults, locationResults: locationBasedResults})
-        });
-
-        this.mostRecentProgramsObserver = LUPA_DB.collection('programs').orderBy('program_start_date', 'asc').onSnapshot(querySnapshot => {
-            let mostRecentResults = []
-            querySnapshot.forEach(doc => {
-                docData = doc.data();
-                mostRecentResults.push(docData);
-            });
-        })
-    }
-
-    componentWillUnmount() {
-        let subscriptions = [
-            this.popularProgramsObserver,
-            this.mostRecentProgramsObserver
-        ]
-        return subscriptions.map((subscription) => {
-            return () => subscription()
-        })
     }
 
     handleOnRefresh() {
@@ -172,7 +149,6 @@ class Search extends React.Component {
         await this.setState({
             searching: false
         })
-
     }
 
     renderComponentDisplay = () => {
@@ -206,19 +182,62 @@ class Search extends React.Component {
 
             this.performSearch(text)
         }
+
+        handleOnGoalPressed = (goal) => {
+            this.setState({ goalIsPressed: true, goalPressed: goal })
+        }
+
+        renderGoalPressedResults = () => {
+            return (
+                <>
+                <View style={{paddingHorizontal: 20, paddingVertical: 20, width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                    <Avatar.Image style={{borderWidth: 1, borderColor: 'grey'}} size={35} source={{uri: this.props.lupa_data.Users.currUserData.photo_url}} />
+                    <View style={{paddingHorizontal: 20}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={{fontSize: 15, fontWeight: '500', color: '#23374d'}}>
+                        Elijah Hampton
+                    </Text>
+                    <Image style={{width: 18, height: 18, marginHorizontal: 5}} source={require('../images/certificate_icon.jpeg')} />
+                    </View>
+                    
+                    <Text style={{fontWeight: '400', fontSize: 15, color: 'rgb(158, 154, 170)'}}>
+                        National Association of Sports and Medicine
+                    </Text>
+                    </View>
+                </View>
+                                    <Divider style={{width: Dimensions.get('window').width}} />
+                                    </>
+            )
+        }
     
 
         render() {
-         this.state.searching != "" ? () => this.setState({ currTab: 0}) : null
     return (
 
         <View style={{flex: 1, backgroundColor: 'white'}}>
-            <Appbar.Header style={styles.appbar}>
-                <Appbar.Action onPress={() => this.props.navigation.pop()} icon={() => <Feather1s name="x" size={20} color="#212121" />} />
-          
-                <Appbar.Content title="Search" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+            <Header noShadow={true}  style={{borderBottomColor: 'white',flexDirection: 'column', backgroundColor: 'white'}} span={true}>
+                <Text style={{alignSelf: 'center', fontSize: 18, fontFamily: 'Avenir-Heavy'}}>
+                    Search
+                </Text>
+                <View style={{backgroundColor: 'white', flexDirection: 'row', alignItems: 'center' , justifyContent: 'space-evenly'}}>
+
               
-            </Appbar.Header>
+            <Feather1s onPress={() => this.props.navigation.pop()} name="x" size={20} color="#212121" style={{paddingHorizontal: 10}} />
+             
+                <SearchBar
+                        placeholder="Search trainers"
+                        placeholderTextColor="#000000"
+                        value={this.state.searchValue}
+                        inputStyle={styles.inputStyle}
+                        platform="ios"
+                        containerStyle={{backgroundColor: 'white', borderColor: 'white', width: '90%'}}
+                        inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE'}}
+                        searchIcon={() => <MaterialIcon name="search" color="#1089ff" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+                    />
+  </View>
+          
+              
+            </Header>
           
           <ScrollView
           contentContainerStyle={{flex: 1}}
@@ -229,65 +248,41 @@ class Search extends React.Component {
             <Tabs 
             page={this.state.currTab}
             onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
-            renderTabBar={(props) => <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Animated.View style={{width: this.state.scrollableTabbarWidth.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ['0%', '90%']
-                })}}>
-                <ScrollableTab {...props} style={{  shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: '#FFFFFF', backgroundColor: COLOR}} tabsContainerStyle={{flex: 1, justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 5, width: 5, borderRadius: 10,marginLeft: 30, elevation: 0, borderRadius: 8}}/>
-                </Animated.View>
-          
-                <Animated.View style={{width: this.state.searchContainerWidth.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ['0%', '100%']
-                }), flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                   {this.state.searchShowing === true ? null : <MaterialIcon onPress={() => this.showSearch()} style={{padding: 20, width: '100%'}} name="search" size={20} /> } 
-                   {this.state.searchShowing === true ?
-                   <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                    <Searchbar 
-                    style={{width: Dimensions.get('window').width - 20, marginVertical: 10, alignSelf: 'center'}} 
-                    placeholder="Search programs or trainers"
-                    iconColor="#1089ff"
-                    value={this.state.searchValue}
-                    onChangeText={text => this.handleOnChangeText(text)}
-                    inputStyle={styles.inputStyle}
-                    theme={{
-                        roundness: 8,
-                        colors: {
-                            primary: '#1089ff',
-                        }
-                    }}
-                      /> 
-                   </View>
-
-                    : 
-                    null}
-                </Animated.View>
-            </View>
+            renderTabBar={(props) =>  <>
+                <ScrollableTab {...props} style={{  shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: 'white'}} tabsContainerStyle={{paddingVertical: 5, flex: 1, justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 5, width: 5, borderRadius: 10,marginLeft: 30, elevation: 0, borderRadius: 8}}/>
+                <Divider />
+                </>
             }>
               
-              <Tab heading="Search" {...TAB_PROPS}>
+              <Tab heading="Goals" {...TAB_PROPS}>
                   <View style={{flex: 1}}>
+                      {
+                          this.state.goalIsPressed === true ?
+                          <View style={{justifyContent: 'flex-start', padding: 20, backgroundColor: 'rgb(245, 246, 249)'}}>
+                              <Text style={{color: '#23374d', fontFamily: 'Avenir-Medium', fontSize: 18}}>
+                                Improve Balance
+                              </Text>
+                          </View>
+                          :
+                          null
+                      }
                 <ScrollView onLayout={event => this.setState({ noResultsViewHeight: event.nativeEvent.layout.height })} contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
                     {
-                        this.state.searchResults.length === 0 ?
-                        <View style={{flex: 1, height: this.state.noResultsViewHeight, alignItems: 'center', justifyContent: 'center'}}>
-                            <Text style={{fontFamily: 'Avenir-Light', fontSize: 20}}>
-                                <Text>
-                                Not seeing any results?
-                                </Text>
-                                <Text>
-                                    {" "}
-                                </Text>
-                                <Text onPress={this.showSearch} style={{color: '#1089ff'}}>
-
-                                Search fitness programs and trainers.
-                                </Text>
-                            </Text>
-                        </View>
-                       
+                        this.state.goalIsPressed === true ?
+                        this.renderGoalPressedResults()
                         :
-                        this.renderSearchResults()
+                       GOALS.map(goal => {
+                           return (
+                               <TouchableWithoutFeedback key={goal} onPress={() => this.handleOnGoalPressed(goal)}>
+                               <Surface style={{alignItems: 'center', justifyContent: 'center', shadowColor: "rgb(210, 180 ,120)", elevation: 2, borderRadius: 15, width: Dimensions.get('window').width / 2.5, backgroundColor: 'rgb(223, 240 ,254)', height: 150, margin: 20}}>
+                                <Text style={{fontFamily: 'Avenir-Roman'}}>
+                                   Improve Balance
+                                </Text>
+                                   <MaterialIcon size={24} name="star" style={{position: 'absolute', top: 0, left: 0, margin: 12}}/>
+                               </Surface>
+                               </TouchableWithoutFeedback>
+                           )
+                       })
                     }
                 </ScrollView>
                   </View>
@@ -329,15 +324,6 @@ class Search extends React.Component {
                     }
                 </ScrollView>
               </Tab>
-
-              <Tab heading="Trainers" {...TAB_PROPS} >
-              <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
-                    
-                </ScrollView>
-              </Tab>
-              
-        
-
             </Tabs>
                 
           </ScrollView>
@@ -360,18 +346,17 @@ const styles = StyleSheet.create({
     inputContainerStyle: {
         backgroundColor: '#FFFFFF',
     },
-    inputStyle: {
-        fontSize: 15, fontWeight: '800', fontFamily: 'Avenir-Roman'
-    },
     iconContainer: {
         alignItems: 'center', justifyContent: 'center'
     },
     appbar: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         backgroundColor: '#FFFFFF',
-        borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',
+        borderColor: 'white',
+        borderBottomWidth: 0,
+      //  borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',
        // borderBottomColor: 'rgb(199, 199, 204)', 
        // borderBottomWidth: 0.8,
         elevation: 0,
@@ -379,6 +364,10 @@ const styles = StyleSheet.create({
     categoryText: {
         fontSize: 15,
         fontFamily: 'Avenir-Heavy',
+    },
+    inputStyle: {
+        fontSize: 15, fontFamily: 'Avenir-Roman'
+
     },
     category: {
         marginVertical: CATEGORY_SEPARATION,

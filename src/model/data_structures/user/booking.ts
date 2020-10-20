@@ -1,22 +1,38 @@
-import { Booking } from "./types";
+import { Booking, BOOKING_STATUS } from "./types";
 
 let booking : Booking = {
-    start_time: new Date(5000),
-    end_time: new Date(5000),
-    trainer_uuid: '',
-    requester_uuid: '',
-    is_set: false,
-    booking_uid: '0',
-    booking_entry_date: new Date(5000)
+    start_time: new Date(),
+    end_time: new Date(),
+    date: new Date(),
+    date_requested: new Date(),
+    trainer_uuid: 0,
+    requester_uuid: 0,
+    status: BOOKING_STATUS.BOOKING_UNKNOWN,
+    uid: 0,
+    note: "",
 }
 
-export default function getBookingStructure(startTime, endTime, trainerUUID, requestUUID, isSet, bookingEntryDate) {
-    booking.start_time = startTime;
-    booking.end_time = endTime;
-    booking.trainer_uuid = trainerUUID;
-    booking.requester_uuid = requestUUID;
-    booking.is_set = isSet;
-    booking.booking_uid = Math.random().toString();
-    booking.booking_entry_date = bookingEntryDate
+export function getNewBookingStructure(start_time, end_time, date, date_requested, trainer_uuid, requester_uuid, trainer_note) : Booking {
+    booking.start_time = start_time;
+    booking.end_time = end_time;
+    booking.date = date;
+    booking.date_requested = date_requested;
+    booking.trainer_uuid = trainer_uuid;
+    booking.requester_uuid = requester_uuid;
+    booking.status = BOOKING_STATUS.BOOKING_REQUESTED;
+    booking.note = trainer_note;
+    booking.uid = Math.random().toString();
+    return booking;
+}
+
+export function getBookingStructure() : Booking {
+    booking.start_time = new Date();
+    booking.end_time = new Date();
+    booking.date = new Date();
+    booking.date_requested = new Date();
+    booking.trainer_uuid = 0;
+    booking.requester_uuid = 0;
+    booking.status = BOOKING_STATUS.BOOKING_UNKNOWN;
+    booking.note = "";
     return booking;
 }

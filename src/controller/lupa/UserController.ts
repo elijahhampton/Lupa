@@ -20,11 +20,13 @@ const tmpIndex = algoliaIndex.initIndex("tempDev_Users");
 const programsIndex = algoliaIndex.initIndex("dev_Programs");
 const tmpProgramsIndex = algoliaIndex.initIndex("tempDev_Programs");
 
+import { BOOKING_STATUS } from '../../model/data_structures/user/types';
+import { getBookingStructure } from '../../model/data_structures/user/booking'
 import { LupaUserStructure, UserCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 
 import LOG, { LOG_ERROR } from '../../common/Logger';
-import { getLupaUserStructure } from '../firebase/collection_structures';
+import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../firebase/collection_structures';
 import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
 import ProgramController from './ProgramController';
 import moment from 'moment';
@@ -254,11 +256,61 @@ export default class UserController {
         let currentUserHealthDocumentData;
 
         let currentUserDocument = await USER_COLLECTION.doc(this.getCurrentUser().uid);
+        let userData = getLupaUserStructurePlaceholder();
+        let trainerMetadata = undefined;
+        let clientMetadata = undefined;
 
         switch (fieldToUpdate) {
-            case 'trainer_type':
+            case 'client_metadata':
+                currentUserDocument.get().then(documentSnapshot => {
+                    userData = documentSnapshot.data()
+                });
+        
+                this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+                clientMetadata = userData.client_metadata;
+                clientMetadata.client_metadata = value;
+
                 currentUserDocument.update({
-                    trainer_type: value,
+                    client_metadata: value
+                });
+                break;
+            case 'exercise_space':
+                currentUserDocument.get().then(documentSnapshot => {
+                    userData = documentSnapshot.data()
+                });
+        
+                this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+                trainerMetadata = userData.trainer_metadata;
+                trainerMetadata.exercise_space = value;
+
+                currentUserDocument.update({
+                    trainer_metadata: trainerMetadata
+                });
+                break;
+            case 'trainer_interest':
+                currentUserDocument.get().then(documentSnapshot => {
+                    userData = documentSnapshot.data()
+                });
+        
+                this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+                trainerMetadata = userData.trainer_metadata;
+                trainerMetadata.trainer_interest = value;
+
+                currentUserDocument.update({
+                    trainer_metadata: trainerMetadata
+                });
+                break;
+            case 'personal_equipment_list':
+                currentUserDocument.get().then(documentSnapshot => {
+                    userData = documentSnapshot.data()
+                });
+        
+                this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+                trainerMetadata = userData.trainer_metadata;
+                trainerMetadata.personal_equipment_list = value;
+
+                currentUserDocument.update({
+                    trainer_metadata: trainerMetadata
                 });
                 break;
             case 'isTrainer':
@@ -1837,29 +1889,41 @@ export default class UserController {
      * TODO: Look into checkuseStructure() usage
      * @param booking 
      */
-    createBookingRequest = async (booking: Object) => {
+    createBookingRequest = async (booking: Object) : Promise<Boolean> => {
+        console.log(booking);
         const requesterUUID = booking.requester_uuid;
+        console.log(requesterUUID);
         const trainerUUID = booking.trainer_uuid;
-
+        console.log(trainerUUID);
         //create booking
-        LUPA_DB.collection('bookings').doc(booking.booking_uid).set(booking);
+        await LUPA_DB.collection('bookings').doc(booking.uid).set(booking)
+        .then(docRef => {
+
+        })
+        .catch(error => {
+            alert(error)
+        });
+
 
         //add the booking uuid to both users booking fields
         //the requester
-        this.updateCurrentUser('bookings', booking.booking_uid, 'add');
+        this.updateCurrentUser('bookings', booking.uid, 'add');
+
+        console.log('updateCurrentUser')
 
         let userData = getLupaUserStructure();
         await USER_COLLECTION.doc(booking.trainer_uuid).get().then(documentSnapshot => {
             userData = documentSnapshot.data();
         })
 
+        console.log('checUserStructure')
+
         if (!this.checkUserStructure(userData, getLupaUserStructure())) {
             userData = Object.assign(getLupaUserStructure(), userData)
         }
-
         
         let trainerBookings = userData.bookings;
-        trainerBookings.push(booking.booking_uid);
+        trainerBookings.push(booking.uid);
 
         USER_COLLECTION.doc(booking.trainer_uuid).update({
             bookings: trainerBookings
@@ -1886,28 +1950,33 @@ export default class UserController {
             await USER_COLLECTION.doc(trainerUUID).get().then(snapshot => {
                 userNotifications = snapshot.data().notifications;
             })
-
+            console.log('pushing notification')
             await userNotifications.push(receivedProgramNotificationStructure);
             
             await USER_COLLECTION.doc(trainerUUID).update({
                 notifications: userNotifications,
-            })
+            });
+
+            console.log('updating')
+
+            return Promise.resolve(true);
     }
 
-    handleAcceptedBooking = async (booking_uid: String) => {
+    handleAcceptedBooking = async (booking_uid: String | Number) => {
         const bookingID = booking_uid;
         let booking  = {}
         await LUPA_DB.collection('bookings').doc(bookingID).get().then(documentSnapshot => {
             booking = documentSnapshot.data();
         });
 
-        booking.is_set = true;
+        booking.status = BOOKING_STATUS.BOOKING_ACCEPTED
+    
         const trainer_uuid = booking.trainer_uuid;
         const requester_uuid = booking.requester_uuid;
 
         LUPA_DB.collection('bookings').doc(bookingID).update({
-            is_set: true
-        })
+            status: BOOKING_STATUS.BOOKING_ACCEPTED
+        });
 
         let GENERATED_CHAT_UUID = undefined;
 
@@ -1979,32 +2048,32 @@ export default class UserController {
 
     /** **************/
 
-
-    try {
-        //init Fire
-        await Fire.shared.init(GENERATED_CHAT_UUID);
-
-        const message = {
-            _id: trainer_uuid,
-            timestamp: new Date().getTime(),
-            text: 'Your booking request has been accepted.',
-            user: {
+    if (!LUPA_AUTH.currentUser.uid) {
+        //email user with the correct details
+    } else {
+        try {
+            //init Fire
+            await Fire.shared.init(GENERATED_CHAT_UUID);
+            const message = {
                 _id: trainer_uuid,
-                name: await this.getAttributeFromUUID(trainer_uuid, 'display_name'),
-                avatar: await this.getAttributeFromUUID(trainer_uuid, 'photo_url')
+                timestamp: new Date().getTime(),
+                text: 'Your booking request has been accepted.',
+                user: {
+                    _id: trainer_uuid,
+                    name: await this.getAttributeFromUUID(trainer_uuid, 'display_name'),
+                    avatar: await this.getAttributeFromUUID(trainer_uuid, 'photo_url')
+                }
             }
+            await Fire.shared.append(message);
+            
+        } catch (err) {
+            alert(err)
         }
-
-        await Fire.shared.append(message)
-
-    } catch (err) {
-        alert(err)
     }
-        
 }
 
     handleCancelBooking = async (booking: Object) => {
-        const booking_uid = booking.booking_uid;
+        const booking_uid = booking.uid;
         const trainer_uid = booking.trainer_uuid;
         const requester_uid = booking.requester_uuid;
 
@@ -2040,8 +2109,6 @@ export default class UserController {
 
         //Delete the booking from the collection
         await LUPA_DB.collection('bookings').doc(booking_uid).delete();
-
-
     }
 
     fetchBookingData = async (uuid: String): Promise<Object> => {
@@ -2053,6 +2120,224 @@ export default class UserController {
         return Promise.resolve(bookingData);
     }
 
+    fetchMyClients = async (uuid: String): Promise<Array<Object>> => {
+        let bookingDataEntry = {
+            user_uuid: undefined,
+            booking_date: undefined
+        }
+        let bookingData : Array<Object> = []
+        let docData = getBookingStructure();
+
+        await LUPA_DB.collection('bookings').where('trainer_uuid', '==', uuid).get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                docData = doc.data();
+                if (docData.status == BOOKING_STATUS.BOOKING_COMPLETED) {
+                    bookingDataEntry.user_uuid = docData.requester_uuid;
+                    bookingDataEntry.booking_date = docData.date_requested;
+                    bookingData.push(bookingDataEntry);
+                }
+            });
+        });
+
+        //Retrieve anymore relevant data from the user
+        docData = getLupaUserStructurePlaceholder()
+        for (let i = 0; i < bookingData.length; i++) {
+            await USER_COLLECTION.doc(bookingData[i].user_uuid).get().then(documentSnapshot => {
+                docData = documentSnapshot.data();
+                bookingData[i].display_name = docData.display_name;
+                bookingData[i].photo_url = docData.photo_url;
+            })
+        }
+
+        return Promise.resolve(bookingData);
+    }
+
+    deleteBooking = (booking_uuid: String, trainer_uuid: String, requester_uuid: String): Boolean => {
+        let userData = getLupaUserStructurePlaceholder();
+        let bookings = []
+
+        const trainerDocRef = USER_COLLECTION.doc(trainer_uuid);
+        const requesterDocRef = USER_COLLECTION.doc(requester_uuid);
+
+        try {
+        trainerDocRef.get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
+
+       // this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+        bookings = userData.bookings;
+        this.arrayRemove(bookings, booking_uuid);
+        trainerDocRef.update({
+            bookings: bookings
+        })
+
+        bookings = [];
+
+        
+        requesterDocRef.get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
+
+        // this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+        bookings = userData.bookings;
+        this.arrayRemove(bookings, booking_uuid);
+        requesterDocRef.update({
+            bookings: bookings
+        })
+
+        LUPA_DB.collection('bookings').doc(booking_uuid).delete();
+    } catch(error) {
+        return false;
+    }
+
+        return true;
+    }
+
+    getAvailableTrainersByDateTime = async (date, time): Promise<Array<Object>> => {
+        let trainers = [];
+        let trainer = getLupaUserStructurePlaceholder();
+        let trainerScheduler = {}, dateQueryObject = []
+        await USER_COLLECTION.where('isTrainer', '==', true).get().then(queryReference => {
+            queryReference.forEach(doc => {
+                trainer = doc.data();
+                if (typeof(trainer.scheduler_times[date.toString()]) == 'undefined') {
+                    //we dont do anything 
+                } else {
+                    trainerScheduler = trainer.scheduler_times;
+                    dateQueryObject = trainerScheduler[date.toString()];
+                    for (let i = 0; i < dateQueryObject.length; i++) {
+                        let timeBlockStartTime = moment(dateQueryObject[i].startTime);
+                        let timeBlockEndTime = moment(dateQueryObject[i].endTime);
+                        let timeQuery = moment(time);
+
+                        if (timeQuery.isAfter(timeBlockStartTime) && timeQuery.isBefore(timeBlockEndTime)) {
+                            trainers.push(trainer);
+                        }
+                    }
+                }
+            });
+        });
+
+        return Promise.resolve(trainers);
+    }
+
+    markBookingSessionCompleted = async (booking) => {
+        let updatedBookingStructure = booking;
+
+        //mark status as completed
+        updatedBookingStructure.status = BOOKING_STATUS.BOOKING_COMPLETED;
+        LUPA_DB.collection('bookings').doc(updatedBookingStructure.uid).set(updatedBookingStructure);
+
+        //make user pay trainer
+
+    }
+
+    setTrainerBelongsToGym = async () => {
+        const uuid  = await LUPA_AUTH.currentUser.uid
+
+        let userData = getLupaUserStructurePlaceholder();
+        let trainerMetadata = {}
+        LUPA_DB.collection('users').doc(uuid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data()
+        });
+
+        this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+        trainerMetadata = userData.trainer_metadata;
+
+        trainerMetadata.hasOwnExerciseSpace = false;
+        trainerMetadata.belongsToTrainerGym = true;
+
+        LUPA_DB.collection('users').doc(uuid).update({
+            trainer_metadata: trainerMetadata
+        })
+    }
+
+    setTrainerHasOwnExerciseSpace = async () => {
+        const uuid  = await LUPA_AUTH.currentUser.uid
+
+        let userData = getLupaUserStructurePlaceholder();
+        let trainerMetadata = {}
+        LUPA_DB.collection('users').doc(uuid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data()
+        });
+
+        this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+        trainerMetadata = userData.trainer_metadata;
+
+        trainerMetadata.hasOwnExerciseSpace = true;
+        trainerMetadata.belongsToTrainerGym = false;
+
+        LUPA_DB.collection('users').doc(uuid).update({
+            trainer_metadata: trainerMetadata
+        })
+    }
+
+    setTrainerIsInHomeTrainer = async () => {
+        const uuid  = await LUPA_AUTH.currentUser.uid
+
+        let userData = getLupaUserStructurePlaceholder();
+        let trainerMetadata = {}
+        LUPA_DB.collection('users').doc(uuid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data()
+        });
+
+        this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+        trainerMetadata = userData.trainer_metadata;
+
+        if (trainerMetadata.isInHomeTrainer === true) {
+            trainerMetadata.isInHomeTrainer = false;
+        } else {
+            trainerMetadata.isInHomeTrainer = true;
+        }
+
+
+
+        LUPA_DB.collection('users').doc(uuid).update({
+            trainer_metadata: trainerMetadata
+        })
+    }
+
+    setTrainerHasExperienceInSmallGroup = async () => {
+        const uuid  = await LUPA_AUTH.currentUser.uid
+
+        let userData = getLupaUserStructurePlaceholder();
+        let trainerMetadata = {}
+        LUPA_DB.collection('users').doc(uuid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data()
+        });
+
+        this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+        trainerMetadata = userData.trainer_metadata;
+
+        if (trainerMetadata.hasExperienceInSmallGroupSettings == true) {
+            trainerMetadata.hasExperienceInSmallGroupSettings = false;
+        } else {
+            trainerMetadata.hasExperienceInSmallGroupSettings = true;
+        }
+
+        LUPA_DB.collection('users').doc(uuid).update({
+            trainer_metadata: trainerMetadata
+        })
+    }
+
+    setTrainerSmallGroupExperience = async (val) => {
+        const uuid  = await LUPA_AUTH.currentUser.uid
+
+        let userData = getLupaUserStructurePlaceholder();
+        let trainerMetadata = {}
+        LUPA_DB.collection('users').doc(uuid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data()
+        });
+
+        this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+        trainerMetadata = userData.trainer_metadata;
+
+        trainerMetadata.smallGroupExperienceYears = val;
+
+        LUPA_DB.collection('users').doc(uuid).update({
+            trainer_metadata: trainerMetadata
+        })
+    }
 }
 
 //me

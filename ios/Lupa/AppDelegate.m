@@ -35,13 +35,6 @@
     [FIRApp configure];
   }
  // [RNFirebaseNotifications configure];  //Add This Line
-
- // Workaround until this lands:
-  // https://github.com/react-native-community/datetimepicker/issues/203
-  if (@available(iOS 14, *)) {
-  UIDatePicker *picker = [UIDatePicker appearance];
-  picker.preferredDatePickerStyle = UIDatePickerStyleWheels;
-}
   
 
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
@@ -60,6 +53,13 @@
     // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
+
+   // Workaround until this lands:
+  // https://github.com/react-native-community/datetimepicker/issues/203
+  if (@available(iOS 14, *)) {
+  UIDatePicker *picker = [UIDatePicker appearance];
+  picker.preferredDatePickerStyle = UIDatePickerStyleWheels;
+}
 
   [RNSplashScreen show];
   return YES;

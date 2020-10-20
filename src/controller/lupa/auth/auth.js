@@ -1,5 +1,4 @@
 import LUPA_DB, { LUPA_AUTH, UserAuthenticationHandler } from '../../firebase/firebase';
-import { dispatch } from 'redux-thunk'
 import { createStripeCustomerAccount } from '../../../modules/payments/stripe';
 
 export const SIGNUP = 'SIGNUP'
@@ -61,30 +60,42 @@ const verifySuccess = () => {
   };
 };
 
-export const loginUser = (email, password) =>  {
+export const loginUser = (email, password) => {
+  console.log(email)
   return async (dispatch) => {
     dispatch(requestLogin());
-    await LUPA_AUTH
-    .signInWithEmailAndPassword(email, password)
-    .then(user => {
-      dispatch(receiveLogin(user));
-    })
-    .catch(error => {
-      //Do something with the error if you want!
-      dispatch(loginError());
-    });
+    console.log('after request')
+    try {
+      await LUPA_AUTH
+      .signInWithEmailAndPassword(email, password)
+      .then(user => {
+        console.log(user)
+        dispatch(receiveLogin(user));
+      })
+      .catch(error => {
+        console.log(error)
+        console.log('error')
+        //Do something with the error if you want!
+        dispatch(loginError());
+      });
+    } catch(error) {
+      console.log('error');
+    }
   }
 };
 
 export const logoutUser = () => {
   return async (dispatch) => {
+    console.log('a')
     dispatch(requestLogout());
     await LUPA_AUTH
       .signOut()
       .then(() => {
         dispatch(receiveLogout());
+        console.log('b')
       })
       .catch(error => {
+        alert(error)
         //Do something with the error if you want!
         dispatch(logoutError());
       });
@@ -97,7 +108,8 @@ export const verifyAuth = () =>  {
     await LUPA_AUTH.onAuthStateChanged(user => {
       if (user !== null) {
         dispatch(receiveLogin(user));
-      }
+      } 
+
       dispatch(verifySuccess());
     });
   }
@@ -132,7 +144,7 @@ export const signup = (email, password) => {
     await authHandler.signUpUser(USER_UUID, "", email, password);
 
     //Create the user as a customer in stripe
-    createStripeCustomerAccount(email, LUPA_AUTH.currentUser.uid);
+   // createStripeCustomerAccount(email, LUPA_AUTH.currentUser.uid);
 
     //user is gined in now
     //LUPA_AUTH.currentUser.getTokenId()

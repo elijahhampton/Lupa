@@ -14,7 +14,7 @@ export enum UserCollectionFields {
     LOCATION="location",
     BIO="bio",
     PACKS="packs",
-    HOME_GYM="homegym",
+    HOME_GYM="exercise_location",
     CHATS="chats",
     TOKENS="tokens",
     PROGRAMS="programs",
@@ -86,7 +86,6 @@ export type LupaUserStructure = {
     certification: String,
     homegym: Object,
     chats: any,
-    trainer_tier: Number,
     tokens: Object,
     notifications: Array<Object>,
     programs: Array<String>,
@@ -97,8 +96,33 @@ export type LupaUserStructure = {
     program_data: Array<Object>
     last_workout_completed: Object,
     stripe_metadata: Object,
-    trainer_type: Array<String>,
     isGuest: Boolean,
+    client_metadata: {
+        physicalActivityStatus: String,
+        hoursMovingPerDay: Number,
+        hasElevatedHeartRateDuringPhysicalActivity: Boolean,
+        currentlyExercises: Boolean,
+        daysPerWeekExercises: Number,
+        averageExerciseTime: Number,
+        hasNegativeExperienceWithExercise: Boolean,
+        dislikedActivities: Array<String>,
+        hasSeenFitnessProfessionalBefore: Boolean,
+        hasNegativeExperienceWithProfessional: Boolean,
+        shortAndLongTermGoalResponse: String,
+        fitnessInjuriesResponse: String,
+    },
+    trainer_metadata: {
+        hasOwnExerciseSpace: Boolean,
+        belongsToTrainerGym: Boolean,
+        hasExperienceInSmallGroupSettings: Boolean,
+        smallGroupExperienceYears: Number,
+        isInHomeTrainer: Boolean,
+        exercise_location: Object,
+        personalEquipmentList: Array<String>,
+        trainer_tier: Number,
+        trainer_interest: Array<String>
+    },
+
 };
 
 /* LupaWorkoutDataStructure */

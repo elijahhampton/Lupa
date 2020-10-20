@@ -44,13 +44,13 @@ import { LOG_ERROR } from '../../../../common/Logger';
 const OPTIONS = [
     {
         key: 0,
-        optionTitle: 'User (Find personalized workout programs from local trainers)',
-        optionSubtitle: 'Users can find personalized workout programs from local trainers and use Lupa tooling to create their own workouts.'
+        optionTitle: 'User',
+        optionSubtitle: 'Instantly find personal trainers for any fitness journey.'
     },
     {
         key: 1,
-        optionTitle: 'Certified Trainer (NASM only)',
-        optionSubtitle: 'Certified trainers can create and sell full scale workout programs.'
+        optionTitle: 'Certified Trainer',
+        optionSubtitle: 'Find, manage, and host training sessions with clients.  (Requires a valid NASM certification)'
     },
    /* {
         key: 2,
@@ -212,6 +212,10 @@ class WelcomeLupaIntroduction extends React.Component {
         this.props.setNextDisabled(true)
     }
 
+    setAccountType = (type) => {
+        this.props.setUserAccountType(type)
+    }
+
     myPromise = (ms, callback) => {
         return new Promise(function (resolve, reject) {
             // Set up the real work
@@ -237,27 +241,18 @@ class WelcomeLupaIntroduction extends React.Component {
                } else {
                 this.setState({ userCheck: 'checked', trainerCheck: 'unchecked', learnCheck: 'unchecked' })
                }
+               this.setAccountType(1)
+              // this.props.setUserAccountIsSelected(true);
                break;
            case 1:
-            if (this.state.trainerCheck == 'checked') {
-                this.setState({ trainerCheck: 'unchecked' })
-           } else {
+          //  this.showVerificationModal()
             this.setState({ trainerCheck: 'checked', userCheck: 'unchecked', learnCheck: 'unchecked' });
-            this.showVerificationModal()
+            this.setAccountType(0)
+           // this.props.setUserAccountIsSelected(true);
+           default:
            }
-
-
-               break;
-           case 2:
-            if (this.state.learnCheck == 'checked') {
-                this.setState({ learnCheck: 'unchecked' })
-           } else {
-            this.setState({ learnCheck: 'checked', trainerCheck: 'unchecked', userCheck: 'unchecked' })
-           }
-               break;
-            default:
+       
        }
-    }
 
     renderCheckBox = (index) => {
         switch(index) {
@@ -293,7 +288,7 @@ class WelcomeLupaIntroduction extends React.Component {
 
                 <View style={{ flex: 2, justifyContent: 'center' }}>
                     <View style={{alignItems: 'flex-start', padding: 20}}>
-                    <Text style={{ fontFamily: 'Avenir-Medium', textAlign: 'left', fontSize: 25, marginVertical: 10 }}>
+                    <Text style={{ fontFamily: 'Avenir-Heavy', textAlign: 'left', fontSize: 25, marginVertical: 10 }}>
                         Which type of account do you want to create?
                     </Text>
                     <Text style={{ textAlign: 'center', fontSize: 15, fontWeight: '500', color: 'rgb(142, 142, 147)', marginVertical: 5 }}>
@@ -326,24 +321,6 @@ class WelcomeLupaIntroduction extends React.Component {
 
 
                 </View>
-                
-                <View style={{flex: 0.3}}>
-                <TouchableOpacity style={{alignSelf: 'center', alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width}}  onPress={this.handleAllowPermissionsOnPress}>
-
-<LinearGradient
-// Button Linear Gradient
-colors={['#8ac5ff', '#1089ff', '#589ee8']}
-start={{ x: 0, y: 1 }} 
-end={{ x: 1, y: 1 }}
-style={{ justifyContent: 'center', alignItems: 'center', borderRadius: 25, width: '80%', height: 55}}
->
-    <Text style={{color: '#FFFFFF', fontSize: 20, }}>
-        Allow Permissions
-        </Text>
-
-</LinearGradient>
-</TouchableOpacity >
-                </View>
                     
                 <TrainerCeritifcationModal isVisible={this.state.verificationModalVisible} closeModal={this.hideVerificationModal} />
                 <ActivityIndicatorModal isVisible={this.state.showLoadingIndicator} />
@@ -371,7 +348,8 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontSize: 15,
-        width: '90%'
+        width: '90%',
+        fontFamily: 'Avenir-Medium'
     }
 })
 

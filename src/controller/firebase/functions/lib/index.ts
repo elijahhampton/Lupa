@@ -88,6 +88,10 @@ console.log('B')
   return false;
 });
 
+exports.makePaymentToTrainer = functions.http.onRequest((request, response) => {
+  
+})
+
 /**
  * Handles sending payment data to firebase server.
  * 

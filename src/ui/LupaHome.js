@@ -5,12 +5,14 @@ import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, T
 import { Banner, FAB, Appbar, Divider , Surface} from 'react-native-paper';
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
+import GuestView from './GuestView';
 import { MenuIcon } from "./icons";
 import CreateWorkout from "./workout/createworkout/CreateWorkout";
 import Feather1s from "react-native-feather1s/src/Feather1s";
 import WorkoutLog from "./WorkoutLog";
 import { connect } from 'react-redux';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import MyClients from './user/trainer/MyClients'
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
 const COLOR = "#FFFFFF";
@@ -45,6 +47,16 @@ export class LupaHome extends Component {
     this.setState({ refreshing: false })
   }
 
+  renderAppropriateFirstTab = (navigation) => {
+    if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
+      return <GuestView navigation={this.props.navigation} />
+    }
+
+
+    return <GuestView navigation={this.props.navigation} />
+    
+  }
+
   renderAppropriateSecondaryTab = () => {
     if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
       return (
@@ -54,12 +66,14 @@ export class LupaHome extends Component {
       )
     } else {
       return (
-        <Tab heading="Workout log" {...TAB_PROPS}>
+       /* <Tab heading="Workout log" {...TAB_PROPS}>
         <WorkoutLog navigation={this.props.navigation} />
-      </Tab>
+      </Tab>*/
+      null
       )
     }
   }
+
 
   render() {
     const currTab = this.state.currTab;
@@ -86,13 +100,16 @@ export class LupaHome extends Component {
           renderTabBar={(props) =>
             <ScrollableTab {...props} style={{borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',  height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 1, elevation: 0, borderRadius: 8}}/>}>
             
-            <Tab heading="Home" {...TAB_PROPS} >
-            <Featured navigation={this.props.navigation} />
+            <Tab heading='Explore' {...TAB_PROPS} >
+                {this.renderAppropriateFirstTab(this.props.navigation)}
             </Tab>
            {this.renderAppropriateSecondaryTab()}
+           <Tab heading="Community" {...TAB_PROPS}>
+           <Featured navigation={this.props.navigation} />
+           </Tab>
           </Tabs>
 
-      { this.state.currTab == 0 ? <FAB  onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" /> : null }
+      { this.state.currTab == 2 ? <FAB  onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" /> : null }
       </View>
     );
   }

@@ -151,28 +151,8 @@ class Featured extends React.Component {
     }
 
     render() {
-        this.checkSearchBarState()
         return (
             <View style={styles.root}>
-              
-  
-                    <Searchbar
-                        ref={this.searchBarRef}
-                        placeholder="Search fitness programs"
-                        placeholderTextColor="#000000"
-                        value={this.state.searchValue}
-                        inputStyle={styles.inputStyle}
-                        style={{elevation: 2, alignSelf: 'center', backgroundColor: 'white', height: 50, marginVertical: 10, width: Dimensions.get('window').width - 20 }}
-                        iconColor="#1089ff"
-                        theme={{
-                            roundness: 8,
-                            colors: {
-                                primary: 'white',
-                            }
-                        }}
-                        onFocus={() => this.setState({ searchBarFocused: true })}
-                        onBlur={() => this.setState({ searchBarFocused: false })}
-                    />
      
                                 <ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />} contentContainerStyle={{backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
                                     {this.renderVlogs()}

@@ -13,6 +13,7 @@ export {
 }
 
 export const STRIPE_ENDPOINT = 'https://us-central1-lupa-cd0e3.cloudfunctions.net/payWithStripe'
+export const PAY_TRAINER_ENDPOINT = ""
 export const CURRENCY = 'usd';
 export const LUPA_ERR_TOKEN_UNDEFINED = "TOKEN_UNDEFINED";
 
@@ -88,9 +89,6 @@ export async function createTokenFromCard(params, stripeID) {
   }
 
   export const addCardToStripeAccount = async (tokenId, stripeID) => {
-    //alert('A'+stripeID + "   " + 'B'+tokenId)
-      alert('okay')
-      console.log('OOOOO')
       const user_uuid = LUPA_AUTH.currentUser.uid;
      return await LUPA_AUTH.currentUser.getIdToken(true).then(async idToken => {
        console.log('OOOOH: ' + idToken)

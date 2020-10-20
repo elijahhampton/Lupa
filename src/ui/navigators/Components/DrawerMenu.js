@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import DrawerIcon from "react-native-vector-icons/Feather"
+import DrawerIcon from 'react-native-feather1s'
 
 import { 
   connect, 
+  useDispatch, 
   useSelector 
 } from 'react-redux';
 
@@ -26,6 +27,7 @@ import { Constants } from 'react-native-unimodules';
 import TrainerInsights from '../../user/trainer/TrainerInsights';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { LUPA_AUTH } from '../../../controller/firebase/firebase';
+import { logoutUser } from '../../../controller/lupa/auth/auth';
 
 const ICON_SIZE = 20;
 const ICON_COLOR = "#3d3d40"
@@ -37,6 +39,7 @@ const ICON_COLOR = "#3d3d40"
  */
 function DrawerMenu(props) {
   const navigation = useNavigation()
+  const dispatch = useDispatch();
   const currUserData = useSelector(state => {
     return state.Users.currUserData;
   })
@@ -69,9 +72,10 @@ function DrawerMenu(props) {
    * Logs the user out.
    */
   const _handleLogout = async () => {
-    await LUPA_AUTH.signOut()
+
+    await dispatch(logoutUser());
+    await navigation.navigate('GuestView')
     navigation.reset();
-    navigation.navigate('GuestView')
   }
 
   return (
@@ -142,6 +146,23 @@ function DrawerMenu(props) {
           </Text>
         </View>
 
+        {
+          currUserData.isTrainer ?
+          <>
+          <Divider />
+          <TouchableOpacity onPress={() => navigation.push('MyClients')}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="user" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           My Clients
+          </Text>
+        </View>
+        </TouchableOpacity>
+          </>
+          :
+          null
+        }
+
 
         <Caption style={{padding: 10}}>
           Version 0.7 (76)
@@ -211,9 +232,9 @@ export default DrawerMenu;
     },
     buttonText: {
       color: '#000000',
-    marginHorizontal: 15, 
+      marginHorizontal: 15, 
         fontSize: 15, 
-        fontFamily: 'Avenir-Roman',
+        fontFamily: 'Avenir-Light',
     }
   });
 

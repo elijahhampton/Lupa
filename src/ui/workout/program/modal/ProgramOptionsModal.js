@@ -44,9 +44,9 @@ const CURR_USER_OPTIONS = [
     {
         optionTitle: 'View Trainer Profile',      
     },
-    {
+   /* {
         optionTitle: 'Launch Live Workout',
-    },
+    },*/
   /* {
         optionTitle: 'Show Program Preview',
     }*/

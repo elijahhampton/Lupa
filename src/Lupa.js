@@ -32,6 +32,7 @@ import CreateNewPost from "./ui/user/profile/modal/CreateNewPost";
 import PickInterest from "./ui/user/modal/WelcomeModal/PickInterest";
 import { Paragraph, Title, Button,} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import Onboarding from './ui/user/modal/WelcomeModal/Onboarding'
 
 Geolocation.setRNConfiguration({
   authorizationLevel: 'whenInUse',
@@ -71,7 +72,6 @@ class Lupa extends React.Component {
   async componentDidMount() {
     LOG('Lupa.js', 'Checking location permissions.');
     await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
-    
     .then((result) => {
       switch (result) {
         case RESULTS.UNAVAILABLE:

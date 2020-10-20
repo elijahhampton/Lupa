@@ -71,8 +71,6 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
         return;
       }
 
-      alert(startTime)
-      
       const timeBlock = {
         startTime: moment(startTime).format('LT').toString(),
         endTime: moment(endTime).format('LT').toString(),

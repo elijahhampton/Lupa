@@ -406,6 +406,7 @@ export default class ProgramController {
 
     fetchDashboardData = async () => {
         let userData = getLupaUserStructure()
+        
         //Access user's data
         await USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(snapshot => {
             userData = snapshot.data();

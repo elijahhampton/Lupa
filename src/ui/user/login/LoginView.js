@@ -31,7 +31,7 @@ import {
 import { useDispatch } from 'react-redux';
 
 import LupaController from '../../../controller/lupa/LupaController';
-import { UserAuthenticationHandler } from "../../../controller/firebase/firebase";
+import { UserAuthenticationHandler, LUPA_AUTH } from "../../../controller/firebase/firebase";
 
 import ThinFeatherIcon from "react-native-feather1s";
 import { storeAsyncData, retrieveAsyncData } from "../../../controller/lupa/storage/async";
@@ -40,7 +40,10 @@ import { getLupaUserStructure } from "../../../controller/firebase/collection_st
 import { Constants } from "react-native-unimodules";
 import Input from '../../common/Input/Input'
 import { useNavigation } from '@react-navigation/native';
-import { _DEFAULT_PROGRESS_UPDATE_INTERVAL_MILLIS } from "expo-av/build/AV";
+
+import { loginUser } from "../../../controller/lupa/auth/auth";
+import { useSelector } from 'react-redux'
+import { getLupaStoreState } from "../../../controller/redux";
 
 const INPUT_PLACEHOLDER_COLOR = "rgb(99, 99, 102)"
 
@@ -80,6 +83,9 @@ function checkUserSchema(userData, schema) {
 function LoginView(props) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
   const userAuthenticationHandler = new UserAuthenticationHandler();
+  const LUPA_AUTH_STATE = useSelector(state => {
+    return state.Auth;
+  })
 
   const [securePasswordEntryEnabled, useSecurePasswordEntry] = useState(true);
   const [snackIsVisible, showSnack] = useState(false);
@@ -87,6 +93,30 @@ function LoginView(props) {
 
   const navigation = useNavigation();
   const dispatch = useDispatch()
+
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      loginEmail: '',
+      loginPassword: '',
+    },
+    inputValidies: {
+      loginEmail: false,
+      loginPassword: false,
+    },
+    formIsValid: false,
+  })
+
+  const inputChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
+    dispatchFormState({
+      type: FORM_INPUT_UPDATE,
+      value: inputValue,
+      isValid: inputValidity,
+      input: inputIdentifier
+    })
+  },
+  [dispatchFormState]
+  );
 
   useEffect(() => {
     async function retrievePreviousSignInData() {
@@ -97,7 +127,7 @@ function LoginView(props) {
             value: res,
             isValid: true,
             input: 'loginEmail'
-          })
+          });
         });
   
         await retrieveAsyncData('PREVIOUS_LOGIN_PASSWORD').then(res => {
@@ -106,10 +136,10 @@ function LoginView(props) {
             value: res,
             isValid: true,
             input: 'loginPassword'
-          })
+          });
         });
       } catch(error) {
-
+        alert('aaaa: ' + error);
         LOG_ERROR('LoginView.js', 'Unhandled error in LoginView.js componentDidMount', error);
         dispatchFormState({
           type: FORM_INPUT_UPDATE,
@@ -120,7 +150,7 @@ function LoginView(props) {
 
         dispatchFormState({
           type: FORM_INPUT_UPDATE,
-          value: inputValue,
+          value: '',
           isValid: true,
           input: 'password'
         })
@@ -134,11 +164,17 @@ function LoginView(props) {
    * Introduce the application by setting up redux, indexing the application, 
    * and navigating the user into the application.
    */
-  const _introduceApp = async () => {
-    await _setupRedux();
+  const _introduceApp = async (uuid) => {
+    await _setupRedux(uuid);
     LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     navigation.navigate('App');
   }
+
+ const LOGIN_REQUEST = "LOGIN_REQUEST";
+ const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+ const LOGIN_FAILURE = "LOGIN_FAILURE";
+
+
 
   /**
    * Handles user authentication once the user presses the login button.
@@ -146,23 +182,21 @@ function LoginView(props) {
   const onLogin = async (e) => {
     e.preventDefault();
 
-    const attemptedUsername = await formState.inputValues.loginEmail.trim()
-    const attemptedPassword = await formState.inputValues.loginPassword.trim();
+    const attemptedUsername = await formState.inputValues.loginEmail;
+    const attemptedPassword = await formState.inputValues.loginPassword;
 
-   let successfulLogin = false;
-   await loginUser(attemptedUsername, attemptedPassword)
+    console.log('about to login')
+   await dispatch(loginUser(attemptedUsername, attemptedPassword));
+  const updatedState = await getLupaStoreState();
+  
 
-   if (this.props.lupa_data.Auth.isAuthenticated === true) {
-    _introduceApp();
+   if (updatedState.Auth.isAuthenticated === true) {
+    _introduceApp(updatedState.Auth.user.user.uid);
     storeAsyncData('PREVIOUS_LOGIN_EMAIL', attemptedUsername);
     storeAsyncData('PREVIOUS_LOGIN_PASSWORD', attemptedPassword);
    } else {
-    if (typeof(successfulLogin) != 'boolean') {
-      setLoginRejectedReason('Invalid Username or Password.  Try again.')
-      showSnack(true);
-      return;
-    }
-
+    setLoginRejectedReason('Invalid Username or Password.  Try again.')
+    showSnack(true);
    }
   }
 
@@ -189,21 +223,20 @@ function LoginView(props) {
    * Sets up redux by loading the current user's data, packs, and programs
    * as well as Lupa application data (assessments, workouts);
    */
-  _setupRedux = async () => {
+  _setupRedux = async (uuid) => {
     let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = {};
-    await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
+    await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
       currUserData = result;
     });
-
+    
     //We need to ensure that the user's structure matches the current schema. If it
     //does not we simply add the missing fields with the default properties.
-    if (!checkUserSchema(currUserData, getLupaUserStructure())) {
+    /*if (!checkUserSchema(currUserData, getLupaUserStructure())) {
       currUserData = Object.assign(getLupaUserStructure(), currUserData)
-    }
+    }*/
 
     let userPayload = {
       userData: currUserData,
-      healthData: {}
     }
 
     await updateUserInRedux(userPayload);
@@ -218,7 +251,6 @@ function LoginView(props) {
     await LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
       lupaWorkouts = result;
     });
-
     await updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
 
@@ -228,30 +260,6 @@ function LoginView(props) {
   const onDismissSnackBar = () => {
     showSnack(false);
   }
-
-  const [formState, dispatchFormState] = useReducer(formReducer, {
-    inputValues: {
-      loginEmail: '',
-      loginPassword: '',
-    },
-    inputValidies: {
-      loginEmail: false,
-      loginPassword: false,
-    },
-    formIsValid: false,
-  })
-
-  const inputChangeHandler = useCallback(
-    (inputIdentifier, inputValue, inputValidity) => {
-    dispatchFormState({
-      type: FORM_INPUT_UPDATE,
-      value: inputValue,
-      isValid: inputValidity,
-      input: inputIdentifier
-    })
-  },
-  [dispatchFormState]
-  );
 
   //next method
 
@@ -302,7 +310,7 @@ function LoginView(props) {
        />
        </View>
 
-       <Button onPress={onLogin} uppercase={false} mode="contained" style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', height: 45, alignItems: 'center', justifyContent: 'center', marginTop: 20, width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+       <Button onPress={(event) => onLogin(event)} uppercase={false} mode="contained" style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', height: 45, alignItems: 'center', justifyContent: 'center', marginTop: 20, width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
           <Text>
             Login
           </Text>

@@ -37,6 +37,7 @@ import { getLupaUserStructure } from '../../../../controller/firebase/collection
 import RBSheet from 'react-native-raw-bottom-sheet'
 import getBookingStructure from '../../../../model/data_structures/user/booking';
 import LupaController from '../../../../controller/lupa/LupaController';
+import BookingRequestModal from '../../modal/BookingRequestModal';
 
 function getMonthString(monthNum) {
   switch(monthNum) {
@@ -112,7 +113,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
     const [startTimeIsSet, setStartTimeIsSet] = useState(false);
     const [endTimeIsSet, setEndTimeIsSet] = useState(false);
 
-    const [bookingRequestDialogVisible, setBookingRequestDialogVisible] = useState(false);
+    const [bookingRequestModalVisible, setBookingRequestModalVisible] = useState(false);
 
     const handleOnPickStartTime = () => {
       setStartTimeIsSet(true);
@@ -191,69 +192,6 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
      LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking);
 
      handleCloseRequestBookingDialog();
-  }
-
-  const renderBookingRequestDialog = () => {
-   
-    return (
-      <Portal>
-        <Dialog visible={bookingRequestDialogVisible} style={{alignSelf: 'center', width: Dimensions.get('window').width - 20}}>
-          <Dialog.Title>
-            Book {userData.display_name}
-          </Dialog.Title>
-          <Dialog.Content>
-          <Caption>
-          You are about to book a session with Elijah Hampton on {displayDate.toString()}. Choose a time block from the requested interval.
-        </Caption>
-
-      <View style={{marginTop: 30, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-evenly'}}>
-      <View style={{marginVertical: 10}}>
-        <Text>
-          Start Time
-        </Text>
-      <NativeButton title={startTimeIsSet ? startTimeFormatted.toString() : 'Choose a start time'} onPress={openStartTimePicker} />
-      </View>
-
-      <View  style={{marginVertical: 10}}>
-        <Text>
-          End Time
-        </Text>
-        <NativeButton title={endTimeIsSet ? endTimeFormatted.toString() : 'Choose an end time'} onPress={openEndTimePicker} />
-      </View>
-
-      </View>
-
-
-      {
-      snackBarVisible && true ?
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-           <FeatherIcon name="alert-circle" color='#f44336' />
-           <HelperText style={{color: '#f44336'}}>
-     
-     {snackBarMessage}
-   </HelperText>
-      </View>
-    
-      :
-      null
-      }
-
-
-          </Dialog.Content>
-
-          <Dialog.Actions>
-            <Button color="#1089ff" onPress={handleCloseRequestBookingDialog}>
-              Cancel
-            </Button>
-
-            <Button color="#1089ff" onPress={handleOnRequestBooking}>
-              Request
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      
-      </Portal>
-    )
   }
 
   const renderStartTimePicker = () => {
@@ -340,7 +278,7 @@ height={300}>
       }
 
      return ( 
-     <Button onPress={handleOpenRequestBookingDialog} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
+     <Button onPress={() => setBookingRequestModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
       <Text style={{fontSize: 12}}>
       Book Me
       </Text>
@@ -520,10 +458,8 @@ height={300}>
   // Agenda container style
   style={{height: HEIGHT}}
 />
-{renderBookingRequestDialog()}
-{renderStartTimePicker()}
-{renderEndTimePicker()}
 
+<BookingRequestModal isVisible={bookingRequestModalVisible} trainer={userData} closeModal={() => setBookingRequestModalVisible(false)} />
 <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} displayDate={displayDate} entryDate={entryDate} />
     </View>
     );

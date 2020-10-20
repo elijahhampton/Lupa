@@ -17,9 +17,9 @@ import {
     Surface,
     DataTable,
     Caption, 
-    Avatar
 } from 'react-native-paper';
 
+import { Avatar } from 'react-native-elements';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useSelector } from 'react-redux'
 import { LineChart } from 'react-native-chart-kit'
@@ -32,6 +32,7 @@ import LUPA_DB from '../../../../controller/firebase/firebase';
 import getBookingStructure from '../../../../model/data_structures/user/booking';
 import moment from 'moment';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { BOOKING_STATUS } from '../../../../model/data_structures/user/types';
 function TrainerDashboard(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -69,17 +70,28 @@ function TrainerDashboard(props) {
                  });
             } catch(error) {
                 setData({})
-                
                 setComponentReady(false)
             }
         }
 
       
-        const currUserObserver = LUPA_DB.collection('bookings').where('trainer_uuid', '==', currUserData.user_uuid).where('is_set', '==', true).onSnapshot(documentSnapshot => {
+        const currUserObserver = LUPA_DB.collection('bookings').where('trainer_uuid', '==', currUserData.user_uuid).where('status', '==', 2).onSnapshot(documentSnapshot => {
             let bookingData = []
+            let booking = {}
             documentSnapshot.forEach(doc => {
-            bookingData.push(doc.data());
-           })
+            booking = doc.data();
+            if (typeof(booking.uid) == 'undefined' 
+            || booking.uid === 0 
+            || booking.status == BOOKING_STATUS.BOOKING_COMPLETED) {
+                
+            } else {
+                if (moment(booking.date).isAfter(moment(new Date())) || moment(new Date().getTime()).isAfter(moment(booking.end_time))) {
+                    LUPA_CONTROLLER_INSTANCE.markBookingSessionCompleted(booking);
+                } else {
+                    bookingData.push(doc.data());
+                }
+            }
+           });
 
             setUserBookings(bookingData);
         });
@@ -201,7 +213,129 @@ function TrainerDashboard(props) {
         }
     }
 
+       /**
+     * Sends request to server to complete payment
+     */
+    const makePaymentToTrainer = async (token, amount, booking) => {
+        //Create an idemptoencyKey to prevent double transactions
+        const idempotencyKey = await Math.random().toString()
+  
+        //Get a copy of the current user data to pass some fields into the request
+        const userData = LUPA_STATE.Users.currUserData
+
+        let requester_stripe_id = undefined;
+        await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.requester_uuid).then(data => {
+            requester_stripe_id = data.stripe_metadata.stripe_id;
+        })
+  
+        //Make the payment request to firebase with axios
+        axios({
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            url: PAY_TRAINER_ENDPOINT,
+            data: JSON.stringify({
+                requester_stripe_id: requester_stripe_id,
+                trainer_stripe_id: userData.stripe_metadata.stripe_id,
+                amount: amount,
+                currency: CURRENCY,
+                token: token,
+                idempotencyKey: idempotencyKey,
+            })
+        }).then(response => {
+        }).catch(err => {
+            setPaymentSuccessful(false)
+            setPaymentComplete(true)
+        })
+    }
+  
+    /**
+     * Handles program purchase process
+     */
+    const handlePayBookingCost = async (amount) => {
+        await setLoading(true)
+         //handle stripe
+         await initStripe();
+  
+         //collect payment information and generate payment token
+         try {
+             setToken(null)
+             
+             //retrieve token from the requester TODO NEXT
+            
+
+             //check if token is undefined
+             if (token == undefined) {
+                 throw LUPA_ERR_TOKEN_UNDEFINED;
+             }
+             
+             await setToken(token)
+         } catch (error) {
+             setLoading(false)
+             return;
+         }
+  
+         //get the token from the state
+         const generatedToken = await token;
+  
+         //Send request to make payment
+         try {
+             await makePayment(generatedToken, amount)
+         } catch (error) {
+             await setPaymentComplete(false)
+             await setPaymentSuccessful(false)
+             setLoading(false);
+             return;
+         }
+  
+        await setLoading(false);
+    }
+
+    handleBookingSessionCompleted = () => {
+        //handlepayment request
+
+        LUPA_CONTROLLER_INSTANCE.markBookingSessionCompleted(booking);
+    }
+
     const openBookingsActionSheet = (booking) => {
+        if (booking.status == BOOKING_STATUS.BOOKING_ACCEPTED
+            && moment(new Date().getTime()).isSameOrAfter(moment(booking.end_time))) {
+                ActionSheetIOS.showActionSheetWithOptions(
+                    {
+                      options: ["Cancel", "Session Completed"],
+                      destructiveButtonIndex: 0,
+                      cancelButtonIndex: 0
+                    },
+                    buttonIndex => {
+                      if (buttonIndex === 0) {
+                        // cancel action
+                      } else if (buttonIndex === 1) {
+                          LUPA_CONTROLLER_INSTANCE.markBookingSessionCompleted(booking);
+                      }
+                    }
+                  );
+                  return;
+        }
+
+        if (booking.status == BOOKING_STATUS.BOOKING_ACCEPTED 
+            && moment(booking.start_time).subtract(30, 'minutes').isSameOrAfter(moment(new Date().getDate()))) {
+            ActionSheetIOS.showActionSheetWithOptions(
+                {
+                  options: ["Cancel"],
+                  destructiveButtonIndex: 0,
+                  cancelButtonIndex: 0
+                },
+                buttonIndex => {
+                  if (buttonIndex === 0) {
+                    // cancel action
+                  }
+                }
+              );
+              return;
+        }
+
         ActionSheetIOS.showActionSheetWithOptions(
             {
               options: ["Cancel", "Cancel Booking"],
@@ -229,18 +363,34 @@ function TrainerDashboard(props) {
 
         return userBookings.map((booking, index, arr) => {
             return (
-                <TouchableWithoutFeedback onPress={() => openBookingsActionSheet(booking)} style={{ marginHorizontal: 10}}>
- <View style={{alignItems: 'center'}}>
-                    <Avatar.Text style={{marginVertical: 5}} label="EH"  size={35} />
-                    <Text style={{fontSize: 10}}>
-                    {booking.start_time}
+                <>
+            <View key={booking.uid} style={{backgroundColor: 'white', alignSelf: 'center', width: Dimensions.get('window').width, padding: 10}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10}}>
+                <Avatar size={70} rounded={false} containerStyle={{backgroundColor: 'black'}} />
+                <View style={{paddingHorizontal: 10}}>
+                    <Text style={{fontSize: 16, fontFamily: 'Avenir-Medium', paddingVertical: 10}}>
+                        Elijah Hampton
                     </Text>
-                    <Text style={{fontSize: 10}}>
-                    {moment(booking.booking_entry_date).format('LL').toString().split(',')[0]}
+                    <Text style={{fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
+                        {moment(booking.date).format('LL').toString()}
+                    </Text>
+                    <Text style={{fontSize: 15, fontFamily: 'Avenir-Medium', color: 'rgb(210, 210, 210)'}}>
+                        {moment(booking.start_time).format('LT').toString()}
                     </Text>
                 </View>
-                </TouchableWithoutFeedback>
-               
+                </View>
+                <View>
+                    <Button onPress={() => openBookingsActionSheet(booking)} uppercase={false} color="#1089ff" mode="outlined" theme={{roundness: 0}} style={{alignSelf: 'center', elevation: 0, marginVertical: 10, width: '100%'}} contentStyle={{width: '100%', height: 50}}>
+                        <Text>
+                            Booking Options
+                        </Text>
+                    </Button>
+                </View>
+
+                <Feather1s color="black" name="info" size={20} style={{position: 'absolute', top: 0, right: 0, margin: 10}} />
+            </View>
+            <Divider style={{width: Dimensions.get('window').width}} />
+            </>
             )
         });
     }
@@ -261,7 +411,7 @@ function TrainerDashboard(props) {
         componentReady === true ?
         <View style={{
             flex: 1,
-            backgroundColor: '#EEEEEE'
+            backgroundColor: '#FFFFFF'
         }}>
              <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)'}}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
@@ -269,27 +419,15 @@ function TrainerDashboard(props) {
                 <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
               <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
 </Appbar.Header> 
- <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{backgroundColor: '#EEEEEE'}}>
-<View style={{marginVertical: 15, padding: 10}}>
-<Text style={{fontSize: 13, paddingVertical: 10, fontWeight: '600'}}>
-                           Bookings
-                        </Text>
-                        <ScrollView horizontal contentContainerStyle={{flexDirection: 'row', alignItems: 'center'}}>
-                        {renderBookings()}
-                        </ScrollView>
-                      
-</View>
-
-
+ <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
  <View style={{marginVertical: 15}}>
                         <Text style={{padding: 10, fontSize: 13, fontWeight: '600'}}>
-                           Purchase History
+                           Booking History
                         </Text>
-                        <DataTable style={{backgroundColor: '#EEEEEE'}}>
+                        <DataTable style={{backgroundColor: '#FFFFFF'}}>
         <DataTable.Header>
           <DataTable.Title>User</DataTable.Title>
-          <DataTable.Title >Purchase Date</DataTable.Title>
-          <DataTable.Title >Program</DataTable.Title>
+          <DataTable.Title >Booking Date</DataTable.Title>
         </DataTable.Header>
         {renderDataTableRows()}
         {renderDataTablePagination()}
@@ -384,6 +522,16 @@ function TrainerDashboard(props) {
                             </ScrollView>
                         </View>
                         </View>
+
+                        <View style={{marginVertical: 15, padding: 10}}>
+<Text style={{fontSize: 13, paddingVertical: 10, fontWeight: '600'}}>
+                           Active Bookings
+                        </Text>
+                        <ScrollView contentContainerStyle={{ alignItems: 'center'}}>
+                        {renderBookings()}
+                        </ScrollView>
+                      
+</View>
 
 </ScrollView>
         </View>

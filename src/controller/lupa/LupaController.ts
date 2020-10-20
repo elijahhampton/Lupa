@@ -717,4 +717,62 @@ export default class LupaController {
 
       return Promise.resolve(retVal);
     }
+
+    fetchMyClients = async (uuid: String | Number): Promise<Array<Object>> => {
+      if (typeof(uuid) == 'undefined' || uuid === 0) {
+        return Promise.resolve([])
+      }
+
+      let retVal : Promise<Array<Object>>;
+      await USER_CONTROLLER_INSTANCE.fetchMyClients(uuid).then(data => {
+        retVal = data;
+      });
+
+      return Promise.resolve(retVal);
+    }
+
+    deleteBooking = (booking_uuid, requester_uuid, trainer_uuid) : Boolean => {
+      let retVal =  USER_CONTROLLER_INSTANCE.deleteBooking(booking_uuid, requester_uuid, trainer_uuid);
+      return retVal;
+    } 
+
+    getAvailableTrainersByDateTime = async (date : Date, time): Promise<Array<Object>> => {
+      
+      let retVal : Promise<Array<Object>> = undefined;
+      await USER_CONTROLLER_INSTANCE.getAvailableTrainersByDateTime(date, time).then(data => {
+        retVal = data;
+      });
+
+      return Promise.resolve(retVal);
+    }
+
+    markBookingSessionCompleted =  (booking) => {
+      USER_CONTROLLER_INSTANCE.markBookingSessionCompleted(booking);
+    }
+
+    setTrainerBelongsToGym = async () => {
+      USER_CONTROLLER_INSTANCE.setTrainerBelongsToGym()
+  }
+
+  setTrainerHasOwnExerciseSpace = async () => {
+      USER_CONTROLLER_INSTANCE.setTrainerHasOwnExerciseSpace()
+  }
+
+  setTrainerIsInHomeTrainer = async () => {
+      USER_CONTROLLER_INSTANCE.setTrainerIsInHomeTrainer()
+  }
+
+  setTrainerHasExperienceInSmallGroup = async () => {
+      USER_CONTROLLER_INSTANCE.setTrainerHasExperienceInSmallGroup()
+  }
+
+  setTrainerSmallGroupExperience = async (val) => {
+    if (typeof(val) != 'string' || typeof(val) != 'number') {
+      return;
+    }
+    
+      const experience = Number(val);
+      USER_CONTROLLER_INSTANCE.setTrainerSmallGroupExperience(experience)
+  }
+
 }

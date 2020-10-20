@@ -45,28 +45,39 @@ class LupaMapView extends React.Component {
 
     componentDidMount = async () => {
         await this._fetchGymLocations();
+
+        if (this.state.surroundingGymLocations.length === 0) {
+            await this._fetchGymLocations()
+        }
+    }
+
+    shouldComponentUpdate = (nextProps, nextState) => {
+        if (this.props.initialRegionLatitude != nextProps.initialRegionLatitude 
+            || this.props.initialRegionLongitude != nextProps.initialRegionLongitude) {
+                return true;
+        }
+
+        return false;
     }
 
     _fetchGymLocations = async () => {
         let results;
         try {
             await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=gym&location=${this.props.initialRegionLatitude},${this.props.initialRegionLongitude}&radius=5000&type=gym&key=AIzaSyAPrxdNkncexkRazrgGy4FY6Nd-9ghZVWE`).then(response => response.json()).then(result => {
-                results = result.results;
-                
+                this.setState({ surroundingGymLocations: result.results })    
             })
         } catch (err)
         {
-        
-            results = [];
+            await this.setState({
+                surroundingGymLocations: []
+            });
+            return;
         }
 
-        await this.setState({
-            surroundingGymLocations: results
-        });
     }
 
     mapMarkers = () => {
-
+        
         return this.state.surroundingGymLocations.map(marker => {
             let coord = {
                 latitude: marker.geometry.location.lat,
