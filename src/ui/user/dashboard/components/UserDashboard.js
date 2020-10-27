@@ -41,7 +41,6 @@ import axios from 'axios';
 function UserDashboard(props) {
 
     useEffect(() => {
-
         const currUserObserver = LUPA_DB.collection('bookings').where('requester_uuid', '==', currUserData.user_uuid).where('status', '==', 2).onSnapshot(documentSnapshot => {
             let bookingData = []
             let booking = {}

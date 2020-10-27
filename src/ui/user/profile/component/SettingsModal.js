@@ -89,22 +89,22 @@ function StripeDashboardWebView({isVisible, closeModal}) {
     const [code, setCode] = useState("");
     const [source, setSource]  = useState("https://connect.stripe.com/express/oauth/authorize?redirect_uri=https://connect.stripe.com/connect/default/oauth&client_id=ca_IGlNQMXFjavl70PtKYuzUceI1Z99KXbx&state=FL")
     const [refresh, setRefreshing] = useState(false)
-    const [firstName, setFirstName] = useState("Nathan")
-    const [lastName, setLastName] = useState("Farley")
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
     const [dateOfBirth, setDateOfBirth] = useState(new Date())
     const [dayOfBirth, setDayOfBirth] = useState(25)
     const [monthOfBirth, setMonthOfBirth] = useState(8);
     const [yearOfBirth, setYearOfBirth] = useState(1993);
-    const [streetAddress, setStreetAddress] = useState("2596 Sarno Road");
+    const [streetAddress, setStreetAddress] = useState("");
     const [secondaryAddress, setSecondaryAddress] = useState("");
-    const [city, setCity] = useState("Melbourne");
-    const [state, setState] = useState("FL")
-    const [country, setCountry] = useState("US")
-    const [zipCode, setZipCode] = useState("32935")
-    const [email, setEmail] = useState('natefarley@live.com')
-    const [phoneNumber, setPhoneNumber] = useState('+13216987724')
-    const [ssn, setSSN] = useState('1167')
-    const [TOSIsAccepted, setTOSIsAccepted] = useState(true)
+    const [city, setCity] = useState("");
+    const [state, setState] = useState("")
+    const [country, setCountry] = useState("")
+    const [zipCode, setZipCode] = useState("")
+    const [email, setEmail] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('+1')
+    const [ssn, setSSN] = useState('')
+    const [TOSIsAccepted, setTOSIsAccepted] = useState(false)
     const [publicIPAddress, setPublicIPAddress] = useState(0);
 
     const [stripeData, setStripeData] = useState({accountData: {}, balanceData: {}})
@@ -113,10 +113,10 @@ function StripeDashboardWebView({isVisible, closeModal}) {
     const [verificationErrors, setVerificationErrors] = useState([])
     const [verificationStatus, setVerificationStatus] = useState('')
 
-    const [bankAccountHolderFirstName, setBankAccountHolderFirstName] = useState("Nathan")
-    const [bankAccountHolderLastName, setBankAccountHolderLastName] = useState("Farley")
-    const [bankAccountRoutingNumber, setBankAccountRoutingNumber] = useState("067014822")
-    const [bankAccountNumber, setBankAccountNumber] = useState("4330485916");
+    const [bankAccountHolderFirstName, setBankAccountHolderFirstName] = useState("")
+    const [bankAccountHolderLastName, setBankAccountHolderLastName] = useState("")
+    const [bankAccountRoutingNumber, setBankAccountRoutingNumber] = useState("")
+    const [bankAccountNumber, setBankAccountNumber] = useState("");
 
 
     useEffect(() => {
@@ -150,14 +150,11 @@ function StripeDashboardWebView({isVisible, closeModal}) {
                 trainer_account_id: currUserData.stripe_metadata.account_id
             })
         }).then(response => {
-          console.log('SUCCESS')
-          console.log(response.data.account_data);
           setStripeData(response.data.account_data)
           setVerificationCurrentlyDue(response.data.account_data.individual.requirements.currently_due)
           setVerificationErrors(response.data.account_data.individual.requirements.errors)
           setVerificationStatus(response.data.account_data.individual.verification.status)
           setReady(true);
-         // console.log(response.data.account_data.individual.requirements)
            LOG('SettingsModal.js', 'Finished running axios request.');
         }).catch(err => {
           console.log('oh')
@@ -221,7 +218,6 @@ function StripeDashboardWebView({isVisible, closeModal}) {
         })
 
     } catch(error) {
-
         console.log('error')
         console.log(error)
     }

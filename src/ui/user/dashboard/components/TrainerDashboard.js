@@ -47,18 +47,6 @@ function TrainerDashboard(props) {
     const navigation = useNavigation();
 
     const [refreshing, setRefreshing] = useState(false);
-    const [data, setData] = useState({
-        purchaseMetaData: {
-            purchase_history: [],
-            gross_pay: 0,
-            net_pay: 0,
-        },
-        interactions: {
-            numInteractions: 0,
-            shares: 0,
-            views: 0
-        }
-    })
     const [lastUpdated, setLastUpdated] = useState(new Date().getTime());
     const [loading, setLoading] = useState(false);
     const [componentReady, setComponentReady] = useState(false);
@@ -99,105 +87,6 @@ function TrainerDashboard(props) {
        
     }, []);
 
-    const renderDataTableRows = () => {
-        if (componentReady === false || typeof(data) == 'undefined' || data.purchaseMetaData.purchase_history.length === 0) {
-            return (
-                <Caption onPress={() => navigation.push('CreatePost')} style={{paddingHorizontal: 10, alignSelf: 'center', paddingVertical: 10}}>
-                You haven't received any booking request.  {" "}
-                <Caption style={{color: '#1089ff',}}>
-                    Create a vlog to advertise your content.
-                </Caption> 
-                </Caption>
-            )
-        }
-
-        //TODO: Possible Bug
-        return data.purchaseMetaData.purchase_history.slice(currPurchaseHistoryStartIndex, currPurchaseHistoryEndIndex).map((purchaseHistory, index, arr) => {
-   
-            return (
-                <DataTable.Row>
-                <DataTable.Cell>{purchaseHistory.purchaser} </DataTable.Cell>
-                <DataTable.Cell >{purchaseHistory.date_purchased.seconds}</DataTable.Cell>
-                <DataTable.Cell>{purchaseHistory.program_name}</DataTable.Cell>
-              </DataTable.Row>
-            )
-        })
-    }
-
-    const renderDataTablePagination = () => {
-        if (componentReady === false || typeof(data) == 'undefined' || data.purchaseMetaData.purchase_history.length === 0) {
-            return (
-               null
-            )
-        } else {
-            return (
-            <DataTable.Pagination
-                page={currPage}
-                numberOfPages={componentReady === true ? data.purchaseMetaData.purchase_history : 0}
-                onPageChange={(page) => handleNextPage(page)}
-                label={`1-3 of ${Math.round(data.purchaseMetaData.purchase_history.length / currPurchaseHistoryEndIndex)}`}
-              />
-            )
-        }
-    }
-
-    const handleNextPage = (page) => {
-       let updatedStartIndex = currPurchaseHistoryStartIndex + 3
-       setCurrPurchaseHistoryStartIndex(updatedStartIndex)
-      
-       let updatedEndIndex = currPurchaseHistoryEndIndex + 3;
-       setCurrPurchaseHistoryEndIndex(updatedEndIndex)
-
-    }
-
-    const renderGrossPay = () => {
-        if (typeof(data) == 'undefined') {
-            return 0;
-        }
-
-        try {
-            return data.purchaseMetaData.gross_pay
-        } catch(error) {
-            return 0;
-        }
-    }
-
-    const renderNetPay = () => {
-        if (typeof(data) == 'undefined') {
-            return 0;
-        }
-
-        try {
-            return data.purchaseMetaData.net_pay;
-        } catch(error) {
-            return 0;
-        }
-    }
-
-    const renderSales = () => {
-        if (typeof(data) == 'undefined' || componentReady === false) {
-            return 0;
-        }
-
-        try {
-            return data.purchaseMetaData.purchase_history.length;
-        } catch(error) {
-            return 0;
-        }
-    }
-
-    const renderShares = () => {
-        if (typeof(data) == 'undefined') {
-            return 0;
-        }
-
-        try {
-            return data.interactions.shares;
-        } catch(error) {
-            return 0;
-        }
-    }
-
        /**
      * Sends request to server to complete payment
      */
@@ -205,7 +94,6 @@ function TrainerDashboard(props) {
         //Create an idemptoencyKey to prevent double transactions
         try {
         const idempotencyKey = await Math.random().toString()
-  console.log('make payment to trainer start')
         //Get a copy of the current user data to pass some fields into the request
         const updatedUserData = getLupaStoreState().Users.currUserData;
 
@@ -217,10 +105,6 @@ function TrainerDashboard(props) {
             console.log(err)
         })
 
-        console.log(requesterUserData)
-        
-        console.log('about to make request')
-        console.log(requesterUserData.stripe_metadata.card_source)
         //Make the payment request to firebase with axios
         axios({
             headers: {
@@ -240,7 +124,7 @@ function TrainerDashboard(props) {
                 idempotencyKey: idempotencyKey,
             })
         }).then(response => {
-            console.log('axios request worked!!!')
+            console.log(response);
         }).catch(err => {
             console.log(err)
             setPaymentSuccessful(false)
@@ -273,10 +157,9 @@ function TrainerDashboard(props) {
     }
 
     handleBookingSessionCompleted = async (booking) => {
-        
         //handlepayment request
         try {
-        await handlePayBookingCost(2, booking);
+        await handlePayBookingCost(currUserData.hourly_payment_rate, booking);
         } catch(error) {
             alert(error);
             LOG_ERROR('TrainerDashboard.js', 'Failed payment in handlePayBookingCost', error);
@@ -287,47 +170,9 @@ function TrainerDashboard(props) {
     }
 
     const openBookingsActionSheet = (booking) => {
-        if (booking.status == BOOKING_STATUS.BOOKING_ACCEPTED
-            && moment(new Date().getTime()).isSameOrAfter(moment(new Date(booking.end_time)))) {
-                ActionSheetIOS.showActionSheetWithOptions(
-                    {
-                      options: ["Cancel", "Session Completed"],
-                      destructiveButtonIndex: 0,
-                      cancelButtonIndex: 0
-                    },
-                    buttonIndex => {
-                      if (buttonIndex === 0) {
-                        // cancel action
-                      } else if (buttonIndex === 1) {
-                          handleBookingSessionCompleted(booking)
-                      }
-                    }
-                  );
-                  return;
-        }
-
-        if (booking.status == BOOKING_STATUS.BOOKING_ACCEPTED 
-            && moment(booking.start_time).subtract(30, 'minutes').isSameOrAfter(moment(new Date().getDate()))) {
-                ActionSheetIOS.showActionSheetWithOptions(
-                    {
-                      options: ["Cancel", "Session Completed"],
-                      destructiveButtonIndex: 0,
-                      cancelButtonIndex: 0
-                    },
-                    buttonIndex => {
-                      if (buttonIndex === 0) {
-                        // cancel action
-                      } else if (buttonIndex === 1) {
-                          handleBookingSessionCompleted(booking)
-                      }
-                    }
-                  );
-              return;
-        }
-
         ActionSheetIOS.showActionSheetWithOptions(
             {
-              options: ["Cancel", "Session Completed"],
+              options: ["Cancel", "Session Completed", "Cancel Session"],
               destructiveButtonIndex: 0,
               cancelButtonIndex: 0
             },
@@ -336,6 +181,8 @@ function TrainerDashboard(props) {
                 // cancel action
               } else if (buttonIndex === 1) {
                   handleBookingSessionCompleted(booking)
+              } else if (buttonIndex === 2) {
+                  LUPA_CONTROLLER_INSTANCE.handleCancelBooking(booking);
               }
             }
           );
@@ -381,18 +228,6 @@ function TrainerDashboard(props) {
             </>
             )
         });
-    }
-
-    const renderViews = () => {
-        if (typeof(data) == 'undefined') {
-            return 0;
-        }
-
-        try {
-            return data.interactions.views;
-        } catch(error) {
-            return 0;
-        }
     }
 
     return (

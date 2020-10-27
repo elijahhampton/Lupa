@@ -41,6 +41,7 @@ import BookNowModal from './modal/BookNowModal';
 import { retrieveAsyncData, storeAsyncData } from '../../../controller/lupa/storage/async';
 import EditBioModal from './settings/modal/EditBioModal'
 import { InformationIcon } from '../../icons';
+import BookingRequestModal from '../modal/BookingRequestModal';
 
 function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const navigation = useNavigation();
@@ -59,7 +60,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const [forceUpdate, setForceUpdate] = useState(false);
     const [trailingInterestLength, setTrainingInterestLength] = useState(0);
     const [trainingInterestTextVisible, showTrailingInterestText] = useState(false)
-
+    const [trainerBookingModalVisible, setTrainerBookingModalVisible] = useState(false);
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
@@ -342,24 +343,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     const renderFAB = () => {
         if (!isCurrentUser) {
-            return;
-        }
-
-        if (showSchedulerButton === true) {
-            return;
-        }
-
-        switch (currPage) {
-            case 0:
-               break;
-            case 1:
-                return <FAB onPress={() => navigation.push('CreatePost')} icon="rss" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
-            case 2:
-                break;
-
-        }
-
-        return null;
+            return <FAB onPress={() => setTrainerBookingModalVisible(false)} icon="calendar" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
+        } else {
+            return <FAB onPress={() => navigation.push('CreatePost')} icon="rss" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
+        }  
     }
 
     /**
@@ -445,9 +432,9 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             setProfileImage(userData.photo_url)
             await fetchVlogs(userData.user_uuid);
             if (isCurrentUser) {
-                setTrainerPrograms()
+              //  setTrainerPrograms()
             } else {
-                fetchPrograms(userData.user_uuid);
+               // fetchPrograms(userData.user_uuid);
             }
         } catch (error) {
             setReady(false)
@@ -648,11 +635,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
 
                 <Tabs page={currPage} tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF'>
-                 {/* <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
-                        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                            {renderPrograms()}
-                        </View>
-            </Tab> */}
                     <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}
@@ -668,6 +650,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
             {renderFAB()}
             
+            <BookingRequestModal closeModal={() => setTrainerBookingModalVisible(false)} isVisible={trainerBookingModalVisible} trainer={userData}  />
             <EditBioModal isVisible={editHoursModalVisible} closeModalMethod={() => setEditHoursModalVisible(false)} />
             <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} selectedDates={markedDates} />
         </SafeAreaView>
