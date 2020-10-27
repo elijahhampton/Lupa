@@ -21,7 +21,7 @@ import LupaColor from '../../../common/LupaColor';
 import { createStripeCustomerAccount, createTokenFromCard, initStripe } from '../../../../modules/payments/stripe';
 import { LOG_ERROR } from '../../../../common/Logger';
 import FullScreenLoadingIndicator from '../../../common/FullScreenLoadingIndicator';
-
+import { getLupaStoreState } from '../../../../controller/redux/index'
 function UpdateCard({ closeModal, isVisible }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -61,9 +61,14 @@ function UpdateCard({ closeModal, isVisible }) {
                 object: 'card',
                 name: currUserData.display_name
               }
+
+              const updatedUserData = getLupaStoreState().Users.currUserData;
+              console.log(updatedUserData.stripe_metadata.stripe_id)
+              console.log('UTUTUTUTUTTU')
+              const cardLastFour = cardNumber.substring(cardNumber.length - 4, cardNumber.length - 1);
     
               //TODO: REFRESH STRIPE ID IN REDUX
-            createTokenFromCard(params, currUserData.stripe_metadata.stripe_id)
+            createTokenFromCard(params, updatedUserData.stripe_metadata.stripe_id, cardLastFour)
         } catch(error) {
             LOG_ERROR('UpdateCard.js', 'Caught unhandled exception in createTokenFromCard', error)
             setFullScreenIndicatorVisible();

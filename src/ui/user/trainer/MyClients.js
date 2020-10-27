@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import {
-    Caption, FAB, Surface, Avatar, Divider,
+    Caption, FAB, Surface, Avatar, Divider, Chip, Badge, Button,
 } from 'react-native-paper';
 
 import Feather1s from 'react-native-feather1s/src/Feather1s';
@@ -38,7 +38,6 @@ const MyClients = ({ navigation, route }) => {
     useEffect(() => {
         async function fetchClientData(uuid) {
             LUPA_CONTROLLER_INSTANCE.fetchMyClients(uuid).then(data => {
-
                 setMyClientData(data)
             })
             .catch(error => {
@@ -73,14 +72,6 @@ const MyClients = ({ navigation, route }) => {
             )
         }
 
-        /*
-
-        myClientData.map((clientData, index, arr) => {
-
-        })
-
-        */
-
         return (
             <View style={{flex: 1}}>
                 <ScrollView>
@@ -89,11 +80,10 @@ const MyClients = ({ navigation, route }) => {
                    
                     {
                         myClientData.map((clientData, index, arr) => {
-                            console.log(clientData)
                             return (
-                                <View style={{paddingHorizontal: 20,width: '100%', marginVertical: 10}}>
-                                  <TouchableWithoutFeedback /*onPress={() => this.navigateToProfile(clientData.user_uuid)}*/ key={clientData.user_uuid} style={{flex: 2, marginVertical: 10}}>
-                        <View>
+                                <View style={{paddingHorizontal: 20,width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10}}>
+                                 
+                        <View style={{marginVertical: 10}}>
                           <View style={{alignItems: 'center', flexDirection: 'row'}}>
 
               
@@ -104,13 +94,19 @@ const MyClients = ({ navigation, route }) => {
                             <Text style={{paddingVertical: 5, fontSize: 12, fontFamily: 'Avenir-Heavy'}}>
                               {clientData.display_name}
                             </Text>
-                            <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 12}}>
-                                #{index}
+                            <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12}}>
+                                #{index + 1}
                             </Text>
                           </View>
                           </View>
                         </View>
-                      </TouchableWithoutFeedback>
+
+                     
+                        <Button uppercase={false} mode="text" color="#1089ff" onPress={() => navigation.push('Profile', {
+                            userUUID: clientData.user_uuid
+                        })}>
+                            View Client
+                        </Button>
                                
                                 </View>
                             )
@@ -127,9 +123,10 @@ const MyClients = ({ navigation, route }) => {
 
     return (
         <View style={{flex: 1, backgroundColor: 'white'}}>
-            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
+            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0}}>
                 <Appbar.Action onPress={() => navigation.pop()} icon={() => <Feather1s thin={true} name="arrow-left" size={20} />}/>
-                <Appbar.Content title="My Clients"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                <Appbar.Content title="My Clients" subtitle={`${myClientData.length} client(s)`}  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+
             </Appbar.Header> 
 
         {renderComponent()}

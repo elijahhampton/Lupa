@@ -202,7 +202,7 @@ function UserBackgroundVerification(props) {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#FFFFFF', }}>
-            <Appbar.Header style={{ backgroundColor: 'white', elevation: 0, borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', }}>
+            <Appbar.Header style={{ backgroundColor: 'white', elevation: 0,  }}>
                 <Appbar.Content title="Fitness Background" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
             </Appbar.Header>
             <ScrollView contentContainerStyle={{ padding: 0, alignItems: 'center', backgroundColor: '#F2F2F2' }}>
@@ -467,7 +467,7 @@ function UserBackgroundVerification(props) {
                     </Text>
                     <RadioButton.Android 
                     color="#1089ff" 
-                    status={userHasNegativeExperienceWithExercise === 'checked' ? 'checked' : 'unchecked'} 
+                    status={userHasNegativeExperienceWithExercise == 'checked' ? 'checked' : 'unchecked'} 
                     onPress={() => {
                         setUserHasNegativeExperienceWithExercise('checked')
                         handleUpdateUserFitnessBackground()
@@ -480,7 +480,7 @@ function UserBackgroundVerification(props) {
                     </Text>
                     <RadioButton.Android 
                     color="#1089ff" 
-                    status={userHasNegativeExperienceWithExercise === 'checked' ? 'unchecked' : 'checked'} 
+                    status={userHasNegativeExperienceWithExercise == 'checked' ? 'unchecked' : 'checked'} 
                     onPress={() => {
                         setUserHasNegativeExperienceWithExercise('unchecked')
                        handleUpdateUserFitnessBackground()
@@ -545,7 +545,7 @@ function UserBackgroundVerification(props) {
                             </Text>
                             <RadioButton.Android 
                             color="#1089ff" 
-                            status={userHasNegativeExperienceWithProfessional} 
+                            status={userHasNegativeExperienceWithProfessional == 'checked' ? 'checked' : 'unchecked'} 
                             onPress={() => {
                                setUserHasNegativeExperienceWithProfessional('checked')
                              handleUpdateUserFitnessBackground()
@@ -558,7 +558,7 @@ function UserBackgroundVerification(props) {
                             </Text>
                             <RadioButton.Android 
                             color="#1089ff" 
-                            status={userHasNegativeExperienceWithProfessional} 
+                            status={userHasNegativeExperienceWithProfessional == 'checked' ? 'unchecked' : 'checked'} 
                             onPress={() => {
                                setUserHasNegativeExperienceWithProfessional('unchecked')
                               handleUpdateUserFitnessBackground()

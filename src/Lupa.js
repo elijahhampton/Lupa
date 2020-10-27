@@ -133,7 +133,7 @@ class Lupa extends React.Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
+       <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
         <LupaDrawerNavigator />
       </View>
     )

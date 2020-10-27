@@ -17,7 +17,7 @@ export const MenuIcon = ({ onPress, customStyle }) => {
 export const InformationIcon = ({ onPress, customStyle }) => {
     return (
         <TouchableOpacity onPress={onPress}>
-        <Image source={INFORMATION_ICON} style={[{width: 15, height: 15}, customStyle]} />
+        <Image source={INFORMATION_ICON} style={[{width: 13, height: 13}, customStyle]} />
     </TouchableOpacity>
     )
 }

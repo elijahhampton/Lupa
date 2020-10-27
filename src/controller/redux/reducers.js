@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import LUPA_DB, { LUPA_AUTH } from '../firebase/firebase';
-import { LOGIN_FAILURE, LOGIN_REQUEST, LOGOUT_SUCCESS, LOGIN_SUCCESS, LOGOUT_FAILURE, VERIFY_REQUEST, VERIFY_SUCCESS } from '../lupa/auth/auth';
+import { LOGIN_FAILURE, LOGIN_REQUEST, LOGOUT_SUCCESS, LOGIN_SUCCESS, LOGOUT_FAILURE, VERIFY_REQUEST, VERIFY_SUCCESS, SIGNUP } from '../lupa/auth/auth';
 
 import { ADD_WORKOUT_TO_PROGRAM_ACTION, ADD_CURRENT_USER_SERVICE_ACTION, UPDATE_CURRENT_USER_SERVICES_ACTION, UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, UPDATE_CURRENT_USER_ACTION, UPDATE_CURRENT_USER_PACKS_ACTION, REMOVE_CURRENT_USER_PACK, ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PROGRAMS_ACTION, UPDATE_LUPA_WORKOUTS_ACTION } from './actionTypes';
 
@@ -26,6 +26,9 @@ handleUserAttributeUpdate = (state, payload) => {
       break;
     case 'bio':
       updatedState.bio = payload.value;
+      break;
+    case 'certification':
+      updatedState.certification = payload.value
       break;
     default:
   }
@@ -95,6 +98,12 @@ const authenticationReducer = (
 }, action) => {
 
   switch (action.type) {
+    case SIGNUP:
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.user
+      }
     case LOGIN_REQUEST:
       return {
         ...state,

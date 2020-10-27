@@ -132,6 +132,7 @@ var lupa_user : LupaUserStructure = {
     sessionsCompleted: 0,
     bio: "",
     bookings: [],
+    clients: [],
     certification: "",
     homegym: {},
     chats: [],
@@ -150,7 +151,10 @@ var lupa_user : LupaUserStructure = {
     stripe_metadata: {
         stripe_id: "",
         card_last_four: "",
+        card_source: "",
         card_added_to_stripe: false,
+        account_id: "",
+        connected_account_verification_status: 'unverified'
     },
     isGuest: true,
     client_metadata: {

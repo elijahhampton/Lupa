@@ -47,7 +47,6 @@ function NotificationsView(props) {
             return () => currUserSubscription()
         } catch(err) {
             setUserNotifications([])
-            alert(err)
             return
         }
     }, [])
@@ -79,6 +78,7 @@ function NotificationsView(props) {
                 case NOTIFICATION_TYPES.RECEIVED_PROGRAM:
                     return <ReceivedProgramNotification notificationData={notification} />
                 case NOTIFICATION_TYPES.BOOKING_REQUEST:
+                    console.log(notification)
                     return <ReceivedBookingRequestNotification notificationData={notification} />
                 default:
                     

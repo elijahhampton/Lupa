@@ -284,9 +284,9 @@ class WelcomeLupaIntroduction extends React.Component {
         this.state.permissionsRequested == true && this.state.userCheck == 'checked' || this.state.trainerCheck == 'checked' || this.state.learnCheck == 'checked' ? this.enableNext() : this.disableNext()
         return (
             <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <StatusBar networkActivityIndicatorVisible={false} hidden={true} />
+                
 
-                <View style={{ flex: 2, justifyContent: 'center' }}>
+                <View style={{ flex: 1, justifyContent: 'flex-start' }}>
                     <View style={{alignItems: 'flex-start', padding: 20}}>
                     <Text style={{ fontFamily: 'Avenir-Heavy', textAlign: 'left', fontSize: 25, marginVertical: 10 }}>
                         Which type of account do you want to create?
@@ -302,12 +302,12 @@ class WelcomeLupaIntroduction extends React.Component {
                             OPTIONS.map((option, index, arr) => {
                                 return (
                             
-                                    <TouchableOpacity onPress={() => this.handleCheckOption(index)} style={{alignSelf: 'flex-start', paddingLeft: 20}}>
+                                    <TouchableOpacity onPress={() => this.handleCheckOption(index)} style={{alignSelf: 'flex-start', paddingHorizontal: 10}}>
                                     <View key={index} style={{ flexDirection: 'row', alignItems: 'center'}}>
                                     <Text style={styles.optionText}>
                                       {option.optionTitle}
                                     </Text>
-                                    {this.renderCheckBox(index)}
+                                
                                 </View>
                                 <Caption>
                                     {option.optionSubtitle}

@@ -318,6 +318,11 @@ export default class UserController {
                     isTrainer: value
                 })
                 break;
+                case 'certification':
+                    currentUserDocument.update({
+                        certification: value
+                    })
+                    break;
             case 'interest':
                 currentUserDocument.update({
                     interest: value
@@ -879,6 +884,55 @@ export default class UserController {
             alert(Exception)
             return false;
         }
+    }
+    
+    /**
+     * 
+     * @param startsWith 
+     */
+    searchTrainersByDisplayName = (startsWith = '') : Promise<Array<Object>> => {
+        let currHit = getLupaUserStructurePlaceholder();
+
+        return new Promise(async (resolve, reject) => {
+            const query = startsWith.toLowerCase();
+            let results = [];
+
+            try {
+            usersIndex.search({
+                query: query,
+
+            }, (err, {hits}) => {
+                if (err) throw reject(err);
+
+                for (let i = 0; i < hits.length; i++) {
+                    currHit = hits[i];
+                    if (typeof(currHit) == 'undefined') {
+                       
+                    } else {
+                        results.push(currHit);
+                    }
+                }
+            });
+        } catch(error) {
+            LOG_ERROR('', '', error);
+
+            await USER_COLLECTION.where('isTrainer', '==', true).get().then(collectionRef => {
+                collectionRef.docs.forEach(doc => {
+                    currHit = doc.data();
+
+                    if (typeof(currHit) == 'undefined') {
+               
+                    } else {
+                        results.push(currHit);
+                    }
+                });
+            })
+
+            resolve(results)
+        }
+
+            resolve(results);
+        })
     }
 
 
@@ -1889,43 +1943,77 @@ export default class UserController {
      * TODO: Look into checkuseStructure() usage
      * @param booking 
      */
-    createBookingRequest = async (booking: Object) : Promise<Boolean> => {
-        console.log(booking);
+    createBookingRequest = async (booking: Object, isAuthenticatedUser?: Boolean, unauthenticatedUserUUID?: String) : Promise<Boolean> => {
         const requesterUUID = booking.requester_uuid;
-        console.log(requesterUUID);
         const trainerUUID = booking.trainer_uuid;
-        console.log(trainerUUID);
+        console.log(unauthenticatedUserUUID)
+
+        console.log(requesterUUID)
+        console.log(trainerUUID)
+
         //create booking
         await LUPA_DB.collection('bookings').doc(booking.uid).set(booking)
         .then(docRef => {
-
+            console.log('success')
         })
         .catch(error => {
-            alert(error)
+            console.log(error)
         });
+
+        console.log(unauthenticatedUserUUID)
 
 
         //add the booking uuid to both users booking fields
         //the requester
-        this.updateCurrentUser('bookings', booking.uid, 'add');
+        if (isAuthenticatedUser === true) {
+            this.updateCurrentUser('bookings', booking.uid, 'add');
+        } else {
+            let unauthenticatedUserData = getLupaUserStructurePlaceholder()
+            await USER_COLLECTION.doc(unauthenticatedUserUUID).get().then(documentSnapshot => {
+                unauthenticatedUserData = documentSnapshot.data();
+            });
 
-        console.log('updateCurrentUser')
+            try {
+                let updatedBookings = unauthenticatedUserData.bookings;
+                updatedBookings.push(booking.uid);
+    
+                USER_COLLECTION.doc(unauthenticatedUserUUID).update({
+                    bookings: updatedBookings
+                })
 
+                console.log('tried for user')
+            } catch(error) {
+                console.log('error')
+                let updatedBookings = []
+                updatedBookings.push(booking.uid);
+    
+                USER_COLLECTION.doc(unauthenticatedUserUUID).update({
+                    bookings: updatedBookings
+                })
+            }
+        }
+
+        console.log('try trianer')
         let userData = getLupaUserStructure();
-        await USER_COLLECTION.doc(booking.trainer_uuid).get().then(documentSnapshot => {
+        await USER_COLLECTION.doc(trainerUUID).get().then(documentSnapshot => {
             userData = documentSnapshot.data();
+        }).catch(error => {
+            console.log('error for trainer?')
         })
 
-        console.log('checUserStructure')
-
+        
         if (!this.checkUserStructure(userData, getLupaUserStructure())) {
             userData = Object.assign(getLupaUserStructure(), userData)
         }
+
+        console.log('ummm')
         
         let trainerBookings = userData.bookings;
         trainerBookings.push(booking.uid);
 
-        USER_COLLECTION.doc(booking.trainer_uuid).update({
+        console.log('boom')
+
+        USER_COLLECTION.doc(trainerUUID).update({
             bookings: trainerBookings
         })
 
@@ -1947,17 +2035,22 @@ export default class UserController {
         //add notification to users notification array
             let userNotifications = [];
 
+            console.log('ruogog')
+
             await USER_COLLECTION.doc(trainerUUID).get().then(snapshot => {
                 userNotifications = snapshot.data().notifications;
             })
-            console.log('pushing notification')
+
+            console.log('bbbbbbb')
+
             await userNotifications.push(receivedProgramNotificationStructure);
-            
+
+            console.log('ororororororor')
             await USER_COLLECTION.doc(trainerUUID).update({
                 notifications: userNotifications,
             });
 
-            console.log('updating')
+            console.log('oppppahhh!')
 
             return Promise.resolve(true);
     }
@@ -2131,11 +2224,25 @@ export default class UserController {
         await LUPA_DB.collection('bookings').where('trainer_uuid', '==', uuid).get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 docData = doc.data();
+
+                //check if the user is undefined
+                if (typeof(docData) == 'undefined') {
+                    return;
+                }
+
+                //check if we have already added the user into the arr
+                for (let i = 0; i < bookingData.length; i++) {
+                    if (bookingData[i].user_uuid === docData.requester_uuid) {
+                        return;
+                    }
+                }
+
                 if (docData.status == BOOKING_STATUS.BOOKING_COMPLETED) {
                     bookingDataEntry.user_uuid = docData.requester_uuid;
                     bookingDataEntry.booking_date = docData.date_requested;
                     bookingData.push(bookingDataEntry);
                 }
+                
             });
         });
 
@@ -2193,6 +2300,31 @@ export default class UserController {
         return true;
     }
 
+    shuffle = (array) => {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+      
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+      
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+      
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+      
+        return array;
+      }
+
+    /**
+     * Returns available trainers given a date and time block.
+     * TODO
+     * @param date 
+     * @param time 
+     */
     getAvailableTrainersByDateTime = async (date, time): Promise<Array<Object>> => {
         let trainers = [];
         let trainer = getLupaUserStructurePlaceholder();
@@ -2200,7 +2332,14 @@ export default class UserController {
         await USER_COLLECTION.where('isTrainer', '==', true).get().then(queryReference => {
             queryReference.forEach(doc => {
                 trainer = doc.data();
-                if (typeof(trainer.scheduler_times[date.toString()]) == 'undefined') {
+                if (typeof(trainer) == 'undefined') {
+                    //delete doc
+
+                } else {
+                    trainers.push(trainer);
+                }
+                
+             /*   if (typeof(trainer.scheduler_times[date.toString()]) == 'undefined') {
                     //we dont do anything 
                 } else {
                     trainerScheduler = trainer.scheduler_times;
@@ -2214,9 +2353,11 @@ export default class UserController {
                             trainers.push(trainer);
                         }
                     }
-                }
-            });
+                }*/
+            })
         });
+
+        this.shuffle(trainers);
 
         return Promise.resolve(trainers);
     }
@@ -2227,9 +2368,6 @@ export default class UserController {
         //mark status as completed
         updatedBookingStructure.status = BOOKING_STATUS.BOOKING_COMPLETED;
         LUPA_DB.collection('bookings').doc(updatedBookingStructure.uid).set(updatedBookingStructure);
-
-        //make user pay trainer
-
     }
 
     setTrainerBelongsToGym = async () => {

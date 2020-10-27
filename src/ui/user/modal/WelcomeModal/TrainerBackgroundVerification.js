@@ -33,6 +33,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { SearchBar } from 'react-native-elements';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
 
 Geolocation.setRNConfiguration({
     authorizationLevel: 'whenInUse',
@@ -49,19 +50,18 @@ const SPORTS_GENRE = [
 ]
 
 const COACHING_INTEREST = [
-    'Interest',
-    'Interest',
-    'Interest',
-    'Interest',
-    'Interest',
+    'In Home',
+    'In Studio',
+    'Virtual',
+    'Outdoor',
 ]
 
 const EQUIPMENT_LIST = [
-    'Equipment',
-    'Equipment',
-    'Equipment',
-    'Equipment',
-    'Equipment',
+    'Training Bench',
+    'Dumbbel Set',
+    'Resistance Bands',
+    'Barbell',
+    'Kettlebell Set',
 ]
 
 const certificationItems = [
@@ -98,14 +98,23 @@ function TrainerCeritifcationModal({ isVisible, closeModal }) {
         }
 
         const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true, []);
+        const certificationUpdatePayload = getUpdateCurrentUserAttributeActionPayload('certification', certification, []);
+
+        dispatch({type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: certificationUpdatePayload});
         dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload });
+
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('certification', certification);
         LUPA_CONTROLLER_INSTANCE.updateCurrentUser('isTrainer', true);
+
+        //send email about certification
+
         handleOnClose();
     }
 
     const handleOnClose = () => {
         closeModal();
     }
+    
     return (
         <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType="slide">
             <SafeAreaView style={{flex: 1}}>
@@ -203,6 +212,8 @@ function TrainerBackgroundVerification(props) {
 
     const [smallGroupExperience, setSmallGroupExperience] = useState(0);
 
+    const [hour, setHourlyPaymentRate] = useState(0);
+
     const [homeGymLocation, setHomeGymLocation] = useState('Launch Map');
     const [homeGymLocationData, setHomeGymLocationData] = useState('');
 
@@ -291,8 +302,6 @@ function TrainerBackgroundVerification(props) {
             return;
         }
 
-        console.log('NBEFORE OPENING UP THE MAP')
-        console.log(userLocation.longitude)
         if (typeof(userLocation.latitude) == 'undefined' || typeof(userLocation.longitude) == 'undefined') {
             return;
         }
@@ -327,10 +336,7 @@ function TrainerBackgroundVerification(props) {
     handleOnFetchUserLocationSuccess = async (position) => {
         const locationData = await getLocationFromCoordinates(position.coords.longitude, position.coords.latitude);
         const initialPosition = JSON.stringify(position);
-    await setUserLocation(locationData);
-        console.log(initialPosition);
-        console.log(userLocation);
-   //    await setUserLocationIsSet(true);
+        await setUserLocation(locationData);
         await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
     }
 
@@ -510,7 +516,7 @@ function TrainerBackgroundVerification(props) {
                 }
 
                     
-                <Surface style={[styles.surface]}>
+               {/* <Surface style={[styles.surface]}>
                     <Text style={styles.surfaceTitle}>
                         Have you professionally played or coached for any specific sports?
                         </Text>
@@ -551,16 +557,16 @@ function TrainerBackgroundVerification(props) {
                             )
                         })
                     }
-                </Surface>
+                </Surface>*/}
 
                 <Divider style={{height: 2}} />
 
                 <Surface style={styles.surface}>
                     <Text style={styles.surfaceTitle}>
-                        Do you have any specific coaching interest?
+                        Do you have any specific coaching styles?
                         </Text>
 
-                        <SearchBar platform="ios" placeholder="Find more options" containerStyle={{backgroundColor: 'transparent'}} inputStyle={{fontSize: 12}} searchIcon={() => <Feather1s size={15} name="search" color="#1089ff" />} />
+                      {/* <SearchBar platform="ios" placeholder="Find more options" containerStyle={{backgroundColor: 'transparent'}} inputStyle={{fontSize: 12}} searchIcon={() => <Feather1s size={15} name="search" color="#1089ff" />} /> */}
 
                     {
                         COACHING_INTEREST.map((interest, index, arr) => {
@@ -606,7 +612,7 @@ function TrainerBackgroundVerification(props) {
                     <Text style={styles.surfaceTitle}>
                         Personal Equipment
                         </Text>
-                        <SearchBar platform="ios" placeholder="Find more options" containerStyle={{backgroundColor: 'transparent'}} inputStyle={{fontSize: 12}} searchIcon={() => <Feather1s size={15} name="search" color="#1089ff" />} />
+                     {/*   <SearchBar platform="ios" placeholder="Find more options" containerStyle={{backgroundColor: 'transparent'}} inputStyle={{fontSize: 12}} searchIcon={() => <Feather1s size={15} name="search" color="#1089ff" />} /> */}
 
                     {
                         EQUIPMENT_LIST.map((equipmentName, index, arr) => {
@@ -645,6 +651,19 @@ function TrainerBackgroundVerification(props) {
                         })
                     }
                 </Surface>
+
+                <Divider style={{height: 2}} />
+
+                <Surface style={styles.surface}>
+                          <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12, color: '#23374d'}}>
+                            How much do you charge per hour?
+                            </Text>
+                            <Caption>
+                                This will be the hourly payment rate users see on your profile.
+                            </Caption>
+                            <TextInput value={hour} onChangeText={(text) => setHourlyPaymentRate(text)} onEndEditing={() => LUPA_CONTROLLER_INSTANCE.updateCurrentUser('hourly_payment_rate', hour)} color="#1089ff" style={{marginVertical: 10}} />
+                    </Surface>
+           
 
             </ScrollView>
 

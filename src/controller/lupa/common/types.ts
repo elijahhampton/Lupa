@@ -84,6 +84,7 @@ export type LupaUserStructure = {
     bio: String,
     bookings: Array<String>,
     certification: String,
+    clients: Array<String>,
     homegym: Object,
     chats: any,
     tokens: Object,

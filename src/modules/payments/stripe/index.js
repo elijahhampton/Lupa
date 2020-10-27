@@ -1,10 +1,12 @@
+
+import React from 'react';
 import stripe from 'tipsi-stripe';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
 import LUPA_DB, { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import axios from 'axios';
 export function initStripe() {
     stripe.setOptions({
-        publishableKey: 'pk_test_99QhW2YbrvHJHLEItYbZ5rH7009Ha858ta'
+        publishableKey: 'pk_live_51GlmH9Cfww9muTLL3x1ey79iTIgxf8gUkcTKODIodBukFttIC9MXRVAJ6TlEjpWheGkLNopSy2CN0WNM4BxwNMD400tuClEWOM'
     })
 }
 
@@ -13,7 +15,7 @@ export {
 }
 
 export const STRIPE_ENDPOINT = 'https://us-central1-lupa-cd0e3.cloudfunctions.net/payWithStripe'
-export const PAY_TRAINER_ENDPOINT = ""
+export const PAY_TRAINER_ENDPOINT = 'https://us-central1-lupa-cd0e3.cloudfunctions.net/makePaymentToTrainer'
 export const CURRENCY = 'usd';
 export const LUPA_ERR_TOKEN_UNDEFINED = "TOKEN_UNDEFINED";
 
@@ -46,7 +48,7 @@ export const createStripeCustomerAccount = (email, uuid) => {
     .then((responseJson) => {
     //  console.log('AAAAAAAAAAA')
      // console.log(responseJson)
-    //  saveUserStripeIDToDatabase(uuid, responseJson.id)
+     saveUserStripeIDToDatabase(uuid, responseJson.id)
     })
     .catch((error) => {
       console.error(error);
@@ -71,7 +73,7 @@ export const createStripeCustomerAccount = (email, uuid) => {
     stripeMetadata.stripe_id = stripe_account_id;
 
     //update the user's stripe_metadata
-    LUPA_DB.collection('users').doc(uid).update({
+    LUPA_DB.collection('users').doc(uuid).update({
         stripe_metadata: stripeMetadata
     });
   }
@@ -80,39 +82,44 @@ export const createStripeCustomerAccount = (email, uuid) => {
 /**
  * Creates token from a card
  */
-export async function createTokenFromCard(params, stripeID) {
-    return await stripe.createTokenWithCard(params).then(token => {
-        addCardToStripeAccount(token.tokenId, stripeID);
+export async function createTokenFromCard(params, stripeID, cardLastFour) {
+  console.log('LOOOOOOOOL')
+  console.log(stripeID);
+  console.log(params)
+    return await stripe.createTokenWithCard(params)
+    .then(token => {
+      console.log('ummm')
+        addCardToStripeAccount(token.tokenId, stripeID, cardLastFour);
     }).catch(error => {
+      console.log(error)
         LOG_ERROR('index.js', 'Error in modules/payments/index.js while creating token from card', error )
     });
   }
 
-  export const addCardToStripeAccount = async (tokenId, stripeID) => {
+  export const addCardToStripeAccount = async (tokenId, stripeID, cardLastFour) => {
       const user_uuid = LUPA_AUTH.currentUser.uid;
-     return await LUPA_AUTH.currentUser.getIdToken(true).then(async idToken => {
+    console.log(LUPA_AUTH.currentUser)
+     await LUPA_AUTH.currentUser.getIdToken(true).then(async idToken => {
        console.log('OOOOH: ' + idToken)
-      fetch('https://us-central1-lupa-cd0e3.cloudfunctions.net/addCardToStripeAccount', {
-        method: 'POST',
+
+       axios({
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + idToken
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            tokenId: tokenId,
+        method: 'POST',
+        url: 'https://us-central1-lupa-cd0e3.cloudfunctions.net/addCardToStripeAccount',
+        data: JSON.stringify({
+          tokenId: tokenId,
             stripeID: stripeID,
             user_uuid: user_uuid
-        }),
-      })
-        .then(async (response) => {
-          if (response.status === 200) {
-          return dispatch({ type: 'ADD_CARD_TO_ACCOUNT_SUCCESS', payload: stripeMetadata });
-        }
         })
-        .catch(err => alert('error while doing get req addCardToStripeAccount:', err));
-  
-  }).catch(err => alert('oo'))
+    }).then(response => {
+      if (response.status === 200) {
+      //  dispatch({ type: 'ADD_CARD_TO_ACCOUNT_SUCCESS', payload: stripeMetadata });
+      }
+    }).catch(err =>  console.log(err))
+  }).catch(err => console.log(err))
 }
 
 /*

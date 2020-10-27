@@ -33,7 +33,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+import axios from 'axios'
 import moment from 'moment';
 import { LinearGradient } from 'expo-linear-gradient';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
@@ -48,6 +48,7 @@ import { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import { BOOKING_STATUS } from '../../../model/data_structures/user/types';
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED} from '../../../modules/payments/stripe';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
+import { getLupaStoreState } from '../../../controller/redux';
 
 function BookingRequestModal({ isVisible, closeModal, trainer, preFilledStartTime, preFilledEndTime, preFilledDate, preFilledTrainerNote }) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();  
@@ -287,7 +288,7 @@ const renderEndTimePicker = () => {
     
      const onChangeStartTime = (event, date) => {
         const currentDate = date;
-        const currentDateFormatted = moment(new Date(date)).format('LT').toString()
+        const currentDateFormatted = moment(date).format('LT').toString()
         setStartTime(currentDate);
         setStartTimeFormatted(currentDateFormatted)
         setStartTimeIsSet(true)
@@ -314,7 +315,7 @@ const renderEndTimePicker = () => {
         if (LUPA_STATE.Auth.isAuthenticated === true) {
           return LUPA_STATE.Users.currUserData.user_uuid;
         } else {
-          const deviceUUID = DeviceInfo.getDeviceId().toString();
+          const deviceUUID = DeviceInfo.getUniqueId()
           return deviceUUID;
         }
       }
@@ -322,15 +323,39 @@ const renderEndTimePicker = () => {
        /**
      * Sends request to server to complete payment
      */
-    const makePayment = async (token, amount) => {
+    const makePayment = async (updatedToken, amount) => {
       //Create an idemptoencyKey to prevent double transactions
       const idempotencyKey = await Math.random().toString()
-
+console.log('a')
       //Get a copy of the current user data to pass some fields into the request
       const userData = LUPA_STATE.Users.currUserData.user_uuid;
-
+console.log('b')
+console.log(trainer.stripe_metadata.stripe_id)
+console.log(updatedToken)
       //Make the payment request to firebase with axios
-      axios({
+    fetch(STRIPE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        seller_stripe_id: trainer.stripe_metadata.stripe_id,
+        amount: 100,
+        currency: CURRENCY,
+        token: updatedToken,
+        idempotencyKey: idempotencyKey,
+      })
+    }).then(response => {
+      console.log(response)
+      console.log('Success')
+    }).catch(error => {
+      console.log(error)
+      setPaymentSuccessful(false)
+      setPaymentComplete(true)
+    })
+
+      /*await axios({
           headers: {
               Accept: 'application/json',
               'Content-Type': 'application/json'
@@ -339,17 +364,24 @@ const renderEndTimePicker = () => {
           url: STRIPE_ENDPOINT,
           data: JSON.stringify({
               seller_stripe_id: trainer.stripe_metadata.stripe_id,
-              amount: amount,
+              amount: 100,
               currency: CURRENCY,
-              token: token,
+              token: updatedToken,
               idempotencyKey: idempotencyKey,
           })
       }).then(response => {
+        console.log('SUCCESS')
       }).catch(err => {
+        console.log('oh')
+        console.log(err)
           setPaymentSuccessful(false)
           setPaymentComplete(true)
       })
+    } catch(error) {
+      console.log(JSON.stringify(error))
+    }*/
   }
+
 
   /**
    * Handles program purchase process
@@ -372,6 +404,7 @@ const renderEndTimePicker = () => {
            
            await setToken(token)
        } catch (error) {
+         console.log(error)
            setLoading(false)
            return;
        }
@@ -383,6 +416,7 @@ const renderEndTimePicker = () => {
        try {
            await makePayment(generatedToken, amount)
        } catch (error) {
+         console.log(error)
            await setPaymentComplete(false)
            await setPaymentSuccessful(false)
            setLoading(false);
@@ -410,12 +444,20 @@ const renderEndTimePicker = () => {
         
 
         const requesterID = getCurrentUserUUID();
-        const booking = getNewBookingStructure(startTime, endTime, bookingDate, new Date(), trainer.user_uuid, requesterID, trainerNote);
+        const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, requesterID, trainerNote);
         const booking_id = booking.uid;
 
         try {
-        await LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking);
+          if (LUPA_STATE.Auth.isAuthenticated === true) {
+            await LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking, true);
+          } else {
+            await LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking, false, requesterID);
+          }
+      
+        closeModal()
         } catch(error) {
+          console.log('BAAAAABY')
+          console.log(error)
           LOG_ERROR('BookingRequestModal.js', 'Failed to creating booking.', error);
           //delete booking if it was created
           //check if booking was ever created?
@@ -426,10 +468,14 @@ const renderEndTimePicker = () => {
         }
 
         if (LUPA_STATE.Auth.isAuthenticated === false) {
-          handlePayBookingCost(0);
+          handlePayBookingCost(50.00);
+
           if (paymentSuccessful) {
+           console.log('hi')
             closeModal()
+   
           } else {
+            console.log('error here')
             setBookingCreationErrorDialogVisible(true);
             LUPA_CONTROLLER_INSTANCE.deleteBooking(booking_id);
             closeModal();
@@ -482,7 +528,7 @@ const renderEndTimePicker = () => {
                
 
                   <Button 
-                  onPress={() => () => setShowCardNeededDialogVisible(false)}
+                  onPress={() => setShowCardNeededDialogVisible(false)}
                   uppercase={false} 
                   mode="outlined" 
                   color="#23374d"
@@ -508,6 +554,57 @@ const renderEndTimePicker = () => {
           </Dialog>
         )
       }
+
+      const renderFollowButton = () => {
+        try {
+        const updatedUserData = getLupaStoreState();
+        return updatedUserData.following.includes(trainer.user_uuid) === true ?
+          <Button 
+          contentStyle={{width: 140}}
+        theme={{
+          roundness: 3
+        }}
+        onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid)} color="#1089ff" 
+        uppercase={false} 
+        mode="outlined" 
+        style={{marginVertical: 20, marginHorizontal: 10}}>
+        <Text style={{fontSize: 12}}>
+          Follow
+        </Text>
+        </Button>
+                   :
+                   <Button 
+                   contentStyle={{width: 140}}
+                 theme={{
+                   roundness: 3
+                 }}
+                 onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid)} color="#1089ff" 
+                 uppercase={false} 
+                 mode="outlined" 
+                 style={{marginVertical: 20, marginHorizontal: 10}}>
+                 <Text style={{fontSize: 12}}>
+                   Follow
+                 </Text>
+                 </Button>
+      } catch(error) {
+          return (
+            <Button 
+            contentStyle={{width: 140}}
+          theme={{
+            roundness: 3
+          }}
+          onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid)} color="#1089ff" 
+          uppercase={false} 
+          mode="outlined" 
+          style={{marginVertical: 20, marginHorizontal: 10}}>
+          <Text style={{fontSize: 12}}>
+            Follow
+          </Text>
+          </Button>
+          )
+      }
+    }
+
 
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animationType="slide">
@@ -564,10 +661,13 @@ contentStyle={{width: 140}}
 theme={{
   roundness: 3
 }}
-onPress={() => navigation.push('PrivateChat', {
-currUserUUID: getCurrentUserUUID(),
-otherUserUUID: trainer.user_uuid
-})} color="#1089ff" 
+onPress={() => {
+  closeModal()
+  navigation.push('PrivateChat', {
+    currUserUUID: getCurrentUserUUID(),
+    otherUserUUID: trainer.user_uuid
+    })
+}} color="#1089ff" 
 uppercase={false} 
 mode="outlined" 
 style={{marginVertical: 20, marginHorizontal: 10}}>
@@ -576,22 +676,11 @@ style={{marginVertical: 20, marginHorizontal: 10}}>
 </Text>
 </Button> 
 
-<Button 
-  contentStyle={{width: 140}}
-theme={{
-  roundness: 3
-}}
-onPress={() => navigation.push('PrivateChat', {
-currUserUUID: getCurrentUserUUID(),
-otherUserUUID: trainer.user_uuid
-})} color="#1089ff" 
-uppercase={false} 
-mode="outlined" 
-style={{marginVertical: 20, marginHorizontal: 10}}>
-<Text style={{fontSize: 12}}>
-  Follow
-</Text>
-</Button> 
+
+
+
+
+{renderFollowButton()}
 </View>
 
 </View>

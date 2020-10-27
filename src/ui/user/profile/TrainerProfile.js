@@ -40,6 +40,7 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import BookNowModal from './modal/BookNowModal';
 import { retrieveAsyncData, storeAsyncData } from '../../../controller/lupa/storage/async';
 import EditBioModal from './settings/modal/EditBioModal'
+import { InformationIcon } from '../../icons';
 
 function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const navigation = useNavigation();
@@ -176,7 +177,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         return (<View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
             <FeatherIcon name="activity" style={{ paddingRight: 5 }} />
             {
-                userData.trainer_type.map((type, index, arr) => {
+                userData.trainer_metadata.trainer_interest.map((type, index, arr) => {
                     if (index == arr.length - 1) {
                         return (
                             <Text style={[styles.userAttributeText, { color: '#23374d' }]}>
@@ -389,7 +390,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                             Interest: {" "}
                         </Text>
                         {
-                            userData.interest.map((interest, index, arr) => {
+                            userData.trainer_metadata.trainer_interest.map((interest, index, arr) => {
                      
                                 if (index >= 3) {
                                   return;
@@ -448,7 +449,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             } else {
                 fetchPrograms(userData.user_uuid);
             }
-           // checkCurrFitnessLocation()
         } catch (error) {
             setReady(false)
  
@@ -576,12 +576,17 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         await setRefreshing(false);
     }
 
-    try {
     return (
         <SafeAreaView style={styles.container}>
+            <View style={{marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                            <Text style={[styles.bioText, {color: '#1089ff', paddingHorizontal: 5}]}>
+                                {userData.display_name} has an hourly rate of ${userData.hourly_payment_rate}
+                            </Text>
+                        </View>
+
             <Appbar.Header style={styles.appbar}>
                 <ThinFeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
-            
+        
 
                 {
                     isCurrentUser === true ?
@@ -603,7 +608,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                     <View style={styles.userInformationContainer}>
                         <View style={styles.infoContainer}>
                             {renderDisplayName()}
-                            {renderInterest()}
                             <View style={{ paddingVertical: 10 }}>
                                 {renderLocation()}
                                 {renderCertification()}
@@ -635,22 +639,20 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
               
                         </View>
                         {renderBio()}
+                        
                     </View>
   
                     {renderInteractions()}
                 
                 </View>
 
-                <>
-                    {renderScheduler()}
-                </>
 
                 <Tabs page={currPage} tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} locked={true} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF'>
-                    <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
+                 {/* <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs/Services">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderPrograms()}
                         </View>
-                    </Tab>
+            </Tab> */}
                     <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}
@@ -670,10 +672,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} selectedDates={markedDates} />
         </SafeAreaView>
     )
-            } catch(error) {
-        
-          
-            }
 }
 
 const styles = StyleSheet.create({

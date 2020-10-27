@@ -72,10 +72,8 @@ function DrawerMenu(props) {
    * Logs the user out.
    */
   const _handleLogout = async () => {
-
     await dispatch(logoutUser());
-    await navigation.navigate('GuestView')
-    navigation.reset();
+    await navigation.navigate('GuestView');
   }
 
   return (

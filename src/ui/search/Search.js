@@ -142,7 +142,7 @@ class Search extends React.Component {
             searchResults: []
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE.searchTrainersAndPrograms(searchQuery).then(searchData => {
+        await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
             this.setState({ searchResults: searchData })
         })
 
@@ -163,15 +163,7 @@ class Search extends React.Component {
 
     renderSearchResults = () => {
             return this.state.searchResults.map(result => {
-                switch(result.resultType) {
-                
-                    case 'Program':
-                        return <LargeProgramSearchResultCard program={result} />
-                    case 'User':
-                        return <UserSearchResult userData={result} />
-                    default:
-                }
-              
+                return <UserSearchResult userData={result} />
             })
         }  
 
@@ -227,6 +219,7 @@ class Search extends React.Component {
                 <SearchBar
                         placeholder="Search trainers"
                         placeholderTextColor="#000000"
+                        onChangeText={text => this.performSearch(text)}
                         value={this.state.searchValue}
                         inputStyle={styles.inputStyle}
                         platform="ios"
@@ -245,7 +238,10 @@ class Search extends React.Component {
             scrollEventThrottle={1}
             bounces={false}
             showsVerticalScrollIndicator={false}>
-            <Tabs 
+                {
+                    this.renderSearchResults()
+                }
+                   {/*  <Tabs 
             page={this.state.currTab}
             onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
             renderTabBar={(props) =>  <>
@@ -254,7 +250,7 @@ class Search extends React.Component {
                 </>
             }>
               
-              <Tab heading="Goals" {...TAB_PROPS}>
+     <Tab heading="Goals" {...TAB_PROPS}>
                   <View style={{flex: 1}}>
                       {
                           this.state.goalIsPressed === true ?
@@ -324,7 +320,7 @@ class Search extends React.Component {
                     }
                 </ScrollView>
               </Tab>
-            </Tabs>
+                </Tabs>*/}
                 
           </ScrollView>
   

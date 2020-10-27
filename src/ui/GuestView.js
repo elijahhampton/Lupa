@@ -58,7 +58,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import { Pagination } from 'react-native-snap-carousel';
 import moment from 'moment';
 import { getLupaUserStructure } from '../controller/firebase/collection_structures';
-
+import { getLupaStoreState} from '../controller/redux/index';
 import BookingRequestModal from './user/modal/BookingRequestModal'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 const mapStateToProps = (state, action) => {
@@ -66,6 +66,29 @@ const mapStateToProps = (state, action) => {
         lupa_data: state,
     }
 }
+
+const availabilityTimeBlocks = [
+  {
+    label: '6 a.m. - 9 a.m.',
+    value: '6.am-9.pm'
+  },
+  {
+    label:   '9 a.m. - 12 p.m.',
+    value: '9.am-12.pm',
+  },
+  {
+    label:   '12 p.m. - 4 p.m.',
+    value: '12.pm-4.pm',
+  },
+  {
+    label:  '4 p.m. - 7 p.m.',
+    value: '4.pm-7.pm',
+  },
+  {
+    label:    '7 p.m. - 10 p.m.',
+    value: '7.pm-10.pm',
+  }
+]
 
 const CATEGORY_SEPARATION = 15
 const NAVBAR_HEIGHT = 50;
@@ -129,9 +152,9 @@ class GuestView extends React.Component {
             futureBookingDisplayDate: new Date(),
             futureBookingDisplayDateFormatted: moment(new Date()).format('LL').toString(),
             futureBookingEndTime: new Date(1598051730000),
-            futureBookingStartTime: new Date(1598051730000),
+            futureBookingStartTime: availabilityTimeBlocks[0].value,
             futureBookingEndTimeFormatted: moment(new Date(1598051730000)).format('LT').toString(),
-            futureBookingStartTimeFormatted: moment(new Date(1598051730000)).format('LT').toString(),
+            futureBookingStartTimeFormatted: availabilityTimeBlocks[0].label,
             futureBookingTrainerNote: "",
             timeBlockSet: false,
             timeBlockBookingDialogVisible: false,
@@ -141,23 +164,52 @@ class GuestView extends React.Component {
     }
 
     async componentDidMount() {
-      this.setState({ futureBookingStartTime: moment(new Date().getTime()).add(1, 'hour').toDate() , futureBookingStartTimeFormatted: moment(new Date().getTime()).add(1, 'hour').format('LT').toString()})
-
         let docData = getLupaUserStructure();
 
-        this.TRAINERS_OBSERVER = LUPA_DB.collection('users').where('isTrainer', '==', true).limit(3).onSnapshot(querySnapshot => {
+        this.TRAINERS_OBSERVER = LUPA_DB.collection('users').limit(3).where('isTrainer', '==', true).onSnapshot(querySnapshot => {
             let trainersDataList = [];
             querySnapshot.docs.forEach(doc => {
                 docData = doc.data();
-                trainersDataList.push(docData);
-            });
 
+                if (typeof(docData) == 'undefined') {
+                  return;
+                }
+                
+                trainersDataList.push(docData);
+
+            });
+            this.shuffle(trainersDataList)
             this.setState({ featuredTrainers: trainersDataList })
         });
+
+        this.LUPA_CONTROLLER_INSTANCE.getAvailableTrainersByDateTime(new Date(), new Date().getTime()).then(trainers => {
+          this.setState({ availableTrainers: trainers });
+        }).catch(error => {
+          this.setState({ availableTrainers: []})
+        })
     }
 
     async componentWillUnmount() {
-        return () => this.PROGRAMS_OBSERVER();
+        return () => this.PROGRAMS_OBSERVER(); 
+    }
+
+    shuffle = (array) => {
+      var currentIndex = array.length, temporaryValue, randomIndex;
+    
+      // While there remain elements to shuffle...
+      while (0 !== currentIndex) {
+    
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+    
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+    
+      return array;
     }
 
     handleOnRefresh = () => {
@@ -200,13 +252,21 @@ class GuestView extends React.Component {
           ref={this.startTimePickerRef}
           height={300}>
             <View style={{flex: 1}}>
-            <DateTimePicker
-            value={this.state.futureBookingStartTime}
-            mode='time'
-            is24Hour={false}
-            display="default"
-            onChange={this.onChangeFutureStartTime}
-          />
+              <ScrollView>
+              {
+              
+              availabilityTimeBlocks.map(block => {
+                return (
+                  <TouchableWithoutFeedback style={{marginVertical: 10}} key={block.value} onPress={() => this.onChangeFutureStartTime(block)}>
+                    <Text>
+                      {block.label}
+                    </Text>
+                  </TouchableWithoutFeedback>
+            
+                )
+              })
+            }
+              </ScrollView>
             </View>
             <SafeAreaView>
               <Button onPress={this.handleOnPickFutureStartTime} color="#1089ff" mode="contained" style={{marginVertical: 10, elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
@@ -265,10 +325,9 @@ renderFutureEndTimePicker = () => {
       }
     
     
-     onChangeFutureStartTime = (event, date) => {
-        const currentDate = date;
-        const currentDateFormatted = moment(new Date(date)).format('LT').toString()
-        this.setState({ futureBookingStartTime: currentDate, futureBookingStartTimeFormatted: currentDateFormatted});
+     onChangeFutureStartTime = (block) => {
+        this.setState({ futureBookingStartTime: block.value, futureBookingStartTimeFormatted: block.label});
+        this.startTimePickerRef.current.close()
       };
     
      onChangeFutureEndTime = (event, date) => {
@@ -339,9 +398,9 @@ renderFutureEndTimePicker = () => {
             height={400}
             ref={this.bookingRef}>
   <View style={{flex: 1, padding: 10,}}>
-<ScrollView>
-<Text style={{fontFamily: 'Avenir-Heavy', fontSize: 15}}>
-            Availability for October 6, 2020 at 7:15 PM
+<ScrollView showsVerticalScrollIndicator={false}>
+<Text style={{fontFamily: 'Avenir-Heavy', fontSize: 18}}>
+        Available Trainers
           </Text>
           
           {
@@ -370,9 +429,13 @@ renderFutureEndTimePicker = () => {
                     </View>
                 </View>
                 <Button 
-                onPress={() => this.props.navigation.push('Profile', {
-                  userUUID: trainer.user_uuid
-                })} 
+                onPress={() => {
+                  this.closeBookingBottomSheet()
+                  this.props.navigation.push('Profile', {
+                    userUUID: trainer.user_uuid
+                  });
+                }
+                } 
                 uppercase={false} 
                 color="#23374d" 
                 contentStyle={{width: '100%'}} 
@@ -449,18 +512,17 @@ renderFutureEndTimePicker = () => {
       }
 
       closeBookingBottomSheet = async () => {
-        if (typeof(trainer) == 'undefined') {
-          return;
-        }
-
         if (this.bookingRef.current) {
           this.bookingRef.current.close();
         }
-
-        this.setState({ requestedTrainer: getLupaUserStructure() })
       }
 
     handleBookTrainerOnPress = async (trainer) => {
+        if (this.props.lupa_data.Auth.isAuthenticated === false) {
+          this.props.navigation.navigate('SignUp')
+          return;
+        }
+
         if (typeof(trainer) == 'undefined') {
           return;
         } else {
@@ -494,6 +556,10 @@ renderFutureEndTimePicker = () => {
     }
 
     navigateToProfile = (uuid) => {
+      if (this.props.lupa_data.Auth.isAuthenticated === false) {
+        this.props.navigation.push('SignUp')
+        return;
+      }
       if (typeof(uuid) == 'undefined') {
         return;
       }
@@ -505,14 +571,22 @@ renderFutureEndTimePicker = () => {
      }
     }
 
-    handleOnRequestFutureBooking = () => {
+    handleOnRequestFutureBooking = async () => {
+
+      if (this.props.lupa_data.Auth.isAuthenticated === false) {
+        this.props.navigation.navigate('SignUp')
+        return;
+      }
+
         if (this.bookingRef.current) {
           this.bookingRef.current.open()
         }
     }
 
     renderRequestAuthenticationMessage = () => {
-      if (this.props.lupa_data.Auth.isAuthenticated === false) {
+      const updatedAuthState = getLupaStoreState().Auth;
+
+      if (updatedAuthState.isAuthenticated === false) {
         return (
           <View style={{padding: 5, }}>
           <Text style={{paddingLeft: 15, fontFamily: 'Avenir-Heavy'}}>
@@ -524,6 +598,55 @@ renderFutureEndTimePicker = () => {
           </View>
         )
       }
+    }
+
+    renderCreateAccountSection = () => {
+      const updatedAuthState = getLupaStoreState().Auth;
+
+      if (updatedAuthState.isAuthenticated === false) {
+        return (
+          <View style={{padding: 10, paddingVertical: 15, marginVertical: 20}}>
+    
+    <Text style={{fontFamily: 'Avenir-Medium', fontSize: 18, color: 'black'}}>
+        Register an account on Lupa and access a variety of fitness trainers 
+    </Text>
+
+    <Button color="#23374d" uppercase={false} mode="outlined" onPress={() => this.props.navigation.navigate('SignUp')} style={{width: 180, marginVertical: 10}}>
+      <Text style={{fontSize: 12}}>
+                    Create an account
+      </Text>
+    </Button>
+
+</View>
+        )
+      }
+    }
+
+    renderPaymentInformationBanner = () => {
+      try {
+      const updatedAppState = getLupaStoreState();
+      if (typeof(updatedAppState.Users.currUserData.card_added_to_stripe) == false && updatedAppState.Auth.isAuthenticated === true && updatedAuthState.Users.currUserData.isTrainer === true ) {
+        return (
+          <Banner 
+          visible={true}
+          icon={() => <MaterialIcon name="payment" size={22} color="#1089ff" />}
+          actions={[{
+label: 'Update Payment Information',
+color: "#1089ff",
+onPress: () => this.props.navigation.push('Settings')
+}]}
+style={{fontSize: 5}}
+contentStyle={{fontSize: 5}}
+>
+Thank you for using Lupa.  Your account won't show up on searches and users won't be able to book you until you add a card to receive payouts.
+</Banner>
+        )
+      }
+    } catch(error) {
+      return null;
+    }
+
+      return null;
     }
 
     render() {
@@ -556,6 +679,8 @@ renderFutureEndTimePicker = () => {
                         onBlur={() => this.setState({ searchBarFocused: false })}
                     />
                                  </TouchableWithoutFeedback>
+
+                                 {this.renderPaymentInformationBanner()}
 
           {
             this.renderRequestAuthenticationMessage()
@@ -683,9 +808,9 @@ renderFutureEndTimePicker = () => {
 
 
                 
-                <Button onPress={this.openBookingBottomSheet} style={{marginVertical: 15}} disabled={false} color="#23374d" uppercase={false} icon={() => <FeatherIcon name='calendar' color="white" />} mode="contained" contentStyle={{height: 'auto'}}>
+                <Button onPress={this.handleOnRequestFutureBooking} style={{marginVertical: 15}} disabled={false} color="#23374d" uppercase={false} icon={() => <FeatherIcon name='calendar' color="white" />} mode="contained" contentStyle={{height: 'auto'}}>
                   <Text style={{fontSize: 12, fontWeight: '500'}}>
-                    See availability {this.state.futureBookingDisplayDateFormatted} at {this.state.futureBookingStartTimeFormatted}
+                   Find Trainer
                   </Text>
                 </Button>               
               </View>
@@ -739,23 +864,11 @@ renderFutureEndTimePicker = () => {
                 </ScrollView>
               </View>
 
+
+              
+
 {
-  this.props.lupa_data.Auth.isAuthenticated === true ?
-  null
-  :
-<View style={{padding: 10, paddingVertical: 15, marginVertical: 20}}>
-    
-    <Text style={{fontFamily: 'Avenir-Medium', fontSize: 18, color: 'black'}}>
-        Register an account on Lupa and access a variety of fitness trainers 
-    </Text>
-
-    <Button color="#23374d" uppercase={false} mode="outlined" onPress={() => this.props.navigation.navigate('SignUp')} style={{width: 180, marginVertical: 10}}>
-      <Text style={{fontSize: 12}}>
-                    Create an account
-      </Text>
-    </Button>
-
-</View>
+  this.renderCreateAccountSection()
 }
 
 

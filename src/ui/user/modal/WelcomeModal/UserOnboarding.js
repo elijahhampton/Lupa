@@ -11,7 +11,6 @@ import {
     Button
 } from 'react-native-paper';
 
-import WelcomeLupaIntroduction from './WelcomeLupaIntroduction';
 import BasicInformation from './BasicInformation';
 import PickInterest from './PickInterest';
 import WelcomeContentDriver from '../WelcomeContentDriver'

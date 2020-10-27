@@ -50,6 +50,7 @@ import { verifyAuth } from './src/controller/lupa/auth/auth';
 import { retrieveAsyncData, storeAsyncData } from './src/controller/lupa/storage/async';
 import DeviceInfo from 'react-native-device-info';
 import MyClients from './src/ui/user/trainer/MyClients';
+import Onboarding from './src/ui/user/modal/WelcomeModal/Onboarding'
 
 
 const App = () => {
@@ -244,7 +245,7 @@ function AppNavigator() {
       <StackApp.Screen name="CreatePost" component={CreateNewPost} />
       <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{ animationEnabled: true }} />
       <StackApp.Screen name="PrivateChat" component={PrivateChat} />
-      <StackApp.Screen name="Onboarding" component={WelcomeModal} />
+      <StackApp.Screen name="Onboarding" component={Onboarding} />
       <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
       <StackApp.Screen name="Settings" component={SettingsStackNavigator} />
       <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />

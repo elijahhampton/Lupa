@@ -100,7 +100,13 @@ function ReceivedBookingRequestNotification({ notificationData }) {
        </Text>
                                </Text>
        <Caption>
-           {moment(notificationData.data.start_time).format('LT').toString()} - {moment(notificationData.data.end_time).format('LT').toString()}
+           {
+           notificationData.data.start_time
+            } 
+            - 
+            {
+            notificationData.data.end_time
+            }
        </Caption>
                            </View>
                        </View>

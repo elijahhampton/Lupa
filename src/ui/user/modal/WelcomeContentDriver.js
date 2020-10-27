@@ -34,6 +34,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Constants } from 'react-native-unimodules';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { Pagination } from 'react-native-snap-carousel';
+import {getLupaStoreState} from '../../../controller/redux/index';
+
 //Activity Indicator to show while fetching location data
 const ActivityIndicatorModal = (props) => {
     return (
@@ -228,7 +230,11 @@ const WelcomeContentDriver = (props) => {
                     bottomDivider
                 />
 
-                <ListItem
+{
+                    getLupaStoreState().Users.currUserData.isTrainer === true ?
+                    null
+                    :
+                    <ListItem
                     title='Enable Location'
                     titleStyle={styles.highlightedTitleStyle}
                     subtitle='Lupa uses your location to suggest local trainers.'
@@ -237,11 +243,14 @@ const WelcomeContentDriver = (props) => {
                     rightIcon={() => <FeatherIcon name="arrow-right" />}
                     onPress={_getLocationAsync}
                 />
+                }
+
+
 
                 <ListItem
                     title='Get started'
                     titleStyle={[styles.highlightedTitleStyle, { color: locationDataSet === true ? '#1089ff' : '#E5E5E5' }]}
-                    disabled={locationDataSet === false}
+                    disabled={getLupaStoreState().Users.currUserData.isTrainer === false && locationDataSet === false}
                     style={{ color: '#E5E5E5' }}
                     bottomDivider
                     rightIcon={() => <FeatherIcon name="arrow-right" />}

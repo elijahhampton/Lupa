@@ -234,6 +234,10 @@ export default class LupaController {
       })
     }
 
+    searchTrainersByDisplayName = (startsWith = '') : Promise<Array<Object>> => {
+      
+    }
+
     /**
      *
      * @param searchQuery
@@ -692,12 +696,12 @@ export default class LupaController {
       PROGRAMS_CONTROLLER_INSTANCE.markProgramPublic(uuid);
     }
 
-    createBookingRequest = (booking) => {
+    createBookingRequest = (booking: Object, isAuthenticatedUser?: Boolean, unauthenticatedUserUUID?: String) => {
       if (typeof(booking) == 'undefined') {
         return;
       };
       
-      USER_CONTROLLER_INSTANCE.createBookingRequest(booking);
+      USER_CONTROLLER_INSTANCE.createBookingRequest(booking, isAuthenticatedUser, unauthenticatedUserUUID);
     }
 
     handleAcceptBooking = (booking_uid) => {

@@ -89,6 +89,8 @@ const SignUp = props => {
     const attemptedEmail = formState.inputValues.email.trim();
     const attemptedPassword = formState.inputValues.password.trim();
 
+    
+
     if (agreedToTerms === false) {
       Alert.alert(
         'Terms and Service',
@@ -98,37 +100,13 @@ const SignUp = props => {
       )
     }
 
-    let emailExist = false;
-    await LUPA_DB.collection('users').where('email', '==', attemptedEmail).limit(1).get().then(docs => {
-      if (docs.size > 0) {
-        emailExist = true;
-        Alert.alert(
-          'Email address in use',
-          'This email address you entered is already in use.',
-          [{text: 'Okay', onPress: () => {}},
-          {text: 'Recover Password', onPress: () => {}}
-          ]
-        )
-        return;
-      } else {
-        emailExist = false;
-      }
-    });
-
-    if (emailExist == true) {
-      return;
-    } else {
-      try {
-      await dispatch(authActions.signup(attemptedEmail, attemptedPassword))
-      } catch(error) {
-        return;
-      }
+    await dispatch(authActions.signup(attemptedEmail, attemptedPassword));
       
       navigation.navigate('Onboarding')
       _setupRedux()
      // storeAsyncData('RECENTLY_INTERACTED_USERS', [])
     }
-  }
+  
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {

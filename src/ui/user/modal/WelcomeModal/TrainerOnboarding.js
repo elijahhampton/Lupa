@@ -7,7 +7,6 @@ import {
     SafeAreaView
 } from 'react-native';
 
-import WelcomeLupaIntroduction from './WelcomeLupaIntroduction';
 import BasicInformation from './BasicInformation';
 import PickInterest from './PickInterest';
 import WelcomeContentDriver from '../WelcomeContentDriver'
@@ -26,7 +25,7 @@ import {
                 return <TrainerBackgroundVerification setNextDisabled={toggleNext} />
             case 1:
                 return <BasicInformation setNextDisabled={toggleNext} />
-            case 3:
+            case 2:
                 return <WelcomeContentDriver closeModalMethod={closeModalMethod} />
         }
     }

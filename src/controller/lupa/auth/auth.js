@@ -11,6 +11,13 @@ export const LOGOUT_FAILURE = "LOGOUT_FAILURE";
 export const VERIFY_REQUEST = "VERIFY_REQUEST";
 export const VERIFY_SUCCESS = "VERIFY_SUCCESS";
 
+const signUp = (user) => {
+  return {
+    type: SIGNUP,
+    user
+  }
+}
+
 const requestLogin = () => {
   return {
     type: LOGIN_REQUEST
@@ -131,23 +138,47 @@ export const signup = (email, password) => {
 
   return async dispatch => {
 
+    let emailExist = false;
+    await LUPA_DB.collection('users').where('email', '==', email).limit(1).get().then(docs => {
+      if (docs.size > 0) {
+        emailExist = true;
+        Alert.alert(
+          'Email address in use',
+          'This email address you entered is already in use.',
+          [{text: 'Okay', onPress: () => {}},
+          {text: 'Recover Password', onPress: () => {}}
+          ]
+        )
+        return;
+      } else {
+        emailExist = false;
+      }
+    });
+  
+    if (emailExist == true) {
+      dispatch(loginError())
+      return;
+    }
+
     //Authenticate user in firebase
-    await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(userCredential => {
+    await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(async userCredential => {
       USER_UUID = userCredential.user.uid
+
+      //Add the user's information to the database
+    await authHandler.signUpUser(USER_UUID, "", email, password);
+
+    createStripeCustomerAccount(email, USER_UUID)
+
+    dispatch(signUp(userCredential));
 
       //Catch error on signup
     }).catch(error => {
       alert('Oops! Something went wrong! Please try again.');
+      if (LUPA_AUTH.currentUser) {
+        LUPA_AUTH.signOut()
+      }
+
+      dispatch(loginError())
     });
-
-    //Add the user's information to the database
-    await authHandler.signUpUser(USER_UUID, "", email, password);
-
-    //Create the user as a customer in stripe
-   // createStripeCustomerAccount(email, LUPA_AUTH.currentUser.uid);
-
-    //user is gined in now
-    //LUPA_AUTH.currentUser.getTokenId()
-    dispatch(signUpUser());
   }
 }
