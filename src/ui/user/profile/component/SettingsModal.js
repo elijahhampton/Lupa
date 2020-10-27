@@ -27,6 +27,7 @@ import {
     Caption,
     Divider,
     List,
+    Snackbar,
     Switch,
     Appbar,
      Avatar,
@@ -85,6 +86,15 @@ function StripeDashboardWebView({isVisible, closeModal}) {
     const openBirthDayPicker = () => birthdayPickerRef.current.open();
     const closeBirthdayPicker = () => birthdayPickerRef.current.close();
     
+    const [visible, setVisible] = useState(false);
+
+    const onToggleSnackBar = () => setSnackBarVisible(!snackBarIsVisible);
+    const onDismissSnackBar = () => setSnackBarVisible(false);
+
+    const [snackBarIsVisible, setSnackBarVisible] = useState(false);
+    const [snackBarReason, setSnackBarReason] = useState("")
+
+    const [pickerOpened, setPickerOpened] = useState(false)
     const [loading, setIsLoading] = useState(false);
     const [code, setCode] = useState("");
     const [source, setSource]  = useState("https://connect.stripe.com/express/oauth/authorize?redirect_uri=https://connect.stripe.com/connect/default/oauth&client_id=ca_IGlNQMXFjavl70PtKYuzUceI1Z99KXbx&state=FL")
@@ -169,6 +179,40 @@ function StripeDashboardWebView({isVisible, closeModal}) {
         
     }, [])
 
+    const inputsAreValid = () => {
+        if (firstName == "") {
+            return false;
+        } else if (lastName == "") {
+            return false;
+        } else if (streetAddress == "") {
+            return false;
+        } else if (city == "" || state == "" || country == "") {
+            return false 
+        } else if (zipCode == "") {
+            return false;
+        } else if (email == "") {
+            return false;
+        } else if (phoneNumber == "" || phoneNumber.length < 12) {
+            return false;
+        } else if (ssn.length < 4 || ssn == "") {
+            return false;
+        } else if (TOSIsAccepted == false) {
+            return false;
+        } else if (publicIPAddress == 0 || typeof(publicIPAddress) == 'undefined') {
+            return false;
+        } else if (bankAccountNumber == "") {
+            return false;
+        } else if (bankAccountHolderFirstName == "") {
+            return false;
+        } else if (bankAccountHolderLastName == "") {
+            return false;
+        } else if (bankAccountRoutingNumber == "") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     const verifyCustomAccount = async () => {
          let userData = getLupaUserStructurePlaceholder();
          await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(currUserData.user_uuid).then(data => {
@@ -176,6 +220,14 @@ function StripeDashboardWebView({isVisible, closeModal}) {
          });
 
          if (userData.user_uuid === 0) {
+             return;
+         }
+
+         let retVal = inputsAreValid();
+
+         if (retVal == false) {
+             setSnackBarVisible(true)
+             setSnackBarReason('One or more of your inputs are invalid');
              return;
          }
 
@@ -280,9 +332,6 @@ function StripeDashboardWebView({isVisible, closeModal}) {
         const month = birthdayDate.getMonth();
         const day = birthdayDate.getDate();
         const year = birthdayDate.getFullYear();
-        console.log(month)
-        console.log(day)
-        console.log(year)
 
         setDateOfBirth(date)
         setMonthOfBirth(month);
@@ -295,33 +344,11 @@ function StripeDashboardWebView({isVisible, closeModal}) {
     }
 
     const handleOpenBirthDayPicker = () => {
-        if (birthdayInput.current) {
-            if (!birthdayInput.current.isFocused()) {
-                openBirthDayPicker()
-            }
-        }
-
         openBirthDayPicker()
-
     }
 
     const handleCloseBirthdayPicker = () => {
-        if (birthdayInput.current) {
-            if (birthdayInput.current.isFocused()) {
-                birthdayInput.current.blur()
-                closeBirthdayPicker()
-                
-            }
-        }
-
-      
         closeBirthdayPicker()
-        birthdayInput.current.blur()
-        closeBirthdayPicker()
-
-
-
-
     }
 
     const renderBirthdayDatePicker = () => {
@@ -370,7 +397,7 @@ function StripeDashboardWebView({isVisible, closeModal}) {
             return (
             <View style={{flex: 1}}>
                 <View style={{backgroundColor: 'rgb(245, 249, 251)', paddingTop: Constants.statusBarHeight, padding: 10}}>
-            <Text onPress={closeModal}>
+            <Text onPress={() => closeModal()}>
                 Cancel
             </Text>
         </View>
@@ -392,6 +419,7 @@ function StripeDashboardWebView({isVisible, closeModal}) {
     </Text>
         </View>
         } else if (verificationStatus == 'unverified') {
+            return (
             <View style={{flex: 1}}>
             <View style={{backgroundColor: 'rgb(245, 249, 251)', paddingTop: Constants.statusBarHeight, padding: 10}}>
             <Text onPress={closeModal}>
@@ -443,8 +471,19 @@ function StripeDashboardWebView({isVisible, closeModal}) {
             </View>
         </View>
 
-        <View style={styles.section}>
-            <Input ref={birthdayInput} value={moment(dateOfBirth).format('LL').toString()} onFocus={handleOpenBirthDayPicker} onBlur={handleCloseBirthdayPicker} label="Date of Birth" labelStyle={styles.labelStyle} inputStyle={styles.inputStyle} inputContainerStyle={styles.inputContainerStyle} />
+       <View style={styles.section}>
+            <View>
+            <Text style={{color: 'rgb(119, 131, 143)', paddingLeft: 15, fontSize: 12, fontWeight: '500' }}>
+                Date of Birth
+            </Text>
+            <Caption style={{paddingLeft: 15}}>
+                Click to choose your date of birth
+            </Caption>
+            </View>
+            <Button color="#23374d" mode="text" uppercase={true} onPress={handleOpenBirthDayPicker}>
+                {moment(dateOfBirth).format('LL').toString()}
+            </Button>
+           
         </View>
 
         <View style={styles.section}>
@@ -531,7 +570,9 @@ Read the Stripe Service Agreement here.
         {renderBirthdayDatePicker()}
         <SafeAreaView />
         </View>
+            )
         } else {
+            return (
             <View style={{flex: 1}}>
             <View style={{backgroundColor: 'rgb(245, 249, 251)', paddingTop: Constants.statusBarHeight, padding: 10}}>
             <Text onPress={closeModal}>
@@ -584,7 +625,18 @@ Read the Stripe Service Agreement here.
         </View>
 
         <View style={styles.section}>
-            <Input ref={birthdayInput} value={moment(dateOfBirth).format('LL').toString()} onFocus={handleOpenBirthDayPicker} onBlur={handleCloseBirthdayPicker} label="Date of Birth" labelStyle={styles.labelStyle} inputStyle={styles.inputStyle} inputContainerStyle={styles.inputContainerStyle} />
+            <View>
+            <Text style={{color: 'rgb(119, 131, 143)', paddingLeft: 15, fontSize: 12, fontWeight: '500' }}>
+                Date of Birth
+            </Text>
+            <Caption style={{paddingLeft: 15}}>
+                Click to choose your date of birth
+            </Caption>
+            </View>
+            <Button color="#23374d" mode="text" uppercase={true} onPress={handleOpenBirthDayPicker}>
+                {moment(dateOfBirth).format('LL').toString()}
+            </Button>
+           
         </View>
 
         <View style={styles.section}>
@@ -671,12 +723,26 @@ Read the Stripe Service Agreement here.
         {renderBirthdayDatePicker()}
         <SafeAreaView />
         </View>
+            )
+            
         }
     }
  
     return (
         <Modal presentationStyle="fullScreen" animationType="slide" visible={isVisible}>
             {renderComponentView()}
+            <Snackbar
+        visible={snackBarIsVisible}
+        onDismiss={onDismissSnackBar}
+        style={{color: '#1089ff'}}
+        action={{
+          label: 'Okay',
+          onPress: () => {
+           setSnackBarVisible(false)
+          },
+        }}>
+        {snackBarReason}
+      </Snackbar>
         </Modal>
     )
 }
