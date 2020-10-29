@@ -94,6 +94,7 @@ const authenticationReducer = (
   loginError: false,
   logoutError: false,
   isAuthenticated: false,
+  loginErrorCode: "",
   user: {}
 }, action) => {
 
@@ -122,7 +123,8 @@ const authenticationReducer = (
         ...state,
         isLoggingIn: false,
         isAuthenticated: false,
-        loginError: true
+        loginError: true,
+        loginErrorCode: action.errorCode,
       };
     case LOGOUT_FAILURE:
       return {

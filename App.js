@@ -117,7 +117,10 @@ const SwitchNavigator = () => {
     //User is not signed in so we let the user continue as a guest
     if (uuid === 0) {
       try {
-      // LUPA_AUTH.signOut();
+      if (LUPA_AUTH.currentUser) {
+        LUPA_AUTH.signOut();
+      }
+
       const newGuestUUID = await handleGuestAccountUUID();
       await userAuthenticationHandler.signUpUser(newGuestUUID, "", "", "");
 
@@ -164,6 +167,7 @@ const SwitchNavigator = () => {
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
   } catch(error) {
     alert(error)
+    console.log(error)
   }
   }
 

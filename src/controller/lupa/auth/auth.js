@@ -31,9 +31,10 @@ const receiveLogin = user => {
   };
 };
 
-const loginError = () => {
+const loginError = (errorCode) => {
   return {
-    type: LOGIN_FAILURE
+    type: LOGIN_FAILURE,
+    errorCode
   };
 };
 
@@ -51,7 +52,7 @@ const receiveLogout = () => {
 
 const logoutError = () => {
   return {
-    type: LOGOUT_FAILURE
+    type: LOGOUT_FAILURE,
   };
 };
 
@@ -80,10 +81,10 @@ export const loginUser = (email, password) => {
         dispatch(receiveLogin(user));
       })
       .catch(error => {
-        console.log(error)
-        console.log('error')
+        var errorCode = error.code;
+        var errorMessage = error.message;
         //Do something with the error if you want!
-        dispatch(loginError());
+        dispatch(loginError(errorCode));
       });
     } catch(error) {
       console.log('error');

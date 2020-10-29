@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useEffect } from 'react';
+import React, { useReducer, useState, useEffect, forwardRef } from 'react';
 
 import {
     View,
@@ -36,7 +36,7 @@ const inputReducer = (state, action) => {
     }
 }
 
-const Input = props => {
+const Input = (props) => {
     let TEXT_INPUT_COLOR = '#1089ff'
     const [focused, setIsFocused] = useState(false)
     const [inputState, dispatch] = useReducer(inputReducer, {
@@ -97,14 +97,18 @@ const Input = props => {
         }
 
         dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
+
+        //temporary call to update text
+        lostFocusHandler()
       };
 
       const lostFocusHandler = () => {
           setIsFocused(false)
           dispatch({ type: INPUT_BLUR })
       }
-    
 
+      
+    
     return (
         <View style={styles.formControl}>
       <Text style={[styles.label, focused ? { color: 'rgba(13,71,161 ,1)' } : {color: 'rgb(142, 142, 147)'}]}>{props.label}</Text>
@@ -121,7 +125,7 @@ const Input = props => {
         style={[focused ? styles.focusedInput : styles.input]}
         value={inputState.value}
         onChangeText={textChangeHandler}
-        onBlur={lostFocusHandler}
+      // onBlur={lostFocusHandler}
         secureTextEntry={props.secureTextEntry}
         theme={{
           colors: {

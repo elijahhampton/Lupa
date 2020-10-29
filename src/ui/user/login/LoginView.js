@@ -5,7 +5,7 @@
  * 
  * Login View
  */
-import React, { useEffect, useReducer, useCallback, useState } from "react";
+import React, { useEffect, useReducer, useCallback, useState, createRef } from "react";
 
 import {
   View,
@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Keyboard,
   SafeAreaView,
   Platform,
   KeyboardAvoidingView
@@ -48,9 +49,16 @@ import { getLupaStoreState } from "../../../controller/redux";
 const INPUT_PLACEHOLDER_COLOR = "rgb(99, 99, 102)"
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
+const SELF_FORM_INPUT_UPDATE = 'SELF_FORM_INPUT_UPDATE';
 
 const formReducer = (state, action) => {
   if (action.type === FORM_INPUT_UPDATE) {
+    if (action.value == '' || typeof(action.value) == 'undefined') {
+      return {
+        ...state
+      }
+    }
+
     const updatedValues = {
       ...state.inputValues,
       [action.input]: action.value
@@ -68,6 +76,11 @@ const formReducer = (state, action) => {
       inputValidities: updatedValidities,
       inputValues: updatedValues
     };
+  } else if (action.type === SELF_FORM_INPUT_UPDATE) {
+    console.log('triggering self form update')
+    return {
+      ...state
+    }
   }
   return state;
 };
@@ -108,6 +121,8 @@ function LoginView(props) {
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
+      console.log(inputIdentifier)
+      console.log(inputValue)
     dispatchFormState({
       type: FORM_INPUT_UPDATE,
       value: inputValue,
@@ -117,6 +132,9 @@ function LoginView(props) {
   },
   [dispatchFormState]
   );
+
+  const loginEmailRef = createRef();
+  const loginPasswordRef = createRef();
 
   useEffect(() => {
     async function retrievePreviousSignInData() {
@@ -139,7 +157,6 @@ function LoginView(props) {
           });
         });
       } catch(error) {
-        alert('aaaa: ' + error);
         LOG_ERROR('LoginView.js', 'Unhandled error in LoginView.js componentDidMount', error);
         dispatchFormState({
           type: FORM_INPUT_UPDATE,
@@ -152,12 +169,12 @@ function LoginView(props) {
           type: FORM_INPUT_UPDATE,
           value: '',
           isValid: true,
-          input: 'password'
+          input: 'loginPassword'
         })
       }
     }
 
-    retrievePreviousSignInData();
+    //retrievePreviousSignInData();
   }, []);
 
    /**
@@ -174,30 +191,75 @@ function LoginView(props) {
  const LOGIN_SUCCESS = "LOGIN_SUCCESS";
  const LOGIN_FAILURE = "LOGIN_FAILURE";
 
+const resetFormState = () => {
+  dispatchFormState({
+    type: FORM_INPUT_UPDATE,
+    value: '',
+    isValid: false,
+    input: 'loginEmail'
+  })
 
+  dispatchFormState({
+    type: FORM_INPUT_UPDATE,
+    value: '',
+    isValid: false,
+    input: 'loginPassword'
+  })
+}
+
+const triggerFormInputUpdate = () => {
+  return {
+    type: SELF_FORM_INPUT_UPDATE,
+  }
+}
 
   /**
    * Handles user authentication once the user presses the login button.
    */
   const onLogin = async (e) => {
-    e.preventDefault();
+    console.log('1')
+    //e.preventDefault();
+    await dispatchFormState({
+      type: FORM_INPUT_UPDATE,
+      value: '',
+    })
+    
+    Keyboard.dismiss();
 
-    const attemptedUsername = await formState.inputValues.loginEmail;
-    const attemptedPassword = await formState.inputValues.loginPassword;
-
-    console.log('about to login')
+    console.log('2')
+    let attemptedUsername = await formState.inputValues.loginEmail;
+    let attemptedPassword = await formState.inputValues.loginPassword;
+    console.log(attemptedUsername)
+    console.log(attemptedPassword)
    await dispatch(loginUser(attemptedUsername, attemptedPassword));
-  const updatedState = await getLupaStoreState();
-  
+    const updatedState = await getLupaStoreState();
 
+    
    if (updatedState.Auth.isAuthenticated === true) {
     _introduceApp(updatedState.Auth.user.user.uid);
-    storeAsyncData('PREVIOUS_LOGIN_EMAIL', attemptedUsername);
-    storeAsyncData('PREVIOUS_LOGIN_PASSWORD', attemptedPassword);
+
+    resetFormState();
    } else {
-    setLoginRejectedReason('Invalid Username or Password.  Try again.')
+     console.log('ummm?')
+     switch(updatedState.Auth.loginErrorCode) {
+       case 'auth/invalid-email':
+        setLoginRejectedReason('The email you are attempting to use is not a valid email address.');
+        break;
+       case 'auth/user-disabled':
+        setLoginRejectedReason('This account has been disabled.  Please contact support for further information.');
+        break;
+       case 'auth/user-not-found':
+        setLoginRejectedReason('This account you are attempting to sign in with is not registered.');
+        break;
+       case 'auth/wrong-password':
+        setLoginRejectedReason('Invalid password.');
+        break;
+     }
+    
     showSnack(true);
    }
+
+
   }
 
   /**
@@ -310,7 +372,7 @@ function LoginView(props) {
        />
        </View>
 
-       <Button onPress={(event) => onLogin(event)} uppercase={false} mode="contained" style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', height: 45, alignItems: 'center', justifyContent: 'center', marginTop: 20, width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+       <Button onPress={(event) => onLogin(event)} uppercase={false} mode="contained" contentStyle={{height: 45, width: Dimensions.get('window').width - 50}} style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', alignItems: 'center', justifyContent: 'center', marginTop: 20, alignSelf: 'center'}}>
           <Text>
             Login
           </Text>
@@ -334,7 +396,7 @@ function LoginView(props) {
        </View>
 
        <Snackbar
-       style={{backgroundColor: '#212121'}}
+       style={{backgroundColor: '#212121', marginBottom: Constants.statusBarHeight}}
        theme={{ colors: { accent: '#2196F3' }}}
        visible={snackIsVisible}
        onDismiss={onDismissSnackBar}

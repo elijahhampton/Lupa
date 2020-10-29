@@ -821,7 +821,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
               <View style={{marginVertical: 10, width: '100%'}}>
                 <View style={{paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <Text style={{fontSize: 15, padding: 10, fontFamily: 'Avenir-Heavy'}}>
-              Promoted
+              Promoted Trainers
           </Text>
 
                 </View>

@@ -214,7 +214,7 @@ function TrainerBackgroundVerification(props) {
 
     const [hour, setHourlyPaymentRate] = useState(0);
 
-    const [homeGymLocation, setHomeGymLocation] = useState('Launch Map');
+    const [homeGymLocation, setHomeGymLocation] = useState('Set Gym Location');
     const [homeGymLocationData, setHomeGymLocationData] = useState('');
 
     const [mapViewVisible, setMapViewVisible] = useState(false);
@@ -226,41 +226,6 @@ function TrainerBackgroundVerification(props) {
 
     useEffect(() => {
         showVerificationModal();
-
-        async function checkLocationPermissionsAndRequest() {
-            await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
-            .then(async (result) => {
-                switch (result) {
-                    case RESULTS.UNAVAILABLE:
-                        //tell user it is not available on this device
-                        setLocationPermissionStatus('unavailable')
-                        break;
-                    case RESULTS.DENIED:
-                         // alert the user to change it from settings
-                        //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
-                        setLocationPermissionStatus('denied');
-                        break;
-                    case RESULTS.GRANTED:
-                        console.log('granted')
-                        await setLocationPermissionStatus('granted')
-                        await fetchUserLocation();
-                        break;
-                    case RESULTS.BLOCKED:
-                        setLocationPermissionStatus('blocked')
-                        // alert the user to change it from settings
-                        //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
-                        break;
-                }
-            })
-            .catch((error) => {
-                alert(error)
-                setLocationPermissionStatus('denied')
-                 // alert the user to change it from settings
-                        //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
-            });
-        }
-
-        checkLocationPermissionsAndRequest()
 
     }, [])
 
@@ -298,13 +263,7 @@ function TrainerBackgroundVerification(props) {
     }
 
     const openMapView = async () => {
-        if (locationPermissionStatus != 'granted') {
-            return;
-        }
 
-        if (typeof(userLocation.latitude) == 'undefined' || typeof(userLocation.longitude) == 'undefined') {
-            return;
-        }
 
         setMapViewVisible(true)
     }
@@ -312,26 +271,11 @@ function TrainerBackgroundVerification(props) {
     const closeMapView = () => setMapViewVisible(false)
 
     const handleOpenHomeGymMapView = async () => {
-        if (typeof(userLocation.latitude) == 'undefined' || typeof(userLocation.longitude) == 'undefined') {
-            await fetchUserLocation()
-        }
-
             openMapView();
 
             console.log('finish handled open gym')
     }
 
-    const fetchUserLocation = async () => {
-            console.log('fetchingLocation')
-           // LOG('Lupa.js', 'Retrieving the current users position');
-            await Geolocation.getCurrentPosition(
-                handleOnFetchUserLocationSuccess, 
-                handleOnFetchUserLocationError,
-              { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-           );
-
-  
-    }
 
     handleOnFetchUserLocationSuccess = async (position) => {
         const locationData = await getLocationFromCoordinates(position.coords.longitude, position.coords.latitude);
@@ -370,7 +314,7 @@ function TrainerBackgroundVerification(props) {
                 </Caption>
 
                     <Button style={{marginVertical: 10}} mode="contained" uppercase={false} color="#1089ff" onPress={handleOpenHomeGymMapView}>
-                        Set Gym Location
+                        {homeGymLocation}
                 </Button>
                 </Surface>
                 <Divider style={{height: 2}} />
@@ -389,7 +333,7 @@ function TrainerBackgroundVerification(props) {
                 </Caption>
 
                     <Button style={{marginVertical: 10}} mode="contained" uppercase={false} color="#1089ff" onPress={handleOpenHomeGymMapView}>
-                        Set Gym Location
+                        {homeGymLocation}
                 </Button>
                 </Surface>
                 <Divider style={{height: 2}} />
@@ -669,8 +613,6 @@ function TrainerBackgroundVerification(props) {
 
 
             <LupaMapView
-                initialRegionLatitude={userLocation.latitude}
-                initialRegionLongitude={userLocation.longitude}
                 closeMapViewMethod={gymData => onMapViewClose(gymData)}
                 isVisible={mapViewVisible}
             />

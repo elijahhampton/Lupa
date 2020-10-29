@@ -89,7 +89,18 @@ const SignUp = props => {
     const attemptedEmail = formState.inputValues.email.trim();
     const attemptedPassword = formState.inputValues.password.trim();
 
-    
+    if (typeof(attemptedEmail) == 'undefined' 
+    || attemptedEmail == '' 
+    || attemptedPassword == '' 
+    || typeof(attemptedPassword) == 'undefined') {
+      Alert.alert(
+        'Invalid Inputs',
+        'You cannot use an empty email or password.',
+        [{text: 'Okay', onPress: () => {}}
+        ]
+      )
+      return;
+    }
 
     if (agreedToTerms === false) {
       Alert.alert(
@@ -97,14 +108,14 @@ const SignUp = props => {
         'Please agree to the Terms and Service before creating an account.',
         [{text: 'Okay', onPress: () => {}}
         ]
-      )
+      );
+      return;
     }
 
     await dispatch(authActions.signup(attemptedEmail, attemptedPassword));
       
       navigation.navigate('Onboarding')
       _setupRedux()
-     // storeAsyncData('RECENTLY_INTERACTED_USERS', [])
     }
   
 
