@@ -52,6 +52,7 @@ function UserProfile({ userData, isCurrentUser }) {
     })
 
     useEffect(() => {
+        let isSubscribed = true;
         async function loadProfileData() {
             try {
                 setProfileImage(userData.photo_url)
@@ -72,6 +73,7 @@ function UserProfile({ userData, isCurrentUser }) {
 
       //  addToRecentlyInteractedList();
         LOG('UserProfile.js', 'Running useEffect.')
+        return () => isSubscribed = false;
     }, [profileImage, ready])
 
     const addToRecentlyInteractedList = async () => {
@@ -373,7 +375,7 @@ function UserProfile({ userData, isCurrentUser }) {
                     </View>
                     {renderInteractions()}
                 </View>
-                <Tabs page={currPage} tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF' locked={true} >
+                <Tabs tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF' >
                     <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}  activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}

@@ -219,6 +219,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     const renderVlogs = () => {
         if (!ready) { return null; }
+
         if (userVlogs.length === 0) {
             return (
                 <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
@@ -429,7 +430,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     async function loadProfileData() {
         try {
+            
+            console.log('o')
             setProfileImage(userData.photo_url)
+            console.log('v')
             await fetchVlogs(userData.user_uuid);
             if (isCurrentUser) {
               //  setTrainerPrograms()
@@ -438,7 +442,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             }
         } catch (error) {
             setReady(false)
- 
+ console.log(error)
             setUserVlogs([])
             setUserPrograms([])
         }
@@ -501,15 +505,19 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     useEffect(() => {
+        console.log('1')
         let isSubscribed = true;
+        console.log('2')
         loadProfileData()
+        console.log('3')
         if (userData.interest.length > 3) {
             let total = userData.interest.length
             setTrainingInterestLength(total - 3)
             showTrailingInterestText(true)
         }
+        console.log('4')
         setReady(true)
-
+        console.log('5')
        // addToRecentlyInteractedList();
         LOG('TrainerProfile.js', 'Running useEffect.')
 
@@ -633,18 +641,18 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 
                 </View>
 
-               <Tabs page={currPage} tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} onChangeTab={tabInfo => setCurrPage(tabInfo.i)} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF'>
-                    <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
+              {/* <Tabs tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF'>
+                   <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}
                         </View>
             </Tab>
-                            <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
+                          <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
                             <View style={{ backgroundColor: '#FFFFFF', height: Dimensions.get('window').height }}>
                                 <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} userData={currUserData} />
                             </View>
-            </Tab>
-            </Tabs>
+        </Tab>
+            </Tabs>*/}
             </ScrollView>
 
             {renderFAB()}

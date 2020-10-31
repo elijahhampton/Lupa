@@ -88,14 +88,12 @@ const ProfileController = ({ route }) => {
 
         try {
             fetchData();
+            setReady(true)
         } catch(error) {
             setReady(false);
             setIsCurrentUser(false)
         }
 
-
-       
-        setReady(true);
         LOG('ProfileController.js', 'Running useEffect.')
         return () => currUserSubscription()
     }, [ready, userData.user_uuid]);
