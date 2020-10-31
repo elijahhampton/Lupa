@@ -115,7 +115,7 @@ export function generateMessagingToken(uuid) {
       fcmService.requestNotificationPermissions();
     }
   }).catch(err => {
-    alert(err)
+
   })
  
 }
@@ -289,7 +289,7 @@ loginUser = async (email, password) => {
   await LUPA_AUTH.signInWithEmailAndPassword(email, password).then(userCredential => {
       result = true;
   }).catch(err => {
-    alert(err)
+ 
       result = false;
   });
 
@@ -315,7 +315,7 @@ signUpUser = async (USER_UUID, username, email, password) => {
       //Add user to users collection with UID.
       await LUPA_DB.collection('users').doc(USER_UUID).set(userData, { merge: true });
   } catch (err) {
-    alert(err)
+
   }
 
   return Promise.resolve(true);

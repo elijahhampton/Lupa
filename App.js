@@ -166,7 +166,6 @@ const SwitchNavigator = () => {
     lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
   } catch(error) {
-    alert(error)
     console.log(error)
   }
   }

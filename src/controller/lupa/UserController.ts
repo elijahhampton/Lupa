@@ -881,7 +881,7 @@ export default class UserController {
             USER_COLLECTION.doc(usernameIn).set(newUserData);
             return true;
         } catch (Exception) {
-            alert(Exception)
+           
             return false;
         }
     }
@@ -1150,7 +1150,7 @@ export default class UserController {
             //delete program from lupa programs
             await PROGRAMS_COLLECTION.doc(programUUID).delete();
         } catch (err) {
-            alert(err)
+            
         }
     }
 
@@ -1371,7 +1371,7 @@ export default class UserController {
             this.PROGRAMS_CONTROLLER_INSTANCE.addProgramShare(program.program_structure_uuid, userList.length);
 
         } catch (err) {
-            alert(err)
+           
         }
 
     }
@@ -2136,7 +2136,7 @@ export default class UserController {
 
         }
     }catch (err) {
-        alert(err)
+ 
     }
 
     /** **************/
@@ -2160,7 +2160,7 @@ export default class UserController {
             await Fire.shared.append(message);
             
         } catch (err) {
-            alert(err)
+          
         }
     }
 }

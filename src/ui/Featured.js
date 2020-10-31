@@ -104,7 +104,7 @@ class Featured extends React.Component {
             this.setState({ feedVlogs: updatedState });
 
         }, err => {
-            alert(err)
+        
         });
 
         this.setState({ suggestionBannerVisisble: true })

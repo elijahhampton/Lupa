@@ -758,7 +758,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
                               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <FeatherIcon name="map-pin" color="#1089ff" style={{paddingHorizontal: 3}} />
                               <Text style={{ fontFamily: 'Avenir-Light', fontSize: 12, }}>
-                                Miami, Florida
+                                {trainer.location.city}, {trainer.location.state}
                               </Text>
                               </View>
                               </View>

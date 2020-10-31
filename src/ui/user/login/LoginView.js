@@ -216,7 +216,7 @@ const triggerFormInputUpdate = () => {
   /**
    * Handles user authentication once the user presses the login button.
    */
-  const onLogin = async (e) => {
+  const onLogin = async () => {
     console.log('1')
     //e.preventDefault();
     await dispatchFormState({
@@ -372,7 +372,7 @@ const triggerFormInputUpdate = () => {
        />
        </View>
 
-       <Button onPress={(event) => onLogin(event)} uppercase={false} mode="contained" contentStyle={{height: 45, width: Dimensions.get('window').width - 50}} style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', alignItems: 'center', justifyContent: 'center', marginTop: 20, alignSelf: 'center'}}>
+       <Button onPress={onLogin} uppercase={false} mode="contained" contentStyle={{height: 45, width: Dimensions.get('window').width - 50}} style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', alignItems: 'center', justifyContent: 'center', marginTop: 20, alignSelf: 'center'}}>
           <Text>
             Login
           </Text>

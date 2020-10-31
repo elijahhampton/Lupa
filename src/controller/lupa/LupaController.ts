@@ -226,7 +226,7 @@ export default class LupaController {
         }
         } catch(err)
         {
-          alert(err)
+       
         }
 
         resolve(finalResults);
@@ -284,7 +284,7 @@ export default class LupaController {
 
         } catch(err)
         {
-          alert(err)
+      
         }
 
         resolve(finalResults);
@@ -410,7 +410,7 @@ export default class LupaController {
       try {
         USER_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, userList, program);
           } catch(err) {
-            alert(err)
+            
         }
     }
 
@@ -524,7 +524,7 @@ export default class LupaController {
             })
         }
         catch (err) {
-            alert(err)
+       
             topPicks = []
         }
         return Promise.resolve(topPicks)
@@ -539,7 +539,7 @@ export default class LupaController {
             })
         }
         catch (err) {
-            alert(err)
+      
             recentlyAddedPrograms = []
         }
 

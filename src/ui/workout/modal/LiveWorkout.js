@@ -470,7 +470,7 @@ class LiveWorkout extends React.Component {
         try {
             return <Image source={{ uri: uri }} style={{ width: '100%', height: '100%' }} resizeMethod="scale" resizeMode="cover" />
         } catch (error) {
-            alert(err)
+       
             return (
 
                 <View style={{ flex: 1, backgroundColor: '#212121', color: 'white', justifyContent: 'center', justifyContent: 'center' }}>

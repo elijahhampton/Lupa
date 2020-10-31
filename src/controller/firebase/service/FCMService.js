@@ -29,7 +29,7 @@ class FCMService {
         console.log('MEssage handled in the background!', remoteMessage);
       })
     
-      // Foreground state messages
+     /* // Foreground state messages
       this.messageListener = reactfirebasemessaging().onMessage(async remoteMessage => {
         LOG('firebase.js', 'createNotificationListeners::onMessage A new FCM message arrived!', remoteMessage);
      
@@ -43,11 +43,11 @@ class FCMService {
     
           onNotification(notification);
         }
-      });
+      });*/
     }
     
     unRegister = () => {
-      this.messageListener()
+      //return () => this.messageListener();
     }
     
     registerAppWithFCM = async () => {

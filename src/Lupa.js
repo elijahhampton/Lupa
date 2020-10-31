@@ -34,10 +34,10 @@ import { Paragraph, Title, Button,} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import Onboarding from './ui/user/modal/WelcomeModal/Onboarding'
 
-Geolocation.setRNConfiguration({
+/*Geolocation.setRNConfiguration({
   authorizationLevel: 'whenInUse',
   skipPermissionRequests: false,
-});
+});*/
 
 const mapStateToProps = (state, action) => {
   return {
@@ -71,7 +71,7 @@ class Lupa extends React.Component {
 
   async componentDidMount() {
     LOG('Lupa.js', 'Checking location permissions.');
-    await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+   /* await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
     .then((result) => {
       switch (result) {
         case RESULTS.UNAVAILABLE:
@@ -95,11 +95,11 @@ class Lupa extends React.Component {
     })
     .catch((error) => {
       // …
-    });
+    });*/
 
     generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid)
 
-  if (this.state.locationPermissionStatus == 'granted') {
+  /*if (this.state.locationPermissionStatus == 'granted') {
     LOG('Lupa.js', 'Retrieving the current users position');
     Geolocation.getCurrentPosition(
       async (position) => {
@@ -118,14 +118,14 @@ class Lupa extends React.Component {
       const lastPosition = await JSON.stringify(position);
       this.setState({ lastPosition: lastPosition });
    });
-  }
+  }*/
 
   this.LUPA_CONTROLLER_INSTANCE.indexApplicationData()
 }
 
   componentWillUnmount() {
     LOG('Lupa.js', 'Clearing subscription to Geolocation');
-    Geolocation.clearWatch(this.watchID);
+   // Geolocation.clearWatch(this.watchID);
 
     return () => this.CURRENT_USER_OBSERVER();
   }

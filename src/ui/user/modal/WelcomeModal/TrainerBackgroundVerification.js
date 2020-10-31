@@ -285,7 +285,7 @@ function TrainerBackgroundVerification(props) {
     }
 
     handleOnFetchUserLocationError = (error) => {
-        alert(error.message)
+     
     }
 
     const onMapViewClose = (locationInformation) => {

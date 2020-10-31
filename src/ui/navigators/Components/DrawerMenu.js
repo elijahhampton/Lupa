@@ -116,7 +116,7 @@ function DrawerMenu(props) {
         </View>
         </TouchableOpacity>
 
-
+{/*
 
         <TouchableOpacity onPress={navigateToTrainerInformation}>
         <View style={styles.navigationButtonContaner}>
@@ -126,6 +126,8 @@ function DrawerMenu(props) {
           </Text>
         </View>
         </TouchableOpacity>
+
+*/}
 
         <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
         <View style={styles.navigationButtonContaner}>
@@ -163,7 +165,7 @@ function DrawerMenu(props) {
 
 
         <Caption style={{padding: 10}}>
-          Version 0.8 (2)
+          Version 0.8 (3)
         </Caption>
 
 

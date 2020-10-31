@@ -319,7 +319,7 @@ function StripeDashboardWebView({isVisible, closeModal}) {
           setStripeData(undefined);
           setComponentDidErr(true)
           setVerificationStatus('')
-          LOG_ERROR('SettingsModal.js', 'Error running axios request.', error);
+          LOG_ERROR('SettingsModal.js', 'Error running axios request.', err);
           setIsLoading(false)
           setReady(false)
         })

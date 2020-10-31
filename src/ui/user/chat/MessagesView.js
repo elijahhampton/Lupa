@@ -164,8 +164,8 @@ class MessagesView extends React.Component {
                 }}>
                      <Appbar.Action icon={() => <Feather1s thin={true} name="arrow-left" size={20} />} onPress={() => this.props.navigation.pop()} />
                     <Appbar.Content title="Messages" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
-                    <Appbar.Action onPress={() => alert('ap')} icon="delete" disabled={!this.state.viewReady && this.state.currMessagesIndex == undefined} color={!this.state.viewReady ? "black" : "grey"} />
-                    <Appbar.Action onPress={() => alert('message')} icon="send" disabled={this.state.viewReady} color={this.state.viewReady ? "black" : "grey"} />
+                    <Appbar.Action onPress={() => {}} icon="delete" disabled={!this.state.viewReady && this.state.currMessagesIndex == undefined} color={!this.state.viewReady ? "black" : "grey"} />
+                    <Appbar.Action onPress={() => {}} icon="send" disabled={this.state.viewReady} color={this.state.viewReady ? "black" : "grey"} />
 
                 </Appbar.Header>
                 <View style={{backgroundColor: 'white', height: "auto", width: "100%", padding: 5}}>

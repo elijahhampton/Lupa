@@ -161,7 +161,6 @@ function TrainerDashboard(props) {
         try {
         await handlePayBookingCost(currUserData.hourly_payment_rate, booking);
         } catch(error) {
-            alert(error);
             LOG_ERROR('TrainerDashboard.js', 'Failed payment in handlePayBookingCost', error);
             return;
         }
