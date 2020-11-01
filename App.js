@@ -112,7 +112,7 @@ const SwitchNavigator = () => {
   const _setupRedux = async (uuid) => {
     const userAuthenticationHandler = new UserAuthenticationHandler();
 
-    let currUserData = getLupaUserStructure(uuid), currUserPrograms = [], lupaWorkouts : Object, userPayload : Object = {}
+    let currUserData = getLupaUserStructure(uuid), currUserPrograms = [], lupaWorkouts , userPayload = {}
 
     //User is not signed in so we let the user continue as a guest
     if (uuid === 0) {
