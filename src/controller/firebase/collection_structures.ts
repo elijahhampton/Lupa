@@ -177,8 +177,8 @@ var lupa_user : LupaUserStructure = {
         hasExperienceInSmallGroupSettings: false,
         smallGroupExperienceYears: 0,
         isInHomeTrainer: false,
-        exercise_location: {city: '', state: '', country: '', longitude: '', latitude: '',},
-        personalEquipmentList: [],
+        exercise_space: {city: '', state: '', country: '', longitude: '', latitude: '',},
+        personal_equipment_list: [],
         trainer_tier: 0,
         trainer_interest: []
     },

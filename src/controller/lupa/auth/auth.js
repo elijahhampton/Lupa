@@ -115,7 +115,7 @@ export const verifyAuth = () =>  {
     dispatch(verifyAuth());
     await LUPA_AUTH.onAuthStateChanged(user => {
       if (user !== null) {
-        dispatch(receiveLogin(user));
+        dispatch(receiveLogin(user)); //Might need to change this
       } 
 
       dispatch(verifySuccess());

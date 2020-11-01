@@ -61,6 +61,7 @@ import { getLupaUserStructure } from '../controller/firebase/collection_structur
 import { getLupaStoreState} from '../controller/redux/index';
 import BookingRequestModal from './user/modal/BookingRequestModal'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import BookingInformationModal from './sessions/modal/BookingInformationModal'
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
@@ -808,10 +809,8 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
 
 
                 
-                <Button onPress={this.handleOnRequestFutureBooking} style={{marginVertical: 15}} disabled={false} color="#23374d" uppercase={false} icon={() => <FeatherIcon name='calendar' color="white" />} mode="contained" contentStyle={{height: 'auto'}}>
-                  <Text style={{fontSize: 12, fontWeight: '500'}}>
+                <Button onPress={this.handleOnRequestFutureBooking} style={{marginVertical: 15}} disabled={false} color="#23374d" uppercase={true} icon={() => <FeatherIcon name='calendar' color="white" />} mode="contained" contentStyle={{height: 45}}>
                    Find Trainer
-                  </Text>
                 </Button>               
               </View>
             
@@ -937,7 +936,6 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
             prefilledDate={this.state.futureBookingDisplayDate}
             />
             <AvailableTrainersModal isVisible={this.state.availableTrainersModalIsVisible} closeModal={() => this.setState({ availableTrainersModalIsVisible: false })} />
-            
        </KeyboardAwareScrollView>
        </SafeAreaView>
         );

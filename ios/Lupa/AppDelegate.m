@@ -61,7 +61,7 @@
   picker.preferredDatePickerStyle = UIDatePickerStyleWheels;
 }
 
-  [RNSplashScreen show];
+  //[RNSplashScreen show];
   return YES;
 }
 

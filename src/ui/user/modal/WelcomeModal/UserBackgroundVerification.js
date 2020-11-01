@@ -35,31 +35,6 @@ Geolocation.setRNConfiguration({
     skipPermissionRequests: false,
   });
 
-
-const SPORTS_GENRE = [
-    'Football',
-    'Soccer',
-    'Lacross',
-    'Basketball',
-    'Basketball'
-]
-
-const COACHING_INTEREST = [
-    'Interest',
-    'Interest',
-    'Interest',
-    'Interest',
-    'Interest',
-]
-
-const EQUIPMENT_LIST = [
-    'Equipment',
-    'Equipment',
-    'Equipment',
-    'Equipment',
-    'Equipment',
-]
-
 function UserBackgroundVerification(props) {
     const LUPA_STATE = useSelector(state => {
         return state;

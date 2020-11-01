@@ -109,7 +109,7 @@ export class LupaHome extends Component {
            </Tab>
           </Tabs>
 
-          {this.props.lupa_data.Auth.isAuthenticated == true ?  <FAB  onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" /> : null}
+          {this.props.lupa_data.Auth.isAuthenticated == true ?  <FAB small onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" /> : null}
       </View>
     );
   }

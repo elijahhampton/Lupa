@@ -105,6 +105,15 @@ export default class LupaController {
       return Promise.resolve(isTaken);
     }
 
+    getAttributeFromUUID = async (uuid : String, attribute : String) => {
+      let retVal;
+      await USER_CONTROLLER_INSTANCE.getAttributeFromUUID(uuid, attribute).then(data => {
+        retVal = data;
+      });
+
+      return Promise.resolve(retVal);
+    }
+
     getCurrentUser = () => {
       let currentUser = USER_CONTROLLER_INSTANCE.getCurrentUser();
       return currentUser;

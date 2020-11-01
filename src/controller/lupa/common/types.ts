@@ -118,8 +118,8 @@ export type LupaUserStructure = {
         hasExperienceInSmallGroupSettings: Boolean,
         smallGroupExperienceYears: Number,
         isInHomeTrainer: Boolean,
-        exercise_location: Object,
-        personalEquipmentList: Array<String>,
+        exercise_space: Object,
+        personal_equipment_list: Array<String>,
         trainer_tier: Number,
         trainer_interest: Array<String>
     },

@@ -16,6 +16,7 @@ import {
 
 
 import {
+    Header,
     Tab,
     Tabs
 } from 'native-base'
@@ -117,6 +118,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderAvatar = () => {
+        try {
         if (isCurrentUser) {
             return (
                 <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
@@ -126,6 +128,41 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         }
 
         return <Avatar key={userData.photo_url} rounded size={65} source={{ uri: profileImage }} />
+    } catch(error) {
+        if (isCurrentUser) {
+            return (
+                <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
+                <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
+            </Surface>
+            )
+        } else {
+            return <PaperAvatar.Icon style={{backgroundColor: 'white'}} icon={() => <FeatherIcon name="user" size={30} />} />
+        }
+        }
+    }
+
+    const getFollowersLength = () => {
+        if (typeof(userData.followers.length) == 'undefined') {
+            return 0;
+        }
+
+        try {
+            return userData.followers.length
+        } catch(error) {
+            return 0;
+        }
+    }
+
+    const getFollowingLength = () => {
+        if (typeof(userData.following.length) == 'undefined') {
+            return 0;
+        }
+
+        try {
+            return userData.following.length
+        } catch(error) {
+            return 0;
+        }
     }
 
     const renderFollowers = () => {
@@ -134,7 +171,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 <TouchableOpacity onPress={navigateToFollowers}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <Text>
-                            {userData.followers.length}
+                         {getFollowersLength()}
                         </Text>
                         <Text style={styles.userAttributeText}>
                             Followers
@@ -145,7 +182,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 <TouchableOpacity onPress={navigateToFollowers}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <Text>
-                            {userData.following.length}
+                            {getFollowingLength()}
                         </Text>
                         <Text style={styles.userAttributeText}>
                             Following
@@ -159,7 +196,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderCertification = () => {
         return (<View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
             <FeatherIcon name="file-text" style={{ paddingRight: 5 }} />
-            <Text key={userData.certification} style={[styles.userAttributeText, { color: '#23374d' }]}>NASM</Text>
+            <Text  style={[styles.userAttributeText, { color: '#23374d' }]}>NASM</Text>
         </View>)
     }
 
@@ -175,7 +212,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderTrainerType = () => {
-        return (<View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
+        if (userData.trainer_metadata.trainer_interest.length == 0) {
+            return;
+        } 
+        
+        return (
+        <View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
             <FeatherIcon name="activity" style={{ paddingRight: 5 }} />
             {
                 userData.trainer_metadata.trainer_interest.map((type, index, arr) => {
@@ -432,17 +474,13 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         try {
             
             console.log('o')
-            setProfileImage(userData.photo_url)
+            setProfileImage(userData.photo_url);
             console.log('v')
             await fetchVlogs(userData.user_uuid);
-            if (isCurrentUser) {
-              //  setTrainerPrograms()
-            } else {
-               // fetchPrograms(userData.user_uuid);
-            }
+
         } catch (error) {
             setReady(false)
- console.log(error)
+            alert(error)
             setUserVlogs([])
             setUserPrograms([])
         }
@@ -505,23 +543,31 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     useEffect(() => {
-        console.log('1')
-        let isSubscribed = true;
-        console.log('2')
-        loadProfileData()
-        console.log('3')
-        if (userData.interest.length > 3) {
-            let total = userData.interest.length
-            setTrainingInterestLength(total - 3)
-            showTrailingInterestText(true)
-        }
-        console.log('4')
-        setReady(true)
-        console.log('5')
-       // addToRecentlyInteractedList();
-        LOG('TrainerProfile.js', 'Running useEffect.')
+        async function loadProfile() {
+            try {
+                setProfileImage(userData.photo_url);
+                await fetchVlogs(userData.user_uuid);
 
-        return () => isSubscribed = false;
+                let total = userData.interest.length
+
+                if (userData.interest.length > 3) {
+                    setTrainingInterestLength(total - 3)
+                    showTrailingInterestText(true)
+                } else {
+                    setTrainingInterestLength(total)
+                    showTrailingInterestText(false);
+                }
+            } catch (error) {
+                alert(error)
+                setReady(false)
+                setUserVlogs([])
+                setUserPrograms([])
+            }
+        }
+
+        loadProfile()
+        setReady(true)
+        LOG('TrainerProfile.js', 'Running useEffect.')
     }, [profileImage, ready])
 
     const renderScheduler = () => {
@@ -567,7 +613,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     const handleOnRefresh = async () => {
         await setRefreshing(true);
-        loadProfileData();
+        await loadProfileData();
         await setRefreshing(false);
     }
 
@@ -575,7 +621,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         <SafeAreaView style={styles.container}>
             <View style={{marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                             <Text style={[styles.bioText, {color: '#1089ff', paddingHorizontal: 5}]}>
-                                {userData.display_name} has an hourly rate of ${userData.hourly_payment_rate}
+                                {userData.display_name} has a rate of ${userData.hourly_payment_rate}
                             </Text>
                         </View>
 
@@ -599,22 +645,23 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
              
             </Appbar.Header>
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
-                <View>
-                    <View style={styles.userInformationContainer}>
-                        <View style={styles.infoContainer}>
+               <View>
+                 <View style={styles.userInformationContainer}>
+                       <View style={styles.infoContainer}>
                             {renderDisplayName()}
                             <View style={{ paddingVertical: 10 }}>
                                 {renderLocation()}
                                 {renderCertification()}
                                 {renderTrainerType()}
                             </View>
-                        </View>
+            </View>
 
                         <View style={styles.avatarContainer}>
-                            {renderAvatar()}
+                           {renderAvatar()}
                             {renderFollowers()}
                         </View>
-                    </View>
+            
+            </View> 
               
                     <View style={{ padding: 10, }}>
                     <View style={{width: '100%', flexDirection: 'row',alignItems: 'center', justifyContent: "space-between"}}>
@@ -639,9 +686,9 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
   
                     {renderInteractions()}
                 
-                </View>
+            </View>
 
-              {/* <Tabs tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF'>
+               <Tabs tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF'>
                    <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}
@@ -649,10 +696,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             </Tab>
                           <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
                             <View style={{ backgroundColor: '#FFFFFF', height: Dimensions.get('window').height }}>
-                                <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} userData={currUserData} />
+                                <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} />
                             </View>
         </Tab>
-            </Tabs>*/}
+            </Tabs>
             </ScrollView>
 
             {renderFAB()}

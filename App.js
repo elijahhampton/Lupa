@@ -183,8 +183,8 @@ const SwitchNavigator = () => {
         introduceApp(updatedAuthState.user.user.uid)
       } else {
         introduceApp(0);
-      }
     }
+  }
 
     function onOpenNotification(notify) {
       console.log('onOpenNotification')

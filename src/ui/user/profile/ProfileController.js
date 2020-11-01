@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import LupaController from '../../../controller/lupa/LupaController';
-import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
+import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { useSelector } from 'react-redux/lib/hooks/useSelector';
 import TrainerProfile from './TrainerProfile';
 import UserProfile from './UserProfile';
@@ -51,7 +51,8 @@ const ProfileController = ({ route }) => {
 
     const renderProfile = () => {
         if (typeof(route.params.userUUID) == 'undefined' || !ready) {
-            return <View style={{flex: 1}} />
+            tryReFetch()
+            return <View style={{flex: 1, backgroundColor: '#FFFFFF'}} />
         }
 
             try {
@@ -61,16 +62,34 @@ const ProfileController = ({ route }) => {
                 case false:
                    return <UserProfile userData={userData} isCurrentUser={isCurrentUser} uuid={userUUID} />
                 default:
-                    return <View style={{flex: 1}} />
+                    return <View style={{flex: 1, backgroundColor: '#FFFFFF'}} />
         }
     } catch(error) {
+        alert(error)
         return <View style={{flex: 1}} />
     }
     }
 
+    const tryReFetch = async () => {
+        const uuid = await _getId();
+        let userData = getLupaUserStructurePlaceholder();
+
+        await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(data => {
+            userData = data;
+        });
+
+        setUserData(userData);
+
+        if (uuid == userData.user_uuid) {
+            setIsCurrentUser(true);
+        } else {
+            setIsCurrentUser(false);
+        }
+    }
+
     useEffect(() => {
         let currUserSubscription = function() {}
-        let receivedUUID;
+    
        async function fetchData() {
             const uuid = await _getId();
             currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(documentSnapshot => {
@@ -78,11 +97,7 @@ const ProfileController = ({ route }) => {
                 setUserData(userData)
             });
 
-            if (uuid == userData.user_uuid) {
-                setIsCurrentUser(true);
-            } else {
-                setIsCurrentUser(false);
-            }
+
 
         }
 
@@ -90,13 +105,14 @@ const ProfileController = ({ route }) => {
             fetchData();
             setReady(true)
         } catch(error) {
+            alert(error)
             setReady(false);
             setIsCurrentUser(false)
         }
 
         LOG('ProfileController.js', 'Running useEffect.')
         return () => currUserSubscription()
-    }, [ready, userData.user_uuid]);
+    }, [ready, userData.user_uuid, userUUID]);
 
     return renderProfile()
 }
