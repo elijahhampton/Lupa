@@ -69,15 +69,11 @@ const verifySuccess = () => {
 };
 
 export const loginUser = (email, password) => {
-  console.log(email)
   return async (dispatch) => {
     dispatch(requestLogin());
-    console.log('after request')
-    try {
       await LUPA_AUTH
       .signInWithEmailAndPassword(email, password)
       .then(user => {
-        console.log(user)
         dispatch(receiveLogin(user));
       })
       .catch(error => {
@@ -86,21 +82,16 @@ export const loginUser = (email, password) => {
         //Do something with the error if you want!
         dispatch(loginError(errorCode));
       });
-    } catch(error) {
-      console.log('error');
-    }
   }
 };
 
 export const logoutUser = () => {
   return async (dispatch) => {
-    console.log('a')
     dispatch(requestLogout());
     await LUPA_AUTH
       .signOut()
       .then(() => {
         dispatch(receiveLogout());
-        console.log('b')
       })
       .catch(error => {
         alert(error)
@@ -112,10 +103,9 @@ export const logoutUser = () => {
 
 export const verifyAuth = () =>  {
   return async (dispatch) => {
-    dispatch(verifyAuth());
-    await LUPA_AUTH.onAuthStateChanged(user => {
+    await LUPA_AUTH.onAuthStateChanged(async user => {
       if (user !== null) {
-        dispatch(receiveLogin(user)); //Might need to change this
+         dispatch(receiveLogin(user));
       } 
 
       dispatch(verifySuccess());
@@ -172,12 +162,7 @@ export const signup = (email, password) => {
 
       //Catch error on signup
     }).catch(error => {
-      alert('Oops! Something went wrong! Please try again.');
-      if (LUPA_AUTH.currentUser) {
-        LUPA_AUTH.signOut()
-      }
-
-      dispatch(loginError())
+      alert('Oops! Something went wrong and your account could not be created.');
     });
   }
 }

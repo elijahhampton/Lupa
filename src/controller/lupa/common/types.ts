@@ -98,6 +98,7 @@ export type LupaUserStructure = {
     last_workout_completed: Object,
     stripe_metadata: Object,
     isGuest: Boolean,
+    has_completed_onboarding: Boolean,
     client_metadata: {
         physicalActivityStatus: String,
         hoursMovingPerDay: Number,

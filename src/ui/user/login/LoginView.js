@@ -32,7 +32,6 @@ import {
 import { useDispatch } from 'react-redux';
 
 import LupaController from '../../../controller/lupa/LupaController';
-import { UserAuthenticationHandler, LUPA_AUTH } from "../../../controller/firebase/firebase";
 
 import ThinFeatherIcon from "react-native-feather1s";
 import { storeAsyncData, retrieveAsyncData } from "../../../controller/lupa/storage/async";
@@ -42,14 +41,14 @@ import { Constants } from "react-native-unimodules";
 import Input from '../../common/Input/Input'
 import { useNavigation } from '@react-navigation/native';
 
-import { loginUser } from "../../../controller/lupa/auth/auth";
+import { loginUser, logoutUser } from "../../../controller/lupa/auth/auth";
 import { useSelector } from 'react-redux'
 import { getLupaStoreState } from "../../../controller/redux";
+import { LUPA_AUTH } from "../../../controller/firebase/firebase";
 
 const INPUT_PLACEHOLDER_COLOR = "rgb(99, 99, 102)"
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
-const SELF_FORM_INPUT_UPDATE = 'SELF_FORM_INPUT_UPDATE';
 
 const formReducer = (state, action) => {
   if (action.type === FORM_INPUT_UPDATE) {
@@ -76,11 +75,6 @@ const formReducer = (state, action) => {
       inputValidities: updatedValidities,
       inputValues: updatedValues
     };
-  } else if (action.type === SELF_FORM_INPUT_UPDATE) {
-    console.log('triggering self form update')
-    return {
-      ...state
-    }
   }
   return state;
 };
@@ -95,7 +89,6 @@ function checkUserSchema(userData, schema) {
 
 function LoginView(props) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-  const userAuthenticationHandler = new UserAuthenticationHandler();
   const LUPA_AUTH_STATE = useSelector(state => {
     return state.Auth;
   })
@@ -121,8 +114,6 @@ function LoginView(props) {
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
-      console.log(inputIdentifier)
-      console.log(inputValue)
     dispatchFormState({
       type: FORM_INPUT_UPDATE,
       value: inputValue,
@@ -132,9 +123,6 @@ function LoginView(props) {
   },
   [dispatchFormState]
   );
-
-  const loginEmailRef = createRef();
-  const loginPasswordRef = createRef();
 
   useEffect(() => {
     async function retrievePreviousSignInData() {
@@ -174,7 +162,7 @@ function LoginView(props) {
       }
     }
 
-    //retrievePreviousSignInData();
+    retrievePreviousSignInData();
   }, []);
 
    /**
@@ -182,14 +170,25 @@ function LoginView(props) {
    * and navigating the user into the application.
    */
   const _introduceApp = async (uuid) => {
+    try {
     await _setupRedux(uuid);
     LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-    navigation.navigate('App');
-  }
 
- const LOGIN_REQUEST = "LOGIN_REQUEST";
- const LOGIN_SUCCESS = "LOGIN_SUCCESS";
- const LOGIN_FAILURE = "LOGIN_FAILURE";
+    const updatedUserState = getLupaStoreState().Users.currUserData;
+    if (updatedUserState.has_completed_onboarding) {
+      navigation.navigate('App');
+    } else {
+      navigation.navigate('Onboarding')
+    }
+
+    } catch(error) {
+      if (LUPA_AUTH.currentUser) {
+        dispatch(logoutUser());
+      }
+
+      navigation.navigate('GuestView');
+    }
+  }
 
 const resetFormState = () => {
   dispatchFormState({
@@ -207,17 +206,10 @@ const resetFormState = () => {
   })
 }
 
-const triggerFormInputUpdate = () => {
-  return {
-    type: SELF_FORM_INPUT_UPDATE,
-  }
-}
-
   /**
    * Handles user authentication once the user presses the login button.
    */
   const onLogin = async () => {
-    console.log('1')
     //e.preventDefault();
     await dispatchFormState({
       type: FORM_INPUT_UPDATE,
@@ -226,21 +218,19 @@ const triggerFormInputUpdate = () => {
     
     Keyboard.dismiss();
 
-    console.log('2')
     let attemptedUsername = await formState.inputValues.loginEmail;
     let attemptedPassword = await formState.inputValues.loginPassword;
-    console.log(attemptedUsername)
-    console.log(attemptedPassword)
+
    await dispatch(loginUser(attemptedUsername, attemptedPassword));
-    const updatedState = await getLupaStoreState();
+  const updatedState = await getLupaStoreState();
 
     
    if (updatedState.Auth.isAuthenticated === true) {
     _introduceApp(updatedState.Auth.user.user.uid);
-
+    storeAsyncData(attemptedUsername, 'PREVIOUS_LOGIN_EMAIL');
+    storeAsyncData(attemptedPassword, 'PREVIOUS_LOGIN_PASSWORD');
     resetFormState();
    } else {
-     console.log('ummm?')
      switch(updatedState.Auth.loginErrorCode) {
        case 'auth/invalid-email':
         setLoginRejectedReason('The email you are attempting to use is not a valid email address.');

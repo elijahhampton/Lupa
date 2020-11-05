@@ -125,6 +125,7 @@ const authenticationReducer = (
         ...state,
         isLoggingIn: false,
         isAuthenticated: true,
+        loginError: false,
         user: action.user
       };
     case LOGIN_FAILURE:
@@ -134,12 +135,6 @@ const authenticationReducer = (
         isAuthenticated: false,
         loginError: true,
         loginErrorCode: action.errorCode,
-      };
-    case LOGOUT_FAILURE:
-      return {
-        ...state,
-        isLoggingOut: true,
-        logoutError: false
       };
     case LOGOUT_SUCCESS:
       return {
@@ -151,7 +146,7 @@ const authenticationReducer = (
     case LOGOUT_FAILURE:
       return {
         ...state,
-        isLoggingOut: false,
+        isLoggingOut: true,
         logoutError: true
       };
     case VERIFY_REQUEST:

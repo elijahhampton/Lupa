@@ -39,6 +39,11 @@ import {
     Avatar as PaperAvatar,
     Paragraph
 } from 'react-native-paper';
+
+import {
+  Button as ElementsButton
+} from 'react-native-elements';
+
 import { Avatar, SearchBar } from 'react-native-elements';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Feather1s from 'react-native-feather1s'
@@ -592,11 +597,14 @@ renderFutureEndTimePicker = () => {
         return (
           <View style={{padding: 5, }}>
           <Text style={{paddingLeft: 15, fontFamily: 'Avenir-Heavy'}}>
-                                   Discover more by creating an account.
+                                   Discover more by signing in or creating an account.
                                  </Text>
-                                 <Button onPress={() => this.props.navigation.push('SignUp')} icon={() => <FeatherIcon name="user" />} color="#1089ff" style={{alignSelf: 'flex-start'}} uppercase={false}>
-                                   Login or Create Account
-                                 </Button>
+                          <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                          <ElementsButton  onPress={() => this.props.navigation.navigate('Login')} color="#23374d" title="Sign in" titleStyle={{fontSize: 15, fontFamily: 'Avenir-Medium'}} raised type="solid" buttonStyle={{borderRadius: 5, backgroundColor: '#23374d',}} containerStyle={{width: '35%'}} />
+
+                          <ElementsButton  onPress={() => this.props.navigation.navigate('SignUp')} color="#23374d" title="Sign up" titleStyle={{fontSize: 15, fontFamily: 'Avenir-Medium', color: '#23374d'}} type="outline" buttonStyle={{borderRadius: 5, backgroundColor: '#FFFFFF', borderColor: '#23374d'}} containerStyle={{width: '35%'}} />
+                          </View>
+                                 
           </View>
         )
       }
@@ -675,7 +683,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
                         platform="ios"
                         containerStyle={{backgroundColor: 'white', borderColor: 'white'}}
                         inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE'}}
-                        searchIcon={() => <MaterialIcon name="search" color="#1089ff" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+                        searchIcon={() => <MaterialIcon name="search" color="#23374d" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
 
                         onFocus={() => this.setState({ searchBarFocused: true })}
                         onBlur={() => this.setState({ searchBarFocused: false })}
@@ -721,7 +729,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
 
             <View style={{marginVertical: 5}}>
             <Text style={{fontSize: 15, padding: 10, fontFamily: 'Avenir-Heavy'}}>
-                  Curated for you
+                  Book trainers near you
                 </Text>
                 <View>
             <ScrollView

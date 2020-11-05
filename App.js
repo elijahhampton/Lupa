@@ -46,7 +46,7 @@ import GuestView from './src/ui/GuestView';
 import SignUp from './src/ui/user/login/SignUpView';
 import LoginView from './src/ui/user/login/LoginView';
 import { getLupaStoreState, LupaStore } from './src/controller/redux/index';
-import { verifyAuth } from './src/controller/lupa/auth/auth';
+import { verifyAuth, logoutError, logoutUser } from './src/controller/lupa/auth/auth';
 import { retrieveAsyncData, storeAsyncData } from './src/controller/lupa/storage/async';
 import DeviceInfo from 'react-native-device-info';
 import MyClients from './src/ui/user/trainer/MyClients';
@@ -80,10 +80,29 @@ const SwitchNavigator = () => {
 
   const introduceApp = async (uuid) => {
     //setup redux
+    try {
     await _setupRedux(uuid);
+    } catch(error) {
+      SplashScreen.hide();
+      if (LUPA_AUTH.currentUser) {
+        logoutUser()
+      }
+
+      navigation.navigate('GuestView');
+    }
     SplashScreen.hide();
-    //navigate to app or guest view depending on the uuid
-    uuid == 0 ? navigation.navigate('GuestView') : navigation.navigate('App');
+
+    if (uuid == 0) {
+      navigation.navigate('GuestView');
+      return;
+    }
+
+    const lupaState = getLupaStoreState();
+    if (lupaState.Users.currUserData.has_completed_onboarding) {
+      navigation.navigate('App');
+    } else (!lupaState.Users.currUserData.has_completed_onboarding) {
+      navigation.navigate('Onboarding')
+    } 
   }
 
   const showAuthentication = () => {
@@ -116,9 +135,8 @@ const SwitchNavigator = () => {
 
     //User is not signed in so we let the user continue as a guest
     if (uuid === 0) {
-      try {
       if (LUPA_AUTH.currentUser) {
-        LUPA_AUTH.signOut();
+        logoutUser()
       }
 
       const newGuestUUID = await handleGuestAccountUUID();
@@ -136,13 +154,8 @@ const SwitchNavigator = () => {
       await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload });
       await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: [] });
       return;
-    } catch(error) {
-      SplashScreen.hide();
-    }
     }
 
-
-    try {
     //we have an authenticated user and we shall continue normally
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
@@ -165,23 +178,26 @@ const SwitchNavigator = () => {
     // Load application workouts
     lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
     await dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkouts });
-  } catch(error) {
-    console.log(error)
-  }
   }
 
   useEffect(() => {
     
     const getUserAuthState = async () => {
-      await verifyAuth()
-
+      let isVerifyingAuth = true;
+      while (isVerifyingAuth) {
+        await dispatch(verifyAuth());
+        isVerifyingAuth = getLupaStoreState().Auth.isVerifying;
+      }
+     
       const updatedAuthState = await getLupaStoreState().Auth;
 
       if (updatedAuthState.isAuthenticated === true) {
+        console.log('authenticated')
         fcmService.createNotificationListeners(onNotification, onOpenNotification);
         localNotificationService.configure(onOpenNotification);
-        introduceApp(updatedAuthState.user.user.uid)
+        introduceApp(updatedAuthState.user.uid)
       } else {
+        console.log('not authenticated')
         introduceApp(0);
     }
   }
@@ -207,7 +223,15 @@ const SwitchNavigator = () => {
       )
     }
 
+    try {
     getUserAuthState()
+    } catch(error) {
+      SplashScreen.hide();
+      if (LUPA_AUTH.currentUser) {
+        logoutUser()
+      }
+      navigation.navigate('GuestView')
+    }
 
     return () => {
       const updatedAuthState = getLupaStoreState().Auth;

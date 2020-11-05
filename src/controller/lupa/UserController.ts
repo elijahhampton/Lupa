@@ -594,6 +594,11 @@ export default class UserController {
                     stripe_metadata: value
                 })
                 break;
+            case 'has_completed_onboarding':
+                currentUserDocument.update({
+                    has_completed_onboarding: true
+                })
+                break;
         }
     }
 
