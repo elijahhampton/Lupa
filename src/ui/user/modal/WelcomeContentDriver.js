@@ -246,8 +246,19 @@ const WelcomeContentDriver = (props) => {
                 }
 
 
-
-                <ListItem
+                {
+                    getLupaStoreState().Users.currUserData.isTrainer === true ?
+                    <ListItem
+                    title='Get started'
+                    titleStyle={{ color: '#1089ff' }}
+                    disabled={false}
+                    style={{ color: '#E5E5E5' }}
+                    bottomDivider
+                    rightIcon={() => <FeatherIcon name="arrow-right" />}
+                    onPress={() => navigation.navigate('App')}
+                />
+                    :
+                    <ListItem
                     title='Get started'
                     titleStyle={[styles.highlightedTitleStyle, { color: locationDataSet === true ? '#1089ff' : '#E5E5E5' }]}
                     disabled={getLupaStoreState().Users.currUserData.isTrainer === false && locationDataSet === false}
@@ -256,6 +267,9 @@ const WelcomeContentDriver = (props) => {
                     rightIcon={() => <FeatherIcon name="arrow-right" />}
                     onPress={() => navigation.navigate('App')}
                 />
+
+                }
+               
 
             </View>
             {/*

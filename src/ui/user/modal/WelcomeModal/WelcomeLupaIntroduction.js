@@ -40,6 +40,8 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { LOG_ERROR } from '../../../../common/Logger';
+import { getLupaStoreState } from '../../../../controller/redux';
+import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../../controller/redux/actionTypes';
 
 const OPTIONS = [
     {
@@ -110,15 +112,17 @@ function TrainerCeritifcationModal({ isVisible, closeModal }) {
         
         try {
             LUPA_CONTROLLER_INSTANCE.submitCertificationNumber(currUserData.user_uuid, certificationNumber);
+            const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true, []);
+            dispatch({ type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload });
+            console.log('hi')
+            handleOnClose();
         } catch(error) {
+            console.log(error)
             LOG_ERROR('WelcomeLupaIntroduction.js', 'Caught unhandled exception in handleOnSubmit()', error);
             handleOnClose();
         }
 
-        const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true, []);
-        dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload });
-        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('isTrainer', true);
-        handleOnClose();
+
     }
 
     handleOnClose = () => {
@@ -166,7 +170,7 @@ function TrainerCeritifcationModal({ isVisible, closeModal }) {
                         </Text>
                     </View>
 
-                    <Button onPress={handleOnSubmit} color="#1089ff" theme={{roundness: 5}} mode="contained" style={{alignSelf: 'center', height: 45, alignItems: 'center', justifyContent: 'center', width: '90%'}}>
+                    <Button onPress={handleOnSubmit} color="#1089ff" theme={{roundness: 5}} mode="contained" contentStyle={{height: 45, width: '90%'}} style={{alignSelf: 'center',  alignItems: 'center', justifyContent: 'center', }}>
                         Submit Verification
                     </Button>
         </View>
@@ -322,7 +326,7 @@ class WelcomeLupaIntroduction extends React.Component {
 
                 </View>
                     
-                <TrainerCeritifcationModal isVisible={this.state.verificationModalVisible} closeModal={this.hideVerificationModal} />
+              
                 <ActivityIndicatorModal isVisible={this.state.showLoadingIndicator} />
             </SafeAreaView>
         )

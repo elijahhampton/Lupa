@@ -34,6 +34,9 @@ import { SearchBar } from 'react-native-elements';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
+import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../../controller/redux/actionTypes';
+import { getLupaStoreState } from '../../../../controller/redux';
+import FullScreenLoadingIndicator from '../../../common/FullScreenLoadingIndicator';
 
 Geolocation.setRNConfiguration({
     authorizationLevel: 'whenInUse',
@@ -80,31 +83,38 @@ function TrainerCeritifcationModal({ isVisible, closeModal }) {
 
     const dispatch = useDispatch();
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
 
-    const handleOnSubmit = () => {
+    const handleOnSubmit = async () => {
+        setIsLoading(true)
         if (certificationNumber.length === 0 || certificationNumber.length < 5) {
+            setIsLoading(false);
             alert('You must enter a valid certification number!')
             return;
         }
         
         try {
             LUPA_CONTROLLER_INSTANCE.submitCertificationNumber(currUserData.user_uuid, certificationNumber);
-        } catch(error) {
-            LOG_ERROR('WelcomeLupaIntroduction.js', 'Caught unhandled exception in handleOnSubmit()', error);
-            handleOnClose();
-        }
 
-        const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true, []);
-        const certificationUpdatePayload = getUpdateCurrentUserAttributeActionPayload('certification', certification, []);
+       // const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true, []);
+        //const certificationUpdatePayload = getUpdateCurrentUserAttributeActionPayload('certification', certification, []);
 
-        dispatch({type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: certificationUpdatePayload});
-        dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload });
+        //await dispatch({type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: certificationUpdatePayload});
+        //await dispatch({ type:  UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload });
 
         LUPA_CONTROLLER_INSTANCE.updateCurrentUser('certification', certification);
         LUPA_CONTROLLER_INSTANCE.updateCurrentUser('isTrainer', true);
+
+
+        } catch(error) {
+            LOG_ERROR('WelcomeLupaIntroduction.js', 'Caught unhandled exception in handleOnSubmit()', error);
+            setIsLoading(false);
+            handleOnClose();
+        }
 
         //send email about certification
 
@@ -161,28 +171,13 @@ function TrainerCeritifcationModal({ isVisible, closeModal }) {
 />
                     </View>
 
-       {/* <View style={{width: Dimensions.get('window').width - 50, alignSelf: 'center', borderRadius: 20, backgroundColor: 'rgb(245, 246, 247)', padding: 20, justifyContent: 'center', alignItems: 'flex-start'}}>
-        <View style={{marginVertical: 20}}>
-                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
-                            Why should I verify certification?
-                        </Text>
-                        <Text style={{color: 'rgb(187, 194, 202)', fontFamily: 'Avenir-Medium'}}>
-                            Lupa only allows certified trainers to host sessions with users.
-                        </Text>
-                    </View>
-
-                    <Button onPress={handleOnSubmit} color="#1089ff" theme={{roundness: 5}} mode="contained" style={{alignSelf: 'center', height: 45, alignItems: 'center', justifyContent: 'center', width: '90%'}}>
-                        Submit Verification
-                    </Button>
-        </View>
-*/}
-
 <Button onPress={handleOnSubmit} color="#1089ff" theme={{roundness: 5}} mode="contained" style={{alignSelf: 'center', height: 45, alignItems: 'center', justifyContent: 'center', width: '90%'}}>
                         Submit Verification
                     </Button>
                     <Feather1s style={{position: 'absolute', top: 0, left: 0, marginLeft: 22}} name="x" size={24} onPress={handleOnClose} />
         </KeyboardAvoidingView>
             </SafeAreaView> 
+           <FullScreenLoadingIndicator isVisible={isLoading} />
         </Modal>
 
     )

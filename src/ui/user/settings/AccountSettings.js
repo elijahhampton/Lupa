@@ -78,10 +78,6 @@ function AccountSettings({ navigation, route }) {
                 <TextInput value={email} returnKeyLabel="done" returnKeyType="done" style={{fontSize: 15, fontWeight: '400', color: 'rgb(142, 142, 147)'}} placeholderTextColor="rgb(142, 142, 147)" placeholder={email} />
                </View>
            </View>
-
-           <Divider />
-
-           <ListItem onPress={() => {}} title="Change Password" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />}/>
         </SafeAreaView>
     )
 }

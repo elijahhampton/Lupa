@@ -186,6 +186,9 @@ export default class UserController {
                 case 'bio':
                     retValue = snapshot.bio;
                     break;
+                case 'stripe_metadata':
+                    retValue = snapshot.stripe_metadata;
+                    break;
             }
         });
 
@@ -585,6 +588,11 @@ export default class UserController {
                         vlogs: updatedVlogs
                     })
                 }
+                break;
+            case 'stripe_metadata':
+                currentUserDocument.update({
+                    stripe_metadata: value
+                })
                 break;
         }
     }

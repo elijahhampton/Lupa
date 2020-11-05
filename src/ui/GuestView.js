@@ -166,6 +166,7 @@ class GuestView extends React.Component {
 
     async componentDidMount() {
         let docData = getLupaUserStructure();
+        const updatedAppState = getLupaStoreState()
 
         this.TRAINERS_OBSERVER = LUPA_DB.collection('users').limit(3).where('isTrainer', '==', true).onSnapshot(querySnapshot => {
             let trainersDataList = [];
@@ -626,7 +627,7 @@ renderFutureEndTimePicker = () => {
     renderPaymentInformationBanner = () => {
       try {
       const updatedAppState = getLupaStoreState();
-      if (typeof(updatedAppState.Users.currUserData.card_added_to_stripe) == false && updatedAppState.Auth.isAuthenticated === true && updatedAuthState.Users.currUserData.isTrainer === true ) {
+      if (typeof(updatedAppState.Users.currUserData.card_added_to_stripe) == false && updatedAppState.Auth.isAuthenticated === true && updatedAppState.Users.currUserData.isTrainer === true ) {
         return (
           <Banner 
           visible={true}

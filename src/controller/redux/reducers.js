@@ -6,14 +6,17 @@ import { ADD_WORKOUT_TO_PROGRAM_ACTION, ADD_CURRENT_USER_SERVICE_ACTION, UPDATE_
 
 
 handleUserAttributeUpdate = (state, payload) => {
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
   let updatedState = state.currUserData;
 
   switch(payload.attribute)
   {
     case 'isTrainer':
+      console.log('updating trainer!!!')
       updatedState.isTrainer = payload.value;
+      break;
     case 'photo_url':
-      updatedState.display_name = payload.value;
+      updatedState.photo_url = payload.value;
       break;
     case 'display_name':
       updatedState.display_name = payload.value;
@@ -30,8 +33,14 @@ handleUserAttributeUpdate = (state, payload) => {
     case 'certification':
       updatedState.certification = payload.value
       break;
+    case 'stripe_metadata':
+      updatedState.stripe_metadata = payload.value;
+      break;
     default:
+      return state;
   }
+
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAASDFSDFSDFAAAAAAAAAA')
 
   return updatedState;
 }
@@ -215,11 +224,14 @@ const userReducer = (state = initialUserReducerState, action) => {
      });
      case UPDATE_CURRENT_USER_ATTRIBUTE_ACTION:
       const updatedState = handleUserAttributeUpdate(state, action.payload);
-      return Object.assign(state, updatedState)
+      console.log('updating state!')
+      console.log('AAAAAAAAAAAAAAAAAASFSDSDFSDFSDFSDFSDFAAAAAAAAAAAAAAAA')
+      return Object.assign({}, state, updatedState)
       default:
       return newState;
   }
 }
+
 //packs reducer
 const packReducer = (state = initialPacksReducerState, action) => {
   const newState = {...state};

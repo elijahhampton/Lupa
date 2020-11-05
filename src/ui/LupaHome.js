@@ -13,6 +13,8 @@ import WorkoutLog from "./WorkoutLog";
 import { connect } from 'react-redux';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import MyClients from './user/trainer/MyClients'
+import { getLupaStoreState } from "../controller/redux";
+import LupaController from "../controller/lupa/LupaController";
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
 const COLOR = "#FFFFFF";
@@ -30,16 +32,24 @@ const mapStateToProps = (state, action) => {
 }
 
 export class LupaHome extends Component {
-  scroll = new Animated.Value(0);
-  headerY;
 
   constructor(props) {
     super(props);
     this.state = {
       refreshing: false,
+      showTrainerContent: false,
       currTab: 0,
     }
-    this.headerY = Animated.multiply(Animated.diffClamp(this.scroll, 0, NAVBAR_HEIGHT), -1);
+
+    this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+  }
+
+  async componentDidMount() {
+    await this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.props.lupa_data.Users.currUserData.user_uuid, 'isTrainer').then(attribute => {
+      this.setState({ showTrainerContent: attribute })
+    }).catch(error => {
+      this.setState({ showTrainerContent: false })
+    })
   }
 
   handleOnRefresh = () => {
@@ -48,17 +58,12 @@ export class LupaHome extends Component {
   }
 
   renderAppropriateFirstTab = (navigation) => {
-    if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
-      return <GuestView navigation={this.props.navigation} />
-    }
-
-
     return <GuestView navigation={this.props.navigation} />
-    
   }
 
   renderAppropriateSecondaryTab = () => {
-    if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
+    const updatedUserState = getLupaStoreState().Users.currUserData;
+    if (this.state.showTrainerContent === true) {
       return (
         <Tab heading="My Programs" {...TAB_PROPS}>
           <MyPrograms />

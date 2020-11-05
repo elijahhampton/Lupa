@@ -1,3 +1,5 @@
+
+
 const functions = require('firebase-functions')
 const admin = require("firebase-admin");
 
@@ -32,6 +34,14 @@ const SESSIONS_DOCUMENT_CHANGE_TYPES = {
   SESSION_FINISHED: "session_finished",
   SESSION_TIME_CHANGE: "session_time_change",
   SESSION_INVITE: "session_invite"
+}
+
+const STRIPE_VERIFICATION_STATUS = {
+  VERIFIED: "0",
+  PENDING: "1",
+  UNVERIFIED: "2",
+  UNREGISTERED: "3",
+  DISABLED: "4",
 }
 
 /** Sends a notification to a user upon receiving a notification object 
@@ -163,62 +173,114 @@ exports.payWithStripe = functions.https.onRequest((request, response) => {
 exports.createStripeCustomerAccount = functions.https.onRequest(async (request, response) => {
   // Set your secret key: remember to change this to your live secret key in production
   // See your keys here: https://dashboard.stripe.com/account/apikeys
-  console.log('CREATING STRIPE CUSToMSE ACCOUNT')
+  console.log('createStripeCustomerAccount')
 
-  const account = await stripe.accounts.create({
-    business_type: 'individual',
-    type: 'custom',
-    country: 'US',
-    email: request.body.user_email,
-    capabilities: {
-      card_payments: {requested: true},
-      transfers: { requested: true }
-    },
+  console.log('Validating request parameters.')
+  console.log(request.body)
+  const uuid = await request.body.user_uuid;
+  const email = await request.body.email; 
+  
+  if (typeof(uuid) == 'undefined' || typeof(email) == 'undefined') {
+    console.log('createStripeCustomerAccount::Exiting function request parameters could not be validated.')
+    console.log('UUID: ' + uuid)
+    console.log('Email: ' + email)
+    return;
+  }
+
+  console.log('createStripeCustomerAccount::Request parameters validated.')
+
+
+  let userData, retAccountID = "", stripe_id = "";
+  
+  console.log('createStripeCustomerAccount::Capturing user data from uuid: ' + uuid);
+  await admin.firestore().collection('users').doc(uuid).get().then(snapshot => {
+    userData = snapshot.data();
   });
 
+  let stripeMetadata = userData.stripe_metadata;
+
+  if (userData.isTrainer) {
+    console.log('createStripeCustomerAccount::Creating user custom stripe account.')
+    const account = await stripe.accounts.create({
+      business_type: 'individual',
+      type: 'custom',
+      country: 'US',
+      email: email,
+      capabilities: {
+        card_payments: {requested: true},
+        transfers: { requested: true }
+      },
+    }).then(account => {
+      stripeMetadata.account_id = account.id;
+      stripeMetadata.connected_account_verification_status = "2";
+      retAccountID = account.id;
+    }).catch(error => {
+      console.log(error)
+    })
+  }
+
+  console.log('createStripeCustomerAccount::Creating user stripe customer account.')
   const stripeCustomer = await stripe.customers.create({
-    email: request.body.email,
+    email: email,
     metadata: {
-      user_uuid: request.body.user_uuid,
-      type: request.body.user_type
+      user_uuid: uuid,
+      type: userData.isTrainer === true ? 'Trainer' : 'User'
     }
-  }).then(async customer => {
-    //Obtain the users information by their UUID
-    let userData;
-    await admin.firestore().collection('users').doc(request.body.user_uuid).get().then(snapshot => {
-      userData = snapshot.data();
-    });
-
-    //Change the stripe_id
-    let stripeMetadata = userData.stripe_metadata;
+  }).then(customer => {
     stripeMetadata.stripe_id = customer.id;
-    stripeMetadata.account_id = account.id;
-
-    //update the user's stripe_metadata
-    admin.firestore().collection('users').doc(request.body.user_uuid).update({
-      stripe_metadata: stripeMetadata
-    });
-
+    stripe_id = customer.id;
+  }).catch(error => {
+    console.log(error)
   })
+ 
+  //update the user's stripe_metadata
+  console.log('createStripeCustomerAccount::Updating user stripe data.')
+  admin.firestore().collection('users').doc(uuid).update({
+    stripe_metadata: stripeMetadata
+  });
 
+  const ids = {
+    account_id: retAccountID,
+    stripe_id: stripe_id
+  }
+
+  console.log('Created ids object.')
+  console.log('Account ID: ' + ids.account_id)
+  console.log('Stripe ID: ' + ids.stripe_id)
+
+  console.log('createStripeCustomerAccount::Sending back response.')
   response.setHeader('Content-Type', 'application/json');
-  response.send({ account_id: account.id /*, charges_enabled: account.charges_enabled, payouts_enabled: account.payouts_enabled */ })
-
+  response.status(200).send(ids)
 });
 
 exports.handleNewIndividualCustomAccountVerificationAttempt = functions.https.onRequest(async (request, response) => {
-  console.log('1')
+  const currentStripeVerificationStatus = Number(request.body.current_stripe_verification_status);
+
+  //check if the user is already verified and this is some error
+  if (currentStripeVerificationStatus == 0) {
+    console.log('handleNewIndividualCustomAccountVerificationAttempt::User already verified returning from function.');
+    return;
+  }
+
+  const user_uuid = request.body.user_uuid;
+  if (typeof(user_uuid) == 'undefined' || user_uuid == "" || user_uuid == null) {
+    console.log('handleNewIndividualCustomAccountVerificationAttempt::UUID is unknown.  Returning from from function.');
+    return;
+  }
+
+  const accountID = request.body.account_id;
+  if (typeof(accountID) == 'undefined' || accountID == "" || accountID == null) {
+    console.log('handleNewIndividualCustomAccountVerificationAttempt::Connected account ID to update is unknown.  Returning from from function.');
+    return;
+  }
+
+
+
   const bankAccountFirstName = request.body.bank_account_holder_first_name;
   const bankAccountHolderLastName = request.body.bank_account_holder_last_name;
   const bankHolderName = bankAccountFirstName + " " + bankAccountHolderLastName;
   const bankAccountNumber = request.body.bank_account_number;
   const bankAccountRoutingNumber = request.body.bank_account_routing_number;
-  console.log(bankAccountFirstName)
-  console.log(bankAccountHolderLastName)
-  console.log(bankAccountNumber)
-  console.log(bankAccountRoutingNumber)
-  console.log('1')
-  const accountID = request.body.account_id;
   const userDisplayName = request.body.user_display_name;
   const productDescription = "Fitness Trainer"
   const city = request.body.city;
@@ -227,41 +289,17 @@ exports.handleNewIndividualCustomAccountVerificationAttempt = functions.https.on
   const streetAddress = request.body.street_address;
   const secondaryAddress = request.body.secondary_address;
   const zipcode = request.body.zipcode;
-  console.log(accountID)
-  console.log(userDisplayName)
-  console.log(productDescription)
-  console.log(city)
-  console.log(state)
-  console.log(streetAddress)
-  console.log(secondaryAddress)
-  console.log(zipcode)
-  console.log(country)
-  console.log('1')
-  //create
   const email = request.body.email;
   const ip = request.body.public_ip_address;
-  const user_uuid = request.body.user_uuid;
   const userFirstName = request.body.user_first_name;
   const userLastName = request.body.user_last_name;
   const phoneNumber = request.body.user_phone_number;
   const last4 = request.body.last_four_ssn;
-  console.log(email)
-  console.log(ip)
-  console.log(user_uuid)
-  console.log(userFirstName)
-  console.log(userLastName)
-  console.log(phoneNumber)
-  console.log(last4)
-
-  console.log('1')
   const day = request.body.birthday_day
   const month = request.body.birthday_month
   const year = request.body.birthday_year;
 
-  console.log(day)
-  console.log(month)
-  console.log(year)
-  console.log('1')
+  console.log('handleNewIndividualCustomAccountVerificationAttempt::Updating connected account data for account id: ' + accountID);
   const account = await stripe.accounts.update(
     accountID,
     {
@@ -322,19 +360,37 @@ exports.handleNewIndividualCustomAccountVerificationAttempt = functions.https.on
         routing_number: bankAccountRoutingNumber,
         account_number: bankAccountNumber,
     },
-      metadata: {
-        user_uuid: user_uuid,
+    metadata: {
+      user_uuid: user_uuid,
+    },
+    settings: {
+      payouts: {
+        schedule: {
+          interval: 'weekly',
+          weekly_anchor: 'tuesday',
+        },
+        statement_descriptor: "RHEA SILVIA"
       }
     }
-  ).then(account => {
-    console.log('updated!')
-    console.log(account)
-  }).catch(err => {
-    console.log('got an error')
-    console.log(err)
-  })
-  console.log('about to print acc')
-  console.log(account)
+    }
+  ).then(async account => {
+    console.log('handleNewIndividualCustomAccountVerificationAttempt::Finished submitting information for account verification.  Updating user account.')
+    let userData;
+    await admin.firestore().collection('users').doc(user_uuid).get().then(documentSnapshot => {
+      userData = documentSnapshot.data();
+    });
+
+    let stripeMetadata = userData.stripe_metadata;
+    stripeMetadata.connected_account_verification_status = 1;
+    stripeMetadata.has_submitted_for_verification = true;
+
+    admin.firestore().collection('users').doc(user_uuid).update({
+      stripe_metadata: stripeMetadata
+    })
+  }).catch(error => {
+    console.log('handleNewIndividualCustomAccountVerificationAttempt::Error submitting connected account information for verification.');
+    console.log(error)
+  });
 
 })
 
@@ -423,7 +479,7 @@ exports.retrieveTrainerAccountInformation = functions.https.onRequest(async (req
     await stripe.accounts.retrieve(account_id)
           .then(account => {
             accountDataIn = account;
-          })
+          });
 
   const balanceInformation = await stripe.balance.retrieve(account_id, (err, balanceInfo) => {
       balanceDataIn = balanceInfo;

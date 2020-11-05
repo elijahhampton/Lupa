@@ -168,8 +168,6 @@ export const signup = (email, password) => {
       //Add the user's information to the database
     await authHandler.signUpUser(USER_UUID, "", email, password);
 
-    createStripeCustomerAccount(email, USER_UUID)
-
     dispatch(signUp(userCredential));
 
       //Catch error on signup
