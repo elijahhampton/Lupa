@@ -610,10 +610,10 @@ renderFutureEndTimePicker = () => {
           <View style={{padding: 10, paddingVertical: 15, marginVertical: 20}}>
     
     <Text style={{fontFamily: 'Avenir-Medium', fontSize: 18, color: 'black'}}>
-        Register an account on Lupa and access a variety of fitness trainers 
+        Create an account on Lupa and access a variety of fitness trainers 
     </Text>
 
-    <Button color="#23374d" uppercase={false} mode="outlined" onPress={() => this.props.navigation.navigate('SignUp')} style={{width: 180, marginVertical: 10}}>
+    <Button color="#23374d" uppercase={false} mode="outlined" onPress={() => this.props.navigation.navigate('SignUp')} style={{width: 180, marginVertical: 10}} theme={{roundness: 10}}>
       <Text style={{fontSize: 12}}>
                     Create an account
       </Text>
@@ -655,8 +655,8 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
       this.checkSearchBarState()
         return (
             
-          <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-           <KeyboardAwareScrollView style={{flex: 1, backgroundColor: 'white'}}>        
+          <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(250, 252, 255)'}}>
+           <KeyboardAwareScrollView style={{flex: 1, backgroundColor: 'rgb(250, 252, 255)'}} bounces={true} showsVerticalScrollIndicator={false}>        
          <ScrollView
          refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
            scrollEventThrottle={1}
@@ -669,13 +669,13 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
   onStartShouldSetResponderCapture={event => false}
                         ref={this.searchBarRef}
                         placeholder="Search trainers"
-                        placeholderTextColor="#000000"
+                        placeholderTextColor="#23374d"
                         value={this.state.searchValue}
                         inputStyle={styles.inputStyle}
                         platform="ios"
-                        containerStyle={{backgroundColor: 'white', borderColor: 'white'}}
+                        containerStyle={{backgroundColor: 'rgb(250, 252, 255)', borderColor: 'white'}}
                         inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE'}}
-                        searchIcon={() => <MaterialIcon name="search" color="#1089ff" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+                        searchIcon={() => <MaterialIcon name="search" color="#23374d" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
 
                         onFocus={() => this.setState({ searchBarFocused: true })}
                         onBlur={() => this.setState({ searchBarFocused: false })}
@@ -688,7 +688,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
             this.renderRequestAuthenticationMessage()
           }
           
-            <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
+            <Divider style={{height: 10, backgroundColor: 'white'}} />
 
 {/*
 <View>
@@ -736,7 +736,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
                     this.state.featuredTrainers.map(trainer => {
                         return (
                           <TouchableOpacity onPress={() => this.handleBookTrainerOnPress(trainer)}>
-                            <Surface  style={{ elevation: 0, marginHorizontal: 15, marginVertical: 12}} >
+                            <Surface  style={{ elevation: 0, marginHorizontal: 15, marginVertical: 12}}>
                              
                               <View>
                                 
@@ -749,17 +749,17 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
 
                               </View>
 
-                              <View style={{height: 50, justifyContent: 'space-evenly'}}>
+                              <View style={{height: 50, justifyContent: 'space-evenly', backgroundColor: 'rgb(250, 252, 255)'}}>
                               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <FeatherIcon name="info" color="#1089ff" style={{paddingHorizontal: 3}} />
-                              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 12, }}>
+                              <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 12, }}>
                                 Available Today
                               </Text>
                               </View>
 
                               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <FeatherIcon name="map-pin" color="#1089ff" style={{paddingHorizontal: 3}} />
-                              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 12, }}>
+                              <Text style={{ fontFamily: 'Avenir-Heavy', fontSize: 12, }}>
                                 {trainer.location.city}, {trainer.location.state}
                               </Text>
                               </View>
@@ -791,7 +791,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
                 </View>
 
                 <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                <TouchableWithoutFeedback onPress={this.openFutureBookingDatePicker} style={{ marginRight: 15, marginVertical: 10,  alignSelf: 'center', padding: 5, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderWidth: 0.5, borderColor: '#E5E5E5', justifyContent: 'space-evenly'}} icon={() => <FeatherIcon name="chevron-down" />}>
+                <TouchableWithoutFeedback onPress={this.openFutureBookingDatePicker} style={{ marginRight: 15, marginVertical: 10,  alignSelf: 'center', padding: 10, paddingHorizontal: 15, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', justifyContent: 'space-evenly'}} icon={() => <FeatherIcon name="chevron-down" />}>
                       <FeatherIcon name="calendar" color="#1089ff" />
                       <Text style={{paddingHorizontal: 10, fontWeight: '500', fontSize: 12}}>
                       {this.state.futureBookingDisplayDateFormatted}
@@ -799,7 +799,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
                       <FeatherIcon name="chevron-down" />
                   </TouchableWithoutFeedback>
 
-                  <TouchableWithoutFeedback onPress={this.openFutureBookingStartTimePicker} style={{marginRight: 15, padding: 5, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderWidth: 0.5, borderColor: '#E5E5E5'}} icon={() => <FeatherIcon name="chevron-down" />}>
+                  <TouchableWithoutFeedback onPress={this.openFutureBookingStartTimePicker} style={{marginRight: 15, padding: 10, paddingHorizontal: 15, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white',}} icon={() => <FeatherIcon name="chevron-down" />}>
                       <FeatherIcon name="clock" color="#1089ff" />
                       <Text style={{paddingHorizontal: 10, fontWeight: '500', fontSize: 12}}>
                       {this.state.futureBookingStartTimeFormatted}
@@ -810,7 +810,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
 
 
                 
-                <Button onPress={this.handleOnRequestFutureBooking} style={{marginVertical: 15}} disabled={false} color="#23374d" uppercase={true} icon={() => <FeatherIcon name='calendar' color="white" />} mode="contained" contentStyle={{height: 45}}>
+                <Button onPress={this.handleOnRequestFutureBooking} style={{marginVertical: 15}} disabled={false} color="#23374d" uppercase={true} icon={() => <FeatherIcon name='calendar' color="white" />} mode="contained" contentStyle={{height: 45}} theme={{roundness: 15}}>
                    Find Trainer
                 </Button>               
               </View>
