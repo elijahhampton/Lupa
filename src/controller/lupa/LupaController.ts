@@ -35,9 +35,13 @@ export default class LupaController {
       return LupaController._instance;
     }
 
-    generateCuratedTrainers = async (uuid, attributes) => {
+    generateCuratedTrainers = async (location: Object) => {
         let retVal = [];
-        await USER_CONTROLLER_INSTANCE.generateCuratedTrainers(uuid, attributes).then(data => {
+        if (typeof(location) == 'undefined') {
+          return Promise.resolve(retVal);
+        }
+
+        await USER_CONTROLLER_INSTANCE.generateCuratedTrainers(location).then(data => {
           retVal = data;
         });
 
