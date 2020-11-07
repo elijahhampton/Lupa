@@ -62,6 +62,7 @@ import { getLupaStoreState} from '../controller/redux/index';
 import BookingRequestModal from './user/modal/BookingRequestModal'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import BookingInformationModal from './sessions/modal/BookingInformationModal'
+import { WebView } from 'react-native-webview';
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state,
@@ -107,6 +108,14 @@ function AvailableTrainersModal({ isVisible, closeModal }) {
   <Modal presentationStyle="pageSheet" visible={isVisible} onDismiss={closeModal}>
 
   </Modal>
+  )
+}
+
+function WebViewStart(props) {
+  return (
+    <Modal visible={true} presentationStyle="pageSheet">
+      <WebView source={{ uri: 'http://localhost:3000' }} />
+    </Modal>
   )
 }
 
@@ -655,8 +664,8 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
       this.checkSearchBarState()
         return (
             
-          <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(250, 252, 255)'}}>
-           <KeyboardAwareScrollView style={{flex: 1, backgroundColor: 'rgb(250, 252, 255)'}} bounces={true} showsVerticalScrollIndicator={false}>        
+          <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(244, 247, 252)'}}>
+           <KeyboardAwareScrollView style={{flex: 1, backgroundColor: 'rgb(244, 247, 252)'}} bounces={true} showsVerticalScrollIndicator={false}>        
          <ScrollView
          refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
            scrollEventThrottle={1}
@@ -673,7 +682,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
                         value={this.state.searchValue}
                         inputStyle={styles.inputStyle}
                         platform="ios"
-                        containerStyle={{backgroundColor: 'rgb(250, 252, 255)', borderColor: 'white'}}
+                        containerStyle={{backgroundColor: 'rgb(244, 247, 252)', borderColor: 'white'}}
                         inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE'}}
                         searchIcon={() => <MaterialIcon name="search" color="#23374d" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
 
@@ -749,7 +758,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
 
                               </View>
 
-                              <View style={{height: 50, justifyContent: 'space-evenly', backgroundColor: 'rgb(250, 252, 255)'}}>
+                              <View style={{height: 50, justifyContent: 'space-evenly', backgroundColor: 'rgb(244, 247, 252)'}}>
                               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <FeatherIcon name="info" color="#1089ff" style={{paddingHorizontal: 3}} />
                               <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 12, }}>
@@ -937,6 +946,7 @@ Thank you for using Lupa.  Your account won't show up on searches and users won'
             prefilledDate={this.state.futureBookingDisplayDate}
             />
             <AvailableTrainersModal isVisible={this.state.availableTrainersModalIsVisible} closeModal={() => this.setState({ availableTrainersModalIsVisible: false })} />
+              <WebViewStart />
        </KeyboardAwareScrollView>
        </SafeAreaView>
         );
