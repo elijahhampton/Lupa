@@ -282,9 +282,9 @@ return (
         
          
 </View>
-<SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} selectedDates={markedDates} />
       {renderStartTimePicker()}
       {renderEndTimePicker()}
+
       </Modal>
     )
 }

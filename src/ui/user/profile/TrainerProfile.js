@@ -28,7 +28,6 @@ import ThinFeatherIcon from 'react-native-feather1s'
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import LupaCalendar from './component/LupaCalendar';
-import SchedulerModal from './component/SchedulerModal';
 import CreateNewPost from './modal/CreateNewPost'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useSelector } from 'react-redux';
@@ -50,7 +49,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const [profileImage, setProfileImage] = useState(userData.photo_url)
     const [userPrograms, setUserPrograms] = useState([])
     const [userVlogs, setUserVlogs] = useState([])
-    const [editHoursModalVisible, setEditHoursModalVisible] = useState(false);
+    const [editBioModalVisible, setEditBioModalVisible] = useState(false);
     const [currPage, setCurrPage] = useState(2)
     const [markedDates, setMarkedDates] = useState([])
     const [showSchedulerButton, setShowSchedulerButton] = useState(false);
@@ -486,61 +485,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         }
     }
 
-    async function checkCurrFitnessLocation() {
-        let results = []
-        let currUserStreet = ""
-        let trainerStreet = ""
-        try {
-            await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=gym&location=${userData.location.latitude},${userData.location.longitude}&radius=5000&type=gym&key=AIzaSyAPrxdNkncexkRazrgGy4FY6Nd-9ghZVWE`).then(response => response.json()).then(result => {
-                results = result.results;
-                setResultsLength(results.length)
-            });
-
-            await getStreetAddressFromCoordinates(currUserData.location.longitude, currUserData.location.latitude).then(result => {
-                currUserStreet = result;
-            });
-
-            await getStreetAddressFromCoordinates(userData.location.longitude, userData.location.latitude).then(result => {
-                trainerStreet = result;
-            });
-
-
-            for (let i = 0; i < results.length; i++) {
-                LOG('TrainerProfile.js', 'Checking location')
-
-                const formattedAddressParts = results[i].formatted_address.split(" ")
-
-                for (let j = 0; j < formattedAddressParts.length; j++) {
-                    if (currUserStreet.includes(formattedAddressParts[j]) && trainerStreet.includes(formattedAddressParts[j])) {
-                        setShowLocationMessage(true);
-                        return;
-                    }
-                }
-                setShowLocationMessage(false);
-            }
-        } catch (err) {
-            setShowLocationMessage(false)
-        }
-
-
-    }
-
-    const addToRecentlyInteractedList = async () => {
-    try {
-      let recentlyInteractedList = await retrieveAsyncData('RECENTLY_INTERACTED_USERS');
-    
-        if (typeof(recentlyInteractedList) == 'undefined' || typeof(recentlyInteractedList) != 'object' || recentlyInteractedList == null) {
-            recentlyInteractedList = [userData.user_uuid];
-        } else {
-            recentlyInteractedList.push(userData.user_uuid);
-        }
-    } catch(error) {
-        storeAsyncData('RECENTLY_INTERACTED_USERS', [])
-        LOG_ERROR('', '', error);
-    }
-
-        storeAsyncData('RECENTLY_INTERACTED_USERS', recentlyInteractedList)
-    }
 
     useEffect(() => {
         async function loadProfile() {
@@ -705,8 +649,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             {renderFAB()}
             
             <BookingRequestModal closeModal={() => setTrainerBookingModalVisible(false)} isVisible={trainerBookingModalVisible} trainer={userData}  />
-            <EditBioModal isVisible={editHoursModalVisible} closeModalMethod={() => setEditHoursModalVisible(false)} />
-            <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} selectedDates={markedDates} />
+            <EditBioModal isVisible={editBioModalVisible} closeModalMethod={() => setEditBioModalVisible(false)} />
         </SafeAreaView>
     )
 }

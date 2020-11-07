@@ -3,10 +3,10 @@
  */
 
 import LUPA_DB, {
-        LUPA_AUTH, 
-        Fire, 
-        FirebaseStorageBucket 
-    } from '../firebase/firebase.js';
+    LUPA_AUTH,
+    Fire,
+    FirebaseStorageBucket
+} from '../firebase/firebase.js';
 
 const USER_COLLECTION = LUPA_DB.collection('users');
 const PROGRAMS_COLLECTION = LUPA_DB.collection('programs');
@@ -19,6 +19,11 @@ const usersIndex = algoliaIndex.initIndex("dev_USERS");
 const tmpIndex = algoliaIndex.initIndex("tempDev_Users");
 const programsIndex = algoliaIndex.initIndex("dev_Programs");
 const tmpProgramsIndex = algoliaIndex.initIndex("tempDev_Programs");
+
+usersIndex.setSettings({
+  highlightPreTag: '',
+  highlightPostTag: ''
+});
 
 import { BOOKING_STATUS } from '../../model/data_structures/user/types';
 import { getBookingStructure } from '../../model/data_structures/user/booking'
@@ -56,22 +61,88 @@ export default class UserController {
 
     /**
      * 
+     * @param user_uuid UUID of the user to search for
+     * @param curatedTrainersArr Array to check if the user exist in
+     * @returns boolean Returns a boolean based on if the user with the user_uuid exist in this array or not
+     */
+    checkIfUserExistInCuratedTrainers = (user_uuid : String, curatedTrainersArr : Array<Object>) : Boolean => {
+        for(let i = 0; i < curatedTrainersArr.length; i++) {
+            if (curatedTrainersArr[i].user_uuid) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 
      * @param uuid UUID of the user for which to curate trainers.
      * @param attributes Array of attributes to base trainer generation.
      * @return Array of trainers.
      */
-    generateCuratedTrainers = async (uuid : String, attributes : Array<String>) : Promise<Object> => {
-        let userData = getLupaUserStructure();
-        await this.getUserInformationByUUID(uuid).then(data => {
-            userData = data;
-        })
+    generateCuratedTrainers = async (location: Object): Promise<Array<Object>> => {
+        let curatedTrainers = new Array();
 
-        let tempRetVal = []
-        await this.getTrainers().then(data => {
-            tempRetVal = data;
-        })
+        const city = location.city;
+        const state = location.state;
+        const attributesToRetrieve = ['user_uuid', 'location', 'display_name', 'scheduler_times', 'isTrainer', 'email', 'photo_url']
 
-        return Promise.resolve(tempRetVal)
+        if (typeof(city) == 'undefined' || typeof(state) == 'undefined') {
+            LOG_ERROR('UserController.ts', 'generateCuratedTrainers::One or more of the values in the location object were undefined.  Returning from function.', 'Undefined parameters in generateCuratedTrainers.');
+            resolve([])
+        }
+
+        return new Promise( async (resolve, reject) => {
+            //search our algolia index for user that match the city query and add them to our array
+            await usersIndex.search(city, {
+                attributesToRetrieve: attributesToRetrieve
+            }).then(({hits}) => {
+                const results = hits;
+                let result = {};
+                for (let i = 0; i < results.length; i++) {
+                    result = results[i];
+                    if (result._highlightResult.location.city.matchLevel == 'full') {
+                        delete result._highlightResult;
+                        curatedTrainers.push(result);
+                    }
+                }
+            }).catch(error => {
+                LOG_ERROR('UserController.ts', 'generateCuratedTrainers::Caught exception searching for users with city value: ' + city, error);
+                resolve([])
+            })
+
+            //search our algolia index for user that match the state query and add them to our array only
+            //if they do not exist in the array
+            await usersIndex.search(state, {
+                attributesToRetrieve: attributesToRetrieve
+            })
+            .then(async ({hits}) => {
+                const results = hits;
+                let result = {};
+                for (let i = 0; i < results.length; i++) {
+                    result = results[i];
+                    if (result._highlightResult.location.state.matchLevel == 'full') {
+                        const userAlreadyExist = await this.checkIfUserExistInCuratedTrainers(result.user_uuid, curatedTrainers);
+                        if (!userAlreadyExist) {
+                            delete result._highlightResult;
+                            curatedTrainers.push(result);
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                LOG_ERROR('UserController.ts', 'generateCuratedTrainers::Caught exception searching for users with state value: ' + state, error);
+                if (curatedTrainers.length != 0 && typeof(curatedTrainers) == 'object') {
+                    resolve(curatedTrainers)
+                } else {
+                    resolve([])
+                }
+            })
+
+            LOG('UserController.ts', 'generateCuratedTrainers::Returning curated trainers from generateCuratedTrainers with a length of: ' + curatedTrainers.length);
+            resolve(curatedTrainers);
+        });
     }
 
     /**
@@ -79,7 +150,7 @@ export default class UserController {
      * @param string URI of the profile image.
      * @return Returns a promise resolving the URL of the profile image in the storage bucket.
      */
-    saveUserProfileImage = async (string: String) : Promise<String> => {
+    saveUserProfileImage = async (string: String): Promise<String> => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -106,7 +177,7 @@ export default class UserController {
      * @param arrOfUUIDS Array of UUIDS for which to fetch user structure.
      * @return Array of user structures.
      */
-    getArrayOfUserObjectsFromUUIDS = async (arrOfUUIDS: Array<String>) : Array<Object> => {
+    getArrayOfUserObjectsFromUUIDS = async (arrOfUUIDS: Array<String>): Array<Object> => {
         let results = new Array();
         return new Promise(async (resolve, reject) => {
             for (let i = 0; i < arrOfUUIDS.length; ++i) {
@@ -241,7 +312,7 @@ export default class UserController {
             return Promise.resolve(data);
 
         } catch (error) {
-     
+
             let errdata = getLupaUserStructure()
             return Promise.resolve(errdata)
         }
@@ -268,7 +339,7 @@ export default class UserController {
                 currentUserDocument.get().then(documentSnapshot => {
                     userData = documentSnapshot.data()
                 });
-        
+
                 this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
                 clientMetadata = userData.client_metadata;
                 clientMetadata.client_metadata = value;
@@ -281,7 +352,7 @@ export default class UserController {
                 currentUserDocument.get().then(documentSnapshot => {
                     userData = documentSnapshot.data()
                 });
-        
+
                 this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
                 trainerMetadata = userData.trainer_metadata;
                 trainerMetadata.exercise_space = value;
@@ -294,7 +365,7 @@ export default class UserController {
                 currentUserDocument.get().then(documentSnapshot => {
                     userData = documentSnapshot.data()
                 });
-        
+
                 this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
                 trainerMetadata = userData.trainer_metadata;
                 trainerMetadata.trainer_interest = value;
@@ -307,7 +378,7 @@ export default class UserController {
                 currentUserDocument.get().then(documentSnapshot => {
                     userData = documentSnapshot.data()
                 });
-        
+
                 this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
                 trainerMetadata = userData.trainer_metadata;
                 trainerMetadata.personal_equipment_list = value;
@@ -321,11 +392,11 @@ export default class UserController {
                     isTrainer: value
                 })
                 break;
-                case 'certification':
-                    currentUserDocument.update({
-                        certification: value
-                    })
-                    break;
+            case 'certification':
+                currentUserDocument.update({
+                    certification: value
+                })
+                break;
             case 'interest':
                 currentUserDocument.update({
                     interest: value
@@ -333,14 +404,14 @@ export default class UserController {
                 break;
             case 'bookings':
                 let bookings = []
-                
+
                 if (optionalData == 'add') {
                     await currentUserDocument.get().then(result => {
                         bookings = result.data().bookings;
                     });
-    
+
                     bookings.push(value);
-    
+
                     currentUserDocument.update({
                         bookings: bookings
                     });
@@ -405,12 +476,12 @@ export default class UserController {
                                     && updatedDay[0].times[i].endTime == optionalDataTwo.endTime
                                     && updatedDay[0].times[i].startTimePeriod == optionalDataTwo.startTimePeriod
                                     && updatedDay[0].times[i].endTimePeriod == optionalDataTwo.endTimePeriod) {
-                                        updatedDay[0].times = updatedDay[0].times.splice(i, 1);
-                                    }
+                                    updatedDay[0].times = updatedDay[0].times.splice(i, 1);
+                                }
                             }
 
                             schedulerObject[key] = updatedDay;
-                            
+
                             currentUserDocument.update({
                                 scheduler_times: schedulerObject
                             })
@@ -438,43 +509,43 @@ export default class UserController {
 
                     }
                 } catch (error) {
-                
+
                 }
                 break;
             case 'program_data':
-                    try {
-    
-                        let programDataList = [], snapshot = {}
-                        if (optionalData == 'add') {
-                            await currentUserDocument.get().then(result => {
-                                snapshot = result.data()
-                            });
-    
-                            programDataList = snapshot.program_data
-                            
-                            /* Update metadata no matter who the user is because trainers might want to do
-                            the program as well.  Date purchased will serve as date created for trainers (not to be explicitly used that way) */
-                                value.program_metadata = {
-                                    workouts_completed: 0
-                                }
+                try {
 
-                                value.program_purchase_metadata = {
-                                    date_purchased: new Date(),
-                                }
-                           
-                            programDataList.push(value);
-                     
-                            await currentUserDocument.update({
-                                program_data: programDataList
-                            });
-                        }
-                        else if (optionalData == 'remove') {
+                    let programDataList = [], snapshot = {}
+                    if (optionalData == 'add') {
+                        await currentUserDocument.get().then(result => {
+                            snapshot = result.data()
+                        });
 
+                        programDataList = snapshot.program_data
+
+                        /* Update metadata no matter who the user is because trainers might want to do
+                        the program as well.  Date purchased will serve as date created for trainers (not to be explicitly used that way) */
+                        value.program_metadata = {
+                            workouts_completed: 0
                         }
-                    } catch (error) {
-                      
+
+                        value.program_purchase_metadata = {
+                            date_purchased: new Date(),
+                        }
+
+                        programDataList.push(value);
+
+                        await currentUserDocument.update({
+                            program_data: programDataList
+                        });
                     }
-                    break;
+                    else if (optionalData == 'remove') {
+
+                    }
+                } catch (error) {
+
+                }
+                break;
             case UserCollectionFields.CHATS:
                 let chats;
                 if (optionalData == 'add') {
@@ -606,7 +677,7 @@ export default class UserController {
      * Returns a user's information based on the uuid given.
      * @param uuid 
      */
-    getUserInformationByUUID = async (uuid: String) : Promise<Object> => {
+    getUserInformationByUUID = async (uuid: String): Promise<Object> => {
         let userResult = getLupaUserStructure(), docData = getLupaProgramInformationStructure(), userPrograms = []
 
         if (uuid == "" || typeof (uuid) == 'undefined') {
@@ -618,7 +689,7 @@ export default class UserController {
                 userResult = result.data();
             });
 
-            if (typeof(userResult) == 'undefined') {
+            if (typeof (userResult) == 'undefined') {
                 userResult = getLupaUserStructure();
                 return Promise.resolve(userResult)
             }
@@ -641,16 +712,16 @@ export default class UserController {
         await USER_COLLECTION.doc(uuidOfAccountBeingFollowed).get().then(snapshot => {
             result = snapshot.data();
         })
-        
+
 
         //Get the current followers
         let currentFollowers = [];
-        if (typeof(result.followers) == 'undefined') {
+        if (typeof (result.followers) == 'undefined') {
             currentFollowers = []
         } else {
             currentFollowers = result.followers;
         }
-        
+
         //add the follower to the current followers
         currentFollowers.push(uuidOfFollower);
 
@@ -673,7 +744,7 @@ export default class UserController {
 
         //get the current following
         let currentFollowing = [];
-        if (typeof(result.following) == 'undefined') {
+        if (typeof (result.following) == 'undefined') {
             currentFollowing = []
         } else {
             currentFollowing = result.following;
@@ -757,7 +828,7 @@ export default class UserController {
                 })
             })
         } catch (error) {
-       
+
             trainers = []
         }
 
@@ -894,16 +965,16 @@ export default class UserController {
             USER_COLLECTION.doc(usernameIn).set(newUserData);
             return true;
         } catch (Exception) {
-           
+
             return false;
         }
     }
-    
+
     /**
      * 
      * @param startsWith 
      */
-    searchTrainersByDisplayName = (startsWith = '') : Promise<Array<Object>> => {
+    searchTrainersByDisplayName = (startsWith = ''): Promise<Array<Object>> => {
         let currHit = getLupaUserStructurePlaceholder();
 
         return new Promise(async (resolve, reject) => {
@@ -911,38 +982,38 @@ export default class UserController {
             let results = [];
 
             try {
-            usersIndex.search({
-                query: query,
+                usersIndex.search({
+                    query: query,
 
-            }, (err, {hits}) => {
-                if (err) throw reject(err);
+                }, (err, { hits }) => {
+                    if (err) throw reject(err);
 
-                for (let i = 0; i < hits.length; i++) {
-                    currHit = hits[i];
-                    if (typeof(currHit) == 'undefined') {
-                       
-                    } else {
-                        results.push(currHit);
-                    }
-                }
-            });
-        } catch(error) {
-            LOG_ERROR('', '', error);
+                    for (let i = 0; i < hits.length; i++) {
+                        currHit = hits[i];
+                        if (typeof (currHit) == 'undefined') {
 
-            await USER_COLLECTION.where('isTrainer', '==', true).get().then(collectionRef => {
-                collectionRef.docs.forEach(doc => {
-                    currHit = doc.data();
-
-                    if (typeof(currHit) == 'undefined') {
-               
-                    } else {
-                        results.push(currHit);
+                        } else {
+                            results.push(currHit);
+                        }
                     }
                 });
-            })
+            } catch (error) {
+                LOG_ERROR('', '', error);
 
-            resolve(results)
-        }
+                await USER_COLLECTION.where('isTrainer', '==', true).get().then(collectionRef => {
+                    collectionRef.docs.forEach(doc => {
+                        currHit = doc.data();
+
+                        if (typeof (currHit) == 'undefined') {
+
+                        } else {
+                            results.push(currHit);
+                        }
+                    });
+                })
+
+                resolve(results)
+            }
 
             resolve(results);
         })
@@ -953,7 +1024,7 @@ export default class UserController {
      * 
      * @param startsWith 
      */
-    searchPrograms = (startsWith = '') : Promise<Array<Object>> => {
+    searchPrograms = (startsWith = ''): Promise<Array<Object>> => {
         let currHit = undefined;
 
         return new Promise((resolve, reject) => {
@@ -1147,7 +1218,7 @@ export default class UserController {
              * Need to delete the last program that was created or the program with the UUID
              * programUUID from the user's document field program_data.
              */
-            
+
             /* await USER_COLLECTION.doc(user_uuid).get().then(snapshot => {
                  tempData = snapshot.data();
              })
@@ -1163,7 +1234,7 @@ export default class UserController {
             //delete program from lupa programs
             await PROGRAMS_COLLECTION.doc(programUUID).delete();
         } catch (err) {
-            
+
         }
     }
 
@@ -1171,9 +1242,9 @@ export default class UserController {
      *  /**
      * Used for deleting workouts that were in the process of creation
      */
-     deleteWorkout = async (user_uuid: String, workoutUUID: String) => {
-         await WORKOUTS_COLLECTION.doc(workoutUUID).delete();
-     }
+    deleteWorkout = async (user_uuid: String, workoutUUID: String) => {
+        await WORKOUTS_COLLECTION.doc(workoutUUID).delete();
+    }
 
     loadCurrentUserPrograms = async (): Promise<Array<Object>> => {
         let programUUIDS = [], programsData = [];
@@ -1206,14 +1277,14 @@ export default class UserController {
                         }
                     }
                 } catch (error) {
-        
+
                     LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
                     continue;
                 }
 
             }
         } catch (error) {
-  
+
             LOG_ERROR('UserController.ts', 'Unhandled exception in loadCurrentUserPrograms()', error)
             programsData = [];
         }
@@ -1384,7 +1455,7 @@ export default class UserController {
             this.PROGRAMS_CONTROLLER_INSTANCE.addProgramShare(program.program_structure_uuid, userList.length);
 
         } catch (err) {
-           
+
         }
 
     }
@@ -1475,7 +1546,7 @@ export default class UserController {
                 result = snapshot.data().chats;
             });
         } catch (error) {
-   
+
             return Promise.resolve([])
         }
 
@@ -1563,7 +1634,7 @@ export default class UserController {
 
         let currUserData = currentUserData;
 
-        if (typeof(currUserData) == 'undefined') {
+        if (typeof (currUserData) == 'undefined') {
             const uuid = await LUPA_AUTH.currentUser.uid;
             USER_COLLECTION.doc(uuid).get().then(documentSnapshot => {
                 currUserData = documentSnapshot.data();
@@ -1574,35 +1645,35 @@ export default class UserController {
         const currUserUUID = await currUserData.user_uuid
         const programOwnerUUID = programData.program_owner;
 
-      
-            //add the program and programData to users list
-            await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
-            let variationProgramData = programData;
-            variationProgramData.date_purchased = new Date()
-            variationProgramData.workouts_completed = 0;
-            variationProgramData.program_started = false;
-            await this.updateCurrentUser('program_data', variationProgramData, 'add');
-            
-            //add the user as one of the program participants
-            let updatedParticipants= [], updatedPurchaseMetadata = {}
-            await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
-                updatedParticipants = snapshot.data().program_participants;
-                updatedPurchaseMetadata = snapshot.data().program_purchase_metadata;
-            });
 
-            updatedParticipants.push(currUserUUID);
-            updatedPurchaseMetadata.purchase_list.push({
-                purchaser: currUserData.display_name,
-                date_purchased: new Date(),
-                program_name: programData.program_name,
-            })
+        //add the program and programData to users list
+        await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
+        let variationProgramData = programData;
+        variationProgramData.date_purchased = new Date()
+        variationProgramData.workouts_completed = 0;
+        variationProgramData.program_started = false;
+        await this.updateCurrentUser('program_data', variationProgramData, 'add');
 
-            await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
-                program_participants: updatedParticipants,
-                program_purchase_metadata: updatedPurchaseMetadata,
-            });
+        //add the user as one of the program participants
+        let updatedParticipants = [], updatedPurchaseMetadata = {}
+        await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
+            updatedParticipants = snapshot.data().program_participants;
+            updatedPurchaseMetadata = snapshot.data().program_purchase_metadata;
+        });
 
-            try {
+        updatedParticipants.push(currUserUUID);
+        updatedPurchaseMetadata.purchase_list.push({
+            purchaser: currUserData.display_name,
+            date_purchased: new Date(),
+            program_name: programData.program_name,
+        })
+
+        await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
+            program_participants: updatedParticipants,
+            program_purchase_metadata: updatedPurchaseMetadata,
+        });
+
+        try {
 
             //setup trainer and user chat channel
             if (currUserUUID.charAt(0) < programOwnerUUID.charAt(0)) {
@@ -1717,7 +1788,7 @@ export default class UserController {
      * 
      * @param uri 
      */
-    saveVlogMedia = async (uri: String): Promise<Array<String>>  => {
+    saveVlogMedia = async (uri: String): Promise<Array<String>> => {
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -1787,7 +1858,7 @@ export default class UserController {
      * @param uuid User uuid for which to fetch vlogs.
      * @return promise Returns a promise resolving a list of vlogs.
      */
-    getAllUserVlogs = async (uuid: String): Promise<Array<Object>>  => {
+    getAllUserVlogs = async (uuid: String): Promise<Array<Object>> => {
         let vlogsList = []
         let vlogsData = [];
 
@@ -1796,7 +1867,7 @@ export default class UserController {
                 vlogsList = snapshot.data().vlogs;
             });
         } catch (error) {
-         
+
             return Promise.resolve([])
         }
 
@@ -1855,78 +1926,78 @@ export default class UserController {
     }
 
     resetProgram = async (userUUID: String, programUUID: String) => {
-      //Obtain the users document given the UUID
-      let userData = getLupaUserStructure();
-      await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
-          userData = documentSnapshot.data();
-      });
+        //Obtain the users document given the UUID
+        let userData = getLupaUserStructure();
+        await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
 
-      //Search for the correct program in the user's program data
-      let userProgramData = userData.program_data;
-      let foundProgram = getLupaProgramInformationStructure();
-      let found = false;
-      let foundIndex = 0;
-      for (let i = 0; i < userProgramData.length; i++) {
-          if (userProgramData[i].program_structure_uuid == programUUID) {
-              found = true;
-              foundProgram = userProgramData[i];
-              foundIndex = i;
-              continue;
-          }
-      }
+        //Search for the correct program in the user's program data
+        let userProgramData = userData.program_data;
+        let foundProgram = getLupaProgramInformationStructure();
+        let found = false;
+        let foundIndex = 0;
+        for (let i = 0; i < userProgramData.length; i++) {
+            if (userProgramData[i].program_structure_uuid == programUUID) {
+                found = true;
+                foundProgram = userProgramData[i];
+                foundIndex = i;
+                continue;
+            }
+        }
 
-      //If we can't find it we just return from this function
-      //if we find it then we need to set program_started to true, reset the start date, and end date
-      //according to the program_duration
+        //If we can't find it we just return from this function
+        //if we find it then we need to set program_started to true, reset the start date, and end date
+        //according to the program_duration
         if (found === false) {
-          return;
-        } 
-        
+            return;
+        }
+
         //Give the program a start date of today and an end date based on the program duration
         let newStartDate = moment().format(); // 2020-09-23T21:09:59-04:00
         let newEndDate = moment().add(foundProgram.program_duration, 'weeks').format()
         foundProgram.program_start_date = newStartDate;
         foundProgram.program_end_date = newEndDate;
-        
+
         //replace the program at the saved index and update the users program data
         userProgramData[foundIndex] = foundProgram;
         await USER_COLLECTION.doc(userUUID).update({
             program_data: userProgramData
         })
     }
-    
+
 
     stopProgram = async (userUUID: String, programUUID: String) => {
-      //Obtain the users document given the UUID
-      let userData = getLupaUserStructure();
-      await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
-          userData = documentSnapshot.data();
-      });
+        //Obtain the users document given the UUID
+        let userData = getLupaUserStructure();
+        await USER_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
 
-      //Search for the correct program in the user's program data
-      let userProgramData = userData.program_data;
-      let foundProgram = getLupaProgramInformationStructure();
-      let found = false;
-      let foundIndex = 0;
-      for (let i = 0; i < userProgramData.length; i++) {
-          if (userProgramData[i].program_structure_uuid == programUUID) {
-              found = true;
-              foundProgram = userProgramData[i];
-              foundIndex = i;
-              continue;
-          }
-      }
+        //Search for the correct program in the user's program data
+        let userProgramData = userData.program_data;
+        let foundProgram = getLupaProgramInformationStructure();
+        let found = false;
+        let foundIndex = 0;
+        for (let i = 0; i < userProgramData.length; i++) {
+            if (userProgramData[i].program_structure_uuid == programUUID) {
+                found = true;
+                foundProgram = userProgramData[i];
+                foundIndex = i;
+                continue;
+            }
+        }
 
-      //If we can't find it we just return from this function
-      //if we find it then we need to set program_started to true, reset the start date, and end date
-      //according to the program_duration
+        //If we can't find it we just return from this function
+        //if we find it then we need to set program_started to true, reset the start date, and end date
+        //according to the program_duration
         if (found === false) {
-          return;
-        } 
+            return;
+        }
 
         //set the found program's field program_started to false
         foundProgram.program_started = false;
-    
+
         //replace the program at the saved index and update the users program data
         userProgramData[foundIndex] = foundProgram;
         await USER_COLLECTION.doc(userUUID).update({
@@ -1947,16 +2018,16 @@ export default class UserController {
      * @param a 
      * @param b 
      */
-    checkUserStructure(a: Object, b: Object){
+    checkUserStructure(a: Object, b: Object) {
         return Object.keys(a).length === Object.keys(b).length
-        && Object.keys(a).every(k => b.hasOwnProperty(k))
+            && Object.keys(a).every(k => b.hasOwnProperty(k))
     }
-    
+
     /**
      * TODO: Look into checkuseStructure() usage
      * @param booking 
      */
-    createBookingRequest = async (booking: Object, isAuthenticatedUser?: Boolean, unauthenticatedUserUUID?: String) : Promise<Boolean> => {
+    createBookingRequest = async (booking: Object, isAuthenticatedUser?: Boolean, unauthenticatedUserUUID?: String): Promise<Boolean> => {
         const requesterUUID = booking.requester_uuid;
         const trainerUUID = booking.trainer_uuid;
         console.log(unauthenticatedUserUUID)
@@ -1966,12 +2037,12 @@ export default class UserController {
 
         //create booking
         await LUPA_DB.collection('bookings').doc(booking.uid).set(booking)
-        .then(docRef => {
-            console.log('success')
-        })
-        .catch(error => {
-            console.log(error)
-        });
+            .then(docRef => {
+                console.log('success')
+            })
+            .catch(error => {
+                console.log(error)
+            });
 
         console.log(unauthenticatedUserUUID)
 
@@ -1989,17 +2060,17 @@ export default class UserController {
             try {
                 let updatedBookings = unauthenticatedUserData.bookings;
                 updatedBookings.push(booking.uid);
-    
+
                 USER_COLLECTION.doc(unauthenticatedUserUUID).update({
                     bookings: updatedBookings
                 })
 
                 console.log('tried for user')
-            } catch(error) {
+            } catch (error) {
                 console.log('error')
                 let updatedBookings = []
                 updatedBookings.push(booking.uid);
-    
+
                 USER_COLLECTION.doc(unauthenticatedUserUUID).update({
                     bookings: updatedBookings
                 })
@@ -2014,13 +2085,13 @@ export default class UserController {
             console.log('error for trainer?')
         })
 
-        
+
         if (!this.checkUserStructure(userData, getLupaUserStructure())) {
             userData = Object.assign(getLupaUserStructure(), userData)
         }
 
         console.log('ummm')
-        
+
         let trainerBookings = userData.bookings;
         trainerBookings.push(booking.uid);
 
@@ -2046,37 +2117,37 @@ export default class UserController {
         }
 
         //add notification to users notification array
-            let userNotifications = [];
+        let userNotifications = [];
 
-            console.log('ruogog')
+        console.log('ruogog')
 
-            await USER_COLLECTION.doc(trainerUUID).get().then(snapshot => {
-                userNotifications = snapshot.data().notifications;
-            })
+        await USER_COLLECTION.doc(trainerUUID).get().then(snapshot => {
+            userNotifications = snapshot.data().notifications;
+        })
 
-            console.log('bbbbbbb')
+        console.log('bbbbbbb')
 
-            await userNotifications.push(receivedProgramNotificationStructure);
+        await userNotifications.push(receivedProgramNotificationStructure);
 
-            console.log('ororororororor')
-            await USER_COLLECTION.doc(trainerUUID).update({
-                notifications: userNotifications,
-            });
+        console.log('ororororororor')
+        await USER_COLLECTION.doc(trainerUUID).update({
+            notifications: userNotifications,
+        });
 
-            console.log('oppppahhh!')
+        console.log('oppppahhh!')
 
-            return Promise.resolve(true);
+        return Promise.resolve(true);
     }
 
     handleAcceptedBooking = async (booking_uid: String | Number) => {
         const bookingID = booking_uid;
-        let booking  = {}
+        let booking = {}
         await LUPA_DB.collection('bookings').doc(bookingID).get().then(documentSnapshot => {
             booking = documentSnapshot.data();
         });
 
         booking.status = BOOKING_STATUS.BOOKING_ACCEPTED
-    
+
         const trainer_uuid = booking.trainer_uuid;
         const requester_uuid = booking.requester_uuid;
 
@@ -2087,96 +2158,96 @@ export default class UserController {
         let GENERATED_CHAT_UUID = undefined;
 
         try {
-        //setup a chat between the two users
-        if (trainer_uuid.charAt(0) < requester_uuid.charAt(0)) {
-            GENERATED_CHAT_UUID = trainer_uuid + requester_uuid;
-        }
-        else {
-            GENERATED_CHAT_UUID = requester_uuid + trainer_uuid;
-        }
-
-        let chats = []
-        await USER_COLLECTION.doc(trainer_uuid).get().then(result => {
-            chats = result.data().chats;
-        });
-
-        let otherUserDocData;
-        let otherUserDoc = USER_COLLECTION.doc(requester_uuid);
-
-        let chatID, chatExistUserOne = false;
-        await chats.forEach(element => {
-            if (element.user == requester_uuid) {
-                chatExistUserOne = true;
-                chatID = element.chatID;
+            //setup a chat between the two users
+            if (trainer_uuid.charAt(0) < requester_uuid.charAt(0)) {
+                GENERATED_CHAT_UUID = trainer_uuid + requester_uuid;
             }
-        });
+            else {
+                GENERATED_CHAT_UUID = requester_uuid + trainer_uuid;
+            }
 
-        if (!chatExistUserOne) {
-
-            //if already got it then return it
-            //if not then add it and return it
-            await this.updateCurrentUser('chats', GENERATED_CHAT_UUID, 'add', requester_uuid);
-
-            //Update other users chats
-            await USER_COLLECTION.doc(requester_uuid).get().then(snapshot => {
-                otherUserDocData = snapshot.data();
+            let chats = []
+            await USER_COLLECTION.doc(trainer_uuid).get().then(result => {
+                chats = result.data().chats;
             });
 
-            let otherUserChats = otherUserDocData.chats;
+            let otherUserDocData;
+            let otherUserDoc = USER_COLLECTION.doc(requester_uuid);
 
-            let chatExistUserTwo;
-            chatExistUserOne = false;
-
-            await otherUserChats.forEach(element => {
-                if (element.user == trainer_uuid) {
-                    chatExistUserTwo = true;
+            let chatID, chatExistUserOne = false;
+            await chats.forEach(element => {
+                if (element.user == requester_uuid) {
+                    chatExistUserOne = true;
                     chatID = element.chatID;
                 }
             });
 
-            //add to other user if they don't already have it
-            if (!chatExistUserTwo) {
-                let chatField = {
-                    user: trainer_uuid,
-                    chatID: GENERATED_CHAT_UUID,
+            if (!chatExistUserOne) {
+
+                //if already got it then return it
+                //if not then add it and return it
+                await this.updateCurrentUser('chats', GENERATED_CHAT_UUID, 'add', requester_uuid);
+
+                //Update other users chats
+                await USER_COLLECTION.doc(requester_uuid).get().then(snapshot => {
+                    otherUserDocData = snapshot.data();
+                });
+
+                let otherUserChats = otherUserDocData.chats;
+
+                let chatExistUserTwo;
+                chatExistUserOne = false;
+
+                await otherUserChats.forEach(element => {
+                    if (element.user == trainer_uuid) {
+                        chatExistUserTwo = true;
+                        chatID = element.chatID;
+                    }
+                });
+
+                //add to other user if they don't already have it
+                if (!chatExistUserTwo) {
+                    let chatField = {
+                        user: trainer_uuid,
+                        chatID: GENERATED_CHAT_UUID,
+                    }
+                    otherUserChats.push(chatField);
+
+                    await otherUserDoc.update({
+                        chats: otherUserChats
+                    })
                 }
-                otherUserChats.push(chatField);
 
-                await otherUserDoc.update({
-                    chats: otherUserChats
-                })
             }
-
-        }
-    }catch (err) {
- 
-    }
-
-    /** **************/
-
-    if (!LUPA_AUTH.currentUser.uid) {
-        //email user with the correct details
-    } else {
-        try {
-            //init Fire
-            await Fire.shared.init(GENERATED_CHAT_UUID);
-            const message = {
-                _id: trainer_uuid,
-                timestamp: new Date().getTime(),
-                text: 'Your booking request has been accepted.',
-                user: {
-                    _id: trainer_uuid,
-                    name: await this.getAttributeFromUUID(trainer_uuid, 'display_name'),
-                    avatar: await this.getAttributeFromUUID(trainer_uuid, 'photo_url')
-                }
-            }
-            await Fire.shared.append(message);
-            
         } catch (err) {
-          
+
+        }
+
+        /** **************/
+
+        if (!LUPA_AUTH.currentUser.uid) {
+            //email user with the correct details
+        } else {
+            try {
+                //init Fire
+                await Fire.shared.init(GENERATED_CHAT_UUID);
+                const message = {
+                    _id: trainer_uuid,
+                    timestamp: new Date().getTime(),
+                    text: 'Your booking request has been accepted.',
+                    user: {
+                        _id: trainer_uuid,
+                        name: await this.getAttributeFromUUID(trainer_uuid, 'display_name'),
+                        avatar: await this.getAttributeFromUUID(trainer_uuid, 'photo_url')
+                    }
+                }
+                await Fire.shared.append(message);
+
+            } catch (err) {
+
+            }
         }
     }
-}
 
     handleCancelBooking = async (booking: Object) => {
         const booking_uid = booking.uid;
@@ -2231,7 +2302,7 @@ export default class UserController {
             user_uuid: undefined,
             booking_date: undefined
         }
-        let bookingData : Array<Object> = []
+        let bookingData: Array<Object> = []
         let docData = getBookingStructure();
 
         await LUPA_DB.collection('bookings').where('trainer_uuid', '==', uuid).get().then(querySnapshot => {
@@ -2239,7 +2310,7 @@ export default class UserController {
                 docData = doc.data();
 
                 //check if the user is undefined
-                if (typeof(docData) == 'undefined') {
+                if (typeof (docData) == 'undefined') {
                     return;
                 }
 
@@ -2255,7 +2326,7 @@ export default class UserController {
                     bookingDataEntry.booking_date = docData.date_requested;
                     bookingData.push(bookingDataEntry);
                 }
-                
+
             });
         });
 
@@ -2280,57 +2351,64 @@ export default class UserController {
         const requesterDocRef = USER_COLLECTION.doc(requester_uuid);
 
         try {
-        trainerDocRef.get().then(documentSnapshot => {
-            userData = documentSnapshot.data();
-        });
+            trainerDocRef.get().then(documentSnapshot => {
+                userData = documentSnapshot.data();
+            });
 
-       // this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
-        bookings = userData.bookings;
-        this.arrayRemove(bookings, booking_uuid);
-        trainerDocRef.update({
-            bookings: bookings
-        })
+            // this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+            bookings = userData.bookings;
+            this.arrayRemove(bookings, booking_uuid);
+            trainerDocRef.update({
+                bookings: bookings
+            })
 
-        bookings = [];
+            bookings = [];
 
-        
-        requesterDocRef.get().then(documentSnapshot => {
-            userData = documentSnapshot.data();
-        });
 
-        // this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
-        bookings = userData.bookings;
-        this.arrayRemove(bookings, booking_uuid);
-        requesterDocRef.update({
-            bookings: bookings
-        })
+            requesterDocRef.get().then(documentSnapshot => {
+                userData = documentSnapshot.data();
+            });
 
-        LUPA_DB.collection('bookings').doc(booking_uuid).delete();
-    } catch(error) {
-        return false;
-    }
+            // this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+            bookings = userData.bookings;
+            this.arrayRemove(bookings, booking_uuid);
+            requesterDocRef.update({
+                bookings: bookings
+            })
+
+            LUPA_DB.collection('bookings').doc(booking_uuid).delete();
+        } catch (error) {
+            return false;
+        }
 
         return true;
     }
 
     shuffle = (array) => {
         var currentIndex = array.length, temporaryValue, randomIndex;
-      
+
         // While there remain elements to shuffle...
         while (0 !== currentIndex) {
-      
-          // Pick a remaining element...
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex -= 1;
-      
-          // And swap it with the current element.
-          temporaryValue = array[currentIndex];
-          array[currentIndex] = array[randomIndex];
-          array[randomIndex] = temporaryValue;
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
         }
-      
+
         return array;
-      }
+    }
+
+    /**
+     * 
+     * @param date 
+     * @param time 
+     */
+
 
     /**
      * Returns available trainers given a date and time block.
@@ -2345,28 +2423,28 @@ export default class UserController {
         await USER_COLLECTION.where('isTrainer', '==', true).get().then(queryReference => {
             queryReference.forEach(doc => {
                 trainer = doc.data();
-                if (typeof(trainer) == 'undefined') {
+                if (typeof (trainer) == 'undefined') {
                     //delete doc
 
                 } else {
                     trainers.push(trainer);
                 }
-                
-             /*   if (typeof(trainer.scheduler_times[date.toString()]) == 'undefined') {
-                    //we dont do anything 
-                } else {
-                    trainerScheduler = trainer.scheduler_times;
-                    dateQueryObject = trainerScheduler[date.toString()];
-                    for (let i = 0; i < dateQueryObject.length; i++) {
-                        let timeBlockStartTime = moment(dateQueryObject[i].startTime);
-                        let timeBlockEndTime = moment(dateQueryObject[i].endTime);
-                        let timeQuery = moment(time);
 
-                        if (timeQuery.isAfter(timeBlockStartTime) && timeQuery.isBefore(timeBlockEndTime)) {
-                            trainers.push(trainer);
-                        }
-                    }
-                }*/
+                /*   if (typeof(trainer.scheduler_times[date.toString()]) == 'undefined') {
+                       //we dont do anything 
+                   } else {
+                       trainerScheduler = trainer.scheduler_times;
+                       dateQueryObject = trainerScheduler[date.toString()];
+                       for (let i = 0; i < dateQueryObject.length; i++) {
+                           let timeBlockStartTime = moment(dateQueryObject[i].startTime);
+                           let timeBlockEndTime = moment(dateQueryObject[i].endTime);
+                           let timeQuery = moment(time);
+   
+                           if (timeQuery.isAfter(timeBlockStartTime) && timeQuery.isBefore(timeBlockEndTime)) {
+                               trainers.push(trainer);
+                           }
+                       }
+                   }*/
             })
         });
 
@@ -2384,7 +2462,7 @@ export default class UserController {
     }
 
     setTrainerBelongsToGym = async () => {
-        const uuid  = await LUPA_AUTH.currentUser.uid
+        const uuid = await LUPA_AUTH.currentUser.uid
 
         let userData = getLupaUserStructurePlaceholder();
         let trainerMetadata = {}
@@ -2404,7 +2482,7 @@ export default class UserController {
     }
 
     setTrainerHasOwnExerciseSpace = async () => {
-        const uuid  = await LUPA_AUTH.currentUser.uid
+        const uuid = await LUPA_AUTH.currentUser.uid
 
         let userData = getLupaUserStructurePlaceholder();
         let trainerMetadata = {}
@@ -2424,7 +2502,7 @@ export default class UserController {
     }
 
     setTrainerIsInHomeTrainer = async () => {
-        const uuid  = await LUPA_AUTH.currentUser.uid
+        const uuid = await LUPA_AUTH.currentUser.uid
 
         let userData = getLupaUserStructurePlaceholder();
         let trainerMetadata = {}
@@ -2449,7 +2527,7 @@ export default class UserController {
     }
 
     setTrainerHasExperienceInSmallGroup = async () => {
-        const uuid  = await LUPA_AUTH.currentUser.uid
+        const uuid = await LUPA_AUTH.currentUser.uid
 
         let userData = getLupaUserStructurePlaceholder();
         let trainerMetadata = {}
@@ -2472,7 +2550,7 @@ export default class UserController {
     }
 
     setTrainerSmallGroupExperience = async (val) => {
-        const uuid  = await LUPA_AUTH.currentUser.uid
+        const uuid = await LUPA_AUTH.currentUser.uid
 
         let userData = getLupaUserStructurePlaceholder();
         let trainerMetadata = {}
