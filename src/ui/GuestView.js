@@ -965,7 +965,6 @@ class GuestView extends React.Component {
 
   renderRequestAuthenticationMessage = () => {
     const updatedAuthState = getLupaStoreState().Auth;
-
       if (updatedAuthState.isAuthenticated === false) {
         return (
           <View style={{padding: 5, }}>
