@@ -36,6 +36,7 @@ var lupa_user : LupaUserStructure = {
     scheduler_times: {},
     workouts: {},
     program_data: [],
+    has_completed_onboarding: false,
     last_workout_completed: {
         dateCompleted: "",
         workoutUUID: "",

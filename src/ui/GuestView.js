@@ -39,6 +39,11 @@ import {
   Avatar as PaperAvatar,
   Paragraph
 } from 'react-native-paper';
+
+import {
+  Button as ElementsButton
+} from 'react-native-elements';
+
 import { Avatar, SearchBar } from 'react-native-elements';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Feather1s from 'react-native-feather1s'
@@ -960,18 +965,21 @@ class GuestView extends React.Component {
 
   renderRequestAuthenticationMessage = () => {
     const updatedAuthState = getLupaStoreState().Auth;
-
-    if (updatedAuthState.isAuthenticated === false) {
-      return (
-        <View style={{ padding: 5, }}>
-          <Text style={{ paddingLeft: 15, fontFamily: 'Avenir-Heavy' }}>
-            Discover more by creating an account.
+      if (updatedAuthState.isAuthenticated === false) {
+        return (
+          <View style={{padding: 5, }}>
+          <Text style={{paddingLeft: 15, fontFamily: 'Avenir-Heavy'}}>
+                                   Discover more by signing in or creating an account.
                                  </Text>
-          <Button onPress={() => this.props.navigation.push('SignUp')} icon={() => <FeatherIcon name="user" />} color="#1089ff" style={{ alignSelf: 'flex-start' }} uppercase={false}>
-            Login or Create Account
-                                 </Button>
-        </View>
-      )
+                          <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                          <ElementsButton  onPress={() => this.props.navigation.navigate('Login')} color="#23374d" title="Sign in" titleStyle={{fontSize: 15, fontFamily: 'Avenir-Medium'}} raised type="solid" buttonStyle={{borderRadius: 5, backgroundColor: '#23374d',}} containerStyle={{width: '35%'}} />
+
+                          <ElementsButton  onPress={() => this.props.navigation.navigate('SignUp')} color="#23374d" title="Sign up" titleStyle={{fontSize: 15, fontFamily: 'Avenir-Medium', color: '#23374d'}} type="outline" buttonStyle={{borderRadius: 5, backgroundColor: '#FFFFFF', borderColor: '#23374d'}} containerStyle={{width: '35%'}} />
+                          </View>
+                                 
+          </View>
+        )
+      }
     }
   }
 
@@ -1020,9 +1028,46 @@ class GuestView extends React.Component {
     } catch (error) {
       return null;
     }
+}
 
-    return null;
-  }
+    render() {
+      this.checkSearchBarState()
+        return (
+            
+          <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+           <KeyboardAwareScrollView style={{flex: 1, backgroundColor: 'white'}}>        
+         <ScrollView
+         refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
+           scrollEventThrottle={1}
+           bounces={false}
+           showsVerticalScrollIndicator={false}
+         >
+             <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
+  <SearchBar
+  onStartShouldSetResponder={event => false}
+  onStartShouldSetResponderCapture={event => false}
+                        ref={this.searchBarRef}
+                        placeholder="Search trainers"
+                        placeholderTextColor="#000000"
+                        value={this.state.searchValue}
+                        inputStyle={styles.inputStyle}
+                        platform="ios"
+                        containerStyle={{backgroundColor: 'white', borderColor: 'white'}}
+                        inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE'}}
+                        searchIcon={() => <MaterialIcon name="search" color="#23374d" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+
+                        onFocus={() => this.setState({ searchBarFocused: true })}
+                        onBlur={() => this.setState({ searchBarFocused: false })}
+                    />
+                                 </TouchableWithoutFeedback>
+
+                                 {this.renderPaymentInformationBanner()}
+
+          {
+            this.renderRequestAuthenticationMessage()
+          }
+          
+            <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
 
   render() {
     this.checkSearchBarState()
@@ -1066,7 +1111,7 @@ class GuestView extends React.Component {
             <View style={{ marginVertical: 5 }}>
               <Text style={{ fontSize: 15, padding: 10, fontFamily: 'Avenir-Heavy' }}>
                 Curated for you
-                </Text>
+              </Text>
               <View>
                 {this.renderCuratedTrainers()}
               </View>

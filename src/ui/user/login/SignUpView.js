@@ -34,10 +34,11 @@ import { connect, useDispatch } from 'react-redux';
 
 import Input from '../../common/Input/Input'
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
-import LUPA_DB from '../../../controller/firebase/firebase';
+import LUPA_DB, { LUPA_AUTH } from '../../../controller/firebase/firebase';
 
 import FeatherIcon from 'react-native-feather1s'
-
+import { storeAsyncData } from '../../../controller/lupa/storage/async';
+import { logoutUser, loginUser } from '../../../controller/lupa/auth/auth'
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
 
 const formReducer = (state, action) => {
@@ -111,11 +112,27 @@ const SignUp = props => {
       );
       return;
     }
-
+    try {
     await dispatch(authActions.signup(attemptedEmail, attemptedPassword));
-      
-      navigation.navigate('Onboarding')
-      _setupRedux()
+    storeAsyncData(attemptedEmail, 'PREVIOUS_LOGIN_EMAIL');
+    storeAsyncData(attemptedPassword, 'PREVIOUS_LOGIN_PASSWORD');
+    navigation.navigate('Onboarding')
+    _setupRedux()
+    } catch(error) {
+      if (LUPA_AUTH.currentUser) {
+        dispatch(logoutUser())
+      }
+
+      dispatch(loginError())
+      navigation.navigate('GuestView')
+
+      Alert.alert(
+        'Error while signing up.',
+        'Try logging in with your newly created account or signing up again.',
+        [{text: 'Okay', onPress: () => {}}
+        ]
+      );
+    }
     }
   
 

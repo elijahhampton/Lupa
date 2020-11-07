@@ -50,7 +50,6 @@ const ActivityIndicatorModal = (props) => {
 const WelcomeContentDriver = (props) => {
     const [locationDataSet, setLocationDataIsSet] = useState(false)
     const [loadingIndicatorIsShowing, setLoadingIndicatorIsShowing] = useState(false)
-    const [curatedTrainers, setCuratedTrainers] = useState([])
     const navigation = useNavigation()
     const dispatch = useDispatch()
 
@@ -59,12 +58,6 @@ const WelcomeContentDriver = (props) => {
     })
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
-
-    const generateCuratedTrainers = async () => {
-        await LUPA_CONTROLLER_INSTANCE.generateCuratedTrainers(currUserData.user_uuid, ['location']).then(data => {
-            setCuratedTrainers(data);
-        })
-    }
 
     /**
      * Fetches the user's location and populates the user lat, 
@@ -152,65 +145,16 @@ const WelcomeContentDriver = (props) => {
             const payload = await getUpdateCurrentUserAttributeActionPayload('location', errLocationData, []);
             await dispatch({ type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload: payload })
             await setLocationDataIsSet(true)
-
-
-            setLoadingIndicatorIsShowing(false)
+            setLoadingIndicatorIsShowing(false);
         }
 
-
-        await setLoadingIndicatorIsShowing(false)
-
+        await setLoadingIndicatorIsShowing(false);
     }
 
-    const renderCuratedTrainers = () => {
-        return curatedTrainers.map(trainer => {
-            return (
-                <View style={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center'}}>
-                <View style={{borderRadius: 12, alignSelf: 'center', width: Dimensions.get('window').width - 20, marginHorizontal: 20, backgroundColor: 'transparent', justifyContent: 'space-between',  padding: 20}}>
-                    <View style={{backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',  }}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Image source={{uri: trainer.photo_url }} style={{marginRight: 10, borderRadius: 50, width: 50, height: 50}} />
-               <View>
-               <Text style={{paddingVertical: 3, fontWeight: '700', color: '#212121', fontFamily: 'Avenir'}}>
-                                                    Elijah Hampton
-                                                </Text>
-                                                <Text style={{fontWeight: '500', color: '#1089ff'}}>
-                                                    View Profile
-                                                </Text>
-               </View>
-     
-                                               
-                </View>
-                              
-                                                <View style={{ justifyContent: 'flex-start', flexDirection: 'row', }}>
-                                                    <Feather1s name="mail" size={20} style={{paddingHorizontal: 10}} />
-                                                    <Feather1s name="share" size={20} style={{paddingHorizontal: 10}} />
-                                                </View>
-                    </View>
-              
-                                    <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                                        <Text style={{fontSize: 20, color: '#212121', fontWeight: 'bold', alignSelf: 'center', paddingVertical: 10}}>
-                                            Burn Fat, Burn Abs
-                                        </Text>
-                                        <Button color="#1089ff" uppercase={false}>
-                                            Preview
-                                        </Button>
-                                    </View>
-                                        </View>
-                                        </View>
-               // <CuratedTrainerCard key={trainer.user_uuid} trainer={trainer} />
-            )
-        });
-
+    const handleGetStartedOnPress = () => {
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('has_completed_onboarding', true, "");
+        navigation.navigate('App')
     }
-
-    useEffect(() => {
-        async function fetchData() {
-            await generateCuratedTrainers();
-        }
-
-        fetchData();
-    }, [])
 
     return (
         <View style={styles.container}>
@@ -255,7 +199,7 @@ const WelcomeContentDriver = (props) => {
                     style={{ color: '#E5E5E5' }}
                     bottomDivider
                     rightIcon={() => <FeatherIcon name="arrow-right" />}
-                    onPress={() => navigation.navigate('App')}
+                    onPress={handleGetStartedOnPress}
                 />
                     :
                     <ListItem
@@ -265,38 +209,13 @@ const WelcomeContentDriver = (props) => {
                     style={{ color: '#E5E5E5' }}
                     bottomDivider
                     rightIcon={() => <FeatherIcon name="arrow-right" />}
-                    onPress={() => navigation.navigate('App')}
+                    onPress={handleGetStartedOnPress}
                 />
 
                 }
                
 
             </View>
-            {/*
-                locationDataSet === true ?
-                    <View style={{ flex: 1.5, justifyContent: 'space-evenly', alignItems: 'center' }}>
-                        <Text style={[styles.headerText, { fontSize: 15, color: 'black', paddingVertical: 5 }]}>
-                            Before we take you into the app we have curated a list of trainers based on your location and goals.
-                                </Text>
-
-
-                        <ScrollView
-                            centerContent
-                            contentContainerStyle={{ alignItems: 'center' }}
-                            horizontal={true}
-                            showsHorizontalScrollIndicator={false}
-                            pagingEnabled={true}
-                            decelerationRate={0}
-                            snapToAlignment='center'
-                            snapToInterval={Dimensions.get('window').width}>
-                            {renderCuratedTrainers()}
-                        </ScrollView>
-                    </View>
-
-                    :
-                    null
-            */  }
-
             <ActivityIndicatorModal isVisible={loadingIndicatorIsShowing} />
         </View>
     )
