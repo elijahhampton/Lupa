@@ -19,7 +19,7 @@ import {
     Caption, 
 } from 'react-native-paper';
 
-import { Avatar } from 'react-native-elements';
+import { Avatar, ListItem } from 'react-native-elements';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useSelector } from 'react-redux'
 import { LineChart } from 'react-native-chart-kit'
@@ -132,6 +132,8 @@ function UserDashboard(props) {
             </ScrollView>
           
 </View>
+
+<ListItem title="Open" onPress={() => navigation.push('VirtualSession')} />
 
 </ScrollView>
         )

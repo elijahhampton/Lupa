@@ -18,7 +18,7 @@
 #import <UMCore/UMModuleRegistry.h>
 #import <UMReactNativeAdapter/UMNativeModulesProxy.h>
 #import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
-#import <Firebase.h> //Add This Line
+#import <Firebase.h> 
 #import <RNCPushNotificationIOS.h>
 #import <UserNotifications/UserNotifications.h>
 

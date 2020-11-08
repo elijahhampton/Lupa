@@ -51,6 +51,7 @@ import { retrieveAsyncData, storeAsyncData } from './src/controller/lupa/storage
 import DeviceInfo from 'react-native-device-info';
 import MyClients from './src/ui/user/trainer/MyClients';
 import Onboarding from './src/ui/user/modal/WelcomeModal/Onboarding'
+import VirtualSession from './src/ui/sessions/virtual/VirtualSession';
 
 
 const App = () => {
@@ -100,7 +101,9 @@ const SwitchNavigator = () => {
     const lupaState = getLupaStoreState();
     if (lupaState.Users.currUserData.has_completed_onboarding) {
       navigation.navigate('App');
-    } else (!lupaState.Users.currUserData.has_completed_onboarding) {
+    } else (!lupaState.Users.currUserData.has_completed_onboarding) 
+    {
+      console.log('wtf')
       navigation.navigate('Onboarding')
     } 
   }
@@ -288,6 +291,7 @@ function AppNavigator() {
       <StackApp.Screen name="VlogContent" component={VlogFeedCardExpanded} />
       <StackApp.Screen name="FollowerView" component={FollowerModal} />
       <StackApp.Screen name="MyClients" component={MyClients} />
+      <StackApp.Screen name="VirtualSession" component={VirtualSession} />
       </StackApp.Navigator>
   )
 }
