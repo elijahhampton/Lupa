@@ -2030,10 +2030,6 @@ export default class UserController {
     createBookingRequest = async (booking: Object, isAuthenticatedUser?: Boolean, unauthenticatedUserUUID?: String): Promise<Boolean> => {
         const requesterUUID = booking.requester_uuid;
         const trainerUUID = booking.trainer_uuid;
-        console.log(unauthenticatedUserUUID)
-
-        console.log(requesterUUID)
-        console.log(trainerUUID)
 
         //create booking
         await LUPA_DB.collection('bookings').doc(booking.uid).set(booking)
@@ -2044,15 +2040,13 @@ export default class UserController {
                 console.log(error)
             });
 
-        console.log(unauthenticatedUserUUID)
-
 
         //add the booking uuid to both users booking fields
         //the requester
         if (isAuthenticatedUser === true) {
             this.updateCurrentUser('bookings', booking.uid, 'add');
         } else {
-            let unauthenticatedUserData = getLupaUserStructurePlaceholder()
+         /*   let unauthenticatedUserData = getLupaUserStructurePlaceholder()
             await USER_COLLECTION.doc(unauthenticatedUserUUID).get().then(documentSnapshot => {
                 unauthenticatedUserData = documentSnapshot.data();
             });
@@ -2074,10 +2068,9 @@ export default class UserController {
                 USER_COLLECTION.doc(unauthenticatedUserUUID).update({
                     bookings: updatedBookings
                 })
-            }
+            }*/
         }
 
-        console.log('try trianer')
         let userData = getLupaUserStructure();
         await USER_COLLECTION.doc(trainerUUID).get().then(documentSnapshot => {
             userData = documentSnapshot.data();
@@ -2090,12 +2083,8 @@ export default class UserController {
             userData = Object.assign(getLupaUserStructure(), userData)
         }
 
-        console.log('ummm')
-
         let trainerBookings = userData.bookings;
         trainerBookings.push(booking.uid);
-
-        console.log('boom')
 
         USER_COLLECTION.doc(trainerUUID).update({
             bookings: trainerBookings
@@ -2119,22 +2108,15 @@ export default class UserController {
         //add notification to users notification array
         let userNotifications = [];
 
-        console.log('ruogog')
 
         await USER_COLLECTION.doc(trainerUUID).get().then(snapshot => {
             userNotifications = snapshot.data().notifications;
         })
-
-        console.log('bbbbbbb')
-
         await userNotifications.push(receivedProgramNotificationStructure);
 
-        console.log('ororororororor')
         await USER_COLLECTION.doc(trainerUUID).update({
             notifications: userNotifications,
         });
-
-        console.log('oppppahhh!')
 
         return Promise.resolve(true);
     }
