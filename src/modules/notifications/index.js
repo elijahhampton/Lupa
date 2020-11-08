@@ -1,3 +1,50 @@
+import { Alert } from 'react-native';
+import {request, check, PERMISSIONS, requestMultiple, checkMultiple, RESULTS} from 'react-native-permissions';
+
+const requestVirtualSessionsPermission = () => {
+  checkMultiple(PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE)
+  .then(results => {
+    switch(results) {
+      case RESULTS.GRANTED:
+        //granted
+        break;
+      case RESULTS.UNAVAILABLE:
+        Alert.alert('Permissions Unavailable', 'One or more of these permissions are unavailable on your device.', [{
+          text: 'Okay',
+          onPress: () => {}
+        }]);
+        break;
+      case RESULTS.DENIED:
+        Alert.alert('Permissions Denied', 'One or more of these permissions have been denied.  Please check your camera and notification settings for Lupa.', [{
+          text: 'Okay',
+          onPress: () => {}
+        }]);
+        break;
+      case RESULTS.BLOCKED:
+
+        request(PERMISSIONS.IOS.CAMERA).then(() => {
+          if (RESULTS.DENIED) {
+            Alert.alert('Permissions Denied', 'One or more of these permissions have been denied.  Please check your camera and notification settings for Lupa.', [{
+              text: 'Okay',
+              onPress: () => {}
+            }]);
+            return;
+          }
+        })
+
+        request(PERMISSIONS.IOS.MICROPHONE).then(results => {
+          if (RESULTS.DENIED) {
+            Alert.alert('Permissions Denied', 'One or more of these permissions have been denied.  Please check your camera and notification settings for Lupa.', [{
+              text: 'Okay',
+              onPress: () => {}
+            }]);
+            return;
+          }
+        })
+    }
+  })
+}
+
 //import PushNotificationIOS from "@react-native-community/push-notification-ios";
 //var PushNotification = require("react-native-push-notification");
 
