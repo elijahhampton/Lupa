@@ -12,7 +12,7 @@ let booking : Booking = {
     note: "",
 }
 
-export function getNewBookingStructure(start_time, end_time, date, date_requested, trainer_uuid, requester_uuid, trainer_note) : Booking {
+export function getNewBookingStructure(start_time, end_time, date, date_requested, trainer_uuid, requester_uuid, trainer_note, type) : Booking {
     booking.start_time = start_time;
     booking.end_time = end_time;
     booking.date = date;
@@ -22,6 +22,7 @@ export function getNewBookingStructure(start_time, end_time, date, date_requeste
     booking.status = BOOKING_STATUS.BOOKING_REQUESTED;
     booking.note = trainer_note;
     booking.uid = Math.random().toString();
+    booking.session_type = type;
     return booking;
 }
 
@@ -34,5 +35,6 @@ export function getBookingStructure() : Booking {
     booking.requester_uuid = 0;
     booking.status = BOOKING_STATUS.BOOKING_UNKNOWN;
     booking.note = "";
+    booking.session_type = '';
     return booking;
 }
