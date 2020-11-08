@@ -65,6 +65,7 @@ import BookingRequestModal from './user/modal/BookingRequestModal'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { LOG_ERROR } from '../common/Logger';
 import Geolocation from '@react-native-community/geolocation';
+import PurchaseProgramWebView from './workout/program/modal/PurchaseProgramWebView'
 
 const mapStateToProps = (state, action) => {
   return {
@@ -1166,6 +1167,7 @@ class GuestView extends React.Component {
             prefilledDate={this.state.futureBookingDisplayDate}
           />
           <AvailableTrainersModal isVisible={this.state.availableTrainersModalIsVisible} closeModal={() => this.setState({ availableTrainersModalIsVisible: false })} />
+          <PurchaseProgramWebView />
         </KeyboardAwareScrollView>
       </SafeAreaView>
     );

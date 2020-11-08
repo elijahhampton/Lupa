@@ -98,9 +98,12 @@ const SwitchNavigator = () => {
     }
 
     const lupaState = getLupaStoreState();
-    if (lupaState.Users.currUserData.has_completed_onboarding) {
+    if (lupaState.Users.currUserData.has_completed_onboarding) 
+    {
       navigation.navigate('App');
-    } else (!lupaState.Users.currUserData.has_completed_onboarding) {
+    } 
+    else (!lupaState.Users.currUserData.has_completed_onboarding) 
+    {
       navigation.navigate('Onboarding')
     } 
   }
