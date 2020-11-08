@@ -1030,7 +1030,7 @@ class GuestView extends React.Component {
   }
 
   render() {
-    this.checkSearchBarState()
+   this.checkSearchBarState()
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
         <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -1068,7 +1068,7 @@ class GuestView extends React.Component {
             <Divider style={{ height: 10, backgroundColor: '#EEEEEE' }} />
 
             <View style={{marginVertical: 5}}>
-            <Text style={{fontSize: 15, padding: 10, fontFamily: 'Avenir-Heavy'}}>
+            <Text style={{fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy'}}>
                   Book trainers near you
                 </Text>
               <View>
@@ -1081,7 +1081,7 @@ class GuestView extends React.Component {
 
             <View style={{ padding: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
+                <Text style={{ fontSize: 16, fontFamily: 'Avenir-Heavy' }}>
                   Book by your availability
                 </Text>
               </View>
@@ -1116,7 +1116,7 @@ class GuestView extends React.Component {
 
             <View style={{ marginVertical: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 15, padding: 10, fontFamily: 'Avenir-Heavy' }}>
+                <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
                   Promoted Trainers
           </Text>
 
@@ -1164,7 +1164,7 @@ class GuestView extends React.Component {
             preFilledEndTime={this.state.preFilledEndTime}
             preFilledTrainerNote={this.state.preFilledTrainerNote}
             prefilledDate={this.state.futureBookingDisplayDate}
-          />
+         /> 
           <AvailableTrainersModal isVisible={this.state.availableTrainersModalIsVisible} closeModal={() => this.setState({ availableTrainersModalIsVisible: false })} />
         </KeyboardAwareScrollView>
       </SafeAreaView>

@@ -16,4 +16,10 @@ export type Booking = {
     status: BOOKING_STATUS,
     uid: String | Number,
     note: String,
+    session_type: String,
+}
+
+export enum SESSION_TYPE {
+    REMOTE='remote',
+    IN_PERSON='in_person'
 }

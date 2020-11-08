@@ -45,12 +45,13 @@ import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../controller/lupa/LupaController'
 import { getNewBookingStructure } from '../../../model/data_structures/user/booking';
 import { LUPA_AUTH } from '../../../controller/firebase/firebase';
-import { BOOKING_STATUS, SESSION_TYPE } from '../../../model/data_structures/user/types';
+import { BOOKING_STATUS } from '../../../model/data_structures/user/types';
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED} from '../../../modules/payments/stripe';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
 import { getLupaStoreState } from '../../../controller/redux';
+import RemoteBookingModal from '../../sessions/modal/RemoteBookingModal';
 
-function BookingRequestModal({ isVisible, closeModal, trainer, preFilledStartTime, preFilledEndTime, preFilledDate, preFilledTrainerNote }) {
+function RemoteBookingModal({ isVisible, closeModal, trainer, preFilledStartTime, preFilledEndTime, preFilledDate, preFilledTrainerNote }) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();  
   
   const LUPA_STATE = useSelector(state => {
@@ -89,7 +90,6 @@ function BookingRequestModal({ isVisible, closeModal, trainer, preFilledStartTim
     const openDatePicker = () => bookingRef.current.open();
     const closeDatePicker = () => bookingRef.current.close();
     const [trainerNote, setTrainerNote] = useState(typeof(preFilledTrainerNote) == 'undefined' ? "" : preFilledTrainerNote)
-    const [sessionType, setSessionType] = useState(SESSION_TYPE.REMOTE)
 
     const [startTimeIsSet, setStartTimeIsSet] = useState(false);
     const [endTimeIsSet, setEndTimeIsSet] = useState(false);
@@ -98,20 +98,6 @@ function BookingRequestModal({ isVisible, closeModal, trainer, preFilledStartTim
     const [bookingDate, setBookingDate] = useState(new Date());
 
     const [timeBlockDialogVisible, setTimeBlockDialogVisible] = useState(false);
-
-    const getSessionTypeSelectionButtonColor = (type) => {
-      if (type == SESSION_TYPE.REMOTE) {
-        return {
-          backgroundColor: 'rgb(57, 95, 236)',
-          color: 'white',
-        }
-      } else {
-        return {
-          color: 'rgb(57, 95, 236)',
-          backgroundColor: 'white',
-        }
-      }
-    }
 
     const renderDisplayDatePicker = () => {
       return (
@@ -441,10 +427,6 @@ console.log(updatedToken)
       await setLoading(false);
   }
 
-  const checkBookingDetails = () => {
-    return true;
-  }
-
       const handleOnRequest = async () => {
         if (LUPA_STATE.Auth.isAuthenticated === true) {
         //need to save a card before you can book
@@ -454,15 +436,16 @@ console.log(updatedToken)
         }
       }
 
-        const bookingDetailsVerified = checkBookingDetails()
-        
+        //let bookingDetailsVerified = checkBookingDetails()
+        /*
         if (!bookingDetailsVerified) {
           return;
         }
-      
+        */
+        
 
         const requesterID = getCurrentUserUUID();
-        const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, requesterID, trainerNote, sessionType);
+        const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, requesterID, trainerNote);
         const booking_id = booking.uid;
 
         try {
@@ -580,14 +563,14 @@ console.log(updatedToken)
           <Button 
           contentStyle={{width: 140}}
         theme={{
-          roundness: 12
+          roundness: 3
         }}
         onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid)} color="#1089ff" 
         uppercase={false} 
         mode="outlined" 
         style={{marginVertical: 20, marginHorizontal: 10}}>
         <Text style={{fontSize: 12}}>
-          Unfollow
+          Follow
         </Text>
         </Button>
                    :
@@ -609,7 +592,7 @@ console.log(updatedToken)
             <Button 
             contentStyle={{width: 140}}
           theme={{
-            roundness: 12
+            roundness: 3
           }}
           onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid)} color="#1089ff" 
           uppercase={false} 
@@ -626,13 +609,26 @@ console.log(updatedToken)
 
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animationType="slide">
+            <LinearGradient
+              colors={['#1089ff', 'white']}
+              start={[1,1]}
+              end={[1,0]}
+              style={{
+                justifyContent: 'space-between',
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                height: Dimensions.get('window').height,
+                width: Dimensions.get('window').width
+              }}>
 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{ alignSelf: 'center',fontSize: 20, paddingHorizontal: 20, paddingVertical: 15, fontFamily: 'Avenir-Heavy'}}>
-                You are about to request a session with Elijah Hampton.
+              <Text style={{ alignSelf: 'center', paddingHorizontal: 20, paddingVertical: 15, fontWeight: '600'}}>
+                You are about to request a session with Elijah Hampton
               </Text>
               
               <TouchableWithoutFeedback onPress={openDatePicker}>
-              <View style={{width: '70%', marginVertical: 10,  alignSelf: 'flex-start', margin: 20, padding: 10, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: '#EEEEEE', borderWidth: 0.5, borderColor: '#FAFAFA', justifyContent: 'space-evenly'}} icon={() => <FeatherIcon name="chevron-down" />}>
+              <View style={{width: '70%', marginVertical: 10,  alignSelf: 'center', padding: 5, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.1)', borderWidth: 0.5, borderColor: '#E5E5E5', justifyContent: 'space-evenly'}} icon={() => <FeatherIcon name="chevron-down" />}>
                       <FeatherIcon name="calendar" color="#1089ff" />
                       <Text style={{paddingHorizontal: 10, fontWeight: '500', fontSize: 12}}>
                         {bookingDisplayDate}
@@ -642,30 +638,29 @@ console.log(updatedToken)
                   </TouchableWithoutFeedback>
 </View>
 
-<Surface style={{backgroundColor: 'rgb(245, 245, 245)', flex: 2, elevation: 0, }}>
-  <View style={{flex: 1,  paddingHorizontal: 10}}>
+<Surface style={{backgroundColor: 'white', flex: 2}}>
+  <View style={{flex: 1, padding: 20}}>
 
   <ScrollView showsVerticalScrollIndicator={false}>
   <View>
-<Surface style={{borderRadius: 5,  marginVertical: 10, elevation: 0, padding: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
+<View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center'}}>
   <Avatar.Image source={{ uri: trainer.photo_url }} size={40} />
-  <View style={{paddingHorizontal: 20}}>
-    <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy', color: '#23374d'}}>
-   Elijah Hampton
+  <View style={{width: '100%', paddingHorizontal: 20}}>
+    <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
+    {trainer.display_name}
     </Text>
-    <Text style={{fontSize: 15, fontFamily: 'Avenir-Heavy', color: '#23374d'}}>
+    <Text style={{fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
       National Association of Sports and Medicine
     </Text>
   </View>
-</Surface>
+</View>
 
-<Surface style={{width: '100%', marginVertical: 10, elevation: 0, borderRadius: 5, alignItems: 'center', justifyContent: 'center', flexDirection: 'row'}}>
+<View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
 
 <Button 
-
 contentStyle={{width: 140}}
 theme={{
-  roundness: 12
+  roundness: 3
 }}
 onPress={() => {
   closeModal()
@@ -675,8 +670,8 @@ onPress={() => {
     })
 }} color="#1089ff" 
 uppercase={false} 
-mode="contained" 
-style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
+mode="outlined" 
+style={{marginVertical: 20, marginHorizontal: 10}}>
 <Text style={{fontSize: 12}}>
   Message
 </Text>
@@ -687,87 +682,16 @@ style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
 
 
 {renderFollowButton()}
-</Surface>
+</View>
 
 </View>
 
-<Surface style={{marginVertical: 10, padding: 20, borderRadius: 5, elevation: 0}}>
-<View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10}}>
-        <Text style={{fontFamily: 'Avenir-Heavy', color: 'rgb(156, 157, 168)'}}>
-          Session Type
-        </Text>
+<Divider />
 
-  </View>
-
-  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 18, paddingVertical: 10,}}>
-    Which works best for you?
-  </Text>
-
-<View>
-  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-  <Text style={{fontFamily: 'Avenir-Medium'}}>
-    Remote Session
-  </Text>
-  <Button mode="outlined" color="#1089ff" style={[getSessionTypeSelectionButtonColor(sessionType), {borderColor: '#1089ff'}]}>
-    Select
-  </Button>
-  </View>
-
-  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-    <Checkbox.IOS status="checked" color="#1089ff"  /> 
-    <Caption>
-      60 or 90 minute remote session.
-    </Caption>
-  </View>
-
-  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-    <Checkbox.IOS status="checked" color="#1089ff"  /> 
-    <Caption>
-      Video Feed over a secured connection.
-    </Caption>
-  </View>
-
-  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-    <Checkbox.IOS status="checked" color="#1089ff"  /> 
-    <Caption>
-      Access only to personal training equipment.
-    </Caption>
-  </View>
-</View>
-
-<Divider style={{width: Dimensions.get('window').width, marginVertical: 20}} />
-
-<View>
-  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-  <Text style={{fontFamily: 'Avenir-Medium'}}>
-    In Person
-  </Text>
-  <Button mode="outlined" color="#1089ff" style={[getSessionTypeSelectionButtonColor(sessionType), {borderColor: '#1089ff'}]}>
-    Select
-  </Button>
-  </View>
-
-  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-    <Checkbox.IOS status="checked" color="#1089ff"  /> 
-    <Caption>
-      60 or 90 minute in person session.
-    </Caption>
-  </View>
-
-  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-    <Checkbox.IOS status="checked" color="#1089ff"  /> 
-    <Caption>
-      Access to trainer's equipment.
-    </Caption>
-  </View>
-</View>
-
-
-</Surface>
-
-<Surface style={{marginVertical: 10, padding: 20, elevation: 0, borderRadius: 5}}>
+<View style={{paddingVertical: 10}}>
   <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10}}>
-        <Text style={{fontFamily: 'Avenir-Heavy', color: 'rgb(156, 157, 168)'}}>
+        <FeatherIcon color="#23374d" name="clock" size={20} />
+        <Text style={{fontFamily: 'Avenir-Heavy', paddingHorizontal: 20, color: 'rgb(156, 157, 168)'}}>
           Timing
         </Text>
   </View>
@@ -818,13 +742,14 @@ style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
   </Caption>
   </View>
 
-</Surface>
+</View>
 
+<Divider />
 
-<Surface style={{marginVertical: 10 ,padding: 20, borderRadius: 5, backgroundColor: 'white', elevation: 0}}>
+<View style={{paddingVertical: 10}}>
   <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10}}>
-
-        <Text style={{fontFamily: 'Avenir-Heavy', color: 'rgb(156, 157, 168)'}}>
+        <FeatherIcon color="#23374d" name="map-pin" size={20} />
+        <Text style={{fontFamily: 'Avenir-Heavy', paddingHorizontal: 20, color: 'rgb(156, 157, 168)'}}>
           Location
         </Text>
   </View>
@@ -833,13 +758,6 @@ style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
               <Paragraph style={{fontSize: 12}}>
                   {trainer.display_name} host sessions at Gold's Gym 1923.
               </Paragraph>
-
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-  <FeatherIcon name="map-pin" style={{color: '#1089ff'}} />
-  <Caption onPress={() => setTimeBlockDialogVisible(true)} style={{ paddingHorizontal: 10, color: '#1089ff'}}>
-      View location
-  </Caption>
-  </View>
                {/*   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                     <Caption>
                         Meet {trainer.display_name} at his home
@@ -847,20 +765,21 @@ style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
                     <Checkbox.Android status="unchecked" />
 </View> */}
               </View>
-</Surface>
+</View>
 
 <Divider />
 
-<Surface style={{marginVertical: 10, padding: 20, backgroundColor: 'white', elevation: 0, borderRadius: 5}}>
+<View style={{paddingVertical: 10}}>
   <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10}}>
-        <Text style={{fontFamily: 'Avenir-Heavy', color: 'rgb(156, 157, 168)'}}>
+        <FeatherIcon color="#23374d" name="edit-2" size={20} />
+        <Text style={{fontFamily: 'Avenir-Heavy', paddingHorizontal: 20, color: 'rgb(156, 157, 168)'}}>
           Notes for trainer
         </Text>
   </View>
 
   <View>
                 <TextInput
-                 value={trainerNote}
+                value={trainerNote}
                 onChangeText={text => setTrainerNote(text)}
                 theme={{
                     colors: {
@@ -868,14 +787,15 @@ style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
                     }
                 }} 
                 mode="flat" 
-                style={{width: Dimensions.get('window').width - 50, alignSelf: 'center'}} 
+                style={{width: Dimensions.get('window').width - 20, alignSelf: 'center'}} 
                 />
                 <Caption style={{paddingHorizontal: 10}}>
                   Leave a note about what you would like to accomplish during this session
                 </Caption>
                 </View>
-</Surface>
+</View>
 
+<Divider />
 {
   true && true ?
   <View style={{paddingVertical: 10}}>
@@ -898,6 +818,7 @@ style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
 </ScrollView>
 </View>
 </Surface>
+            </LinearGradient>
 
             {
           snackBarVisible && true ?
@@ -947,4 +868,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default BookingRequestModal;
+export default RemoteBookingModal;

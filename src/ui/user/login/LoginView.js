@@ -89,13 +89,14 @@ function checkUserSchema(userData, schema) {
 
 function LoginView(props) {
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-  const LUPA_AUTH_STATE = useSelector(state => {
-    return state.Auth;
+  const LUPA_STATE = useSelector(state => {
+    return state;
   })
 
   const [securePasswordEntryEnabled, useSecurePasswordEntry] = useState(true);
   const [snackIsVisible, showSnack] = useState(false);
   const [loginRejectedReason, setLoginRejectedReason] = useState('');
+  const [userHasCompletedOnboarding, setUserHasCompletedOnboarding] = useState(false);
 
   const navigation = useNavigation();
   const dispatch = useDispatch()
@@ -174,11 +175,9 @@ function LoginView(props) {
     await _setupRedux(uuid);
     LUPA_CONTROLLER_INSTANCE.indexApplicationData();
 
-    const updatedUserState = getLupaStoreState().Users.currUserData;
-    if (updatedUserState.has_completed_onboarding) {
+    if (LUPA_STATE.Users.currUserData.has_completed_onboarding == true) {
       navigation.navigate('App');
-    } else {
-      navigation.navigate('Onboarding')
+      return;
     }
 
     } catch(error) {
@@ -188,6 +187,8 @@ function LoginView(props) {
 
       navigation.navigate('GuestView');
     }
+
+    navigation.navigate('Onboarding')
   }
 
 const resetFormState = () => {
@@ -280,6 +281,8 @@ const resetFormState = () => {
     await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
       currUserData = result;
     });
+
+    setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
     
     //We need to ensure that the user's structure matches the current schema. If it
     //does not we simply add the missing fields with the default properties.

@@ -71,9 +71,10 @@ const SwitchNavigator = () => {
   const dispatch = useDispatch()
 
   const [finishedVerifying, setFinishedVerifying] = useState(false);
+  const [userHasCompletedOnboarding, setUserHasCompletedOnboarding] = useState(false);
 
-  const LUPA_AUTH_STATE = useSelector(state => {
-    return state.Auth;
+  const LUPA_STATE = useSelector(state => {
+    return state;
   })
 
 
@@ -99,13 +100,13 @@ const SwitchNavigator = () => {
     }
 
     const lupaState = getLupaStoreState();
-    if (lupaState.Users.currUserData.has_completed_onboarding) {
+
+    if (LUPA_STATE.Users.currUserData.has_completed_onboarding == true) {
       navigation.navigate('App');
-    } else (!lupaState.Users.currUserData.has_completed_onboarding) 
-    {
-      console.log('wtf')
-      navigation.navigate('Onboarding')
+      return;
     } 
+
+    navigation.navigate('Onboarding')
   }
 
   const showAuthentication = () => {
@@ -122,7 +123,7 @@ const SwitchNavigator = () => {
       const uniqueDeviceID = await DeviceInfo.getUniqueId();
       storeAsyncData('UNIQUE_DEVICE_ID', uniqueDeviceID);
       return uniqueDeviceID;
-    } else {
+    } else { 
       return deviceID;
     }
   }
@@ -150,6 +151,8 @@ const SwitchNavigator = () => {
         currUserData = result;
       });
 
+      await setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
+
       userPayload = {
         userData: currUserData,
       }
@@ -163,6 +166,8 @@ const SwitchNavigator = () => {
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
     });
+
+    await setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
 
     userPayload = {
       userData: currUserData,
