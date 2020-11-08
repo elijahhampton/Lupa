@@ -51,6 +51,7 @@ import { retrieveAsyncData, storeAsyncData } from './src/controller/lupa/storage
 import DeviceInfo from 'react-native-device-info';
 import MyClients from './src/ui/user/trainer/MyClients';
 import Onboarding from './src/ui/user/modal/WelcomeModal/Onboarding'
+import VirtualSession from './src/ui/sessions/virtual/VirtualSession';
 
 
 const App = () => {
@@ -295,6 +296,7 @@ function AppNavigator() {
       <StackApp.Screen name="VlogContent" component={VlogFeedCardExpanded} />
       <StackApp.Screen name="FollowerView" component={FollowerModal} />
       <StackApp.Screen name="MyClients" component={MyClients} />
+      <StackApp.Screen name="VirtualSession" component={VirtualSession} />
       </StackApp.Navigator>
   )
 }
