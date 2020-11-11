@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import LUPA_DB, { LUPA_AUTH, UserAuthenticationHandler } from '../../firebase/firebase';
 import { createStripeCustomerAccount } from '../../../modules/payments/stripe';
 
@@ -31,7 +32,7 @@ const receiveLogin = user => {
   };
 };
 
-const loginError = (errorCode) => {
+export const loginError = (errorCode) => {
   return {
     type: LOGIN_FAILURE,
     errorCode
@@ -67,6 +68,13 @@ const verifySuccess = () => {
     type: VERIFY_SUCCESS
   };
 };
+
+export const handleLoginError = (error) => {
+  return async (dispatch) => {
+    dispatch(loginError(error));
+  }
+}
+
 
 export const loginUser = (email, password) => {
   return async (dispatch) => {
@@ -140,6 +148,7 @@ export const signup = (email, password) => {
           {text: 'Recover Password', onPress: () => {}}
           ]
         )
+        throw new Error('This email address you entered is already in use.')
         return;
       } else {
         emailExist = false;

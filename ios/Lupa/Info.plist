@@ -46,7 +46,7 @@
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Allow Lupa to access your Apple Music.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Lupa to access your camera. Lupa uses your camera to allow you to add custom media to your own custom workouts that you create as well as to change visual elements such as your avatar.</string>
+	<string>Allow Lupa to access your camera.  Lupa uses your camera to provide the ability of remote workout sessions between you and your trainer.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Allow Lupa to access your contacts.  Lupa uses your contacts to allow you to invite your friends to participate in online fitness programs with you.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -56,13 +56,9 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Lupa to use your location. Lupa uses your location to recommend you trainers, show you content near you, and detect trainers that are near you when are at a gym.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow Lupa to access your microphone.</string>
+	<string>Allow Lupa to access your microphone.  Lupa uses your microphone to provide the ability of remote workout sessions between you and your trainer.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow Lupa to access your photo library. Lupa uses your photo library to allow you to add custom media to your own custom workouts as well as to change visual elements such as your avatar.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Allow Lupa to access your camera.  Lupa uses your camera to provide the ability of remote workout sessions between you and your trainer.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow Lupa to access your microphone.  Lupa uses your microphone to provide the ability of remote workout sessions between you and your trainer.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>FeatherIcons.ttf</string>

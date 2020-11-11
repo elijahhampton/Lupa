@@ -23,8 +23,9 @@ import { useNavigation } from '@react-navigation/native';
 import ProgramOptionsModal from '../../../workout/program/modal/ProgramOptionsModal';
 import LUPA_DB, { LUPA_AUTH } from '../../../../controller/firebase/firebase';
 import getBookingStructure from '../../../../model/data_structures/user/booking';
-import { BOOKING_STATUS } from '../../../../model/data_structures/user/types';
+import { BOOKING_STATUS, SESSION_TYPE } from '../../../../model/data_structures/user/types';
 import moment from 'moment';
+import { LOG_ERROR } from '../../../../common/Logger';
 
 const {windowWidth} = Dimensions.get('window').width
 
@@ -68,6 +69,55 @@ function ReceivedBookingRequestNotification({ notificationData }) {
         
     }
 
+    const renderNotificationMessage = () => {
+        try {
+        if (bookingData.session_type == SESSION_TYPE.REMOTE) {
+            return (
+                <Text>
+                               <Text style={{fontWeight: '500'}}>
+       {senderUserData.display_name}{" "}
+       </Text>
+       <Text>
+       has requested a remote training session with you.
+       </Text>
+                               </Text>
+            )
+        } else if (bookingData.session_type == SESSION_TYPE.IN_PERSON) {
+            return (
+                <Text>
+                               <Text style={{fontWeight: '500'}}>
+       {senderUserData.display_name}{" "}
+       </Text>
+       <Text>
+       has requested an in person training session with you.
+       </Text>
+                               </Text>
+            )
+        } else {
+            <Text>
+                               <Text style={{fontWeight: '500'}}>
+       {senderUserData.display_name}{" "}
+       </Text>
+       <Text>
+       has requested a training session with you.
+       </Text>
+                               </Text>
+        }
+    } catch(error) {
+        LOG_ERROR('ReceivedBookingRequestNotificaiton.js', 'renderNotificationMessage::Caught exception trying to render the notification message.  Returning default message.', error);
+        return (
+            <Text>
+                               <Text style={{fontWeight: '500'}}>
+       {senderUserData.display_name}{" "}
+       </Text>
+       <Text>
+       has requested a training session with you.
+       </Text>
+                               </Text>
+        )
+    }
+    }
+
     useEffect(() => {
         async function fetchData() {
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.from).then(data => {
@@ -91,14 +141,7 @@ function ReceivedBookingRequestNotification({ notificationData }) {
                        <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                            <Avatar.Image source={{uri: senderUserData.photo_url}} size={35} style={{marginHorizontal: 10}} />
                            <View>
-                               <Text>
-                               <Text style={{fontWeight: '500'}}>
-       {senderUserData.display_name}{" "}
-       </Text>
-       <Text>
-       has requested a training session with you.
-       </Text>
-                               </Text>
+                               {renderNotificationMessage()}
        <Caption>
            {
            notificationData.data.start_time

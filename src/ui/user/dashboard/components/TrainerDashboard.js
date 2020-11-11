@@ -113,7 +113,7 @@ function TrainerDashboard(props) {
 
 
                         <View style={{marginVertical: 15, padding: 10}}>
-<Text style={{fontSize: 13, paddingVertical: 10, fontWeight: '600'}}>
+<Text style={{fontSize: 16, paddingVertical: 10, fontFamily: 'Avenir-Heavy'}}>
                            Active Bookings
                         </Text>
                         <ScrollView contentContainerStyle={{ alignItems: 'center'}}>

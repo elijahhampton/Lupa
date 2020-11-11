@@ -243,24 +243,6 @@ class GuestView extends React.Component {
     })
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.lupa_data.Users.currUserData.location.city != nextProps.lupa_data.Users.currUserData.location.city) {
-      return true;
-    } else if (this.state.curatedTrainers.length != nextState.curatedTrainers.length) {
-      return true;
-    } else if (this.state.componentIsFetching != nextState.componentIsFetching) {
-      return true;
-    } else if (this.state.curatedTrainers.length != nextState.curatedTrainers.length) {
-      return true;
-    } else if (this.state.promotedTrainers.length != nextState.promotedTrainers.length) {
-      return true;
-    } else if (this.state.byLupaTrainers.length != nextState.byLupaTrainers.length) {
-      return true;
-    }
-
-    return false;
-  }
-
   /**
  * Fetches the user's location and populates the user lat, 
  * long, city, state, and country in the database.
@@ -837,7 +819,7 @@ class GuestView extends React.Component {
 
   handleCloseRequestBookingDialog = () => {
     this.onCloseRequestBookingDialog();
-    this.setState({ bookingRequestDialogVisible: false })
+    this.setState({ bookingRequestModalIsVisible: false })
   }
 
   handleOpenRequestBookingDialog = () => {
@@ -846,6 +828,7 @@ class GuestView extends React.Component {
 
   onCloseRequestBookingDialog = () => {
     //reset state
+    this.setState({ requestedTrainer: undefined })
   }
 
   handleOnRequestBooking = (userData) => {
@@ -898,6 +881,7 @@ class GuestView extends React.Component {
   }
 
   handleBookTrainerOnPress = async (trainer) => {
+    this.setState({ componentIsFetching: true })
     if (this.props.lupa_data.Auth.isAuthenticated === false) {
       this.props.navigation.navigate('SignUp')
       return;
@@ -909,7 +893,12 @@ class GuestView extends React.Component {
       await this.setState({ requestedTrainer: trainer });
     }
 
-    this.setState({ bookingRequestModalIsVisible: true });
+    this.setState({ bookingRequestModalIsVisible: true, componentIsFetching: false });
+  }
+
+  handleCloseBookTrainer = () => {
+  this.setState({ componentIsFetching: true })
+    this.setState({ bookingRequestModalIsVisible: true, componentIsFetching: false });
   }
 
   handleTrainerCardOnPress = (trainer) => {

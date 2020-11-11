@@ -75,6 +75,5 @@ target 'Lupa' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-  pod 'react-native-agora', :path => '../node_modules/react-native-agora'
 
 end

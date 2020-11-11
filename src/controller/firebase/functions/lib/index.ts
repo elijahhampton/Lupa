@@ -4,7 +4,7 @@ const functions = require('firebase-functions')
 const admin = require("firebase-admin");
 
 const cors = require('cors')({ origin: true });
-
+const {RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole} = require('agora-access-token')
 const stripe = require('stripe')
   ('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');
 
@@ -43,6 +43,30 @@ const STRIPE_VERIFICATION_STATUS = {
   UNREGISTERED: "3",
   DISABLED: "4",
 }
+
+exports.generateAgoraTokenFromUUID = functions.https.onRequest(async (request, response) => {
+    // Rtc Example
+const appID = 'fd515bbb863a43fa8dd6e89f2b3bfaeb';
+const appCertificate = '5ac6a8379aeb454c95c16b1393b3a693';
+const channelName = request.body.channel_name;
+const uid = 0;
+const role = RtcRole.PUBLISHER;
+const expirationTimeInSeconds = 3600
+const currentTimestamp = Math.floor(Date.now() / 1000)
+const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds
+
+console.log(channelName)
+console.log(uid)
+
+// Build token with uid
+const token = await RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, uid, role, privilegeExpiredTs);
+console.log("Token With Integer Number Uid: " + token);
+
+
+
+response.setHeader('Content-Type', 'application/json');
+response.status(200).send({token: token})
+})
 
 /** Sends a notification to a user upon receiving a notification object 
  * of some type. 

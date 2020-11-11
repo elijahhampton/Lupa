@@ -38,7 +38,7 @@ import LUPA_DB, { LUPA_AUTH } from '../../../controller/firebase/firebase';
 
 import FeatherIcon from 'react-native-feather1s'
 import { storeAsyncData } from '../../../controller/lupa/storage/async';
-import { logoutUser, loginUser } from '../../../controller/lupa/auth/auth'
+import { logoutUser, handleLoginError} from '../../../controller/lupa/auth/auth'
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
 
 const formReducer = (state, action) => {
@@ -123,15 +123,8 @@ const SignUp = props => {
         dispatch(logoutUser())
       }
 
-      dispatch(loginError())
+      handleLoginError()
       navigation.navigate('GuestView')
-
-      Alert.alert(
-        'Error while signing up.',
-        'Try logging in with your newly created account or signing up again.',
-        [{text: 'Okay', onPress: () => {}}
-        ]
-      );
     }
     }
   

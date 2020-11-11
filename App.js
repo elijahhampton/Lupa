@@ -101,12 +101,7 @@ const SwitchNavigator = () => {
 
     const lupaState = getLupaStoreState();
 
-    if (LUPA_STATE.Users.currUserData.has_completed_onboarding == true) {
-      navigation.navigate('App');
-      return;
-    } 
-
-    navigation.navigate('Onboarding')
+    navigation.navigate('App')
   }
 
   const showAuthentication = () => {

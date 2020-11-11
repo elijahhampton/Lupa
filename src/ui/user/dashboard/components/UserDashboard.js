@@ -36,6 +36,7 @@ import { BOOKING_STATUS } from '../../../../model/data_structures/user/types';
 import { initStripe, PAY_TRAINER_ENDPOINT, CURRENCY } from '../../../../modules/payments/stripe/index'
 import { getLupaUserStructurePlaceholder } from '../../../../controller/firebase/collection_structures';
 import { getLupaStoreState } from '../../../../controller/redux/index'
+import SessionDashboardComponent from '../../../sessions/modal/component/SessionDashboardComponent'
 import axios from 'axios';
 
 function UserDashboard(props) {
@@ -94,33 +95,14 @@ function UserDashboard(props) {
 
         return userBookings.map((booking, index, arr) => {
             return (
-                <>
-            <View key={booking.uid} style={{backgroundColor: 'white', alignSelf: 'center', width: Dimensions.get('window').width, padding: 10}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10}}>
-                <Avatar size={70} rounded={false} containerStyle={{backgroundColor: 'black'}} />
-                <View style={{paddingHorizontal: 10}}>
-                    <Text style={{fontSize: 16, fontFamily: 'Avenir-Medium', paddingVertical: 10}}>
-                        Elijah Hampton
-                    </Text>
-                    <Text style={{fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
-                        {moment(booking.date).format('LL').toString()}
-                    </Text>
-                    <Text style={{fontSize: 15, fontFamily: 'Avenir-Medium', color: 'rgb(210, 210, 210)'}}>
-                       { booking.start_time}
-                    </Text>
-                </View>
-                </View>
-
-            </View>
-            <Divider style={{width: Dimensions.get('window').width}} />
-            </>
+                <SessionDashboardComponent key={index} booking={booking} />
             )
         });
     }
 
     const renderComponent = () => {
         return (
-            <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
+            <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{backgroundColor: 'white'}}>
 
 
             <View style={{marginVertical: 15, padding: 10}}>
@@ -132,8 +114,6 @@ function UserDashboard(props) {
             </ScrollView>
           
 </View>
-
-<ListItem title="Open" onPress={() => navigation.push('VirtualSession')} />
 
 </ScrollView>
         )

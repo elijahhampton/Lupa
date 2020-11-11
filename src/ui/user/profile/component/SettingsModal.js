@@ -45,23 +45,12 @@ import { useNavigation } from '@react-navigation/native';
 
 import axios from 'axios';
 
-import FeatherIcon from 'react-native-vector-icons/Feather'
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
-
-import IPService from 'react-native-public-ip';
-
 import LupaColor from '../../../common/LupaColor'
 import { connect, useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
-import { Constants } from 'react-native-unimodules';
-import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import UpdateCard from '../../settings/modal/UpdateCard';
-import { getLupaStoreState } from '../../../../controller/redux/index';
-import { TextInputMask } from 'react-native-masked-text'
-import DateTimePicker from '@react-native-community/datetimepicker'
-import RBSheet from 'react-native-raw-bottom-sheet';
 
 import moment from 'moment'
 import { getLupaUserStructurePlaceholder } from '../../../../controller/firebase/collection_structures';
@@ -70,6 +59,7 @@ import FullScreenLoadingIndicator from '../../../common/FullScreenLoadingIndicat
 import { createStripeCustomerAccount, STRIPE_VERIFICATION_STATUS } from '../../../../modules/payments/stripe';
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import StripeVerificationStatusModal from '../../settings/modal/StripeVerificationStatusModal'
+import HomeGymModal from '../../modal/HomeGymModal';
 
 const SECTION_SEPARATOR = 15;
 const SUB_SECTION_SEPARATOR = 25;
@@ -81,6 +71,8 @@ const SettingsModal = () => {
         return state.Users.currUserData.user_uuid;
     });
     const navigation = useNavigation();
+
+    const [homeGymModalIsVisible, setHomeGymModalIsVisible] = useState(false);
 
     const [updatedUserData, setUpdatedUserData] = useState(getLupaUserStructurePlaceholder());
     const [loading, setIsLoading] = useState(false);
@@ -358,6 +350,10 @@ console.log(status)
         }
     }
 
+    handleChangeHomeGymOnPress = () => {
+        setHomeGymModalIsVisible(true);
+    }
+
     renderLupaTrainerOptions = () => {
         if (updatedUserData.isTrainer === true) {
             return (
@@ -367,6 +363,7 @@ console.log(status)
                             </Text>
 
                     <ListItem onPress={handleTrainerPayoutsOnPress} title="Trainer Payouts" titleStyle={styles.titleStyle} subtitle={renderVerificationStatusData()} subtitleStyle={[{ fontSize: 12 }, getTrainerPayoutsSubtitleStyle()]} bottomDivider />
+                    <ListItem onPress={handleChangeHomeGymOnPress} title="Change Home Gym" titleStyle={styles.titleStyle} subtitle='Change the location of your home gym.' subtitleStyle={[{ fontSize: 12 }, getTrainerPayoutsSubtitleStyle()]} bottomDivider />
                 </View>
             )
         }
@@ -416,7 +413,8 @@ console.log(status)
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_d6bd8c33999e4e5ba4191b65eaf89048.pdf')} title="Privacy Policy" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Terms and Conditions" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                     </View>
-
+                    
+                    <HomeGymModal isVisible={homeGymModalIsVisible} closeModal={() => setHomeGymModalIsVisible(false)} />
                     <UpdateCard isVisible={updateCardModalIsVisible} closeModal={() => setUpdateCardModalIsVisible(false)} />
                     <StripeVerificationStatusModal isVisible={registrationModalIsVisible} closeModal={() => setRegistrationModalVisible(false)} userData={updatedUserData} verificationStatus={verificationStatus} verificationErrors={verificationErrors} />
                 </ScrollView>

@@ -89,7 +89,7 @@ function BookingRequestModal({ isVisible, closeModal, trainer, preFilledStartTim
     const openDatePicker = () => bookingRef.current.open();
     const closeDatePicker = () => bookingRef.current.close();
     const [trainerNote, setTrainerNote] = useState(typeof(preFilledTrainerNote) == 'undefined' ? "" : preFilledTrainerNote)
-    const [sessionType, setSessionType] = useState(SESSION_TYPE.REMOTE)
+    const [sessionType, setSessionType] = useState(SESSION_TYPE.IN_PERSON)
 
     const [startTimeIsSet, setStartTimeIsSet] = useState(false);
     const [endTimeIsSet, setEndTimeIsSet] = useState(false);
@@ -99,7 +99,7 @@ function BookingRequestModal({ isVisible, closeModal, trainer, preFilledStartTim
 
     const [timeBlockDialogVisible, setTimeBlockDialogVisible] = useState(false);
 
-    const getSessionTypeSelectionButtonColor = (type) => {
+    const getRemoteSessionTypeSelectionButtonColor = (type) => {
       if (type == SESSION_TYPE.REMOTE) {
         return {
           backgroundColor: 'rgb(57, 95, 236)',
@@ -109,6 +109,20 @@ function BookingRequestModal({ isVisible, closeModal, trainer, preFilledStartTim
         return {
           color: 'rgb(57, 95, 236)',
           backgroundColor: 'white',
+        }
+      }
+    }
+
+    const getInPersonSessionTypeSelectionButtonColor = (type) => {
+      if (type == SESSION_TYPE.REMOTE) {
+        return {
+          color: 'rgb(57, 95, 236)',
+          backgroundColor: 'white',
+        }
+      } else {
+        return {
+          backgroundColor: 'rgb(57, 95, 236)',
+          color: 'white',
         }
       }
     }
@@ -448,10 +462,10 @@ console.log(updatedToken)
       const handleOnRequest = async () => {
         if (LUPA_STATE.Auth.isAuthenticated === true) {
         //need to save a card before you can book
-        if (LUPA_STATE.Users.currUserData.stripe_metadata.card_added_to_stripe === false) {
+       /* if (LUPA_STATE.Users.currUserData.stripe_metadata.card_added_to_stripe === false) {
           setShowCardNeededDialogVisible(true);
           return;
-        }
+        }*/
       }
 
         const bookingDetailsVerified = checkBookingDetails()
@@ -462,7 +476,7 @@ console.log(updatedToken)
       
 
         const requesterID = getCurrentUserUUID();
-        const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, requesterID, trainerNote, sessionType);
+        const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), '3kwSiuirFdTAg4463DCBrYfNFfR2', requesterID, trainerNote, sessionType);
         const booking_id = booking.uid;
 
         try {
@@ -474,8 +488,6 @@ console.log(updatedToken)
       
         closeModal()
         } catch(error) {
-          console.log('BAAAAABY')
-          console.log(error)
           LOG_ERROR('BookingRequestModal.js', 'Failed to creating booking.', error);
           //delete booking if it was created
           //check if booking was ever created?
@@ -623,12 +635,16 @@ console.log(updatedToken)
       }
     }
 
+    const handleOnPressSessionType = (type) => {
+      setSessionType(type)
+    }
+
 
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animationType="slide">
 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
               <Text style={{ alignSelf: 'center',fontSize: 20, paddingHorizontal: 20, paddingVertical: 15, fontFamily: 'Avenir-Heavy'}}>
-                You are about to request a session with Elijah Hampton.
+                You are about to request a session with {trainer.dispaly_name}.
               </Text>
               
               <TouchableWithoutFeedback onPress={openDatePicker}>
@@ -647,14 +663,14 @@ console.log(updatedToken)
 
   <ScrollView showsVerticalScrollIndicator={false}>
   <View>
-<Surface style={{borderRadius: 5,  marginVertical: 10, elevation: 0, padding: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
+<Surface style={{borderRadius: 5,  marginVertical: 10, elevation: 0, padding: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
   <Avatar.Image source={{ uri: trainer.photo_url }} size={40} />
   <View style={{paddingHorizontal: 20}}>
     <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy', color: '#23374d'}}>
-   Elijah Hampton
+      {trainer.display_name}
     </Text>
     <Text style={{fontSize: 15, fontFamily: 'Avenir-Heavy', color: '#23374d'}}>
-      National Association of Sports and Medicine
+      {trainer.certification}
     </Text>
   </View>
 </Surface>
@@ -708,7 +724,7 @@ style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
   <Text style={{fontFamily: 'Avenir-Medium'}}>
     Remote Session
   </Text>
-  <Button mode="outlined" color="#1089ff" style={[getSessionTypeSelectionButtonColor(sessionType), {borderColor: '#1089ff'}]}>
+  <Button onPress={() => handleOnPressSessionType(SESSION_TYPE.REMOTE)} mode="outlined" color={sessionType == SESSION_TYPE.REMOTE ? 'white' : '#1089ff'} style={[getRemoteSessionTypeSelectionButtonColor(sessionType), {borderColor: '#1089ff'}]}>
     Select
   </Button>
   </View>
@@ -742,7 +758,7 @@ style={{marginVertical: 20, marginHorizontal: 10, elevation: 3}}>
   <Text style={{fontFamily: 'Avenir-Medium'}}>
     In Person
   </Text>
-  <Button mode="outlined" color="#1089ff" style={[getSessionTypeSelectionButtonColor(sessionType), {borderColor: '#1089ff'}]}>
+  <Button onPress={() => handleOnPressSessionType(SESSION_TYPE.IN_PERSON)} mode="outlined" color={sessionType == SESSION_TYPE.IN_PERSON ? 'white' : '#1089ff'}style={[getInPersonSessionTypeSelectionButtonColor(sessionType), {borderColor: '#1089ff'}]}>
     Select
   </Button>
   </View>

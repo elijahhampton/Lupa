@@ -63,7 +63,7 @@ export class LupaHome extends Component {
 
   renderAppropriateSecondaryTab = () => {
     const updatedUserState = getLupaStoreState().Users.currUserData;
-    if (this.state.showTrainerContent === true) {
+    if (updatedUserState.isTrainer == true) {
       return (
         <Tab heading="My Programs" {...TAB_PROPS}>
           <MyPrograms />

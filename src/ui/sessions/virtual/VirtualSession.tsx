@@ -1,8 +1,26 @@
 import React, {Component} from 'react'
-import {Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, Dimensions} from 'react-native'
+import {
+    Platform, 
+    ScrollView, 
+    StyleSheet, 
+    Text, 
+    TouchableOpacity, 
+    View, 
+    SafeAreaView,
+    Image,
+    Dimensions, 
+    ActivityIndicator
+} from 'react-native'
+import { Constants } from 'react-native-unimodules'
 import RtcEngine, {RtcLocalView, RtcRemoteView, VideoRenderMode} from 'react-native-agora'
 import { connect } from 'react-redux'
-
+import axios from 'axios';
+import LupaController from '../../../controller/lupa/LupaController';
+import { getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
+import { LupaUserStructure } from '../../../controller/lupa/common/types';
+import FeatherIcon from 'react-native-vector-icons/Feather'
+import { Surface, Button, Caption } from 'react-native-paper';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 interface Props {
 }
 
@@ -18,6 +36,11 @@ interface State {
     channelName: string,
     joinSucceed: boolean,
     peerIds: number[],
+    uid: number,
+    tokenLoaded: boolean,
+    trainerData: LupaUserStructure,
+    requesterData: LupaUserStructure,
+    componentDidError: boolean,
 }
 
 const mapStateToProps = (state, props) => {
@@ -28,21 +51,80 @@ const mapStateToProps = (state, props) => {
 
 class VirtualSession extends Component<Props, State> {
     _engine?: RtcEngine
+    LUPA_CONTROLLER_INSTANCE?: LupaController
 
     constructor(props) {
         super(props)
         this.state = {
             appId: 'fd515bbb863a43fa8dd6e89f2b3bfaeb',
-            token: '006fd515bbb863a43fa8dd6e89f2b3bfaebIABv4jfbqzMtKzN2xSyTvvjrulZPDYIOaYiPOMNUKMZ5X7iT6u4AAAAAEABqf2Zw+8SoXwEAAQD6xKhf',
-            channelName: '', //Randomly generate number
+            token: null,
+            channelName: 'OOP', //Randomly generate number
             joinSucceed: false,
             peerIds: [],
+            uid: 0,
+            tokenLoaded: false,
+            trainerData: getLupaUserStructurePlaceholder(),
+            requesterData: getLupaUserStructurePlaceholder(),
+            componentDidError: false,
         }
+
+        this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     }
 
-    componentDidMount() {
-        this.generateChannelName();
-        this.init();
+    async componentDidMount() {
+        await this.generateUserData()
+        await this.generateUID();
+        await this.generateChannelName();
+        await this.generateToken();
+        await this.init();
+    }
+
+    generateUserData = async () => {
+        const bookingInfo = this.props.route.params.booking;
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingInfo.trainer_uuid).then(data => {
+            this.setState({ trainerData: data })
+        }).catch(error => {
+            this.setState({ componentDidError: true });
+        })
+
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingInfo.requester_uuid).then(data => {
+            this.setState({ requesterData: data })
+        }).catch(error => {
+            this.setState({ componentDidError: true })
+        })
+    }
+
+    generateUID = async () => {
+        const uuid = await Math.floor(Math.random() * Math.floor(20));
+        await this.setState({
+            uid: uuid
+        });
+    }
+
+    generateToken = async () => {
+        await axios({
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            url: "https://us-central1-lupa-cd0e3.cloudfunctions.net/generateAgoraTokenFromUUID",
+            data: JSON.stringify({
+                uid: this.state.uid,
+                channel_name: this.state.channelName,
+            })
+        }).then(response => {
+            console.log(response)
+            console.log(response.data);
+            this.setState({ 
+                token: response.data.token,
+                tokenLoaded: true 
+            })
+            console.log(response);
+        }).catch(err => {
+            console.log('AAAAAAA')
+            console.log(err)
+        })
     }
 
     /**
@@ -94,10 +176,19 @@ class VirtualSession extends Component<Props, State> {
         })
     }
 
-    generateChannelName = () => {
-        this.setState({
-            channelName: Math.random().toString()
-        })
+    generateChannelName = async () => {
+        const trainerUUID = this.state.trainerData.user_uuid;
+        const requesterUUID = this.state.requesterData.user_uuid;
+        
+        if (trainerUUID.toString().charAt(0) < requesterUUID.toString().charAt(0)) {
+            await this.setState({
+                channelName: trainerUUID.toString() + requesterUUID.toString()
+            })
+        } else {
+            await this.setState({
+                channelName: requesterUUID.toString() + trainerUUID.toString()
+            })
+        }
     }
 
     /**
@@ -106,7 +197,11 @@ class VirtualSession extends Component<Props, State> {
      */
     startCall = async () => {
         // Join Channel using null token and channel name
-        await this._engine?.joinChannel(this.state.token, this.state.channelName, null, 0)
+        await this._engine?.joinChannel(this.state.token, this.state.channelName, null, 0).then(() => {
+           
+        }).catch(error => {
+            console.log(error)
+        });
     }
 
     /**
@@ -118,39 +213,92 @@ class VirtualSession extends Component<Props, State> {
         this.setState({peerIds: [], joinSucceed: false})
     }
 
+    getDisplayImageURI = () => {
+        if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.trainerData.user_uuid) {
+            return this.state.requesterData.photo_url;
+        } else {
+            return this.state.trainerData.photo_url;
+        }
+    }
+
+    renderJoinSessionView = () => {
+        return (
+            <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(255, 255, 255)', justifyContent: 'space-between'}}>
+                <View style={{width: '100%', padding: 5, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
+                   <Text>
+                       
+                   </Text>
+                    <Text style={{alignSelf: 'center', fontWeight: '600', color: 'rgb(188, 188, 188)', fontSize: 15}}>
+                        Remote Session
+                    </Text>
+
+                    <Text>
+
+                    </Text>
+                </View>
+
+                <View style={{alignItems: 'center', borderWidth: 70, borderRadius: 110, width: 100, height: 110, alignSelf: 'center', borderColor: 'rgb(215, 238, 252)', justifyContent: 'center'}}>
+                    <Surface style={{elevation: 0, borderRadius: 110, width: 110, height: 110}}>
+                            <Image style={{borderRadius: 110, width: '100%', height: '100%'}} source={{ uri: this.getDisplayImageURI() }} />
+                    </Surface>
+                </View>
+
+
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                    <TouchableOpacity onPress={this.startCall}>
+                    <View style={{alignItems: 'center'}}>
+                    <Surface style={{elevation: 0, backgroundColor: 'rgb(32, 211, 104)', height: 70, width: 70, borderRadius: 70, alignItems: 'center', justifyContent: 'center'}}>
+                            <MaterialIcon name="local-phone" size={24} color="white" />
+                    </Surface>
+                    <Caption>
+                        Join Session
+                    </Caption>
+                    </View>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity onPress={this.endCall}>
+                    <View style={{alignItems: 'center'}}>
+                    <Surface style={{elevation: 0, backgroundColor: 'rgb(246, 61, 70)', height: 70, width: 70, borderRadius: 70, alignItems: 'center', justifyContent: 'center'}}>
+                            <MaterialIcon name="close" size={24} color="white" />
+                    </Surface>
+                    <Caption>
+                        Leave Session
+                    </Caption>
+                    </View>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+        )
+    }
+
+    renderComponentView = () => {
+        if (!this.state.joinSucceed) {
+            return this.renderJoinSessionView();
+        }
+
+        if (this.state.joinSucceed) {
+            return this._renderRemoteVideos()
+        }
+    }
+
     render() {
         return (
             <View style={styles.max}>
                 <View style={styles.max}>
-                    <View style={styles.buttonHolder}>
-                        <TouchableOpacity
-                            onPress={this.startCall}
-                            style={styles.button}>
-                            <Text style={styles.buttonText}> Start Call </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={this.endCall}
-                            style={styles.button}>
-                            <Text style={styles.buttonText}> End Call </Text>
-                        </TouchableOpacity>
+                    {
+                        this.state.tokenLoaded === true ?
+                        <View style={{flex: 1}}>
+                       {this.renderComponentView()}
                     </View>
-                    {this._renderVideos()}
+                    :
+                    <View style={{flex: 1}}>
+                        <ActivityIndicator animating={true} color="red" />
+                    </View>
+                    }
+                    
                 </View>
             </View>
         )
-    }
-
-    _renderVideos = () => {
-        const {joinSucceed} = this.state
-        return joinSucceed ? (
-            <View style={styles.fullView}>
-                <RtcLocalView.SurfaceView
-                    style={styles.max}
-                    channelId={this.state.channelName}
-                    renderMode={VideoRenderMode.Hidden}/>
-                {this._renderRemoteVideos()}
-            </View>
-        ) : null
     }
 
     generateRandomUID = () => {
@@ -158,23 +306,38 @@ class VirtualSession extends Component<Props, State> {
     }
 
     _renderRemoteVideos = () => {
-        const {peerIds} = this.state
+        const {peerIds} = this.state;
         return (
-            <ScrollView
-                style={styles.remoteContainer}
-                contentContainerStyle={{paddingHorizontal: 2.5}}
-                horizontal={true}>
-                {peerIds.map((value, index, array) => {
+            <View style={styles.remoteContainer}>
+                 <RtcLocalView.SurfaceView
+                    style={styles.max}
+                    channelId={this.state.channelName}
+                    renderMode={VideoRenderMode.Hidden}/>
+                {
+                peerIds.map((value, index, array) => {
                     return (
                         <RtcRemoteView.SurfaceView
                             style={styles.remote}
-                            uid={this.generateRandomUID()}
+                            uid={value}
                             channelId={this.state.channelName}
                             renderMode={VideoRenderMode.Hidden}
-                            zOrderMediaOverlay={true}/>
+                            zOrderMediaOverlay={false}/>
                     )
-                })}
-            </ScrollView>
+                })
+                }   
+                <View style={{width: Dimensions.get('window').width, backgroundColor: 'transparent', alignSelf: 'center', position: 'absolute', bottom: 0}}>
+                <TouchableOpacity  onPress={this.endCall}>
+                    <View style={{alignItems: 'center'}}>
+                    <Surface style={{elevation: 0, backgroundColor: 'rgb(246, 61, 70)', height: 70, width: 70, borderRadius: 70, alignItems: 'center', justifyContent: 'center'}}>
+                            <MaterialIcon name="close" size={24} color="white" />
+                    </Surface>
+                    <Caption>
+                        Leave Session
+                    </Caption>
+                    </View>
+                    </TouchableOpacity>
+                </View>
+            </View>
         )
     }
 }
@@ -206,15 +369,11 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height - 100,
     },
     remoteContainer: {
-        width: '100%',
-        height: 150,
-        position: 'absolute',
-        top: 5
+        flex: 1,
     },
     remote: {
-        width: 150,
-        height: 150,
-        marginHorizontal: 2.5
+        flex: 1,
+        backgroundColor: 'red',
     },
     noUserText: {
         paddingHorizontal: 10,
