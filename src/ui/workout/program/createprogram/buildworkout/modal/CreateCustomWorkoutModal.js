@@ -5,11 +5,12 @@ import {
     Text,
     StyleSheet,
     Modal,
-    SafeAreaView,
     Dimensions,
     TouchableOpacity,
-    Image
+    Image,
+    SafeAreaView,
 } from 'react-native';
+ 
 import { Video } from 'expo-av'
 import {
     TextInput as PaperInput, Divider, Surface, Caption, FAB, IconButton, Button, Appbar

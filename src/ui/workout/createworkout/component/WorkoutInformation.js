@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef, createRef } from 'react';
 
 import {
     View,
-    SafeAreaView,
     StyleSheet,
     Text,
+    SafeAreaView,
 } from 'react-native';
 import { Constants } from 'react-native-unimodules'
 import { Checkbox, Button, Caption, TextInput } from 'react-native-paper';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { useNavigation } from '@react-navigation/native';
-
+ 
 const daysOfTheWeek = [
     'Monday',
     'Tuesday',

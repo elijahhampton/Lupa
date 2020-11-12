@@ -8,6 +8,7 @@ import {
   ScrollView,
   Platform,
   Dimensions,
+  SafeAreaView,
   KeyboardAvoidingView,
   Alert
 } from 'react-native';
@@ -16,7 +17,7 @@ import {
   Button,
 } from 'react-native-paper';
 
-import SafeAreaView from 'react-native-safe-area-view';
+ 
 
 import {
   CheckBox,

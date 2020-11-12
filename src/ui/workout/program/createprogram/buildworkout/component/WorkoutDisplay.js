@@ -8,10 +8,10 @@ import {
     Dimensions,
     ScrollView,
     StyleSheet,
+    TextInput,
     SafeAreaView,
-    TextInput
 } from 'react-native'
-
+ 
 import {
     Surface,
     Caption,

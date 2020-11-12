@@ -7,11 +7,11 @@ import {
     SectionList,
     Dimensions,
     Image,
-    SafeAreaView,
     Modal,
+    SafeAreaView,
     ActivityIndicator,
 } from 'react-native';
-
+ 
 import {
     Icon 
 } from 'react-native-elements';

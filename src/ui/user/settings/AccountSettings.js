@@ -16,7 +16,7 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { useDispatch } from 'react-redux';
 import { UPDATE_CURRENT_USER_ACTION_PAYLOAD } from '../../../controller/redux/payload_utility';
 import LupaController from '../../../controller/lupa/LupaController';
-
+ 
 function AccountSettings({ navigation, route }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData

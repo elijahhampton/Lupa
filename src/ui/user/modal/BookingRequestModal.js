@@ -5,12 +5,14 @@ import {
     Text, 
     StyleSheet,
     Button as NativeButton,
-    SafeAreaView,
     Dimensions,
     Image,
+    SafeAreaView,
     Modal,
     TouchableWithoutFeedback,
 } from 'react-native';
+
+ 
 
 import {
     Appbar,

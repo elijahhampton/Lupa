@@ -3,10 +3,9 @@ import React, {useState} from 'react';
 import {
     View,
     Text,
-    StyleSheet,
-    SafeAreaView
+    StyleSheet,    SafeAreaView,
 } from 'react-native';
-
+ 
 import BasicInformation from './BasicInformation';
 import PickInterest from './PickInterest';
 import WelcomeContentDriver from '../WelcomeContentDriver'

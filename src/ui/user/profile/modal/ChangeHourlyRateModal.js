@@ -4,10 +4,10 @@ import {
     View,
     Text,
     StyleSheet,
-    Modal,
     SafeAreaView,
+    Modal,
 } from 'react-native';
-
+ 
 import {
     Appbar,
     Caption,

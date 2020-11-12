@@ -7,6 +7,7 @@ import {
     Text,
     Dimensions,
     TouchableWithoutFeedback,
+    SafeAreaView,
 } from 'react-native';
 
 import {
@@ -18,7 +19,6 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import {
     Appbar
 } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import LupaController from '../../../controller/lupa/LupaController'
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';

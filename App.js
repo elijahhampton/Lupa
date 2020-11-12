@@ -12,6 +12,8 @@ import Lupa from './src/Lupa';
 import SplashScreen from 'react-native-splash-screen'
 import { connect } from 'react-redux';
 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 import LupaController from './src/controller/lupa/LupaController';
 import LUPA_DB, { LUPA_AUTH, registerAppWithFCM, generateMessagingToken, UserAuthenticationHandler } from './src/controller/firebase/firebase';
 import { getLupaUserStructure, getLupaPackStructure } from './src/controller/firebase/collection_structures';
@@ -56,10 +58,13 @@ import VirtualSession from './src/ui/sessions/virtual/VirtualSession';
 
 const App = () => {
   return (
+
     <NavigationContainer>
       <StoreProvider store={LupaStore}>
         <PaperProvider>
+
           <AppNavigator />
+
         </PaperProvider>
       </StoreProvider>
     </NavigationContainer>

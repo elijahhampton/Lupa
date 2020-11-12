@@ -5,15 +5,15 @@ import {
     View,
     StyleSheet,
 Image,
-SafeAreaView,
     Modal,
+    SafeAreaView,
     Dimensions,
     ScrollView,
     Alert,
 } from 'react-native';
 
 import {request, PERMISSIONS, RESULTS, check, } from 'react-native-permissions';
-
+ 
 import {
     ActivityIndicator, Surface, Avatar, Chip, Button,
 } from 'react-native-paper';

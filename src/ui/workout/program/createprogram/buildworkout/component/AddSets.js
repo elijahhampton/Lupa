@@ -5,10 +5,10 @@ import {
     Text,
     Dimensions,
     StyleSheet,
-    SafeAreaView,
     ScrollView,
+    SafeAreaView,
 } from 'react-native';
-
+ 
 import {
     Appbar,
     Caption,

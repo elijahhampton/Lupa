@@ -2,7 +2,6 @@ import React, { useEffect, createRef, useState } from 'react'
 
 import {
     View,
-    SafeAreaView,
     Text,
     StyleSheet,
     Dimensions,

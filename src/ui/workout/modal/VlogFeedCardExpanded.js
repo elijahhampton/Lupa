@@ -6,8 +6,10 @@ import {
     Text,
     StyleSheet,
     Modal,
-    SafeAreaView, ScrollView, Dimensions
+    SafeAreaView,
+    ScrollView, Dimensions
 } from 'react-native';
+ 
 import { Video } from 'expo-av'
 import ThinFeatherIcon from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'

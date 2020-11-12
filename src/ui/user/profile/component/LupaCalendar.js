@@ -7,11 +7,11 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  SafeAreaView,
   Button as NativeButton,
   Modal,
-  SafeAreaView,
 } from 'react-native';
-
+ 
 import {
   Surface,
   IconButton,

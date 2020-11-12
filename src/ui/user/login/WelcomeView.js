@@ -10,11 +10,11 @@ import React from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   StyleSheet,
+  SafeAreaView,
   Image,
 } from "react-native";
-
+ 
 import {
   Button,
 } from 'react-native-paper';

@@ -6,10 +6,11 @@ import {
     Image,
     Text,
     Dimensions,
-    SafeAreaView,
     TouchableOpacity,
+    SafeAreaView,
     ScrollView,
 } from 'react-native';
+ 
 import { useSelector } from 'react-redux';
 import {
     Surface, Button, Divider

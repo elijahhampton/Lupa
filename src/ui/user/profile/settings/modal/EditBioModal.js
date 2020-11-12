@@ -8,6 +8,7 @@ import {
     View,
     StyleSheet,
     TouchableHighlight,
+    SafeAreaView,
     ScrollView,
     Dimensions
 } from 'react-native';
@@ -32,7 +33,7 @@ import {
     Appbar,
 } from 'react-native-paper';
 
-import SafeAreaView from 'react-native-safe-area-view';
+ 
 
 import { useDispatch, useSelector} from 'react-redux';
 

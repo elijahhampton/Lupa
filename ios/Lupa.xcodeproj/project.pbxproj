@@ -229,7 +229,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				2E11852915BD6DF7E5524464 /* [CP] Copy Pods Resources */,
 				27ADFDE0B490B0AE55F8237B /* [CP-User] [RNFB] Core Configuration */,
-				54F000BD9F3657D3F6806A26 /* [CP] Embed Pods Frameworks */,
+				F2C8EAB6874E9ED71836AF63 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -385,7 +385,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Lupa/Pods-Lupa-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		54F000BD9F3657D3F6806A26 /* [CP] Embed Pods Frameworks */ = {
+		F2C8EAB6874E9ED71836AF63 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -481,9 +481,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Lupa/lupa.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.0.7;
+				CURRENT_PROJECT_VERSION = 1.0.8;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				HEADER_SEARCH_PATHS = (
@@ -621,7 +621,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rheasilvia.Lupa;
 				PRODUCT_NAME = lupa;
-				PROVISIONING_PROFILE_SPECIFIER = LupaDistributionCert;
+				PROVISIONING_PROFILE_SPECIFIER = ElijahHDev;
 				SWIFT_OBJC_BRIDGING_HEADER = "Lupa-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -636,9 +636,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Lupa/lupa.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.0.7;
+				CURRENT_PROJECT_VERSION = 1.0.8;
 				DEVELOPMENT_TEAM = 4GJL3RKQ5P;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -775,7 +775,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rheasilvia.Lupa;
 				PRODUCT_NAME = lupa;
-				PROVISIONING_PROFILE_SPECIFIER = ElijahHDev;
+				PROVISIONING_PROFILE_SPECIFIER = LupaDistributionCert;
 				SWIFT_OBJC_BRIDGING_HEADER = "Lupa-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;

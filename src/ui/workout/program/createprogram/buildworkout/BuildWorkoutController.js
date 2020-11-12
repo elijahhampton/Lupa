@@ -6,12 +6,12 @@ import {
     Dimensions,
     Text,
     TouchableOpacity,
-    SafeAreaView,
     ScrollView,
     SectionList,
+    SafeAreaView,
     TouchableWithoutFeedback
 } from 'react-native';
-
+ 
 import {
     Surface,
     Caption,

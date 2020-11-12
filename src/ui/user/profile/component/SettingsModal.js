@@ -28,6 +28,7 @@ import {
     Divider,
     List,
     Snackbar,
+    SafeAreaView,
     Switch,
     Banner,
     Appbar,
@@ -38,7 +39,7 @@ import {
 
 import { ListItem, Input, CheckBox } from 'react-native-elements'
 
-import SafeAreaView from 'react-native-safe-area-view';
+ 
 
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';

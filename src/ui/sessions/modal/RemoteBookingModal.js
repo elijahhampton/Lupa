@@ -4,7 +4,7 @@ import {
     View,
     Text, 
     StyleSheet,
-    Button as NativeButton,
+    Button as NativeButton,  
     SafeAreaView,
     Dimensions,
     Image,

@@ -7,9 +7,9 @@ import {
     Modal,
     Image,
     Dimensions,
-    SafeAreaView, 
+    SafeAreaView,
 } from 'react-native';
-
+ 
 import {
     Surface,
     Button,

@@ -5,7 +5,6 @@ import {
     View,
     Text,
     Modal,
-    SafeAreaView,
     ImageBackground
 } from 'react-native'
 

@@ -13,7 +13,7 @@ import {
   Dimensions,
   ImageBackground,
 } from 'react-native';
-
+ 
 import {
     Surface,
     Modal,

@@ -31,7 +31,7 @@ const mapStateToProps = (state, action) => {
   }
 }
 
-export class LupaHome extends Component {
+export class   extends Component {
 
   constructor(props) {
     super(props);
@@ -84,20 +84,6 @@ export class LupaHome extends Component {
     const currTab = this.state.currTab;
     return (
         <View style={{flex: 1}}>
-          <Header style={{backgroundColor: COLOR}} noShadow={false} hasTabs>
-            <Left style={{flexDirection: 'row', alignItems: 'center'}}>
-              <MenuIcon onPress={() => this.props.navigation.openDrawer()}/>
-            </Left>
-
-            <Body>
-              <Image source={require('./icons/logo.jpg')} style={{marginTop: 5, width: 35, height: 35}} />
-            </Body>
-
-            <Right>
-            <Appbar.Action onPress={() => this.props.navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
-                <Appbar.Action onPress={() => this.props.navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
-            </Right>
-          </Header>
           <Tabs 
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
           style={{backgroundColor: '#FFFFFF'}}
@@ -120,4 +106,4 @@ export class LupaHome extends Component {
   }
 }
 
-export default connect(mapStateToProps)(LupaHome);
+export default connect(mapStateToProps)( );

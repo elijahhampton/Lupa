@@ -10,7 +10,7 @@ import {
     SafeAreaView,
     KeyboardAvoidingView,
 } from 'react-native';
-
+ 
 import {
     Headline,
     TextInput,

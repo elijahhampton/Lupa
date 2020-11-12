@@ -1,10 +1,10 @@
 import React from 'react'
 import { Appbar, Surface} from 'react-native-paper'
-import { SafeAreaView, Dimensions, StyleSheet, Text, ScrollView} from 'react-native'
+import { Dimensions, StyleSheet, Text, ScrollView, SafeAreaView} from 'react-native'
 import {LineChart} from 'react-native-chart-kit'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useNavigation } from '@react-navigation/native'
-
+ 
 function MyData(props) {
     const navigation = useNavigation()
 

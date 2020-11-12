@@ -11,14 +11,16 @@ import {
   View,
   Text,
   StyleSheet,
+  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   Dimensions,
   Keyboard,
-  SafeAreaView,
   Platform,
   KeyboardAvoidingView
 } from "react-native";
+
+ 
 
 import {
   Snackbar,

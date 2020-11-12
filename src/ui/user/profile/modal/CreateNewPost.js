@@ -7,7 +7,6 @@ import {
     StyleSheet,
     Modal,
     Image,
-    SafeAreaView,
     TextInput,
 } from 'react-native';
 

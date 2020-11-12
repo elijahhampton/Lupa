@@ -5,9 +5,9 @@ import {
     View,
     TextInput,
     Text,
-    SafeAreaView,
-    Button as NativeButton, Dimensions
+    Button as NativeButton, Dimensions,     SafeAreaView,
 } from 'react-native';
+ 
 import { Divider, Appbar, FAB, Caption, Menu, Provider, Button } from 'react-native-paper';
 import ThinFeatherIcon from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'

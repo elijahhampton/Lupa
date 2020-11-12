@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 
 import {
     Button as NativeButton, 
-    SafeAreaView, 
     View, 
     Text, 
     Modal, 
     Image, 
     StyleSheet,
+    SafeAreaView,
 } from 'react-native';
+
+ 
 
 import { 
 Divider

@@ -5,15 +5,15 @@ import {
     View,
     StyleSheet,
     Image,
-    Dimensions,
     SafeAreaView,
+    Dimensions,
     Modal,
     Alert,
     TouchableOpacity,
     StatusBar,
      KeyboardAvoidingView
 } from 'react-native';
-
+ 
 import {
     Surface,
     ActivityIndicator,

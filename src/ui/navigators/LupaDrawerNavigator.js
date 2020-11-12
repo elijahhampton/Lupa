@@ -19,7 +19,14 @@ const Drawer = createDrawerNavigator();
 
 function LupaDrawerNavigator() {
   return (
-          <Drawer.Navigator initialRouteName="Lupa" drawerPosition="left" drawerContent={(props) => <DrawerMenu {...props}  />}>
+          <Drawer.Navigator 
+          initialRouteName="Lupa" 
+          drawerPosition="left" 
+          drawerContent={(props) => <DrawerMenu {...props}  />}
+          screenOptions={{
+          headerShown: false
+          }}
+          >
       <Drawer.Screen name="Lupa" component={LupaBottomTabNavigator}/>
     </Drawer.Navigator>
   )
@@ -56,11 +63,9 @@ function LupaBottomTabNavigator() {
 
   return (
     <Tab.Navigator 
-    navig
     tabBarOptions={tabBarOptions}
       initialRouteName="Train"
       screenOptions={({ route, index }) => ({
-        
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -75,6 +80,7 @@ function LupaBottomTabNavigator() {
           }
 
         },
+        headerShown: false
       })} >
              
              <Tab.Screen name="Train" component={LupaHomeNavigator} />

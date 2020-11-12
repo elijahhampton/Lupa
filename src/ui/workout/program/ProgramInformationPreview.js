@@ -5,13 +5,13 @@ import {
     View,
     Text,
     Image,
-    SafeAreaView,
     Modal,
     TextInput,
     Dimensions,
+    SafeAreaView,
     StatusBar,
 } from 'react-native';
-
+ 
 import {
     Surface,
     Button,

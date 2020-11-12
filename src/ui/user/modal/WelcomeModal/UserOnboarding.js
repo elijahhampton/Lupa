@@ -4,9 +4,8 @@ import {
     View,
     Text,
     StyleSheet,
-    SafeAreaView
+    SafeAreaView,
 } from 'react-native';
-
 import {
     Button
 } from 'react-native-paper';

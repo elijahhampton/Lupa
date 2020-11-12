@@ -6,8 +6,8 @@ import {
     Text, 
     TouchableOpacity, 
     View, 
-    SafeAreaView,
     Image,
+    SafeAreaView,
     Dimensions, 
     ActivityIndicator
 } from 'react-native'

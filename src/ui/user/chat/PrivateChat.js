@@ -7,6 +7,8 @@ import {
     SafeAreaView,
 } from 'react-native';
 
+ 
+
 import { Input } from 'react-native-elements';
 
 import { GiftedChat } from 'react-native-gifted-chat';

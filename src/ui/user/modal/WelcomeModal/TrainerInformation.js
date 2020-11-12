@@ -5,11 +5,13 @@ import {
     StyleSheet,
     Text,
     Button as NativeButton,
+    SafeAreaView,
     Image,
     Modal,
-    SafeAreaView,
     KeyboardAvoidingView
 } from 'react-native';
+
+ 
 
 import {
     Button,

@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import {
     Text,
     View,
-    SafeAreaView,
     StyleSheet,
     ScrollView,
+    SafeAreaView,
 } from 'react-native';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 
@@ -14,7 +14,7 @@ import { Checkbox, Button } from 'react-native-paper';
 import { Constants } from 'react-native-unimodules';
 import { useSelector } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
-
+ 
 const SKILL_BASED_INTEREST = [
     'Agility',
     'Balance',

@@ -4,12 +4,12 @@ import {
     View,
     Text,
     StyleSheet,
-    SafeAreaView
+    SafeAreaView,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { LUPA_AUTH } from '../../../../controller/firebase/firebase';
 import { useSelector } from 'react-redux';
-
+ 
 function AccountSettings(props) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;

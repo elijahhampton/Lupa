@@ -6,15 +6,15 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  SafeAreaView,
   Image,
   Dimensions,
   Slider,
   TouchableHighlight,
   KeyboardAvoidingView,
-  SafeAreaView,
   Modal,
 } from 'react-native';
-
+ 
 import {
   Surface,
   Modal as PaperModal,

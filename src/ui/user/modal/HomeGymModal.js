@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { View, Modal, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Modal, StyleSheet,     SafeAreaView,} from 'react-native';
+ 
 
 import { Banner, ActivityIndicator} from 'react-native-paper';
 

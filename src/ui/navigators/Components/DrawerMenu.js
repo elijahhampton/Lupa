@@ -14,7 +14,6 @@ import {
     TouchableOpacity,
     SafeAreaView,
 } from 'react-native';
-
 import {
   Avatar,
   Caption,
@@ -165,7 +164,7 @@ function DrawerMenu(props) {
 
 
         <Caption style={{padding: 10}}>
-          Version 0.8 (3)
+          Version 0.9.0 (1.0.9)
         </Caption>
 
 

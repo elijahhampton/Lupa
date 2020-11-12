@@ -8,11 +8,11 @@
 import React, { useEffect } from "react";
 import {
   Text,
+  SafeAreaView,
   StyleSheet,
   AsyncStorage,
   Dimensions,
   Modal,
-  SafeAreaView,
   View,
   StatusBar,
 

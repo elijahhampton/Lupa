@@ -11,12 +11,13 @@ import React from 'react';
 import {
     View,
     StyleSheet,
-    SafeAreaView,
     Dimensions,
     ScrollView,
     Image,
+    SafeAreaView,
     Text,
 } from 'react-native';
+ 
 import {
     Header,
     Left,

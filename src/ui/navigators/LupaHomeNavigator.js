@@ -10,7 +10,14 @@ const Stack = createStackNavigator()
 
 function LupaHomeNavigator() {
   return (
-    <Stack.Navigator initialRouteName="LupaHome" headerMode='none' mode='modal'>
+    <Stack.Navigator 
+    initialRouteName="LupaHome" 
+    headerMode='none' 
+    mode='modal'
+    screenOptions={{
+      headerShown: false
+    }}
+    >
       <Stack.Screen name="LupaHome" component={LupaHome} />
       <Stack.Screen name="Profile" component={ProfileController} />
       <Stack.Screen name="MessagesView" component={MessagesView} />

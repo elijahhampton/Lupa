@@ -4,12 +4,12 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     StyleSheet,
-    SafeAreaView,
     Text,
     Dimensions,
     ScrollView,
+    SafeAreaView,
 } from 'react-native';
-
+ 
 import {
     Appbar,
     FAB,

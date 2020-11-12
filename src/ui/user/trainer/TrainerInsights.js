@@ -3,13 +3,13 @@ import React from 'react';
 import {
     Text,
     StyleSheet,
-    SafeAreaView,
     Modal,
     Dimensions,
     View,
+    SafeAreaView,
     ScrollView,
 } from 'react-native';
-
+ 
 import {
     Appbar,
     Surface,
