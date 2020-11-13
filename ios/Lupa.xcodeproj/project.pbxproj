@@ -224,7 +224,6 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				2E11852915BD6DF7E5524464 /* [CP] Copy Pods Resources */,
 				27ADFDE0B490B0AE55F8237B /* [CP-User] [RNFB] Core Configuration */,
-				8EB859F0A8E39F745B8B1B74 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -377,26 +376,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Lupa/Pods-Lupa-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8EB859F0A8E39F745B8B1B74 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Lupa/Pods-Lupa-frameworks.sh",
-				"${PODS_ROOT}/AgoraRtcEngine_iOS_Crypto/Agora_Native_SDK_for_iOS_FULL/libs/AgoraRtcKit.framework",
-				"${PODS_ROOT}/AgoraRtcEngine_iOS_Crypto/Agora_Native_SDK_for_iOS_FULL/libs/AgoraRtcCryptoLoader.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AgoraRtcKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AgoraRtcCryptoLoader.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Lupa/Pods-Lupa-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F8BC737F2AD7A05944D9E2A1 /* [CP] Check Pods Manifest.lock */ = {

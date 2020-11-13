@@ -1,1 +1,1 @@
-../../../../../node_modules/react-native-radial-gradient/ios/SRSRadialGradientLayer.h
+../../../../../node_modules/react-native-radial-gradient/ios/SRSRadialGradient/SRSRadialGradientLayer.h
