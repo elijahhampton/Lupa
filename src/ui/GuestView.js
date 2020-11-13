@@ -1156,7 +1156,6 @@ class GuestView extends React.Component {
             prefilledDate={this.state.futureBookingDisplayDate}
          /> 
           <AvailableTrainersModal isVisible={this.state.availableTrainersModalIsVisible} closeModal={() => this.setState({ availableTrainersModalIsVisible: false })} />
-          <PurchaseProgramWebView />
         </KeyboardAwareScrollView>
       </View>
     );
