@@ -7,11 +7,11 @@ import {
     Text,
     TouchableOpacity,
     ScrollView,
-    SectionList,
     SafeAreaView,
+    SectionList,
     TouchableWithoutFeedback
 } from 'react-native';
- 
+
 import {
     Surface,
     Caption,
@@ -82,19 +82,19 @@ class BuildWorkoutController extends React.Component {
                 },
                 {
                     title: "Flexibility",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.flexibility_workouts 
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.flexibility_workouts 
                 },
                 {
                     title: "Core",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.core_workouts
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.core_workouts
                 },
                 {
                     title: "Resistance",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.resistance_workouts
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.resistance_workouts
                 },
                 {
                     title: "Plyometric",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts._55.plyometric_workouts
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric_workouts
                 },
             ],
             currView: 0

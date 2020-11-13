@@ -477,6 +477,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             console.log('v')
             await fetchVlogs(userData.user_uuid);
 
+            if (currUserData.user_uuid == userData.user_uuid) {
+                setTrainerPrograms();
+            } else {
+                await fetchPrograms(userData.user_uuid);
+            }
+    
         } catch (error) {
             setReady(false)
             alert(error)
@@ -491,7 +497,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             try {
                 setProfileImage(userData.photo_url);
                 await fetchVlogs(userData.user_uuid);
-
+                await fetchPrograms(userData.user_uuid)
                 let total = userData.interest.length
 
                 if (userData.interest.length > 3) {
@@ -633,6 +639,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             </View>
 
                <Tabs tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF'>
+               <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs">
+                        <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                            {renderPrograms()}
+                        </ScrollView>
+            </Tab>
+                  
                    <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}

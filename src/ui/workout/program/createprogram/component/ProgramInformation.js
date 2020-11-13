@@ -4,9 +4,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import {
   View,
   Text,
+  SafeAreaView,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   Image,
   Dimensions,
   Slider,
@@ -14,7 +14,7 @@ import {
   KeyboardAvoidingView,
   Modal,
 } from 'react-native';
- 
+
 import {
   Surface,
   Modal as PaperModal,
@@ -331,7 +331,7 @@ function ProgramInformation(props) {
 
   const getNextView = () => {
     //check program values
-    let retVal = checkInputs();
+    let retVal = false //checkInputs();
     
     if (retVal) {
       return;
