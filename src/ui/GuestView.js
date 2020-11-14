@@ -1022,7 +1022,7 @@ class GuestView extends React.Component {
   render() {
    this.checkSearchBarState()
     return (
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
         <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: 'white' }}>
           <ScrollView
             refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
@@ -1157,7 +1157,7 @@ class GuestView extends React.Component {
          /> 
           <AvailableTrainersModal isVisible={this.state.availableTrainersModalIsVisible} closeModal={() => this.setState({ availableTrainersModalIsVisible: false })} />
         </KeyboardAwareScrollView>
-      </View>
+      </SafeAreaView>
     );
 }
 }
