@@ -164,7 +164,7 @@ function DrawerMenu(props) {
 
 
         <Caption style={{padding: 10}}>
-          Version 0.9.0 (1.1.0)
+          Version 0.9.0 (1.1.1)
         </Caption>
 
 
