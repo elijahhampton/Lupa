@@ -154,9 +154,10 @@ const daysOfTheWeek  = [
 
 function ProgramInformation(props) {
   return (
-    <SafeAreaView style={styles.root}>
-            <Surface style={{elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', marginBottom: 50, width: Dimensions.get('window').width - 20}}>
-              <View style={{ paddingHorizontal: 20}}>
+    <View style={styles.root}>
+      <SafeAreaView />
+            <Surface style={{flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20}}>
+              <View style={{ paddingHorizontal: 20, borderWidth: 1, borderRadius: 3, borderColor: '#E5E5E5', paddingVertical: 10, paddingBottom: 20}}>
               <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
                 Write a program name
               </Text>
@@ -166,9 +167,7 @@ function ProgramInformation(props) {
               <TextInput selectionColor="#23374d" placeholder="5 Week Starter Program" style={{borderColor: '#23374d', borderBottomWidth: 1.5, paddingVertical: 10}} />
               </View>
 
-              <Divider style={{width: Dimensions.get('window').width, alignSelf: 'center', marginVertical: 15, backgroundColor: '#EEEEEE', height: 5}} />
-
-              <View style={{ paddingHorizontal: 20}}>
+              <View style={{ paddingHorizontal: 20, borderWidth: 1, borderRadius: 3, borderColor: '#E5E5E5', paddingVertical: 10,}}>
               <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
                 Select the duration
               </Text>
@@ -178,12 +177,16 @@ function ProgramInformation(props) {
               </Caption>
                 </View>
 
-                <Divider style={{width: Dimensions.get('window').width, alignSelf: 'center', marginVertical: 15, backgroundColor: '#EEEEEE', height: 5}} />
-
-                <View style={{}}>
-              <Text style={{paddingHorizontal: 20, paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
-                Choose workout days
+                <View style={{borderWidth: 1, borderRadius: 3, borderColor: '#E5E5E5', paddingVertical: 10,}}>
+              <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
+                Choose workout days 
               </Text>
+              <Caption>
+                  (0) selected
+                </Caption>
+              </View>
+            
               <View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {
@@ -200,29 +203,24 @@ function ProgramInformation(props) {
                 </ScrollView>
               </View>
                 </View>
-
-              
-              
-
-            
-             
             </Surface>
 
-            <View style={{padding: 20, alignItems: 'flex-start'}}>
-              <Caption>
+            <View style={{flex: 3, padding: 20, backgroundColor: '#1089ff', alignItems: 'flex-start'}}>
+              <Caption style={{color: 'white'}}>
                   Create and sell fitness program directly through Lupa.  Add your own workouts, modify workout schemes, and make your program discoverable for sell.
               </Caption>
 
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{color: '#23374d', fontFamily: 'Avenir-Heavy', paddingVertical: 10}}>
+              <Text style={{color: 'white', fontFamily: 'Avenir-Heavy', paddingVertical: 10}}>
                 Add workouts to my program
               </Text>
-              <FeatherIcon name="arrow-right" size={15} />
+              <FeatherIcon name="arrow-right" size={15} color="#FFFFFF" />
               </View>
-            </View>
-
-            <FeatherIcon name="x" size={22} onPress={() => {}} style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, margin: 18}} />
-  </SafeAreaView>
+                </View>
+            
+            <FeatherIcon name="x" size={22} onPress={() => {}} style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, margin: 15}} />
+             
+  </View>
   )
 }
 
@@ -240,7 +238,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
