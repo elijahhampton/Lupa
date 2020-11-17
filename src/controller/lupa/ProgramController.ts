@@ -9,6 +9,7 @@ import { getLupaWorkoutInformationStructure } from '../../model/data_structures/
 import { getPurchaseMetaDataStructure } from '../../model/data_structures/programs/purchaseMetaData'
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import moment from 'moment';
+import { LupaProgramInformationStructure } from '../../model/data_structures/programs/common/types.js';
 
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
@@ -29,6 +30,63 @@ export default class ProgramController {
         }
 
         return ProgramController._instance;
+    }
+
+    createProgram = async (programStructure: LupaProgramInformationStructure) => {
+        return new Promise(async (resolve, reject) => {
+            let userProgramData = [];
+
+            const userDocumentRef = await USERS_COLLECTION.doc(programStructure.program_owner);
+            await userDocumentRef.get()
+            .then(documentSnapshot => {
+                userProgramData = documentSnapshot.data().program_data;
+            }).catch(error => {
+                reject();
+            })
+
+            userProgramData.push(programStructure);
+
+            await PROGRAM_COLLECTION.add(programStructure)
+            .then(docRef => {
+                resolve(docRef.id);
+            }).catch(error => {
+                reject();
+            });
+
+        
+        });
+    }
+
+    updateProgramWorkoutData = (programUUID, workoutData) => {
+        const programDocumentRef = PROGRAM_COLLECTION.doc(programUUID);
+        programDocumentRef.update({
+            program_workout_structure: workoutData
+        })
+    }
+
+    updateProgramMetadata = async (programUUID, title, description, tags, image, price) => {
+        const programDocumentRef = PROGRAM_COLLECTION.doc(programUUID);
+        
+        try {
+        await programDocumentRef.update({
+            program_name: title,
+            program_description: description,
+            program_tags: tags,
+            program_image: image,
+            program_price: price,
+        })
+
+        return Promise.resolve(true);
+    } catch(error) {
+        return Promise.resolve(false);
+    }
+    }
+
+    setProgramPublic = (programUUID, isPublic: Boolean) => {
+        const programDocumentRef = PROGRAM_COLLECTION.doc(programUUID);
+        programDocumentRef.update({
+            isPublic: isPublic
+        })
     }
 
     getAllUserPrograms = async (uuid) => {
@@ -363,12 +421,6 @@ export default class ProgramController {
         docRef.set(programData);
     }
 
-    updateProgramWorkoutData = (programUUID, workoutData) => {
-        const docRef = PROGRAM_COLLECTION.doc(programUUID);
-        docRef.update({
-            program_workout_structure: workoutData
-        })
-    }
 
     updateWorkoutInformation = (workoutUUID, workoutData) => {
         const docRef = WORKOUT_COLLECTION.doc(workoutUUID);

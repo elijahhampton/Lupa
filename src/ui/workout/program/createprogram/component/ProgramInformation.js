@@ -21,11 +21,13 @@ import {
   Modal as PaperModal,
   Caption,
   Button,
+  Appbar,
   IconButton,
   Chip,
   Snackbar,
   ProgressBar,
   Divider,
+  Title,
 } from 'react-native-paper';
 
 import { Constants } from 'react-native-unimodules';
@@ -106,7 +108,6 @@ function AddTagsModal(props) {
               value={inputValue}
               inputStyle={{ fontSize: 12, padding: 10, }}
               inputContainerStyle={{ backgroundColor: 'white', borderWidth: 1, borderBottomWidth: 1, borderColor: '#BBDEFB' }}
-             // onSubmitEditing={() => handleAddTags()}
               onBlur={handleAddTags}
               onChangeText={text => setInputValue(text)}
               keyboardAppearance="light"
@@ -152,47 +153,71 @@ const daysOfTheWeek  = [
   'Sunday'
 ]
 
-function ProgramInformation(props) {
+function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
+  const [programDuration, setProgramDuration] = useState(1);
+  const [programWorkoutDays, setProgramWorkoutDays] = useState([]);
+
+  const handleSaveProgramInformation = () => {
+    saveProgramInformation(programDuration, programWorkoutDays);
+  }
+
+  const handleOnPickDay = (day) => {
+    if (programWorkoutDays.includes(day)) {
+      setProgramWorkoutDays(days => [...days, day])
+    } else {
+      setProgramWorkoutDays(days => days.splice(days.indexOf(day), 1));
+    }
+  }
+
   return (
     <View style={styles.root}>
       <SafeAreaView />
-            <Surface style={{flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20}}>
-              <View style={{ paddingHorizontal: 20, borderWidth: 1, borderRadius: 3, borderColor: '#E5E5E5', paddingVertical: 10, paddingBottom: 20}}>
-              <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
-                Write a program name
-              </Text>
-              <Text style={{color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
-                You will have a chance to change this later.
-              </Text>
-              <TextInput selectionColor="#23374d" placeholder="5 Week Starter Program" style={{borderColor: '#23374d', borderBottomWidth: 1.5, paddingVertical: 10}} />
-              </View>
+      <FeatherIcon name="x" size={22} onPress={() => {}} style={{alignSelf: 'flex-start', margin: 15}} />
 
-              <View style={{ paddingHorizontal: 20, borderWidth: 1, borderRadius: 3, borderColor: '#E5E5E5', paddingVertical: 10,}}>
+            <Surface style={{flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20}}>
+
+              <View style={{ paddingHorizontal: 20, paddingVertical: 10,}}>
               <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
                 Select the duration
               </Text>
-              <Slider  />
+              <Text style={{color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
+                How long will this program last?
+              </Text>
+              <Slider 
+                minimumValue={1} 
+                maximumValue={15} 
+                step={1} 
+                value={programDuration} 
+                onValueChange={value => setProgramDuration(value)} 
+                />
               <Caption>
-                3 Weeks
+                {programDuration} Weeks
               </Caption>
                 </View>
 
-                <View style={{borderWidth: 1, borderRadius: 3, borderColor: '#E5E5E5', paddingVertical: 10,}}>
-              <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-              <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
-                Choose workout days 
+                <View style={{paddingVertical: 10,}}>
+                  <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
+
+              <View style={{ flexDirection: 'row', paddingVertical: 5, alignItems: 'center', justifyContent: 'space-between'}}>
+              <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
+                Add workout days 
               </Text>
               <Caption>
-                  (0) selected
+                  ({programWorkoutDays.length}) selected
                 </Caption>
               </View>
+              <Text style={{ color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
+                Which days will exercise be required?
+              </Text>
+              </View>
+            
             
               <View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {
                     daysOfTheWeek.map(day => {
                       return (
-                        <Chip style={{ marginHorizontal: 10, backgroundColor: '#EEEEEE', width: 100, alignItems: 'center', justifyContent: 'center'}}>
+                        <Chip onPress={() => handleOnPickDay(day)} key={day} style={{ marginHorizontal: 10, backgroundColor: '#EEEEEE', width: 100, alignItems: 'center', justifyContent: 'center'}}>
                         {day}
                       </Chip>
                       )
@@ -205,32 +230,21 @@ function ProgramInformation(props) {
                 </View>
             </Surface>
 
-            <View style={{flex: 3, padding: 20, backgroundColor: '#1089ff', alignItems: 'flex-start'}}>
-              <Caption style={{color: 'white'}}>
-                  Create and sell fitness program directly through Lupa.  Add your own workouts, modify workout schemes, and make your program discoverable for sell.
-              </Caption>
-
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{color: 'white', fontFamily: 'Avenir-Heavy', paddingVertical: 10}}>
-                Add workouts to my program
-              </Text>
-              <FeatherIcon name="arrow-right" size={15} color="#FFFFFF" />
-              </View>
+            <View style={{flex: 2, padding: 20, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center'}}>
+              <Button
+  
+              color="#1089ff"
+              uppercase={false}
+              mode="contained"
+              theme={{roundness: 12}}
+              style={{elevation: 8}}
+              contentStyle={{height: 45, width: Dimensions.get('window').width - 50}}>
+                Add Workouts to Plan
+              </Button>
                 </View>
-            
-            <FeatherIcon name="x" size={22} onPress={() => {}} style={{position: 'absolute', top: Constants.statusBarHeight, left: 0, margin: 15}} />
+          
              
-  </View>
-  )
-}
-
-function PublishProgram(props) {
-  return (
-    <SafeAreaView style={{flex: 1}}>
-        <View style={{flexDirection: 'rw'}}>
-        <FeatherIcon name="arrow-left" size={22} onPress={() => {}} style={{margin: 18}} />
-        </View>
-    </SafeAreaView>
+                </View>
   )
 }
 
