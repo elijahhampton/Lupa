@@ -39,7 +39,7 @@ const RestTimer = ({isVisible, closeModal, timerHasStarted, restTime}) => {
     ]}
   >
     {({ remainingTime, animatedColor }) => (
-      <Animated.Text style={{ color: animatedColor, fontSize: 20, fontFamily: 'Avenir' }}>
+      <Animated.Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'Avenir' }}>
         {remainingTime}
       </Animated.Text>
     )}
