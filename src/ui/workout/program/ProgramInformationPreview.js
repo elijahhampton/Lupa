@@ -81,13 +81,8 @@ function ProgramInformationPreview(props) {
     })
 
     const getProgramProps = () => {
-        const programProps = {
-            program_name: programData.program_name,
-            program_price: programData.program_price,
-            program_image: programData.program_image,
-            program_owner_display_name: programOwnerData.display_name,
-        }
-
+        let programProps = programData;
+        programProps.program_owner_display_name = programOwnerData.display_name;
         return programProps;
     }
 
