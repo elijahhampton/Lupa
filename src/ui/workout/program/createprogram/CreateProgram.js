@@ -21,7 +21,7 @@ import LupaController from '../../../../controller/lupa/LupaController';
 
 import ProgramInformation from './component/ProgramInformation'
 import PublishProgram from './component/PublishProgram';
-import { getLupaProgramInformationStructure, initializeNewProgram } from '../../../../model/data_structures/programs/program_structures';
+import initializeNewProgram, { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import { useNavigation } from '@react-navigation/native';
@@ -65,13 +65,16 @@ class CreateProgram extends React.Component {
             currIndex: 0,
             programData: getLupaProgramInformationStructure(),
             componentDidErr: false,
+            program_workout_days: []
         }
     }
 
     initializeProgram = async (programDuration, programDays) => {
-        const newProgramData = initializeNewProgram(0, this.props.lupa_data.Users.currUserData.user_uuid, [this.props.lupa_data.Users.currUserData.user_uuid], programDuration, programDays);
-        await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(programData).then(programUUID => {
+        const { user_uuid } = this.props.lupa_data.Users.currUserData
+       const newProgramData = initializeNewProgram(0, user_uuid, [user_uuid], programDuration, programDays);
+       await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(newProgramData).then(programUUID => {
             this.setState({
+                program_workout_days: newProgramData.program_workout_days,
                 programData: {
                     program_structure_uuid: programUUID,
                     ...newProgramData
@@ -82,11 +85,13 @@ class CreateProgram extends React.Component {
             this.setState({
                 componentDidErr: false
             })
-        })
+        });
     }
 
     saveProgramInformation = async (programDuration, programDays) => {
-        await initializeNewProgram(programDuration, programDays);
+        console.log('c')
+        await this.initializeProgram(programDuration, programDays);
+        console.log('d')
         this.goToIndex(1)
     }
 
@@ -99,8 +104,8 @@ class CreateProgram extends React.Component {
         await this.LUPA_CONTROLLER_INSTANCE.updateProgramMetadata(this.state.programData.program_structure_uuid, title, description, tags, image, price).then(async result => {
             if (result) {
                 const programUUID = this.state.programData.program_structure_uuid;
-                await LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', programUUID, 'add');
-                await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(programUUID).then(data => {
+                await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', programUUID, 'add');
+                await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(programUUID).then(data => {
                 this.props.addProgramdispatch(data);
                 })
                 handleExitCreateProgram();
@@ -138,7 +143,7 @@ class CreateProgram extends React.Component {
     }
 
     renderAppropriateDisplay = () => {
-        switch (2) {
+        switch (this.state.currIndex) {
             case 0:
                 return (
                     <ProgramInformation 
@@ -150,6 +155,7 @@ class CreateProgram extends React.Component {
                 return <BuildWorkoutController 
                         navigation={this.props.navigation} 
                         programData={this.state.programData} 
+                        program_workout_days={this.state.program_workout_days}
                         goToIndex={this.goToIndex} 
                         saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} 
                         /> 

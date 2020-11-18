@@ -53,12 +53,14 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     isPublic: false,
 }
 
-export const initializeNewProgram = (uuid: String | Number, programOwner: String, programParticipants: Array<String>, duration: Number, workoutDays: Array<String>) => {
+const initializeNewProgram = (uuid: String | Number, programOwner: String, programParticipants: Array<String>, duration: Number, workoutDays: Array<String>) : LupaProgramInformationStructure => {
     lupa_program_information_structure.program_structure_uuid = uuid;
     lupa_program_information_structure.program_duration = duration;
     lupa_program_information_structure.program_workout_days = workoutDays;
     lupa_program_information_structure.program_participants = programParticipants;
     lupa_program_information_structure.program_owner = programOwner;
+
+    return lupa_program_information_structure;
 }
 
 export const getLupaProgramInformationStructure = (
@@ -146,3 +148,5 @@ var lupa_program_workout_structure_entry : ProgramWorkoutStructureEntry = {
 export const getProgramWorkoutStructureEntry = () => {
     return lupa_program_workout_structure_entry;
 }
+
+export default initializeNewProgram;

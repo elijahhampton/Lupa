@@ -390,8 +390,13 @@ export default class LupaController {
       return Promise.resolve(retVal);
     }
 
-    createNewProgram = async (uuid) => {
-     USER_CONTROLLER_INSTANCE.createProgram(uuid)
+    createNewProgram = async (programData) => {
+      let retVal = getLupaProgramInformationStructure();
+     await PROGRAMS_CONTROLLER_INSTANCE.createProgram(programData).then(result => {
+       retVal = result;
+     });
+
+     return Promise.resolve(retVal);
     }
 
     createNewWorkout = async (uuid) => {

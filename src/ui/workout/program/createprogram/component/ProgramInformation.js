@@ -42,7 +42,7 @@ import SelectProgramImage from './SelectProgramImage'
 import { Input} from 'react-native-elements';
 import LupaMapView from '../../../../user/modal/LupaMapView'
 import { copyFileAssets } from 'react-native-fs';
-import { getLupaProgramInformationStructure } from '../../../../../model/data_structures/programs/program_structures';
+import { getLupaProgramInformationStructure, } from '../../../../../model/data_structures/programs/program_structures';
 import NumberFormat from 'react-number-format';
 
 const months = ["January", "February", "March", "April",
@@ -162,7 +162,7 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
   }
 
   const handleOnPickDay = (day) => {
-    if (programWorkoutDays.includes(day)) {
+    if (!programWorkoutDays.includes(day)) {
       setProgramWorkoutDays(days => [...days, day])
     } else {
       setProgramWorkoutDays(days => days.splice(days.indexOf(day), 1));
@@ -232,7 +232,7 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
 
             <View style={{flex: 2, padding: 20, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center'}}>
               <Button
-  
+              onPress={handleSaveProgramInformation}
               color="#1089ff"
               uppercase={false}
               mode="contained"
@@ -241,7 +241,7 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
               contentStyle={{height: 45, width: Dimensions.get('window').width - 50}}>
                 Add Workouts to Plan
               </Button>
-                </View>
+               </View>
           
              
                 </View>

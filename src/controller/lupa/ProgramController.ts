@@ -41,6 +41,7 @@ export default class ProgramController {
             .then(documentSnapshot => {
                 userProgramData = documentSnapshot.data().program_data;
             }).catch(error => {
+                console.log(error)
                 reject();
             })
 
@@ -50,10 +51,9 @@ export default class ProgramController {
             .then(docRef => {
                 resolve(docRef.id);
             }).catch(error => {
+                console.log(error);
                 reject();
-            });
-
-        
+            })
         });
     }
 

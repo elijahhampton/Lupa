@@ -37,7 +37,6 @@ import { Constants } from 'react-native-unimodules';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import Icon from "react-native-feather1s";
-import TextInputMask from 'react-native-text-input-mask';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import SelectProgramImage from './SelectProgramImage'
@@ -284,7 +283,9 @@ function PublishProgram({ saveProgramMetadata, goBack}) {
               <View style={{width: 50, backgroundColor: '#1089ff', alignItems: 'center', justifyContent: 'center'}}>
                 <FeatherIcon name="dollar-sign" size={20} color="white" />
               </View>
-              <TextInputMask mask={"$[999].[99]"}
+              <TextInput
+              value={programPrice}
+              onChangeText={text => setProgramPrice(text)}
               placeholder="$59.99" 
               style={{paddingHorizontal: 10}}
               returnKeyType="done"
