@@ -222,7 +222,7 @@ function TrainerBackgroundVerification(props) {
     const hideVerificationModal = () => setVerificationModalVisible(false);
 
     useEffect(() => {
-        showVerificationModal();
+      //  showVerificationModal();
 
     }, [])
 
@@ -419,95 +419,10 @@ function TrainerBackgroundVerification(props) {
 
                 <Divider style={{height: 2}} />
 
-                <Surface style={[styles.surface, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}]}>
-                    <Text style={styles.surfaceTitle}>
-                        I have experience in small group settings.
-                        </Text>
-                    <RadioButton.Android 
-                    color="#1089ff" 
-                    onPress={userHasExperienceInSmallGroupSettings === 
-                        'checked' ? 
-                        () => {
-                            setUserHasExperienceInSmallGroupSettings('unchecked') 
-                            LUPA_CONTROLLER_INSTANCE.setTrainerHasExperienceInSmallGroup()
-                        }
-                        : 
-                        () => {
-                            setUserHasExperienceInSmallGroupSettings('checked')
-                            LUPA_CONTROLLER_INSTANCE.setTrainerHasExperienceInSmallGroup()
-                        }} 
-                    status={userHasExperienceInSmallGroupSettings} />
-                </Surface>
-
-                <Divider style={{height: 2}} />
-
-                {
-                    userHasExperienceInSmallGroupSettings === 'checked' ?
-                    <>
-                    <Surface style={styles.surface}>
-                          <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12, color: '#23374d'}}>
-                            Enter your years of experience
-                            </Text>
-                            <TextInput value={smallGroupExperience} onChangeText={(text) => setSmallGroupExperience(text)} onEndEditing={() => LUPA_CONTROLLER_INSTANCE.setTrainerSmallGroupExperience(smallGroupExperience)} color="#1089ff" style={{marginVertical: 10}} />
-                    </Surface>
-                    <Divider style={{height: 2}} />
-                    </>
-                    :
-                    null
-                }
-
-                    
-               {/* <Surface style={[styles.surface]}>
-                    <Text style={styles.surfaceTitle}>
-                        Have you professionally played or coached for any specific sports?
-                        </Text>
-                        <SearchBar platform="ios" placeholder="Find more options" containerStyle={{backgroundColor: 'transparent'}} inputStyle={{fontSize: 12}} searchIcon={() => <Feather1s size={15} name="search" color="#1089ff" />} />
-
-                    {
-                        SPORTS_GENRE.map((genre, index, arr) => {
-                            if (index  >= 5) {
-                                return;
-                            }
-
-                            if (index === 0) {
-                                return (
-                                    <View key={index} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <Text>
-                                            {genre}
-                                        </Text>
-
-                                        <Checkbox.Android color="#1089ff" key={index} status={interestList.includes(genre) ?  'checked' : 'unchecked'} onPress={() => handleInterestOnPress(genre)} />
-                                    </View>
-
-                                )
-                            }
-
-                            return (
-                                <>
-                                    <Divider style={{ marginVertical: 5 }} />
-
-                                    <View key={index} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <Text>
-                                            {genre}
-                                        </Text>
-
-                                        <Checkbox.Android color="#1089ff" key={index} status={interestList.includes(genre) ?  'checked' : 'unchecked'} onPress={() => handleInterestOnPress(genre)} />
-                                    </View>
-
-                                </>
-                            )
-                        })
-                    }
-                </Surface>*/}
-
-                <Divider style={{height: 2}} />
-
                 <Surface style={styles.surface}>
                     <Text style={styles.surfaceTitle}>
                         Do you have any specific coaching styles?
                         </Text>
-
-                      {/* <SearchBar platform="ios" placeholder="Find more options" containerStyle={{backgroundColor: 'transparent'}} inputStyle={{fontSize: 12}} searchIcon={() => <Feather1s size={15} name="search" color="#1089ff" />} /> */}
 
                     {
                         COACHING_INTEREST.map((interest, index, arr) => {
@@ -626,7 +541,7 @@ const styles = StyleSheet.create({
         elevation: 1
     },
     surfaceTitle: {
-        fontSize: 13,
+        fontSize: 15,
         fontFamily: 'Avenir-Heavy'
     },
 })
