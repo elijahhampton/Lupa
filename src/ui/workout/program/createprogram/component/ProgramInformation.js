@@ -177,9 +177,14 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
             <Surface style={{flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20}}>
 
               <View style={{ paddingHorizontal: 20, paddingVertical: 10,}}>
-              <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <FeatherIcon name="clock" size={15} style={{marginRight: 5}} />
+                <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
                 Select the duration
               </Text>
+             
+                </View>
+             
               <Text style={{color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
                 How long will this program last?
               </Text>
@@ -199,9 +204,13 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                   <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
 
               <View style={{ flexDirection: 'row', paddingVertical: 5, alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <FeatherIcon name="calendar" size={18} style={{marginRight: 5}} />
               <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
                 Add workout days 
               </Text>
+              </View>
+              
               <Caption>
                   ({programWorkoutDays.length}) selected
                 </Caption>

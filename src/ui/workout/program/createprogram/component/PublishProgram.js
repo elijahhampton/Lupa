@@ -279,7 +279,11 @@ function PublishProgram({ saveProgramMetadata, goBack}) {
 
           <Divider />
 
-          <View style={{flexDirection: 'row', aligItems: 'center', marginVertical: 10, height: 45, alignSelf: 'center', width: Dimensions.get('window').width - 20, borderWidth: 0.8, borderColor: '#E5E5E5'}}>
+          <View>
+          <Text style={{padding: 10, fontFamily: 'Avenir-Heavy', fontSize: 16}}>
+                 Program Price
+               </Text>
+               <View style={{flexDirection: 'row', aligItems: 'center', marginVertical: 10, height: 45, alignSelf: 'center', width: Dimensions.get('window').width - 20, borderWidth: 0.8, borderColor: '#E5E5E5'}}>
               <View style={{width: 50, backgroundColor: '#1089ff', alignItems: 'center', justifyContent: 'center'}}>
                 <FeatherIcon name="dollar-sign" size={20} color="white" />
               </View>
@@ -294,6 +298,8 @@ function PublishProgram({ saveProgramMetadata, goBack}) {
               keyboardAppearance="light"
               />
           </View>
+          </View>
+
 
           <Divider />
 

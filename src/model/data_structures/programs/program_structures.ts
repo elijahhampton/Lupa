@@ -53,7 +53,7 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     isPublic: false,
 }
 
-const initializeNewProgram = (uuid: String | Number, programOwner: String, programParticipants: Array<String>, duration: Number, workoutDays: Array<String>) : LupaProgramInformationStructure => {
+function initializeNewProgram(uuid: String | Number, programOwner: String, programParticipants: Array<String>, duration: Number, workoutDays: Array<String>) : LupaProgramInformationStructure {
     lupa_program_information_structure.program_structure_uuid = uuid;
     lupa_program_information_structure.program_duration = duration;
     lupa_program_information_structure.program_workout_days = workoutDays;

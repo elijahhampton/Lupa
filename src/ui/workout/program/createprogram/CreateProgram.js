@@ -143,12 +143,12 @@ class CreateProgram extends React.Component {
     }
 
     renderAppropriateDisplay = () => {
-        switch (this.state.currIndex) {
+        switch (2) {
             case 0:
                 return (
                     <ProgramInformation 
                     handleCancelOnPress={this.exit}
-                    saveProgramInformation={(this.saveProgramInformation)}
+                    saveProgramInformation={this.saveProgramInformation}
                      />
                 )
             case 1:
