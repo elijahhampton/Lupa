@@ -10,7 +10,8 @@ import {
 import {
     Surface,
     Button,
-    Caption
+    Caption,
+    Dialog
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
@@ -93,7 +94,7 @@ function SessionDashboardComponent({ booking }) {
         }
     }
     return (
-        <Surface key={booking.uid} style={{elevation: 3, alignSelf: 'center', width: '98%', borderRadius: 8, marginVertical: 10, padding: 10}}>
+        <Surface key={booking.uid} style={{elevation: 0, alignSelf: 'center', width: Dimensions.get('window').width - 10, borderRadius: 8, borderWidth: 0.5, borderColor: '#E5E5E5', marginVertical: 10, padding: 10}}>
              <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
                         {moment(booking.date).format('LL').toString()}
                     </Text>
@@ -128,7 +129,7 @@ function SessionDashboardComponent({ booking }) {
 
             <Button 
                 onPress={() => setBookingInformationModalVisible(true)} 
-                color="#23374d" 
+                color="rgb(35, 73, 115)" 
                 uppercase={false} 
                 mode="contained" 
                 contentStyle={{height: 40, width: '100%'}} 

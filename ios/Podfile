@@ -70,11 +70,8 @@ target 'Lupa' do
   pod 'tipsi-stripe', :path => '../node_modules/tipsi-stripe'
 
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-<<<<<<< HEAD
-=======
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
->>>>>>> 7e98044442ad7708570d8bc4092e406c2dc8d9a0
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 

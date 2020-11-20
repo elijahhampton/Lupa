@@ -1096,7 +1096,16 @@ class GuestView extends React.Component {
 
 
 
-              <Button onPress={this.handleOnRequestFutureBooking} style={{ marginVertical: 15 }} disabled={false} color="#23374d" uppercase={true} icon={() => <FeatherIcon name='calendar' color="white" />} mode="contained" contentStyle={{ height: 45 }}>
+              <Button 
+                onPress={this.handleOnRequestFutureBooking} 
+                style={{ marginVertical: 15, elevation: 0 }} 
+                theme={{roundness: 12}}
+                disabled={false} 
+                color="#23374d" 
+                uppercase={true} 
+                icon={() => <FeatherIcon name='calendar' color="white" />} 
+                mode="contained" 
+                contentStyle={{ height: 45 }}>
                 Find Trainer
                 </Button>
             </View>

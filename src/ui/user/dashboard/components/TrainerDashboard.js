@@ -12,11 +12,12 @@ import {
 
 import {
     Button,
+    Chip,
     Divider,
     Appbar,
     Surface,
     DataTable,
-    Caption, 
+    Caption,
 } from 'react-native-paper';
 
 import { Avatar } from 'react-native-elements';
@@ -56,19 +57,19 @@ function TrainerDashboard(props) {
             let bookingData = []
             let booking = {}
             documentSnapshot.forEach(doc => {
-            booking = doc.data();
-            if (typeof(booking.uid) == 'undefined' 
-            || booking.uid === 0 
-            || booking.status == BOOKING_STATUS.BOOKING_COMPLETED) {
-                
-            } else {
-                if (moment(booking.date).isAfter(moment(new Date())) && moment(new Date().getTime()).isAfter(moment(booking.end_time))) {
-                    LUPA_CONTROLLER_INSTANCE.markBookingSessionCompleted(booking);
+                booking = doc.data();
+                if (typeof (booking.uid) == 'undefined'
+                    || booking.uid === 0
+                    || booking.status == BOOKING_STATUS.BOOKING_COMPLETED) {
+
                 } else {
-                    bookingData.push(doc.data());
+                    if (moment(booking.date).isAfter(moment(new Date())) && moment(new Date().getTime()).isAfter(moment(booking.end_time))) {
+                        LUPA_CONTROLLER_INSTANCE.markBookingSessionCompleted(booking);
+                    } else {
+                        bookingData.push(doc.data());
+                    }
                 }
-            }
-           });
+            });
 
             setUserBookings(bookingData);
         });
@@ -82,20 +83,16 @@ function TrainerDashboard(props) {
     }
 
 
-    const renderBookings = () => {
+    const renderUpcomingBooking = () => {
         if (userBookings.length === 0) {
             return (
                 <Caption>
-                You don't have any scheduled bookings.
-            </Caption>
+                    You don't have any scheduled bookings.
+                </Caption>
             )
         }
 
-        return userBookings.map((booking, index, arr) => {
-            return (
-              <SessionDashboardComponent key={index} booking={booking} />
-            )
-        });
+        return <SessionDashboardComponent booking={userBookings[0]} />
     }
 
     return (
@@ -103,12 +100,84 @@ function TrainerDashboard(props) {
             flex: 1,
             backgroundColor: '#FFFFFF'
         }}>
-             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)'}}>
+            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
-                <Appbar.Content title="Dashboard"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
-                <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
-              <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
-</Appbar.Header> 
+                <Appbar.Content title='Dashboard' titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />} />
+                <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />} />
+            </Appbar.Header>
+            <View style={{ flex: 1, }}>
+                <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
+                    <View style={{ margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
+                        <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
+                            Total Sessions Completed
+                        </Text>
+
+                        <View>
+                            <Text style={{ alignSelf: 'flex-start', padding: 5, fontSize: 30, color: 'white' }}>
+                                0
+                        </Text>
+                            <Chip textStyle={{ fontSize: 12 }} style={{ height: 20, alignItems: 'center', width: '85%', justifyContent: 'flex-start' }}>
+                                ~ Since yesterday
+                        </Chip>
+                        </View>
+
+                    </View>
+
+                    <View style={{ margin: 10, flex: 1, height: '90%', paddingVertical: 20, justifyContent: 'space-between' }}>
+                        <View style={{backgroundColor: 'rgb(240, 243, 252)', borderRadius: 8, justifyContent: 'space-evenly', padding: 10, alignItems: 'flex-start'}}>
+                            <View style={{backgroundColor: 'rgb(35, 73, 115)', padding: 10, paddingVertical: 10, borderRadius: 5}}>
+                                <Text style={{fontSize: 12, color: 'white'}}>
+                                    0
+                                </Text>
+                            </View>
+
+                            <View style={{paddingTop: 8}}>
+                                <Text style={{fontSize: 12}}>
+                                    Program Views
+                                </Text>
+                                <Text style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+                                    Recently updated
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={{backgroundColor: 'rgb(240, 243, 252)', borderRadius: 8, marginVertical: 10, padding: 10, alignItems: 'flex-start'}}>
+                            <View style={{ backgroundColor: 'rgb(35, 73, 115)',  padding: 10, borderRadius: 5}}>
+                                <Text style={{fontSize: 12, color: 'white'}}>
+                                    0
+                                </Text>
+                            </View>
+
+                            <View style={{paddingTop: 8}}>
+                                <Text style={{fontSize: 12}}>
+                                    Earnings
+                                </Text>
+                                <Text style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+                                    Recently updated
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+                <View style={{ flex: 2 }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+                    <Text style={{fontFamily: 'Avenir-Heavy'}}>
+                        Upcoming Session
+                    </Text>
+                    <Text style={{color: 'rgb(35, 73, 115)', fontWeight: '500'}}>
+                        See all
+                    </Text>
+                    </View>
+
+                    {renderUpcomingBooking()}
+                   
+                </View>
+                <View style={{ flex: 1 }}>
+                    
+                </View>
+            </View>
+            {/*
  <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
 
 
@@ -122,7 +191,7 @@ function TrainerDashboard(props) {
                       
 </View>
 
-</ScrollView>
+</ScrollView>*/}
         </View>
     )
 }

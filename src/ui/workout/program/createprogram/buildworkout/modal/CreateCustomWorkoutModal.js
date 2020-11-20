@@ -116,12 +116,12 @@ function CreateCustomWorkoutModal({ route, navigation }) {
             )
         }
 
-        switch (uri) {
+        switch (mediaType) {
             
             case 'IMAGE':
-                return <Image source={{uri: uri}} resizeMode="cover" style={{ width: '100%', height: '100%',  borderRadius: 0 }} />
+                return <Image source={{uri: uri}} resizeMode="cover" style={{ width: '100%', height: '100%',  borderRadius: 10 }} />
             case 'VIDEO':
-                return <Video source={{uri: uri}} style={{  width: '100%', height: '100%', borderRadius: 80 }} loop={false} />
+                return <Video source={{uri: uri}} style={{  width: '100%', height: '100%', borderRadius: 10 }} loop={false} />
             default:
                 return ( 
                 <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}> 
