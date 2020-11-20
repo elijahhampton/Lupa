@@ -81,7 +81,6 @@ export default class LupaController {
         url = result;
       });
 
-      console.log('ReturningL: ' + url)
       return Promise.resolve(url);
     }
 
