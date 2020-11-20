@@ -106,8 +106,9 @@ function TrainerDashboard(props) {
                 <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />} />
                 <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />} />
             </Appbar.Header>
+            <ScrollView>
             <View style={{ flex: 1, }}>
-                <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
+                <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
                     <View style={{ margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
                         <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
                             Total Sessions Completed
@@ -160,7 +161,7 @@ function TrainerDashboard(props) {
                         </View>
                     </View>
                 </View>
-                <View style={{ flex: 2 }}>
+                <View style={{ flex: 2, marginVertical: 10, }}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
                     <Text style={{fontFamily: 'Avenir-Heavy'}}>
                         Upcoming Session
@@ -173,25 +174,8 @@ function TrainerDashboard(props) {
                     {renderUpcomingBooking()}
                    
                 </View>
-                <View style={{ flex: 1 }}>
-                    
-                </View>
             </View>
-            {/*
- <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
-
-
-                        <View style={{marginVertical: 15, padding: 10}}>
-<Text style={{fontSize: 16, paddingVertical: 10, fontFamily: 'Avenir-Heavy'}}>
-                           Active Bookings
-                        </Text>
-                        <ScrollView contentContainerStyle={{ alignItems: 'center'}}>
-                        {renderBookings()}
-                        </ScrollView>
-                      
-</View>
-
-</ScrollView>*/}
+            </ScrollView>
         </View>
     )
 }
