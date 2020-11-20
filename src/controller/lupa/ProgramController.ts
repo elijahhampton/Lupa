@@ -4,12 +4,12 @@
 
 import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
 import WorkoutController from './WorkoutController';
-import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures.js';
+import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 import { getPurchaseMetaDataStructure } from '../../model/data_structures/programs/purchaseMetaData'
-import { getLupaUserStructure } from '../firebase/collection_structures';
+import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../firebase/collection_structures';
 import moment from 'moment';
-import { LupaProgramInformationStructure } from '../../model/data_structures/programs/common/types.js';
+import { LupaProgramInformationStructure } from '../../model/data_structures/programs/common/types';
 
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
@@ -33,27 +33,39 @@ export default class ProgramController {
     }
 
     createProgram = async (programStructure: LupaProgramInformationStructure) => {
-        return new Promise(async (resolve, reject) => {
-            let userProgramData = [];
-
+        let userData = getLupaUserStructurePlaceholder(), userProgramData = [], id = -1;
             const userDocumentRef = await USERS_COLLECTION.doc(programStructure.program_owner);
             await userDocumentRef.get()
             .then(documentSnapshot => {
-                userProgramData = documentSnapshot.data().program_data;
+                userData = documentSnapshot.data()
             }).catch(error => {
                 console.log(error)
-                reject();
-            })
+                id = -1;
+                return Promise.resolve(-1);
+            });
 
-            userProgramData.push(programStructure);
+            console.log(userData);
+
+            userProgramData = userData.program_data;
+
+            if (typeof(userProgramData) !== 'undefined') {
+                userProgramData.push(programStructure);
+            } else {
+                userProgramData = [];
+                userProgramData.push(programStructure)
+            }
 
             await PROGRAM_COLLECTION.add(programStructure)
             .then(docRef => {
-                resolve(docRef.id);
+               id = docRef.id;
+               console.log('Creating a program with id: ' + id)
             }).catch(error => {
                 console.log(error);
-                reject();
+                id = -1;
             })
+
+        return new Promise(async (resolve, reject) => {
+            resolve(id);
         });
     }
 
@@ -74,6 +86,7 @@ export default class ProgramController {
             program_tags: tags,
             program_image: image,
             program_price: price,
+            completedProgram: true,
         })
 
         return Promise.resolve(true);
@@ -277,6 +290,7 @@ export default class ProgramController {
         let imageURL;
         return new Promise((resolve, reject) => {
             this.fbStorage.saveProgramImage(programUUID, blob).then(url => {
+                console.log('QQQWWWWWWWWWWWWWWWWWWWWW: ' + url)
                 resolve(url);
             })
         })

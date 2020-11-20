@@ -130,7 +130,7 @@ export const getLupaProgramInformationStructure = (
         num_interactions: 0,
         views: 0,
         shares: 0,
-    },
+    }
 
     return lupa_program_information_structure;
 }

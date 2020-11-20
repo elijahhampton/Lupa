@@ -423,6 +423,7 @@ export class FirebaseStorageBucket {
       
      LUPA_PROGRAM_IMAGES_STORAGE_REF.child(programUUID).put(blob).then(ref => {
       LUPA_PROGRAM_IMAGES_STORAGE_REF.child(programUUID).getDownloadURL().then(url => {
+        console.log('IIQIIWIWIWIWIWWIWIWIWIIW: ' + url)
           resolve(url)
         })
       })

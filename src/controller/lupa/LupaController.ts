@@ -74,6 +74,17 @@ export default class LupaController {
       return Promise.resolve(url);
     }
 
+    saveProgramImage = async (programUUID, uri) => {
+      let url = "";
+
+      await PROGRAMS_CONTROLLER_INSTANCE.saveProgramImage(programUUID, uri).then(result => {
+        url = result;
+      });
+
+      console.log('ReturningL: ' + url)
+      return Promise.resolve(url);
+    }
+
     /***************************** */
 
     /***********  App IO *************/
@@ -391,12 +402,15 @@ export default class LupaController {
     }
 
     createNewProgram = async (programData) => {
-      let retVal = getLupaProgramInformationStructure();
-     await PROGRAMS_CONTROLLER_INSTANCE.createProgram(programData).then(result => {
-       retVal = result;
-     });
+      return new Promise(async (resolve, reject) => {
+        let retVal = -1;
+        await PROGRAMS_CONTROLLER_INSTANCE.createProgram(programData).then(result => {
+        retVal = result;
+      });
 
-     return Promise.resolve(retVal);
+     resolve(retVal);
+
+      })
     }
 
     createNewWorkout = async (uuid) => {
@@ -721,8 +735,8 @@ export default class LupaController {
       PROGRAMS_CONTROLLER_INSTANCE.markProgramCompleted(uuid);
     }
 
-    markProgramPublic = (uuid) => {
-      PROGRAMS_CONTROLLER_INSTANCE.markProgramPublic(uuid);
+    setProgramPublic = (uuid, isPublic) => {
+      PROGRAMS_CONTROLLER_INSTANCE.setProgramPublic(uuid, isPublic);
     }
 
     createBookingRequest = (booking: Object, isAuthenticatedUser?: Boolean, unauthenticatedUserUUID?: String) => {

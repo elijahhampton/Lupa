@@ -132,7 +132,7 @@ function AddTagsModal({ captureTags, isVisible, closeModal }) {
   )
 }
 
-function PublishProgram({ saveProgramMetadata, goBack}) {
+function PublishProgram({uuid, saveProgramMetadata, goBack}) {
   const [programTitle, setProgramTitle] = useState("");
   const [programDescription, setProgramDescription] = useState("");
   const [programTags, setProgramTags] = useState([]);
@@ -140,8 +140,34 @@ function PublishProgram({ saveProgramMetadata, goBack}) {
   const [programPrice, setProgramPrice] = useState(0);
   const [programImageIsSet, setProgramImageSet] = useState(false);
   const [programTagModalVisible, setProgramTagModalVisible] = useState(false);
+  const [programIsPublic, setProgramPublic] = useState(false);
 
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+  const handlePublishToProfile = () => {
+    if (programIsPublic === true) {
+      return;
+    }
+
+    LUPA_CONTROLLER_INSTANCE.setProgramPublic(uuid, true);
+    setProgramPublic(true);
+  }
+
+  const renderPublicToProfileText = () => {
+    if (programIsPublic === true) {
+      return (
+      <Text>
+        Publish to profile
+      </Text>
+      )
+    } else {
+      return (
+        <Text>
+        Program published!
+      </Text>
+      )
+    }
+  }
 
   const renderProgramTags = () => {
     if (programTags.length === 0) {
@@ -185,7 +211,12 @@ function PublishProgram({ saveProgramMetadata, goBack}) {
   }, async (response) => {
       if (!response.didCancel)
       {
-        setProgramImage(response.uri);
+        let updatedUri = "";
+        await LUPA_CONTROLLER_INSTANCE.saveProgramImage(uuid, response.uri.trim()).then(uri => {
+          updatedUri = uri;
+        })
+
+        setProgramImage(updatedUri);
         setProgramImageSet(true);
       }
       else if (response.error)
@@ -213,10 +244,6 @@ function PublishProgram({ saveProgramMetadata, goBack}) {
   }
 
   const renderShareWithFriendsModal = () => {
-
-  }
-
-  const handlePublishToProfile = () => {
 
   }
 
@@ -331,12 +358,13 @@ function PublishProgram({ saveProgramMetadata, goBack}) {
 
           <View>
           <Button   
+          onPress={handlePublishToProfile}
             color="#1089ff"
             style={{alignSelf: 'flex-start'}}
             mode="text"
             uppercase={false} 
-            icon={() => <FeatherIcon name="globe"  size={12} />}>
-              Publish to profile
+            icon={() => <FeatherIcon name="globe" size={12} />}>
+             {renderPublicToProfileText()}
             </Button>
             <Caption style={{paddingHorizontal: 10}}>
               Publishing a program to your profile will also allow your program to be shown on the home  and search pages.
