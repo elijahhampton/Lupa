@@ -21,12 +21,10 @@ const getView = (viewNumber, toggleNext, closeModalMethod) => {
     switch(viewNumber)
     {
         case 0:
-            return <UserBackgroundVerification />
-        case 1:
             return <BasicInformation setNextDisabled={toggleNext} />
-        case 2:
+        case 1:
             return <PickInterest setNextDisabled={toggleNext} isOnboarding={true} />
-        case 3:
+        case 2:
             return <WelcomeContentDriver closeModalMethod={closeModalMethod} />
     }
 }
