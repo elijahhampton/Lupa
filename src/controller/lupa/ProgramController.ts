@@ -4,11 +4,12 @@
 
 import LUPA_DB, { LUPA_AUTH, FirebaseStorageBucket } from '../firebase/firebase.js';
 import WorkoutController from './WorkoutController';
-import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures.js';
+import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 import { getPurchaseMetaDataStructure } from '../../model/data_structures/programs/purchaseMetaData'
-import { getLupaUserStructure } from '../firebase/collection_structures';
+import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../firebase/collection_structures';
 import moment from 'moment';
+import { LupaProgramInformationStructure } from '../../model/data_structures/programs/common/types';
 
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
@@ -31,6 +32,76 @@ export default class ProgramController {
         return ProgramController._instance;
     }
 
+    createProgram = async (programStructure: LupaProgramInformationStructure) => {
+        let userData = getLupaUserStructurePlaceholder(), userProgramData = [], id = -1;
+        const userDocumentRef = await USERS_COLLECTION.doc(programStructure.program_owner);
+        await userDocumentRef.get()
+            .then(documentSnapshot => {
+                userData = documentSnapshot.data()
+            }).catch(error => {
+                console.log(error)
+                id = -1;
+                return Promise.resolve(-1);
+            });
+
+        console.log(userData);
+
+        userProgramData = userData.program_data;
+
+        if (typeof (userProgramData) !== 'undefined') {
+            userProgramData.push(programStructure);
+        } else {
+            userProgramData = [];
+            userProgramData.push(programStructure)
+        }
+
+        await PROGRAM_COLLECTION.add(programStructure)
+            .then(docRef => {
+                id = docRef.id;
+                console.log('Creating a program with id: ' + id)
+            }).catch(error => {
+                console.log(error);
+                id = -1;
+            })
+
+        return new Promise(async (resolve, reject) => {
+            resolve(id);
+        });
+    }
+
+    updateProgramWorkoutData = (programUUID, workoutData) => {
+        const programDocumentRef = PROGRAM_COLLECTION.doc(programUUID);
+        programDocumentRef.update({
+            program_workout_structure: workoutData
+        })
+    }
+
+    updateProgramMetadata = async (programUUID, title, description, tags, image, price) => {
+        const programDocumentRef = PROGRAM_COLLECTION.doc(programUUID);
+
+        try {
+            await programDocumentRef.update({
+                program_name: title,
+                program_description: description,
+                program_tags: tags,
+                program_image: image,
+                program_price: price,
+                completedProgram: true,
+            })
+
+            return Promise.resolve(true);
+        } catch (error) {
+            return Promise.resolve(false);
+        }
+    }
+
+    setProgramPublic = (programUUID, isPublic: Boolean) => {
+        const programDocumentRef = PROGRAM_COLLECTION.doc(programUUID);
+        programDocumentRef.update({
+            isPublic: isPublic
+        })
+    }
+
     getAllUserPrograms = async (uuid) => {
         let programsList = [];
         let programDataList = [];
@@ -38,14 +109,14 @@ export default class ProgramController {
             await USERS_COLLECTION.doc(uuid).get().then(snapshot => {
                 programsList = snapshot.data().programs;
             });
-    
+
             for (let i = 0; i < programsList.length; i++) {
                 await PROGRAM_COLLECTION.doc(programsList[i]).get().then(snapshot => {
                     programDataList.push(snapshot.data());
                 })
             }
-        } catch(error) {
-          
+        } catch (error) {
+
             return Promise.resolve([]);
         }
 
@@ -54,15 +125,15 @@ export default class ProgramController {
 
     loadWorkouts = async () => {
         let documentData = {}
-        let balanceWorkouts = [], 
-            flexibilityWorkouts = [], 
-            coreFlexibility = [], 
-            resistanceWorkouts = [], 
+        let balanceWorkouts = [],
+            flexibilityWorkouts = [],
+            coreFlexibility = [],
+            resistanceWorkouts = [],
             plyometricWorkouts = []
 
         await LUPA_DB.collection('exercises').where('training_modality', '==', 'Balance').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
-                if (typeof(doc) == 'undefined') {
+                if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
@@ -73,7 +144,7 @@ export default class ProgramController {
 
         await LUPA_DB.collection('exercises').where('training_modality', '==', 'Flexibility').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
-                if (typeof(doc) == 'undefined') {
+                if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
@@ -84,7 +155,7 @@ export default class ProgramController {
 
         await LUPA_DB.collection('exercises').where('training_modality', '==', 'Resistance').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
-                if (typeof(doc) == 'undefined') {
+                if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
@@ -95,7 +166,7 @@ export default class ProgramController {
 
         await LUPA_DB.collection('exercises').where('training_modality', '==', 'Core').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
-                if (typeof(doc) == 'undefined') {
+                if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
@@ -106,7 +177,7 @@ export default class ProgramController {
 
         await LUPA_DB.collection('exercises').where('training_modality', '==', 'Plyometric').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
-                if (typeof(doc) == 'undefined') {
+                if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
@@ -171,11 +242,11 @@ export default class ProgramController {
         await PROGRAM_COLLECTION.where('completedProgram', '==', true).limit(5).get().then(docs => {
             let snapshot = getLupaProgramInformationStructure()
             docs.forEach(querySnapshot => {
-                  snapshot = querySnapshot.data()
-                  if (typeof(snapshot) != 'undefined' && snapshot != null && snapshot.program_image != "") {
+                snapshot = querySnapshot.data()
+                if (typeof (snapshot) != 'undefined' && snapshot != null && snapshot.program_image != "") {
                     topPicks.push(snapshot)
-                  }
-              })
+                }
+            })
         })
 
 
@@ -190,14 +261,14 @@ export default class ProgramController {
     getRecentlyAddedPrograms = async () => {
         let recentlyAddedPrograms = []
         await PROGRAM_COLLECTION.orderBy("program_start_date").limit(5).get().then(docs => {
-            let snapshot = getLupaProgramInformationStructure()  
+            let snapshot = getLupaProgramInformationStructure()
             docs.forEach(querySnapshot => {
                 console.log('getToPciks()')
-                  snapshot = querySnapshot.data()
-                  if (typeof(snapshot) != 'undefined' && snapshot != null && snapshot.program_image != "") {
+                snapshot = querySnapshot.data()
+                if (typeof (snapshot) != 'undefined' && snapshot != null && snapshot.program_image != "") {
                     recentlyAddedPrograms.push(snapshot)
-                  }
-              })
+                }
+            })
         })
         return Promise.resolve(recentlyAddedPrograms)
     }
@@ -216,7 +287,6 @@ export default class ProgramController {
             xhr.send(null);
         });
 
-        let imageURL;
         return new Promise((resolve, reject) => {
             this.fbStorage.saveProgramImage(programUUID, blob).then(url => {
                 resolve(url);
@@ -265,11 +335,11 @@ export default class ProgramController {
         programData.program_metadata.workouts_completed = 0;
         programData.program_metadata.date_created = new Date().toDateString()
 
-         //Give the program a start date of today and an end date based on the program duration
-         let newStartDate = moment().format(); // 2020-09-23T21:09:59-04:00
-         let newEndDate = moment().add(programData.program_duration, 'weeks');
-         programData.program_start_date = newStartDate;
-         programData.program_end_date = newEndDate;
+        //Give the program a start date of today and an end date based on the program duration
+        let newStartDate = moment().format(); // 2020-09-23T21:09:59-04:00
+        let newEndDate = moment().add(programData.program_duration, 'weeks');
+        programData.program_start_date = newStartDate;
+        programData.program_end_date = newEndDate;
         programData.isPublic = true;
         programData.program_image = imageURL;
         programData.program_started = false;
@@ -301,24 +371,24 @@ export default class ProgramController {
 
         for (let i = 0; i < programParticipants.length; i++) {
             let userPrograms = [], userProgramsDataList = []
-           let userRef = USERS_COLLECTION.doc(programParticipants[i]).get().then(snapshot => {
-            userPrograms = snapshot.data().programs;
-            userProgramsDataList = snapshot.data().program_data;
-           })
+            let userRef = USERS_COLLECTION.doc(programParticipants[i]).get().then(snapshot => {
+                userPrograms = snapshot.data().programs;
+                userProgramsDataList = snapshot.data().program_data;
+            })
 
-           let updatedProgramsList = this.arrayRemove(userPrograms, uuid);
-           let updatedProgramsDataList = []
-           for (let j = 0; j < userProgramsDataList.length; j++) {
-            if (userProgramsDataList[j].program_structure_uuid == uuid) {
-                updatedProgramsDataList = userProgramsDataList.splice(j, 1);
+            let updatedProgramsList = this.arrayRemove(userPrograms, uuid);
+            let updatedProgramsDataList = []
+            for (let j = 0; j < userProgramsDataList.length; j++) {
+                if (userProgramsDataList[j].program_structure_uuid == uuid) {
+                    updatedProgramsDataList = userProgramsDataList.splice(j, 1);
+                }
             }
-           }
 
 
-           userRef.update({
-            programs: updatedProgramsList,
-            program_data: updatedProgramsDataList,
-           })
+            userRef.update({
+                programs: updatedProgramsList,
+                program_data: updatedProgramsDataList,
+            })
         }
 
         PROGRAM_COLLECTION.doc(uuid).delete();
@@ -330,32 +400,32 @@ export default class ProgramController {
 
     publishWorkout = async (uuid, dateString) => {
         try {
-        await WORKOUT_COLLECTION.doc(uuid).update({
-            completedProgram: true
-        });
+            await WORKOUT_COLLECTION.doc(uuid).update({
+                completedProgram: true
+            });
 
-        let workoutData = getLupaWorkoutInformationStructure();
-        await WORKOUT_COLLECTION.doc(uuid).get().then(documentSnapshot => {
-            workoutData = documentSnapshot.data();
-        })
+            let workoutData = getLupaWorkoutInformationStructure();
+            await WORKOUT_COLLECTION.doc(uuid).get().then(documentSnapshot => {
+                workoutData = documentSnapshot.data();
+            })
 
-        let userWorkoutData = {}
-        const userUUID = await LUPA_AUTH.currentUser.uid
-        console.log(userUUID)
-        await USERS_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
-            userWorkoutData = documentSnapshot.data().workouts;
-        })
+            let userWorkoutData = {}
+            const userUUID = await LUPA_AUTH.currentUser.uid
+            console.log(userUUID)
+            await USERS_COLLECTION.doc(userUUID).get().then(documentSnapshot => {
+                userWorkoutData = documentSnapshot.data().workouts;
+            })
 
-        userWorkoutData[dateString] = [workoutData];
-        console.log(userWorkoutData)
+            userWorkoutData[dateString] = [workoutData];
+            console.log(userWorkoutData)
 
-        await USERS_COLLECTION.doc(userUUID).update({
-            workouts: userWorkoutData
-        })
- 
-    } catch(error) {
-      
-    }
+            await USERS_COLLECTION.doc(userUUID).update({
+                workouts: userWorkoutData
+            })
+
+        } catch (error) {
+
+        }
     }
 
     updateProgramData = (programUUID, programData) => {
@@ -363,12 +433,6 @@ export default class ProgramController {
         docRef.set(programData);
     }
 
-    updateProgramWorkoutData = (programUUID, workoutData) => {
-        const docRef = PROGRAM_COLLECTION.doc(programUUID);
-        docRef.update({
-            program_workout_structure: workoutData
-        })
-    }
 
     updateWorkoutInformation = (workoutUUID, workoutData) => {
         const docRef = WORKOUT_COLLECTION.doc(workoutUUID);
@@ -382,16 +446,16 @@ export default class ProgramController {
             completedWorkout: true,
         });
 
-      /*  let userDataWorkouts = []
-        USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(documentSnapshot => {
-            const data = documentSnapshot.data();
-            userDataWorkouts = data.workouts;
-        });
-
-        userDataWorkouts.push(workoutUUID);
-        USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({
-            workouts: userDataWorkouts
-        })*/
+        /*  let userDataWorkouts = []
+          USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(documentSnapshot => {
+              const data = documentSnapshot.data();
+              userDataWorkouts = data.workouts;
+          });
+  
+          userDataWorkouts.push(workoutUUID);
+          USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).update({
+              workouts: userDataWorkouts
+          })*/
     }
 
     /**
@@ -406,7 +470,7 @@ export default class ProgramController {
 
     fetchDashboardData = async () => {
         let userData = getLupaUserStructure()
-        
+
         //Access user's data
         await USERS_COLLECTION.doc(LUPA_AUTH.currentUser.uid).get().then(snapshot => {
             userData = snapshot.data();
@@ -422,7 +486,7 @@ export default class ProgramController {
         for (let i = 0; i < userPrograms.length; i++) {
             await PROGRAM_COLLECTION.doc(userPrograms[i]).get().then(snapshot => {
                 tempProgramData = snapshot.data();
-                if (typeof(tempProgramData) != 'undefined' && tempProgramData.program_owner == LUPA_AUTH.currentUser.uid) {
+                if (typeof (tempProgramData) != 'undefined' && tempProgramData.program_owner == LUPA_AUTH.currentUser.uid) {
                     programData.push(tempProgramData);
                 }
             });
@@ -439,16 +503,16 @@ export default class ProgramController {
             console.log(programData[j].program_purchase_metadata.purchase_list.length)
             console.log(programData[j].program_purchase_metadata.purchase_list)
             purchaseMetaDataList = purchaseMetaDataList.concat(programData[j].program_purchase_metadata.purchase_list)
-             numInteractions = numInteractions += programData[j].program_metadata.num_interactions 
-             shares = shares += programData[j].program_metadata.shares;
-             views = views += programData[j].program_metadata.views;
+            numInteractions = numInteractions += programData[j].program_metadata.num_interactions
+            shares = shares += programData[j].program_metadata.shares;
+            views = views += programData[j].program_metadata.views;
             grossPay = programData[j].program_purchase_metadata.gross_pay;
             netPay = programData[j].program_purchase_metadata.net_pay;
-            }
+        }
 
         const dashboardData = {
             purchaseMetaData: {
-                purchase_history: typeof(purchaseMetaDataList.length) == 'undefined' ?  [] : purchaseMetaDataList,
+                purchase_history: typeof (purchaseMetaDataList.length) == 'undefined' ? [] : purchaseMetaDataList,
                 gross_pay: grossPay,
                 net_pay: netPay,
             },
@@ -473,7 +537,7 @@ export default class ProgramController {
 
         updatedProgramMetaData.views = updatedProgramMetaData.views += 1;
         updatedProgramMetaData.num_interactions = updatedProgramMetaData.num_interactions += 1;
-    
+
         PROGRAM_COLLECTION.doc(programUUID).update({
             program_metadata: updatedProgramMetaData
         })
@@ -487,7 +551,7 @@ export default class ProgramController {
 
         updatedProgramMetaData.shares = updatedProgramMetaData.shares += numShares;
         updatedProgramMetaData.num_interactions = updatedProgramMetaData.num_interactions += 1;
-    
+
         PROGRAM_COLLECTION.doc(programUUID).update({
             program_metadata: updatedProgramMetaData
         })
@@ -500,7 +564,7 @@ export default class ProgramController {
         })
 
         updatedProgramMetaData.num_interactions = updatedProgramMetaData.num_interactions += 1;
-    
+
         PROGRAM_COLLECTION.doc(programUUID).update({
             program_metadata: updatedProgramMetaData
         })

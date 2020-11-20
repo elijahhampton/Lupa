@@ -176,12 +176,6 @@ function LoginView(props) {
     try {
     await _setupRedux(uuid);
     LUPA_CONTROLLER_INSTANCE.indexApplicationData();
-
-    if (LUPA_STATE.Users.currUserData.has_completed_onboarding == true) {
-      navigation.navigate('App');
-      return;
-    }
-
     } catch(error) {
       if (LUPA_AUTH.currentUser) {
         dispatch(logoutUser());
@@ -190,7 +184,7 @@ function LoginView(props) {
       navigation.navigate('GuestView');
     }
 
-    navigation.navigate('Onboarding')
+    navigation.navigate('App')
   }
 
 const resetFormState = () => {

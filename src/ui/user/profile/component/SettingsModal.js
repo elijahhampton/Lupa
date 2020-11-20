@@ -9,6 +9,7 @@ import {
     RefreshControl,
     Image,
     ScrollView,
+    SafeAreaView,
     Dimensions
 } from 'react-native';
 
@@ -28,7 +29,6 @@ import {
     Divider,
     List,
     Snackbar,
-    SafeAreaView,
     Switch,
     Banner,
     Appbar,

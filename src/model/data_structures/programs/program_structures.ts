@@ -6,7 +6,7 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_slots: 0,
     program_start_date: new Date(),
     program_end_date: new Date(),
-    program_duration: "",
+    program_duration: 0,
     program_time: "",
     program_price: 0,
     program_location: {
@@ -51,6 +51,16 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     },
     type: 'PROGRAM',
     isPublic: false,
+}
+
+function initializeNewProgram(uuid: String | Number, programOwner: String, programParticipants: Array<String>, duration: Number, workoutDays: Array<String>) : LupaProgramInformationStructure {
+    lupa_program_information_structure.program_structure_uuid = uuid;
+    lupa_program_information_structure.program_duration = duration;
+    lupa_program_information_structure.program_workout_days = workoutDays;
+    lupa_program_information_structure.program_participants = programParticipants;
+    lupa_program_information_structure.program_owner = programOwner;
+
+    return lupa_program_information_structure;
 }
 
 export const getLupaProgramInformationStructure = (
@@ -120,7 +130,7 @@ export const getLupaProgramInformationStructure = (
         num_interactions: 0,
         views: 0,
         shares: 0,
-    },
+    }
 
     return lupa_program_information_structure;
 }
@@ -138,3 +148,5 @@ var lupa_program_workout_structure_entry : ProgramWorkoutStructureEntry = {
 export const getProgramWorkoutStructureEntry = () => {
     return lupa_program_workout_structure_entry;
 }
+
+export default initializeNewProgram;

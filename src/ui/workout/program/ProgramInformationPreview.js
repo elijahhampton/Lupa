@@ -6,6 +6,7 @@ import {
     Text,
     Image,
     Modal,
+    Linking,
     TextInput,
     Dimensions,
     SafeAreaView,
@@ -48,6 +49,7 @@ import ProfileProgramCard from './components/ProfileProgramCard';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Pagination } from 'react-native-snap-carousel';
 import { colors } from 'react-native-elements';
+import PurchaseProgramWebView from '../program/modal/PurchaseProgramWebView';
 
 import MapView, { Marker } from 'react-native-maps';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
@@ -68,6 +70,8 @@ function ProgramInformationPreview(props) {
     const [paymentSuccessful, setPaymentSuccessful] = useState(false)
     const [paymentComplete, setPaymentComplete] = useState(false)
 
+    const [lupaPurchasePageOpen, setLupaPurchasePageOpen] = useState(false)
+
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     const dispatch = useDispatch()
@@ -75,6 +79,17 @@ function ProgramInformationPreview(props) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
+
+    const getProgramProps = () => {
+        const programProps = {
+            program_name: programData.program_name,
+            program_price: programData.program_price,
+            program_image: programData.program_image,
+            program_owner_display_name: programOwnerData.display_name,
+        }
+
+        return programProps;
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -425,20 +440,20 @@ function ProgramInformationPreview(props) {
                       </View>
                   </View>
 
-                {/*  <View style={styles.programTermsContainer}>
-                       <Text style={{alignItems: 'flex-start', fontFamily: 'Avenir-Light'}}>
+                  <View style={styles.programTermsContainer}>
+                       <Text onPress={() => Linking.openURL()}  style={{alignItems: 'flex-start', fontFamily: 'Avenir-Light'}}>
                             Terms of Service
                        </Text>
-                       <Text style={{alignItems: 'flex-start', fontFamily: 'Avenir-Light'}}>
+                       <Text onPress={() => {}} style={{alignItems: 'flex-start', fontFamily: 'Avenir-Light'}}>
                             Privacy Policy
                        </Text>
-                    </View>*/}
+                    </View>
 
                    </ScrollView>
-                  {/* <View style={styles.purchaseContainer}>
+                   <View style={styles.purchaseContainer}>
 
                   <Button 
-                        onPress={() => handlePurchaseProgram(programData.program_price)} 
+                        onPress={() => setLupaPurchasePageOpen(true)} 
                         mode="outlined"
                         theme={{
                         roundness: 8,
@@ -449,8 +464,13 @@ function ProgramInformationPreview(props) {
                     style={{width: '100%'}}>
                         Proceed to Checkout
                 </Button>
-                </View>*/}
+                </View>
                    <FullScreenLoadingIndicator isVisible={loading} />
+                   <PurchaseProgramWebView 
+                    isVisible={lupaPurchasePageOpen} 
+                    closeModal={() => setLupaPurchasePageOpen(false)}
+                    programProps={getProgramProps()}
+                    />
                    </SafeAreaView>
             </Modal>
     )

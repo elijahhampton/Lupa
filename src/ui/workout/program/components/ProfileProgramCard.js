@@ -16,10 +16,9 @@ import {
 } from 'react-native-paper';
 import ProgramInformationPreview from '../ProgramInformationPreview';
 import ProgramOptionsModal from '../modal/ProgramOptionsModal';
+import LupaController from '../../../../controller/lupa/LupaController'
 
-
-function ProfileProgramCard(props) {
-    const result = props.programData;
+function ProfileProgramCard({ programData }) {
 
     const [programModalVisible, setProgramModalVisible] = useState(false);
     const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
@@ -27,9 +26,11 @@ function ProfileProgramCard(props) {
         return state.Users.currUserData;
     })
 
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
     const handleOnPress = () => {
 
-        if (result.program_participants.includes(currUserData.user_uuid))
+        if (programData.program_participants.includes(currUserData.user_uuid))
         {
             setProgramOptionsModalVisible(true);
         }
@@ -43,7 +44,7 @@ function ProfileProgramCard(props) {
     const getProgramTags = () => {
         try {
         return (
-            result.program_tags.map((tag, index, arr) => {
+            programData.program_tags.map((tag, index, arr) => {
                 if (index == arr.length - 1)
                 {
                     return (
@@ -70,7 +71,7 @@ function ProfileProgramCard(props) {
         <TouchableWithoutFeedback onPress={() => handleOnPress()}>
         <Surface style={styles.container}>
         <View style={styles.imageContainer}>
-        <Image source={{uri: props.programData.program_image}} style={styles.image} />
+        <Image source={{uri: programData.program_image}} style={styles.image} />
         </View>
       
         
@@ -78,11 +79,11 @@ function ProfileProgramCard(props) {
             <View style={styles.programInformationContainer}>
 
             <Text style={styles.programNameText}>
-            {props.programData.program_name}
+            {programData.program_name}
           </Text>
 
           <Text numberOfLines={2} style={styles.programDescriptionText}>
-         {props.programData.program_description}
+         {programData.program_description}
           </Text>
             </View>
 
@@ -91,8 +92,8 @@ function ProfileProgramCard(props) {
 
       </TouchableWithoutFeedback>
 
-      <ProgramInformationPreview isVisible={programModalVisible} program={props.programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
-      <ProgramOptionsModal program={props.programData} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
+      <ProgramInformationPreview isVisible={programModalVisible} program={programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
+      <ProgramOptionsModal program={programData} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
       </View>
     )
 }

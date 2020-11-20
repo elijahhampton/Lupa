@@ -54,6 +54,7 @@ import DeviceInfo from 'react-native-device-info';
 import MyClients from './src/ui/user/trainer/MyClients';
 import Onboarding from './src/ui/user/modal/WelcomeModal/Onboarding'
 import VirtualSession from './src/ui/sessions/virtual/VirtualSession';
+import LOG, { LOG_ERROR } from './src/common/Logger';
 
 
 const App = () => {
@@ -62,9 +63,7 @@ const App = () => {
     <NavigationContainer>
       <StoreProvider store={LupaStore}>
         <PaperProvider>
-
           <AppNavigator />
-
         </PaperProvider>
       </StoreProvider>
     </NavigationContainer>
@@ -78,11 +77,6 @@ const SwitchNavigator = () => {
   const [finishedVerifying, setFinishedVerifying] = useState(false);
   const [userHasCompletedOnboarding, setUserHasCompletedOnboarding] = useState(false);
 
-  const LUPA_STATE = useSelector(state => {
-    return state;
-  })
-
-
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
   const introduceApp = async (uuid) => {
@@ -90,6 +84,7 @@ const SwitchNavigator = () => {
     try {
     await _setupRedux(uuid);
     } catch(error) {
+      LOG_ERROR('App.js', 'introduceApp::Caught error trying to setup redux.', error)
       SplashScreen.hide();
       if (LUPA_AUTH.currentUser) {
         logoutUser()
@@ -107,10 +102,6 @@ const SwitchNavigator = () => {
     const lupaState = getLupaStoreState();
 
     navigation.navigate('App')
-  }
-
-  const showAuthentication = () => {
-    navigation.navigate('Auth');
   }
 
   const handleGuestAccountUUID = async () => {
@@ -193,6 +184,7 @@ const SwitchNavigator = () => {
     const getUserAuthState = async () => {
       let isVerifyingAuth = true;
       while (isVerifyingAuth) {
+        LOG('App.js', 'getUserAuthState::Attempting to verify user.');
         await dispatch(verifyAuth());
         isVerifyingAuth = getLupaStoreState().Auth.isVerifying;
       }
@@ -200,22 +192,22 @@ const SwitchNavigator = () => {
       const updatedAuthState = await getLupaStoreState().Auth;
 
       if (updatedAuthState.isAuthenticated === true) {
-        console.log('authenticated')
+        LOG('App.js', 'getUserAuthState::User is authenticated.. Setting up notification listeners and navigating to app.');
         fcmService.createNotificationListeners(onNotification, onOpenNotification);
         localNotificationService.configure(onOpenNotification);
         introduceApp(updatedAuthState.user.uid)
       } else {
-        console.log('not authenticated')
+        LOG('App.js', 'getUserAuthState::User unauthenticated.')
         introduceApp(0);
     }
   }
 
     function onOpenNotification(notify) {
-      console.log('onOpenNotification')
+      LOG('App.js', 'onOpenNotification');
     }
   
     function onNotification(notify) {
-      console.log('onNotification')
+      LOG('App.js', 'onNotification');
 
       const options = {
         soundName: 'default',
@@ -232,8 +224,10 @@ const SwitchNavigator = () => {
     }
 
     try {
+    LOG('App.js', 'useEffect::Running useEffect.');
     getUserAuthState()
     } catch(error) {
+      LOG_ERROR('App.js', 'useEffect::Caught error trying to fetch auth state.', error)
       SplashScreen.hide();
       if (LUPA_AUTH.currentUser) {
         logoutUser()
