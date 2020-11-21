@@ -6,41 +6,39 @@ import {
     StyleSheet,
     TouchableOpacity,
     Dimensions,
+    ScrollView,
     SafeAreaView,
     RefreshControl
 } from 'react-native';
 
 import {
-    Surface, Appbar, Chip, Caption, Button, FAB, Menu, Card, Avatar as PaperAvatar, Divider
+    Surface, 
+    Appbar, 
+    Caption, 
+    FAB, 
+    Avatar as PaperAvatar,
 } from 'react-native-paper';
 
 
 import {
-    Header,
     Tab,
     Tabs
 } from 'native-base'
-import { Avatar } from 'react-native-elements';
-import FeatherIcon from 'react-native-vector-icons/Feather'
-import LupaColor from '../../common/LupaColor'
+
+import { 
+    Avatar 
+} from 'react-native-elements';
 import ImagePicker from 'react-native-image-picker';
-import ThinFeatherIcon from 'react-native-feather1s'
-import { ScrollView } from 'react-native-gesture-handler';
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useNavigation } from '@react-navigation/native';
 import LupaCalendar from './component/LupaCalendar';
-import CreateNewPost from './modal/CreateNewPost'
-import RBSheet from 'react-native-raw-bottom-sheet'
 import { useSelector } from 'react-redux';
 import LupaController from '../../../controller/lupa/LupaController';
 import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
 import VlogFeedCard from '../component/VlogFeedCard'
-import { getStreetAddressFromCoordinates } from '../../../modules/location/mapquest/mapquest';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
-import BookNowModal from './modal/BookNowModal';
-import { retrieveAsyncData, storeAsyncData } from '../../../controller/lupa/storage/async';
 import EditBioModal from './settings/modal/EditBioModal'
-import { InformationIcon } from '../../icons';
 import BookingRequestModal from '../modal/BookingRequestModal';
 
 function TrainerProfile({ userData, isCurrentUser, uuid }) {
@@ -50,12 +48,9 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const [userPrograms, setUserPrograms] = useState([])
     const [userVlogs, setUserVlogs] = useState([])
     const [editBioModalVisible, setEditBioModalVisible] = useState(false);
-    const [currPage, setCurrPage] = useState(2)
     const [markedDates, setMarkedDates] = useState([])
     const [showSchedulerButton, setShowSchedulerButton] = useState(false);
     const [ready, setReady] = useState(false)
-    const [showLocationMessage, setShowLocationMessage] = useState(false);
-    const [resultsLength, setResultsLength] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
     const [forceUpdate, setForceUpdate] = useState(false);
     const [trailingInterestLength, setTrainingInterestLength] = useState(0);
@@ -485,17 +480,14 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     return (
         <View style={styles.container}>
-            {/* <View style={{marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                            <Text style={[styles.bioText, {color: '#1089ff', paddingHorizontal: 5}]}>
-                                {userData.display_name} has a rate of ${userData.hourly_payment_rate}
-                            </Text>
-    </View> */}
-
             <Appbar.Header style={styles.appbar}>
                 <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 {
                     isCurrentUser === true ?
-                        null
+                    <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
+                        currUserUUID: currUserData.user_uuid,
+                        otherUserUUID: userData.user_uuid,
+                    })} />
                         :
                         <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
                             currUserUUID: currUserData.user_uuid,
@@ -503,7 +495,14 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         })} />
                 }
             </Appbar.Header>
+            
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
+            <View style={{paddingVertical: 5, flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', alignItems: 'flex-start', justifyContent: 'center'}}>
+                <Feather1s name="info" />
+                            <Text style={{color: '#1089ff', paddingHorizontal: 20, fontFamily: 'Avenir-Light', fontSize: 12}}>
+                                {userData.display_name} has a rate of ${userData.hourly_payment_rate} for in person and virtual sessions.
+                            </Text>
+    </View> 
                 <View>
                     <View style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
                         <View style={styles.userInformationContainer}>
@@ -528,7 +527,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                             <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 13 }}>
                                 Learn more
                 </Text>
-
                             {
                                 isCurrentUser === true ?
                                     <Text onPress={() => setEditHoursModalVisible(true)} style={{ color: '#1089ff', fontWeight: '600', fontSize: 12 }}>
@@ -539,11 +537,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                             }
                         </View>
                         {renderBio()}
-
                     </View>
-
-
-
                 </View>
 
                 <Tabs tabBarUnderlineStyle={{ height: 0, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF'>
@@ -608,9 +602,9 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Light',
     },
     appbar: {
-        backgroundColor: 'transparent',
         elevation: 0,
-        paddingHorizontal: 10,
+        paddingHorizontal: 20,
+        justifyContent: 'space-between',
         backgroundColor: 'rgb(247, 247, 247)'
     },
     displayNameText: {

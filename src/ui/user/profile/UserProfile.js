@@ -11,7 +11,9 @@ import {
 } from 'react-native';
  
 import {
-    Surface, Appbar, Caption, Divider,
+    Surface, 
+    Appbar, 
+    Caption,
     Button
 } from 'react-native-paper';
 
@@ -24,24 +26,21 @@ import {
     Tabs
 } from 'native-base'
 
+import { useNavigation } from '@react-navigation/native';
 import ImagePicker from 'react-native-image-picker';
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../controller/lupa/LupaController';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import VlogFeedCard from '../component/VlogFeedCard';
 import { useSelector } from 'react-redux';
-import { retrieveAsyncData, storeAsyncData } from '../../../controller/lupa/storage/async';
 import EditBioModal from './settings/modal/EditBioModal';
 
 function UserProfile({ userData, isCurrentUser }) {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
     const [editBioModalIsVisible, setEditBioModalIsVisible] = useState(false);
-    const [currPage, setCurrPage] = useState(0);
     const [userVlogs, setUserVlogs] = useState([])
-    const [postType, setPostType] = useState("VLOG");
     const [trailingInterestLength, setTrainingInterestLength] = useState(0);
     const [trainingInterestTextVisible, showTrailingInterestText] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -68,31 +67,10 @@ function UserProfile({ userData, isCurrentUser }) {
                 setUserVlogs([])
             }
         }
-
         loadProfileData()
-
-      //  addToRecentlyInteractedList();
         LOG('UserProfile.js', 'Running useEffect.')
         return () => isSubscribed = false;
     }, [profileImage, ready])
-
-    const addToRecentlyInteractedList = async () => {
-        try {
-        let recentlyInteractedList = await retrieveAsyncData('RECENTLY_INTERACTED_USERS');
-    
-        if (typeof(recentlyInteractedList) == 'undefined' || typeof(recentlyInteractedList) != 'object') {
-  
-            recentlyInteractedList = [userData.user_uuid];
-        } else {
-            recentlyInteractedList.push(userData.user_uuid);
-        }
-    } catch(error) {
-        storeAsyncData('RECENTLY_INTERACTED_USERS', [])
-        LOG_ERROR('', '', error)
-    }
-
-        storeAsyncData('RECENTLY_INTERACTED_USERS', recentlyInteractedList)
-    }
 
 
     const fetchVlogs = async (uuid) => {
@@ -349,8 +327,6 @@ function UserProfile({ userData, isCurrentUser }) {
            }
        }
 
-
-
     /**
      * Navigates to the follower view.
      */
@@ -375,7 +351,6 @@ function UserProfile({ userData, isCurrentUser }) {
             </Appbar.Header>
             <ScrollView>
                 <View>
-
                 <View style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
                         <View style={styles.userInformationContainer}>
                             <View style={styles.infoContainer}>
@@ -401,10 +376,8 @@ function UserProfile({ userData, isCurrentUser }) {
 
                 <Text onPress={() => setEditHoursModalVisible(true)} style={{ color: '#1089ff', fontWeight: '600', fontSize: 12 }}>
                             Edit Bio
-                       
                 </Text>
                         </View>
-
                         {renderBio()}
                     </View>
                     {renderInteractions()}
@@ -458,7 +431,8 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: 'rgb(247, 247, 247)',
         elevation: 0,
-        paddingHorizontal: 20
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
     },
     appbarTitle: {
         fontSize: 12,
