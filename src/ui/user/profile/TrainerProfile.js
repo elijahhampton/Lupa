@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 
 import {
-    Surface, Appbar, Caption, Button, FAB, Menu, Card, Avatar as PaperAvatar, Divider
+    Surface, Appbar, Chip, Caption, Button, FAB, Menu, Card, Avatar as PaperAvatar, Divider
 } from 'react-native-paper';
- 
+
 
 import {
     Header,
@@ -94,7 +94,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         }, async (response) => {
             if (!response.didCancel) {
 
-                if (response.uri == "" || response.uri == null || typeof(response.uri) == 'undefined') {
+                if (response.uri == "" || response.uri == null || typeof (response.uri) == 'undefined') {
                     return;
                 }
 
@@ -118,48 +118,46 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     const renderAvatar = () => {
         try {
-        if (isCurrentUser) {
-            return (
-                <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
-                    <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
-                </Surface>
-            )
-        }
+            if (isCurrentUser) {
+                return (
+                    <Avatar key={userData.photo_url} raised={true} rounded size={60} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
+                )
+            }
 
-        return <Avatar key={userData.photo_url} rounded size={65} source={{ uri: profileImage }} />
-    } catch(error) {
-        if (isCurrentUser) {
-            return (
-                <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
-                <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
-            </Surface>
-            )
-        } else {
-            return <PaperAvatar.Icon style={{backgroundColor: 'white'}} icon={() => <FeatherIcon name="user" size={30} />} />
-        }
+            return <Avatar key={userData.photo_url} rounded size={80} source={{ uri: profileImage }} />
+        } catch (error) {
+            if (isCurrentUser) {
+                return (
+                    <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
+                        <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
+                    </Surface>
+                )
+            } else {
+                return <PaperAvatar.Icon style={{ backgroundColor: 'white' }} icon={() => <FeatherIcon name="user" size={30} />} />
+            }
         }
     }
 
     const getFollowersLength = () => {
-        if (typeof(userData.followers.length) == 'undefined') {
+        if (typeof (userData.followers.length) == 'undefined') {
             return 0;
         }
 
         try {
             return userData.followers.length
-        } catch(error) {
+        } catch (error) {
             return 0;
         }
     }
 
     const getFollowingLength = () => {
-        if (typeof(userData.following.length) == 'undefined') {
+        if (typeof (userData.following.length) == 'undefined') {
             return 0;
         }
 
         try {
             return userData.following.length
-        } catch(error) {
+        } catch (error) {
             return 0;
         }
     }
@@ -169,10 +167,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             <View style={{ marginVertical: 10, flex: 1, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
                 <TouchableOpacity onPress={navigateToFollowers}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text>
-                         {getFollowersLength()}
+                        <Text style={{ fontSize: 13, fontFamily: 'Avenir-Heavy' }}>
+                            {getFollowersLength()}
                         </Text>
-                        <Text style={styles.userAttributeText}>
+                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir-Roman', fontSize: 11 }]}>
                             Followers
         </Text>
                     </View>
@@ -180,10 +178,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={navigateToFollowers}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text>
+                        <Text style={{ fontSize: 13, fontFamily: 'Avenir-Heavy' }}>
                             {getFollowingLength()}
                         </Text>
-                        <Text style={styles.userAttributeText}>
+                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir-Roman', fontSize: 11 }]}>
                             Following
         </Text>
                     </View>
@@ -195,15 +193,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderCertification = () => {
         return (<View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
             <FeatherIcon name="file-text" style={{ paddingRight: 5 }} />
-            <Text  style={[styles.userAttributeText, { color: '#23374d' }]}>NASM</Text>
+            <Text style={[styles.userAttributeText, { color: '#23374d' }]}>NASM</Text>
         </View>)
     }
 
     const renderLocation = () => {
-        return (<View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
-            <FeatherIcon name="map-pin" style={{ paddingRight: 5 }} />
-            <Text style={[styles.userAttributeText, { color: '#23374d' }]}>{userData.location.city}, {userData.location.state}</Text>
-        </View>)
+        return <Text style={[styles.userAttributeText, { color: 'rgb(35, 73, 115)', fontFamily: 'Avenir-Heavy' }]}>{userData.location.city}, {userData.location.state}</Text>
     }
 
     const renderDisplayName = () => {
@@ -213,47 +208,52 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderTrainerType = () => {
         if (userData.trainer_metadata.trainer_interest.length == 0) {
             return;
-        } 
-        
+        }
+
         return (
-        <View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
-            <FeatherIcon name="activity" style={{ paddingRight: 5 }} />
-            {
-                userData.trainer_metadata.trainer_interest.map((type, index, arr) => {
-                    if (index == arr.length - 1) {
+
+            <View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
+                <Text numberOfLines={2} ellipsizeMode="tail">
+                <Text style={[styles.userAttributeText, { color: '#23374d' }]} >
+                    Trainer Interest: {" "}
+                </Text>
+                {
+                    userData.trainer_metadata.trainer_interest.map((type, index, arr) => {
+                        if (index == arr.length - 1) {
+                            return (
+                                <Text style={[styles.userAttributeText, { color: '#23374d' }]}>
+                                    {type}
+                                </Text>
+                            )
+                        }
+
                         return (
                             <Text style={[styles.userAttributeText, { color: '#23374d' }]}>
-                            {type}
-                        </Text>
-                        )
-                    }
-
-                    return (
-                        <Text style={[styles.userAttributeText, { color: '#23374d' }]}>
-                       {type} {" - "}
-                   </Text>
-                    );
-                })
-            }
-        </View>
+                                {type}, {" "}
+                            </Text>
+                        );
+                    })
+                }
+                </Text>
+            </View>
         )
     }
 
     const renderBio = () => {
         if (userData.bio.length == 0) {
             return isCurrentUser === true ?
-            <Caption style={styles.bioText}>
-            You have not setup a bio.
+                <Caption style={styles.bioText}>
+                    You have not setup a bio.
           </Caption>
-          :
-          <Caption style={styles.bioText}>
-             {userData.display_name} has not setup a bio.
+                :
+                <Caption style={styles.bioText}>
+                    {userData.display_name} has not setup a bio.
         </Caption>
         }
 
         return (
             <Text style={styles.bioText}>
-             {userData.bio}
+                {userData.bio}
             </Text>
         )
     }
@@ -263,30 +263,30 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
         if (userVlogs.length === 0) {
             return (
-                <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
+                <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
-                    isCurrentUser === true ?
-                    <Caption>
-                        <Caption>
-                        You haven't created any vlogs.
+                        isCurrentUser === true ?
+                            <Caption>
+                                <Caption>
+                                    You haven't created any vlogs.
                         </Caption>
-                        {" "}
-                        <Caption style={{color: '#1089ff'}} onPress={() => navigation.push('CreateNewPost')}>
-                        Start publishing by creating content.
+                                {" "}
+                                <Caption style={{ color: '#1089ff' }} onPress={() => navigation.push('CreateNewPost')}>
+                                    Start publishing by creating content.
                         </Caption>
-                    </Caption>
-                    :
-                    <Caption>
-                        No Vlogs have been created by {userData.display_name}
-                    </Caption>
+                            </Caption>
+                            :
+                            <Caption>
+                                No Vlogs have been created by {userData.display_name}
+                            </Caption>
                     }
-                    
+
                 </View>
             )
         }
 
         return userVlogs.map((vlog, index, arr) => {
-            if (typeof(vlog) == 'undefined') {
+            if (typeof (vlog) == 'undefined') {
                 return null;
             }
 
@@ -299,33 +299,33 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
         if (userPrograms.length === 0) {
             return (
-                <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
+                <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
-                    isCurrentUser === true ?
-                    <Caption>
-                        <Caption>
-                        You haven't created any programs.
+                        isCurrentUser === true ?
+                            <Caption>
+                                <Caption>
+                                    You haven't created any programs.
                         </Caption>
-                        {" "}
-                        <Caption style={{color: '#1089ff'}} onPress={() => navigation.push('CreateProgram')}>
-                        Create your first program.
+                                {" "}
+                                <Caption style={{ color: '#1089ff' }} onPress={() => navigation.push('CreateProgram')}>
+                                    Create your first program.
                         </Caption>
-                    </Caption>
-                    :
-                    <Caption>
-                        No programs have been created by {userData.display_name}
-                    </Caption>
+                            </Caption>
+                            :
+                            <Caption>
+                                No programs have been created by {userData.display_name}
+                            </Caption>
                     }
-                    
+
                 </View>
             )
         }
 
         return userPrograms.map((program, index, arr) => {
-            if (typeof(program) == 'undefined') {
+            if (typeof (program) == 'undefined') {
                 return null;
             }
-            
+
 
             return (
                 <ProfileProgramCard programData={program} />
@@ -336,13 +336,19 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderInteractions = () => {
         if (!ready) { return null }
 
-        if (isCurrentUser) { return; }
+        //   if (isCurrentUser) { return; }
 
         return (
-            <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
-
+            <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginVertical: 10 }}>
                 {renderFollowButton()}
 
+                <TouchableOpacity onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}>
+                    <View style={{ backgroundColor: '#FFFFFF', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                        <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
+                            Message
+                    </Text>
+                    </View>
+                </TouchableOpacity>
             </View>
         )
     }
@@ -350,35 +356,28 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderFollowButton = () => {
         if (!ready) { return null }
 
-     if (isCurrentUser) { return; }
+        // if (isCurrentUser) { return; }
 
         if (currUserData.following.includes(userData.user_uuid)) {
             return (
-                <Button
-                    onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}
-                    icon={() => <FeatherIcon name="user" />}
-                    theme={{ roundness: 5 }}
-                    uppercase={false}
-                    color="#E5E5E5"
-                    mode="outlined"
-                    style={{ elevation: 0 }}>
-                        Unfollow {userData.display_name}
-                    </Button>
+
+                <TouchableOpacity onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}>
+                    <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                        <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
+                            Follow
+                    </Text>
+                    </View>
+                </TouchableOpacity>
             )
         } else {
             return (
-                <Button
-                    onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)}
-                    icon={() => <FeatherIcon size={15} name="user" color="white" />}
-                    theme={{ roundness: 5 }}
-                    uppercase={false}
-                    color="#1089ff"
-                    mode="contained"
-                    style={{ elevation: 0, width: '100%',   alignItems: 'center', justifyContent: 'center'}}>
-                    <Text style={{fontSize: 13}}>
-                        Follow {userData.display_name}
+                <TouchableOpacity onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)}>
+                    <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                        <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
+                            Follow
                     </Text>
-                </Button>
+                    </View>
+                </TouchableOpacity>
             )
         }
     }
@@ -388,7 +387,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             return <FAB onPress={() => setTrainerBookingModalVisible(false)} icon="calendar" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
         } else {
             return <FAB onPress={() => navigation.push('CreatePost')} icon="rss" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
-        }  
+        }
     }
 
     /**
@@ -404,43 +403,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         })
     }
 
-    const renderInterest = () => {
-        if (userData.interest.length == 0) {
-            return (
-                <Caption>
-                    This user has not specified any fitness interest.
-                </Caption>
-            )
-        } else {
-            return (
-                <View style={{ paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <Text style={styles.bioText}>
-                            Interest: {" "}
-                        </Text>
-                        {
-                            userData.trainer_metadata.trainer_interest.map((interest, index, arr) => {
-                     
-                                if (index >= 3) {
-                                  return;
-                                }
-
-                                return (
-                                    <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: 'rgb(58, 58, 61)' }}>
-                                        {interest} {" "}
-                                    </Text>
-
-                                )
-                            })
-                        }
-                        {trainingInterestTextVisible === true ? <Caption style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff' }}> and {trailingInterestLength} more... </Caption> : null}
-                    </View>
-
-                </View>
-            )
-        }
-    }
-
     const fetchPrograms = async (uuid) => {
         let programs = [];
         let profilePrograms = [];
@@ -449,7 +411,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         })
 
         for (let i = 0; i < programs.length; i++) {
-           if (programs[i].isPublic === true) {
+            if (programs[i].isPublic === true) {
                 profilePrograms.push(programs[i]);
             }
         }
@@ -462,19 +424,16 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         const trainerPrograms = currUserPrograms;
         for (let i = 0; i < trainerPrograms.length; i++) {
             if (trainerPrograms[i].isPublic === true) {
-                 profilePrograms.push(trainerPrograms[i]);
-             }
-         }
+                profilePrograms.push(trainerPrograms[i]);
+            }
+        }
 
-         setUserPrograms(profilePrograms);
+        setUserPrograms(profilePrograms);
     }
 
     async function loadProfileData() {
         try {
-            
-            console.log('o')
             setProfileImage(userData.photo_url);
-            console.log('v')
             await fetchVlogs(userData.user_uuid);
 
             if (currUserData.user_uuid == userData.user_uuid) {
@@ -482,10 +441,9 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             } else {
                 await fetchPrograms(userData.user_uuid);
             }
-    
+
         } catch (error) {
             setReady(false)
-            alert(error)
             setUserVlogs([])
             setUserPrograms([])
         }
@@ -508,7 +466,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                     showTrailingInterestText(false);
                 }
             } catch (error) {
-                alert(error)
                 setReady(false)
                 setUserVlogs([])
                 setUserPrograms([])
@@ -520,47 +477,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         LOG('TrainerProfile.js', 'Running useEffect.')
     }, [profileImage, ready])
 
-    const renderScheduler = () => {
-        if (!ready) { return null }
-
-        if (isCurrentUser) {
-            return;
-        }
-
-        if (showSchedulerButton === true) {
-            return (
-                <View style={{ backgroundColor: '#FFFFFF', width: '100%', height: Dimensions.get('window').height }}>
-                    <Button onPress={() => setShowSchedulerButton(false)} mode="contained" uppercase={false} color='#1089ff' style={{ marginVertical: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center' }}>
-                        Done
-            </Button>
-                    <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} isCurrentUser={isCurrentUser} />
-                </View>
-            )
-        }
-
-        return renderCloseLocationMessage();
-    }
-
-    const renderCloseLocationMessage = () => {
-        if (!ready) { return null }
-        
-        if (isCurrentUser) {
-            return;
-        }
-
-        return (
-            <Surface style={{ backgroundColor: 'transparent', width: Dimensions.get('window').width - 20, elevation: 0, padding: 20, borderRadius: 8, marginVertical: 10, alignSelf: 'center' }}>
-                <Caption style={{ color: '#1089ff' }}>
-                    It looks like you and {userData.display_name} might be training in the same gym.  Would you like to see her available hours?
-            </Caption>
-
-                <Button onPress={() => setShowSchedulerButton(true)} mode="contained" uppercase={false} color='#1089ff' style={{ marginVertical: 10 }}>
-                    View Hours
-            </Button>
-            </Surface>
-        )
-    }
-
     const handleOnRefresh = async () => {
         await setRefreshing(true);
         await loadProfileData();
@@ -568,101 +484,94 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={{marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+        <View style={styles.container}>
+            {/* <View style={{marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                             <Text style={[styles.bioText, {color: '#1089ff', paddingHorizontal: 5}]}>
                                 {userData.display_name} has a rate of ${userData.hourly_payment_rate}
                             </Text>
-                        </View>
+    </View> */}
 
             <Appbar.Header style={styles.appbar}>
-                <ThinFeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
-        
-
+                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 {
                     isCurrentUser === true ?
-                    null
-                    :
-                    <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
-                        currUserUUID: currUserData.user_uuid,
-                        otherUserUUID: userData.user_uuid,
-                    })} />
+                        null
+                        :
+                        <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
+                            currUserUUID: currUserData.user_uuid,
+                            otherUserUUID: userData.user_uuid,
+                        })} />
                 }
-               
-
- 
-
-             
             </Appbar.Header>
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
-               <View>
-                 <View style={styles.userInformationContainer}>
-                       <View style={styles.infoContainer}>
-                            {renderDisplayName()}
-                            <View style={{ paddingVertical: 10 }}>
+                <View>
+                    <View style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+                        <View style={styles.userInformationContainer}>
+                            <View style={styles.infoContainer}>
+                                {renderDisplayName()}
+                                <View>
                                 {renderLocation()}
-                                {renderCertification()}
                                 {renderTrainerType()}
+                                </View>
                             </View>
-            </View>
-
-                        <View style={styles.avatarContainer}>
-                           {renderAvatar()}
-                            {renderFollowers()}
+                            <View style={styles.avatarContainer}>
+                                {renderAvatar()}
+                                {renderFollowers()}
+                            </View>
                         </View>
-            
-            </View> 
-              
+                        {renderInteractions()}
+                    </View>
+
+
                     <View style={{ padding: 10, }}>
-                    <View style={{width: '100%', flexDirection: 'row',alignItems: 'center', justifyContent: "space-between"}}>
-                        <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 13 }}>
-                            Learn more
+                        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: "space-between" }}>
+                            <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 13 }}>
+                                Learn more
                 </Text>
 
-                {
-                isCurrentUser === true ?
-                <Text onPress={() => setEditHoursModalVisible(true)} style={{color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 13 }}>
-                Edit Bio
+                            {
+                                isCurrentUser === true ?
+                                    <Text onPress={() => setEditHoursModalVisible(true)} style={{ color: '#1089ff', fontWeight: '600', fontSize: 12 }}>
+                                        Edit Bio
     </Text>
-                :
-                null
-                }
-
-              
+                                    :
+                                    null
+                            }
                         </View>
                         {renderBio()}
-                        
-                    </View>
-  
-                    {renderInteractions()}
-                
-            </View>
 
-               <Tabs tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF'>
-               <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs">
-                        <ScrollView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                    </View>
+
+
+
+                </View>
+
+                <Tabs tabBarUnderlineStyle={{ height: 0, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF'>
+                    <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs">
+                        <View style={{ backgroundColor: '#FFFFFF' }}>
                             {renderPrograms()}
-                        </ScrollView>
-            </Tab>
-                  
-                   <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
+                        </View>
+                    </Tab>
+
+                    <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}
                         </View>
-            </Tab>
-                          <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
-                            <View style={{ backgroundColor: '#FFFFFF', height: Dimensions.get('window').height }}>
-                                <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} />
-                            </View>
-        </Tab>
-            </Tabs>
+                    </Tab>
+                    <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
+                        <View style={{ backgroundColor: '#FFFFFF', height: Dimensions.get('window').height }}>
+                            <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} />
+                        </View>
+                    </Tab>
+                </Tabs>
             </ScrollView>
 
             {renderFAB()}
-            
-            <BookingRequestModal closeModal={() => setTrainerBookingModalVisible(false)} isVisible={trainerBookingModalVisible} trainer={userData}  />
+
+            <BookingRequestModal closeModal={() => setTrainerBookingModalVisible(false)} isVisible={trainerBookingModalVisible} trainer={userData} />
             <EditBioModal isVisible={editBioModalVisible} closeModalMethod={() => setEditBioModalVisible(false)} />
-        </SafeAreaView>
+        <SafeAreaView />
+        </View>
     )
 }
 
@@ -675,12 +584,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
+        backgroundColor: 'rgb(247, 247, 247)'
     },
     infoContainer: {
         flex: 3,
+        height: 90,
+        justifyContent: 'space-evenly',
         paddingHorizontal: 10,
         alignItems: 'flex-start',
-        justifyContent: 'center'
+
     },
     avatarContainer: {
         flex: 2,
@@ -698,17 +610,13 @@ const styles = StyleSheet.create({
     appbar: {
         backgroundColor: 'transparent',
         elevation: 0,
-        paddingHorizontal: 20,
-        justifyContent: 'space-between',
-    },
-    appbarTitle: {
-        fontSize: 15,
-        fontFamily: 'Avenir-Roman'
+        paddingHorizontal: 10,
+        backgroundColor: 'rgb(247, 247, 247)'
     },
     displayNameText: {
-        paddingVertical: 5,
+        paddingVertical: 2,
         fontSize: 20,
-        fontFamily: 'Avenir-Black'
+        fontFamily: 'Avenir-Heavy'
     },
     inactiveTabHeading: {
         fontSize: 12,

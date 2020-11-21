@@ -8,6 +8,7 @@ import {
     Animated,
     RefreshControl,
     Dimensions,
+    TouchableOpacity,
     Easing,
     TouchableWithoutFeedback,
     Image,
@@ -16,7 +17,7 @@ import {
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
 
 import LupaController from '../../controller/lupa/LupaController'
-import { Avatar, Surface, Divider, Button } from 'react-native-paper'
+import { Avatar, Surface, Divider, Button, Appbar } from 'react-native-paper'
 import {
     SearchBar
 } from 'react-native-elements'
@@ -61,6 +62,21 @@ const mapStateToProps = (state, action) => {
     }
 }
 
+const SKILL_BASED_INTEREST = [
+    'Agility',
+    'Balance',
+    'Speed',
+    'Power',
+    'Coordination',
+    'Reaction Time',
+    'Weight Loss',
+    'Test Preparation',
+    'Sport Specific',
+    'Bodybuilding',
+    'Fitness Coach',
+    'Injury Prevention',
+]
+
 class Search extends React.Component {
     constructor(props) {
         super(props);
@@ -84,6 +100,142 @@ class Search extends React.Component {
             goalPressed: "",
         }
 
+    }
+
+    renderImage = (skill, index) => {
+        switch (skill) {
+            case 'Agility':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Agility')}>
+                            <Image style={{width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Agility.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                            {skill}
+                        </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Speed':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Speed')}>
+                            <Image style={{ width: 70, height: 70, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Speed.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                                {skill}
+                            </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Balance':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Balance')}>
+                            <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Balance.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                            {skill}
+                            </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Power':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Power')}>
+                            <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Power.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                            {skill}
+                                </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Coordination':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Coordination')}>
+                            <Image style={{ width: 75, height: 82, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Coordination.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                            {skill}
+                                    </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Reaction Time':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Reaction Time')}>
+                            <Image style={{ width: 80, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/ReactionTime.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                            {skill}
+                                        </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Weight Loss':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Weight Loss')}>
+                            <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/WeightLoss.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                            {skill}
+                            </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Test Preparation':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Test Preparation')}>
+                            <Image style={{ width: 85, height: 65, alignSelf: 'center' }} source={require('../images/interest_icons/selected/TestPreparation.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                                {skill}
+                                                </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Sport Specific':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Sport Specific')}>
+                            <Image style={{ width: 60, height: 75, alignSelf: 'center' }} source={require('../images/interest_icons/selected/SportSpecific.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                                {skill}
+                            </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Bodybuilding':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Bodybuilding')}>
+                            <Image style={{ width: 80, height: 40, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Bodybuilding.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                            {skill}
+                                                        </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Fitness Coach':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Fitness Coach')}>
+                            <Image style={{ width: 44, height: 56, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Health:FitnessCoach.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                            {skill}
+                                                            </Text>
+                        </TouchableOpacity>
+                    )
+            case 'Injury Prevention':
+                    return (
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Injury Prevention')}>
+                            <Image style={{  alignSelf: 'center' }} source={require('../images/interest_icons/selected/InjuryPrevention.png')} />
+                            <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                                {skill}
+                            </Text>
+                        </TouchableOpacity>
+                    )
+            default:
+        }
+    }
+
+    renderSkills = () => {
+        let count = 0;
+        return (
+            <View style={{ flex: 1 }}>
+                {
+                    SKILL_BASED_INTEREST.map((skill, index, arr) => {
+
+                        if (index % 2 == 0) {
+                            return (
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 55}}>
+                                  {this.renderImage(arr[index], index)}
+                                  {this.renderImage(arr[index + 1], index)}
+                            </View>
+
+                            )
+                        }
+                    })
+                }
+            </View>
+        )
     }
 
     handleOnRefresh() {
@@ -206,38 +358,42 @@ class Search extends React.Component {
     return (
 
         <View style={{flex: 1, backgroundColor: 'white'}}>
-            <Header noShadow={true}  style={{borderBottomColor: 'white',flexDirection: 'column', backgroundColor: 'white'}} span={true}>
-                <Text style={{alignSelf: 'center', fontSize: 18, fontFamily: 'Avenir-Heavy'}}>
-                    Search
-                </Text>
-                <View style={{backgroundColor: 'white', flexDirection: 'row', alignItems: 'center' , justifyContent: 'space-evenly'}}>
-
-              
-            <Feather1s onPress={() => this.props.navigation.pop()} name="x" size={20} color="#212121" style={{paddingHorizontal: 10}} />
-             
-                <SearchBar
-                        placeholder="Search trainers"
-                        placeholderTextColor="#000000"
-                        onChangeText={text => this.performSearch(text)}
-                        value={this.state.searchValue}
-                        inputStyle={styles.inputStyle}
-                        platform="ios"
-                        containerStyle={{backgroundColor: 'white', borderColor: 'white', width: '90%'}}
-                        inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE'}}
-                        searchIcon={() => <MaterialIcon name="search" color="#1089ff" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
-                    />
-  </View>
-          
-              
-            </Header>
+                          
+<FeatherIcon onPress={() => this.props.navigation.pop()} name="arrow-left" size={20} color="#212121" style={{paddingHorizontal: 10, marginTop: Constants.statusBarHeight}} />
+ 
           
           <ScrollView
-          contentContainerStyle={{flex: 1}}
           refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh}/>}
             scrollEventThrottle={1}
             bounces={false}
             showsVerticalScrollIndicator={false}>
+
+<View noShadow={true}  style={{elevation: 0,  marginTop: 10, marginBottom: 10, alignItems: 'center', justifyContent: 'center', borderBottomColor: 'white', backgroundColor: 'white'}} span={true}>
+            <Text style={{padding: 10, fontFamily: 'Avenir-Heavy', alignSelf: 'flex-start', marginLeft: 20, fontSize: 20}}>
+                    Explore Trainers and Programs
+                </Text>
+              
+            </View>
+
+            <View style={{backgroundColor: 'white', flexDirection: 'row', alignItems: 'center' , justifyContent: 'space-evenly'}}>
+
+    <SearchBar
+            placeholder="Search trainers"
+            placeholderTextColor="#000000"
+            onChangeText={text => this.performSearch(text)}
+            value={this.state.searchValue}
+            inputStyle={styles.inputStyle}
+            platform="ios"
+            containerStyle={{backgroundColor: 'white', borderColor: 'white', width: '90%'}}
+            inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE'}}
+            searchIcon={() => <MaterialIcon name="search" color="#1089ff" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+        />
+</View>
+         
                 {
+                    this.state.searchResults.length === 0 ?
+                    this.renderSkills()
+                    :
                     this.renderSearchResults()
                 }
                    {/*  <Tabs 

@@ -6,6 +6,7 @@ import {
     Text,
     Button,
     Dimensions,
+    SafeAreaView,
     TouchableOpacity,
     ScrollView
 } from 'react-native';
