@@ -86,7 +86,7 @@ class CreateProgram extends React.Component {
                 await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', programUUID, 'add');
                 await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(programUUID).then(data => {
                 this.props.addProgramdispatch(data);
-                })
+                });
                 handleExitCreateProgram();
             } else {
                 //show problem  dialog
@@ -118,7 +118,7 @@ class CreateProgram extends React.Component {
     }
 
     exit = () => {
-        this.props.navigation.goBack();
+        this.props.navigation.navigate('Train');
     }
 
     renderAppropriateDisplay = () => {
@@ -139,7 +139,7 @@ class CreateProgram extends React.Component {
                         saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} 
                         /> 
             case 2:
-                return <PublishProgram uuid={this.state.programData.program_structure_uuid} saveProgramMetadata={this.saveProgramMetadata} goBack={this.prevIndex} />
+                return <PublishProgram uuid={this.state.programData.program_structure_uuid} saveProgramMetadata={this.saveProgramMetadata} goBack={this.prevIndex} exit={this.exit} />
             default:
         }
     }

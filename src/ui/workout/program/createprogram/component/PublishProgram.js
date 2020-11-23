@@ -135,7 +135,7 @@ function AddTagsModal({ captureTags, isVisible, closeModal }) {
   )
 }
 
-function PublishProgram({uuid, saveProgramMetadata, goBack}) {
+function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
   const [programTitle, setProgramTitle] = useState("");
   const [programDescription, setProgramDescription] = useState("");
   const [programTags, setProgramTags] = useState([]);
@@ -180,29 +180,31 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
 
   const handleAvatarOnPress = (user) => {
     let updatedUserUUIDList = usersUUIDToShare;
+    let updatedUserList = usersToShare;
     if (usersUUIDToShare.includes(user.user_uuid)) {
       updatedUserUUIDList.splice(updatedUserUUIDList.indexOf(user.user_uuid), 1)
-      let updatedUserList = usersToShare;
       setUsersUUIDToShare(updatedUserUUIDList);
-      
-      //setUsersToShare(updatedUserList.splice(updatedUserList.indexOf(user), 1));
       } else {
       updatedUserUUIDList.push(user.user_uuid);
       setUsersUUIDToShare(updatedUserUUIDList)
-      //setUsersToShare(arr => [...arr, user]);
     }
 
     setForceUpdate(!forceUpdate)
   }
 
+  const handleOnPressSend = async () => {
+    await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(result => {
+      LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, usersUUIDToShare, result);
+    });  
+  }
+
   const renderUserAvatars = () => {
     return currUserFollowers.map((user, index, arr) => {
       if (usersUUIDToShare.includes(user.user_uuid)) {
-        console.log('ioio')
         return (
           <TouchableWithoutFeedback key={user.user_uuid} onPress={() => handleAvatarOnPress(user)}>
           <View style={{alignItems: 'center', justifyContent: 'center'}}>
- source={{uri: user.photo_url}} rounded size={60} containerStyle={{borderWidth: 2, padding: 3, borderColor: '#1089ff'}} icon={() => <FeatherIcon name="user" />} />
+          <Avatar source={{uri: user.photo_url}} rounded size={60} containerStyle={{borderWidth: 2, padding: 3, borderColor: '#1089ff'}} icon={() => <FeatherIcon name="user" />} />
           <Text style={{padding: 10, fontSize: 12, fontFamily: 'Avenir-Roman'}}>
             {user.display_name}
           </Text>
@@ -210,9 +212,8 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
           </TouchableWithoutFeedback>
         )
       } else {
-        console.log('boug')
         return (
-          <TouchableWithoutFeedback key={user.user_uuid} onPress={() => handleAvatarOnPress(user)}>
+          <TouchableWithoutFeedback onPress={() => handleAvatarOnPress(user)}>
              <View style={{alignItems: 'center', justifyContent: 'center'}}>
              <Avatar source={{uri: user.photo_url}} rounded size={60} icon={() => <FeatherIcon name="user" />} />
              <Text style={{padding: 10, fontSize: 12, fontFamily: 'Avenir-Roman'}}>
@@ -309,8 +310,12 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
     setProgramTags(tags)
   }
 
-  const handleOnFinish = () => {
-    saveProgramMetadata(programTitle, programDescription, programTags, programImage, programPrice);
+  const handleOnFinish = async () => {
+    await saveProgramMetadata(programTitle, programDescription, programTags, programImage, programPrice).then(() => {
+      handleOnPressSend()
+    });
+
+    exit();
   }
 
   const openShareWithFriendsModal = () => shareProgramRBSheetRef.current.open();
@@ -474,7 +479,7 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
             icon={() => <FeatherIcon name="user-plus"  size={12} />}
             onPress={openShareWithFriendsModal}
             >
-              Share with friends (0 selected)
+              Share with friends ({usersUUIDToShare.length} selected)
             </Button>
 
           <View>
