@@ -163,11 +163,6 @@ function DrawerMenu(props) {
         }
 
 
-        <Caption style={{padding: 10}}>
-          Version 0.9.0 (1.1.0)
-        </Caption>
-
-
         <View style={{position: 'absolute', bottom: 80, width: '100%'}}>
         <Button style={{alignSelf: 'center'}} mode="text" compact color="#1565C0" onPress={_handleLogout}>
     Log out

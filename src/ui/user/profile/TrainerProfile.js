@@ -245,7 +245,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                     {userData.display_name} has not setup a bio.
         </Caption>
         }
-
+ 
         return (
             <Text style={styles.bioText}>
                 {userData.bio}

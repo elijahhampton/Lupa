@@ -22,7 +22,7 @@ import FeatherIcon from "react-native-vector-icons/Feather"
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 
-class SingleWorkout extends React.PureComponent {
+class SingleWorkout extends React.Component {
     constructor(props) {
         super(props);
 
@@ -36,54 +36,42 @@ class SingleWorkout extends React.PureComponent {
     }
 
     static getDerivedStateFromProps = (props, state) => {
-            return {
-                showSelectStyle: props.showSelectStyle,
-
-            }
+        return {
+            showSelectStyle: props.showSelectStyle
+        }
     }
-
-
-   /* handleOnPress = () => {
-        
-        if (this.state.isPressed)
-        {
-
-            this.setState({
-                isPressed: false
-            })
-        }
-        else
-        {
-            this.setState({
-                isPressed: true
-            })
-        }
-
-        this.props.captureWorkout(this.props.workout);
-    }*/
 
     render() {
 return (
-    <View style={[{marginVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
+    <>
+    <View style={[{marginVertical: 10, width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
+    
    <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5}}>
    <View style={{flexDirection: 'row', alignItems: 'flex-start',}}>
+       <TouchableOpacity onPress={this.props.onPress}>
+
    <Surface style={{borderWidth: 1, height: 70, width: 100, backgroundColor: '#212121'}}>
-                            <Video source={require('../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+    <Video source={require('../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+    {
+        this.state.showSelectStyle === true ?
+        <View style={{position: 'absolute',  width: '100%', height: '100%', flex: 1, backgroundColor: 'rgba(225, 120, 205, 0.5)'}}  />
+        :
+        null
+    }
+   
           </Surface>
+          </TouchableOpacity>
     <View style={{paddingHorizontal: 10,}}>
-    <Text style={{width: 90,  paddingVertical: 3, fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
+    <Text style={{ paddingVertical: 3, fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
               {this.props.workout.workout_name}
           </Text>
-          <Text style={{fontFamily: 'Avenir-Light', color: '#1089ff'}}>
-              Preview Exercise
-          </Text>
-    </View>
-               
+    </View>   
+   </View>
    </View>
 
-   </View>
+   
     </View>
-
+    </>
 )
  
             

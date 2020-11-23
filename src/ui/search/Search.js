@@ -369,8 +369,8 @@ class Search extends React.Component {
             showsVerticalScrollIndicator={false}>
 
 <View noShadow={true}  style={{elevation: 0,  marginTop: 10, marginBottom: 10, alignItems: 'center', justifyContent: 'center', borderBottomColor: 'white', backgroundColor: 'white'}} span={true}>
-            <Text style={{padding: 10, fontFamily: 'Avenir-Heavy', alignSelf: 'flex-start', marginLeft: 20, fontSize: 20}}>
-                    Explore Trainers and Programs
+            <Text style={{padding: 10, width: '80%', fontFamily: 'Avenir-Heavy', alignSelf: 'flex-start', marginLeft: 20, fontSize: 20}}>
+                    Explore Trainers and Fitness Programs
                 </Text>
               
             </View>

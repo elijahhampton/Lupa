@@ -84,9 +84,9 @@ function TrainerDashboard(props) {
 
 
     const renderUpcomingBooking = () => {
-        if (userBookings.length === 0) {
+        if (true) {
             return (
-                <Caption>
+                <Caption style={{padding: 20}}>
                     You don't have any scheduled bookings.
                 </Caption>
             )

@@ -107,6 +107,7 @@
     "react-native-slider": "^0.11.0",
     "react-native-snap-carousel": "^3.8.2",
     "react-native-splash-screen": "^3.2.0",
+    "react-native-spotlight-view": "^1.0.1",
     "react-native-step-indicator": "0.0.11",
     "react-native-sticky-parallax-header": "^0.3.1",
     "react-native-stream": "^0.1.9",

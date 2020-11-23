@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     ScrollView,
     SafeAreaView,
+    Image,
     SectionList,
     TouchableWithoutFeedback
 } from 'react-native';
@@ -36,17 +37,44 @@ import { Picker } from '@react-native-community/picker';
 import { getProgramWorkoutStructureEntry } from '../../../../../model/data_structures/programs/program_structures';
 import { getLupaExerciseStructure } from '../../../../../model/data_structures/workout/exercise_collections';
 import { LOG_ERROR } from '../../../../../common/Logger';
+import { DebugInstructions } from 'react-native/Libraries/NewAppScreen';
+import WorkoutDisplay from './component/WorkoutDisplay';
 
 const PLACEMENT_TYPES = {
     SUPERSET: 'superset',
     EXERCISE: 'exercise',
 }
 
+const CATEGORIES = [
+    'Balance',
+    'Flexibility',
+    'Core',
+    'Resistance',
+    'Plyometric'
+
+]
+
 //Redux::mapStateToProps
 const mapStateToProps = (state, action) => {
     return {
         lupa_data: state
     }
+}
+
+function Exercise(workoutObject, workoutDay) {
+    this.workout_name = workoutObject.workout_name
+    this.workout_description = workoutObject.workout_description
+    this.workoutMedia = {
+        media_type: '',
+        uri: '',
+    }
+    this.workout_reps = 0
+    this.workout_sets = 0
+    this.workout_uid = Math.random().toString()
+    this.workout_tempo = '0-0-0'
+    this.workout_rest_time = 0
+    this.workout_day = workoutDay
+    this.superset = []
 }
 
 /**
@@ -57,10 +85,14 @@ class BuildWorkoutController extends React.Component {
     constructor(props) {
         super(props);
 
+        this.trackedWorkouts = []
+
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
         this.addedWorkoutOptionsRef = createRef();
         this.weekDayRBSheetRef = createRef();
         this.dayOfTheWeekRBSheetRef = createRef();
+        this.addExerciseRBSheetRef = createRef();
+        this.addExerciseNestedRBSheetRef = createRef()
 
         this.state = {
             addedWorkoutsScrollViewWidth: 0,
@@ -68,6 +100,8 @@ class BuildWorkoutController extends React.Component {
             weeks: [],
             searchValue: '',
             bottomViewIndex: 0,
+            folderIsSelected: false,
+            folderSelected: '',
             workoutDays: [],
             numWorkoutsAdded: 0,
             currDayIndex: 0,
@@ -78,11 +112,11 @@ class BuildWorkoutController extends React.Component {
             libraryData: [
                 {
                     title: "Balance",
-                    data: [],
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.balance_workouts,
                 },
                 {
                     title: "Flexibility",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.flexibility_workouts 
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.flexibility_workouts
                 },
                 {
                     title: "Core",
@@ -123,22 +157,21 @@ class BuildWorkoutController extends React.Component {
                 }
             }
         } else {
-          workoutDays = new Array(1)
-          await weeks.push(0)
-          workoutDays[0] = {
-            Monday: [],
-            Tuesday: [],
-            Wednesday: [],
-            Thursday: [],
-            Friday: [],
-            Saturday: [],
-            Sunday: []
-          }
+            workoutDays = new Array(1)
+            await weeks.push(0)
+            workoutDays[0] = {
+                Monday: [],
+                Tuesday: [],
+                Wednesday: [],
+                Thursday: [],
+                Friday: [],
+                Saturday: [],
+                Sunday: []
+            }
         }
 
-    
+
         await this.setState({ ready: true, weeks: weeks, workoutDays: workoutDays })
-        console.log(this.props.lupa_data.Application_Workouts.applicationWorkouts)
     }
 
     /**
@@ -193,6 +226,15 @@ class BuildWorkoutController extends React.Component {
         this.setState({ workoutDays: newState })
     }
 
+    addNewWorkout = (workoutObject) => {
+        const workoutDay = this.getCurrentDay()
+        const currWeek = this.getCurrentWeek();
+
+        var updatedWorkout = {}
+
+        return updatedWorkout;
+    }
+
     /**
      * Adds a workout to the workoutDays structure.
      * @param {*} workoutObject 
@@ -202,22 +244,7 @@ class BuildWorkoutController extends React.Component {
         const workoutDay = this.getCurrentDay()
         const currWeek = this.getCurrentWeek();
 
-        //  let updatedWorkout = getLupaExerciseStructure(workoutObject.workout_name, workoutObject.workout_description, workoutDay, Math.random().toString())
-        let updatedWorkout = {
-            workout_name: workoutObject.workout_name,
-            workout_description: workoutObject.workout_description,
-            workoutMedia: {
-                media_type: '',
-                uri: '',
-            },
-            workout_reps: 0,
-            workout_sets: 0,
-            workout_uid: Math.random().toString(),
-            workout_tempo: '0-0-0',
-            workout_rest_time: 0,
-            workout_day: workoutDay,
-            superset: [],
-        }
+        let updatedWorkout = new Exercise(workoutObject, workoutDay)
 
         if (typeof (workoutObject) == 'undefined') {
             return;
@@ -235,16 +262,18 @@ class BuildWorkoutController extends React.Component {
                         newWorkoutData[currWeek][workoutDay][i] = workoutToUpdate
                     }
                 }
-
                 break;
             case PLACEMENT_TYPES.EXERCISE:
+                console.log('Exercise being added is: ' + updatedWorkout.workout_name);
                 newWorkoutData[currWeek][workoutDay].push(updatedWorkout);
                 break;
             default:
         }
 
+
+
         const num = this.state.numWorkoutsAdded + 1;
-        this.setState({ workoutDays: newWorkoutData, currPressedPopulatedWorkout: undefined, numWorkoutsAdded: num, currPlacementType: PLACEMENT_TYPES.EXERCISE })
+        this.setState({ workoutDays: Array.from(newWorkoutData), currPressedPopulatedWorkout: undefined, numWorkoutsAdded: num, currPlacementType: PLACEMENT_TYPES.EXERCISE })
     }
 
     /**
@@ -260,36 +289,37 @@ class BuildWorkoutController extends React.Component {
         }
 
         try {
-            if (typeof(workoutDays[currWeek][currDay]) == 'undefined') {
+            if (typeof (workoutDays[currWeek][currDay]) == 'undefined') {
                 return null;
             }
 
-            if (workoutDays[currWeek][currDay].length === 0) {
-                return null;
-            }
+            const currWorkoutDaysState = workoutDays[currWeek][currDay];
+            const content = currWorkoutDaysState.map((exercise, index, arr) => {
+                return (
+                   <TouchableWithoutFeedback key={index} style={[styles.populatedExerciseTouchableContainer, { width: this.state.addedWorkoutsScrollViewWidth - 10, }]}>
+                         <WorkoutDisplay workout={exercise} programDuration={0} handleExerciseOnPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} />
+                    </TouchableWithoutFeedback>
+                
+                )
+            })
 
-            return (
-                <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                    {
-                        workoutDays[currWeek][currDay].map((exercise, index, arr) => {
-                            return (
-                                <TouchableWithoutFeedback key={index} onPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} style={[styles.populatedExerciseTouchableContainer, { width: this.state.addedWorkoutsScrollViewWidth - 10, }]}>
-                                    <View style={[styles.flexOne, { width: 100, height: 100, marginVertical: 10}]}>
-                                        <View style={[styles.flexOne, { width: '100%'}]}>
-                                            <Surface style={[styles.flexOne, { width: '100%'}]}>
-                                                <Video source={require('../../../../videos/pushuppreview.mov')} style={[styles.flexOne, { width: '100%'}]} shouldPlay={false} resizeMode="cover" />
-                                            </Surface>
-                                        </View>
-                                        <Text style={styles.populatedExerciseText}>
-                                            {exercise.workout_name}
-                                        </Text>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            )
-                        })
-                    }
+            if (currWorkoutDaysState.length == 0) {
+                return (
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly', width: '100%', height: '100%'}}>
+                    <Image style={{width: 110, height: 110}} source={require('../../../../images/timetable_icon/timetable.png')} />
+                
+                <Text style={{paddingHorizontal: 10, fontFamily: 'Avenir-Black', fontSize: 18}}>
+                    Add your first exercise to {this.getCurrentDay()} for this week.
+                </Text>
                 </View>
-            )
+                )
+            } else {
+                return (
+                    <ScrollView style={{flex: 1, width: '100%', alignItems: 'flex-start'}}>
+                        {content}
+                    </ScrollView>
+                )
+            }
         } catch (error) {
             LOG_ERROR('BuildWorkoutController.js', 'Caught unhandled exception in getCurrentDayContent', error);
         }
@@ -306,36 +336,20 @@ class BuildWorkoutController extends React.Component {
      * Opens a bottom sheet with options for the current pressed added workout.
      * @param {} workout 
      */
-    handleOpenAddedWorkoutOptionsSheet = async (workout) => {
-        this.setState({ currPressedPopulatedWorkout: workout })
-        await this.addedWorkoutOptionsRef.current.open();
-    }
-
-    /**
-     * Renders the appropriate caption in the header.
-     */
-    renderAddExercisesHeaderText = () => {
-        if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
-            return (
-                <Caption style={styles.whiteText}>
-                    Choose a day of the week and add exercises. Select your added exercises for further options.
-                </Caption>
-            )
-        } else {
-            return (
-                <Caption style={styles.whiteText}>
-                    Add exercises and select your added exercises for further options.
-                </Caption>
-            )
-        }
+    handleOpenAddedWorkoutOptionsSheet =  (workout) => {
+        this.setState({ currPressedPopulatedWorkout: workout }, () => {
+            this.addedWorkoutOptionsRef.current.open();
+        })
     }
 
     /**
      * Handles adding an exercise as a superset.
      */
-    handleAddSuperSet = async () => {
-        await this.setState({ currPlacementType: PLACEMENT_TYPES.SUPERSET });
-        this.addedWorkoutOptionsRef.current.close();
+    handleAddSuperSet = (exercise) => {
+        this.setState({ currPlacementType: PLACEMENT_TYPES.SUPERSET, currPressedPopulatedWorkout: exercise }, () => {
+            console.log('handle add superset call back!')
+            this.openRenderAddExerciseRBSheet()
+        });
     }
 
     /**
@@ -358,15 +372,15 @@ class BuildWorkoutController extends React.Component {
                     this.state.currPressedPopulatedWorkout.superset.map(exercise => {
                         return (
                             <View style={[styles.flexOne, styles.populatedSupersetExercise]}>
-                            <View style={styles.flexOne}>
-                                <Surface style={styles.flexOne}>
-                                    <Video source={require('../../../../videos/pushuppreview.mov')} style={styles.flexOne} shouldPlay={false} resizeMode="cover" />
-                                </Surface>
+                                <View style={styles.flexOne}>
+                                    <Surface style={styles.flexOne}>
+                                        <Video source={require('../../../../videos/pushuppreview.mov')} style={styles.flexOne} shouldPlay={false} resizeMode="cover" />
+                                    </Surface>
+                                </View>
+                                <Text style={styles.populatedExerciseText}>
+                                    {exercise.workout_name}
+                                </Text>
                             </View>
-                            <Text style={styles.populatedExerciseText}>
-                                {exercise.workout_name}
-                            </Text>
-                        </View>
                         )
                     })
                 }
@@ -381,7 +395,7 @@ class BuildWorkoutController extends React.Component {
         return (
             <RBSheet
                 ref={this.addedWorkoutOptionsRef}
-                height={Dimensions.get('window').height / 3}
+                height={300}
                 closeOnPressMask={true}
                 customStyles={{
                     wrapper: {},
@@ -395,7 +409,7 @@ class BuildWorkoutController extends React.Component {
                 dragFromTopOnly={true}
             >
                 <View style={{ alignItems: 'flex-start', flex: 1, padding: 20, backgroundColor: '#FFFFFF' }}>
-                    <TouchableWithoutFeedback onPress={() => this.handleAddSuperSet()} style={{ marginVertical: 10, }}>
+                    <TouchableWithoutFeedback onPress={this.handleAddSuperSet} style={{ marginVertical: 10, }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <FeatherIcon name="plus" size={20} style={{ paddingHorizontal: 10 }} />
                             <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 15 }}>
@@ -411,16 +425,9 @@ class BuildWorkoutController extends React.Component {
                     </Text>
                         </View>
                     </TouchableWithoutFeedback>
-
-                    <Divider style={{ alignSelf: 'center', width: Dimensions.get('window').width }} />
-                    <View style={{ width: '100%' }}>
-                        <Text style={{ alignSelf: 'flex-end', paddingVertical: 5, fontSize: 18, fontWeight: 'bold' }}>
-                            Exercise Supersets ({typeof (this.state.currPressedPopulatedWorkout) == 'undefined' ? 0 : this.state.currPressedPopulatedWorkout.superset.length})
-                 </Text>
-                        {this.renderCurrWorkoutSupersets()}
-                    </View>
                 </View>
                 <SafeAreaView />
+                {this.renderNestedAddExerciseRBSheet()}
             </RBSheet>
         )
     }
@@ -448,7 +455,7 @@ class BuildWorkoutController extends React.Component {
                 >
                     <View style={{ flex: 1 }}>
                         <View style={{ width: '100%' }}>
-                            <Button color="#1089ff" style={{ alignSelf: 'flex-end' }} mode="text" onPress={this.closeWeekDayPicker}>
+                        <Button color="#1089ff" style={{ alignSelf: 'center', marginVertical: 10 }} contentStyle={{width: Dimensions.get('window').width- 20}} mode="contained" onPress={this.closeWeekDayPicker}>
                                 <Text>
                                     Done
                         </Text>
@@ -477,23 +484,38 @@ class BuildWorkoutController extends React.Component {
     }
 
     renderTrainerButtons = () => {
-        if (this.props.lupa_data.Users.currUserData.isTrainer === false) {
-            return;
-        }
-
         return (
-            
-            <SafeAreaView style={styles.buildOptionsSafeAreaView}>
-                    <Button onPress={this.openWeekDayPicker} uppercase={false} color="#1089ff" style={styles.buildOptionsButton} mode="contained" icon={() => <FeatherIcon color="white" name="chevron-up" />}>
-                        {this.getCurrentDay()}
-                    </Button>
+            <View style={{ backgroundColor: '#23374d', padding: 10 }}>
 
-           
-                    <Button onPress={this.openWeekPicker} uppercase={false} color="#1089ff" style={styles.buildOptionsButton} mode="contained" icon={() => <FeatherIcon color="white" name="chevron-up" />}>
-                        Week {this.state.currWeekIndex + 1}
-                    </Button>
-           
-            </SafeAreaView>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%' }}>
+                    <TouchableOpacity onPress={this.openWeekDayPicker}>
+                        <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                            <FeatherIcon name="chevron-down" />
+                            <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
+                               {this.getCurrentDay()}
+                    </Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={this.openWeekPicker}>
+                        <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                            <FeatherIcon name="chevron-down" />
+                            <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
+                                Week {this.getCurrentWeek() + 1}
+                    </Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={this.openRenderAddExerciseRBSheet}>
+                        <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                            <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
+                                Add Exercise
+                    </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
+            </View>
         )
     }
 
@@ -504,7 +526,7 @@ class BuildWorkoutController extends React.Component {
         if (this.props.lupa_data.Users.currUserData.isTrainer != true) {
             return 0;
         }
-        
+
         return this.state.currWeekIndex
     }
 
@@ -533,7 +555,7 @@ class BuildWorkoutController extends React.Component {
                 >
                     <View style={{ flex: 1 }}>
                         <View style={{ width: '100%' }}>
-                            <Button color="#1089ff" style={{ alignSelf: 'flex-end' }} mode="text" onPress={this.closeWeekPicker}>
+                            <Button color="#1089ff" style={{ alignSelf: 'center', marginVertical: 10 }} contentStyle={{width: Dimensions.get('window').width - 20}} mode="contained" onPress={this.closeWeekPicker}>
                                 <Text>
                                     Done
                         </Text>
@@ -560,39 +582,266 @@ class BuildWorkoutController extends React.Component {
         return null;
     }
 
-    /**
-     * Renders workout library as section list.
-     */
-    renderSectionList = () => {
-        try {
-            return (
-                <SectionList
-                                    sections={this.state.libraryData}
-                                    keyExtractor={(item, index) => item.index}
-                                    initialNumToRender={5}
-                                    removeClippedSubviews={true}
-                               
-                                    renderItem={({ item }) => {
-                                        if (typeof (item) == 'undefined' || item.workout_name == "" || typeof(item.workout_name) == 'undefined') {
-                                            return;
-                                        }
-                                        return (
-                                            <TouchableOpacity key={item.workout_name} onPress={() => this.captureWorkout(item, this.state.currPlacementType)}>
-                                                <SingleWorkout
-                                                    showSelectStyle={this.state.placementType == PLACEMENT_TYPES.SUPERSET}
-                                                    workout={item}
-                                                />
-                                            </TouchableOpacity>
-                                        )
-                                    }}
-                                    renderSectionHeader={({ section: { title } }) => (
-                                        <Text style={styles.sectionHeader}>{title}</Text>
-                                    )}
-                                />
-            )
-        } catch(error) {
-       
+    checkShowSelectedStyle = (exerciseObject) => {
+        const workoutDay = this.getCurrentDay()
+        const currWeek = this.getCurrentWeek();
+     
+        for (let i = 0; i < this.state.workoutDays[currWeek][workoutDay].length; i++) {
+            if (this.state.workoutDays[currWeek][workoutDay][i].workout_name == exerciseObject.workout_name) {
+                exerciseObject.showSelectStyle = true;
+            }
         }
+    }
+
+    openRenderAddExerciseRBSheet = () => this.addExerciseRBSheetRef.current.open();
+
+    closeRenderAddExerciseRBSheet = () => this.addExerciseRBSheetRef.current.close();
+
+
+    openRenderNestedAddExerciseRBSheet = () => this.addExerciseNestedRBSheetRef.current.open();
+
+    closeRenderNestedAddExerciseRBSheet = () => this.addExerciseRBSheetRef.current.close();
+
+    handleFolderIsOpen = (folderString) => {
+        this.setState({ folderIsSelected: true, folderSelected: folderString }, () => {
+            this.openRenderAddExerciseRBSheet();
+        })
+    }
+
+    handlerLeaveFolder = () => {
+        this.setState({ folderSelected: '', folderIsSelected: false}, () => {
+            this.openRenderAddExerciseRBSheet()
+        })
+
+
+    }
+
+    renderFolderContent = () => {
+        switch(this.state.folderSelected) {
+            case 'Balance':
+                return (
+                    <View style={{width: Dimensions.get('window').width}}>
+                    <ScrollView>
+                        {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.balance_workouts.map((item, index, value) => {
+                            if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
+                                return;
+                            }
+                            this.checkShowSelectedStyle(item)
+                            return (
+                                <SingleWorkout
+                                    onPress={() => this.captureWorkout(item, this.state.currPlacementType)}
+                                    key={item.workout_name}
+                                    showSelectStyle={item.showSelectStyle}
+                                    workout={item}
+                                />
+                            )
+                        })
+                        }
+                    </ScrollView>
+                    <Button color="#1089ff" onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 50}} style={{marginVertical: 10, alignSelf: 'center'}}>
+                        Back
+                    </Button>         
+                    </View>
+                )
+            case 'Core':
+                return (
+                    <View style={{width: Dimensions.get('window').width}}>
+                    <ScrollView>
+                        {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.core_workouts.map((item, index, value) => {
+                            if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
+                                return;
+                            }
+                            this.checkShowSelectedStyle(item)
+                            return (
+                                <SingleWorkout
+                                    onPress={() => this.captureWorkout(item, this.state.currPlacementType)}
+                                    key={item.workout_name}
+                                    showSelectStyle={item.showSelectStyle}
+                                    workout={item}
+                                />
+                            )
+                        })
+                        }
+                    </ScrollView>
+                    <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
+                        Back
+                    </Button>         
+                    </View>
+                )
+            case 'Plyometric':
+                return (
+                    <View style={{width: Dimensions.get('window').width}}>
+                    <ScrollView>
+                        {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric_workouts.map((item, index, value) => {
+                            if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
+                                return;
+                            }
+                            this.checkShowSelectedStyle(item)
+                            return (
+                                <SingleWorkout
+                                    onPress={() => this.captureWorkout(item, this.state.currPlacementType)}
+                                    key={item.workout_name}
+                                    showSelectStyle={item.showSelectStyle}
+                                    workout={item}
+                                />
+                            )
+                        })
+                        }
+                    </ScrollView>
+                    <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
+                        Back
+                    </Button>         
+                    </View>
+                )
+            case 'Flexibility':
+                return (
+                    <View style={{width: Dimensions.get('window').width}}>
+                    <ScrollView>
+                        {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.flexibility_workouts.map((item, index, value) => {
+                            if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
+                                return;
+                            }
+                            this.checkShowSelectedStyle(item)
+                            return (
+                                <SingleWorkout
+                                    onPress={() => this.captureWorkout(item, this.state.currPlacementType)}
+                                    key={item.workout_name}
+                                    showSelectStyle={item.showSelectStyle}
+                                    workout={item}
+                                />
+                            )
+                        })
+                        }
+                    </ScrollView>
+                    <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
+                        Back
+                    </Button>         
+                    </View>
+                )
+            case 'Resistance':
+                return (
+                    <View style={{width: Dimensions.get('window').width}}>
+                    <ScrollView>
+                        {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.resistance_workouts.map((item, index, value) => {
+                            if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
+                                return;
+                            }
+                            this.checkShowSelectedStyle(item)
+                            return (
+                                <SingleWorkout
+                                    onPress={() => this.captureWorkout(item, this.state.currPlacementType)}
+                                    key={item.workout_name}
+                                    showSelectStyle={item.showSelectStyle}
+                                    workout={item}
+                                />
+                            )
+                        })
+                        }
+                    </ScrollView>
+                    <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
+                        Back
+                    </Button>         
+                    </View>
+                )
+        }
+    }
+
+    renderAddExerciseContent = () => {
+        if (this.state.folderIsSelected === false) {
+            
+            return (
+                <ScrollView horizontal>
+{
+                CATEGORIES.map(categoryString => {
+                   return ( <TouchableOpacity onPress={() => this.handleFolderIsOpen(categoryString)} style={{ margin: 20, alignItems: 'center' }}>
+                        <Image source={require('../../../../images/buildworkout/ExerciseFolder.png')} style={{ width: 90, height: 80 }} />
+                        <Text style={{ fontFamily: 'Avenir-Heavy', marginVertical: 10 }}>
+                            {categoryString}
+                        </Text>
+                    </TouchableOpacity>
+                   )
+            })
+        }
+                        </ScrollView>
+            )
+        } else {
+            return (
+            <View style={{flex: 1}}>
+                {this.renderFolderContent()}
+            </View>
+            )
+        }
+    }
+
+    handleOnCloseAddExerciseRBSheet = () => {
+        console.log('BEGINNING ON CLOSE')
+        this.setState({ folderIsSelected: false, folderSelected: ''})
+        console.log("ENDING ON CLOSE")
+    }
+
+    renderAddExerciseRBSheet = () => {
+        return (
+            <RBSheet
+                ref={this.addExerciseRBSheetRef}
+                dragFromTopOnly={true}
+                closeOnDragDown={true}
+                onClose={this.handleOnCloseAddExerciseRBSheet}
+                height={this.state.folderIsSelected === true ? 550 : 160}
+                customStyles={{
+                    wrapper: {
+                        flex: 1,
+                    },
+                    container: {
+                        borderTopRightRadius: 10,
+                        borderTopLeftRadius: 10,
+                    },
+                    draggableIcon: {
+                        backgroundColor: 'grey',
+                    }
+                }}
+            >
+                <ScrollView horizontal>
+                    {
+                        this.renderAddExerciseContent()
+                    }
+                </ScrollView>
+            </RBSheet>
+        )
+    }
+
+    renderNestedAddExerciseRBSheet = () => {
+        return (
+            <RBSheet
+                ref={this.addExerciseNestedRBSheetRef}
+                dragFromTopOnly={true}
+                closeOnDragDown={true}
+                onClose={this.handleOnCloseAddExerciseRBSheet}
+                height={this.state.folderIsSelected === true ? 550 : 160}
+                customStyles={{
+                    wrapper: {
+                        flex: 1,
+                    },
+                    container: {
+                        borderTopRightRadius: 10,
+                        borderTopLeftRadius: 10,
+                    },
+                    draggableIcon: {
+                        backgroundColor: 'grey',
+                    }
+                }}
+            >
+           
+                    {
+                        this.renderAddExerciseContent()
+                    }
+   
+            </RBSheet>
+        )
     }
 
 
@@ -604,79 +853,32 @@ class BuildWorkoutController extends React.Component {
         if (!this.state.ready) {
             return null;
         }
-        
+
         switch (this.state.currView) {
             case 0:
                 return (
-                <View style={styles.container}>
-                    <Appbar.Header style={[styles.appbar, styles.specializedAppbar]}>
-                        <View style={styles.appbarActions}>
-                            {
-                                this.props.toolIsFirstScreen === true ?
-                                    <Button color="white" uppercase={false} onPress={() => this.props.navigation.pop()}>
-                                        Cancel
+                    <View style={styles.container}>
+                        <Appbar.Header style={{ elevation: 0, alignItems: 'center', backgroundColor: '#23374d', }}>
+                            <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
+                                Back
                                     </Button>
-                                    :
-                                    <Button color="white" uppercase={false} onPress={() => this.state.bottomViewIndex === 0 ? this.props.goToIndex(0) : this.setState({ bottomViewIndex: 0 })}>
-                                        Back
+                            <Appbar.Content title="Add Exercises" />
+                            <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(2)}>
+                                Next
                                     </Button>
-                            }
-                            <Button color="white" uppercase={false} onPress={() => this.goToIndex(1)}>
-                                Add Sets
-                            </Button>
-                        </View>
-                        <View style={styles.containerPadding}>
-                            <View>
-                                <Text style={styles.addExerciseText}>
-                                    Add Exercises
-                                </Text>
-                                {/* <View>
-                        <FeatherIcon name="search" size={24} color="white" />
-                   </View> */}
-                            </View>
-                            {this.renderAddExercisesHeaderText()}
-                        </View>
-
-                    </Appbar.Header>
-                    <Divider />
-                    <View style={styles.content}>
-                        <View style={{ flex: 4 }}>
-                            <View>
-                                <View style={styles.flexOne}>
-                                    <Text>
-                                        No Workouts
-                            </Text>
-                                </View>
-                            </View>
-                            <View style={styles.flexOne}>
-                                {
-                                    this.props.lupa_data.Users.currUserData.isTrainer === true ?
-                                            <Button icon={() => <FeatherIcon name="plus" color="#1089ff" />} onPress={() => this.props.navigation.push('CreateCustomWorkout', {
-                                                programUUID: this.props.programData.program_structure_uuid
-                                            })} color="#1089ff" style={{ alignSelf: 'flex-start' }}>
-                                                <Text>
-                                                    Add a custom exercise
-                                                </Text>
-                                            </Button>
-                                        :
-                                        null
-                                }
-                                {this.renderSectionList()}
-                            </View>
-                        </View>
-                        <View style={styles.midSectionDivider} />
-                        <View style={{ flex: 1.5 }}>
-                            <ScrollView onLayout={event => this.setState({ addedWorkoutsScrollViewWidth: event.nativeEvent.layout.width })} contentContainerStyle={{ alignItems: 'center', width: '100%' }}>
+                        </Appbar.Header>
+                        <View style={styles.content}>
+                           
                                 {this.getCurrentDayContent()}
-                            </ScrollView>
+                            </View>
+                        <View style={{ position: 'absolute', bottom: 0 }} /* style={styles.toolbar} */>
+                            {this.renderTrainerButtons()}
                         </View>
+                        {this.renderDropdownPicker()}
+                        {this.renderDayOfTheWeekDropdownPicker()}
+                        {this.renderAddExerciseRBSheet()}
+                        {this.renderWorkoutOptionsSheet()}
                     </View>
-                   
-                    {this.renderWorkoutOptionsSheet()}
-                   {this.renderTrainerButtons()}
-                   {            this.renderDropdownPicker()}
-           { this.renderDayOfTheWeekDropdownPicker()}
-                </View>
                 );
             case 1:
                 return <AddSets programData={this.props.programData} saveProgramWorkoutData={this.handleSaveProgramData} goToIndex={this.goToIndex} programWorkoutDays={this.props.lupa_data.Users.currUserData.isTrainer === false ? this.props.program_workout_days : this.props.programData.program_workout_days} workoutDays={this.state.workoutDays} structureID={this.props.currProgramUUID} />
@@ -729,10 +931,6 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#FFFFFF',
     },
     mainContent: {
         flex: 2,
@@ -766,13 +964,15 @@ const styles = StyleSheet.create({
         flex: 1,
     }, //---- verified
     populatedExerciseTouchableContainer: {
-        height: 100, 
-        marginTop: 5, 
+        height: 100,
+        marginTop: 5,
         marginBottom: 10
     },
     populatedExerciseText: {
-        padding: 3, 
-        alignSelf: 'center'
+        paddingVertical: 5,
+        alignSelf: 'center',
+        fontSize: 10,
+        width: '100%'
     },
     flexOne: {
         flex: 1,
@@ -781,43 +981,44 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     populatedSupersetExercise: {
-        width: 100, 
-        height: 100, 
+        width: 100,
+        height: 100,
         marginHorizontal: 10
     },
-    specializedAppbar: { 
-        height: 'auto', 
-        paddingVertical: 10 
+    specializedAppbar: {
+        height: 'auto',
+        paddingVertical: 10
     },
     appbarActions: {
-        width: '100%', 
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between'
     },
     addExerciseText: {
-        color: 'white', 
-        fontWeight: 'bold', 
-        fontFamily: 'Avenir-Heavy', 
-        fontSize: 25
+        color: 'white',
+        alignSelf: 'flex-start',
+        fontWeight: 'bold',
+        fontFamily: 'Avenir-Heavy',
+        fontSize: 20
     },
     containerPadding: {
         padding: 10,
     },
     buildOptionsSafeAreaView: {
-        borderTopColor: '#E5E5E5', 
-        borderTopWidth: 0.5, 
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        borderTopColor: '#E5E5E5',
+        borderTopWidth: 0.5,
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-evenly'
     },
     buildOptionsButton: {
-        elevation: 8, 
+        elevation: 8,
         marginVertical: 10
     },
     midSectionDivider: {
-        height: '100%', 
-        width: 1.5, 
+        height: '100%',
+        width: 1.5,
         backgroundColor: '#EEEEEE'
     }
 })

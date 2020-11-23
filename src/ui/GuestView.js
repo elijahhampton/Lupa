@@ -107,25 +107,6 @@ const availabilityTimeBlocks = [
   }
 ]
 
-const CATEGORY_SEPARATION = 15
-const NAVBAR_HEIGHT = 50;
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const COLOR = "#FFFFFF";
-const TAB_PROPS = {
-  tabStyle: { backgroundColor: COLOR },
-  activeTabStyle: { backgroundColor: COLOR },
-  textStyle: { color: "rgba(35, 55, 77, 0.75)", fontFamily: 'Avenir-Heavy' },
-  activeTextStyle: { color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold' }
-};
-
-function AvailableTrainersModal({ isVisible, closeModal }) {
-  return (
-    <Modal presentationStyle="pageSheet" visible={isVisible} onDismiss={closeModal}>
-
-    </Modal>
-  )
-}
-
 class GuestView extends React.Component {
   constructor(props) {
     super(props);
@@ -1055,7 +1036,7 @@ class GuestView extends React.Component {
               this.renderRequestAuthenticationMessage()
             }
 
-            <Divider style={{ height: 10, backgroundColor: '#EEEEEE' }} />
+      
 
             <View style={{marginVertical: 5}}>
             <Text style={{fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy'}}>
@@ -1164,7 +1145,6 @@ class GuestView extends React.Component {
             preFilledTrainerNote={this.state.preFilledTrainerNote}
             prefilledDate={this.state.futureBookingDisplayDate}
          /> 
-          <AvailableTrainersModal isVisible={this.state.availableTrainersModalIsVisible} closeModal={() => this.setState({ availableTrainersModalIsVisible: false })} />
         </KeyboardAwareScrollView>
       </SafeAreaView>
     );

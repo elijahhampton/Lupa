@@ -17,6 +17,7 @@ import {
     Chip,
     Surface,
     DataTable,
+    Paragraph,
     Caption, 
 } from 'react-native-paper';
 
@@ -86,34 +87,29 @@ function UserDashboard(props) {
     }, []);
 
     const renderUpcomingBooking = () => {
-        if (userBookings.length === 0) {
+        if (true) {
             return (
-                <Caption>
-                    You don't have any scheduled bookings.
-                </Caption>
+                <View style={{padding: 10}}>
+  <Paragraph style={{color: '#212121', fontFamily: 'Avenir-Medium'}}>
+                <Text>
+                    You don't have any scheduled bookings.{" "}
+                    </Text>
+                    <Text>
+                       Visit the search page to find a variety of Lupa trainers and fitness programs.
+                    </Text>
+                </Paragraph>
+
+                <Button onPress={() => navigation.push('Search')} style={{marginVertical: 10, width: Dimensions.get('window').width - 20}} mode="outlined" theme={{roundness: 8}} color="#1089ff">
+                    <Text style={{fontSize: 12}}>
+                    Search Trainers and Fitness Programs
+                    </Text>
+                </Button>
+                </View>
+              
             )
         }
 
         return <SessionDashboardComponent booking={userBookings[0]} />
-    }
-
-    const renderComponent = () => {
-        return (
-            <ScrollView refreshControl={<RefreshControl refreshing={refreshing}  onRefresh={handleOnRefresh} />} contentContainerStyle={{backgroundColor: 'white'}}>
-
-
-            <View style={{marginVertical: 15, padding: 10}}>
-<Text style={{fontSize: 13, paddingVertical: 10, fontWeight: '600'}}>
-               Active Bookings
-            </Text>
-            <ScrollView contentContainerStyle={{ alignItems: 'center'}}>
-            {renderBookings()}
-            </ScrollView>
-          
-</View>
-
-</ScrollView>
-        )
     }
     
     return (
