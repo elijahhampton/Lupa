@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import DrawerIcon from 'react-native-feather1s'
+import DrawerIcon from 'react-native-vector-icons/Feather'
 
 import { 
   connect, 
@@ -12,7 +12,9 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
+    Dimensions,
     SafeAreaView,
+    Linking,
 } from 'react-native';
 import {
   Avatar,
@@ -27,9 +29,10 @@ import TrainerInsights from '../../user/trainer/TrainerInsights';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import { logoutUser } from '../../../controller/lupa/auth/auth';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 const ICON_SIZE = 20;
-const ICON_COLOR = "#3d3d40"
+const ICON_COLOR = "rgb(191, 191, 191)"
 
 /**
  * This component render a drawer menu. The drawer menu contains all of the content for the
@@ -80,7 +83,8 @@ function DrawerMenu(props) {
     <SafeAreaView
       style={styles.safeAreaView}
       forceInset={{top: 'always', horizontal: 'never'}}>
-
+        <View style={{flex: 1, justifyContent: 'space-between'}}>
+<View>
       <TouchableOpacity onPress={navigateToProfile}>
       <View style={styles.drawerHeader}>
         <View>
@@ -138,17 +142,9 @@ function DrawerMenu(props) {
         </TouchableOpacity>
         
 
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="help-circle" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Support
-          </Text>
-        </View>
-
         {
           currUserData.isTrainer ?
           <>
-          <Divider />
           <TouchableOpacity onPress={() => navigation.push('MyClients')}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="user" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
@@ -162,12 +158,36 @@ function DrawerMenu(props) {
           null
         }
 
+        </View>
 
-        <View style={{position: 'absolute', bottom: 80, width: '100%'}}>
-        <Button style={{alignSelf: 'center'}} mode="text" compact color="#1565C0" onPress={_handleLogout}>
-    Log out
-    </Button>
-        </View> 
+        <View style={{paddingVertical: 50}}>
+        <Divider style={{width: Dimensions.get('window').width}} />
+
+        <TouchableOpacity onPress={() => Linking.openURL('https://rheasilvialupaheal.wixsite.com/lupahealth/')}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="help-circle" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           Support
+          </Text>
+        </View>
+        </TouchableOpacity>
+
+
+<View style={{width: '100%'}}>
+<TouchableOpacity onPress={_handleLogout}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="log-out" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           Log out
+          </Text>
+        </View>
+        </TouchableOpacity>
+</View> 
+        </View>
+
+
+
+        </View>
     </SafeAreaView>
   </View>
   )
@@ -178,7 +198,7 @@ export default DrawerMenu;
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#F2F2F2'
+      backgroundColor: '#FFFFFF'
     },
     safeAreaView: {
       flex: 1,
@@ -228,7 +248,7 @@ export default DrawerMenu;
       color: '#000000',
       marginHorizontal: 15, 
         fontSize: 15, 
-        fontFamily: 'Avenir-Light',
+        fontFamily: 'Avenir-Roman',
     }
   });
 
