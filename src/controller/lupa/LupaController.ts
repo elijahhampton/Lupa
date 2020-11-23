@@ -167,7 +167,7 @@ export default class LupaController {
 
 
     getUserInformationFromArray = async (arrOfUUIDS) => {
-      let result;
+      let result = []
       await USER_CONTROLLER_INSTANCE.getArrayOfUserObjectsFromUUIDS(arrOfUUIDS).then(objs => {
         result = objs;
       });

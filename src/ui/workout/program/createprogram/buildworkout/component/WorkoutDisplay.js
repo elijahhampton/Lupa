@@ -47,6 +47,14 @@ const restTimes = [
     '300',
 ]
 
+function handleMeasurement(exercise, tempo) {
+    if (typeof(exercise) == 'undefined' || typeof(tempo) == 'undefined') {
+        return;
+    }
+
+    exercise.workout_tempo = tempo;
+} 
+
 function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress, programDuration }) {
     const [updateState, forceUpdateState] = useState(false);
 
@@ -57,6 +65,8 @@ function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress,
     const programWeekPicker = createRef();
     const restTimePickerRef = createRef();
     const tempoPickerRef = createRef();
+
+    const [measurementAccessed, setAccessedMeasurement] = useState(workout)
 
 
     const [pickedExerciseTempo, setPickedExerciseTempo] = useState('0-0-0');
@@ -147,37 +157,25 @@ function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress,
         closeTempoPicker()
     }
 
-    const handleOnChangeTempoSupersetText = (text, workoutRef) => {
-        setTempoSupersetText(text)
-        workoutre.workout_tempo = inputRestTimeSupersetText;
-    }
-
-    const changeExerciseTempo = (workoutRef, tempo) => {
-        if (tempo == 'Edit') {
-            setEditTempo(true);
-            return;
-        }
-
-        workoutRef.workout_tempo = tempo;
-        setPickedExerciseTempo(tempo);
-    }
-
-    const onChangeTextHandler = (text, workoutRef) => {
+    const onChangeTextHandler = (text) => {
         if (text.length < pickedExerciseTempo.length) {
             text = text.substr(0, pickedExerciseTempo.length - 2);
             setPickedExerciseTempo(text)
-            workoutRef.workout_tempo = text
-            return
+            handleMeasurement(measurementAccessed, text)
+          //  workoutRef.workout_tempo = text
+            return;
         } else if (text.length > pickedExerciseTempo.length) {
             if (pickedExerciseTempo.length === 4) {
                 setPickedExerciseTempo(text);
-                workoutRef.workout_tempo = text
+           //     workoutRef.workout_tempo = text
+           handleMeasurement(measurementAccessed, text)
                 return;
             }
             
             text = text + "-"
             setPickedExerciseTempo(text)
-            workoutRef.workout_tempo = text
+         //   workoutRef.workout_tempo = text
+         handleMeasurement(measurementAccessed, text)
         }
     }
 
@@ -194,6 +192,7 @@ function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress,
     const closeRestTimePicker = () => restTimePickerRef.current.close();
 
     const handleOnOpenTempoPicker = (workout) => {
+        setAccessedMeasurement(workout);
         openTempoPicker();
     }
 
@@ -202,7 +201,7 @@ function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress,
     const openTempoPicker = () => tempoPickerRef.current.open();
     const closeTempoPicker = () => tempoPickerRef.current.close();
 
-    const renderTempoPicker = (workoutRef) => {
+    const renderTempoPicker = () => {
         return (
             <RBSheet
             ref={tempoPickerRef}
@@ -240,7 +239,6 @@ function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress,
                         
                     </Dialog.Content>
                 <TextInput
-                
                 style={{alignSelf: 'center', fontSize: 60, borderWidth: 0.8 ,padding: 20, borderRadius: 15, borderColor: '#EEEEEE'}}
             placeholder="0-0-0"
             maxLength={5}
@@ -250,7 +248,7 @@ function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress,
             returnKeyType="done"
 value={pickedExerciseTempo}
 onFocus={onFocusTextHandler}
-onChangeText={(text) => onChangeTextHandler(text, workoutRef)} />
+onChangeText={(text) => onChangeTextHandler(text)} />
                 </View>
 
                 <View style={{width: '100%'}}>
@@ -328,7 +326,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                     <> 
                    <View style={{marginLeft: 10,}}>
          <Text style={{fontSize: 15, fontFamily: 'Avenir-Black'}}>
-                            Group One
+                            {workout.workout_name}
                         </Text>
          <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                         <FeatherIcon name="plus" />
@@ -339,21 +337,18 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                     </View>
         </View>
                 
-                    <View style={{flex: 1, marginLeft: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
+                    <View style={{flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
             
 
 <View style={{flexDirection: 'row', alignItems: 'center'}}>
 
 
-<TouchableOpacity style={{width: 70, height: 50, alignSelf: 'center', }} onPress={handleExerciseOnPress}>
-
-<Surface style={{borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+<Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
         <Video shouldPlay={false} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
     </Surface>
-    </TouchableOpacity>
 
 
-<View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 210}}>
+<View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto'}}>
 
         <View>
         <View style={{marginHorizontal: 5}}>
@@ -412,7 +407,6 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
             
                                     </View>
                                     <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
-                                    {renderTempoPicker(workout)}
                                     </>
                 )
             case false:
@@ -423,7 +417,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
          
          <View style={{marginLeft: 10,}}>
          <Text style={{fontSize: 15, fontFamily: 'Avenir-Black'}}>
-                            Group One
+                            {workout.workout_name}
                         </Text>
          <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                         <FeatherIcon name="plus" />
@@ -448,23 +442,20 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                         >
                           <>
                   
-                  <View style={{flex: 1,  marginLeft: 10,  marginRight: 35, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
+                  <View style={{flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
           
 
 <View style={{flexDirection: 'row', alignItems: 'center'}}>
 
 
-<TouchableOpacity style={{width: 70, height: 50, alignSelf: 'center', marginRight: 10}} onPress={handleExerciseOnPress}>
-
-<Surface style={{borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+<Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
       <Video shouldPlay={false} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
   </Surface>
-  </TouchableOpacity>
 
 
-<View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 160}}>
+<View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto'}}>
 
-      <View style={{marginRight: 10}}>
+      <View>
       <View style={{marginHorizontal: 5}}>
           <View style={{height: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
       <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -499,7 +490,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
       </View>
       
 
-      <View style={{marginLeft: 10}}>
+      <View>
       <TouchableWithoutFeedback onPress={openRestTimePicker}>
       <Text style={{paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12}}>
               Rest Time ({workout.workout_rest_time}s)
@@ -520,7 +511,6 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
         
           
                                   </View>
-                                  {renderTempoPicker(workout)}
                                   <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
                                   
                                   </>
@@ -528,21 +518,19 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                                         workout.superset.map(superset => {
                                             return (
                                                 <>
-                                          <View style={{flex: 1,  marginLeft: 10, marginRight: 30, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
+                                          <View style={{flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
                                   
                       
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       
                       
-                      <TouchableOpacity style={{width: 70, height: 50, alignSelf: 'center', marginRight: 10}} onPress={handleExerciseOnPress}>
-                      
-                      <Surface style={{borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+                      <Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
                               <Video shouldPlay={false} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
                           </Surface>
-                          </TouchableOpacity>
+                
                       
                       
-                      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 160}}>
+                      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto'}}>
                       
                               <View style={{marginRight: 10}}>
                               <View style={{marginHorizontal: 5}}>
@@ -600,7 +588,6 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                                 
                                   
                                                           </View>
-                                                          {renderTempoPicker(superset)}
                                                           </>
                                             )    
                                     })
@@ -611,9 +598,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                     </View>
                 )
                 default:
-                    return <Text>
-                        Huuh
-                    </Text>
+    
         }
     }
 
@@ -670,6 +655,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
         <>
         {renderComponentDisplay()}
         {renderRestTimePicker()}
+        {renderTempoPicker()}
       </>
     )
 }

@@ -39,6 +39,7 @@ import { getLupaExerciseStructure } from '../../../../../model/data_structures/w
 import { LOG_ERROR } from '../../../../../common/Logger';
 import { DebugInstructions } from 'react-native/Libraries/NewAppScreen';
 import WorkoutDisplay from './component/WorkoutDisplay';
+import { Constants } from 'react-native-unimodules';
 
 const PLACEMENT_TYPES = {
     SUPERSET: 'superset',
@@ -251,10 +252,12 @@ class BuildWorkoutController extends React.Component {
         }
 
         let newWorkoutData = this.state.workoutDays;
+        let workoutToUpdate = undefined;
 
         switch (this.state.currPlacementType) {
             case PLACEMENT_TYPES.SUPERSET:
-                let workoutToUpdate = this.state.currPressedPopulatedWorkout;
+                workoutToUpdate = this.state.currPressedPopulatedWorkout;
+                console.log(workoutToUpdate)
                 workoutToUpdate.superset.push(updatedWorkout);
 
                 for (let i = 0; i < this.state.workoutDays[currWeek][workoutDay].length; i++) {
@@ -273,9 +276,8 @@ class BuildWorkoutController extends React.Component {
 
 
         const num = this.state.numWorkoutsAdded + 1;
-        this.setState({ workoutDays: Array.from(newWorkoutData), currPressedPopulatedWorkout: undefined, numWorkoutsAdded: num, currPlacementType: PLACEMENT_TYPES.EXERCISE })
+        this.setState({ workoutDays: Array.from(newWorkoutData), numWorkoutsAdded: num})
     }
-
     /**
      * Returns the workouts for the current day and week.
      */
@@ -297,7 +299,7 @@ class BuildWorkoutController extends React.Component {
             const content = currWorkoutDaysState.map((exercise, index, arr) => {
                 return (
                    <TouchableWithoutFeedback key={index} style={[styles.populatedExerciseTouchableContainer, { width: this.state.addedWorkoutsScrollViewWidth - 10, }]}>
-                         <WorkoutDisplay workout={exercise} programDuration={0} handleExerciseOnPress={() => this.handleOpenAddedWorkoutOptionsSheet(exercise)} handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} />
+                         <WorkoutDisplay workout={exercise} programDuration={0}  handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} />
                     </TouchableWithoutFeedback>
                 
                 )
@@ -315,7 +317,7 @@ class BuildWorkoutController extends React.Component {
                 )
             } else {
                 return (
-                    <ScrollView style={{flex: 1, width: '100%', alignItems: 'flex-start'}}>
+                    <ScrollView contentContainerStyle={{paddingVertical: 5, width: '100%', alignItems: 'flex-start'}}>
                         {content}
                     </ScrollView>
                 )
@@ -483,9 +485,14 @@ class BuildWorkoutController extends React.Component {
         }
     }
 
+    handleOnPressAddExercise = () => {
+        this.setState({ currPlacementType: PLACEMENT_TYPES.EXERCISE})
+        this.openRenderAddExerciseRBSheet()
+    }
+
     renderTrainerButtons = () => {
         return (
-            <View style={{ backgroundColor: '#23374d', padding: 10 }}>
+            <View style={{ backgroundColor: '#23374d', padding: 10, paddingVertical: Constants.statusBarHeight }}>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%' }}>
                     <TouchableOpacity onPress={this.openWeekDayPicker}>
@@ -506,7 +513,7 @@ class BuildWorkoutController extends React.Component {
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={this.openRenderAddExerciseRBSheet}>
+                    <TouchableOpacity onPress={this.handleOnPressAddExercise}>
                         <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
                             <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
                                 Add Exercise
@@ -791,7 +798,7 @@ class BuildWorkoutController extends React.Component {
                 dragFromTopOnly={true}
                 closeOnDragDown={true}
                 onClose={this.handleOnCloseAddExerciseRBSheet}
-                height={this.state.folderIsSelected === true ? 550 : 160}
+                height={this.state.folderIsSelected === true ? 550 : 180}
                 customStyles={{
                     wrapper: {
                         flex: 1,
