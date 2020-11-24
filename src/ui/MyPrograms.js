@@ -89,12 +89,12 @@ function MyPrograms(props) {
     const renderComponentDisplay = () => {
         if (programs.length === 0) {
             return (
-            <View style={{height: 200, alignItems: 'center', justifyContent: 'center', width: '100%'}}>
-                <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+            <View style={{height: 200, alignItems: 'center', justifyContent: 'center', width: '100%', paddingHorizontal: 10}}>
+                <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 16, fontWeight: '800'}}>
                     <Text>
                         You haven't created any programs.{" "}
                     </Text>
-                    <Text onPress={() => navigation.push('CreateProgram')} style={{color: '#1089ff', fontWeight: '400'}}>
+                    <Text onPress={() => navigation.push('CreateProgram')} style={{color: '#1089ff', fontSize: 16, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
                         Get started with your first.
                     </Text>
                 </Text>

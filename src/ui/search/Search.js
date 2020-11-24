@@ -98,15 +98,21 @@ class Search extends React.Component {
             noResultsViewHeight: 0,
             goalIsPressed: true,
             goalPressed: "",
+            categoryIsPressed: false,
+            categoryToSearch: '',
         }
 
+    }
+
+    handleOnPressCategory = (category) => {
+        this.setState({ categoryIsPressed: true, categoryToSearch: category })
     }
 
     renderImage = (skill, index) => {
         switch (skill) {
             case 'Agility':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Agility')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
                             <Image style={{width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Agility.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
@@ -115,7 +121,7 @@ class Search extends React.Component {
                     )
             case 'Speed':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Speed')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Speed')}>
                             <Image style={{ width: 70, height: 70, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Speed.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                                 {skill}
@@ -124,7 +130,7 @@ class Search extends React.Component {
                     )
             case 'Balance':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Balance')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Balance')}>
                             <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Balance.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
@@ -133,7 +139,7 @@ class Search extends React.Component {
                     )
             case 'Power':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Power')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Power')}>
                             <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Power.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
@@ -142,7 +148,7 @@ class Search extends React.Component {
                     )
             case 'Coordination':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Coordination')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Coordination')}>
                             <Image style={{ width: 75, height: 82, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Coordination.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
@@ -151,7 +157,7 @@ class Search extends React.Component {
                     )
             case 'Reaction Time':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Reaction Time')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Reaction Time')}>
                             <Image style={{ width: 80, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/ReactionTime.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
@@ -160,7 +166,7 @@ class Search extends React.Component {
                     )
             case 'Weight Loss':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Weight Loss')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Weight Loss')}>
                             <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/WeightLoss.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
@@ -169,7 +175,7 @@ class Search extends React.Component {
                     )
             case 'Test Preparation':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Test Preparation')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Test Preparation')}>
                             <Image style={{ width: 85, height: 65, alignSelf: 'center' }} source={require('../images/interest_icons/selected/TestPreparation.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                                 {skill}
@@ -178,7 +184,7 @@ class Search extends React.Component {
                     )
             case 'Sport Specific':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Sport Specific')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Sport Specific')}>
                             <Image style={{ width: 60, height: 75, alignSelf: 'center' }} source={require('../images/interest_icons/selected/SportSpecific.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                                 {skill}
@@ -187,7 +193,7 @@ class Search extends React.Component {
                     )
             case 'Bodybuilding':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Bodybuilding')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Bodybuilding')}>
                             <Image style={{ width: 80, height: 40, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Bodybuilding.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
@@ -196,7 +202,7 @@ class Search extends React.Component {
                     )
             case 'Fitness Coach':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Fitness Coach')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Fitness Coach')}>
                             <Image style={{ width: 44, height: 56, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Health:FitnessCoach.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
@@ -205,7 +211,7 @@ class Search extends React.Component {
                     )
             case 'Injury Prevention':
                     return (
-                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Injury Prevention')}>
+                        <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Injury Prevention')}>
                             <Image style={{  alignSelf: 'center' }} source={require('../images/interest_icons/selected/InjuryPrevention.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                                 {skill}
@@ -302,19 +308,38 @@ class Search extends React.Component {
         })
     }
 
+    renderCategoryResults = () => {
+        return (
+            <View style={{flex: 1, marginTop: 100, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, backgroundColor: 'white'}}>
+                <Text style={{fontSize: 16, fontFamily: 'Avenir-Medium'}}>
+                    Sorry we couldn't find any programs relating to {this.state.categoryToSearch}.
+                </Text>
+                <Text onPress={() => this.setState({ categoryIsPressed: false, categoryToSearch: '' })} style={{fontFamily: 'Avenir-Roman', fontSize: 15, marginTop: 30, color: '#1089ff'}}>
+                    Return to search
+                </Text>
+            </View>
+        )
+    }
+
     renderComponentDisplay = () => {
-        if (this.state.searching === true) {
+        if (this.state.searchValue != "") {
             return this.renderSearchResults()
         }
-
-        return (
-            null
-        )
+        
+        if (this.state.searchResults.length === 0 && this.categoryIsPressed === false) {
+            return this.renderSkills()
+        } else if (this.state.categoryIsPressed === true) {
+            return this.renderCategoryResults();
+        } else if (this.state.searching === true) {
+            return this.renderSearchResults()
+        } else {
+            return this.renderSkills()
+        }
     }
 
     renderSearchResults = () => {
             return this.state.searchResults.map(result => {
-                return <UserSearchResult userData={result} />
+                return <UserSearchResult buttonOnPress={() => this.props.navigation.push('Profile', {userUUID: result.user_uuid})} userData={result} />
             })
         }  
 
@@ -391,91 +416,9 @@ class Search extends React.Component {
 </View>
          
                 {
-                    this.state.searchResults.length === 0 ?
-                    this.renderSkills()
-                    :
-                    this.renderSearchResults()
+                    this.renderComponentDisplay()
                 }
-                   {/*  <Tabs 
-            page={this.state.currTab}
-            onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
-            renderTabBar={(props) =>  <>
-                <ScrollableTab {...props} style={{  shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, borderBottomColor: 'white'}} tabsContainerStyle={{paddingVertical: 5, flex: 1, justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 5, width: 5, borderRadius: 10,marginLeft: 30, elevation: 0, borderRadius: 8}}/>
-                <Divider />
-                </>
-            }>
-              
-     <Tab heading="Goals" {...TAB_PROPS}>
-                  <View style={{flex: 1}}>
-                      {
-                          this.state.goalIsPressed === true ?
-                          <View style={{justifyContent: 'flex-start', padding: 20, backgroundColor: 'rgb(245, 246, 249)'}}>
-                              <Text style={{color: '#23374d', fontFamily: 'Avenir-Medium', fontSize: 18}}>
-                                Improve Balance
-                              </Text>
-                          </View>
-                          :
-                          null
-                      }
-                <ScrollView onLayout={event => this.setState({ noResultsViewHeight: event.nativeEvent.layout.height })} contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
-                    {
-                        this.state.goalIsPressed === true ?
-                        this.renderGoalPressedResults()
-                        :
-                       GOALS.map(goal => {
-                           return (
-                               <TouchableWithoutFeedback key={goal} onPress={() => this.handleOnGoalPressed(goal)}>
-                               <Surface style={{alignItems: 'center', justifyContent: 'center', shadowColor: "rgb(210, 180 ,120)", elevation: 2, borderRadius: 15, width: Dimensions.get('window').width / 2.5, backgroundColor: 'rgb(223, 240 ,254)', height: 150, margin: 20}}>
-                                <Text style={{fontFamily: 'Avenir-Roman'}}>
-                                   Improve Balance
-                                </Text>
-                                   <MaterialIcon size={24} name="star" style={{position: 'absolute', top: 0, left: 0, margin: 12}}/>
-                               </Surface>
-                               </TouchableWithoutFeedback>
-                           )
-                       })
-                    }
-                </ScrollView>
-                  </View>
-              </Tab>
 
-           <Tab heading="Popular" {...TAB_PROPS}>
-                <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
-                    {
-                        this.state.popularPrograms.map(program => {
-                            return (
-                                <LargeProgramSearchResultCard program={program} />
-                            )
-                        })
-                    }
-                </ScrollView>
-    
-              </Tab>
-
-              <Tab heading="Most Recent" {...TAB_PROPS} >
-              <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
-                    {
-                        this.state.popularPrograms.map(program => {
-                            return (
-                                <LargeProgramSearchResultCard program={program} />
-                            )
-                        })
-                    }
-                </ScrollView>
-              </Tab>
-              
-              <Tab heading="Location" {...TAB_PROPS} >
-              <ScrollView contentContainerStyle={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap'}}>
-                    {
-                        this.state.locationResults.map(program => {
-                            return (
-                                <LargeProgramSearchResultCard program={program} />
-                            )
-                        })
-                    }
-                </ScrollView>
-              </Tab>
-                </Tabs>*/}
                 
           </ScrollView>
   

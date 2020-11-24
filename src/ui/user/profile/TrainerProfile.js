@@ -162,10 +162,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             <View style={{ marginVertical: 10, flex: 1, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
                 <TouchableOpacity onPress={navigateToFollowers}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 13, fontFamily: 'Avenir-Heavy' }}>
+                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
                             {getFollowersLength()}
                         </Text>
-                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir-Roman', fontSize: 11 }]}>
+                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 15 }]}>
                             Followers
         </Text>
                     </View>
@@ -173,10 +173,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={navigateToFollowers}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 13, fontFamily: 'Avenir-Heavy' }}>
+                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
                             {getFollowingLength()}
                         </Text>
-                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir-Roman', fontSize: 11 }]}>
+                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 15 }]}>
                             Following
         </Text>
                     </View>
@@ -261,19 +261,20 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
                         isCurrentUser === true ?
-                            <Caption>
-                                <Caption>
-                                    You haven't created any vlogs.
-                        </Caption>
-                                {" "}
-                                <Caption style={{ color: '#1089ff' }} onPress={() => navigation.push('CreateNewPost')}>
-                                    Start publishing by creating content.
-                        </Caption>
-                            </Caption>
-                            :
-                            <Caption>
-                                No Vlogs have been created by {userData.display_name}
-                            </Caption>
+                        <Text style={{paddingHorizontal: 10}}>
+                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                    <Text>
+                    You haven't created any vlogs.{" "}
+                    </Text>
+                    <Text onPress={() => navigation.push('CreateNewPost')} style={{color: '#1089ff', fontSize: 15, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
+                    Start creating content on Lupa.
+                    </Text>
+                </Text>
+                </Text>
+                :
+                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                   No Vlogs have been created by {userData.display_name}
+                </Text>
                     }
 
                 </View>
@@ -297,19 +298,20 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
                         isCurrentUser === true ?
-                            <Caption>
-                                <Caption>
-                                    You haven't created any programs.
-                        </Caption>
-                                {" "}
-                                <Caption style={{ color: '#1089ff' }} onPress={() => navigation.push('CreateProgram')}>
-                                    Create your first program.
-                        </Caption>
-                            </Caption>
-                            :
-                            <Caption>
-                                No programs have been created by {userData.display_name}
-                            </Caption>
+                        <Text>
+                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                    <Text>
+                        You haven't created any programs.{" "}
+                    </Text>
+                    <Text onPress={() => navigation.push('CreateProgram')} style={{color: '#1089ff', fontSize: 15, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
+                        Get started with your first.
+                    </Text>
+                </Text>
+                </Text>
+                :
+                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                    No programs have been created by {userData.display_name}
+                </Text>
                     }
 
                 </View>
@@ -446,8 +448,8 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     useEffect(() => {
         async function loadProfile() {
             try {
-               // setProfileImage(userData.photo_url);
-               // await fetchVlogs(userData.user_uuid);
+                setProfileImage(userData.photo_url);
+                await fetchVlogs(userData.user_uuid);
                if (currUserData.user_uuid == userData.user_uuid) {
                 setTrainerPrograms();
             } else {
@@ -488,12 +490,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 {
                     isCurrentUser === true ?
-                    <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
+                    <FeatherIcon name="send" size={22} onPress={() => navigation.push('PrivateChat', {
                         currUserUUID: currUserData.user_uuid,
                         otherUserUUID: userData.user_uuid,
                     })} />
                         :
-                        <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
+                        <FeatherIcon name="send" size={22} onPress={() => navigation.push('PrivateChat', {
                             currUserUUID: currUserData.user_uuid,
                             otherUserUUID: userData.user_uuid,
                         })} />

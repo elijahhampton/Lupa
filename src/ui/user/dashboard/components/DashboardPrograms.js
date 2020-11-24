@@ -13,9 +13,9 @@ import {
  
 import { useSelector } from 'react-redux';
 import {
-    Surface, Button, Divider
+    Surface, Button, Divider, Appbar, Paragraph,
 } from 'react-native-paper';
-
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { useNavigation } from '@react-navigation/native';
 import LUPA_DB from '../../../../controller/firebase/firebase';
@@ -72,11 +72,39 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
         return () => programDataObserver();
     }, [])
 
-    return (
-        <Modal animated={true} animationType="slide" visible={isVisible} presentationStyle="fullScreen" onDismiss={closeModal}>
-            <SafeAreaView style={{flex: 1}}>
-                <Feather1s name="arrow-left" size={20} onPress={closeModal} style={{paddingLeft: 20}} />
-                <ScrollView>
+    const handleOnPressFindFitnessProgram = () => {
+        closeModal();
+        navigation.push('Search')
+    }
+
+    const renderMyPrograms = () => {
+        if (programs.length === 0) {
+            return (
+                <View style={{flex: 1, paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center'}}>
+                    <Paragraph>
+                        <Text style={{ fontSize: 16, fontFamily: 'Avenir-Medium'}}>
+                        Here you can access all of the fitness programs you have bought on Lupa.{" "} 
+                        </Text>
+                        <Text style={{ fontSize: 16, fontFamily: 'Avenir-Medium', color: ''}}>
+                        Get started with a program that fits you.
+                        </Text>
+                    </Paragraph>
+
+                    <Button
+                    onPress={handleOnPressFindFitnessProgram}
+                    uppercase={false}
+                    mode="contained"
+                    color="#1089ff"
+                    theme={{roundness: 12}}
+                    style={{elevation: 0, marginVertical: 15, width: '100%'}}
+                    contentStyle={{height: 55, width: Dimensions.get('window').width - 25}}
+                    >
+                        Find a Fitness Program
+                    </Button>
+                </View>
+            )
+        } else {
+            <ScrollView>
                 {
                     programs.map((result, index, arr) => {
                         if (typeof(result) == 'undefined' || typeof(result.program_structure_uuid) == 'undefined' || result.program_image == "") {
@@ -126,8 +154,20 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                         )
                     })
                 }
-                                </ScrollView>
-            </SafeAreaView>
+            </ScrollView>
+        }
+    }
+
+    return (
+        <Modal animated={true} animationType="slide" visible={isVisible} presentationStyle="fullScreen" onDismiss={closeModal}>
+            <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
+                    <Appbar.Action color="black" onPress={closeModal} icon={() =>  <FeatherIcon name="arrow-left" color="black" size={20} />} />
+                    <Appbar.Content title="My Programs" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+            </Appbar.Header>
+            <View style={{flex: 1}}>
+               {renderMyPrograms()}
+            </View>
+            <SafeAreaView />
         </Modal>
     )
 }

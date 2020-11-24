@@ -230,7 +230,7 @@ export default DrawerMenu;
     drawerHeaderText: { 
       paddingVertical: 5,
       fontSize: 18,
-      fontFamily: 'Avenir-Roman'
+      fontFamily: 'Avenir-Medium'
     },
     drawerHeaderSubText: {
       fontSize: 15,
@@ -247,8 +247,8 @@ export default DrawerMenu;
     buttonText: {
       color: '#000000',
       marginHorizontal: 15, 
-        fontSize: 15, 
-        fontFamily: 'Avenir-Roman',
+        fontSize: 18, 
+        fontFamily: 'Avenir-Medium',
     }
   });
 

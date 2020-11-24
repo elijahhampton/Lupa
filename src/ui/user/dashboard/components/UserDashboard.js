@@ -40,6 +40,7 @@ import { getLupaUserStructurePlaceholder } from '../../../../controller/firebase
 import { getLupaStoreState } from '../../../../controller/redux/index'
 import SessionDashboardComponent from '../../../sessions/modal/component/SessionDashboardComponent'
 import axios from 'axios';
+import DashboardPrograms from './DashboardPrograms';
 
 function UserDashboard(props) {
 
@@ -87,7 +88,7 @@ function UserDashboard(props) {
     }, []);
 
     const renderUpcomingBooking = () => {
-        if (true) {
+        if (userBookings.length === 0) {
             return (
                 <View style={{padding: 10}}>
   <Paragraph style={{color: '#212121', fontFamily: 'Avenir-Medium'}}>
@@ -99,10 +100,15 @@ function UserDashboard(props) {
                     </Text>
                 </Paragraph>
 
-                <Button onPress={() => navigation.push('Search')} style={{marginVertical: 10, width: Dimensions.get('window').width - 20}} mode="outlined" theme={{roundness: 8}} color="#1089ff">
-                    <Text style={{fontSize: 12}}>
+                <Button 
+                uppercase={false}
+                onPress={() => navigation.push('Search')} 
+                style={{marginVertical: 10, width: '100%', elevation: 0}} 
+                contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
+                mode="contained" 
+                theme={{roundness: 12}} 
+                color="#1089ff">
                     Search Trainers and Fitness Programs
-                    </Text>
                 </Button>
                 </View>
               
@@ -120,8 +126,8 @@ function UserDashboard(props) {
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
                 <Appbar.Content title='Dashboard' titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
-                <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />} />
-                <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />} />
+                <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <FeatherIcon thin={true} name="mail" size={20} />} />
+                <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <FeatherIcon thin={true} name="bell" size={20} />} />
             </Appbar.Header>
             <ScrollView>
             <View style={{ flex: 1, }}>
@@ -170,6 +176,20 @@ function UserDashboard(props) {
                         </TouchableWithoutFeedback>
                     </View>
                 </View>
+
+                <View style={{marginVertical: 10}}>
+                    <ListItem 
+                    title="My Programs" 
+                    titleStyle={{fontSize: 16, fontFamily: 'Avenir-Medium'}} 
+                    subtitle="Access all of your programs." 
+                    subtitleStyle={{fontSize: 15, fontFamily: 'Avenir-Roman'}} 
+                    topDivider 
+                    bottomDivider
+                    rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}
+                    onPress={() => setProgramModalIsOpen(true)}
+                    />
+                </View>
+
                 <View style={{ flex: 2, marginVertical: 10}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
                     <Text style={{fontFamily: 'Avenir-Heavy'}}>
@@ -183,11 +203,9 @@ function UserDashboard(props) {
                     {renderUpcomingBooking()}
                    
                 </View>
-                <View style={{ flex: 1 }}>
-                    
-                </View>
             </View>
             </ScrollView>
+            <DashboardPrograms isVisible={programsModalIsOpen} closeModal={() => setProgramModalIsOpen(false)} />
         </View>
     )
 }

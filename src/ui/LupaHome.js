@@ -9,6 +9,7 @@ import GuestView from './GuestView';
 import { MenuIcon } from "./icons";
 import CreateWorkout from "./workout/createworkout/CreateWorkout";
 import Feather1s from "react-native-feather1s/src/Feather1s";
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import WorkoutLog from "./WorkoutLog";
 import { connect } from 'react-redux';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
@@ -79,9 +80,22 @@ export class LupaHome extends Component {
     }
   }
 
+  renderFAB = () => {
+    if (this.props.lupa_data.Auth.isAuthenticated == true) {
+      if (this.props.lupa_data.Users.currUserData.isTrainer == true && this.state.currTab == 3) {
+        return (
+          <FAB small onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+        )
+      } else if (this.props.lupa_data.Users.currUserData.isTrainer == false && this.state.currTab == 2) {
+        return (
+          <FAB small onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+        )
+      }
+    }
+ 
+  }
 
   render() {
-    const currTab = this.state.currTab;
     return (
         <View style={{flex: 1}}>
           <Header style={{backgroundColor: COLOR}} noShadow={false} hasTabs>
@@ -94,8 +108,8 @@ export class LupaHome extends Component {
             </Body>
 
             <Right>
-            <Appbar.Action onPress={() => this.props.navigation.push('Messages')} icon={() => <Feather1s thin={true} name="mail" size={20} />}/>
-                <Appbar.Action onPress={() => this.props.navigation.push('Notifications')} icon={() => <Feather1s thin={true} name="bell" size={20} />}/>
+            <Appbar.Action onPress={() => this.props.navigation.push('Messages')} icon={() => <FeatherIcon name="mail" size={20} />}/>
+                <Appbar.Action onPress={() => this.props.navigation.push('Notifications')} icon={() => <FeatherIcon name="bell" size={20} />}/>
             </Right>
           </Header>
           <Tabs 
@@ -115,7 +129,7 @@ export class LupaHome extends Component {
            </Tab>
           </Tabs>
 
-          {this.props.lupa_data.Auth.isAuthenticated == true ?  <FAB small onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" /> : null}
+          {this.renderFAB()}
       </View>
     );
   }

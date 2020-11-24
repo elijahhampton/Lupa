@@ -253,19 +253,20 @@ function UserProfile({ userData, isCurrentUser }) {
                 <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
                     {
                     isCurrentUser === true ?
-                    <Caption>
-                        <Caption>
-                        You haven't created any vlogs.
-                        </Caption>
-{" "}
-                        <Caption style={{color: '#1089ff'}} onPress={() => navigation.push('CreateNewPost')}>
-                        Start publishing by creating content.
-                        </Caption>
-                    </Caption>
-                    :
-                    <Caption>
-                        No Vlogs have been created by {userData.display_name}
-                    </Caption>
+                    <Text style={{paddingHorizontal: 10}}>
+                    <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                <Text>
+                You haven't created any vlogs.{" "}
+                </Text>
+                <Text onPress={() => navigation.push('CreateNewPost')} style={{color: '#1089ff', fontSize: 15, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
+                Start creating content on Lupa.
+                </Text>
+            </Text>
+            </Text>
+            :
+                    <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+               No Vlogs have been created by {userData.display_name}
+            </Text>
                     }
                     
                 </View>
@@ -337,7 +338,7 @@ function UserProfile({ userData, isCurrentUser }) {
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <Feather1s name="arrow-left" size={20} onPress={() => navigation.pop()} />
+                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 
                 {
                     isCurrentUser === true ?
