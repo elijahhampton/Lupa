@@ -331,7 +331,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderInteractions = () => {
         if (!ready) { return null }
 
-        //   if (isCurrentUser) { return; }
+       if (isCurrentUser) { return; }
 
         return (
             <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginVertical: 10 }}>
@@ -351,7 +351,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderFollowButton = () => {
         if (!ready) { return null }
 
-        // if (isCurrentUser) { return; }
+         if (isCurrentUser) { return; }
 
         if (currUserData.following.includes(userData.user_uuid)) {
             return (
@@ -378,9 +378,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderFAB = () => {
-        if (!isCurrentUser) {
-            return <FAB onPress={() => setTrainerBookingModalVisible(false)} icon="calendar" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
-        } else {
+        if (isCurrentUser == false) {
             return <FAB onPress={() => navigation.push('CreatePost')} icon="rss" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
         }
     }
@@ -448,9 +446,14 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     useEffect(() => {
         async function loadProfile() {
             try {
-                setProfileImage(userData.photo_url);
-                await fetchVlogs(userData.user_uuid);
-                await fetchPrograms(userData.user_uuid)
+               // setProfileImage(userData.photo_url);
+               // await fetchVlogs(userData.user_uuid);
+               if (currUserData.user_uuid == userData.user_uuid) {
+                setTrainerPrograms();
+            } else {
+                await fetchPrograms(userData.user_uuid);
+            }
+
                 let total = userData.interest.length
 
                 if (userData.interest.length > 3) {
@@ -473,6 +476,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }, [profileImage, ready])
 
     const handleOnRefresh = async () => {
+        
         await setRefreshing(true);
         await loadProfileData();
         await setRefreshing(false);
@@ -497,10 +501,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             </Appbar.Header>
             
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
-            <View style={{paddingVertical: 5, flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', alignItems: 'flex-start', justifyContent: 'center'}}>
+            <View style={{paddingVertical: 5, flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', alignItems: 'flex-start', justifyContent: 'center', paddingHorizontal: 20}}>
                 <Feather1s name="info" />
-                            <Text style={{color: '#1089ff', paddingHorizontal: 20, fontFamily: 'Avenir-Light', fontSize: 12}}>
-                                {userData.display_name} has a rate of ${userData.hourly_payment_rate} for in person and virtual sessions.
+                            <Text style={{color: '#1089ff', paddingHorizontal: 20,  fontFamily: 'Avenir-Light', fontSize: 12}}>
+                                {userData.display_name} has a hourly rate of ${userData.hourly_payment_rate} for in person and virtual sessions.
                             </Text>
     </View> 
                 <View>

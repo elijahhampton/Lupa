@@ -18,6 +18,7 @@ import {
   Button,
   Snackbar,
   Caption,
+  Chip,
   Divider,
   Paragraph, 
   Dialog, 
@@ -139,16 +140,30 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
     return;
   }
 
-    return timeBlock.map(timeBlock => {
-      return(
-        <Surface style={{elevation: 0,borderRadius: 3, alignItems: 'center', backgroundColor: 'white', borderWidth: 0.5, borderColor: '#E5E5E5', padding: 20,  marginVertical: 15, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+    return timeBlock.map(timeBlockData => {
+      return timeBlockData.times.map(time => {
+        return(
+          <>
+          <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'white', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+           <View style={{flexDirection: 'row', alignItems: 'center'}}>
+           <Text style={{fontFamily: 'Avenir-Heavy',  alignSelf: 'flex-start', fontSize: 15}}>
+             {time}
+            </Text>
+             </View> 
 
-          <Text style={{fontFamily: 'Avenir-Heavy',  alignSelf: 'flex-start', fontSize: 15}}>
-            {timeBlock.startTime.toString()} - {timeBlock.endTime.toString()}
-          </Text>
-          
-        </Surface>
-      );
+        {  
+        isCurrentUser == false ?
+        <Text onPress={handleOpenRequestBookingDialog} style={{fontFamily: 'Avenir-Medium', fontWeight: '700', color: '#1089ff'}}>
+              Book Me
+            </Text>
+        :
+         null
+      }
+          </View>
+          <Divider style={{width: Dimensions.get('window').width - 20, alignSelf: 'center'}} />
+          </>
+        );
+      })
     })
   }
 
