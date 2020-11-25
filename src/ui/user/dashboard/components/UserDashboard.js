@@ -132,7 +132,7 @@ function UserDashboard(props) {
             <ScrollView>
             <View style={{ flex: 1, }}>
                 <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
-                    <View style={{ margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
+                    <Surface style={{elevation: 10, margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
                         <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
                             Total Sessions Completed
                         </Text>
@@ -146,7 +146,7 @@ function UserDashboard(props) {
                         </Chip>
                         </View>
 
-                    </View>
+                    </Surface>
 
                     <View style={{ margin: 10, flex: 1, height: '90%', paddingVertical: 20, justifyContent: 'space-between' }}>
                         <View style={{backgroundColor: 'rgb(240, 243, 252)', borderRadius: 8, justifyContent: 'space-evenly', padding: 10, alignItems: 'flex-start'}}>

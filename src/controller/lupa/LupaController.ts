@@ -389,6 +389,10 @@ export default class LupaController {
       return Promise.resolve(trainers);
     }
 
+    updateProgramImage = (programUUID, imageURI) => {
+       PROGRAMS_CONTROLLER_INSTANCE.updateProgramImage(programUUID, imageURI);
+    }
+
     updateProgramMetadata = async (programUUID, title, description, tags, image, price) => {
       let retVal = false;
       await PROGRAMS_CONTROLLER_INSTANCE.updateProgramMetadata(programUUID, title, description, tags, image, price).then(result => {

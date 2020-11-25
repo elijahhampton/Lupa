@@ -870,7 +870,7 @@ class BuildWorkoutController extends React.Component {
                                 Back
                                     </Button>
                             <Appbar.Content title="Add Exercises" />
-                            <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(2)}>
+                            <Button color="white" uppercase={false} onPress={() => this.handleSaveProgramData(this.state.workoutDays)}>
                                 Next
                                     </Button>
                         </Appbar.Header>

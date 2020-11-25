@@ -76,15 +76,26 @@ export default class ProgramController {
         })
     }
 
-    updateProgramMetadata = async (programUUID, title, description, tags, image, price) => {
-        const programDocumentRef = PROGRAM_COLLECTION.doc(programUUID);
+    updateProgramImage = async (programUUID, imageURI) => {
+        const programDocumentRef = await PROGRAM_COLLECTION.doc(programUUID);
+        try {
+            await programDocumentRef.update({
+                program_image: imageURI
+            })
 
+            return Promise.resolve(true);
+        } catch (error) {
+            return Promise.resolve(false);
+        }
+    }
+
+    updateProgramMetadata = async (programUUID, title, description, tags, price) => {
+        const programDocumentRef = await PROGRAM_COLLECTION.doc(programUUID);
         try {
             await programDocumentRef.update({
                 program_name: title,
                 program_description: description,
                 program_tags: tags,
-                program_image: image,
                 program_price: price,
                 completedProgram: true,
             })

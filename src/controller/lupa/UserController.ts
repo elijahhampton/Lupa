@@ -1452,7 +1452,7 @@ export default class UserController {
                 })
             }
 
-            this.PROGRAMS_CONTROLLER_INSTANCE.addProgramShare(program.program_structure_uuid, userList.length);
+           // this.PROGRAMS_CONTROLLER_INSTANCE.addProgramShare(program.program_structure_uuid, userList.length);
 
         } catch (err) {
 

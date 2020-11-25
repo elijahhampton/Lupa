@@ -290,13 +290,18 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
   }, async (response) => {
       if (!response.didCancel)
       {
-        let updatedUri = "";
-        await LUPA_CONTROLLER_INSTANCE.saveProgramImage(uuid, response.uri.trim()).then(uri => {
-          updatedUri = uri;
-        })
+        await LUPA_CONTROLLER_INSTANCE.saveProgramImage(uuid, response.uri.trim())
+        .then(uri => {
+          setProgramImage(uri)
+          setProgramImageSet(true);
+          LUPA_CONTROLLER_INSTANCE.updateProgramImage(uuid, uri);
+          LOG('PublishProgram.js', 'handleChooseProgramImage::Successfully retrieved image uri and set state: ' + programImage)
+        }). catch(error => {
+          setProgramImage("")
+          setProgramImageSet(false);
+          LOG_ERROR('PublishProgram.js', 'handleChooseProgramImage::Caught exception trying to retrieve new image uri.' ,error)
+        });
 
-        setProgramImage(updatedUri);
-        setProgramImageSet(true);
       }
       else if (response.error)
       {
@@ -311,7 +316,7 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
   }
 
   const handleOnFinish = async () => {
-    await saveProgramMetadata(programTitle, programDescription, programTags, programImage, programPrice).then(() => {
+    await saveProgramMetadata(programTitle, programDescription, programTags, programPrice).then(() => {
       handleOnPressSend()
     });
 
@@ -326,7 +331,7 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
     return (
       <RBSheet
        ref={shareProgramRBSheetRef}
-       height={280}
+       height={200}
        dragFromTopOnly={true}
        closeOnDragDown={true}
        customStyles={{
@@ -355,16 +360,7 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
               {renderUserAvatars()}
             </ScrollView>
           </View>
-          <Divider />
-          <Button
-          mode="contained"
-          color="#1089ff"
-          style={{margin: 20, elevation: 0}}
-          theme={{roundness: 8}}
-          contentStyle={{width: Dimensions.get('window').width - 20, height: 45}}
-          >
-            Send
-          </Button>
+ 
         </View>
         <SafeAreaView />
       </RBSheet>

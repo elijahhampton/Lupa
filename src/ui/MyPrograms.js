@@ -40,7 +40,7 @@ function MyPrograms(props) {
     }
 
     useEffect(() => {
-        const currUserProgramsObserver = LUPA_DB.collection('programs').onSnapshot(querySnapshot => {
+        const currUserProgramsObserver = LUPA_DB.collection('programs').where('program_owner', '==', currUserData.user_uuid).onSnapshot(querySnapshot => {
            let userPrograms = []
             querySnapshot.docs.forEach(doc => {
                 let document = doc.data();

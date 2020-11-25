@@ -46,7 +46,7 @@ const ACTIVE_COLOR = "#23374d"
 const INACTIVE_COLOR = "#23374d"
 
 const tabBarOptions = {
-  showLabel: false,
+  showLabel: true,
   activeTintColor: '#1089ff',
   inactiveTintColor: 'rgb(58, 58, 60)',
   labelStyle: {

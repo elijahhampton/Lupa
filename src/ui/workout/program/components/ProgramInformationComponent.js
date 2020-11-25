@@ -42,7 +42,7 @@ function ProgramInformationComponent({ program }) {
         }
         else {
             setProgramModalVisible(true);
-            LUPA_CONTROLLER_INSTANCE.addProgramView(program.program_structure_uuid);
+          //  LUPA_CONTROLLER_INSTANCE.addProgramView(program.program_structure_uuid);
         }
     }
 

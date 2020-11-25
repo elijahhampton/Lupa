@@ -32,7 +32,7 @@ import { logoutUser } from '../../../controller/lupa/auth/auth';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 const ICON_SIZE = 20;
-const ICON_COLOR = "rgb(191, 191, 191)"
+const ICON_COLOR = "rgb(203, 209, 214)"
 
 /**
  * This component render a drawer menu. The drawer menu contains all of the content for the
@@ -99,7 +99,6 @@ function DrawerMenu(props) {
           <Avatar.Image source={{uri: currUserData.photo_url}} size={40} />
         </View>
       </TouchableOpacity>
-<Divider />
 
 <TouchableOpacity onPress={navigateToProfile}>
         <View style={styles.navigationButtonContaner}>
@@ -207,11 +206,12 @@ export default DrawerMenu;
     drawerHeader: {
       margin: 15, 
       flexDirection: 'row', 
+      paddingHorizontal: 10,
       alignItems: 'center', 
       justifyContent: 'space-between'
     },
     drawerFooter: {
-      width: '100%', 
+      width: '100%',
       flexDirection: 'column', 
       position: 'absolute', 
       bottom: Constants.statusBarHeight
@@ -230,7 +230,7 @@ export default DrawerMenu;
     drawerHeaderText: { 
       paddingVertical: 5,
       fontSize: 18,
-      fontFamily: 'Avenir-Medium'
+      fontFamily: 'Avenir-Black'
     },
     drawerHeaderSubText: {
       fontSize: 15,
@@ -247,8 +247,8 @@ export default DrawerMenu;
     buttonText: {
       color: '#000000',
       marginHorizontal: 15, 
-        fontSize: 18, 
-        fontFamily: 'Avenir-Medium',
+        fontSize: 15, 
+        fontWeight: '300',
     }
   });
 
