@@ -1,4 +1,5 @@
 export type Pack = {
+    uid: string,
     name: string,
     date_created: Date,
     time_created: Date,
