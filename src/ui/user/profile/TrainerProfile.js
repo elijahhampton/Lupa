@@ -260,7 +260,9 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             return (
                 <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
-                        isCurrentUser === true ?
+                        currUserData.user_uuid == uuid ?
+                        
+                
                         <Text style={{paddingHorizontal: 10}}>
                         <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
                     <Text>
@@ -272,9 +274,11 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 </Text>
                 </Text>
                 :
-                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
-                   No Vlogs have been created by {userData.display_name}
+                <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                   No Vlogs have been created by {userData.display_name}.
                 </Text>
+                
+
                     }
 
                 </View>
@@ -297,7 +301,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             return (
                 <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
-                        isCurrentUser === true ?
+                        isCurrentUser === false ?
                         <Text>
                         <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
                     <Text>
@@ -310,7 +314,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 </Text>
                 :
                         <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
-                    No programs have been created by {userData.display_name}
+                    No programs have been created by {userData.display_name}.
                 </Text>
                     }
 
@@ -319,8 +323,8 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         }
 
         return userPrograms.map((program, index, arr) => {
-            if (typeof (program) == 'undefined') {
-                return null;
+            if (typeof (program) === 'undefined') {
+                return;
             }
 
 
@@ -333,7 +337,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderInteractions = () => {
         if (!ready) { return null }
 
-       if (isCurrentUser) { return; }
+       if (currUserData.user_uuid == uuid) { return; }
 
         return (
             <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginVertical: 10 }}>
@@ -353,7 +357,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderFollowButton = () => {
         if (!ready) { return null }
 
-         if (isCurrentUser) { return; }
+        if (currUserData.user_uuid == uuid) { return; }
 
         if (currUserData.following.includes(userData.user_uuid)) {
             return (

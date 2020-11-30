@@ -44,8 +44,6 @@ export default class ProgramController {
                 return Promise.resolve(-1);
             });
 
-        console.log(userData);
-
         userProgramData = userData.program_data;
 
         if (typeof (userProgramData) !== 'undefined') {
@@ -59,6 +57,8 @@ export default class ProgramController {
             .then(docRef => {
                 id = docRef.id;
                 console.log('Creating a program with id: ' + id)
+
+                PROGRAM_COLLECTION.doc(id).update({ program_structure_uuid: id });
             }).catch(error => {
                 console.log(error);
                 id = -1;

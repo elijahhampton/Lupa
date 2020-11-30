@@ -60,8 +60,7 @@ import FullScreenLoadingIndicator from '../../common/FullScreenLoadingIndicator'
 const { windowWidth } = Dimensions.get('window').width
 const VERTICAL_SEPARATION = 20
 
-function ProgramInformationPreview(props) {
-    const [programData, setProgramData] = useState(getLupaProgramInformationStructure());
+function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const [showProfileModal, setShowProfileModal] = useState(false)
     const [showWorkoutPreviewModal, setShowWorkoutPreviewModal] = useState(false)
@@ -81,29 +80,15 @@ function ProgramInformationPreview(props) {
     })
 
     const getProgramProps = () => {
-        const programProps = {
-            program_name: programData.program_name,
-            program_price: programData.program_price,
-            program_image: programData.program_image,
-            program_owner_display_name: programOwnerData.display_name,
-        }
+        const id = program.program_structure_uuid
+        return id;
 
-        return programProps;
     }
 
     useEffect(() => {
         async function fetchData() {
             try {
-                await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.program.program_structure_uuid).then(data => {
-                    setProgramData(data)
-                })
-            } catch(err) {
-                alert(err)
-                setProgramData(getLupaProgramInformationStructure())
-            }
-
-            try {
-                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.program.program_owner).then(data => {
+                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(program.program_owner).then(data => {
                     setProgramOwnerData(data)
                 })
             } catch(err) {
@@ -190,23 +175,23 @@ function ProgramInformationPreview(props) {
 
             //handle program in backend
             try {
-                const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData, programData);
+                const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData, program);
                 await dispatch({ type: "ADD_CURRENT_USER_PROGRAM" , ...updatedProgramData})
             } catch (err) {
                 setLoading(false);
                 alert(err)
                 //need to handle the case where there is an error when we add the program
-                props.closeModalMethod()
+                closeModalMethod()
             }
         }
         await setLoading(false);
         //close modal
-        props.closeModalMethod()
+        closeModalMethod()
     }
 
     const getProgramTags = () => {
         try {
-            return programData.program_tags.map((tag, index, arr) => {
+            return program.program_tags.map((tag, index, arr) => {
                 return (
                     <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: '#23374d'}} style={{backgroundColor: 'transparent', borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
                     
@@ -250,7 +235,7 @@ function ProgramInformationPreview(props) {
             try {
                 return (
                     <Text style={{ fontSize: 15, color: '#212121', paddingVertical: 10, fontFamily: 'Avenir-Heavy'}}>
-                           {titleCase(programData.program_name)}
+                           {titleCase(program.program_name)}
                     </Text>
                 )
             } catch(err) {
@@ -267,13 +252,13 @@ function ProgramInformationPreview(props) {
      * @return URI Returns a string for the description, otherwise ''
      */
     const getProgramDescription = () => {
-        if (typeof(programData) == 'undefined')
+        if (typeof(program) == 'undefined')
         {
             return ''
         }
 
             try {
-                return programData.program_description;
+                return program.program_description;
             } catch(err) {
                 return ''
             }
@@ -284,13 +269,13 @@ function ProgramInformationPreview(props) {
      * @return URI Returns a uri for the program image, otherwise ''
      */
     const getProgramImage = () => {
-        if (typeof(programData) == 'undefined')
+        if (typeof(program) == 'undefined')
         {
             return ''
         }
 
             try {
-                return programData.program_image;
+                return program.program_image;
             } catch(err) {
                 return ''
             }
@@ -301,65 +286,65 @@ function ProgramInformationPreview(props) {
      * @return String representing the program price, otherwise, ''
      */
     const getProgramPrice = () => {
-        if (typeof(programData) == 'undefined')
+        if (typeof(program) == 'undefined')
         {
             return 0
         }
 
             try {
-                return programData.program_price;
+                return program.program_price;
             } catch(error) {
                 return 0;
             }
     }
 
     const getLocationLatitude = () => {
-        if (typeof(programData) == 'undefined' || programData == null)
+        if (typeof(program) == 'undefined' || program == null)
         {
             return 0
         }
 
         try {
-            return programData.program_location.location.lat
+            return program.program_location.location.lat
         } catch(error) {
             return 0;
         }
     }
 
     const getLocationLongitude = () => {
-        if (typeof(programData) == 'undefined' || programData == null)
+        if (typeof(program) == 'undefined' || program == null)
         {
             return 0
         }
 
         try {
-            return programData.program_location.location.long;
+            return program.program_location.location.long;
         } catch(error) {
             return 0;
         }
     }
 
     const renderProgramLocationName = () => {
-        if (typeof(programData) == 'undefined' || programData == null)
+        if (typeof(program) == 'undefined' || program == null)
         {
             return "";
         }
 
         try {
-            return programData.program_location.name;
+            return program.program_location.name;
         } catch(error) {
             return "";
         }
     }
 
     const renderProgramLocationAddress = () => {
-        if (typeof(programData) == 'undefined' || programData == null)
+        if (typeof(program) == 'undefined' || program == null)
         {
             return "";
         }
 
         try {
-            return programData.program_location.address;
+            return program.program_location.address;
         } catch(error) {
             return "";
         }
@@ -367,14 +352,14 @@ function ProgramInformationPreview(props) {
 
 
     return (
-        <Modal presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
+        <Modal presentationStyle="fullScreen" visible={isVisible} style={styles.container} animated={true} animationType="slide">
               <SafeAreaView style={styles.container}>
                   <Appbar.Header style={styles.appbar} theme={{
                       colors: {
                           primary: '#FFFFFF'
                       },
                   }}>
-                      <Appbar.Action icon={() => <FeatherIcon name="x" size={20}/>} onPress={() => props.closeModalMethod()} />
+                      <Appbar.Action icon={() => <FeatherIcon name="x" size={20}/>} onPress={closeModalMethod} />
                     
                   </Appbar.Header>
                    <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
@@ -382,7 +367,7 @@ function ProgramInformationPreview(props) {
                        <Surface style={{marginHorizontal: 20, width: '90%', borderRadius: 10, height: 300, alignItems: 'center', justifyContent: 'center'}}>
                        <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: getProgramImage()}} />
                        <Chip textStyle={{color: 'white', fontFamily: 'Avenir-Heavy', fontWeight: '600'}} style={{paddingHorizontal: 10, borderRadius: 0, borderBottomLeftRadius: 8, elevation: 8, position: 'absolute', top: 0, right: 0, alignSelf: 'center', backgroundColor: '#1089ff', width: 'auto'}}>
-                           {programData.program_price}
+                           {program.program_price}
                        </Chip>
                        </Surface>
                        
@@ -395,31 +380,6 @@ function ProgramInformationPreview(props) {
                        </Paragraph>
                        <View style={[styles.programTags, styles.alignRowAndCenter]}>
                            {getProgramTags()}
-                       </View>
-                   </View>
-
-                   <View style={styles.mapViewContainer}>
-                       <View style={styles.mapViewSubContainer}>
-                                <MapView style={styles.mapView}
-                                scrollEnabled={false}
-                                shouldRasterizeIOS={true}
-                    initialRegion={{
-                        latitude: getLocationLatitude(),
-                        longitude: getLocationLongitude(),
-                        latitudeDelta: 0.05,
-                        longitudeDelta: 0.05,
-                        
-                      }} 
-                   
-                      />
-                                <View style={styles.mapViewTextContainer}>
-                                <Text style={styles.mapViewText}>
-                           {renderProgramLocationName()}
-                       </Text>
-                       <Text style={styles.mapViewText}>
-                       {renderProgramLocationAddress()}
-                       </Text>
-                       </View>
                        </View>
                    </View>
 

@@ -36,7 +36,7 @@ import VlogFeedCard from '../component/VlogFeedCard';
 import { useSelector } from 'react-redux';
 import EditBioModal from './settings/modal/EditBioModal';
 
-function UserProfile({ userData, isCurrentUser }) {
+function UserProfile({uuid, userData, isCurrentUser }) {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
     const [editBioModalIsVisible, setEditBioModalIsVisible] = useState(false);
@@ -252,7 +252,7 @@ function UserProfile({ userData, isCurrentUser }) {
             return (
                 <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
                     {
-                    isCurrentUser === true ?
+                      currUserData.user_uuid == uuid ?
                     <Text style={{paddingHorizontal: 10}}>
                     <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
                 <Text>
@@ -265,7 +265,7 @@ function UserProfile({ userData, isCurrentUser }) {
             </Text>
             :
                     <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
-               No Vlogs have been created by {userData.display_name}
+               No Vlogs have been created by {userData.display_name}.
             </Text>
                     }
                     
@@ -283,7 +283,7 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     const renderInteractions = () => {
-        if (isCurrentUser) { return; }
+        if (  currUserData.user_uuid == uuid ) { return; }
 
         return (
             <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
@@ -295,7 +295,7 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     const renderFollowButton = () => {
-        if (isCurrentUser) { return; }
+        if (  currUserData.user_uuid == uuid ) { return; }
    
            if (currUserData.following.includes(userData.user_uuid)) {
                return (

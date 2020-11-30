@@ -35,8 +35,15 @@ const ProfileController = ({ route }) => {
             if (route.params.userUUID) {
                 id = route.params.userUUID;
                 setUserUUID(id)
+
+                if (currUserData.user_uuid == id) {
+                    setIsCurrentUser(true)
+                } else {
+                    setIsCurrentUser(false)
+                }
         } else {
             id = currUserData.user_uuid
+            setIsCurrentUser(true)
             setUserUUID(id)
         }
 
@@ -65,7 +72,6 @@ const ProfileController = ({ route }) => {
                     return <View style={{flex: 1, backgroundColor: '#FFFFFF'}} />
         }
     } catch(error) {
-        alert(error)
         return <View style={{flex: 1}} />
     }
     }
@@ -81,6 +87,7 @@ const ProfileController = ({ route }) => {
         setUserData(userData);
 
         if (uuid == userData.user_uuid) {
+
             setIsCurrentUser(true);
         } else {
             setIsCurrentUser(false);
