@@ -30,6 +30,8 @@ import { useNavigation, CommonActions } from '@react-navigation/native';
 import { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import { logoutUser } from '../../../controller/lupa/auth/auth';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
+import { getLupaStoreState }from '../../../controller/redux/index';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const ICON_SIZE = 20;
 const ICON_COLOR = "rgb(203, 209, 214)"
@@ -45,6 +47,10 @@ function DrawerMenu(props) {
   const currUserData = useSelector(state => {
     return state.Users.currUserData;
   })
+
+  const LUPA_STATE = getLupaStoreState();
+
+  const [packsAreVisible, setPacksVisible] = useState(false);
 
   /**
    * Navigates to the ProfileView
@@ -78,6 +84,44 @@ function DrawerMenu(props) {
     await navigation.navigate('GuestView');
   }
 
+  const togglePacksVisibility = () => {
+    setPacksVisible(!packsAreVisible)
+  }
+
+  const navigateToPackChat = (uid) => {
+    navigation.navigate('PackChat', {
+      uid: uid
+    })
+  }
+
+  const renderPacksDisplay = () => {
+    if (packsAreVisible) {
+      return null;
+    }
+
+    if (LUPA_STATE.Packs.currUserPacksData.length === 0) {
+      return (
+        <View style={{height: 'auto', marginLeft: 50}}>
+        <Text style={{fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}> 
+          Find a Pack
+        </Text>
+      </View>
+      )
+    }
+
+    return LUPA_STATE.Packs.currUserPacksData.map(pack => {
+      return (
+        <TouchableWithoutFeedback onPress={() => navigateToPackChat(pack.uid)}>
+        <View style={{height: 'auto', marginLeft: 50}}>
+        <Text style={{fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}> 
+        {pack.name}
+        </Text>
+      </View>
+      </TouchableWithoutFeedback>
+      )
+    })
+  }
+
   return (
     <View style={styles.container}>
     <SafeAreaView
@@ -108,6 +152,18 @@ function DrawerMenu(props) {
           </Text>
         </View>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={togglePacksVisibility}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="globe" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           Packs
+          </Text>
+        </View>
+        </TouchableOpacity>
+        {
+          renderPacksDisplay()
+        }
 
         <TouchableOpacity onPress={navigateToPickInterest}>
         <View style={styles.navigationButtonContaner}>
@@ -246,7 +302,6 @@ export default DrawerMenu;
     },
     buttonText: {
       color: '#000000',
-      marginHorizontal: 15, 
         fontSize: 15, 
         fontWeight: '300',
     }
