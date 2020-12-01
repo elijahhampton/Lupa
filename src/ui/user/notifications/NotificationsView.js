@@ -19,6 +19,7 @@ import { NOTIFICATION_TYPES } from '../../../model/notifications/common/types'
 import Feather1s from 'react-native-feather1s/src/Feather1s'
 import ReceivedBookingRequestNotification from './component/ReceivedBookingRequestNotification'
 import ReceivedNotification from './component/ReceivedNotification'
+import ReceivedPackInviteNotification from './component/ReceivedPackInviteNotification';
 
 
 function NotificationsView(props) {
@@ -78,8 +79,9 @@ function NotificationsView(props) {
                 case NOTIFICATION_TYPES.RECEIVED_PROGRAM:
                     return <ReceivedProgramNotification notificationData={notification} />
                 case NOTIFICATION_TYPES.BOOKING_REQUEST:
-                    console.log(notification)
                     return <ReceivedBookingRequestNotification notificationData={notification} />
+                case NOTIFICATION_TYPES.PACK_INVITE:
+                    return <ReceivedPackInviteNotification notificationData={notification} />
                 default:
                     
             }

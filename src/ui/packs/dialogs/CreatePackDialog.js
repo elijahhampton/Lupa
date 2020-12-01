@@ -20,6 +20,7 @@ import LupaController from '../../../controller/lupa/LupaController';
 import LOG from '../../../common/Logger';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import { ADD_CURRENT_USER_PACK } from '../../../controller/redux/actionTypes';
+import { initializeNewPack } from '../../../model/data_structures/packs/packs';
 
 const CreatePackDialog = React.forwardRef(({openRBSheet, closeRBSheet}, ref) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -40,6 +41,7 @@ const [searchValue, setSearchValue] = useState("")
     const [shouldShowMoreOptions, setShowMoreOptions] = useState(false);
     const [rbSheetHeight, setRBSheetHeight] = useState(350)
     const [packName, setPackName] = useState("");
+    const [attachedProgram, setAttachedProgram] = useState({})
     const packNameTextInput = createRef();
 
     const handleOnCreatePack = () => {
@@ -47,15 +49,24 @@ const [searchValue, setSearchValue] = useState("")
         ref.current.close()
       }
 
-      LUPA_CONTROLLER_INSTANCE.createNewPack(packName, currUserData.user_uuid)
-      .then(retVal => {
+      const newPack = initializeNewPack(packName, currUserData.user_uuid, attachedProgram, usersUUIDToShare);
+
+      LUPA_CONTROLLER_INSTANCE.createNewPack(newPack)
+      .then(async retVal => {
         if (retVal === -1) {
           alert('Could not create pack.')
           return;
         } else {
           alert('Pack created with uuid: ' + retVal)
-          LUPA_CONTROLLER_INSTANCE.getPackInformationFromUUID(retVal).then(data => {
-            dispatch({ type: ADD_CURRENT_USER_PACK, payload:data });
+          let updatedPackData;
+          await LUPA_CONTROLLER_INSTANCE.getPackInformationFromUUID(retVal).then(data => {
+            updatedPackData = data;
+            dispatch({ type: ADD_CURRENT_USER_PACK, payload: data });
+          });
+
+          usersUUIDToShare.forEach(uuid => {
+            console.log(updatedPackData)
+            LUPA_CONTROLLER_INSTANCE.inviteUserToPack(uuid, updatedPackData)
           })
         }
       })
@@ -101,6 +112,10 @@ const [searchValue, setSearchValue] = useState("")
           updatedUserUUIDList.splice(updatedUserUUIDList.indexOf(user.user_uuid), 1)
           setUsersUUIDToShare(updatedUserUUIDList);
           } else {
+          if (updatedUserUUIDList.length === 4) {
+            return;
+          }
+
           updatedUserUUIDList.push(user.user_uuid);
           setUsersUUIDToShare(updatedUserUUIDList)
         }

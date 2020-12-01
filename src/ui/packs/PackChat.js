@@ -5,7 +5,7 @@ import {
     Text,
     StyleSheet
 } from 'react-native';
-import { Appbar, Avatar , Button} from 'react-native-paper';
+import { Appbar, Avatar , Button, Dialog, Paragraph} from 'react-native-paper';
 import { GiftedChat } from 'react-native-gifted-chat';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { Fire } from '../../controller/firebase/firebase';
@@ -15,8 +15,9 @@ import LOG from '../../common/Logger';
 
 function PackChat({route, navigation}) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    const [packData, setPackData] = useState({members: []})
+    const [packData, setPackData] = useState({uid: 0, members: []})
     const [packMemberData, setPackMemberData] = useState([]);
+    const [showUnLivePackDialog, setShowUnLivePackDialogVisible] = useState(false);
     const [componentDidErr, setComponentDidErr] = useState(false);
     const [ready, setReady] = useState(false);
     useEffect(() => {
@@ -25,6 +26,10 @@ function PackChat({route, navigation}) {
             await LUPA_CONTROLLER_INSTANCE.getPackInformationFromUUID(packUID)
             .then(packData => {
                 setPackData(packData);
+
+                if (packData.members.length < 3) {
+                    setShowUnLivePackDialogVisible(true);
+                }
             })
             .catch(error => {
                 alert(error)
@@ -51,7 +56,7 @@ function PackChat({route, navigation}) {
         setupFire()
         setReady(true);
         return () => Fire.shared.off()
-    }, [])
+    }, [packData.uid])
 
     const setupFire = async () => {
         const packUID = route.params.uid;
@@ -69,6 +74,34 @@ function PackChat({route, navigation}) {
             <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
 
             </View>
+        )
+    }
+
+    const renderUnLivePackDialog = () => {
+        return (
+            <Dialog visible={showUnLivePackDialog}>
+                <Dialog.Title>
+                    Waiting for invitations...
+                </Dialog.Title>
+                <Dialog.Content>
+                    <Paragraph>
+                        Once atleast three members you invited to your pack have accepted your invite your pack will go live!
+                    </Paragraph>
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button 
+                    uppercase={false}
+                    theme={{roundness: 8}}
+                    mode="contained"
+                    color="#1089ff"
+                    contentStyle={{height: 45, width: 110}}
+                    style={{elevation: 0,}}
+                    onPress={() => navigation.pop()}
+                    >
+                        Okay
+                    </Button>
+                </Dialog.Actions>
+            </Dialog>
         )
     }
 
@@ -106,7 +139,7 @@ function PackChat({route, navigation}) {
                     Leave Pack
                 </Button>
             </Appbar.Header>
-            <GiftedChat renderChatFooter={renderChatFooter} />
+            <GiftedChat showUserAvatar={true} renderChatFooter={renderChatFooter} />
         </View>
             )
         }
@@ -114,6 +147,7 @@ function PackChat({route, navigation}) {
     return (
         <>
         {renderComponent()}
+        {renderUnLivePackDialog()}
         </>
     )
 }

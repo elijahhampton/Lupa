@@ -407,15 +407,27 @@ export default class LupaController {
       return Promise.resolve(retVal);
     }
 
-    createNewPack = async (name, leader) => {
+    createNewPack = async (newPack) => {
       return new Promise(async (resolve, reject) => {
         let retVal = -1;
-        await PACKS_CONTROLLER_INSTANCE.createPack(name, leader).then(result => {
+        await PACKS_CONTROLLER_INSTANCE.createPack(newPack).then(result => {
           retVal = result;
         });
 
         resolve(retVal);
       })
+    }
+
+    handleOnAcceptPackInvite = (packUID, userUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, userUID);
+    }
+
+    handleOnDeclinePackInvite = (packUID, userUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleOnDeclinePackInvite(packUID, userUID);
+    }
+
+    inviteUserToPack = (uuid, packData) => {
+      PACKS_CONTROLLER_INSTANCE.inviteUserToPack(uuid, packData);
     }
 
     getPackInformationFromUUID = async (uuid) => {

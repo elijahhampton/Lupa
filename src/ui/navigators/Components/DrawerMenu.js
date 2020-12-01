@@ -104,18 +104,14 @@ function DrawerMenu(props) {
 
     if (lupaStoreState.Packs.currUserPacksData.length === 0) {
       return (
-        <View style={{height: 'auto', marginLeft: 50}}>
-        <Text style={{fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}> 
-          Find a Pack
-        </Text>
-      </View>
+        null
       )
     }
 
     return lupaStoreState.Packs.currUserPacksData.map(pack => {
       return (
         <TouchableWithoutFeedback onPress={() => navigateToPackChat(pack.uid)}>
-        <View style={{height: 'auto', marginLeft: 50}}>
+        <View style={{height: 'auto', marginLeft: 50, marginVertical: 5}}>
         <Text style={{fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}> 
         {pack.name}
         </Text>
@@ -167,6 +163,15 @@ function DrawerMenu(props) {
         {
           renderPacksDisplay()
         }
+
+<TouchableOpacity onPress={togglePacksVisibility}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="globe" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           Achievements
+          </Text>
+        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={navigateToPickInterest}>
         <View style={styles.navigationButtonContaner}>

@@ -41,14 +41,13 @@ export default class PackController {
         return PackController._instance;
     }
 
-    createPack = async (name, leader) => {
-        const newPack = initializeNewPack(name, leader);
+    createPack = async (newPack) => {
         let newPackUUID = "";
 
         await PACKS_COLLECTION.add(newPack)
         .then((docRef) => {
             newPackUUID = docRef.id
-            PACKS_COLLECTION.doc(docRef.id).update({ uid: docRef.id, members: [leader] });
+            PACKS_COLLECTION.doc(docRef.id).update({ uid: docRef.id, members: [newPack.leader] });
         }).catch(error => {
             return Promise.resolve(-1);
         });
@@ -56,18 +55,18 @@ export default class PackController {
         if (typeof(newPackUUID) === 'undefined' || newPackUUID == "") {
             return Promise.resolve(-1);
         } else {
-            await USERS_COLLECTION.doc(leader).get()
+            await USERS_COLLECTION.doc(newPack.leader).get()
             .then(documentSnapshot => {
                 let userData = documentSnapshot.data();
                 let packs = userData.packs;
 
                 if (typeof(packs) === 'undefined') {
-                    USERS_COLLECTION.doc(leader).update({
+                    USERS_COLLECTION.doc(newPack.leader).update({
                         packs: []
                     })
                 } else {
                     packs.push(newPackUUID)
-                    USERS_COLLECTION.doc(leader).update({
+                    USERS_COLLECTION.doc(newPack.leader).update({
                         packs: packs
                     })
                 }
@@ -75,6 +74,96 @@ export default class PackController {
         }
 
         return Promise.resolve(newPackUUID);
+    }
+
+    inviteUserToPack = async (uuid, packData) => {
+         //create notification
+         const receivedPackInviteNotificationStructure = {
+            notification_uuid: Math.random().toString(),
+            data: packData,
+            from: packData.leader,
+            to: uuid,
+            read: false,
+            type: NOTIFICATION_TYPES.PACK_INVITE,
+            actions: ['Accept', 'Delete'],
+            timestamp: new Date().getTime()
+        }
+
+        //add notification to users notification array
+        let userNotifications = [];
+
+        const INVITED_USER_DOC_REF = USERS_COLLECTION.doc(uuid);
+
+
+
+        await INVITED_USER_DOC_REF.get().then(snapshot => {
+            userNotifications = snapshot.data().notifications;
+        });
+
+        await userNotifications.push(receivedPackInviteNotificationStructure);
+
+        INVITED_USER_DOC_REF.update({
+            notifications: userNotifications,
+        });
+    }
+
+    handleOnAcceptPackInvite = async (packUID, userUID) => {
+        const INVITED_USER_DOC_REF = USERS_COLLECTION.doc(userUID);
+        const PACK_DOC_REF = PACKS_COLLECTION.doc(packUID);
+
+        //update user pack list
+        let invitedUserData = getLupaUserStructurePlaceholder();
+        await INVITED_USER_DOC_REF.get()
+        .then(documentSnapshot => {
+            invitedUserData = documentSnapshot.data();
+        });
+
+        invitedUserData.packs.push(packUID);
+
+        INVITED_USER_DOC_REF.update({
+            packs: invitedUserData.packs
+        });
+
+        //update pack data
+        let packData;
+        await PACK_DOC_REF.get()
+        .then(documentSnapshot => {
+            packData = documentSnapshot.data()
+        });
+
+        let updatedInviteList = packData.invited_members;
+        let updatedMembers = packData.members;
+
+        //remove member from invite list
+        updatedInviteList.splice(updatedInviteList.indexOf(userUID), 1);
+
+        //add to members list
+        updatedMembers.push(packUID)
+
+        PACK_DOC_REF.update({
+            invited_members: updatedInviteList,
+            members: updatedMembers
+        })
+    }
+
+    handleOnDeclinePackInvite = async (packUID, userUID) => {
+        const PACK_DOC_REF = PACKS_COLLECTION.doc(packUID);
+
+        //update pack data
+        let packData;
+        await PACK_DOC_REF.get()
+        .then(documentSnapshot => {
+            packData = documentSnapshot.data()
+        });
+
+        let updatedInviteList = packData.invited_members;
+
+        //remove member from invite list
+        updatedInviteList.splice(updatedInviteList.indexOf(userUID), 1);
+
+        await PACK_DOC_REF.update({
+            invited_members: updatedInviteList,
+        })
     }
 
     getPackInformationFromUUID = async (uuid) => {
