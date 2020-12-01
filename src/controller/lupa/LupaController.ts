@@ -6,6 +6,7 @@ import WorkoutController from './WorkoutController';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
+import PackController from './PacksController';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -15,6 +16,7 @@ const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 let USER_CONTROLLER_INSTANCE;
 let NOTIFICATIONS_CONTROLLER_INSTANCE;
 let PROGRAMS_CONTROLLER_INSTANCE;
+let PACKS_CONTROLLER_INSTANCE;
 
 
 export default class LupaController {
@@ -23,6 +25,7 @@ export default class LupaController {
     private constructor() {
        USER_CONTROLLER_INSTANCE = UserController.getInstance();
        PROGRAMS_CONTROLLER_INSTANCE = ProgramController.getInstance();
+       PACKS_CONTROLLER_INSTANCE = PackController.getInstance();
     }
 
     public static getInstance() {
@@ -402,6 +405,17 @@ export default class LupaController {
       });
 
       return Promise.resolve(retVal);
+    }
+
+    createNewPack = async (name, leader) => {
+      return new Promise(async (resolve, reject) => {
+        let retVal = -1;
+        await PACKS_CONTROLLER_INSTANCE.createPack(name, leader).then(result => {
+          retVal = result;
+        });
+
+        resolve(retVal);
+      })
     }
 
     createNewProgram = async (programData) => {
