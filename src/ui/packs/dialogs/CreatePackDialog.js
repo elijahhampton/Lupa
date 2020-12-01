@@ -20,7 +20,7 @@ import LupaController from '../../../controller/lupa/LupaController';
 import LOG from '../../../common/Logger';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 
-const CreatePackDialog = React.forwardRef(({}, ref) => {
+const CreatePackDialog = React.forwardRef(({openRBSheet, closeRBSheet}, ref) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const currUserData = useSelector(state => {
         return state.Users.currUserData
