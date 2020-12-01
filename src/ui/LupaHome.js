@@ -1,8 +1,8 @@
 
-import React, {Component} from "react";
+import React, {Component, createRef} from "react";
 import {Animated,ScrollView,  Image, Dimensions, Platform, Text, View, RefreshControl} from 'react-native';
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
-import { Banner, FAB, Appbar, Divider , Surface} from 'react-native-paper';
+import { Banner, FAB, Appbar, Divider , Surface, Menu} from 'react-native-paper';
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import GuestView from './GuestView';
@@ -16,6 +16,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import MyClients from './user/trainer/MyClients'
 import { getLupaStoreState } from "../controller/redux";
 import LupaController from "../controller/lupa/LupaController";
+import CreatePackDialog from "./packs/dialogs/CreatePackDialog";
 const NAVBAR_HEIGHT = 50;
 const {width: SCREEN_WIDTH} = Dimensions.get("window");
 const COLOR = "#FFFFFF";
@@ -36,6 +37,9 @@ export class LupaHome extends Component {
 
   constructor(props) {
     super(props);
+
+    this.createPackSheetRef = createRef();
+
     this.state = {
       refreshing: false,
       showTrainerContent: false,
@@ -56,6 +60,14 @@ export class LupaHome extends Component {
   handleOnRefresh = () => {
     this.setState({ refreshing: true })
     this.setState({ refreshing: false })
+  }
+
+  handleOpenCreatePack = () => {
+    this.createPackSheetRef.current.open();
+  }
+
+  handleOnCloseCreatePack = () => {
+    this.createPackSheetRef.current.close();
   }
 
   renderAppropriateFirstTab = (navigation) => {
@@ -95,6 +107,10 @@ export class LupaHome extends Component {
  
   }
 
+  handleOnChooseCreatePack = () => {
+    this.setState({ createIsVisble: false }, this.handleOpenCreatePack);
+  }
+
   render() {
     return (
         <View style={{flex: 1}}>
@@ -109,7 +125,13 @@ export class LupaHome extends Component {
 
             <Right>
             <Appbar.Action onPress={() => this.props.navigation.push('Messages')} icon={() => <FeatherIcon name="mail" size={20} />}/>
-                <Appbar.Action onPress={() => this.props.navigation.push('Notifications')} icon={() => <FeatherIcon name="bell" size={20} />}/>
+              
+                <Menu visible={this.state.createIsVisble} anchor={
+                <Appbar.Action onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} />}/>
+                }>
+                    <Menu.Item onPress={this.handleOnChooseCreatePack} theme={{roundness:20}} contentStyle={{borderRadius: 20, width: 'auto'}} style={{ height: 30}} icon={() => <FeatherIcon name="globe" color="rgb(34, 74, 115)" size={15} />} titleStyle={{fontSize: 13, fontFamily: 'Avenir'}} title="Create a Pack" />
+                </Menu>
+              
             </Right>
           </Header>
           <Tabs 
@@ -130,6 +152,7 @@ export class LupaHome extends Component {
           </Tabs>
 
           {this.renderFAB()}
+          <CreatePackDialog ref={this.createPackSheetRef} />
       </View>
     );
   }
