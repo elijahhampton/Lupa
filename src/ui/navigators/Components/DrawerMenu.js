@@ -98,7 +98,7 @@ function DrawerMenu(props) {
   }
 
   const renderPacksDisplay = () => {
-    if (packsAreVisible) {
+    if (packsAreVisible == false) {
       return null;
     }
 
@@ -164,7 +164,7 @@ function DrawerMenu(props) {
           renderPacksDisplay()
         }
 
-<TouchableOpacity onPress={togglePacksVisibility}>
+<TouchableOpacity onPress={() => navigation.push('Achievements')}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="globe" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={styles.buttonText}>

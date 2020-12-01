@@ -30,7 +30,7 @@ import { LOG_ERROR } from '../../../../common/Logger';
 const {windowWidth} = Dimensions.get('window').width
 
 
-function ReceivedBookingRequestNotification({ notificationData }) {
+function ReceivedPackInviteNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const [packData, setPackData] = useState(notificationData.data);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
@@ -49,7 +49,7 @@ function ReceivedBookingRequestNotification({ notificationData }) {
        {senderUserData.display_name}{" "}
        </Text>
        <Text>
-       has invited you to join their pack {programName}. (Program Name / ${programPrice}/month)
+       has invited you to join their pack {programName}. (${programPrice}/month)
        </Text>
                                </Text>
             )
@@ -96,8 +96,11 @@ function ReceivedBookingRequestNotification({ notificationData }) {
             })
         }
 
-        const PACK_OBSERVER = LUPA_DB.collection('packs').where('uid', '==', notificationData.data.uid).onSnapshot(documentSnapshot => {
-            setPackData(documentSnapshot.data());
+        const PACK_OBSERVER = LUPA_DB.collection('packs').where('uid', '==', notificationData.data.uid).onSnapshot(querySnapshot => {
+            querySnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                setPackData(data);
+            })
         })
 
         fetchData()
@@ -122,4 +125,4 @@ function ReceivedBookingRequestNotification({ notificationData }) {
     )
 }
 
-export default ReceivedBookingRequestNotification;
+export default ReceivedPackInviteNotification;

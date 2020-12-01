@@ -6,6 +6,7 @@ import {
     Dimensions,
     StyleSheet,
     ScrollView,
+    TouchableOpacity,
     SafeAreaView,
 TextInput,
     TouchableWithoutFeedback
@@ -15,9 +16,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {Avatar, SearchBar, Input} from 'react-native-elements';
-import { Dialog, Divider, Button, Caption } from 'react-native-paper';
+import { Dialog, Divider, Button, Caption, Chip } from 'react-native-paper';
 import LupaController from '../../../controller/lupa/LupaController';
-import LOG from '../../../common/Logger';
+import LOG, { LOG_ERROR } from '../../../common/Logger';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import { ADD_CURRENT_USER_PACK } from '../../../controller/redux/actionTypes';
 import { initializeNewPack } from '../../../model/data_structures/packs/packs';
@@ -28,6 +29,10 @@ const CreatePackDialog = React.forwardRef(({openRBSheet, closeRBSheet}, ref) => 
         return state.Users.currUserData
     });
 
+    const currUserProgramData = useSelector(state => {
+      return state.Programs.currUserProgramsData
+    })
+
     const dispatch = useDispatch();
 
   const [forceUpdate, setForceUpdate] = useState(false);
@@ -36,7 +41,6 @@ const [searchValue, setSearchValue] = useState("")
     const [usersUUIDToShare, setUsersUUIDToShare] = useState([]);
     const [currUserFollowers, setCurrUserFollowers] = useState([]);
     const [programIsAttached, setProgramIsAttached] = useState(false);
-    const [programAttached, setProgramAttached] = useState(getLupaProgramInformationStructure());
     const [sheetIsOpen, setSheetIsOpen] = useState(false);
     const [shouldShowMoreOptions, setShowMoreOptions] = useState(false);
     const [rbSheetHeight, setRBSheetHeight] = useState(350)
@@ -54,10 +58,8 @@ const [searchValue, setSearchValue] = useState("")
       LUPA_CONTROLLER_INSTANCE.createNewPack(newPack)
       .then(async retVal => {
         if (retVal === -1) {
-          alert('Could not create pack.')
           return;
         } else {
-          alert('Pack created with uuid: ' + retVal)
           let updatedPackData;
           await LUPA_CONTROLLER_INSTANCE.getPackInformationFromUUID(retVal).then(data => {
             updatedPackData = data;
@@ -65,13 +67,12 @@ const [searchValue, setSearchValue] = useState("")
           });
 
           usersUUIDToShare.forEach(uuid => {
-            console.log(updatedPackData)
             LUPA_CONTROLLER_INSTANCE.inviteUserToPack(uuid, updatedPackData)
           })
         }
       })
       .catch(error => {
-        alert('Could not create pack: ' + error)
+        LOG_ERROR('CreatePackDialog.js', 'Caught exception creating pack.', error)
       })
 
 
@@ -96,7 +97,7 @@ const [searchValue, setSearchValue] = useState("")
     const handleMoreOptions = () => {
         if (shouldShowMoreOptions == false) {
             setShowMoreOptions(true);
-            setRBSheetHeight(420)
+            setRBSheetHeight(470)
             ref.current.open()
         } else {
             setShowMoreOptions(false)
@@ -151,6 +152,40 @@ const [searchValue, setSearchValue] = useState("")
         })
       }
 
+      handleSetAttachedProgram = (program) => {
+        if (typeof(program) === 'undefined') {
+          return;
+        }
+
+        setAttachedProgram(program);
+      }
+
+      renderPrograms = () => {
+        return currUserProgramData.map((program, index, arr) => {
+          if (program.program_structure_uuid == attachedProgram.program_structure_uuid) {
+            return (
+              <TouchableOpacity key={index} onPress={() => handleSetAttachedProgram({program_structure_uuid: ''})}>
+              <Chip icon={() => <FeatherIcon name="check" color="green" size={15} />} style={{borderRadius: 5, backgroundColor: 'rgb(245, 246, 249)'}}>
+              <Text style={{fontWeight: 'bold'}}>
+                {program.program_name}
+              </Text>
+              </Chip>
+            </TouchableOpacity>
+            )
+          }
+            return (
+              <TouchableOpacity key={index} onPress={() => handleSetAttachedProgram(program)}>
+                <Chip style={{borderRadius: 5, backgroundColor: 'rgb(245, 246, 249)'}}>
+                <Text style={{fontWeight: 'bold'}}>
+                  {program.program_name}
+                </Text>
+                </Chip>
+              </TouchableOpacity>
+            
+            )
+          })
+      }
+
       useEffect(() => {
         async function fetchFollowers () {
           if (typeof(currUserData.followers) === 'undefined') {
@@ -193,7 +228,7 @@ const [searchValue, setSearchValue] = useState("")
                   </Text>
 
                        
-                <Button icon={() => <FeatherIcon name={shouldShowMoreOptions == false ? 'chevron-down' : 'chevron-up'}/>} color="#1089ff" onPress={handleMoreOptions} uppercase={false} mode="text">
+                <Button icon={() => <FeatherIcon name={shouldShowMoreOptions == false ? 'chevron-down' : 'chevron-up'}/>} color="#1089ff" onPress={handleMoreOptions} uppercase={false} mode="text" contentStyle={{height: 'auto'}}>
                         More Options
                     </Button>
               </View>
@@ -232,7 +267,7 @@ const [searchValue, setSearchValue] = useState("")
           </Button>
 
           <Divider />
-          <View style={{}}>
+          <View style={{flex: 1, justifyContent: 'space-evenly'}}>
               <View style={{alignItems: 'flex-start'}}>
               <Button style={{marginVertical: 3}} contentStyle={{height: 40}} icon={() => <FeatherIcon name="airplay" color="#1089ff"/>} uppercase={false} color="#1089ff">
                   Attach a program
@@ -240,6 +275,12 @@ const [searchValue, setSearchValue] = useState("")
               <Caption style={{paddingLeft: 12}}>
                   Add a program for you and your friends to progress
               </Caption>
+              </View>
+
+              <View>
+                <ScrollView horizontal contentContainerStyle={{paddingHorizontal: 10, marginVertical: 10, alignItems: 'center', justifyContent: 'center'}}>
+                  {renderPrograms()}
+                </ScrollView>
               </View>
 
           </View>

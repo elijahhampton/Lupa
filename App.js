@@ -57,7 +57,7 @@ import VirtualSession from './src/ui/sessions/virtual/VirtualSession';
 import LOG, { LOG_ERROR } from './src/common/Logger';
 import PackChat from './src/ui/packs/PackChat';
 import { UPDATE_CURRENT_USER_PACKS_ACTION } from './src/controller/redux/actionTypes';
-
+import Achievements from './src/ui/user/Achievements'
 
 const App = () => {
   return (
@@ -300,6 +300,7 @@ function AppNavigator() {
       <StackApp.Screen name="FollowerView" component={FollowerModal} />
       <StackApp.Screen name="MyClients" component={MyClients} />
       <StackApp.Screen name="VirtualSession" component={VirtualSession} />
+      <StackApp.Screen name="Achievements" component={Achievements} />
       </StackApp.Navigator>
   )
 }

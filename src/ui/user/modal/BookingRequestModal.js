@@ -816,6 +816,9 @@ const checkBookingDetails = () => {
                   Leave a note about what you would like to accomplish during this session
                 </Caption>
                 </View>
+                <Caption style={{paddingLeft: 30, color: '#1089ff'}}>
+                  Estimated Cost: $100
+                </Caption>
 </View>
 
 
