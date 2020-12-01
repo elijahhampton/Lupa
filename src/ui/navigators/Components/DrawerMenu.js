@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DrawerIcon from 'react-native-vector-icons/Feather'
 
 import { 
@@ -42,15 +42,18 @@ const ICON_COLOR = "rgb(203, 209, 214)"
  * @param {Object} props Properties that this component receives.
  */
 function DrawerMenu(props) {
+  const [lupaStoreState, setLupaStoreState] = useState(getLupaStoreState())
   const navigation = useNavigation()
   const dispatch = useDispatch();
   const currUserData = useSelector(state => {
     return state.Users.currUserData;
   })
 
-  const LUPA_STATE = getLupaStoreState();
-
   const [packsAreVisible, setPacksVisible] = useState(false);
+
+  useEffect(() => {
+    setLupaStoreState(getLupaStoreState())
+  }, [])
 
   /**
    * Navigates to the ProfileView
@@ -99,7 +102,7 @@ function DrawerMenu(props) {
       return null;
     }
 
-    if (LUPA_STATE.Packs.currUserPacksData.length === 0) {
+    if (lupaStoreState.Packs.currUserPacksData.length === 0) {
       return (
         <View style={{height: 'auto', marginLeft: 50}}>
         <Text style={{fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}> 
@@ -109,7 +112,7 @@ function DrawerMenu(props) {
       )
     }
 
-    return LUPA_STATE.Packs.currUserPacksData.map(pack => {
+    return lupaStoreState.Packs.currUserPacksData.map(pack => {
       return (
         <TouchableWithoutFeedback onPress={() => navigateToPackChat(pack.uid)}>
         <View style={{height: 'auto', marginLeft: 50}}>

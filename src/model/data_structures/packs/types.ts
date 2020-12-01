@@ -1,4 +1,4 @@
-export type Pack = {
+export type PackType = {
     uid: string,
     name: string,
     date_created: Date,

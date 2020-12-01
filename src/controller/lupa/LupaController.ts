@@ -418,6 +418,17 @@ export default class LupaController {
       })
     }
 
+    getPackInformationFromUUID = async (uuid) => {
+      return new Promise(async (resolve, reject) => {
+        let retVal = {}
+        await PACKS_CONTROLLER_INSTANCE.getPackInformationFromUUID(uuid).then(result => {
+          retVal = result;
+        });
+
+        resolve(retVal);
+      })
+    }
+
     createNewProgram = async (programData) => {
       return new Promise(async (resolve, reject) => {
         let retVal = -1;
@@ -498,6 +509,17 @@ export default class LupaController {
       })
 
       return Promise.resolve(programsData);
+    }
+
+
+    loadCurrentUserPacks = async () => {
+      let packsData = []
+
+      await PACKS_CONTROLLER_INSTANCE.loadCurrentUserPacks().then(result => {
+        packsData = result;
+      });
+
+      return Promise.resolve(packsData);
     }
 
     loadWorkouts = async () => {

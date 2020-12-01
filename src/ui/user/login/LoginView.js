@@ -47,6 +47,7 @@ import { loginUser, logoutUser } from "../../../controller/lupa/auth/auth";
 import { useSelector } from 'react-redux'
 import { getLupaStoreState } from "../../../controller/redux";
 import { LUPA_AUTH } from "../../../controller/firebase/firebase";
+import { UPDATE_CURRENT_USER_PACKS_ACTION } from "../../../controller/redux/actionTypes";
 
 const INPUT_PLACEHOLDER_COLOR = "rgb(99, 99, 102)"
 
@@ -264,6 +265,10 @@ const resetFormState = () => {
     dispatch({ type: 'UPDATE_LUPA_WORKOUTS', payload: lupaWorkoutsData });
   }
 
+  const updateUserPacksDataInRedux = (packsData) => {
+    dispatch({ type: UPDATE_CURRENT_USER_PACKS_ACTION, payload: packsData });
+  }
+
   const toggleSecurePasswordEntry = () => {
     useSecurePasswordEntry(!securePasswordEntryEnabled);
   }
@@ -273,10 +278,10 @@ const resetFormState = () => {
    * as well as Lupa application data (assessments, workouts);
    */
   _setupRedux = async (uuid) => {
-    let currUserData = getLupaUserStructure(), currUserPrograms = [], lupaWorkouts = {};
+    let currUserData = getLupaUserStructure(), currUserPacks = [], currUserPrograms = [], lupaWorkouts = {};
     await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(result => {
       currUserData = result;
-    });
+    })
 
     setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
     
@@ -293,15 +298,30 @@ const resetFormState = () => {
     await updateUserInRedux(userPayload);
 
     if (currUserData.isTrainer) {
-      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms()
+      .then(result => {
         currUserPrograms = result;
       })
+      .catch(error => {
+        currUserPrograms = []
+      });
+
       await updateUserProgramsDataInRedux(currUserPrograms);
     }
+
+    await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPacks()
+    .then(result => {
+      currUserPacks = result;
+    })
+    .catch(error => {
+      currUserPacks = []
+    })
+    await updateUserPacksDataInRedux(currUserPacks);
 
     await LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {
       lupaWorkouts = result;
     });
+
     await updateLupaWorkoutsDataInRedux(lupaWorkouts);
   }
 

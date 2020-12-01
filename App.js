@@ -55,6 +55,8 @@ import MyClients from './src/ui/user/trainer/MyClients';
 import Onboarding from './src/ui/user/modal/WelcomeModal/Onboarding'
 import VirtualSession from './src/ui/sessions/virtual/VirtualSession';
 import LOG, { LOG_ERROR } from './src/common/Logger';
+import PackChat from './src/ui/packs/PackChat';
+import { UPDATE_CURRENT_USER_PACKS_ACTION } from './src/controller/redux/actionTypes';
 
 
 const App = () => {
@@ -126,7 +128,7 @@ const SwitchNavigator = () => {
   const _setupRedux = async (uuid) => {
     const userAuthenticationHandler = new UserAuthenticationHandler();
 
-    let currUserData = getLupaUserStructure(uuid), currUserPrograms = [], lupaWorkouts , userPayload = {}
+    let currUserData = getLupaUserStructure(uuid), currUserPrograms = [], currUserPacks = [], lupaWorkouts , userPayload = {}
 
     //User is not signed in so we let the user continue as a guest
     if (uuid === 0) {
@@ -150,12 +152,17 @@ const SwitchNavigator = () => {
 
       await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload });
       await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: [] });
+      await dispatch({ type: UPDATE_CURRENT_USER_PACKS_ACTION, payload: [] })
       return;
     }
 
     //we have an authenticated user and we shall continue normally
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
       currUserData = result;
+    });
+
+    await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPacks(uuid).then(result => {
+      currUserPacks = result;
     });
 
     await setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
@@ -173,6 +180,7 @@ const SwitchNavigator = () => {
 
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload });
     await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });
+    await dispatch({ type: UPDATE_CURRENT_USER_PACKS_ACTION, payload: currUserPacks })
       
     // Load application workouts
     lupaWorkouts = await LUPA_CONTROLLER_INSTANCE.loadWorkouts();
@@ -282,6 +290,7 @@ function AppNavigator() {
       <StackApp.Screen name="Profile" component={ProfileNavigator} />
       <StackApp.Screen name="Notifications" component={NotificationsView} />
       <StackApp.Screen name="Messages" component={MessagesView} />
+      <StackApp.Screen name="PackChat" component={PackChat} />
       <StackApp.Screen name="Search" component={Search} />
       <StackApp.Screen name="MyData" component={MyData} />
       <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />

@@ -11,7 +11,7 @@ TextInput,
     TouchableWithoutFeedback
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {Avatar, SearchBar, Input} from 'react-native-elements';
@@ -19,12 +19,15 @@ import { Dialog, Divider, Button, Caption } from 'react-native-paper';
 import LupaController from '../../../controller/lupa/LupaController';
 import LOG from '../../../common/Logger';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
+import { ADD_CURRENT_USER_PACK } from '../../../controller/redux/actionTypes';
 
 const CreatePackDialog = React.forwardRef(({openRBSheet, closeRBSheet}, ref) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     });
+
+    const dispatch = useDispatch();
 
   const [forceUpdate, setForceUpdate] = useState(false);
 const [searchValue, setSearchValue] = useState("")
@@ -38,6 +41,30 @@ const [searchValue, setSearchValue] = useState("")
     const [rbSheetHeight, setRBSheetHeight] = useState(350)
     const [packName, setPackName] = useState("");
     const packNameTextInput = createRef();
+
+    const handleOnCreatePack = () => {
+      if (ref.current) {
+        ref.current.close()
+      }
+
+      LUPA_CONTROLLER_INSTANCE.createNewPack(packName, currUserData.user_uuid)
+      .then(retVal => {
+        if (retVal === -1) {
+          alert('Could not create pack.')
+          return;
+        } else {
+          alert('Pack created with uuid: ' + retVal)
+          LUPA_CONTROLLER_INSTANCE.getPackInformationFromUUID(retVal).then(data => {
+            dispatch({ type: ADD_CURRENT_USER_PACK, payload:data });
+          })
+        }
+      })
+      .catch(error => {
+        alert('Could not create pack: ' + error)
+      })
+
+
+    }
 
     const onOpen = () => {
         setSheetIsOpen(true)
@@ -178,7 +205,14 @@ const [searchValue, setSearchValue] = useState("")
             </ScrollView>
           </View>
 
-          <Button uppercase={false} mode="contained" color="#1089ff" theme={{roundness: 12}} style={{ elevation: 0, marginHorizontal: 20, marginVertical: 10, alignSelf: 'center'}} contentStyle={{width: Dimensions.get('window').width - 20, height: 45}}>
+          <Button 
+          onPress={handleOnCreatePack} 
+          uppercase={false} 
+          mode="contained" 
+          color="#1089ff" 
+          theme={{roundness: 12}} 
+          style={{ elevation: 0, marginHorizontal: 20, marginVertical: 10, alignSelf: 'center'}} 
+          contentStyle={{width: Dimensions.get('window').width - 20, height: 45}}>
               Create Pack
           </Button>
 
