@@ -17,6 +17,7 @@ import {
     Caption, 
     FAB, 
     Avatar as PaperAvatar,
+    Divider,
 } from 'react-native-paper';
 
 
@@ -165,7 +166,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
                             {getFollowersLength()}
                         </Text>
-                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 15 }]}>
+                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 13 }]}>
                             Followers
         </Text>
                     </View>
@@ -176,7 +177,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
                             {getFollowingLength()}
                         </Text>
-                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 15 }]}>
+                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 13 }]}>
                             Following
         </Text>
                     </View>
@@ -492,6 +493,9 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
                 <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
+                
+                <Appbar.Content title="$15/HR" titleStyle={{fontFamily: 'Avenir-Medium'}}/>
+                
                 {
                     isCurrentUser === true ?
                     <FeatherIcon name="send" size={22} onPress={() => navigation.push('PrivateChat', {
@@ -507,12 +511,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             </Appbar.Header>
             
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
-            <View style={{paddingVertical: 5, flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', alignItems: 'flex-start', justifyContent: 'center', paddingHorizontal: 20}}>
+           {/* <View style={{paddingVertical: 5, flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', alignItems: 'flex-start', justifyContent: 'center', paddingHorizontal: 20}}>
                 <Feather1s name="info" />
                             <Text style={{color: '#1089ff', paddingHorizontal: 20,  fontFamily: 'Avenir-Light', fontSize: 12}}>
                                 {userData.display_name} has a hourly rate of ${userData.hourly_payment_rate} for in person and virtual sessions.
                             </Text>
-    </View> 
+            </View> */}
                 <View>
                     <View style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
                         <View style={styles.userInformationContainer}>
@@ -530,6 +534,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         </View>
                         {renderInteractions()}
                     </View>
+                    <Divider />
 
 
                     <View style={{ padding: 10, }}>
@@ -550,7 +555,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                     </View>
                 </View>
 
-                <Tabs tabBarUnderlineStyle={{ height: 0, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF'>
+                <Tabs initialPage={2} tabBarUnderlineStyle={{ height: 0, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF'>
                     <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs">
                         <View style={{ backgroundColor: '#FFFFFF' }}>
                             {renderPrograms()}
@@ -562,7 +567,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                             {renderVlogs()}
                         </View>
                     </Tab>
-                    <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Scheduler">
+                    <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Book Me">
                         <View style={{ backgroundColor: '#FFFFFF', height: Dimensions.get('window').height }}>
                             <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} />
                         </View>
@@ -605,7 +610,7 @@ const styles = StyleSheet.create({
     },
     bioText: {
         fontFamily: 'Avenir-Roman',
-        fontSize: 11,
+        fontSize: 13,
 
     },
     certificationText: {
@@ -623,18 +628,20 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Heavy'
     },
     inactiveTabHeading: {
-        fontSize: 12,
+        fontSize: 15,
         fontFamily: 'Avenir-Medium',
+        fontWeight: '500',
         color: 'rgb(102, 111, 120)',
     },
     activeTabHeading: {
-        fontSize: 12,
-        fontFamily: 'Avenir-Medium',
+        fontSize: 15,
+        fontFamily: 'Avenir-Heavy',
+        fontWeight: '700',
+color: '#1089ff'
     },
     userAttributeText: {
-        fontSize: 12,
+        fontSize: 13,
         fontFamily: 'Avenir',
-
     }
 })
 

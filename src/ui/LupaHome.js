@@ -124,21 +124,41 @@ export class LupaHome extends Component {
             </Body>
 
             <Right>
-            <Appbar.Action onPress={() => this.props.navigation.push('Messages')} icon={() => <FeatherIcon name="mail" size={20} />}/>
-              
-                <Menu visible={this.state.createIsVisble} anchor={
-                <Appbar.Action onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} />}/>
+            <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
+                <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} />}/>
+
                 }>
-                    <Menu.Item onPress={this.handleOnChooseCreatePack} theme={{roundness:20}} contentStyle={{borderRadius: 20, width: 'auto'}} style={{ height: 30}} icon={() => <FeatherIcon name="globe" color="rgb(34, 74, 115)" size={15} />} titleStyle={{fontSize: 13, fontFamily: 'Avenir'}} title="Create a Pack" />
+                    <Menu.Item 
+                    onPress={this.handleOnChooseCreatePack} 
+                    theme={{roundness:20}} 
+                    contentStyle={{borderRadius: 20, width: 'auto'}} 
+                    style={{ height: 30}} 
+                    icon={() => <FeatherIcon name="globe" color="rgb(34, 74, 115)" size={15} />} 
+                    titleStyle={{fontSize: 13, fontFamily: 'Avenir-Heavy'}} 
+                    title="Create a Pack" />
+                  {
+                    this.props.lupa_data.Users.currUserData.user_uuid == '3kwSiuirFdTAg4463DCBrYfNFfR2' ?
+                    <Menu.Item 
+                    onPress={this.handleOnChooseCreatePack} 
+                    theme={{roundness:20}} 
+                    contentStyle={{borderRadius: 20, width: 'auto'}} 
+                    style={{ height: 30}} 
+                    icon={() => <FeatherIcon name="globe" color="rgb(34, 74, 115)" size={15} />} 
+                    titleStyle={{fontSize: 13, fontFamily: 'Avenir'}} 
+                  title="Create a Community" /> 
+                  :
+                  null
+                  }
+           
                 </Menu>
-              
+            <Appbar.Action key='mail' onPress={() => this.props.navigation.push('Messages')} icon={() => <FeatherIcon name="mail" size={20} />}/>
             </Right>
           </Header>
           <Tabs 
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
           style={{backgroundColor: '#FFFFFF'}}
           tabBarUnderlineStyle={{backgroundColor: '#FFFFFF', height: 1}}
-          tabContainerStyle={{borderBottomWidth: 0, height: 0}}
+          tabContainerStyle={{borderBottomWidth: 0, height: 0}}xw
           renderTabBar={(props) =>
             <ScrollableTab {...props} style={{borderBottomWidth: 0, borderColor: 'rgb(174, 174, 178)',  height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 1, elevation: 0, borderRadius: 8}}/>}>
             

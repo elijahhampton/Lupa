@@ -58,10 +58,10 @@ import LOG, { LOG_ERROR } from './src/common/Logger';
 import PackChat from './src/ui/packs/PackChat';
 import { UPDATE_CURRENT_USER_PACKS_ACTION } from './src/controller/redux/actionTypes';
 import Achievements from './src/ui/user/Achievements'
+import Community from './src/ui/community/Community';
 
 const App = () => {
   return (
-
     <NavigationContainer>
       <StoreProvider store={LupaStore}>
         <PaperProvider>
@@ -69,6 +69,52 @@ const App = () => {
         </PaperProvider>
       </StoreProvider>
     </NavigationContainer>
+  )
+}
+
+const StackApp = createStackNavigator()
+
+/**
+ * Global App Navigator
+ * Allows us to access the auth and app screen at a global level and acts as a switch navigator.
+ * Allows access to our "global modal" for creating programs.
+ */
+function AppNavigator() {
+  return (
+    <StackApp.Navigator initialRouteName='Loading' mode="modal" headerMode='none' screenOptions={{
+      gestureEnabled: false
+    }}>
+      <StackApp.Screen name='Loading' component={SwitchNavigator} />
+      <StackApp.Screen name='Auth' component={AuthenticationNavigator} />
+      <StackApp.Screen name="SignUp" component={SignUp} />
+      <StackApp.Screen name="Login" component={LoginView} />
+      <StackApp.Screen name='App' component={Lupa} />
+      <StackApp.Screen name="GuestView" component={GuestView} />
+      <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{ animationEnabled: true }} />
+      <StackApp.Screen name="CreatePost" component={CreateNewPost} />
+      <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{ animationEnabled: true }} />
+      <StackApp.Screen name="PrivateChat" component={PrivateChat} />
+      <StackApp.Screen name="Onboarding" component={Onboarding} />
+      <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
+      <StackApp.Screen name="Settings" component={SettingsStackNavigator} />
+      <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
+      <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
+      <StackApp.Screen name="Profile" component={ProfileNavigator} />
+      <StackApp.Screen name="Notifications" component={NotificationsView} />
+      <StackApp.Screen name="Messages" component={MessagesView} />
+      <StackApp.Screen name="PackChat" component={PackChat} />
+      <StackApp.Screen name="Search" component={Search} />
+      <StackApp.Screen name="MyData" component={MyData} />
+      <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />
+      <StackApp.Screen name="PickInterest" component={PickInterest} initialParams={{ isOnboarding: false }} />
+      <StackApp.Screen name="CreateCustomWorkout" component={CreateCustomWorkoutModal} />
+      <StackApp.Screen name="VlogContent" component={VlogFeedCardExpanded} />
+      <StackApp.Screen name="FollowerView" component={FollowerModal} />
+      <StackApp.Screen name="MyClients" component={MyClients} />
+      <StackApp.Screen name="VirtualSession" component={VirtualSession} />
+      <StackApp.Screen name="Achievements" component={Achievements} />
+      <StackApp.Screen name="Community" component={Community} />
+      </StackApp.Navigator>
   )
 }
 
@@ -260,48 +306,4 @@ const SwitchNavigator = () => {
   )
 }
 
-const StackApp = createStackNavigator()
-
-/**
- * Global App Navigator
- * Allows us to access the auth and app screen at a global level and acts as a switch navigator.
- * Allows access to our "global modal" for creating programs.
- */
-function AppNavigator() {
-  return (
-    <StackApp.Navigator initialRouteName='Loading' mode="modal" headerMode='none' screenOptions={{
-      gestureEnabled: false
-    }}>
-      <StackApp.Screen name='Loading' component={SwitchNavigator} />
-      <StackApp.Screen name='Auth' component={AuthenticationNavigator} />
-      <StackApp.Screen name="SignUp" component={SignUp} />
-      <StackApp.Screen name="Login" component={LoginView} />
-      <StackApp.Screen name='App' component={Lupa} />
-      <StackApp.Screen name="GuestView" component={GuestView} />
-      <StackApp.Screen name="CreateProgram" component={CreateProgram} options={{ animationEnabled: true }} />
-      <StackApp.Screen name="CreatePost" component={CreateNewPost} />
-      <StackApp.Screen name="RegisterAsTrainer" component={TrainerInformation} options={{ animationEnabled: true }} />
-      <StackApp.Screen name="PrivateChat" component={PrivateChat} />
-      <StackApp.Screen name="Onboarding" component={Onboarding} />
-      <StackApp.Screen name="ShareProgramModal" component={ShareProgramModal} />
-      <StackApp.Screen name="Settings" component={SettingsStackNavigator} />
-      <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
-      <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
-      <StackApp.Screen name="Profile" component={ProfileNavigator} />
-      <StackApp.Screen name="Notifications" component={NotificationsView} />
-      <StackApp.Screen name="Messages" component={MessagesView} />
-      <StackApp.Screen name="PackChat" component={PackChat} />
-      <StackApp.Screen name="Search" component={Search} />
-      <StackApp.Screen name="MyData" component={MyData} />
-      <StackApp.Screen name="LupaCamera" component={LupaCamera} initialParams={{ mediaCaptureType: "VIDEO" }} />
-      <StackApp.Screen name="PickInterest" component={PickInterest} initialParams={{ isOnboarding: false }} />
-      <StackApp.Screen name="CreateCustomWorkout" component={CreateCustomWorkoutModal} />
-      <StackApp.Screen name="VlogContent" component={VlogFeedCardExpanded} />
-      <StackApp.Screen name="FollowerView" component={FollowerModal} />
-      <StackApp.Screen name="MyClients" component={MyClients} />
-      <StackApp.Screen name="VirtualSession" component={VirtualSession} />
-      <StackApp.Screen name="Achievements" component={Achievements} />
-      </StackApp.Navigator>
-  )
-}
 export default App;

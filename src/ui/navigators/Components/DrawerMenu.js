@@ -156,7 +156,7 @@ function DrawerMenu(props) {
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="globe" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={styles.buttonText}>
-           Packs
+           My Packs
           </Text>
         </View>
         </TouchableOpacity>
@@ -195,14 +195,6 @@ function DrawerMenu(props) {
 
 */}
 
-        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="settings" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Settings
-          </Text>
-        </View>
-        </TouchableOpacity>
         
 
         {
@@ -226,7 +218,17 @@ function DrawerMenu(props) {
         <View style={{paddingVertical: 50}}>
         <Divider style={{width: Dimensions.get('window').width}} />
 
-        <TouchableOpacity onPress={() => Linking.openURL('https://rheasilvialupaheal.wixsite.com/lupahealth/')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+        <View style={styles.navigationButtonContaner}>
+          <DrawerIcon name="settings" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <Text style={styles.buttonText}>
+           Settings
+          </Text>
+        </View>
+        </TouchableOpacity>
+
+       {
+       /* <TouchableOpacity onPress={() => Linking.openURL('https://rheasilvialupaheal.wixsite.com/lupahealth/')}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="help-circle" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={styles.buttonText}>
@@ -234,6 +236,7 @@ function DrawerMenu(props) {
           </Text>
         </View>
         </TouchableOpacity>
+      */}
 
 
 <View style={{width: '100%'}}>

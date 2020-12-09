@@ -118,7 +118,7 @@ class MessagesView extends React.Component {
       }
 
       componentWillUnmount() {
-        Fire.shared.off();
+        return () => Fire.shared.off();
       }
 
       renderTextInput = () => {

@@ -6,6 +6,7 @@ import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import io.agora.rtc.react.RCTAgoraRtcPackage;
 import io.agora.rtc.react.RCTAgoraRtcPackage;
+import io.agora.rtc.react.RCTAgoraRtcPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;

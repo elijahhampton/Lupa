@@ -407,6 +407,34 @@ export default class LupaController {
       return Promise.resolve(retVal);
     }
 
+    sendPackInvite = (newPack, usersToInvite) => {
+      PACKS_CONTROLLER_INSTANCE.sendPackInvite(newPack, usersToInvite);
+    }
+
+    handleDeletePackProgram = async (packProgramUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleDeletePackProgram(packProgramUID);
+    }
+
+    handleStartPackProgramOffer = (packProgramUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleStartPackProgramOffer(packProgramUID);
+    }
+
+    setPackProgramLive = (packProgramUID, bool) => {
+      PACKS_CONTROLLER_INSTANCE.setPackProgramLive(packProgramUID, bool);
+    }
+
+    handleSendProgramOfferInvite = (senderUUID, packData, programData) => {
+      PACKS_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(senderUUID, packData, programData);
+    }
+
+    handleAcceptPackProgramOfferInvite = (packProgramUID, userUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleAcceptPackProgramOfferInvite(packProgramUID, userUID);
+    }
+
+    handleDeclinePackProgramOfferInvite = (packProgramUID, userUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleDeclinePackProgramOfferInvite(packProgramUID, userUID);
+    }
+
     createNewPack = async (newPack) => {
       return new Promise(async (resolve, reject) => {
         let retVal = -1;
@@ -415,6 +443,19 @@ export default class LupaController {
         });
 
         resolve(retVal);
+      })
+    }
+
+    checkProgramWaitlistForMatches = async (programUID, userData) => {
+      await PROGRAMS_CONTROLLER_INSTANCE.checkProgramWaitlistForMatches(programUID, userData, this.createNewPack);
+    }
+
+    addUserToProgramWaitlist = async (programUID, userData) => {
+      return new Promise(async (resolve, reject) => {
+        await PROGRAMS_CONTROLLER_INSTANCE.addUserToProgramWaitlist(programUID, userData)
+        .then(result => {
+          resolve(result);
+        })
       })
     }
 
@@ -871,6 +912,10 @@ export default class LupaController {
     
       const experience = Number(val);
       USER_CONTROLLER_INSTANCE.setTrainerSmallGroupExperience(experience)
+  }
+
+  loadAchievements = () => {
+    return USER_CONTROLLER_INSTANCE.loadAchievements();
   }
 
 }

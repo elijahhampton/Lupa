@@ -176,7 +176,7 @@ function LoginView(props) {
   const _introduceApp = async (uuid) => {
     try {
     await _setupRedux(uuid);
-    LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+    //LUPA_CONTROLLER_INSTANCE.indexApplicationData();
     } catch(error) {
       if (LUPA_AUTH.currentUser) {
         dispatch(logoutUser());

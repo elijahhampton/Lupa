@@ -47,10 +47,12 @@ const PLACEMENT_TYPES = {
 }
 
 const CATEGORIES = [
-    'Balance',
-    'Flexibility',
-    'Core',
-    'Resistance',
+    'Bodyweight',
+    'Barbell',
+    'Dumbell',
+    'Kettlebell',
+    'Machine Assisted',
+    'Medicine Ball',
     'Plyometric'
 
 ]
@@ -76,6 +78,8 @@ function Exercise(workoutObject, workoutDay) {
     this.workout_rest_time = 0
     this.workout_day = workoutDay
     this.superset = []
+    this.default_media_type = workoutObject.default_media_type
+    this.default_media_uri = workoutObject.default_media_uri
 }
 
 /**
@@ -112,24 +116,32 @@ class BuildWorkoutController extends React.Component {
             customWorkoutModalVisible: false,
             libraryData: [
                 {
-                    title: "Balance",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.balance_workouts,
+                    title: "Bodyweight",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.bodyweight,
                 },
                 {
-                    title: "Flexibility",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.flexibility_workouts
+                    title: "Barbell",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.barbell
                 },
                 {
-                    title: "Core",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.core_workouts
+                    title: "Dumbell",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.dumbell
                 },
                 {
-                    title: "Resistance",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.resistance_workouts
+                    title: "Kettlebell",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.kettlebell
+                },
+                {
+                    title: "Machine Assisted",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.machine_assisted
+                },
+                {
+                    title: "Medicine Ball",
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.medicine_ball
                 },
                 {
                     title: "Plyometric",
-                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric_workouts
+                    data: this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric
                 },
             ],
             currView: 0
@@ -257,7 +269,6 @@ class BuildWorkoutController extends React.Component {
         switch (this.state.currPlacementType) {
             case PLACEMENT_TYPES.SUPERSET:
                 workoutToUpdate = this.state.currPressedPopulatedWorkout;
-                console.log(workoutToUpdate)
                 workoutToUpdate.superset.push(updatedWorkout);
 
                 for (let i = 0; i < this.state.workoutDays[currWeek][workoutDay].length; i++) {
@@ -267,7 +278,6 @@ class BuildWorkoutController extends React.Component {
                 }
                 break;
             case PLACEMENT_TYPES.EXERCISE:
-                console.log('Exercise being added is: ' + updatedWorkout.workout_name);
                 newWorkoutData[currWeek][workoutDay].push(updatedWorkout);
                 break;
             default:
@@ -625,12 +635,12 @@ class BuildWorkoutController extends React.Component {
 
     renderFolderContent = () => {
         switch(this.state.folderSelected) {
-            case 'Balance':
+            case 'Bodyweight':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
                     <ScrollView>
                         {
-                        this.props.lupa_data.Application_Workouts.applicationWorkouts.balance_workouts.map((item, index, value) => {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.bodyweight.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
                                 return;
                             }
@@ -651,12 +661,12 @@ class BuildWorkoutController extends React.Component {
                     </Button>         
                     </View>
                 )
-            case 'Core':
+            case 'Dumbbell':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
                     <ScrollView>
                         {
-                        this.props.lupa_data.Application_Workouts.applicationWorkouts.core_workouts.map((item, index, value) => {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.dumbbell.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
                                 return;
                             }
@@ -682,7 +692,7 @@ class BuildWorkoutController extends React.Component {
                     <View style={{width: Dimensions.get('window').width}}>
                     <ScrollView>
                         {
-                        this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric_workouts.map((item, index, value) => {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
                                 return;
                             }
@@ -703,12 +713,12 @@ class BuildWorkoutController extends React.Component {
                     </Button>         
                     </View>
                 )
-            case 'Flexibility':
+            case 'Medicine Ball':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
                     <ScrollView>
                         {
-                        this.props.lupa_data.Application_Workouts.applicationWorkouts.flexibility_workouts.map((item, index, value) => {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.medicine_ball.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
                                 return;
                             }
@@ -729,12 +739,12 @@ class BuildWorkoutController extends React.Component {
                     </Button>         
                     </View>
                 )
-            case 'Resistance':
+            case 'Barbell':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
                     <ScrollView>
                         {
-                        this.props.lupa_data.Application_Workouts.applicationWorkouts.resistance_workouts.map((item, index, value) => {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.barbell.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
                                 return;
                             }
@@ -755,6 +765,32 @@ class BuildWorkoutController extends React.Component {
                     </Button>         
                     </View>
                 )
+                case 'Machine Assisted':
+                    return (
+                        <View style={{width: Dimensions.get('window').width}}>
+                        <ScrollView>
+                            {
+                            this.props.lupa_data.Application_Workouts.applicationWorkouts.machine_assisted.map((item, index, value) => {
+                                if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
+                                    return;
+                                }
+                                this.checkShowSelectedStyle(item)
+                                return (
+                                    <SingleWorkout
+                                        onPress={() => this.captureWorkout(item, this.state.currPlacementType)}
+                                        key={item.workout_name}
+                                        showSelectStyle={item.showSelectStyle}
+                                        workout={item}
+                                    />
+                                )
+                            })
+                            }
+                        </ScrollView>
+                        <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
+                            Back
+                        </Button>         
+                        </View>
+                    )
         }
     }
 

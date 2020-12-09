@@ -33,9 +33,11 @@ var lupa_user : LupaUserStructure = {
     programs: [],
     hourly_payment_rate: 15,
     vlogs: [],
+    waitlisted_programs: [],
     scheduler_times: {},
     workouts: {},
     program_data: [],
+    pack_programs: [],
     has_completed_onboarding: false,
     last_workout_completed: {
         dateCompleted: "",

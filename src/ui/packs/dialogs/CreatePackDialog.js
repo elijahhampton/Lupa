@@ -58,6 +58,7 @@ const [searchValue, setSearchValue] = useState("")
       LUPA_CONTROLLER_INSTANCE.createNewPack(newPack)
       .then(async retVal => {
         if (retVal === -1) {
+          //TODO: error creating pack show dialog
           return;
         } else {
           let updatedPackData;
@@ -65,14 +66,11 @@ const [searchValue, setSearchValue] = useState("")
             updatedPackData = data;
             dispatch({ type: ADD_CURRENT_USER_PACK, payload: data });
           });
-
-          usersUUIDToShare.forEach(uuid => {
-            LUPA_CONTROLLER_INSTANCE.inviteUserToPack(uuid, updatedPackData)
-          })
         }
       })
       .catch(error => {
         LOG_ERROR('CreatePackDialog.js', 'Caught exception creating pack.', error)
+         //TODO: error creating pack show dialog
       })
 
 

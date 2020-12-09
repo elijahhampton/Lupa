@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 
 import {
     View,
     Text,
-    StyleSheet
+    StyleSheet,
+    Dimensions,
 } from 'react-native';
-import { Appbar, Avatar , Button, Dialog, Paragraph} from 'react-native-paper';
+import { Appbar, Avatar , Button, Dialog, Surface, Paragraph, IconButton, Divider, Caption} from 'react-native-paper';
 import { GiftedChat } from 'react-native-gifted-chat';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import { Fire } from '../../controller/firebase/firebase';
+import { Fire, LUPA_DB_FIREBASE } from '../../controller/firebase/firebase';
 import { initializeNewPack } from '../../model/data_structures/packs/packs';
 import LupaController from '../../controller/lupa/LupaController';
 import LOG from '../../common/Logger';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ProgramOfferInviteMessage from './component/ProgramOfferInviteMessage';
 
 function PackChat({route, navigation}) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -19,13 +22,21 @@ function PackChat({route, navigation}) {
     const [packMemberData, setPackMemberData] = useState([]);
     const [showUnLivePackDialog, setShowUnLivePackDialogVisible] = useState(false);
     const [componentDidErr, setComponentDidErr] = useState(false);
+    const [messagesState, setMessagesState] = useState([])
     const [ready, setReady] = useState(false);
+
+    const dbString =  `messages/${route.params.uid}`;
+    const firebaseDBRef = LUPA_DB_FIREBASE.ref(dbString);
+
     useEffect(() => {
         async function fetchPackData() {
             const packUID = route.params.uid;
             await LUPA_CONTROLLER_INSTANCE.getPackInformationFromUUID(packUID)
             .then(packData => {
                 setPackData(packData);
+                console.log(packUID)
+                console.log('checking!!!')
+                console.log(packData)
 
                 if (packData.members.length < 3) {
                     setShowUnLivePackDialogVisible(true);
@@ -49,33 +60,41 @@ function PackChat({route, navigation}) {
             })
         }
 
-        LOG('PackChat.js', 'Running useEffect');
+        LOG('PackChat.js', 'Running useEffect::Fetching pack data, pack member data, and initializing Fire.');
 
         fetchPackData()
         fetchPackMemberData()
         setupFire()
         setReady(true);
+
+        firebaseDBRef.on('child_added', (snapshot) => {
+
+        })
+
+        
         return () => Fire.shared.off()
-    }, [packData.uid])
+    }, [route.params.uid])
+
 
     const setupFire = async () => {
         const packUID = route.params.uid;
 
          //init Fire
-        await Fire.shared.init(packUID);
+        await Fire.shared.init(packUID)
+        .then(() => {
+
+        })
+        .catch(err => {
+            setComponentDidErr(true)
+            setReady(false)
+        })
+
+        setMessagesState([])
 
         await Fire.shared.on(message =>
-        setMessages(messages => GiftedChat.append(messages, message))
-        );  
-      }
-
-    const renderChatFooter = () => {
-        return (
-            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-
-            </View>
+        setMessagesState(messages => GiftedChat.append(messages, message))
         )
-    }
+      }
 
     const renderUnLivePackDialog = () => {
         return (
@@ -119,6 +138,21 @@ function PackChat({route, navigation}) {
         )
     }
 
+    const renderSystemMessage = (props) => {
+        
+        const  { extraData, timestamp} = props.currentMessage
+    if (extraData.type) {
+        switch (extraData.type) {
+            case 'PROGRAM_OFFER_INVITE':
+                console.log("OOOOO")
+                console.log(extraData)
+                return <ProgramOfferInviteMessage messageData={extraData} timeCreated={timestamp} />
+        }
+    }
+
+    }
+
+
     const renderComponent = () => {
         if (componentDidErr || ready == false) {
             return (
@@ -132,14 +166,24 @@ function PackChat({route, navigation}) {
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', elevation: 0,}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Appbar.Action onPress={() => navigation.pop()} icon={() => <FeatherIcon name="arrow-left" size={20} />} />
-                    {renderUserAvatars()}
+               
                 </View>
                 
                 <Button mode="text" color="red">
                     Leave Pack
                 </Button>
             </Appbar.Header>
-            <GiftedChat showUserAvatar={true} renderChatFooter={renderChatFooter} />
+            <GiftedChat 
+            renderSystemMessage={renderSystemMessage}
+            messages={messagesState}
+            onSend={Fire.shared.send} 
+            user={Fire.shared.getUser()} 
+            showAvatarForEveryMessage={true} 
+            placeholder="Begin typing here" 
+            renderUsernameOnMessage={true}
+            showUserAvatar={true}
+            alwaysShowSend={true}
+            />
         </View>
             )
         }
@@ -160,3 +204,9 @@ const styles = StyleSheet.create({
 })
 
 export default PackChat;
+
+//click to share in program preview
+
+//send system message (attach message as system)
+
+//if is sytem message render appropriate me

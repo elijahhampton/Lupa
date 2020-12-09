@@ -9,3 +9,11 @@ export type PackType = {
     is_live: boolean,
     invited_members: Array<String>
 }
+
+export type PackProgramType = {
+    uid: string,
+    program_uid: string,
+    members: Array<string>,
+    pack_uid: string,
+    is_live: boolean,
+}

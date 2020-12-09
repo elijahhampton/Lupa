@@ -41,17 +41,15 @@ function ReceivedPackInviteNotification({ notificationData }) {
 
     const renderNotificationMessage = () => {
         try {
-            const programPrice = notificationData.data.attached_program.program_price;
-            const programName = notificationData.data.attached_program.program_name;
             return (
                 <Text>
                                <Text style={{fontWeight: '500'}}>
        {senderUserData.display_name}{" "}
        </Text>
        <Text>
-       has invited you to join their pack {programName}. (${programPrice}/month)
+       has invited you to join their pack {packData.name}.
        </Text>
-                               </Text>
+        </Text>
             )
        
     } catch(error) {
@@ -61,7 +59,6 @@ function ReceivedPackInviteNotification({ notificationData }) {
 
     const handleOnAcceptPackInvite = () => {
         const packUID = notificationData.data.uid;
-
         LUPA_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, currUserData.user_uuid)
     }
 

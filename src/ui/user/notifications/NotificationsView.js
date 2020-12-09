@@ -20,7 +20,7 @@ import Feather1s from 'react-native-feather1s/src/Feather1s'
 import ReceivedBookingRequestNotification from './component/ReceivedBookingRequestNotification'
 import ReceivedNotification from './component/ReceivedNotification'
 import ReceivedPackInviteNotification from './component/ReceivedPackInviteNotification';
-
+import ReceivedPackProgramInviteNotification from './component/ReceivedPackProgramInviteNotification';
 
 function NotificationsView(props) {
     const [refreshing, setIsRefreshing] = useState(false)
@@ -82,6 +82,8 @@ function NotificationsView(props) {
                     return <ReceivedBookingRequestNotification notificationData={notification} />
                 case NOTIFICATION_TYPES.PACK_INVITE:
                     return <ReceivedPackInviteNotification notificationData={notification} />
+                case NOTIFICATION_TYPES.RECEIVED_PACK_PROGRAM_OFFER_INVITE:
+                    return <ReceivedPackProgramInviteNotification notificationData={notification} />
                 default:
                     
             }

@@ -10,10 +10,14 @@ import { getPurchaseMetaDataStructure } from '../../model/data_structures/progra
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../firebase/collection_structures';
 import moment from 'moment';
 import { LupaProgramInformationStructure } from '../../model/data_structures/programs/common/types';
+import { LupaUserStructure } from './common/types';
+import { initializeNewPack, initializeNewPackWithMembers } from '../../model/data_structures/packs/packs';
+import { kMaxLength } from 'buffer';
 
 const PROGRAM_COLLECTION = LUPA_DB.collection('programs');
 const USERS_COLLECTION = LUPA_DB.collection('users');
 const WORKOUT_COLLECTION = LUPA_DB.collection('workouts');
+const PROGRAM_WAITLIST_COLLECTION = LUPA_DB.collection('program_waitlist')
 
 export default class ProgramController {
     private static _instance: ProgramController;
@@ -67,6 +71,89 @@ export default class ProgramController {
         return new Promise(async (resolve, reject) => {
             resolve(id);
         });
+    }
+
+    handleMatchAndCreatePack = (programData, chosenFourUUIDS, createNewPack) => {
+        //create new pack structure
+        const newPack = initializeNewPackWithMembers('Lupa_Pack398', chosenFourUUIDS[0], programData, [], chosenFourUUIDS);
+        //create new pack
+        createNewPack(newPack)        
+    } 
+
+    checkProgramWaitlistForMatches = async (programUID, userData, createNewPack) => {
+        console.log(userData.user_uuid)
+
+        let programWaitlistEntries = []
+
+        let programData = getLupaProgramInformationStructure()
+        await PROGRAM_COLLECTION.doc(programUID).get().then(documentSnapshot => {
+            programData = documentSnapshot.data();
+        })
+
+        await PROGRAM_WAITLIST_COLLECTION.doc(programUID).get().then(async documentShapshot => {
+            const data = documentShapshot.data();
+            const waitlist = data.waitlist;
+            console.log(waitlist)
+            console.log('A')
+
+            const usersInCity = waitlist.filter(entry => {
+                console.log('checking: ' + entry.city + "   " + userData.location.city)
+                return entry.city == userData.location.city
+            })
+
+            if (usersInCity.length >= 3) {
+                //choose first four 
+                const chosenFour = usersInCity.slice(0, 3);
+                let chosenFourUUIDS = []
+                for (let i = 0; i < chosenFour.length; i++) {
+                    chosenFourUUIDS.push(chosenFour[i].user_uuid)
+                }
+
+                this.handleMatchAndCreatePack(programData, chosenFourUUIDS, createNewPack)
+            }
+        })
+    }
+
+    addUserToProgramWaitlist = async (programUID, userData) => {
+        //add user to program waitlist
+        const waitlistDocRef = PROGRAM_WAITLIST_COLLECTION.doc(programUID);
+        const userDocRef = USERS_COLLECTION.doc(userData.user_uuid);
+        const userWaitlistDataEntry = constructUserWaitlistMetadataEntry(userData);
+        let updatedWaitlist = [];
+       
+
+        waitlistDocRef.get()
+            .then((documentSnapshot) => {
+                if (documentSnapshot.exists) {
+                    //get waitlist data
+                    const data = documentSnapshot.data();
+                    updatedWaitlist = data.waitlist;
+                    updatedWaitlist.push(userWaitlistDataEntry);
+                    
+                    waitlistDocRef.update({
+                        waitlist: updatedWaitlist
+                    });
+                } else {
+                    waitlistDocRef.set({ waitlist: [constructUserWaitlistMetadataEntry(userData)]}); // create the document
+                }
+            })
+            .catch(error => {
+                alert(error)
+            })
+
+        userDocRef.get()
+            .then(documentSnapshot => {
+                const data = documentSnapshot.data();
+                let updatedWaitlist = data.waitlisted_programs;
+                updatedWaitlist.push(programUID);
+
+                userDocRef.update({
+                    waitlist: updatedWaitlist
+                })
+            })
+            .catch(error => {
+
+            })
     }
 
     updateProgramWorkoutData = (programUUID, workoutData) => {
@@ -136,73 +223,100 @@ export default class ProgramController {
 
     loadWorkouts = async () => {
         let documentData = {}
-        let balanceWorkouts = [],
-            flexibilityWorkouts = [],
-            coreFlexibility = [],
-            resistanceWorkouts = [],
-            plyometricWorkouts = []
+        let bodyweight = [],
+        barbell = [],
+        dumbell =  [],
+        kettlebell = [],
+        machine_assisted = [],
+        medicine_ball = [],
+        plyometric = []
 
-        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Balance').get().then(collectionSnapshot => {
+        await LUPA_DB.collection('exercises').where('body_area', '==', 'Bodyweight').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
                 if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
-                    balanceWorkouts.push(documentData);
+                    bodyweight.push(documentData);
                 }
             });
         });
 
-        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Flexibility').get().then(collectionSnapshot => {
+        await LUPA_DB.collection('exercises').where('body_area', '==', 'Barbell').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
                 if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
-                    flexibilityWorkouts.push(documentData);
+                    barbell.push(documentData);
                 }
             });
         });
 
-        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Resistance').get().then(collectionSnapshot => {
+        await LUPA_DB.collection('exercises').where('body_area', '==', 'Dumbell').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
                 if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
-                    resistanceWorkouts.push(documentData);
+                    dumbell.push(documentData);
+                }
+            });
+
+        });
+
+        await LUPA_DB.collection('exercises').where('body_area', '==', 'Kettlebell').get().then(collectionSnapshot => {
+            collectionSnapshot.forEach(doc => {
+                if (typeof (doc) == 'undefined') {
+                    //delete doc
+                } else {
+                    documentData = doc.data();
+                    kettlebell.push(documentData);
                 }
             });
         });
 
-        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Core').get().then(collectionSnapshot => {
+        await LUPA_DB.collection('exercises').where('body_area', '==', 'Machine Assisted').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
                 if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
-                    coreFlexibility.push(documentData);
+                    machine_assisted.push(documentData);
                 }
             });
         });
 
-        await LUPA_DB.collection('exercises').where('training_modality', '==', 'Plyometric').get().then(collectionSnapshot => {
+        await LUPA_DB.collection('exercises').where('body_area', '==', 'Medicine Ball').get().then(collectionSnapshot => {
             collectionSnapshot.forEach(doc => {
                 if (typeof (doc) == 'undefined') {
                     //delete doc
                 } else {
                     documentData = doc.data();
-                    plyometricWorkouts.push(documentData);
+                    medicine_ball.push(documentData);
+                }
+            });
+        });
+
+        await LUPA_DB.collection('exercises').where('body_area', '==', 'Plyometric').get().then(collectionSnapshot => {
+            collectionSnapshot.forEach(doc => {
+                if (typeof (doc) == 'undefined') {
+                    //delete doc
+                } else {
+                    documentData = doc.data();
+                    plyometric.push(documentData);
                 }
             });
         });
 
         const allWorkouts = {
-            balance_workouts: balanceWorkouts,
-            flexibility_workouts: flexibilityWorkouts,
-            core_workouts: coreFlexibility,
-            resistance_workouts: resistanceWorkouts,
-            plyometric_workouts: plyometricWorkouts,
+            bodyweight: bodyweight,
+        barbell: barbell,
+        dumbell: dumbell,
+        kettlebell: kettlebell,
+        machine_assisted: machine_assisted,
+        medicine_ball: medicine_ball,
+        plyometric: plyometric
         }
 
         return Promise.resolve(allWorkouts);
@@ -582,3 +696,39 @@ export default class ProgramController {
     }
 
 }
+
+function constructUserWaitlistMetadataEntry(userData: LupaUserStructure) {
+    const entry = {
+        user_uuid: userData.user_uuid,
+        city: userData.location.city,
+        state: userData.location.state,
+        country: userData.location.country,
+        position: [userData.location.longitude, userData.location.latitude] //[long, lat] - [x, y]
+    };
+
+    return entry;
+}
+
+function degreesToRadians(degrees) {
+    return degrees * Math.PI / 180;
+  }
+  
+  function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
+    var earthRadiusKm = 6371;
+  
+    var dLat = degreesToRadians(lat2-lat1);
+    var dLon = degreesToRadians(lon2-lon1);
+  
+    lat1 = degreesToRadians(lat1);
+    lat2 = degreesToRadians(lat2);
+  
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    return earthRadiusKm * c;
+  }
+
+  function convertKMToMiles(kilometers) {
+    var miles = kilometers / 1.609;
+    return miles;
+  }

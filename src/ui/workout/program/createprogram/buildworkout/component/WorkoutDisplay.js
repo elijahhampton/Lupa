@@ -83,6 +83,35 @@ function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress,
     const [inputTempoTwoText, setTempoInputTwoText] = useState("");
     const [inputTempoSupersetText, setTempoSupersetText] = useState("");
 
+    const renderImageSource = (workoutObj) => {
+        
+        switch(workoutObj.default_media_uri) {
+
+            case '':
+                return <Image source={''} />
+            case 'Traps':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Traps.png')} />
+            case 'Chest':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Chest.png')} />
+            case 'Bicep':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain"source={require('../../../../../images/buildworkout/singleworkout/Bicep.png')} />
+            case 'Calves':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Calves.png')} />
+            case 'Core':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Core.png')} />
+            case 'Glutes':
+                return <Image style={{flex: 1, width: '100%', height: '100%', alignSelf: 'center', backgroundColor: 'red'}} resizeMode="cover" source={require('../../../../../images/buildworkout/singleworkout/Glutes.png')} />
+            case 'Supr':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Supr.png')} />
+            case 'Triceps':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Triceps.png')} />
+            case 'Hip':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Hip.png')} />
+            default:
+                return <Image source={''} />
+        }
+    }
+
     const handleChangeRepsSliderValue = (workoutRef, value) => {
         workoutRef.workout_reps = value;
         forceUpdateState(!updateState)
@@ -343,8 +372,8 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
 <View style={{flexDirection: 'row', alignItems: 'center'}}>
 
 
-<Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
-        <Video shouldPlay={false} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
+<Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0}}>
+        {renderImageSource(workout)}
     </Surface>
 
 
@@ -449,7 +478,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
 
 
 <Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
-      <Video shouldPlay={false} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
+     {renderImageSource(workout)}
   </Surface>
 
 
@@ -525,7 +554,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                       
                       
                       <Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
-                              <Video shouldPlay={false} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
+                            {renderImageSource(superset)}
                           </Surface>
                 
                       

@@ -7,6 +7,7 @@ import {
     Button as NativeButton,
     TouchableOpacity,
     Dimensions,
+    Image,
     PanResponder,
     Text,
     Animated,
@@ -41,26 +42,58 @@ class SingleWorkout extends React.Component {
         }
     }
 
+    renderImageSource = () => {
+        const { workout } = this.props;
+        switch(workout.default_media_uri) {
+            case '':
+                return <Image source={''} />
+            case 'Traps':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Traps.png')} />
+            case 'Chest':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Chest.png')} />
+            case 'Bicep':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain"source={require('../../images/buildworkout/singleworkout/Bicep.png')} />
+            case 'Calves':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Calves.png')} />
+            case 'Core':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Core.png')} />
+            case 'Glutes':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Glutes.png')} />
+            case 'Supr':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Supr.png')} />
+            case 'Triceps':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Triceps.png')} />
+            case 'Hip':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Hip.png')} />
+            default:
+                return <Image source={''} />
+        }
+    }
+
     render() {
 return (
     <>
     <View style={[{marginVertical: 10, width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
     
    <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5}}>
-   <View style={{flexDirection: 'row', alignItems: 'flex-start',}}>
+   <View style={{flexDirection: 'row',  alignItems: 'center',}}>
        <TouchableOpacity onPress={this.props.onPress}>
 
-   <Surface style={{borderWidth: 1, height: 70, width: 100, backgroundColor: '#212121'}}>
-    <Video source={require('../../videos/pushuppreview.mov')} style={{flex: 1}} shouldPlay={false} resizeMode="cover" />
+   <View style={{height: 70, width: 100}}>
+   {this.renderImageSource()}
     {
         this.state.showSelectStyle === true ?
-        <View style={{position: 'absolute',  width: '100%', height: '100%', flex: 1, backgroundColor: 'rgba(225, 120, 205, 0.5)'}}  />
+        <View style={{backgroundColor: 'rgba(245, 245, 245, 0.8)', alignItems: 'center', justifyContent: 'center', position: 'absolute',  width: '100%', height: '100%', flex: 1, borderRadius: 5}}>
+            <FeatherIcon name="check-circle" size={18} color="#1089ff" />
+        </View>
         :
         null
     }
+    
    
-          </Surface>
+          </View>
           </TouchableOpacity>
+          
     <View style={{paddingHorizontal: 10,}}>
     <Text style={{ paddingVertical: 3, fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
               {this.props.workout.workout_name}

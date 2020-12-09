@@ -1,0 +1,100 @@
+{
+  "achievements": [
+  {
+    "index": 0,
+    "title": "Completed a one on one session with a trainer.",
+    "description": "",
+    "identifier": "SC"
+  },
+  {
+    "index": 1,
+    "title": "Completed 5 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC5"
+  },
+  {
+    "index": 2,
+    "title": "Completed 10 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC10"
+  },
+  {
+    "index": 3,
+    "title": "Completed 20 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC20"
+  },
+  {
+    "index": 4,
+    "title": "Completed 40 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC40"
+  },
+  {
+    "index": 5,
+    "title": "Completed 60 on on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC60"
+  },
+  {
+    "index": 6,
+    "title": "Completed 80 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC80"
+  },
+  {
+    "index": 7,
+    "title": "Completed 100 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC100"
+  },
+  {
+    "index": 8,
+    "title": "Completed 150 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC150"
+  },
+  {
+    "index": 9,
+    "title": "Completed 200 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC200"
+  },
+  {
+    "index": 10,
+    "title": "Completed 250 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC250"
+  },
+  {
+    "index": 11,
+    "title": "Completed 300 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC300"
+  },
+  {
+    "index": 12,
+    "title": "Completed 500 one on one sessions with a trainer.",
+    "description": "",
+    "identifier": "SC500"
+  },
+  {
+    "index": 13,
+    "title": "Joined a pack.",
+    "description": "",
+    "identifier": "PJ"
+  },
+  {
+    "index": 14,
+    "title": "Joined 3 packs.",
+    "description": "",
+    "identifier": "PJ3"
+  },
+  {
+    "index": 15,
+    "title": "Started a pack.",
+    "description": "",
+    "identifier": "PS"
+  }
+]
+}

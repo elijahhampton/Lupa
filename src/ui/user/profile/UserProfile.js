@@ -164,7 +164,7 @@ function UserProfile({uuid, userData, isCurrentUser }) {
                     <Text style={{ fontSize: 13, fontFamily: 'Avenir-Heavy' }}>
                         {getFollowersLength()}
                     </Text>
-                    <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir-Roman', fontSize: 11 }]}>
+                    <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 13 }]}>
                         Followers
     </Text>
                 </View>
@@ -175,7 +175,7 @@ function UserProfile({uuid, userData, isCurrentUser }) {
                     <Text style={{ fontSize: 13, fontFamily: 'Avenir-Heavy' }}>
                         {getFollowingLength()}
                     </Text>
-                    <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir-Roman', fontSize: 11 }]}>
+                    <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir-Roman', fontSize: 13 }]}>
                         Following
     </Text>
                 </View>
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     },
     bioText: {
         fontFamily: 'Avenir',
-        fontSize: 12,
+        fontSize: 13,
     },
     certificationText: {
         fontFamily: 'Avenir-Light',
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Medium',
     },
     userAttributeText: {
-        fontSize: 12,
+        fontSize: 13,
         fontFamily: 'Avenir',
 
     }

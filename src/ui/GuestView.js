@@ -203,6 +203,11 @@ class GuestView extends React.Component {
     });
 
     await this.fetchCuratedTrainers();
+
+    await this.LUPA_CONTROLLER_INSTANCE.getAvailableTrainersByDateTime(this.state.futureBookingDisplayDate, this.state.futureBookingStartTime).then(data => {
+      this.setState({ availableTrainers: data })
+    })
+
     this.setState({ componentIsFetching: false })
   }
 
@@ -493,12 +498,12 @@ class GuestView extends React.Component {
             }
 
             return (
-              <TouchableOpacity onPress={() => this.handleBookTrainerOnPress(trainer)}>
-                <Surface style={{ elevation: 0, marginHorizontal: 15, marginVertical: 12 }} >
+              <TouchableOpacity  onPress={() => this.handleBookTrainerOnPress(trainer)}>
+                <Surface style={{elevation: 0, marginHorizontal: 15, marginVertical: 12 }} >
 
                   <View style={{borderRadius: 12}}>
 
-                    <Avatar  containerStyle={{borderRadius: 12}} avatarStyle={{borderRadius: 12}}  key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
+                    <Image style={{borderRadius: 12, width: 120, height: 120}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
 
                     <Surface style={{ elevation: 5, width: 30, height: 30, alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, right: 0, margin: 12, borderRadius: 30 }}>
                       <Feather1s name="calendar" color="#1089ff" />
@@ -630,6 +635,8 @@ class GuestView extends React.Component {
     await this.LUPA_CONTROLLER_INSTANCE.getAvailableTrainersByDateTime(this.state.futureBookingDisplayDate, this.state.futureBookingStartTime).then(data => {
       this.setState({ availableTrainers: data })
     })
+
+    alert('dfsdfd')
     this.closeFutureBookingDatePicker()
   }
 
@@ -707,36 +714,47 @@ class GuestView extends React.Component {
                   return (
                     <>
 
-                      <View style={{ paddingHorizontal: 10, paddingVertical: 15, width: '100%', flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
+
+                    <View style={{ paddingVertical: 15, flexDirection: 'row', alignItems: 'center' }}>
                         <PaperAvatar.Image style={{ borderWidth: 1, borderColor: 'grey' }} size={35} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} />
                         <View style={{ paddingHorizontal: 10 }}>
                           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Text style={{ fontSize: 15, fontWeight: '500' }}>
                               {trainer.display_name}
                             </Text>
-                            <Image style={{ width: 18, height: 18, marginHorizontal: 5 }} source={require('./images/certificate_icon.jpeg')} />
                           </View>
 
-                          <Text style={{ fontWeight: '400', fontSize: 12, color: 'rgb(158, 154, 170)' }}>
+                          <Text style={{flexWrap: 'wrap', fontWeight: '400', fontSize: 12, color: 'rgb(158, 154, 170)' }}>
                             {trainer.bio}
                           </Text>
                         </View>
                       </View>
-                      <Button
+
+
+                    <Button
                         onPress={() => {
-                          this.closeBookingBottomSheet()
-                          this.props.navigation.push('Profile', {
-                            userUUID: trainer.user_uuid
-                          });
+                          this.closeBookingBottomSheet().then(() => {
+                            this.props.navigation.push('Profile', {
+                              userUUID: trainer.user_uuid
+                            });
+                          })
+                    
                         }
                         }
+
                         uppercase={false}
                         color="#23374d"
-                        contentStyle={{ width: '100%' }}
                         mode="contained"
-                        style={{ elevation: 0, marginVertical: 5 }}>
-                        View Profile
+                        style={{ elevation: 1, marginVertical: 5 }}>
+                          <Text style={{fontFamily: 'Avenir', fontSize: 13}}>
+                          View Profile
+                          </Text>
+                    
                 </Button>
+                    </View>
+                     
+                  
                       <Divider style={{ width: Dimensions.get('window').width, alignSelf: 'center', }} />
                     </>
                   )
@@ -971,7 +989,6 @@ class GuestView extends React.Component {
                 containerStyle={{ backgroundColor: 'white', borderColor: 'white' }}
                 inputContainerStyle={{ borderColor: 'white', backgroundColor: 'rgb(245, 246, 249)' }}
                 searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
-
                 onFocus={() => this.setState({ searchBarFocused: true })}
                 onBlur={() => this.setState({ searchBarFocused: false })} />
             </TouchableWithoutFeedback>

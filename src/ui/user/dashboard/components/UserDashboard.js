@@ -82,9 +82,16 @@ function UserDashboard(props) {
     const [trainersModalIsOpen, setTrainersModalIsOpen] = useState(false);
     const [userBookings, setUserBookings] = useState([]);
     const [refreshing, setRefreshing] = useState(false)
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const handleOnRefresh =  React.useCallback(() => {
-     
+        setRefreshing(true);
+        /*const programsToCheck = currUserData.waitlisted_programs
+        for (let i = 0; i < programsToCheck.length; i++) {
+            alert('refreshing on: ' + programsToCheck[i])
+            LUPA_CONTROLLER_INSTANCE.checkProgramWaitlistForMatches(programsToCheck[i], currUserData);
+        }*/
+        setRefreshing(false);
     }, []);
 
     const renderUpcomingBooking = () => {
@@ -129,10 +136,23 @@ function UserDashboard(props) {
                 <Appbar.Action onPress={() => navigation.push('Messages')} icon={() => <FeatherIcon thin={true} name="mail" size={20} />} />
                 <Appbar.Action onPress={() => navigation.push('Notifications')} icon={() => <FeatherIcon thin={true} name="bell" size={20} />} />
             </Appbar.Header>
-            <ScrollView>
+            <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}> 
+            <View style={{marginVertical: 10}}>
+                    <ListItem 
+                    title="My Programs" 
+                    titleStyle={{fontSize: 16, fontFamily: 'Avenir-Medium'}} 
+                    subtitle="Access all of your programs." 
+                    subtitleStyle={{fontSize: 15, fontFamily: 'Avenir-Roman'}} 
+              
+                    bottomDivider
+                    rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}
+                    onPress={() => setProgramModalIsOpen(true)}
+                    />
+                </View>
+                
             <View style={{ flex: 1, }}>
                 <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
-                    <Surface style={{elevation: 10, margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
+                    <Surface style={{elevation: 0, margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
                         <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
                             Total Sessions Completed
                         </Text>
@@ -177,22 +197,9 @@ function UserDashboard(props) {
                     </View>
                 </View>
 
-                <View style={{marginVertical: 10}}>
-                    <ListItem 
-                    title="My Programs" 
-                    titleStyle={{fontSize: 16, fontFamily: 'Avenir-Medium'}} 
-                    subtitle="Access all of your programs." 
-                    subtitleStyle={{fontSize: 15, fontFamily: 'Avenir-Roman'}} 
-                    topDivider 
-                    bottomDivider
-                    rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}
-                    onPress={() => setProgramModalIsOpen(true)}
-                    />
-                </View>
-
-                <View style={{ flex: 2, marginVertical: 10}}>
+                <View style={{ flex: 2, marginVertical: 15}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                    <Text style={{fontFamily: 'Avenir-Heavy'}}>
+                    <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 18}}>
                         Upcoming Session
                     </Text>
                     <Text style={{color: 'rgb(35, 73, 115)', fontWeight: '500'}}>
