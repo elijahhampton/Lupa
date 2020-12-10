@@ -19,7 +19,6 @@ import {
 } from "react-native";
 import LupaController from './controller/lupa/LupaController';
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
-import BackgroundFetch from 'react-native-background-fetch';
 import { connect, useSelector } from 'react-redux'
 import LUPA_DB, { generateMessagingToken, requestNotificationPermissions, registerAppWithFCM, } from "./controller/firebase/firebase";
 import { fcmService } from './controller/firebase/service/FCMService'

@@ -1,10 +1,4 @@
 import 'react-native-gesture-handler';
-
-if (__DEV__) {
-  NativeModules.DevSettings.setIsDebuggingRemotely(true)
-}
-
-
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View, Text, AppState, NativeModules } from 'react-native';
 

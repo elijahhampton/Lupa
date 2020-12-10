@@ -61,7 +61,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import moment from 'moment';
 import { getLupaUserStructure } from '../controller/firebase/collection_structures';
 import { getLupaStoreState } from '../controller/redux/index';
-import BookingRequestModal, { BookingModal }  from './user/modal/BookingRequestModal'
+import BookingRequestModal from './user/modal/BookingRequestModal'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { LOG_ERROR } from '../common/Logger';
 import Geolocation from '@react-native-community/geolocation';
@@ -1068,7 +1068,7 @@ class GuestView extends React.Component {
           {this.renderFutureBookingDatePicker()}
           {this.renderRBSheet()}
 
-         <BookingModal 
+         <BookingRequestModal 
           closeModal={this.closeBookingRequestModal}
           trainer={this.state.requestedTrainer}
           preFilledStartTime={this.state.preFilledStartTime}
