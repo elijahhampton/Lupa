@@ -22,11 +22,9 @@ import ReceivedNotification from './component/ReceivedNotification'
 import ReceivedPackInviteNotification from './component/ReceivedPackInviteNotification';
 import ReceivedPackProgramInviteNotification from './component/ReceivedPackProgramInviteNotification';
 
-function NotificationsView(props) {
+function NotificationsView({ navigation, route }) {
     const [refreshing, setIsRefreshing] = useState(false)
     const [userNotifications, setUserNotifications] = useState([])
-
-    const navigation = useNavigation()
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData
@@ -99,7 +97,6 @@ function NotificationsView(props) {
     return (
         <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <Appbar.Header style={styles.appbar}>
-            <Appbar.Action icon={() => <Feather1s thin={true} name="x" size={20} />} onPress={() => navigation.pop()} />
             <Appbar.Content title="Notifications" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
             </Appbar.Header>
             <View style={{flex: 1}}>

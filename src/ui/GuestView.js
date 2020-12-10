@@ -987,7 +987,7 @@ class GuestView extends React.Component {
                 inputStyle={styles.inputStyle}
                 platform="ios"
                 containerStyle={{ backgroundColor: 'white', borderColor: 'white' }}
-                inputContainerStyle={{ borderColor: 'white', backgroundColor: 'rgb(245, 246, 249)' }}
+                inputContainerStyle={{borderColor: 'white', backgroundColor: 'rgb(245, 246, 249)' }}
                 searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
                 onFocus={() => this.setState({ searchBarFocused: true })}
                 onBlur={() => this.setState({ searchBarFocused: false })} />
@@ -1009,32 +1009,35 @@ class GuestView extends React.Component {
                   Book by your availability
                 </Text>
               </View>
-              <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
-                <TouchableWithoutFeedback onPress={this.openFutureBookingDatePicker} style={{ marginRight: 15, marginVertical: 10, alignSelf: 'center', padding: 5, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgb(245, 246, 249)', borderWidth: 0.5, borderColor: '#E5E5E5', justifyContent: 'space-evenly' }} icon={() => <FeatherIcon name="chevron-down" />}>
-                  <FeatherIcon name="calendar" color="#1089ff" />
+              <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                <TouchableOpacity onPress={this.openFutureBookingDatePicker} style={{ marginRight: 15, marginVertical: 10, alignSelf: 'center', padding: 10, borderRadius: 5, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgb(250, 250, 250)', borderWidth: 0.5, borderColor: '#E5E5E5', justifyContent: 'space-evenly' }} icon={() => <FeatherIcon name="chevron-down" />}>
+      
                   <Text style={{ paddingHorizontal: 10, fontWeight: '500', fontSize: 12 }}>
                     {this.state.futureBookingDisplayDateFormatted}
                   </Text>
                   <FeatherIcon name="chevron-down" />
-                </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={this.openFutureBookingStartTimePicker} style={{ marginRight: 15, padding: 5, borderRadius: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgb(245, 246, 249)', borderWidth: 0.5, borderColor: '#E5E5E5' }} icon={() => <FeatherIcon name="chevron-down" />}>
-                  <FeatherIcon name="clock" color="#1089ff" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.openFutureBookingStartTimePicker} style={{ marginRight: 15, padding: 10, borderRadius: 5, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgb(250, 250, 250)', borderWidth: 0.5, borderColor: '#E5E5E5' }} icon={() => <FeatherIcon name="chevron-down" />}>
+           
                   <Text style={{ paddingHorizontal: 10, fontWeight: '500', fontSize: 12 }}>
                     {this.state.futureBookingStartTimeFormatted}
                   </Text>
                   <FeatherIcon name="chevron-down" />
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
               </View>
               <Button 
                 onPress={this.handleOnRequestFutureBooking} 
-                style={{ marginVertical: 15, elevation: 0 }} 
+                style={{ marginVertical: 15, elevation: 0}} 
                 theme={{roundness: 12}}
                 disabled={false} 
                 color="rgb(34, 74, 115)" 
                 uppercase={false} 
                 mode="contained" 
-                contentStyle={{ height: 45 }}>
-                Find Trainer
+                contentStyle={{ height: 40 }}>
+                  <Text style={{fontFamily: 'Avenir', fontWeight: '800'}}>
+                  Find Trainer
+                  </Text>
+
                 </Button>
             </View>
             <Divider style={{ marginVertical: 10, height: 8, backgroundColor: 'rgb(245, 246, 249)' }} />

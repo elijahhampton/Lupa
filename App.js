@@ -1,6 +1,12 @@
 import 'react-native-gesture-handler';
+
+if (__DEV__) {
+  NativeModules.DevSettings.setIsDebuggingRemotely(true)
+}
+
+
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, View, Text, AppState } from 'react-native';
+import { ActivityIndicator, View, Text, AppState, NativeModules } from 'react-native';
 
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider as StoreProvider, useDispatch, useSelector } from 'react-redux';

@@ -126,7 +126,6 @@ export class LupaHome extends Component {
             <Right>
             <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
                 <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} />}/>
-
                 }>
                     <Menu.Item 
                     onPress={this.handleOnChooseCreatePack} 
@@ -139,7 +138,7 @@ export class LupaHome extends Component {
                   {
                     this.props.lupa_data.Users.currUserData.user_uuid == '3kwSiuirFdTAg4463DCBrYfNFfR2' ?
                     <Menu.Item 
-                    onPress={this.handleOnChooseCreatePack} 
+                    onPress={() => this.props.navigation.push('Community')} 
                     theme={{roundness:20}} 
                     contentStyle={{borderRadius: 20, width: 'auto'}} 
                     style={{ height: 30}} 
@@ -151,7 +150,7 @@ export class LupaHome extends Component {
                   }
            
                 </Menu>
-            <Appbar.Action key='mail' onPress={() => this.props.navigation.push('Messages')} icon={() => <FeatherIcon name="mail" size={20} />}/>
+           
             </Right>
           </Header>
           <Tabs 
