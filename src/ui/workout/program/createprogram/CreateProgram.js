@@ -12,7 +12,7 @@ import ProgramInformation from './component/ProgramInformation'
 import PublishProgram from './component/PublishProgram';
 import initializeNewProgram, { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 import BuildWorkoutController from './buildworkout/BuildWorkoutController';
-import { LOG_ERROR } from '../../../../common/Logger';
+import LOG, { LOG_ERROR } from '../../../../common/Logger';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -47,7 +47,8 @@ class CreateProgram extends React.Component {
             currIndex: 0,
             programData: getLupaProgramInformationStructure(),
             componentDidErr: false,
-            program_workout_days: []
+            program_workout_days: [],
+            uuid: 0,
         }
     }
 
@@ -55,10 +56,9 @@ class CreateProgram extends React.Component {
        const { user_uuid } = this.props.lupa_data.Users.currUserData
        const newProgramData = await initializeNewProgram(0, user_uuid, [user_uuid], programDuration, programDays);
        await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(newProgramData).then(programUUID => {
-
             this.setState({
-                programData: initializeNewProgram(programUUID, user_uuid, [user_uuid], programDuration, programDays)
-                
+                programData: initializeNewProgram(programUUID, user_uuid, [user_uuid], programDuration, programDays),
+                uuid: programUUID
             }, () => console.log(this.state.programData.program_structure_uuid));
         }).catch(error => {
             LOG_ERROR('CreateProgram.js', 'initializeProgram::Caught exception creating program.', error)
@@ -75,19 +75,22 @@ class CreateProgram extends React.Component {
     }
 
     saveProgramWorkoutData = async (workoutData) => {
-        await this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.programData.program_structure_uuid, workoutData);
+        LOG('CreateProgram.js', 'Updating workout data for program: ' + this.state.programData.program_structure_uuid);
+        this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.programData.program_structure_uuid, workoutData)
         this.goToIndex(2);
     }
 
-    saveProgramMetadata = async (title, description, tags, image, price) => {
-        await this.LUPA_CONTROLLER_INSTANCE.updateProgramMetadata(this.state.programData.program_structure_uuid, title, description, tags, image, price).then(async result => {
+    saveProgramMetadata = async (title, description, tags, price) => {
+        LOG('CreateProgram.js', 'Updating program metadata: ' + this.state.uuid);
+
+        await this.LUPA_CONTROLLER_INSTANCE.updateProgramMetadata(this.state.uuid, title, description, tags, price).then(async result => {
             if (result) {
                 const programUUID = this.state.programData.program_structure_uuid;
                 await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', programUUID, 'add');
                 await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(programUUID).then(data => {
-                this.props.addProgramdispatch(data);
-                })
-                handleExitCreateProgram();
+                this.props.addProgram(data);
+                });
+                this.handleExitCreateProgram();
             } else {
                 //show problem  dialog
             }
@@ -118,7 +121,17 @@ class CreateProgram extends React.Component {
     }
 
     exit = () => {
-        this.props.navigation.goBack();
+        this.props.navigation.navigate('Train');
+
+        this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.state.programData.program_structure_uuid)
+        .then(programData => {
+            if (programData.completedProgram == false)  {
+                this.LUPA_CONTROLLER_INSTANCE.deleteProgram(programData.program_structure_uuid);
+            }
+        }).catch(error => {
+            //cleanup program and safely exit component
+
+        })
     }
 
     renderAppropriateDisplay = () => {
@@ -139,9 +152,13 @@ class CreateProgram extends React.Component {
                         saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} 
                         /> 
             case 2:
-                return <PublishProgram uuid={this.state.programData.program_structure_uuid} saveProgramMetadata={this.saveProgramMetadata} goBack={this.prevIndex} />
+                return <PublishProgram uuid={this.state.programData.program_structure_uuid} saveProgramMetadata={this.saveProgramMetadata} goBack={this.prevIndex} exit={this.handleExitCreateProgram} />
             default:
         }
+    }
+
+    componentDidErr() {
+        this.handleExitCreateProgram()
     }
 
 

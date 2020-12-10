@@ -1452,7 +1452,7 @@ export default class UserController {
                 })
             }
 
-            this.PROGRAMS_CONTROLLER_INSTANCE.addProgramShare(program.program_structure_uuid, userList.length);
+           // this.PROGRAMS_CONTROLLER_INSTANCE.addProgramShare(program.program_structure_uuid, userList.length);
 
         } catch (err) {
 
@@ -2407,7 +2407,6 @@ export default class UserController {
                 trainer = doc.data();
                 if (typeof (trainer) == 'undefined') {
                     //delete doc
-
                 } else {
                     trainers.push(trainer);
                 }
@@ -2548,6 +2547,51 @@ export default class UserController {
         LUPA_DB.collection('users').doc(uuid).update({
             trainer_metadata: trainerMetadata
         })
+    }
+
+    loadAchievements = () => {
+        const ACHIEVEMENTS_FILE = require('../../model/data_structures/achievement/achievements.json')
+
+        let exercise = [], 
+            muscleGroup = [], 
+            packs = [], 
+            sessions = [], 
+            programs = [];
+
+        let achievements = ACHIEVEMENTS_FILE.achievements;
+
+        for (let i = 0; i < achievements.length; i++) {
+            switch(achievements[i].identifier.toString().charAt(0).toLowerCase()) 
+            {
+                case 'e':
+                    exercise.push(achievements[i])
+                    break;
+                case 's':
+                    sessions.push(achievements[i]);
+                    break;
+                case 'p':
+                    packs.push(achievements[i]);
+                    break;
+                case 'pr':
+                    programs.push(achievements[i]);
+                    break;
+                case 'mg':
+                    muscleGroup.push(achievements[i]);
+                    break;
+                default:
+                    console.log('default')
+            }
+        }
+
+        const achievementCategories = {
+            exercise: exercise,
+            muscleGroup: muscleGroup,
+            packs: packs,
+            sessions: sessions,
+            programs: programs
+        }
+
+        return achievementCategories;
     }
 }
 

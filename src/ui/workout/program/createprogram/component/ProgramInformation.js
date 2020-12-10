@@ -18,6 +18,9 @@ import {
   Caption,
   Button,
   Chip,
+  Paragraph,
+  Appbar,
+  Dialog,
 } from 'react-native-paper';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
@@ -39,11 +42,37 @@ const daysOfTheWeek  = [
   'Sunday'
 ]
 
+const ProgramLearnMoreDialog = ({ isVisible, closeDialog }) => {
+  return (
+    <Dialog visible={isVisible} style={{width: Dimensions.get('window').width - 20, height: 300, justifyContent: 'space-evenly', alignSelf: 'center'}}>
+      <Dialog.Title>
+        Plan. Design. Publish
+      </Dialog.Title>
+
+      <Dialog.Content>
+        <Paragraph>
+          Create and host fitness programs using Lupa.  Choose the duration of your 
+          program and then pick the days on which there will be workouts.
+          After designing your program you can set your own price and publish it 
+          for the world to see, send it to your friends, or save it for personal use.
+        </Paragraph>
+      </Dialog.Content>
+
+      <Dialog.Actions>
+        <Button onPress={closeDialog} theme={{roundness: 8}} uppercase={false} mode="contained" color="#1089ff">
+          Start designing
+        </Button>
+      </Dialog.Actions>
+    </Dialog>
+  )
+}
+
 function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
   const navigation = useNavigation();
 
   const [programDuration, setProgramDuration] = useState(1);
   const [programWorkoutDays, setProgramWorkoutDays] = useState([]);
+  const [learnMoreDialogIsVisible, setLearnMoreDialogIsVisible] = useState(false);
 
   const handleSaveProgramInformation = () => {
     saveProgramInformation(programDuration, programWorkoutDays);
@@ -59,10 +88,14 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView />
-      <FeatherIcon name="x" size={22} onPress={() => navigation.pop()} style={{alignSelf: 'flex-start', margin: 15}} />
+      <Appbar.Header style={{paddingHorizontal: 10, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: '#FFFFFF'}}>
+      <FeatherIcon onPress={handleCancelOnPress} name="x" size={22} onPress={() => navigation.pop()} />
+      <Appbar.Content title="Design a fitness program" style={{alignSelf: 'center'}} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+      <FeatherIcon name="x" color="white" size={22} onPress={() => navigation.pop()} />
+      </Appbar.Header>
+      
 
-            <Surface style={{flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20}}>
+            <View style={{flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20}}>
 
               <View style={{ paddingHorizontal: 20, paddingVertical: 10,}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -125,32 +158,40 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 </ScrollView>
               </View>
                 </View>
-            </Surface>
+            </View>
 
-            <View style={{flex: 2, padding: 20, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{flex: 2, padding: 20, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-evenly'}}>
               <Button
               onPress={handleSaveProgramInformation}
               color="#1089ff"
+              disabled={programWorkoutDays.length > 0 ? false : true}
               uppercase={false}
               mode="contained"
-              theme={{roundness: 12}}
-              style={{elevation: 8}}
-              contentStyle={{height: 45, width: Dimensions.get('window').width - 50}}>
-                Add Workouts to Plan
+              theme={{roundness: 15}}
+              style={{elevation: 0}}
+              icon={() => <FeatherIcon name="plus" size={18} color="white" />}
+              contentStyle={{height: 60, width: Dimensions.get('window').width - 50}}>
+                Add Workouts to Program
               </Button>
+
+              <Button mode="text" color="#1089ff" uppercase={false} onPress={() => setLearnMoreDialogIsVisible(true)}>
+                    <Text style={{fontSize: 12}}>
+                    Learn more about creating a program
+                    </Text>
+                 </Button>
                </View>
-          
-             
+
+               <ProgramLearnMoreDialog isVisible={learnMoreDialogIsVisible} closeDialog={() => setLearnMoreDialogIsVisible(false)} />
                 </View>
   )
 }
+
+
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   topView: {
     flex: 2,

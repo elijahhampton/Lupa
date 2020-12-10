@@ -76,7 +76,7 @@ const WelcomeContentDriver = (props) => {
               Alert.alert('It looks like your location services are disabled for Lupa.  Navigate to your settings to enable them and return to the app to continue.')
              return;
             case RESULTS.DENIED:
-                ert('It looks like your location services are disabled for Lupa.  Navigate to your settings to enable them and return to the app to continue.')
+                alert('It looks like your location services are disabled for Lupa.  Navigate to your settings to enable them and return to the app to continue.')
                 return;
             case RESULTS.GRANTED:
               // nothing to do

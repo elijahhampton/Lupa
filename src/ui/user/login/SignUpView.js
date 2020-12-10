@@ -153,18 +153,18 @@ const SignUp = props => {
 
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData().then(result => {
       currUserData = result;
-    })
-    let userPayload = {
+    });
+
+    const userPayload = {
       userData: currUserData,
       healthData: {}
     }
-    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload })
+
+    await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload });
+    await dispatch({ type: UPDATE_CURRENT_USER_PACKS_ACTION, payload: [] });
 
     if (currUserData.isTrainer) {
-      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-        currUserPrograms = result;
-      })
-      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms })
+      await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: [] })
     }
 
     await LUPA_CONTROLLER_INSTANCE.loadWorkouts().then(result => {

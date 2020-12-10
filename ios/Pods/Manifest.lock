@@ -412,7 +412,7 @@ PODS:
   - Permission-PhotoLibrary (2.2.2):
     - RNPermissions
   - PromisesObjC (1.2.11)
-  - Protobuf (3.13.0)
+  - Protobuf (3.14.0)
   - RCTRequired (0.62.2)
   - RCTTypeSafety (0.62.2):
     - FBLazyVector (= 0.62.2)
@@ -666,6 +666,8 @@ PODS:
     - React-cxxreact (= 0.62.2)
     - React-jsi (= 0.62.2)
     - ReactCommon/callinvoker (= 0.62.2)
+  - RNBackgroundFetch (3.1.0):
+    - React
   - RNCAsyncStorage (1.12.1):
     - React-Core
   - RNCMaskedView (0.1.10):
@@ -738,11 +740,38 @@ PODS:
     - React
   - RNPermissions (2.2.2):
     - React-Core
-  - RNReanimated (1.4.0):
+  - RNReanimated (2.0.0-alpha.9.2):
+    - DoubleConversion
+    - FBLazyVector
+    - FBReactNativeSpec
+    - Folly
+    - glog
+    - RCTRequired
+    - RCTTypeSafety
     - React
+    - React-Core
+    - React-Core/DevSupport
+    - React-Core/RCTWebSocket
+    - React-CoreModules
+    - React-cxxreact
+    - React-jsi
+    - React-jsiexecutor
+    - React-jsinspector
+    - React-RCTActionSheet
+    - React-RCTAnimation
+    - React-RCTBlob
+    - React-RCTImage
+    - React-RCTLinking
+    - React-RCTNetwork
+    - React-RCTSettings
+    - React-RCTText
+    - React-RCTVibration
+    - ReactCommon/callinvoker
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (2.0.0-alpha.12):
     - React
-  - RNSVG (9.13.6):
+  - RNSVG (12.1.0):
     - React
   - RNVectorIcons (6.7.0):
     - React
@@ -836,6 +865,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/callinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNCPicker (from `../node_modules/@react-native-community/picker`)"
@@ -1042,6 +1072,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNBackgroundFetch:
+    :path: "../node_modules/react-native-background-fetch"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
   RNCMaskedView:
@@ -1198,7 +1230,7 @@ SPEC CHECKSUMS:
   Permission-Notifications: 1e154e50f5b3bbd0bd2b688621e8f23a7a6cacfd
   Permission-PhotoLibrary: bb20a7ac8aec0f7459558e5fbe2bd0a6f2744be3
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
-  Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
+  Protobuf: 0cde852566359049847168e51bd1c690e0f70056
   RCTRequired: cec6a34b3ac8a9915c37e7e4ad3aa74726ce4035
   RCTTypeSafety: 93006131180074cffa227a1075802c89a49dd4ce
   React: 29a8b1a02bd764fb7644ef04019270849b9a7ac3
@@ -1230,6 +1262,7 @@ SPEC CHECKSUMS:
   React-RCTText: fae545b10cfdb3d247c36c56f61a94cfd6dba41d
   React-RCTVibration: 4356114dbcba4ce66991096e51a66e61eda51256
   ReactCommon: ed4e11d27609d571e7eee8b65548efc191116eb3
+  RNBackgroundFetch: 81c690aa5e8e67dbc3f86ecb7f26629c00c6060d
   RNCAsyncStorage: cb9a623793918c6699586281f0b51cbc38f046f9
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNCPicker: 914b557e20b3b8317b084aca9ff4b4edb95f61e4
@@ -1251,9 +1284,9 @@ SPEC CHECKSUMS:
   RNGestureHandler: 911d3b110a7a233a34c4f800e7188a84b75319c6
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNPermissions: 067727df624665d4a6c8e2cffcc172ba608b96ed
-  RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
+  RNReanimated: f768d8df7a710603b14d376715b61697d4df4dda
   RNScreens: 254da4b84f25971cbb30ed3ddc84131f23cac812
-  RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
+  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: 368d6d8b8301224e5ffb6254191f4f8876c2be0d
   SRSRadialGradient: 71378a83e52b616c40367c37ee7cb6865f9f7c6e
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
@@ -1274,6 +1307,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 4e6c4c34a89512e2225d336154df1cb689226a29
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
 
-PODFILE CHECKSUM: 582713c3ff2b6f77b33b60a62b1ffa56e859b0d8
+PODFILE CHECKSUM: c563b3d31c7aaf38e47cbf842fb249f929925cc3
 
 COCOAPODS: 1.10.0

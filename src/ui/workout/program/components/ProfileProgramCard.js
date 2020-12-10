@@ -24,7 +24,7 @@ function ProfileProgramCard({ programData }) {
     const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
-    })
+    });
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -37,38 +37,14 @@ function ProfileProgramCard({ programData }) {
         else
         {
             setProgramModalVisible(true);
-            LUPA_CONTROLLER_INSTANCE.addProgramView(programData.program_structure_uuid);
-        }
-    }
-
-    const getProgramTags = () => {
-        try {
-        return (
-            programData.program_tags.map((tag, index, arr) => {
-                if (index == arr.length - 1)
-                {
-                    return (
-                        <Caption>
-                        {tag}
-                    </Caption>
-                    )
-                }
-                return (
-                    <Caption>
-                        {tag},{" "}
-                    </Caption>
-                )
-            })
-        )
-        } catch(err) {
-            return;
+          //  LUPA_CONTROLLER_INSTANCE.addProgramView(programData.program_structure_uuid);
         }
     }
 
     return (
         <View style={{width: '100%', alignSelf: 'center', marginHorizontal: 20}}>
 
-        <TouchableWithoutFeedback onPress={() => handleOnPress()}>
+        <TouchableWithoutFeedback onPress={handleOnPress}>
         <Surface style={styles.container}>
         <View style={styles.imageContainer}>
         <Image source={{uri: programData.program_image}} style={styles.image} />

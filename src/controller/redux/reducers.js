@@ -81,7 +81,7 @@ const initialUserReducerState = {
 }
 
 const initialPacksReducerState = {
-  currUserPacksData: {},
+  currUserPacksData: [],
 }
 
 const initialProgramsReducerState = {

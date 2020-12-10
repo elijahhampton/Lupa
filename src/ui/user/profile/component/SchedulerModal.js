@@ -66,14 +66,28 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
       setAddedTimes(prevState => prevState.concat(timeBlock));
     }
 
+    const createTimeBlockArray = () => {
+      let times = [moment(startTime).format('LT').toString()];
+      let time = startTime
+      while (moment(time).isSameOrBefore(endTime)) {
+        time = moment(time).add(1, 'hour');
+        times.push(moment(time).format('LT').toString())
+      }
+
+      return times;
+    }
+
     const handleOnSave = () => {
       if (typeof(entryDate) == 'undefined') {
         return;
       }
 
+      const times = createTimeBlockArray();
+
       const timeBlock = {
         startTime: moment(startTime).format('LT').toString(),
         endTime: moment(endTime).format('LT').toString(),
+        times: times
       }
 
       let currentSchedulerTimes  = currUserData.scheduler_times;

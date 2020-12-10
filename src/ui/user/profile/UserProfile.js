@@ -11,7 +11,9 @@ import {
 } from 'react-native';
  
 import {
-    Surface, Appbar, Caption, Divider,
+    Surface, 
+    Appbar, 
+    Caption,
     Button
 } from 'react-native-paper';
 
@@ -24,24 +26,21 @@ import {
     Tabs
 } from 'native-base'
 
+import { useNavigation } from '@react-navigation/native';
 import ImagePicker from 'react-native-image-picker';
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../controller/lupa/LupaController';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import VlogFeedCard from '../component/VlogFeedCard';
 import { useSelector } from 'react-redux';
-import { retrieveAsyncData, storeAsyncData } from '../../../controller/lupa/storage/async';
 import EditBioModal from './settings/modal/EditBioModal';
 
-function UserProfile({ userData, isCurrentUser }) {
+function UserProfile({uuid, userData, isCurrentUser }) {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
     const [editBioModalIsVisible, setEditBioModalIsVisible] = useState(false);
-    const [currPage, setCurrPage] = useState(0);
     const [userVlogs, setUserVlogs] = useState([])
-    const [postType, setPostType] = useState("VLOG");
     const [trailingInterestLength, setTrainingInterestLength] = useState(0);
     const [trainingInterestTextVisible, showTrailingInterestText] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -68,31 +67,10 @@ function UserProfile({ userData, isCurrentUser }) {
                 setUserVlogs([])
             }
         }
-
         loadProfileData()
-
-      //  addToRecentlyInteractedList();
         LOG('UserProfile.js', 'Running useEffect.')
         return () => isSubscribed = false;
     }, [profileImage, ready])
-
-    const addToRecentlyInteractedList = async () => {
-        try {
-        let recentlyInteractedList = await retrieveAsyncData('RECENTLY_INTERACTED_USERS');
-    
-        if (typeof(recentlyInteractedList) == 'undefined' || typeof(recentlyInteractedList) != 'object') {
-  
-            recentlyInteractedList = [userData.user_uuid];
-        } else {
-            recentlyInteractedList.push(userData.user_uuid);
-        }
-    } catch(error) {
-        storeAsyncData('RECENTLY_INTERACTED_USERS', [])
-        LOG_ERROR('', '', error)
-    }
-
-        storeAsyncData('RECENTLY_INTERACTED_USERS', recentlyInteractedList)
-    }
 
 
     const fetchVlogs = async (uuid) => {
@@ -133,52 +111,81 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     const renderAvatar = () => {
-        if (isCurrentUser) {
-            return (
-                <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
-                    <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
-                </Surface>
-            )
+        try {
+            if (isCurrentUser) {
+                return (
+                    <Avatar key={userData.photo_url} raised={true} rounded size={60} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
+                )
+            }
+
+            return <Avatar key={userData.photo_url} rounded size={80} source={{ uri: profileImage }} />
+        } catch (error) {
+            if (isCurrentUser) {
+                return (
+                    <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
+                        <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
+                    </Surface>
+                )
+            } else {
+                return <PaperAvatar.Icon style={{ backgroundColor: 'white' }} icon={() => <FeatherIcon name="user" size={30} />} />
+            }
+        }
+    }
+
+    const getFollowersLength = () => {
+        if (typeof (userData.followers.length) == 'undefined') {
+            return 0;
         }
 
-        return <Avatar key={userData.photo_url} rounded size={65} source={{ uri: profileImage }} />
+        try {
+            return userData.followers.length
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    const getFollowingLength = () => {
+        if (typeof (userData.following.length) == 'undefined') {
+            return 0;
+        }
+
+        try {
+            return userData.following.length
+        } catch (error) {
+            return 0;
+        }
     }
 
     const renderFollowers = () => {
         return (
             <View style={{ marginVertical: 10, flex: 1, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                <TouchableOpacity onPress={navigateToFollowers}>
-                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text>
-                            {userData.followers.length}
-                        </Text>
-                        <Text style={styles.userAttributeText}>
-                            Followers
-        </Text>
-                    </View>
+            <TouchableOpacity onPress={navigateToFollowers}>
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, fontFamily: 'Avenir-Heavy' }}>
+                        {getFollowersLength()}
+                    </Text>
+                    <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 13 }]}>
+                        Followers
+    </Text>
+                </View>
 
-                </TouchableOpacity>
-                <TouchableOpacity onPress={navigateToFollowers}>
-                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text>
-                            {userData.following.length}
-                        </Text>
-                        <Text style={styles.userAttributeText}>
-                            Following
-        </Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={navigateToFollowers}>
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, fontFamily: 'Avenir-Heavy' }}>
+                        {getFollowingLength()}
+                    </Text>
+                    <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir-Roman', fontSize: 13 }]}>
+                        Following
+    </Text>
+                </View>
+            </TouchableOpacity>
+        </View>
         )
     }
 
     const renderLocation = () => {
-        return (
-            <View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
-                <FeatherIcon name="map-pin" style={{ paddingRight: 5 }} />
-                <Text style={[styles.userAttributeText, { color: '#23374d' }]}>{userData.location.city}, {userData.location.state}</Text>
-            </View>
-        )
+        return <Text style={[styles.userAttributeText, { color: 'rgb(35, 73, 115)', fontFamily: 'Avenir-Heavy' }]}>{userData.location.city}, {userData.location.state}</Text>
     }
 
     const renderDisplayName = () => {
@@ -213,7 +220,7 @@ function UserProfile({ userData, isCurrentUser }) {
             )
         } else {
             return (
-                <View style={{ paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
                         <Text style={styles.bioText}>
                             Interest: {" "}
@@ -245,20 +252,21 @@ function UserProfile({ userData, isCurrentUser }) {
             return (
                 <View style={{flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start'}}>
                     {
-                    isCurrentUser === true ?
-                    <Caption>
-                        <Caption>
-                        You haven't created any vlogs.
-                        </Caption>
-{" "}
-                        <Caption style={{color: '#1089ff'}} onPress={() => navigation.push('CreateNewPost')}>
-                        Start publishing by creating content.
-                        </Caption>
-                    </Caption>
-                    :
-                    <Caption>
-                        No Vlogs have been created by {userData.display_name}
-                    </Caption>
+                      currUserData.user_uuid == uuid ?
+                    <Text style={{paddingHorizontal: 10}}>
+                    <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+                <Text>
+                You haven't created any vlogs.{" "}
+                </Text>
+                <Text onPress={() => navigation.push('CreateNewPost')} style={{color: '#1089ff', fontSize: 15, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
+                Start creating content on Lupa.
+                </Text>
+            </Text>
+            </Text>
+            :
+                    <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+               No Vlogs have been created by {userData.display_name}.
+            </Text>
                     }
                     
                 </View>
@@ -275,7 +283,7 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     const renderInteractions = () => {
-        if (isCurrentUser) { return; }
+        if (  currUserData.user_uuid == uuid ) { return; }
 
         return (
             <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
@@ -287,7 +295,7 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     const renderFollowButton = () => {
-        if (isCurrentUser) { return; }
+        if (  currUserData.user_uuid == uuid ) { return; }
    
            if (currUserData.following.includes(userData.user_uuid)) {
                return (
@@ -320,8 +328,6 @@ function UserProfile({ userData, isCurrentUser }) {
            }
        }
 
-
-
     /**
      * Navigates to the follower view.
      */
@@ -330,9 +336,9 @@ function UserProfile({ userData, isCurrentUser }) {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <Feather1s name="arrow-left" size={20} onPress={() => navigation.pop()} />
+                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 
                 {
                     isCurrentUser === true ?
@@ -346,17 +352,21 @@ function UserProfile({ userData, isCurrentUser }) {
             </Appbar.Header>
             <ScrollView>
                 <View>
-
-                    <View style={styles.userInformationContainer}>
-                        <View style={styles.infoContainer}>
-                            {renderDisplayName()}
-                            {renderInterest()}
+                <View style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+                        <View style={styles.userInformationContainer}>
+                            <View style={styles.infoContainer}>
+                                {renderDisplayName()}
+                                <View>
+                                {renderLocation()}
+                                {renderInterest()}
+                                </View>
+                            </View>
+                            <View style={styles.avatarContainer}>
+                                {renderAvatar()}
+                                {renderFollowers()}
+                            </View>
                         </View>
-
-                        <View style={styles.avatarContainer}>
-                            {renderAvatar()}
-                            {renderFollowers()}
-                        </View>
+                        {renderInteractions()}
                     </View>
 
                     <View style={{ padding: 10, }}>
@@ -365,17 +375,15 @@ function UserProfile({ userData, isCurrentUser }) {
                             Learn more
                 </Text>
 
-                <Text style={{color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 13 }}>
+                <Text onPress={() => setEditHoursModalVisible(true)} style={{ color: '#1089ff', fontWeight: '600', fontSize: 12 }}>
                             Edit Bio
-                       
                 </Text>
                         </View>
-
                         {renderBio()}
                     </View>
                     {renderInteractions()}
                 </View>
-                <Tabs tabBarUnderlineStyle={{ height: 2, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF' }} tabBarBackgroundColor='#FFFFFF' >
+                <Tabs tabBarUnderlineStyle={{ height: 0, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF' >
                     <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}  activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}
@@ -385,25 +393,29 @@ function UserProfile({ userData, isCurrentUser }) {
             </ScrollView>
 
             <EditBioModal isVisible={editBioModalIsVisible} closeModalMethod={() => setEditBioModalIsVisible(false)} />
-        </SafeAreaView>
+            <SafeAreaView />
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: '#FFFFFF',
     },
     userInformationContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
+        backgroundColor: 'rgb(247, 247, 247)'
     },
     infoContainer: {
         flex: 3,
+        height: 120,
+        justifyContent: 'space-evenly',
         paddingHorizontal: 10,
         alignItems: 'flex-start',
-        justifyContent: 'center'
+
     },
     avatarContainer: {
         flex: 2,
@@ -412,22 +424,23 @@ const styles = StyleSheet.create({
     },
     bioText: {
         fontFamily: 'Avenir',
-        fontSize: 12,
+        fontSize: 13,
     },
     certificationText: {
         fontFamily: 'Avenir-Light',
     },
     appbar: {
-        backgroundColor: 'transparent',
+        backgroundColor: 'rgb(247, 247, 247)',
         elevation: 0,
-        paddingHorizontal: 20
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
     },
     appbarTitle: {
         fontSize: 12,
         fontFamily: 'Avenir-Roman'
     },
     displayNameText: {
-        paddingVertical: 5,
+        paddingVertical: 2,
         fontSize: 20,
         fontFamily: 'Avenir-Black'
     },
@@ -441,7 +454,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Medium',
     },
     userAttributeText: {
-        fontSize: 12,
+        fontSize: 13,
         fontFamily: 'Avenir',
 
     }

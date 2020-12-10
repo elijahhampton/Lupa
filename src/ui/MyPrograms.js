@@ -40,7 +40,7 @@ function MyPrograms(props) {
     }
 
     useEffect(() => {
-        const currUserProgramsObserver = LUPA_DB.collection('programs').onSnapshot(querySnapshot => {
+        const currUserProgramsObserver = LUPA_DB.collection('programs').where('program_owner', '==', currUserData.user_uuid).onSnapshot(querySnapshot => {
            let userPrograms = []
             querySnapshot.docs.forEach(doc => {
                 let document = doc.data();
@@ -70,16 +70,17 @@ function MyPrograms(props) {
             }
             
             return (
-                <Card key={program.program_structure_uuid} style={{elevation: 3, width: Dimensions.get('window').width - 20, marginVertical: 10}} onPress={() => handleCardOnPress(program)}>
+                <View style={{width: Dimensions.get('window').width - 20, margin: 20, alignSelf: 'center'}}>
+                <Card key={program.program_structure_uuid} style={{elevation: 3, width: '100%', alignSelf: 'center'}} onPress={() => handleCardOnPress(program)}>
                 <Card.Cover source={{ uri: program.program_image }} />
                 <Card.Actions style={{justifyContent: 'space-between', paddingVertical: 10}}>
                     <Text style={{fontSize: 15, fontFamily: 'HelveticaNeue'}}>
                         {program.program_name}
                     </Text>
-
                     <FeatherIcon name="more-vertical" size={20} onPress={() => setProgramOptionsModalIsVisible(true)} />
                 </Card.Actions>
               </Card>
+              </View>
             )
         })
 
@@ -88,14 +89,12 @@ function MyPrograms(props) {
     const renderComponentDisplay = () => {
         if (programs.length === 0) {
             return (
-                <View style={{height: 200,  alignItems: 'center', justifyContent: 'center', width: '100%', paddingHorizontal: 20}}>
-                <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+            <View style={{height: 200, alignItems: 'center', justifyContent: 'center', width: '100%', paddingHorizontal: 10}}>
+                <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 16, fontWeight: '800'}}>
                     <Text>
                         You haven't created any programs.{" "}
                     </Text>
-                    <Text onPress={() => navigation.push('CreateProgram', {
-
-                    })} style={{color: '#1089ff', fontWeight: '400'}}>
+                    <Text onPress={() => navigation.push('CreateProgram')} style={{color: '#1089ff', fontSize: 16, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
                         Get started with your first.
                     </Text>
                 </Text>
@@ -103,14 +102,10 @@ function MyPrograms(props) {
             )
         } else {
             return (
-                <View 
-                contentContainerStyle={{
-                    flex: 1,
-                }}>
+                <View>
                     <ScrollView>
                     {renderPrograms()}
                     </ScrollView>
-               
                </View>
             )
         }

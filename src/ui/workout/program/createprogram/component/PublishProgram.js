@@ -13,6 +13,7 @@ import {
   Slider,
   TouchableHighlight,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
   Modal,
 } from 'react-native';
 
@@ -33,7 +34,7 @@ import {
 import ImagePicker from 'react-native-image-picker';
 
 import { Constants } from 'react-native-unimodules';
-
+import { Avatar } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import Icon from "react-native-feather1s";
@@ -48,6 +49,8 @@ import NumberFormat from 'react-number-format';
 import LupaController from '../../../../../controller/lupa/LupaController';
 import { LUPA_AUTH } from '../../../../../controller/firebase/firebase';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import LOG, { LOG_ERROR } from '../../../../../common/Logger';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function AddTagsModal({ captureTags, isVisible, closeModal }) {
   let [tags, setTags] = useState([]);
@@ -132,7 +135,7 @@ function AddTagsModal({ captureTags, isVisible, closeModal }) {
   )
 }
 
-function PublishProgram({uuid, saveProgramMetadata, goBack}) {
+function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
   const [programTitle, setProgramTitle] = useState("");
   const [programDescription, setProgramDescription] = useState("");
   const [programTags, setProgramTags] = useState([]);
@@ -142,19 +145,95 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
   const [programTagModalVisible, setProgramTagModalVisible] = useState(false);
   const [programIsPublic, setProgramPublic] = useState(false);
 
+  const [usersToShare, setUsersToShare] = useState([]);
+  const [usersUUIDToShare, setUsersUUIDToShare] = useState([]);
+  const [currUserFollowers, setCurrUserFollowers] = useState([]);
+
+  const [forceUpdate, setForceUpdate] = useState(false);
+  
+  const shareProgramRBSheetRef = createRef();
+
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-  const handlePublishToProfile = () => {
-    if (programIsPublic === true) {
-      return;
+  const currUserData = useSelector(state => {
+    return state.Users.currUserData;
+  });
+
+  useEffect(() => {
+    async function fetchFollowers () {
+      if (typeof(currUserData.followers) === 'undefined') {
+        return;
+      }
+
+      await LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(currUserData.followers)
+      .then(result => {
+        setCurrUserFollowers(result);
+      }).catch(error => {
+        LOG_ERROR('PublishProgram.js', 'useEffect::Caught error fetching current users followers data.', error)
+        setCurrUserFollowers([])
+      })
     }
+
+    LOG('PublishProgram.js', 'Running useEffect');
+    fetchFollowers()
+  }, []);
+
+  const handleAvatarOnPress = (user) => {
+    let updatedUserUUIDList = usersUUIDToShare;
+    let updatedUserList = usersToShare;
+    if (usersUUIDToShare.includes(user.user_uuid)) {
+      updatedUserUUIDList.splice(updatedUserUUIDList.indexOf(user.user_uuid), 1)
+      setUsersUUIDToShare(updatedUserUUIDList);
+      } else {
+      updatedUserUUIDList.push(user.user_uuid);
+      setUsersUUIDToShare(updatedUserUUIDList)
+    }
+
+    setForceUpdate(!forceUpdate)
+  }
+
+  const handleOnPressSend = async () => {
+    await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(result => {
+      LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, usersUUIDToShare, result);
+    });  
+  }
+
+  const renderUserAvatars = () => {
+    return currUserFollowers.map((user, index, arr) => {
+      if (usersUUIDToShare.includes(user.user_uuid)) {
+        return (
+          <TouchableWithoutFeedback key={user.user_uuid} onPress={() => handleAvatarOnPress(user)}>
+          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <Avatar source={{uri: user.photo_url}} rounded size={60} containerStyle={{borderWidth: 2, padding: 3, borderColor: '#1089ff'}} icon={() => <FeatherIcon name="user" />} />
+          <Text style={{padding: 10, fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+            {user.display_name}
+          </Text>
+          </View>
+          </TouchableWithoutFeedback>
+        )
+      } else {
+        return (
+          <TouchableWithoutFeedback onPress={() => handleAvatarOnPress(user)}>
+             <View style={{alignItems: 'center', justifyContent: 'center'}}>
+             <Avatar source={{uri: user.photo_url}} rounded size={60} icon={() => <FeatherIcon name="user" />} />
+             <Text style={{padding: 10, fontSize: 12, fontFamily: 'Avenir-Roman'}}>
+               {user.display_name}
+             </Text>
+             </View>
+             </TouchableWithoutFeedback>
+        )
+      }
+    })
+  }
+
+  const handlePublishToProfile = () => {
 
     LUPA_CONTROLLER_INSTANCE.setProgramPublic(uuid, true);
     setProgramPublic(true);
   }
 
   const renderPublicToProfileText = () => {
-    if (programIsPublic === true) {
+    if (programIsPublic != true) {
       return (
       <Text>
         Publish to profile
@@ -211,13 +290,18 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
   }, async (response) => {
       if (!response.didCancel)
       {
-        let updatedUri = "";
-        await LUPA_CONTROLLER_INSTANCE.saveProgramImage(uuid, response.uri.trim()).then(uri => {
-          updatedUri = uri;
-        })
+        await LUPA_CONTROLLER_INSTANCE.saveProgramImage(uuid, response.uri.trim())
+        .then(uri => {
+          setProgramImage(uri)
+          setProgramImageSet(true);
+          LUPA_CONTROLLER_INSTANCE.updateProgramImage(uuid, uri);
+          LOG('PublishProgram.js', 'handleChooseProgramImage::Successfully retrieved image uri and set state: ' + programImage)
+        }). catch(error => {
+          setProgramImage("")
+          setProgramImageSet(false);
+          LOG_ERROR('PublishProgram.js', 'handleChooseProgramImage::Caught exception trying to retrieve new image uri.' ,error)
+        });
 
-        setProgramImage(updatedUri);
-        setProgramImageSet(true);
       }
       else if (response.error)
       {
@@ -231,20 +315,56 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
     setProgramTags(tags)
   }
 
-  const handleOnFinish = () => {
-    saveProgramMetadata(programTitle, programDescription, programTags, programImage, programPrice);
+  const handleOnFinish = async () => {
+    await saveProgramMetadata(programTitle, programDescription, programTags, programPrice).then(() => {
+      handleOnPressSend()
+    });
+
+    exit();
   }
 
-  const openShareWithFriendsModal = () => {
-
-  }
+  const openShareWithFriendsModal = () => shareProgramRBSheetRef.current.open();
   
-  const closeShareWithFriendsModal = () => {
-
-  }
+  const closeShareWithFriendsModal = () => shareProgramRBSheetRef.current.close();
 
   const renderShareWithFriendsModal = () => {
+    return (
+      <RBSheet
+       ref={shareProgramRBSheetRef}
+       height={200}
+       dragFromTopOnly={true}
+       closeOnDragDown={true}
+       customStyles={{
+         wrapper: {
 
+         },
+         container: {
+    
+           borderTopLeftRadius: 15,
+           borderTopRightRadius: 15,
+         },
+         draggableIcon: {
+           backgroundColor: 'grey',
+         }
+       }}
+      >
+        <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+          <View style={{padding: 10, paddingBottom: 15}}>
+            <Text style={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontSize: 16}}>
+              Share Program
+            </Text>
+          </View>
+          <Divider style={{width: Dimensions.get('window').width}} />
+          <View style={{marginVertical: 10}}>
+            <ScrollView horizontal centerContent contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+              {renderUserAvatars()}
+            </ScrollView>
+          </View>
+ 
+        </View>
+        <SafeAreaView />
+      </RBSheet>
+    )
   }
 
   return (
@@ -352,13 +472,15 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
             style={{alignSelf: 'flex-start'}}
             mode="text"
             uppercase={false} 
-            icon={() => <FeatherIcon name="user-plus"  size={12} />}>
-              Share with friends (0 selected)
+            icon={() => <FeatherIcon name="user-plus"  size={12} />}
+            onPress={openShareWithFriendsModal}
+            >
+              Share with friends ({usersUUIDToShare.length} selected)
             </Button>
 
           <View>
           <Button   
-          onPress={handlePublishToProfile}
+          onPress={programIsPublic != true ? handlePublishToProfile : null}
             color="#1089ff"
             style={{alignSelf: 'flex-start'}}
             mode="text"
@@ -390,6 +512,7 @@ function PublishProgram({uuid, saveProgramMetadata, goBack}) {
 
     
                  <AddTagsModal isVisible={programTagModalVisible} closeModal={() => setProgramTagModalVisible(false)} captureTags={handleCaptureTags} />
+                 {renderShareWithFriendsModal()}
     </View>
   )
 }

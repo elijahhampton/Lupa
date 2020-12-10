@@ -22,8 +22,6 @@ import {
 //temporary
 import { useNavigation } from "@react-navigation/native";
 
-const AppLogo = require('../../images/applogo.png')
-
 const WelcomeView = () => {
   const navigation = useNavigation()
 
@@ -47,9 +45,9 @@ const WelcomeView = () => {
                 </Text>
           </View>
 
-          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+         {/* <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
           <Image source={AppLogo} style={{flex: 1, width: 150, height: 5, alignSelf: 'center'}} />
-          </View>
+    </View> */}
 
           <View style={{flex: 1, justifyContent: 'flex-end'}}>
 

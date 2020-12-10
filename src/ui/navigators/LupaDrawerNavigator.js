@@ -14,6 +14,8 @@ import DashboardNavigator from './DashboardNavigator';
 import LupaHomeNavigator from './LupaHomeNavigator';
 import Search from '../search/Search';
 import { useSelector } from 'react-redux';
+import NotificationsView from '../user/notifications/NotificationsView';
+import MessagesView from '../user/chat/MessagesView'
 
 const Drawer = createDrawerNavigator();
 
@@ -45,21 +47,24 @@ const PlaceHolder = () => {
 const ACTIVE_COLOR = "#23374d"
 const INACTIVE_COLOR = "#23374d"
 
-const tabBarOptions = {
-  showLabel: true,
-  activeTintColor: '#1089ff',
-  inactiveTintColor: 'rgb(58, 58, 60)',
-  labelStyle: {
-    fontSize: 12,
-    fontFamily: 'HelveticaNeue-Light',
-    fontWeight: '400',
-  }
-}
-
 function LupaBottomTabNavigator() {
   const currUserData = useSelector(state => {
     return state.Users.currUserData
   })
+
+  const INACTIVE_COLOR = "#212121"
+
+  const tabBarOptions = {
+    showLabel: false,
+    activeTintColor: '#1089ff',
+    inactiveTintColor: INACTIVE_COLOR,
+    labelStyle: {
+      fontSize: 12,
+      fontFamily: 'Avenir-Light',
+      fontWeight: '400',
+    }
+  }
+
 
   return (
     <Tab.Navigator 
@@ -72,11 +77,15 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Dashboard':
-              return focused === true ? <ThinFeatherIcon name='clipboard' size={20} color="#1089ff" /> : <ThinFeatherIcon name='clipboard' size={20} color="#212121" />
+              return focused === true ? <FeatherIcon name='clipboard' size={20} color="#1089ff" /> : <FeatherIcon name='clipboard' size={20} color={INACTIVE_COLOR} />
             case 'Train':
-              return focused === true ? <ThinFeatherIcon name='home' size={20} color="#1089ff" /> : <ThinFeatherIcon name='home' size={20} color="#212121" />
+              return focused === true ? <FeatherIcon name='home' size={20} color="#1089ff" /> : <FeatherIcon name='home' size={20} color={INACTIVE_COLOR} />
             case 'Create':
-              return focused === true ? <ThinFeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <ThinFeatherIcon name='plus-circle' size={20} color="#212121" />
+              return focused === true ? <FeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <FeatherIcon name='plus-circle' size={20} color={INACTIVE_COLOR} />
+              case 'Alerts':
+              return focused === true ? <FeatherIcon name='bell' size={20} color="#1089ff" /> : <FeatherIcon name='bell' size={20} color={INACTIVE_COLOR} />
+              case 'Inbox':
+              return focused === true ? <FeatherIcon name='message-square' size={20} color="#1089ff" /> : <FeatherIcon name='message-square' size={20} color={INACTIVE_COLOR} />
           }
 
         },
@@ -84,6 +93,7 @@ function LupaBottomTabNavigator() {
       })} >
              
              <Tab.Screen name="Train" component={LupaHomeNavigator} />
+             <Tab.Screen name="Inbox" component={MessagesView} />
             {
                 currUserData.isTrainer === true ?
                 <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
@@ -95,6 +105,7 @@ function LupaBottomTabNavigator() {
                 :
                 null
               }
+              <Tab.Screen name="Alerts" component={NotificationsView} />
             <Tab.Screen name="Dashboard" component={DashboardNavigator} />
     </Tab.Navigator>
   );

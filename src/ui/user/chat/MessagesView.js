@@ -6,6 +6,7 @@ import {
     Text,
     Button,
     Dimensions,
+    SafeAreaView,
     TouchableOpacity,
     ScrollView
 } from 'react-native';
@@ -19,6 +20,7 @@ import { Input } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 import { Fire } from '../../../controller/firebase/firebase';
+import { SearchBar } from 'react-native-elements';
 
 import LupaController from '../../../controller/lupa/LupaController';
 
@@ -42,7 +44,9 @@ class MessagesView extends React.Component {
             userMessageData: [],
             currMessagesIndex: undefined,
             inboxEmpty: true,
+            searchValue: "",
             viewReady: false,
+            showChat: false,
         }
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -117,7 +121,7 @@ class MessagesView extends React.Component {
       }
 
       componentWillUnmount() {
-        Fire.shared.off();
+        return () => Fire.shared.off();
       }
 
       renderTextInput = () => {
@@ -127,7 +131,7 @@ class MessagesView extends React.Component {
       }
 
       handleAvatarOnPress = async (avatarIndex) => {
-        await this.setState({currMessagesIndex: avatarIndex })
+        await this.setState({ showChat: true, avatarIndex: avatarIndex })
         await this.setupFire();
       }
 
@@ -142,8 +146,19 @@ class MessagesView extends React.Component {
               {
                return this.state.userMessageData.map((userData, index, arr) => {
                     return (
-                        <TouchableOpacity onPress={() => this.handleAvatarOnPress(index)}>
-                          <Avatar.Image source={{uri: userData.photo_url}} key={index} size={32} style={{ elevation: 10, margin: 5 }}  />
+                        <TouchableOpacity style={{marginVertical: 10, alignItems: 'flex-start'}} onPress={() => this.handleAvatarOnPress(index)}>
+                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                            <Avatar.Image source={{uri: userData.photo_url}} key={index} size={50}  style={{ elevation: 10, marginHorizontal: 20 }}  />
+                            <View>
+                                <Text style={{fontSize: 16, fontFamily: 'Avenir-Heavy'}}>
+                                    {userData.display_name}
+                                </Text>
+                                <Text style={{fontSize: 13, fontFamily: 'Avenir-Light'}}>
+                                    Last Message
+                                </Text>
+                            </View>
+                            </View>
+                         
                         </TouchableOpacity>
                     )
                 })
@@ -152,31 +167,30 @@ class MessagesView extends React.Component {
         
       }
 
-
-    render() {
-        return (
-            <View style={styles.root}>
-                <Appbar.Header style={{elevation: 0, alignItems: "center", borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)'}} theme={{
-                    colors: {
-                        primary: 'white'
-                    }
-                }}>
-                     <Appbar.Action icon={() => <Feather1s thin={true} name="arrow-left" size={20} />} onPress={() => this.props.navigation.pop()} />
-                    <Appbar.Content title="Messages" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
-                    <Appbar.Action onPress={() => {}} icon="delete" disabled={!this.state.viewReady && this.state.currMessagesIndex == undefined} color={!this.state.viewReady ? "black" : "grey"} />
-                    <Appbar.Action onPress={() => {}} icon="send" disabled={this.state.viewReady} color={this.state.viewReady ? "black" : "grey"} />
-
-                </Appbar.Header>
-                <View style={{backgroundColor: 'white', height: "auto", width: "100%", padding: 5}}>
-
-<ScrollView horizontal contentContainerStyle={{alignItems: "center", justifyContent: 'flex-end'}} shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
-                {this.renderAvatarList()}
-</ScrollView>
-</View>
-<Divider />
-{
-    this.state.viewReady ? 
-    <GiftedChat 
+    renderChatComponent = () => {
+        if (this.state.showChat === true) {
+            return (
+                <View style={{flex: 1}}>
+                {
+                    this.state.showChat === false ?
+                    <SearchBar
+                    onStartShouldSetResponder={event => false}
+                    onStartShouldSetResponderCapture={event => false}
+                    placeholder="Search "
+                    placeholderTextColor="rgb(199, 201, 203)"
+                    value={this.state.searchValue}
+                    inputStyle={styles.inputStyle}
+                    platform="ios"
+                    rightIconContainerStyle={{backgroundColor: 'transparent'}}
+                    containerStyle={{ backgroundColor: 'white', borderColor: 'white' }}
+                    inputContainerStyle={{ padding: 5, borderColor: 'white', backgroundColor: 'rgb(245, 246, 249)' }}
+                    searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+                    />
+                    :
+                    null
+                }
+               
+                       <GiftedChat 
     messages={this.state.messages} 
     onSend={Fire.shared.send} 
     user={Fire.shared.getUser()} 
@@ -186,39 +200,63 @@ class MessagesView extends React.Component {
     renderUsernameOnMessage={true}
     showUserAvatar={true}
     alwaysShowSend={true}
-    renderInputToolbar={() =>
-        <View style={{ marginVertical: 5, flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
-
-        <Input
-            leftIcon={() => <FeatherIcon color="#212121" name="message-circle" size={20} />}
-            placeholder='How is your workout?'
-            inputStyle={{ fontSize: 15, padding: 10 }}
-            containerStyle={{ width: '80%', borderBottomWidth: 0 }}
-            inputContainerStyle={{ borderBottomWidth: 0, backgroundColor: 'rgb(247, 247, 247)', borderRadius: 20 }}
-            returnKeyType="done"
-            returnKeyLabel="done"
-        />
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '20%' }}>
-            <FeatherIcon name="paperclip" size={20} />
-            <FeatherIcon name="send" size={20} />
-        </View>
-
-    </View>
-    }
     />
-    :
-    this.state.userMessageData.length >= 1 ?
-    <View style={{flex: 1, alignItems: "center", justifyContent: "center", padding: 20}}>
-    
     </View>
-    :
-    <View style={{flex: 1, alignItems: "center", justifyContent: "center", padding: 20}}>
-        <Text style={{fontSize: 25, fontFamily: "avenir-roman"}}>
-            Your inbox is empty.  Compose a new message.
-        </Text>
-        </View>
+         
+            )
+        } else {
+            return (
+                <ScrollView  shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
+                 {
+                    this.state.showChat === false ?
+                    <SearchBar
+                    onStartShouldSetResponder={event => false}
+                    onStartShouldSetResponderCapture={event => false}
+                    placeholder="Search "
+                    placeholderTextColor="rgb(199, 201, 203)"
+                    value={this.state.searchValue}
+                    inputStyle={styles.inputStyle}
+                    platform="ios"
+                    rightIconContainerStyle={{backgroundColor: 'transparent'}}
+                    containerStyle={{ backgroundColor: 'white', borderColor: 'white' }}
+                    inputContainerStyle={{ padding: 5, borderColor: 'white', backgroundColor: 'rgb(245, 246, 249)' }}
+                    searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+                    />
+                    :
+                    null
+                }
+                {this.renderAvatarList()}
+</ScrollView>
+            )
+        }
+    }
 
-}
+
+    render() {
+        return (
+            <View style={styles.root}>
+                <Appbar.Header style={{elevation: 0, alignItems: "center"}} theme={{
+                    colors: {
+                        primary: 'white'
+                    }
+                }}>
+                    {
+                        this.state.showChat === true ?
+                        <Appbar.Action icon={() => <FeatherIcon thin={true} name="arrow-left" size={20} />} onPress={() => this.setState({ showChat: false })} />
+                        :
+                        null
+                    }
+                    
+                    <Appbar.Content title="Messages" titleStyle={{ fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                    <Appbar.Action onPress={() => {}} icon="delete" disabled={!this.state.showChat === true}  color={!this.state.viewReady ? "black" : "grey"} />
+
+                </Appbar.Header>
+                <View style={{flex: 1, backgroundColor: 'white'}}>
+                {this.renderChatComponent()}
+
+</View>
+<Divider />
+
                     <SafeAreaView />
             </View>
         )
@@ -228,7 +266,10 @@ class MessagesView extends React.Component {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-    }
+    },
+    inputStyle: {
+        fontSize: 15, fontFamily: 'Avenir-Medium'
+      },
 })
 
 export default connect(mapStateToProps)(MessagesView);

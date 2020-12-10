@@ -6,6 +6,7 @@ import WorkoutController from './WorkoutController';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
+import PackController from './PacksController';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -15,6 +16,7 @@ const usersIndex = algoliaUsersIndex.initIndex("dev_USERS");
 let USER_CONTROLLER_INSTANCE;
 let NOTIFICATIONS_CONTROLLER_INSTANCE;
 let PROGRAMS_CONTROLLER_INSTANCE;
+let PACKS_CONTROLLER_INSTANCE;
 
 
 export default class LupaController {
@@ -23,6 +25,7 @@ export default class LupaController {
     private constructor() {
        USER_CONTROLLER_INSTANCE = UserController.getInstance();
        PROGRAMS_CONTROLLER_INSTANCE = ProgramController.getInstance();
+       PACKS_CONTROLLER_INSTANCE = PackController.getInstance();
     }
 
     public static getInstance() {
@@ -167,7 +170,7 @@ export default class LupaController {
 
 
     getUserInformationFromArray = async (arrOfUUIDS) => {
-      let result;
+      let result = []
       await USER_CONTROLLER_INSTANCE.getArrayOfUserObjectsFromUUIDS(arrOfUUIDS).then(objs => {
         result = objs;
       });
@@ -389,6 +392,10 @@ export default class LupaController {
       return Promise.resolve(trainers);
     }
 
+    updateProgramImage = (programUUID, imageURI) => {
+       PROGRAMS_CONTROLLER_INSTANCE.updateProgramImage(programUUID, imageURI);
+    }
+
     updateProgramMetadata = async (programUUID, title, description, tags, image, price) => {
       let retVal = false;
       await PROGRAMS_CONTROLLER_INSTANCE.updateProgramMetadata(programUUID, title, description, tags, image, price).then(result => {
@@ -398,6 +405,81 @@ export default class LupaController {
       });
 
       return Promise.resolve(retVal);
+    }
+
+    sendPackInvite = (newPack, usersToInvite) => {
+      PACKS_CONTROLLER_INSTANCE.sendPackInvite(newPack, usersToInvite);
+    }
+
+    handleDeletePackProgram = async (packProgramUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleDeletePackProgram(packProgramUID);
+    }
+
+    handleStartPackProgramOffer = (packProgramUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleStartPackProgramOffer(packProgramUID);
+    }
+
+    setPackProgramLive = (packProgramUID, bool) => {
+      PACKS_CONTROLLER_INSTANCE.setPackProgramLive(packProgramUID, bool);
+    }
+
+    handleSendProgramOfferInvite = (senderUUID, packData, programData) => {
+      PACKS_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(senderUUID, packData, programData);
+    }
+
+    handleAcceptPackProgramOfferInvite = (packProgramUID, userUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleAcceptPackProgramOfferInvite(packProgramUID, userUID);
+    }
+
+    handleDeclinePackProgramOfferInvite = (packProgramUID, userUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleDeclinePackProgramOfferInvite(packProgramUID, userUID);
+    }
+
+    createNewPack = async (newPack) => {
+      return new Promise(async (resolve, reject) => {
+        let retVal = -1;
+        await PACKS_CONTROLLER_INSTANCE.createPack(newPack).then(result => {
+          retVal = result;
+        });
+
+        resolve(retVal);
+      })
+    }
+
+    checkProgramWaitlistForMatches = async (programUID, userData) => {
+      await PROGRAMS_CONTROLLER_INSTANCE.checkProgramWaitlistForMatches(programUID, userData, this.createNewPack);
+    }
+
+    addUserToProgramWaitlist = async (programUID, userData) => {
+      return new Promise(async (resolve, reject) => {
+        await PROGRAMS_CONTROLLER_INSTANCE.addUserToProgramWaitlist(programUID, userData)
+        .then(result => {
+          resolve(result);
+        })
+      })
+    }
+
+    handleOnAcceptPackInvite = (packUID, userUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, userUID);
+    }
+
+    handleOnDeclinePackInvite = (packUID, userUID) => {
+      PACKS_CONTROLLER_INSTANCE.handleOnDeclinePackInvite(packUID, userUID);
+    }
+
+    inviteUserToPack = (uuid, packData) => {
+      PACKS_CONTROLLER_INSTANCE.inviteUserToPack(uuid, packData);
+    }
+
+    getPackInformationFromUUID = async (uuid) => {
+      return new Promise(async (resolve, reject) => {
+        let retVal = {}
+        await PACKS_CONTROLLER_INSTANCE.getPackInformationFromUUID(uuid).then(result => {
+          retVal = result;
+        });
+
+        resolve(retVal);
+      })
     }
 
     createNewProgram = async (programData) => {
@@ -480,6 +562,17 @@ export default class LupaController {
       })
 
       return Promise.resolve(programsData);
+    }
+
+
+    loadCurrentUserPacks = async () => {
+      let packsData = []
+
+      await PACKS_CONTROLLER_INSTANCE.loadCurrentUserPacks().then(result => {
+        packsData = result;
+      });
+
+      return Promise.resolve(packsData);
     }
 
     loadWorkouts = async () => {
@@ -819,6 +912,10 @@ export default class LupaController {
     
       const experience = Number(val);
       USER_CONTROLLER_INSTANCE.setTrainerSmallGroupExperience(experience)
+  }
+
+  loadAchievements = () => {
+    return USER_CONTROLLER_INSTANCE.loadAchievements();
   }
 
 }

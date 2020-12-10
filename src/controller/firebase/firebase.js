@@ -150,14 +150,16 @@ export class Fire {
   }
 
 parse = snapshot => {
-  const { timestamp: numberStamp, text, user } = snapshot.val();
+  const { timestamp: numberStamp, createdAt, text, user, system, extraData } = snapshot.val();
   const { key: _id } = snapshot;
-  const timestamp = new Date(numberStamp);
+  const timestamp = createdAt;
   const message = {
     _id,
     timestamp,
     text,
     user,
+    system,
+    extraData
   };
   return message;
 };
@@ -170,15 +172,19 @@ on = callback =>
 get timestamp() {
   //return this.ref.ServerValue.TIMESTAMP;
   //return firebase.database.ServerValue.TIMESTAMP;
+  return new Date().getTime()
 }
 // send the message to the Backend
 send = messages => {
   for (let i = 0; i < messages.length; i++) {
-    const { text, user } = messages[i];
+    const { text, user, extraData } = messages[i];
+
     const message = {
+      system: messages[i].system === false || typeof(messages[i].system) === 'undefined'  ? false : true,
+      extraData,
       text,
       user,
-      timestamp: this.timestamp,
+      timestamp: new Date().getTime(),
     };
     this.append(message);
   }
@@ -188,7 +194,7 @@ append = message => this.ref.push(message);
 
 // close the connection to the Backend
 off() {
-  //this.ref.off();
+  this.ref.off();
 }
 }
 

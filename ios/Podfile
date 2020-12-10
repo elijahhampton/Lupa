@@ -68,9 +68,6 @@ target 'Lupa' do
   # react-native-cli autolinking
   use_native_modules!
   pod 'tipsi-stripe', :path => '../node_modules/tipsi-stripe'
-
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-
 end

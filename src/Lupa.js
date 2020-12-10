@@ -19,6 +19,7 @@ import {
 } from "react-native";
 import LupaController from './controller/lupa/LupaController';
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
+import BackgroundFetch from 'react-native-background-fetch';
 import { connect, useSelector } from 'react-redux'
 import LUPA_DB, { generateMessagingToken, requestNotificationPermissions, registerAppWithFCM, } from "./controller/firebase/firebase";
 import { fcmService } from './controller/firebase/service/FCMService'
@@ -33,11 +34,8 @@ import PickInterest from "./ui/user/modal/WelcomeModal/PickInterest";
 import { Paragraph, Title, Button,} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import Onboarding from './ui/user/modal/WelcomeModal/Onboarding'
+import Community from "./ui/community/Community";
 
-/*Geolocation.setRNConfiguration({
-  authorizationLevel: 'whenInUse',
-  skipPermissionRequests: false,
-});*/
 
 const mapStateToProps = (state, action) => {
   return {
@@ -70,71 +68,15 @@ class Lupa extends React.Component {
   }
 
   async componentDidMount() {
-    LOG('Lupa.js', 'Checking location permissions.');
-   /* await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
-    .then((result) => {
-      switch (result) {
-        case RESULTS.UNAVAILABLE:
-         // alert('Location Services Unavailable')
-          this.setState({ locationPermissionStatus: 'unavailable' })
-          break;
-        case RESULTS.DENIED:
-        //  alert('Location Services Denied')
-          this.setState({ locationPermissionStatus: 'denied' })
-          break;
-        case RESULTS.GRANTED:
-        //  this.setState({ locationPermissionStatus: 'granted' })
-          break;
-        case RESULTS.BLOCKED:
-       //   alert('Location Services Blocked')
-          this.setState({ locationPermissionStatus: 'blocked' })
-          break;
-        default:
-       
-      }
-    })
-    .catch((error) => {
-      // …
-    });*/
-
-    generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid)
-
-  /*if (this.state.locationPermissionStatus == 'granted') {
-    LOG('Lupa.js', 'Retrieving the current users position');
-    Geolocation.getCurrentPosition(
-      async (position) => {
-        const locationData = await getLocationFromCoordinates(position.coords.longitude, position.coords.latitude);
-        await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
-         const initialPosition = JSON.stringify(position);
-         this.setState({ initialPosition : initialPosition });
-      },
-      (error) => alert(error.message),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-   );
-
-    this.watchID = Geolocation.watchPosition(async (position) => {
-      const locationData = await getLocationFromCoordinates(position.coords.longitude, position.coords.latitude);
-      await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('location', locationData);
-      const lastPosition = await JSON.stringify(position);
-      this.setState({ lastPosition: lastPosition });
-   });
-  }*/
-
-  this.LUPA_CONTROLLER_INSTANCE.indexApplicationData()
-}
-
-  componentWillUnmount() {
-    LOG('Lupa.js', 'Clearing subscription to Geolocation');
-   // Geolocation.clearWatch(this.watchID);
-
-    return () => this.CURRENT_USER_OBSERVER();
+    generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid);
+    this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
   }
 
   render() {
     return (
       <View style={{flex: 1}}>
        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-        <LupaDrawerNavigator />
+       <LupaDrawerNavigator />
       </View>
     )
   }

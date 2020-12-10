@@ -1,10 +1,11 @@
+import LOG from "../../../../common/Logger";
 
 
 const functions = require('firebase-functions')
 const admin = require("firebase-admin");
 
 const cors = require('cors')({ origin: true });
-const {RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole} = require('agora-access-token')
+const { RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole } = require('agora-access-token')
 const stripe = require('stripe')
   ('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');
 
@@ -45,27 +46,27 @@ const STRIPE_VERIFICATION_STATUS = {
 }
 
 exports.generateAgoraTokenFromUUID = functions.https.onRequest(async (request, response) => {
-    // Rtc Example
-const appID = 'fd515bbb863a43fa8dd6e89f2b3bfaeb';
-const appCertificate = '5ac6a8379aeb454c95c16b1393b3a693';
-const channelName = request.body.channel_name;
-const uid = 0;
-const role = RtcRole.PUBLISHER;
-const expirationTimeInSeconds = 3600
-const currentTimestamp = Math.floor(Date.now() / 1000)
-const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds
+  // Rtc Example
+  const appID = 'fd515bbb863a43fa8dd6e89f2b3bfaeb';
+  const appCertificate = '5ac6a8379aeb454c95c16b1393b3a693';
+  const channelName = request.body.channel_name;
+  const uid = 0;
+  const role = RtcRole.PUBLISHER;
+  const expirationTimeInSeconds = 3600
+  const currentTimestamp = Math.floor(Date.now() / 1000)
+  const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds
 
-console.log(channelName)
-console.log(uid)
+  console.log(channelName)
+  console.log(uid)
 
-// Build token with uid
-const token = await RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, uid, role, privilegeExpiredTs);
-console.log("Token With Integer Number Uid: " + token);
+  // Build token with uid
+  const token = await RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, uid, role, privilegeExpiredTs);
+  console.log("Token With Integer Number Uid: " + token);
 
 
 
-response.setHeader('Content-Type', 'application/json');
-response.status(200).send({token: token})
+  response.setHeader('Content-Type', 'application/json');
+  response.status(200).send({ token: token })
 })
 
 /** Sends a notification to a user upon receiving a notification object 
@@ -120,7 +121,44 @@ exports.receivedNotification = functions.firestore
   });
 
 
+exports.createPackCharge = functions.https.onRequest(async (request, response) => {
+  const packData = request.body.pack_data;
 
+  if (typeof (packData) === 'undefined' || packData.uid == 0) {
+    console.log('createPackCharge::Pack data is undefined or uid is 0.  Returning from function...')
+  }
+
+  console.log('createPackCharge::Attempting to create charge.')
+
+  const actualAmount = 0;
+  const lupaPayout = 0;
+
+  // Create a PaymentIntent:
+  await stripe.paymentIntents.create({
+    amount: actualAmount,
+    currency: 'usd',
+    payment_method: request.body.requester_card_source,
+    customer: request.body.customer_id,
+    payment_method_types: ['card'],
+    transfer_group: 0,
+    confirm: true,
+    transfer_data: {
+      destination: request.body.trainer_account_id,
+    },
+    application_fee_amount: lupaPayout,
+  }, {
+    idempotencyKey: Math.random.toString(),
+  }).then(intent => {
+    console.log('Successfull intent')
+    console.log(intent)
+  }).catch(err => {
+    console.log('OKOKOKOK ERRROOOORR')
+    console.log(err)
+  })
+})
+
+//why doesn he need to talk to your gma so much?
+//france - your grandma - and traeling
 exports.makePaymentToTrainer = functions.https.onRequest(async (request, response) => {
   const actualAmount = request.body.amount * 100;
   const CURRENCY = request.body.currency;
@@ -129,7 +167,7 @@ exports.makePaymentToTrainer = functions.https.onRequest(async (request, respons
 
   const externalAccountsList = await stripe.accounts.listExternalAccounts(
     request.body.trainer_account_id,
-    {object: 'bank_account', limit: 1}
+    { object: 'bank_account', limit: 1 }
   );
 
   const externalAccount = externalAccountsList.data[0].id
@@ -140,27 +178,27 @@ exports.makePaymentToTrainer = functions.https.onRequest(async (request, respons
   console.log('stripe fee without amount: ' + amountWithoutStripeFee)
 
   // Create a PaymentIntent:
-const paymentIntent = await stripe.paymentIntents.create({
-  amount: actualAmount,
-  currency: 'usd',
-  payment_method: request.body.requester_card_source,
-  customer: request.body.customer_id,
-  payment_method_types: ['card'],
-  transfer_group: 0,
-  confirm: true,
-  transfer_data: {
-    destination: request.body.trainer_account_id,
-  },
-  application_fee_amount: lupaPayout,
-}, {
-  idempotencyKey: Math.random.toString(),
-}).then(intent => {
-  console.log('Successfull intent')
-  console.log(intent)
-}).catch(err => {
-  console.log('OKOKOKOK ERRROOOORR')
-  console.log(err)
-})
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: actualAmount,
+    currency: 'usd',
+    payment_method: request.body.requester_card_source,
+    customer: request.body.customer_id,
+    payment_method_types: ['card'],
+    transfer_group: 0,
+    confirm: true,
+    transfer_data: {
+      destination: request.body.trainer_account_id,
+    },
+    application_fee_amount: lupaPayout,
+  }, {
+    idempotencyKey: Math.random.toString(),
+  }).then(intent => {
+    console.log('Successfull intent')
+    console.log(intent)
+  }).catch(err => {
+    console.log('OKOKOKOK ERRROOOORR')
+    console.log(err)
+  })
 })
 
 /**
@@ -202,9 +240,9 @@ exports.createStripeCustomerAccount = functions.https.onRequest(async (request, 
   console.log('Validating request parameters.')
   console.log(request.body)
   const uuid = await request.body.user_uuid;
-  const email = await request.body.email; 
-  
-  if (typeof(uuid) == 'undefined' || typeof(email) == 'undefined') {
+  const email = await request.body.email;
+
+  if (typeof (uuid) == 'undefined' || typeof (email) == 'undefined') {
     console.log('createStripeCustomerAccount::Exiting function request parameters could not be validated.')
     console.log('UUID: ' + uuid)
     console.log('Email: ' + email)
@@ -215,7 +253,7 @@ exports.createStripeCustomerAccount = functions.https.onRequest(async (request, 
 
 
   let userData, retAccountID = "", stripe_id = "";
-  
+
   console.log('createStripeCustomerAccount::Capturing user data from uuid: ' + uuid);
   await admin.firestore().collection('users').doc(uuid).get().then(snapshot => {
     userData = snapshot.data();
@@ -231,7 +269,7 @@ exports.createStripeCustomerAccount = functions.https.onRequest(async (request, 
       country: 'US',
       email: email,
       capabilities: {
-        card_payments: {requested: true},
+        card_payments: { requested: true },
         transfers: { requested: true }
       },
     }).then(account => {
@@ -256,7 +294,7 @@ exports.createStripeCustomerAccount = functions.https.onRequest(async (request, 
   }).catch(error => {
     console.log(error)
   })
- 
+
   //update the user's stripe_metadata
   console.log('createStripeCustomerAccount::Updating user stripe data.')
   admin.firestore().collection('users').doc(uuid).update({
@@ -287,13 +325,13 @@ exports.handleNewIndividualCustomAccountVerificationAttempt = functions.https.on
   }
 
   const user_uuid = request.body.user_uuid;
-  if (typeof(user_uuid) == 'undefined' || user_uuid == "" || user_uuid == null) {
+  if (typeof (user_uuid) == 'undefined' || user_uuid == "" || user_uuid == null) {
     console.log('handleNewIndividualCustomAccountVerificationAttempt::UUID is unknown.  Returning from from function.');
     return;
   }
 
   const accountID = request.body.account_id;
-  if (typeof(accountID) == 'undefined' || accountID == "" || accountID == null) {
+  if (typeof (accountID) == 'undefined' || accountID == "" || accountID == null) {
     console.log('handleNewIndividualCustomAccountVerificationAttempt::Connected account ID to update is unknown.  Returning from from function.');
     return;
   }
@@ -375,7 +413,7 @@ exports.handleNewIndividualCustomAccountVerificationAttempt = functions.https.on
         date: new Date(),
         ip: ip,
       },
-      external_account: { 
+      external_account: {
         object: 'bank_account',
         country: 'US',
         currency: 'usd',
@@ -383,19 +421,19 @@ exports.handleNewIndividualCustomAccountVerificationAttempt = functions.https.on
         account_holder_type: 'individual',
         routing_number: bankAccountRoutingNumber,
         account_number: bankAccountNumber,
-    },
-    metadata: {
-      user_uuid: user_uuid,
-    },
-    settings: {
-      payouts: {
-        schedule: {
-          interval: 'weekly',
-          weekly_anchor: 'tuesday',
-        },
-        statement_descriptor: "RHEA SILVIA"
+      },
+      metadata: {
+        user_uuid: user_uuid,
+      },
+      settings: {
+        payouts: {
+          schedule: {
+            interval: 'weekly',
+            weekly_anchor: 'tuesday',
+          },
+          statement_descriptor: "RHEA SILVIA"
+        }
       }
-    }
     }
   ).then(async account => {
     console.log('handleNewIndividualCustomAccountVerificationAttempt::Finished submitting information for account verification.  Updating user account.')
@@ -419,7 +457,7 @@ exports.handleNewIndividualCustomAccountVerificationAttempt = functions.https.on
 })
 
 exports.updateAccount = functions.https.onRequest(async (request, response) => {
-  
+
 })
 
 exports.createAccountLink = functions.https.onRequest(async (request, response) => {
@@ -499,20 +537,20 @@ exports.retrieveTrainerAccountInformation = functions.https.onRequest(async (req
 
   let accountDataIn = {}, balanceDataIn = {};
 
-  const trainerAccountInformation = 
+  const trainerAccountInformation =
     await stripe.accounts.retrieve(account_id)
-          .then(account => {
-            accountDataIn = account;
-          });
+      .then(account => {
+        accountDataIn = account;
+      });
 
   const balanceInformation = await stripe.balance.retrieve(account_id, (err, balanceInfo) => {
-      balanceDataIn = balanceInfo;
+    balanceDataIn = balanceInfo;
   })
-  
-  if (typeof(balanceDataIn) == 'undefined' || accountDataIn == 'undefined') {
+
+  if (typeof (balanceDataIn) == 'undefined' || accountDataIn == 'undefined') {
     return;
   }
- 
+
   const accountData = {
     account_data: accountDataIn,
     balance_data: balanceDataIn,

@@ -58,7 +58,7 @@ const MyClients = ({ navigation, route }) => {
             
                 <View style={{width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={{fontFamily: 'Avenir-Heavy', marginTop: 80, fontSize: 16, alignSelf: 'center', paddingHorizontal: 20}}>
-                    You have not acquired any clients yet.  Add your own clients by inviting them to the app or check out the search page.
+                    You have not acquired any clients yet.  Users will be added to your client list by completing sessions.
                 </Text>
                 </View>
                 

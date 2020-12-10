@@ -19,13 +19,12 @@ import { NOTIFICATION_TYPES } from '../../../model/notifications/common/types'
 import Feather1s from 'react-native-feather1s/src/Feather1s'
 import ReceivedBookingRequestNotification from './component/ReceivedBookingRequestNotification'
 import ReceivedNotification from './component/ReceivedNotification'
+import ReceivedPackInviteNotification from './component/ReceivedPackInviteNotification';
+import ReceivedPackProgramInviteNotification from './component/ReceivedPackProgramInviteNotification';
 
-
-function NotificationsView(props) {
+function NotificationsView({ navigation, route }) {
     const [refreshing, setIsRefreshing] = useState(false)
     const [userNotifications, setUserNotifications] = useState([])
-
-    const navigation = useNavigation()
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData
@@ -78,8 +77,11 @@ function NotificationsView(props) {
                 case NOTIFICATION_TYPES.RECEIVED_PROGRAM:
                     return <ReceivedProgramNotification notificationData={notification} />
                 case NOTIFICATION_TYPES.BOOKING_REQUEST:
-                    console.log(notification)
                     return <ReceivedBookingRequestNotification notificationData={notification} />
+                case NOTIFICATION_TYPES.PACK_INVITE:
+                    return <ReceivedPackInviteNotification notificationData={notification} />
+                case NOTIFICATION_TYPES.RECEIVED_PACK_PROGRAM_OFFER_INVITE:
+                    return <ReceivedPackProgramInviteNotification notificationData={notification} />
                 default:
                     
             }
@@ -95,7 +97,6 @@ function NotificationsView(props) {
     return (
         <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <Appbar.Header style={styles.appbar}>
-            <Appbar.Action icon={() => <Feather1s thin={true} name="x" size={20} />} onPress={() => navigation.pop()} />
             <Appbar.Content title="Notifications" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
             </Appbar.Header>
             <View style={{flex: 1}}>
@@ -116,8 +117,7 @@ function NotificationsView(props) {
 const styles = StyleSheet.create({
     appbar: {
         backgroundColor: '#FFFFFF',
-        elevation: 0,
-        borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)'
+        elevation: 0
     },
 })
 

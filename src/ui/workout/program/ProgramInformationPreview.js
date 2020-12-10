@@ -5,11 +5,14 @@ import {
     View,
     Text,
     Image,
+    TouchableOpacity,
     Modal,
+    ScrollView,
     Linking,
     TextInput,
     Dimensions,
     SafeAreaView,
+    TouchableWithoutFeedback,
     StatusBar,
 } from 'react-native';
  
@@ -18,17 +21,13 @@ import {
     Button,
     Paragraph,
     Caption,
-    Avatar,
     IconButton,
     Chip,
     Appbar,
     Divider,
     Card,
+    Dialog,
 } from 'react-native-paper';
-
-import {
-    Header
-} from 'native-base';
 
 import { Constants } from 'react-native-unimodules';
 import LupaController from '../../../controller/lupa/LupaController';
@@ -42,26 +41,207 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 
 import { connect, useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { LOG_ERROR } from '../../../common/Logger';
+import LOG, { LOG_ERROR } from '../../../common/Logger';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import ProfileProgramCard from './components/ProfileProgramCard';
-import { ScrollView } from 'react-native-gesture-handler';
 import { Pagination } from 'react-native-snap-carousel';
-import { colors } from 'react-native-elements';
+import { Avatar } from 'react-native-elements';
 import PurchaseProgramWebView from '../program/modal/PurchaseProgramWebView';
 
 import MapView, { Marker } from 'react-native-maps';
 import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
 import { titleCase } from '../../common/Util';
 import FullScreenLoadingIndicator from '../../common/FullScreenLoadingIndicator';
+import LUPA_DB from '../../../controller/firebase/firebase';
+import { getLupaStoreState } from '../../../controller/redux';
+import { initializeNewPack } from '../../../model/data_structures/packs/packs';
 
 
 const { windowWidth } = Dimensions.get('window').width
-const VERTICAL_SEPARATION = 20
+const VERTICAL_SEPARATION = 10
 
-function ProgramInformationPreview(props) {
-    const [programData, setProgramData] = useState(getLupaProgramInformationStructure());
+function StartPackDialog({ isVisible, closeModal, program }) {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData
+    })
+
+    const [usersToShare, setUsersToShare] = useState([currUserData]);
+    const [chosenPack, setChosenPack] = useState(initializeNewPack('', '', '', []));
+  const [currUserFollowers, setCurrUserFollowers] = useState([])
+    const [forceUpdate, setForceUpdate] = useState(false);
+
+    const handleInviteFriends = () => {
+
+    }
+
+    const handleAvatarOnPress = (user) => {
+        if (user.uid == chosenPack.uid) {
+            return;
+        } else {
+            setChosenPack(user);
+        }
+    
+        setForceUpdate(!forceUpdate)
+      }
+    
+      const handleOnPressSend = async () => {
+       // const newPack =  initializeNewPack('LupaPack837', currUserData.user_uuid, program, [usersUUIDToShare])
+       // LUPA_CONTROLLER_INSTANCE.sendPackInvite(newPack, usersUUIDToShare);
+
+       LUPA_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(currUserData.user_uuid, chosenPack.uid, program.program_structure_uuid)
+
+        closeModal()
+      }
+    
+      const renderUserAvatars = () => {
+        return getLupaStoreState().Packs.currUserPacksData.map((user, index, arr) => {
+          if (chosenPack.uid == user.uid) {
+            return (
+              <TouchableWithoutFeedback key={user.user_uuid} onPress={() => handleAvatarOnPress(user)}>
+              <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+              <Text style={{padding: 10, fontSize: 15, fontFamily: 'Avenir-Medium'}}>
+                {user.name}
+              </Text>
+              </View>
+              </TouchableWithoutFeedback>
+            )
+          } else {
+            return (
+              <TouchableWithoutFeedback  key={user.uid} onPress={() => handleAvatarOnPress(user)}>
+                 <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                 <Text style={{padding: 10, fontSize: 15, fontFamily: 'Avenir-Roman'}}>
+                   {user.name}
+                 </Text>
+                 </View>
+                 </TouchableWithoutFeedback>
+            )
+          }
+        })
+      }
+
+    useEffect(() => {
+        async function fetchFollowers () {
+          if (typeof(currUserData.followers) === 'undefined') {
+            return;
+          }
+    
+          await LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(currUserData.followers)
+          .then(result => {
+            setCurrUserFollowers(result);
+          }).catch(error => {
+            LOG_ERROR('PublishProgram.js', 'useEffect::Caught error fetching current users followers data.', error)
+            setCurrUserFollowers([])
+          })
+        }
+    
+        LOG('PublishProgram.js', 'Running useEffect');
+        fetchFollowers()
+      }, []);
+
+
+    return (
+        <Dialog visible={isVisible} animationType="fade" animated={true} style={{borderRadius: 15, height: 500}}>
+            <Dialog.Title>
+                Invite your pack
+            </Dialog.Title>
+            <Dialog.Content>
+                <Paragraph style={{fontFamily: 'Avenir'}}>
+                    You are about to invite your pack to start {program.program_name} with you.  
+                </Paragraph>
+                <View style={{height: 200, alignItems: 'flex-start', width: '100%'}}>
+                    <ScrollView>
+                    {renderUserAvatars()}
+                    </ScrollView>
+                </View>
+         
+
+            </Dialog.Content>
+
+            <Dialog.Actions style={{flexDirection: 'row', marginVertical: 10, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <Button 
+                uppercase={false}
+                mode="contained" 
+                color="rgb(245, 245, 245)"
+                contentStyle={{height: 45, width: Dimensions.get('window').width / 2.8}}
+                theme={{roundness: 8}}
+                style={{elevation: 0}}
+                onPress={closeModal}
+                >
+                    Cancel
+                </Button>
+
+                <Button 
+                uppercase={false}
+                mode="contained" 
+                color="#1089ff"
+                contentStyle={{height: 45, width: Dimensions.get('window').width / 2.8}}
+                theme={{roundness: 8}}
+                style={{elevation: 0}}
+                onPress={handleOnPressSend}
+                >
+                    Send Invite
+                </Button>
+            </Dialog.Actions>
+        </Dialog>
+    )
+}
+
+function WaitListDialog({ isVisible, closeModal, program, userIsWaitlisted }) {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+    const handleAddToWaitlist = () => {
+        const userData = getLupaStoreState().Users.currUserData;
+        LUPA_CONTROLLER_INSTANCE.addUserToProgramWaitlist(program.program_structure_uuid, userData);
+        closeModal();
+    }
+    return (
+        <Dialog visible={isVisible} animationType="fade" animated={true} style={{borderRadius: 15,}}>
+            <Dialog.Title>
+                Add to waitlist
+            </Dialog.Title>
+            <Dialog.Content>
+                <Paragraph style={{fontFamily: 'Avenir'}}>
+                    You are about to added to the wait for {program.program_name}.  Lupa will search for four users in your area
+                    to join this program with you.  Users are usually matched within the day.
+                </Paragraph>
+
+                <Caption>
+                    You will be notified once you are placed in a pack.
+                </Caption>
+            </Dialog.Content>
+
+            <Dialog.Actions style={{flexDirection: 'row', marginVertical: 10, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <Button 
+                uppercase={false}
+                mode="contained" 
+                color="rgb(245, 245, 245)"
+                contentStyle={{height: 45, width: Dimensions.get('window').width / 2.8}}
+                theme={{roundness: 8}}
+                style={{elevation: 0}}
+                onPress={closeModal}
+                >
+                    Cancel
+                </Button>
+
+                <Button 
+                uppercase={false}
+                mode="contained" 
+                color="#1089ff"
+                contentStyle={{height: 45, width: Dimensions.get('window').width / 2.8}}
+                theme={{roundness: 8}}
+                style={{elevation: 0}}
+                onPress={handleAddToWaitlist}
+                disabled={userIsWaitlisted}
+                >
+                    Confirm
+                </Button>
+            </Dialog.Actions>
+        </Dialog>
+    )
+}
+
+function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const [showProfileModal, setShowProfileModal] = useState(false)
     const [showWorkoutPreviewModal, setShowWorkoutPreviewModal] = useState(false)
@@ -69,6 +249,10 @@ function ProgramInformationPreview(props) {
     const [token, setToken] = useState("")
     const [paymentSuccessful, setPaymentSuccessful] = useState(false)
     const [paymentComplete, setPaymentComplete] = useState(false)
+    const [waitlistDialogIsVisible, setWaitlistDialogIsVisible] = useState(false);
+    const [startPackDialogIsVisible, setStartPackDialogIsVisible] = useState(false);
+
+    const [waitlistProgramData, setProgramWaitlistData] = useState([]);
 
     const [lupaPurchasePageOpen, setLupaPurchasePageOpen] = useState(false)
 
@@ -81,29 +265,15 @@ function ProgramInformationPreview(props) {
     })
 
     const getProgramProps = () => {
-        const programProps = {
-            program_name: programData.program_name,
-            program_price: programData.program_price,
-            program_image: programData.program_image,
-            program_owner_display_name: programOwnerData.display_name,
-        }
+        const id = program.program_structure_uuid
+        return id;
 
-        return programProps;
     }
 
     useEffect(() => {
         async function fetchData() {
             try {
-                await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(props.program.program_structure_uuid).then(data => {
-                    setProgramData(data)
-                })
-            } catch(err) {
-                alert(err)
-                setProgramData(getLupaProgramInformationStructure())
-            }
-
-            try {
-                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(props.program.program_owner).then(data => {
+                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(program.program_owner).then(data => {
                     setProgramOwnerData(data)
                 })
             } catch(err) {
@@ -112,8 +282,29 @@ function ProgramInformationPreview(props) {
             }
         }
 
+        LOG('ProgramInformationPreview.js', 'Running useEffect');
+
+        const PROGRAM_WAITLIST_OBSERVER = LUPA_DB.collection('program_waitlist').doc(program.program_structure_uuid).onSnapshot(documentSnapshot => {
+            const data = documentSnapshot.data();
+            setProgramWaitlistData(data.waitlist)
+        });
+
         fetchData();
+
+        return () => PROGRAM_WAITLIST_OBSERVER();
     }, [])
+
+    const checkUserIsWaitlisted = () => {
+        let retVal = false;
+        waitlistProgramData.forEach(entry => {
+            if (entry.user_uuid == currUserData.user_uuid) {
+                retVal = true;
+            }
+        });
+
+        retVal = false;
+        return retVal;
+    }
 
     /**
      * Sends request to server to complete payment
@@ -190,23 +381,23 @@ function ProgramInformationPreview(props) {
 
             //handle program in backend
             try {
-                const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData, programData);
+                const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData, program);
                 await dispatch({ type: "ADD_CURRENT_USER_PROGRAM" , ...updatedProgramData})
             } catch (err) {
                 setLoading(false);
                 alert(err)
                 //need to handle the case where there is an error when we add the program
-                props.closeModalMethod()
+                closeModalMethod()
             }
         }
         await setLoading(false);
         //close modal
-        props.closeModalMethod()
+        closeModalMethod()
     }
 
     const getProgramTags = () => {
         try {
-            return programData.program_tags.map((tag, index, arr) => {
+            return program.program_tags.map((tag, index, arr) => {
                 return (
                     <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: '#23374d'}} style={{backgroundColor: 'transparent', borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
                     
@@ -250,7 +441,7 @@ function ProgramInformationPreview(props) {
             try {
                 return (
                     <Text style={{ fontSize: 15, color: '#212121', paddingVertical: 10, fontFamily: 'Avenir-Heavy'}}>
-                           {titleCase(programData.program_name)}
+                           {titleCase(program.program_name)}
                     </Text>
                 )
             } catch(err) {
@@ -267,13 +458,13 @@ function ProgramInformationPreview(props) {
      * @return URI Returns a string for the description, otherwise ''
      */
     const getProgramDescription = () => {
-        if (typeof(programData) == 'undefined')
+        if (typeof(program) == 'undefined')
         {
             return ''
         }
 
             try {
-                return programData.program_description;
+                return program.program_description;
             } catch(err) {
                 return ''
             }
@@ -284,13 +475,13 @@ function ProgramInformationPreview(props) {
      * @return URI Returns a uri for the program image, otherwise ''
      */
     const getProgramImage = () => {
-        if (typeof(programData) == 'undefined')
+        if (typeof(program) == 'undefined')
         {
             return ''
         }
 
             try {
-                return programData.program_image;
+                return program.program_image;
             } catch(err) {
                 return ''
             }
@@ -301,133 +492,133 @@ function ProgramInformationPreview(props) {
      * @return String representing the program price, otherwise, ''
      */
     const getProgramPrice = () => {
-        if (typeof(programData) == 'undefined')
+        if (typeof(program) == 'undefined')
         {
             return 0
         }
 
             try {
-                return programData.program_price;
+                return program.program_price;
             } catch(error) {
                 return 0;
             }
     }
 
     const getLocationLatitude = () => {
-        if (typeof(programData) == 'undefined' || programData == null)
+        if (typeof(program) == 'undefined' || program == null)
         {
             return 0
         }
 
         try {
-            return programData.program_location.location.lat
+            return program.program_location.location.lat
         } catch(error) {
             return 0;
         }
     }
 
     const getLocationLongitude = () => {
-        if (typeof(programData) == 'undefined' || programData == null)
+        if (typeof(program) == 'undefined' || program == null)
         {
             return 0
         }
 
         try {
-            return programData.program_location.location.long;
+            return program.program_location.location.long;
         } catch(error) {
             return 0;
         }
     }
 
     const renderProgramLocationName = () => {
-        if (typeof(programData) == 'undefined' || programData == null)
+        if (typeof(program) == 'undefined' || program == null)
         {
             return "";
         }
 
         try {
-            return programData.program_location.name;
+            return program.program_location.name;
         } catch(error) {
             return "";
         }
     }
 
     const renderProgramLocationAddress = () => {
-        if (typeof(programData) == 'undefined' || programData == null)
+        if (typeof(program) == 'undefined' || program == null)
         {
             return "";
         }
 
         try {
-            return programData.program_location.address;
+            return program.program_location.address;
         } catch(error) {
             return "";
         }
     }
 
+    const renderAddToWaitlist = () => {
+        if (checkUserIsWaitlisted() == false) {
+            return "You're on the list!"
+        } else {
+            return "Add to Waitlist"
+        }
+    }
 
     return (
-        <Modal presentationStyle="fullScreen" visible={props.isVisible} style={styles.container} animated={true} animationType="slide">
+        <Modal presentationStyle="fullScreen" visible={isVisible} style={styles.container} animated={true} animationType="slide">
               <SafeAreaView style={styles.container}>
+               
                   <Appbar.Header style={styles.appbar} theme={{
                       colors: {
                           primary: '#FFFFFF'
                       },
                   }}>
-                      <Appbar.Action icon={() => <FeatherIcon name="x" size={20}/>} onPress={() => props.closeModalMethod()} />
+                      <Appbar.Action icon={() => <FeatherIcon name="x" size={20}/>} onPress={closeModalMethod} />
                     
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+
+                    <TouchableOpacity onPress={() => setStartPackDialogIsVisible(true)}>
+                        <View style={{marginHorizontal: 5, alignItems: 'center', justifyContent: 'center',}}>
+                        <View style={{borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 30, height: 30, backgroundColor: 'rgb(245, 245, 245)',}}>
+                            <MaterialIcon name="group-add" size={18} />
+                          
+                        </View>
+                        </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => setWaitlistDialogIsVisible(true)}>
+
+
+                        <View style={{marginHorizontal: 5, alignItems: 'center', justifyContent: 'center',}}>
+                        <View style={{borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 30, height: 30, backgroundColor: 'rgb(245, 245, 245)',}}>
+                            <MaterialIcon name="playlist-add" size={20} />
+                          
+                        </View>
+                        </View>
+                        </TouchableOpacity>
+
+                    </View>
                   </Appbar.Header>
-                   <ScrollView contentContainerStyle={{justifyContent: 'space-between', flexGrow: 2}}>
+                   <View style={{flexGrow: 2}}>
+                       <Text style={{alignSelf: 'center', paddingVertical: 10}}>
+                       {getProgramName()}
+                       </Text>
                    <View style={styles.programImageContainer}>
-                       <Surface style={{marginHorizontal: 20, width: '90%', borderRadius: 10, height: 300, alignItems: 'center', justifyContent: 'center'}}>
+                       <Surface style={{marginHorizontal: 20, width: '60%', borderRadius: 10, height: 180, alignItems: 'center', justifyContent: 'center'}}>
                        <Image style={{width: '100%', height: '100%', borderRadius: 10}} source={{uri: getProgramImage()}} />
-                       <Chip textStyle={{color: 'white', fontFamily: 'Avenir-Heavy', fontWeight: '600'}} style={{paddingHorizontal: 10, borderRadius: 0, borderBottomLeftRadius: 8, elevation: 8, position: 'absolute', top: 0, right: 0, alignSelf: 'center', backgroundColor: '#1089ff', width: 'auto'}}>
-                           {programData.program_price}
-                       </Chip>
                        </Surface>
+
+                       <Text style={{color: "#1089ff", paddingTop: 10, fontFamily: 'Avenir-Medium'}}>
+                           ${program.program_price}
+                       </Text>
                        
-                   </View>
-
-                   <View style={styles.programInformationContainer}>
-                           {getProgramName()}
-                       <Paragraph style={styles.programDescriptionText}>
-                           {getProgramDescription()}
-                       </Paragraph>
-                       <View style={[styles.programTags, styles.alignRowAndCenter]}>
-                           {getProgramTags()}
-                       </View>
-                   </View>
-
-                   <View style={styles.mapViewContainer}>
-                       <View style={styles.mapViewSubContainer}>
-                                <MapView style={styles.mapView}
-                                scrollEnabled={false}
-                                shouldRasterizeIOS={true}
-                    initialRegion={{
-                        latitude: getLocationLatitude(),
-                        longitude: getLocationLongitude(),
-                        latitudeDelta: 0.05,
-                        longitudeDelta: 0.05,
-                        
-                      }} 
-                   
-                      />
-                                <View style={styles.mapViewTextContainer}>
-                                <Text style={styles.mapViewText}>
-                           {renderProgramLocationName()}
-                       </Text>
-                       <Text style={styles.mapViewText}>
-                       {renderProgramLocationAddress()}
-                       </Text>
-                       </View>
-                       </View>
                    </View>
 
                    <View style={styles.programOwnerDetailsContainer}>
                       
                       <View style={styles.programOwnerDetailsSubContainer}>
                       <View>
-                              <Avatar.Image source={{uri: programOwnerData.photo_url}} label="EH" color="#FFFFFF" size={50} style={{backgroundColor: '#212121'}} />
+                              <Avatar rounded source={{uri: programOwnerData.photo_url}} color="#FFFFFF" size={50} />
                           </View>
                           <View>
                               <Text style={styles.mapViewText}>
@@ -440,27 +631,28 @@ function ProgramInformationPreview(props) {
                       </View>
                   </View>
 
-                  <View style={styles.programTermsContainer}>
-                       <Text onPress={() => Linking.openURL()}  style={{alignItems: 'flex-start', fontFamily: 'Avenir-Light'}}>
-                            Terms of Service
-                       </Text>
-                       <Text onPress={() => {}} style={{alignItems: 'flex-start', fontFamily: 'Avenir-Light'}}>
-                            Privacy Policy
-                       </Text>
-                    </View>
+                   <View style={styles.programInformationContainer}>
+                       
+                       <Paragraph style={styles.programDescriptionText}>
+                           {getProgramDescription()}
+                       </Paragraph>
+                       <View style={[styles.programTags, styles.alignRowAndCenter]}>
+                           {getProgramTags()}
+                       </View>
+                   </View>
 
-                   </ScrollView>
+                   </View>
                    <View style={styles.purchaseContainer}>
 
                   <Button 
+                  icon={() => <FeatherIcon name="shopping-cart" color="white" size={15} />}
                         onPress={() => setLupaPurchasePageOpen(true)} 
-                        mode="outlined"
+                        mode="contained"
                         theme={{
                         roundness: 8,
-                        colors: {
-                            primary: '#1089ff'
-                        }
+             
                     }}
+                    color="#1089ff"
                     style={{width: '100%'}}>
                         Proceed to Checkout
                 </Button>
@@ -472,6 +664,8 @@ function ProgramInformationPreview(props) {
                     programProps={getProgramProps()}
                     />
                    </SafeAreaView>
+                   <WaitListDialog isVisible={waitlistDialogIsVisible} closeModal={() => setWaitlistDialogIsVisible(false)} program={program} userIsWaitlisted={checkUserIsWaitlisted()} />
+                   <StartPackDialog isVisible={startPackDialogIsVisible} closeModal={() => setStartPackDialogIsVisible(false)} program={program} />
             </Modal>
     )
 }
@@ -485,7 +679,9 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     appbar: {
-        elevation: 0
+        elevation: 0,
+        justifyContent: 'space-between',
+
     },
     mapViewContainer: {
         marginVertical: VERTICAL_SEPARATION
@@ -526,15 +722,15 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center', 
         width: windowWidth,
-        marginBottom: VERTICAL_SEPARATION
     },
     image: {
         width: '100%', 
         height: '100%'
     },
     programOwnerDetailsContainer: {
-        alignItems: 'center', justifyContent: 'space-evenly',
-        marginVertical: VERTICAL_SEPARATION
+        alignItems: 'center', 
+        justifyContent: 'space-evenly',
+        marginVertical: VERTICAL_SEPARATION,
     },
     programOwnerDetailsSubContainer: {
         width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'
@@ -579,9 +775,9 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width - 20
     },
     programTermsContainer: {
-        justifyContent: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
-        paddingHorizontal: 20,
         marginVertical: VERTICAL_SEPARATION
     }
 })

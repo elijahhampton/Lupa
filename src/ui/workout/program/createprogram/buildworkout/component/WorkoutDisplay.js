@@ -15,6 +15,9 @@ import {
 import {
     Surface,
     Caption,
+    Dialog,
+    HelperText,
+    Paragraph,
     Button,
 } from 'react-native-paper';
 
@@ -44,21 +47,29 @@ const restTimes = [
     '300',
 ]
 
-const exerciseTempos = [
-    'Edit',
-    '2-1-2',
-    '4-0-2',
-]
-function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
+function handleMeasurement(exercise, tempo) {
+    if (typeof(exercise) == 'undefined' || typeof(tempo) == 'undefined') {
+        return;
+    }
+
+    exercise.workout_tempo = tempo;
+} 
+
+function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress, programDuration }) {
     const [updateState, forceUpdateState] = useState(false);
 
     const [currProgramWeek, setCurrProgramWeek] = useState(0)
+
+    const [exerciseTempoError, setExerciseTempoError] = useState(false)
 
     const programWeekPicker = createRef();
     const restTimePickerRef = createRef();
     const tempoPickerRef = createRef();
 
-    const [pickedExerciseTempo, setPickedExerciseTempo] = useState(exerciseTempos[0]);
+    const [measurementAccessed, setAccessedMeasurement] = useState(workout)
+
+
+    const [pickedExerciseTempo, setPickedExerciseTempo] = useState('0-0-0');
     const [pickedRestTime, setPickedRestTime] = useState(restTimes[0])
 
     const [editTempoIsVisible, setEditTempo] = useState(false);
@@ -71,6 +82,35 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
     const [inputTempoOneText, setTempoInputOneText] = useState("");
     const [inputTempoTwoText, setTempoInputTwoText] = useState("");
     const [inputTempoSupersetText, setTempoSupersetText] = useState("");
+
+    const renderImageSource = (workoutObj) => {
+        
+        switch(workoutObj.default_media_uri) {
+
+            case '':
+                return <Image source={''} />
+            case 'Traps':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Traps.png')} />
+            case 'Chest':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Chest.png')} />
+            case 'Bicep':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain"source={require('../../../../../images/buildworkout/singleworkout/Bicep.png')} />
+            case 'Calves':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Calves.png')} />
+            case 'Core':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Core.png')} />
+            case 'Glutes':
+                return <Image style={{flex: 1, width: '100%', height: '100%', alignSelf: 'center', backgroundColor: 'red'}} resizeMode="cover" source={require('../../../../../images/buildworkout/singleworkout/Glutes.png')} />
+            case 'Supr':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Supr.png')} />
+            case 'Triceps':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Triceps.png')} />
+            case 'Hip':
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Hip.png')} />
+            default:
+                return <Image source={''} />
+        }
+    }
 
     const handleChangeRepsSliderValue = (workoutRef, value) => {
         workoutRef.workout_reps = value;
@@ -136,19 +176,42 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
         workoutRef.workout_tempo = inputTempoTwoText;
     }
 
-    const handleOnChangeTempoSupersetText = (text, workoutRef) => {
-        setTempoSupersetText(text)
-        workoutre.workout_tempo = inputRestTimeSupersetText;
-    }
-
-    const changeExerciseTempo = (workoutRef, tempo) => {
-        if (tempo == 'Edit') {
-            setEditTempo(true);
-            return;
+    const handleOnSetTempo = () => {
+        if (pickedExerciseTempo.length === 3) {
+            setExerciseTempoError(true);
         }
 
-        workoutRef.workout_tempo = tempo;
-        setPickedExerciseTempo(tempo);
+        
+
+        closeTempoPicker()
+    }
+
+    const onChangeTextHandler = (text) => {
+        if (text.length < pickedExerciseTempo.length) {
+            text = text.substr(0, pickedExerciseTempo.length - 2);
+            setPickedExerciseTempo(text)
+            handleMeasurement(measurementAccessed, text)
+          //  workoutRef.workout_tempo = text
+            return;
+        } else if (text.length > pickedExerciseTempo.length) {
+            if (pickedExerciseTempo.length === 4) {
+                setPickedExerciseTempo(text);
+           //     workoutRef.workout_tempo = text
+           handleMeasurement(measurementAccessed, text)
+                return;
+            }
+            
+            text = text + "-"
+            setPickedExerciseTempo(text)
+         //   workoutRef.workout_tempo = text
+         handleMeasurement(measurementAccessed, text)
+        }
+    }
+
+    onFocusTextHandler = () => {
+        if (pickedExerciseTempo === '0-0-0') {
+            setPickedExerciseTempo("")
+        }
     }
 
     const openProgramWeekPicker = () => programWeekPicker.current.open();
@@ -157,6 +220,13 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
     const openRestTimePicker = () => restTimePickerRef.current.open();
     const closeRestTimePicker = () => restTimePickerRef.current.close();
 
+    const handleOnOpenTempoPicker = (workout) => {
+        setAccessedMeasurement(workout);
+        openTempoPicker();
+    }
+
+    
+
     const openTempoPicker = () => tempoPickerRef.current.open();
     const closeTempoPicker = () => tempoPickerRef.current.close();
 
@@ -164,14 +234,14 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
         return (
             <RBSheet
             ref={tempoPickerRef}
-            height={300}
-            closeOnPressMask={true}
+            height={350}
+            closeOnPressMask={true}x
             customStyles={{
                 wrapper: {
 
                 },
                 container: {
-                    borderRadius: 20
+ 
                 },
                 draggableIcon: {
                     backgroundColor: '#000000'
@@ -181,24 +251,50 @@ function WorkoutDisplay({ workout, handleSuperSetOnPress, programDuration }) {
 
         >
             <View style={{flex: 1}}>
-            <View style={{width: '100%'}}>
-                <Button color="#1089ff" style={{alignSelf: 'flex-end'}} mode="text" onPress={closeTempoPicker}>
+
+                <View style={{flex: 1, justifyContent: 'space-evenly'}}>
+                    <Dialog.Content>
+                        <Paragraph>
+                        Type in the tempo you wish to set for this exercise.
+                        </Paragraph>
+                        {
+                            exerciseTempoError ?
+<Text style={{ fontSize: 12, color: 'red'}}>
+                            Tempo must be in the format: X-X-X
+                        </Text>
+                        :
+                        null
+                        }
+                        
+                    </Dialog.Content>
+                <TextInput
+                style={{alignSelf: 'center', fontSize: 60, borderWidth: 0.8 ,padding: 20, borderRadius: 15, borderColor: '#EEEEEE'}}
+            placeholder="0-0-0"
+            maxLength={5}
+            keyboardType="numeric"
+            keyboardAppearance="light"
+            returnKeyLabel="done"
+            returnKeyType="done"
+value={pickedExerciseTempo}
+onFocus={onFocusTextHandler}
+onChangeText={(text) => onChangeTextHandler(text)} />
+                </View>
+
+                <View style={{width: '100%'}}>
+                <Button 
+                mode="contained"  
+                color="#1089ff" 
+                style={{alignSelf: 'center', marginVertical: 10, elevation: 0}} 
+                contentStyle={{height: 45, width: Dimensions.get('window').width - 20}} 
+                onPress={handleOnSetTempo}
+                theme={{roundness: 8}}
+                >
                     <Text>
-                        Done
+                        Set Tempo
                     </Text>
                 </Button>
                 </View>
               
-            <Picker
-selectedValue={pickedExerciseTempo}
-style={{height: '100%', width: '100%'}}
-onValueChange={(itemValue, itemIndex) => changeExerciseTempo(workout, itemValue)}>
-  {
-      exerciseTempos.map((tempo, index, arr) => {
-          return <Picker.Item key={index} label={tempo} value={tempo} />
-      })
-  }
-</Picker>
 </View>
 <SafeAreaView />
         </RBSheet>
@@ -251,150 +347,93 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
     }
 
     const renderComponentDisplay = () => {
+        
         switch(workout.superset.length == 0)
         {
             case true:
                 return (
-                    <>
-                    <View style={{flex: 1, height: 420, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
-                                     <View style={{flex: 1,}}>
-
-                                        <View style={{paddingVertical: 5, paddingHorizontal: 10, alignItems: 'flex-start'}}>
-                                        <Text adjustsFontSizeToFit={true} style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
-                                          {workout.workout_name}
-                                        </Text>
-
-
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
- {/* Rest Time */}
- <View style={{alignItems: 'flex-start'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
-                Rest Time
-            </Text>
-            {
-            editRestTimeIsVisible === true ?
-            null
-            :
-            <FeatherIcon name="chevron-up" />
-        }
-
-            </View>
-            {
-                editRestTimeIsVisible === true ?
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                 <TextInput key={workout.workout_uid} value={inputRestTimeOneText} onChangeText={text => handleOnChangeRestTimeOneInputText(text, workout)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
-                 <FeatherIcon onPress={() => setEditRestTime(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
-            
-                </View>
-
-               
-                :
-
-                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
-
-                <Text style={{fontSize: 20}}>
-                                    {workout.workout_rest_time}
-                                </Text>
+                    <> 
+                   <View style={{marginLeft: 10,}}>
+         <Text style={{fontSize: 15, fontFamily: 'Avenir-Black'}}>
+                            {workout.workout_name}
+                        </Text>
+         <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                        <FeatherIcon name="plus" />
+                          
+                    <Text style={{paddingLeft: 10, paddingVertical: 5, color: '#1089ff', fontWeight: '800', fontFamily: 'Avenir-Medium'}} onPress={handleSuperSetOnPress}>
+                      Add Superset
+                  </Text>
+                    </View>
+        </View>
                 
-                                </TouchableWithoutFeedback>
-            }
-          
-        </View>
+                    <View style={{flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
+            
 
-          {/* Tempo */}
-          <View style={{alignItems: 'flex-start'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
-                Tempo
-            </Text>
-            {
-            editTempoIsVisible === true ?
-                null
-                :
-                <FeatherIcon name="chevron-up" />
-            }
-            </View>
-            {
-                editTempoIsVisible === true ?
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                <TextInput key={workout.workout_uid} value={inputTempoOneText} onChangeText={text => handleOnChangeTempoInputOneText(text, workout)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
-                <FeatherIcon onPress={() => setEditTempo(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
-           
-               </View>
+<View style={{flexDirection: 'row', alignItems: 'center'}}>
 
-                :
-                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
-                <Text style={{fontSize: 20}}>
-                {workout.workout_tempo}
-                                </Text>
-                                </TouchableWithoutFeedback>
-            }
-       
-        </View>
-                                        </View>
 
-                                    
-                                        </View>
+<Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0}}>
+        {renderImageSource(workout)}
+    </Surface>
 
-                                        <Surface style={{width: '100%', height: '60%', alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
-                                                <Video shouldPlay={true} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
-                                            </Surface>
-        
-                                 
-                                            <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
 
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
-        
+<View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto'}}>
+
+        <View>
         <View style={{marginHorizontal: 5}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                Sets
-            </Text>
-            <View style={{height: 30, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{height: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
         <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseSets(workout)} />
+            <ThinFeatherIcon name="chevron-left" size={22} onPress={() => handleDecrementExerciseSets(workout)} />
         </View>
-        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-        <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 20}}>
-                {workout.workout_sets}
+
+        <View style={{paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12}}>
+                Sets ({workout.workout_sets})
             </Text>
         </View>
-        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-        <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseSets(workout)}/>
+  
+        <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseSets(workout)}/>
     </View>
         </View>
 
         <View style={{marginHorizontal: 5}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                Reps
-            </Text>
-            <View style={{height: 30, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{height: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
         <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseReps(workout)} />
+            <ThinFeatherIcon name="chevron-left" size={22} onPress={() => handleDecrementExerciseReps(workout)} />
         </View>
-        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-        <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 20}}>
-                {workout.workout_reps}
+
+        <View style={{paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12}}>
+                Reps ({workout.workout_reps})
             </Text>
         </View>
-        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-        <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseReps(workout)}/>
+  
+        <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseReps(workout)}/>
     </View>
         </View>
+        </View>
+        
+
+        <View>
+        <TouchableWithoutFeedback onPress={openRestTimePicker}>
+        <Text style={{paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12}}>
+                Rest Time ({workout.workout_rest_time}s)
+            </Text>
+            </TouchableWithoutFeedback>
+            
+            <TouchableWithoutFeedback onPress={() => handleOnOpenTempoPicker(workout)}>
+            <Text style={{paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12}}>
+                Tempo ({workout.workout_tempo})
+            </Text>
+            </TouchableWithoutFeedback>
+        </View>
+
         
     
     </View>
-    </View>     
-
-                                            </View>
-
-                                        
-                                                        
-
-                                    </Surface>
+                                    </View>  
+          
+            
                                     </View>
                                     <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
                                     </>
@@ -402,7 +441,23 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
             case false:
 
                 return (
-                    <View style={{flex: 1}}>
+                    
+                    <View style={{flex: 1, alignItems: 'flex-start'}}>
+         
+         <View style={{marginLeft: 10,}}>
+         <Text style={{fontSize: 15, fontFamily: 'Avenir-Black'}}>
+                            {workout.workout_name}
+                        </Text>
+         <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                        <FeatherIcon name="plus" />
+                          
+                    <Text style={{paddingLeft: 10, paddingVertical: 5, color: '#1089ff', fontWeight: '800', fontFamily: 'Avenir-Medium'}} onPress={handleSuperSetOnPress}>
+                      Add Superset
+                  </Text>
+                    </View>
+        </View>
+     
+               
                         <ScrollView 
                                 showsHorizontalScrollIndicator={false} 
                                 pagingEnabled={true} 
@@ -414,301 +469,165 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                                 scrollEventThrottle={3}
                                 contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
                         >
-                        <View style={{flex: 1, height: 420, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
-                                     <View style={{flex: 1,}}>
-
-                                        <View style={{paddingVertical: 5, paddingHorizontal: 10, alignItems: 'flex-start'}}>
-                                        <Text adjustsFontSizeToFit={true} style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
-                                          {workout.workout_name}
-                                        </Text>
-
-
-                                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
- {/* Rest Time */}
- <View style={{alignItems: 'flex-start'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
-                Rest Time
-            </Text>
-            {
-            editRestTimeIsVisible === true ?
-            null
-            :
-            <FeatherIcon name="chevron-up" />
-        }
-
-            </View>
-            {
-                editRestTimeIsVisible === true ?
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                 <TextInput key={workout.workout_uid} value={inputRestTimeTwoText} onChangeText={text => handleOnChangeRestTimeTwoInputText(text, workout)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
-                 <FeatherIcon onPress={() => setEditRestTime(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
-            
-                </View>
-
-               
-                :
-
-                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
-
-                <Text style={{fontSize: 20}}>
-                                    {workout.workout_rest_time}
-                                </Text>
-                
-                                </TouchableWithoutFeedback>
-            }
+                          <>
+                  
+                  <View style={{flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
           
-        </View>
 
-          {/* Tempo */}
-          <View style={{alignItems: 'flex-start'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
-                Tempo
-            </Text>
-            {
-            editTempoIsVisible === true ?
-                null
-                :
-                <FeatherIcon name="chevron-up" />
-            }
-            </View>
-            {
-                editTempoIsVisible === true ?
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                <TextInput key={workout.workout_uid} value={inputTempoTwoText} onChangeText={text => handleOnChangeTempoInputTwoText(text, workout)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
-                <FeatherIcon onPress={() => setEditTempo(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
-           
-               </View>
+<View style={{flexDirection: 'row', alignItems: 'center'}}>
 
-                :
-                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
-                <Text style={{fontSize: 20}}>
-                {workout.workout_tempo}
-                                </Text>
-                                </TouchableWithoutFeedback>
-            }
-       
-        </View>
-                                        </View>
 
-                                    
-                                        </View>
+<Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+     {renderImageSource(workout)}
+  </Surface>
 
-                                        <Surface style={{width: '100%', height: '60%', alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
-                                                <Video shouldPlay={true} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
-                                            </Surface>
+
+<View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto'}}>
+
+      <View>
+      <View style={{marginHorizontal: 5}}>
+          <View style={{height: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <ThinFeatherIcon name="chevron-left" size={22} onPress={() => handleDecrementExerciseSets(workout)} />
+      </View>
+
+      <View style={{paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12}}>
+              Sets ({workout.workout_sets})
+          </Text>
+      </View>
+
+      <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseSets(workout)}/>
+  </View>
+      </View>
+
+      <View style={{marginHorizontal: 5}}>
+          <View style={{height: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <ThinFeatherIcon name="chevron-left" size={22} onPress={() => handleDecrementExerciseReps(workout)} />
+      </View>
+
+      <View style={{paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12}}>
+              Reps ({workout.workout_reps})
+          </Text>
+      </View>
+
+      <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseReps(workout)}/>
+  </View>
+      </View>
+      </View>
+      
+
+      <View>
+      <TouchableWithoutFeedback onPress={openRestTimePicker}>
+      <Text style={{paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12}}>
+              Rest Time ({workout.workout_rest_time}s)
+          </Text>
+          </TouchableWithoutFeedback>
+          
+          <TouchableWithoutFeedback onPress={() => handleOnOpenTempoPicker(workout)}>
+          <Text style={{paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12}}>
+              Tempo ({workout.workout_tempo})
+          </Text>
+          </TouchableWithoutFeedback>
+      </View>
+
+      
+  
+  </View>
+                                  </View>  
         
-                                 
-                                            <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-
-<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
-        
-        <View style={{marginHorizontal: 5}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                Sets
-            </Text>
-            <View style={{height: 30, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseSets(workout)} />
-        </View>
-        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-        <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 20}}>
-                {workout.workout_sets}
-            </Text>
-        </View>
-        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-        <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseSets(workout)}/>
-    </View>
-        </View>
-
-        <View style={{marginHorizontal: 5}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                Reps
-            </Text>
-            <View style={{height: 30, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseReps(workout)} />
-        </View>
-        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-        <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 20}}>
-                {workout.workout_reps}
-            </Text>
-        </View>
-        <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-        <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseReps(workout)}/>
-    </View>
-        </View>
-        
-    
-    </View>
-    </View>     
-
-                                            </View>
-
-                                        
-                                                        
-
-                                    </Surface>
-                                    </View>
+          
+                                  </View>
+                                  <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
+                                  
+                                  </>
                                     {
-                                        workout.superset.map((superset, index, arr) => {
+                                        workout.superset.map(superset => {
                                             return (
-                                                <View style={{flex: 1, height: 420, width: Dimensions.get('window').width, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}>
-                                                <Surface style={{justifyContent: 'space-evenly', backgroundColor: '#FFFFFF', elevation: 0, width: Dimensions.get('window').width,  flex: 1, alignSelf: 'center'}}>
-                                                 <View style={{flex: 1,}}>
-            
-                                                    <View style={{paddingVertical: 5, paddingHorizontal: 10, alignItems: 'flex-start'}}>
-                                                    <Text adjustsFontSizeToFit={true} style={{fontFamily: 'Avenir-Medium', color: '#23374d', fontSize: 15, padding: 10}}>
-                                          {superset.workout_name}
-                                        </Text>
-            
-            
-                                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-             {/* Rest Time */}
-             <View style={{alignItems: 'flex-start'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
-                Rest Time
-            </Text>
-            {
-            editRestTimeIsVisible === true ?
-            null
-            :
-            <FeatherIcon name="chevron-up" />
-        }
-
-            </View>
-            {
-                editRestTimeIsVisible === true ?
-                <View key='superSetRestTimeView' style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                 <TextInput key={superset.workout_uid} value={inputRestTimeSupersetText} onChangeText={text => handleOnChangeRestTimeSupersetInputText(text, superset)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
-                 <FeatherIcon onPress={() => setEditRestTime(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
-            
-                </View>
-
-               
-                :
-
-                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openRestTimePicker}>
-
-                <Text style={{fontSize: 20}}>
-                                    {superset.workout_rest_time}
-                                </Text>
+                                                <>
+                                          <View style={{flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center'}}>
+                                  
+                      
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      
+                      
+                      <Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+                            {renderImageSource(superset)}
+                          </Surface>
                 
-                                </TouchableWithoutFeedback>
-            }
-          
-        </View>
-            
-                      {/* Tempo */}
-                      <View style={{alignItems: 'flex-start'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}} >
-                Tempo
-            </Text>
-            {
-            editTempoIsVisible === true ?
-                null
-                :
-                <FeatherIcon name="chevron-up" />
-            }
-            </View>
-            {
-                editTempoIsVisible === true ?
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                <TextInput key={workout.workout_uid} value={inputTempoSupersetText} onChangeText={text => handleOnChangeTempoSupersetText(text, superset)} placehold="0-0-0" style={{alignItems: 'center', justifyContent: 'center', width: 70, borderWidth: 0.5, borderColor: 'black', padding: 3}} />
-                <FeatherIcon onPress={() => setEditTempo(false)} size={18} name="refresh-cw"  style={{paddingHorizontal: 10}}/>
-           
-               </View>
-
-                :
-                <TouchableWithoutFeedback style={{marginHorizontal: 15}} onPress={openTempoPicker}>
-                <Text style={{fontSize: 20}}>
-                {workout.workout_tempo}
-                                </Text>
-                                </TouchableWithoutFeedback>
-            }
-       
-        </View>
-                                                    </View>
-            
-                                                
-                                                    </View>
-            
-                                                    <Surface style={{width: '100%', height: '60%', alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
-                                                            <Video shouldPlay={true} style={{width: '100%', height: '100%'}} resizeMode="stretch" source={require('../../../../../videos/pushuppreview.mov')} />
-                                                        </Surface>
-                    
-                                             
-                                                        <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%'}}>
-                    
-                    <View style={{marginHorizontal: 5}}>
-                        <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                            Sets
-                        </Text>
-                        <View style={{height: 30, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseSets(superset)} />
-                    </View>
-                    <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-                    <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontSize: 20}}>
-                            {superset.workout_sets}
-                        </Text>
-                    </View>
-                    <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-                    <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseSets(superset)}/>
-                </View>
-                    </View>
-            
-                    <View style={{marginHorizontal: 5}}>
-                        <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 15}}>
-                            Reps
-                        </Text>
-                        <View style={{height: 30, borderWidth: 1, borderRadius: 5, borderColor: 'rgb(102, 111, 120)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <ThinFeatherIcon name="chevron-left" size={30} onPress={() => handleDecrementExerciseReps(superset)} />
-                    </View>
-                    <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-                    <View style={{paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{fontSize: 20}}>
-                            {superset.workout_reps}
-                        </Text>
-                    </View>
-                    <View style={{height: 30, backgroundColor: '#212121', width: 1}} />
-                    <ThinFeatherIcon name="chevron-right" size={30} onPress={() => handleIncrementExcerciseReps(superset)}/>
-                </View>
-                    </View>
-                    
-                
-                </View>
-                </View>     
-            
-                                                        </View>
-            
-                                                    
-                                                                    
-            
-                                                </Surface>
-                                                </View>
-                                            )
-                                        })
+                      
+                      
+                      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto'}}>
+                      
+                              <View style={{marginRight: 10}}>
+                              <View style={{marginHorizontal: 5}}>
+                                  <View style={{height: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                                  <ThinFeatherIcon name="chevron-left" size={22} onPress={() => handleDecrementExerciseSets(superset)} />
+                              </View>
+                      
+                              <View style={{paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center'}}>
+                                  <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12}}>
+                                      Sets ({superset.workout_sets})
+                                  </Text>
+                              </View>
+                        
+                              <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseSets(superset)}/>
+                          </View>
+                              </View>
+                      
+                              <View style={{marginHorizontal: 5}}>
+                                  <View style={{height: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                                  <ThinFeatherIcon name="chevron-left" size={22} onPress={() => handleDecrementExerciseReps(superset)} />
+                              </View>
+                      
+                              <View style={{paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center'}}>
+                                  <Text style={{color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12}}>
+                                      Reps ({superset.workout_reps})
+                                  </Text>
+                              </View>
+                        
+                              <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseReps(superset)}/>
+                          </View>
+                              </View>
+                              </View>
+                              
+                      
+                              <View style={{marginLeft: 10}}>
+                              <TouchableWithoutFeedback onPress={openRestTimePicker}>
+                              <Text style={{paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12}}>
+                                      Rest Time ({superset.workout_rest_time}s)
+                                  </Text>
+                                  </TouchableWithoutFeedback>
+                                  
+                                  <TouchableWithoutFeedback onPress={() => handleOnOpenTempoPicker(superset)}>
+                                  <Text style={{paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12}}>
+                                      Tempo ({superset.workout_tempo})
+                                  </Text>
+                                  </TouchableWithoutFeedback>
+                              </View>
+                      
+                              
+                          
+                          </View>
+                                                          </View>  
+                                
+                                  
+                                                          </View>
+                                                          </>
+                                            )    
+                                    })
+                                                      
                                     }
                         </ScrollView>
-                        <Pagination  dotsLength={5} />
                         <Divider style={{height: 10, backgroundColor: '#EEEEEE'}} />
                     </View>
                 )
                 default:
-                    return <Text>
-                        Huuh
-                    </Text>
+    
         }
     }
 
