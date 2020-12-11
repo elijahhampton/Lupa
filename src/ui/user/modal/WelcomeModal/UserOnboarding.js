@@ -14,6 +14,7 @@ import BasicInformation from './BasicInformation';
 import PickInterest from './PickInterest';
 import WelcomeContentDriver from '../WelcomeContentDriver'
 import UserBackgroundVerification from './UserBackgroundVerification';
+import { Avatar } from 'react-native-elements';
 
 import  { Pagination } from 'react-native-snap-carousel'
 

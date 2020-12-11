@@ -358,16 +358,16 @@ class GuestView extends React.Component {
 
 
         return (
-          <TouchableWithoutFeedback onPress={() => this.navigateToProfile(trainer.user_uuid)} key={trainer.user_uuid} style={{ paddingHorizontal: 10, marginVertical: 10 }}>
-            <View>
+          <TouchableWithoutFeedback onPress={() => this.navigateToProfile(trainer.user_uuid)} key={trainer.user_uuid} style={{ paddingHorizontal: 10, borderRadius: 12, marginVertical: 10 }}>
+            <View style={{borderRadius: 12}}>
               <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
 
-                <Surface style={{ elevation: 5 }}>
-                  <Avatar size={45} source={{ uri: trainer.photo_url }} />
+                <Surface style={{ elevation: 5, borderRadius: 12 }}>
+                  <Avatar size={45} containerStyle={{borderRadius: 12}} source={{ uri: trainer.photo_url }} />
                 </Surface>
 
                 <View style={{ paddingHorizontal: 10 }}>
-                  <Text style={{ paddingVertical: 5, fontSize: 12, fontFamily: 'Avenir-Heavy' }}>
+                  <Text style={{ paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
                     {trainer.display_name}
                   </Text>
 
@@ -418,7 +418,7 @@ class GuestView extends React.Component {
                 </Surface>
 
                 <View style={{ paddingHorizontal: 10 }}>
-                  <Text style={{ paddingVertical: 5, fontSize: 12, fontFamily: 'Avenir-Heavy' }}>
+                  <Text style={{ paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
                     {trainer.display_name}
                   </Text>
 

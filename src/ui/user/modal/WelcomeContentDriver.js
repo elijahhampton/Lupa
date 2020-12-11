@@ -175,9 +175,7 @@ const WelcomeContentDriver = (props) => {
                 />
 
 {
-                    getLupaStoreState().Users.currUserData.isTrainer === true ?
-                    null
-                    :
+                    getLupaStoreState().Users.currUserData.isTrainer === false ?
                     <ListItem
                     title='Enable Location'
                     titleStyle={styles.highlightedTitleStyle}
@@ -187,6 +185,8 @@ const WelcomeContentDriver = (props) => {
                     rightIcon={() => <FeatherIcon name="arrow-right" />}
                     onPress={_getLocationAsync}
                 />
+                    :
+                        null
                 }
 
 

@@ -361,115 +361,20 @@ function TrainerBackgroundVerification(props) {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#FFFFFF', }}>
-            <Appbar.Header style={{ backgroundColor: 'white', elevation: 0, borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', }}>
+            <Appbar.Header style={{ backgroundColor: 'white', elevation: 0, }}>
                 <Appbar.Content title="Trainer Background" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
             </Appbar.Header>
             <ScrollView contentContainerStyle={{ padding: 0, alignItems: 'center', backgroundColor: '#FFFFFF' }}>
-                <Surface style={styles.surface}>
-                    <Text style={styles.surfaceTitle}>
-                        Do you belong to a trainer gym or do you have your own exercise studio space?
-                        </Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12, color: '#23374d'}}>
-                            I have my own exercise space.
-                            </Text>
-                        <RadioButton.Android color="#1089ff" onPress={handleHasOwnExerciseSpaceOnPress} status={userHasSelfExerciseSpace} />
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12, color: '#23374d'}}>
-                            I belong to a trainer gym.
-                            </Text>
-                        <RadioButton.Android color="#1089ff" onPress={handleUserBelongsToTrainerGymOnPress} status={userBelongsToTrainerGym} />
-                    </View>
-                </Surface>
 
-                <Divider style={{height: 2}} />
 
                 {renderLocationPickingOptions()}
 
-
-                <Surface style={styles.surface}>
-                    <View>
-                    <Text style={styles.surfaceTitle}>
-                        I have transportation and feel comfortable training clients at their home.  <Caption>
-                            (This will make your profile show up for users who are looking for in home trainers.)
-                        </Caption>
-                        </Text>
-                    </View>
-
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12, color: '#23374d'}}>
-                            Enable In Home Training
-                     </Text>
-                    
-
-                        <RadioButton.Android color="#1089ff" onPress={hostInHomeSessions === 'checked' ? () => {
-                            setUserHostInHomeSessions('unchecked')
-                            LUPA_CONTROLLER_INSTANCE.setTrainerIsInHomeTrainer()
-                        } 
-                        : 
-                        () => {
-                            LUPA_CONTROLLER_INSTANCE.setTrainerIsInHomeTrainer()
-                            setUserHostInHomeSessions('checked')
-                        }
-                        } 
-                        status={hostInHomeSessions} />
-                    </View>
-                </Surface>
-
                 <Divider style={{height: 2}} />
-
-                <Surface style={styles.surface}>
-                    <Text style={styles.surfaceTitle}>
-                        Do you have any specific coaching styles?
-                        </Text>
-
-                    {
-                        COACHING_INTEREST.map((interest, index, arr) => {
-                            if (index  >= 5) {
-                                return;
-                            }
-
-                            if (index === 0) {
-                                return (
-                                    <View key={index} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <Text>
-                                            {interest}
-                                        </Text>
-
-                                        <Checkbox.Android color="#1089ff" status={getCheckBoxStatus(interest)} onPress={() => handleInterestOnPress(interest)} />
-                                    </View>
-
-                                )
-                            }
-
-                            return (
-                                <>
-                                    <Divider style={{ marginVertical: 5 }} />
-
-                                    <View key={index} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <Text>
-                                            {interest}
-                                        </Text>
-
-                                        <Checkbox.Android color="#1089ff" status={getCheckBoxStatus(interest)} onPress={() => handleInterestOnPress(interest)} />
-                                    </View>
-
-                                </>
-                            )
-                        })
-                    }
-                </Surface>
-
-                <Divider style={{height: 2}} />
-
 
                 <Surface style={styles.surface}>
                     <Text style={styles.surfaceTitle}>
                         Personal Equipment
                         </Text>
-                     {/*   <SearchBar platform="ios" placeholder="Find more options" containerStyle={{backgroundColor: 'transparent'}} inputStyle={{fontSize: 12}} searchIcon={() => <Feather1s size={15} name="search" color="#1089ff" />} /> */}
-
                     {
                         EQUIPMENT_LIST.map((equipmentName, index, arr) => {
 
@@ -510,17 +415,6 @@ function TrainerBackgroundVerification(props) {
 
                 <Divider style={{height: 2}} />
 
-                <Surface style={styles.surface}>
-                          <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12, color: '#23374d'}}>
-                            How much do you charge per hour?
-                            </Text>
-                            <Caption>
-                                This will be the hourly payment rate users see on your profile.
-                            </Caption>
-                            <TextInput value={hour} onChangeText={(text) => setHourlyPaymentRate(text)} onEndEditing={() => LUPA_CONTROLLER_INSTANCE.updateCurrentUser('hourly_payment_rate', hour)} color="#1089ff" style={{marginVertical: 10}} />
-                    </Surface>
-           
-
             </ScrollView>
 
 
@@ -538,7 +432,7 @@ const styles = StyleSheet.create({
     surface: {
         width: '100%',
         padding: 10,
-        elevation: 1
+        elevation: 0,
     },
     surfaceTitle: {
         fontSize: 15,

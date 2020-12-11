@@ -260,6 +260,12 @@ export default class UserController {
                 case 'stripe_metadata':
                     retValue = snapshot.stripe_metadata;
                     break;
+                case 'client_metadata':
+                    retValue = snapshot.client_metadata;
+                    break;
+                case 'trainer_metadata':
+                    retValue = snapshot.trainer_metadata;
+                    break;
             }
         });
 
@@ -335,6 +341,19 @@ export default class UserController {
         let clientMetadata = undefined;
 
         switch (fieldToUpdate) {
+            case 'experience_level':
+                currentUserDocument.get().then(documentSnapshot => {
+                    userData = documentSnapshot.data()
+                });
+
+                this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+                clientMetadata = userData.client_metadata;
+                clientMetadata.experience_level = value;
+
+                currentUserDocument.update({
+                    client_metadata: value
+                });
+                break;
             case 'client_metadata':
                 currentUserDocument.get().then(documentSnapshot => {
                     userData = documentSnapshot.data()
@@ -374,6 +393,19 @@ export default class UserController {
                     trainer_metadata: trainerMetadata
                 });
                 break;
+            case 'trainer_metadata':
+                    currentUserDocument.get().then(documentSnapshot => {
+                        userData = documentSnapshot.data()
+                    });
+    
+                    this.checkUserStructure(userData, getLupaUserStructurePlaceholder());
+                    trainerMetadata = userData.trainer_metadata;
+                    trainerMetadata = value;
+    
+                    currentUserDocument.update({
+                        trainer_metadata: trainerMetadata
+                    });
+                    break;
             case 'personal_equipment_list':
                 currentUserDocument.get().then(documentSnapshot => {
                     userData = documentSnapshot.data()

@@ -7,7 +7,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import DrawerMenu from './Components/DrawerMenu';
 import ProfileNavigator from './ProfileNavigator';
-import ThinFeatherIcon from 'react-native-feather1s'
+import Feather1s from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardNavigator from './DashboardNavigator';
@@ -44,19 +44,17 @@ const PlaceHolder = () => {
   )
 }
 
-const ACTIVE_COLOR = "#23374d"
-const INACTIVE_COLOR = "#23374d"
+const ACTIVE_COLOR = "#1089ff"
+const INACTIVE_COLOR = "#212121"
 
 function LupaBottomTabNavigator() {
   const currUserData = useSelector(state => {
     return state.Users.currUserData
   })
 
-  const INACTIVE_COLOR = "#212121"
-
   const tabBarOptions = {
     showLabel: false,
-    activeTintColor: '#1089ff',
+    activeTintColor: ACTIVE_COLOR,
     inactiveTintColor: INACTIVE_COLOR,
     labelStyle: {
       fontSize: 12,
@@ -77,15 +75,15 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Dashboard':
-              return focused === true ? <FeatherIcon name='clipboard' size={20} color="#1089ff" /> : <FeatherIcon name='clipboard' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='clipboard' size={20} color="#1089ff" /> : <Feather1s name='clipboard' size={20} color={INACTIVE_COLOR} />
             case 'Train':
-              return focused === true ? <FeatherIcon name='home' size={20} color="#1089ff" /> : <FeatherIcon name='home' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='home' size={20} color="#1089ff" /> : <Feather1s name='home' size={20} color={INACTIVE_COLOR} />
             case 'Create':
-              return focused === true ? <FeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <FeatherIcon name='plus-circle' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <Feather1s name='plus-circle' size={20} color={INACTIVE_COLOR} />
               case 'Alerts':
-              return focused === true ? <FeatherIcon name='bell' size={20} color="#1089ff" /> : <FeatherIcon name='bell' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='bell' size={20} color="#1089ff" /> : <Feather1s name='bell' size={20} color={INACTIVE_COLOR} />
               case 'Inbox':
-              return focused === true ? <FeatherIcon name='message-square' size={20} color="#1089ff" /> : <FeatherIcon name='message-square' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='message-square' size={20} color="#1089ff" /> : <Feather1s name='message-square' size={20} color={INACTIVE_COLOR} />
           }
 
         },

@@ -265,11 +265,6 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 
     const handleOnRequest = async () => {
       if (LUPA_STATE.Auth.isAuthenticated === true) {
-
-      if (LUPA_STATE.Users.currUserData.stripe_metadata.card_added_to_stripe === false) {
-          setShowCardNeededDialogVisible(true);
-          return;
-      }
     
       const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, currUserData.user_uuid, trainerNote, sessionType);
       const booking_id = booking.uid;
@@ -301,19 +296,6 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
               <Dialog.Title style={{alignSelf: 'center', fontWeight: 'bold', fontFamily: 'Avenir-Heavy'}}>
                 No Card Found
               </Dialog.Title>
-
-
-              <Button 
-                onPress={() => {}}
-                uppercase={false} 
-                mode="text" 
-                color="#23374d"
-                style={{elevation: 0}}
-
-           
-                theme={{roundness: 8}}>
-                  Learn More
-                </Button>
               </View>
 
            
@@ -321,10 +303,6 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
               <Dialog.Content style={{alignSelf: 'flex-start', justifyContent: 'center'}}>
                 <Text style={{color: 'rgb(144, 144, 144)', paddingVertical: 5}}>
                   Lupa requires that you have a card saved before booking a session.  
-                </Text>
-
-                <Text style={{color: 'rgb(144, 144, 144)'}}>
-                Note: You will not be allowed to remove a card if you have an active session with 30 minutes of starting.
                 </Text>
 
               </Dialog.Content>
@@ -421,7 +399,8 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 
         },
         container: {
-          
+            borderTopRightRadius: 15,
+            borderTopLeftRadius: 15,
         },
         draggableIcon: {
 
@@ -431,15 +410,15 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
             <Dialog.Title style={{fontFamily: 'Avenir'}}>
               Schedule a session with {trainer.display_name}
             </Dialog.Title>
-            <Paragraph style={{paddingBottom: 20, paddingHorizontal: 20, fontFamily: 'Avenir'}}>
-              Choose a start time and leave a note for what you would like to accomplish.
-            </Paragraph>
+            <Text>
+              Contact Trainer
+            </Text>
 
   <View style={{flex: 1, justifyContent: 'space-evenly'}}>
 
 <View style={{paddingHorizontal: 20}}>
   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 15}}>
+  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16}}>
     Session Type
   </Text>
   
@@ -459,7 +438,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 
 <View style={{paddingHorizontal: 20}}>
   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 15}}>
+  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16}}>
     Start Time
   </Text>
   <TouchableWithoutFeedback  onPress={openStartTimePicker}>
@@ -472,36 +451,17 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
                   </View>
                   </TouchableWithoutFeedback>
   </View>
-
-  </View>
-
-  <Divider />
-
-  <View style={{paddingHorizontal: 20}}>
-  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 15}}>
-    End Time
-  </Text>
-
-  <View style={{borderRadius: 10, flexDirection: 'row', alignItems: 'center'}} icon={() => <FeatherIcon name="chevron-down" />}>
-                
- 
-                <Text style={{ fontWeight: '500', fontSize: 13}}>
-                 {endTimeFormatted}
-                </Text>
-          
-            </View>
-  </View>
   <Caption>
-    The end time will automatically be set to one hour after the start time.
+    The maximum schedule time for a session is one hour.  Your session will end at: {endTimeFormatted}.
   </Caption>
-</View>
+
+  </View>
 
 <Divider />
 
 <View style={{paddingHorizontal: 20}}>
 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-<Text style={{fontFamily: 'Avenir-Heavy', color: 'black'}}>
+<Text style={{fontFamily: 'Avenir-Heavy', color: 'black', fontSize: 16}}>
           Date
         </Text>
         <TouchableWithoutFeedback onPress={openDatePicker}>
@@ -516,52 +476,25 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 </View>
 
 <Divider />
-
-
-
-<View style={{ backgroundColor: 'white', elevation: 0, borderRadius: 5}}>
-  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Text style={{fontFamily: 'Avenir-Heavy', paddingHorizontal: 20, color: 'black'}}>
-          Notes for trainer
-        </Text>
-  </View>
-
-  <View>
-
-    <View style={{marginVertical: 10, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center', borderRadius: 20, height: 35, width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
-    <TextInput
-    placeholder="What would you like to accomplish?"
-                 value={trainerNote}
-                onChangeText={text => setTrainerNote(text)}
-                mode="flat" 
-                style={{paddingLeft: 10, width: Dimensions.get('window').width - 50, fontFamily: 'Avenir-Medium', alignSelf: 'center'}} 
-                />
-    </View>
-                
-                </View>
-                <Caption style={{paddingLeft: 30, color: '#1089ff'}}>
-                  Estimated Cost: ${trainer.hourly_payment_rate}
-                </Caption>
-</View>
-
-
 <Button 
 onPress={handleOnRequest}
 mode="contained" 
 color="#1089ff"
 uppercase={false}
-style={{alignSelf: 'center', elevation: 0, marginVertical: 10}} 
+style={{alignSelf: 'center', elevation: 0, marginVertical: 5}} 
 contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
 theme={{roundness: 12}}>
-  Request Session
+  <Text>
+    Request Session
+  </Text>
 </Button>
 
 <Button 
 onPress={closeModal}
-mode="outlined" 
+mode="text" 
 color="black"
 uppercase={false}
-style={{alignSelf: 'center', borderWidth: 1, borderColor: 'black', elevation: 0, marginVertical: 5}} 
+style={{alignSelf: 'center', elevation: 0, marginVertical: 5}} 
 contentStyle={{width: Dimensions.get('window').width - 20, height: 45}} 
 theme={{roundness: 12}}>
   Cancel

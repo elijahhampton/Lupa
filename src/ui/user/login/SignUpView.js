@@ -40,6 +40,7 @@ import LUPA_DB, { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import FeatherIcon from 'react-native-feather1s'
 import { storeAsyncData } from '../../../controller/lupa/storage/async';
 import { logoutUser, handleLoginError} from '../../../controller/lupa/auth/auth'
+import { UPDATE_CURRENT_USER_PACKS_ACTION } from '../../../controller/redux/actionTypes';
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE'
 
 const formReducer = (state, action) => {

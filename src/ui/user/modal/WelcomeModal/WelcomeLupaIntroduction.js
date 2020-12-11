@@ -198,6 +198,7 @@ class WelcomeLupaIntroduction extends React.Component {
             learnCheck: 'unchecked',
             permissionsRequested: false,
             verificationModalVisible: false,
+            accountTypeSelected: '',
         }
 
         this.handleCheckOption = this.handleCheckOption.bind(this);
@@ -237,23 +238,16 @@ class WelcomeLupaIntroduction extends React.Component {
         this.setState({ permissionsRequested: true })
     }
 
-   handleCheckOption = (id) => {
+   handleCheckOption = (optionData) => {
+       const id = optionData.key;
        switch(id) {
            case 0:
-               if (this.state.userCheck == 'checked') {
-                    this.setState({ userCheck: 'unchecked' })
-               } else {
-                this.setState({ userCheck: 'checked', trainerCheck: 'unchecked', learnCheck: 'unchecked' })
-               }
-               this.setAccountType(1)
-              // this.props.setUserAccountIsSelected(true);
+            this.setAccountType(1)
                break;
            case 1:
-          //  this.showVerificationModal()
-            this.setState({ trainerCheck: 'checked', userCheck: 'unchecked', learnCheck: 'unchecked' });
             this.setAccountType(0)
-           // this.props.setUserAccountIsSelected(true);
            default:
+ 
            }
        
        }
@@ -283,17 +277,29 @@ class WelcomeLupaIntroduction extends React.Component {
    hideVerificationModal = () => {
        this.setState({ verificationModalVisible: false })
    }
+
+   getBackgroundColor = (option) => {
+
+            return 'transparent'
+
+   }
+
+   getTextColor = (option) => {
+        return 'black'
+  
+}
+
     
     render() {
         this.state.permissionsRequested == true && this.state.userCheck == 'checked' || this.state.trainerCheck == 'checked' || this.state.learnCheck == 'checked' ? this.enableNext() : this.disableNext()
         return (
-            <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                
+            <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+                <Image source={require('../../../images/logo.jpg')} style={{width: 55, height: 55}} />
 
-                <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+                <View style={{ flex: 1, justifyContent: 'flex-start', backgroundColor: 'white' }}>
                     <View style={{alignItems: 'flex-start', padding: 20}}>
                     <Text style={{ fontFamily: 'Avenir-Heavy', textAlign: 'left', fontSize: 25, marginVertical: 10 }}>
-                        Which type of account do you want to create?
+                        How would you like to use Lupa?
                     </Text>
                     <Text style={{ textAlign: 'center', fontSize: 15, fontWeight: '500', color: 'rgb(142, 142, 147)', marginVertical: 5 }}>
                         Select one of the options below
@@ -306,9 +312,10 @@ class WelcomeLupaIntroduction extends React.Component {
                             OPTIONS.map((option, index, arr) => {
                                 return (
                             
-                                    <TouchableOpacity onPress={() => this.handleCheckOption(index)} style={{alignSelf: 'flex-start', paddingHorizontal: 10}}>
+                                    <TouchableOpacity onPress={() => this.handleCheckOption(option)} style={{flexDirection: 'row', alignItems: 'center', backgroundColor: this.getBackgroundColor(option), borderColor: '#EEEEEE', width: Dimensions.get('window').width - 20, borderWidth: 1, borderRadius: 12, alignSelf: 'flex-start', padding: 20}}>
+                                    <View style={{flex: 1}}>
                                     <View key={index} style={{ flexDirection: 'row', alignItems: 'center'}}>
-                                    <Text style={styles.optionText}>
+                                    <Text style={[styles.optionText, {color: this.getTextColor(option)}]}>
                                       {option.optionTitle}
                                     </Text>
                                 
@@ -316,6 +323,10 @@ class WelcomeLupaIntroduction extends React.Component {
                                 <Caption>
                                     {option.optionSubtitle}
                                 </Caption>
+                                    </View>
+
+                                    <Feather1s name="chevron-right" size={20} />
+                                   
                                 </TouchableOpacity>
                              
                                 )
@@ -351,9 +362,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     optionText: {
-        fontSize: 15,
+        fontSize: 18,
         width: '90%',
-        fontFamily: 'Avenir-Medium'
+        fontFamily: 'Avenir-Medium',
     }
 })
 

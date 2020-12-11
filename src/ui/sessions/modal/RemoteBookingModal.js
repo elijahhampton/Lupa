@@ -498,20 +498,6 @@ console.log(updatedToken)
                   No Card Found
                 </Dialog.Title>
 
-
-                <Button 
-                  onPress={() => {}}
-                  uppercase={false} 
-                  mode="text" 
-                  color="#23374d"
-                  style={{elevation: 0}}
-
-             
-                  theme={{roundness: 8}}>
-                    Learn More
-                  </Button>
-                </View>
-  
              
 
                 <Dialog.Content style={{alignSelf: 'flex-start', justifyContent: 'center'}}>

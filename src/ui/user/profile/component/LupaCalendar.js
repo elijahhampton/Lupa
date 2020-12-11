@@ -81,6 +81,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
     return state.Users.currUserData;
   });
 
+  const bookingRequestModalRef = createRef();
   const [markedDates, setMarkedDates] = useState({});
   const [displayDate, setDisplayDate] = useState(new Date());
   const [entryDate, setEntryDate] = useState('');
@@ -169,11 +170,16 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
 
   const handleCloseRequestBookingDialog = () => {
     onCloseRequestBookingDialog();
-    setBookingRequestDialogVisible(false);
+    setBookingRequestVisible(false);
   }
 
   const handleOpenRequestBookingDialog = () => {
-    setBookingRequestDialogVisible(true)
+    bookingRequestModalRef.current.open();
+
+  }
+
+  handleOpenBookingRequest = () => {
+        bookingRequestModalRef.current.open();
   }
 
   const onCloseRequestBookingDialog = () => {
@@ -293,7 +299,7 @@ height={300}>
       }
 
      return ( 
-     <Button onPress={() => setBookingRequestModalVisible(true)} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
+     <Button onPress={handleOpenRequestBookingDialog} color="#1089ff" icon={() => <Feather1s name="calendar" />}>
       <Text style={{fontSize: 12}}>
       Book Me
       </Text>
@@ -474,7 +480,7 @@ height={300}>
   style={{height: HEIGHT}}
 />
 
-<BookingRequestModal isVisible={bookingRequestModalVisible} trainer={userData} closeModal={() => setBookingRequestModalVisible(false)} />
+<BookingRequestModal ref={bookingRequestModalRef} isVisible={bookingRequestModalVisible} trainer={userData} closeModal={() => setBookingRequestModalVisible(false)} />
 <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} displayDate={displayDate} entryDate={entryDate} />
     </View>
     );
