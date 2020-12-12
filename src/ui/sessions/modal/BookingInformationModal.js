@@ -220,14 +220,14 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <FeatherIcon name="map-pin" style={{paddingHorizontal: 5}} />
                                 <Text>
-                                    {trainerUserData.trainer_metadata.exercise_space.address}
+                                    {trainerUserData.homegym.address}
                                 </Text>
                             </View>
 
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <FeatherIcon name="home" style={{paddingHorizontal: 5}} />
                                 <Text>
-                                {trainerUserData.trainer_metadata.exercise_space.name}
+                                {trainerUserData.homegym.name}
                                 </Text>
                             </View>
                            </View >

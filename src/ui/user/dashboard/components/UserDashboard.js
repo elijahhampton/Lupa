@@ -200,9 +200,6 @@ function UserDashboard(props) {
                     <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 18}}>
                         Upcoming Session
                     </Text>
-                    <Text style={{color: 'rgb(35, 73, 115)', fontWeight: '500'}}>
-                        See all
-                    </Text>
                     </View>
 
                     {renderUpcomingBooking()}
