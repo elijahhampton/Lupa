@@ -264,15 +264,14 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
     }
 
     const handleOnRequest = async () => {
-      if (LUPA_STATE.Auth.isAuthenticated === true) {
-    
-      const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, currUserData.user_uuid, trainerNote, sessionType);
+      const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid, trainerNote, sessionType);
       const booking_id = booking.uid;
 
       try {
         await LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking, true)
         closeModal()
       } catch(error) {
+        alert(error)
         LOG_ERROR('BookingRequestModal.js', 'Failed to creating booking.', error);
         //delete booking if it was created
         //check if booking was ever created?
@@ -280,7 +279,6 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
         //show warning to user
         setBookingCreationErrorDialogVisible(true);
       }
-    }
   }
 
     const handleNavigateToSettings = () => {

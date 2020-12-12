@@ -114,22 +114,23 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
     const renderAvatar = () => {
         try {
-            if (isCurrentUser) {
+            if (isCurrentUser == false) {
                 return (
-                    <Avatar key={userData.photo_url} raised={true} rounded size={60} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
+                    <Avatar key={userData.photo_url} rounded size={80} source={{ uri: profileImage }} />
                 )
             }
 
             return <Avatar key={userData.photo_url} rounded size={80} source={{ uri: profileImage }} />
         } catch (error) {
-            if (isCurrentUser) {
+            if (isCurrentUser == false) {
+                return <PaperAvatar.Icon style={{ backgroundColor: 'white' }} icon={() => <FeatherIcon name="user" size={30} />} />
+
+            } else {
                 return (
                     <Surface style={{ marginVertical: 5, elevation: 8, width: 65, height: 65, borderRadius: 65 }}>
                         <Avatar key={userData.photo_url} raised={true} rounded size={65} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
                     </Surface>
                 )
-            } else {
-                return <PaperAvatar.Icon style={{ backgroundColor: 'white' }} icon={() => <FeatherIcon name="user" size={30} />} />
             }
         }
     }

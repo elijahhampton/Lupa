@@ -170,7 +170,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
 
   const handleCloseRequestBookingDialog = () => {
     onCloseRequestBookingDialog();
-    setBookingRequestVisible(false);
+    bookingRequestModalRef.current.close();
   }
 
   const handleOpenRequestBookingDialog = () => {
@@ -480,7 +480,7 @@ height={300}>
   style={{height: HEIGHT}}
 />
 
-<BookingRequestModal ref={bookingRequestModalRef} isVisible={bookingRequestModalVisible} trainer={userData} closeModal={() => setBookingRequestModalVisible(false)} />
+<BookingRequestModal ref={bookingRequestModalRef} isVisible={bookingRequestModalVisible} trainer={userData} closeModal={handleCloseRequestBookingDialog} />
 <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} displayDate={displayDate} entryDate={entryDate} />
     </View>
     );
