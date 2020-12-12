@@ -39,6 +39,7 @@ function ReceivedBookingRequestNotification({ notificationData }) {
         return state.Users.currUserData;
     })
 
+
     const renderBookingButtons = () => {
         if (typeof(bookingData) == 'undefined') {
             return (
@@ -127,7 +128,10 @@ function ReceivedBookingRequestNotification({ notificationData }) {
 
 
         const bookingsObserver = LUPA_DB.collection('bookings').doc(notificationData.data.uid).onSnapshot(documentSnapshot => {
-            let bookingData = documentSnapshot.data();
+            const bookingData = documentSnapshot.data();
+            console.log('@@@@@@@')
+            console.log(notificationData.data.uid)
+            console.log(bookingData)
             setBookingData(bookingData)
         })
 

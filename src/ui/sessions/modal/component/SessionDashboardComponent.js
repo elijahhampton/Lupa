@@ -90,7 +90,7 @@ function SessionDashboardComponent({ booking }) {
             case SESSION_TYPE.REMOTE:
                 return 'Remote';
             case SESSION_TYPE.IN_PERSON:
-                return trainerUserData.homegym.name;
+                return trainerUserData.trainer_metadata.homegym;
         }
     }
     return (

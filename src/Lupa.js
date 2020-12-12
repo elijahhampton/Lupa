@@ -21,20 +21,10 @@ import LupaController from './controller/lupa/LupaController';
 import LupaDrawerNavigator from "./ui/navigators/LupaDrawerNavigator";
 import { connect, useSelector } from 'react-redux'
 import LUPA_DB, { generateMessagingToken, requestNotificationPermissions, registerAppWithFCM, } from "./controller/firebase/firebase";
-import { fcmService } from './controller/firebase/service/FCMService'
-import WelcomeModal from './ui/user/modal/WelcomeModal/WelcomeModal'
-import WelcomeContentDriver from "./ui/user/modal/WelcomeContentDriver";
-import {check, PERMISSIONS, RESULTS} from 'react-native-permissions';
-import getLocationFromCoordinates from './modules/location/mapquest/mapquest'
-import Geolocation from '@react-native-community/geolocation';
-import LOG from "./common/Logger";
-import CreateNewPost from "./ui/user/profile/modal/CreateNewPost";
-import PickInterest from "./ui/user/modal/WelcomeModal/PickInterest";
-import { Paragraph, Title, Button,} from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
-import Onboarding from './ui/user/modal/WelcomeModal/Onboarding'
-import Community from "./ui/community/Community";
-
+import UserOnboarding from './ui/user/modal/WelcomeModal/UserOnboarding'
+import TrainerOnboarding from './ui/user/modal/WelcomeModal/TrainerOnboarding';
+import {Avatar} from 'react-native-elements';
+import WelcomeLupaIntroduction from "./ui/user/modal/WelcomeModal/WelcomeLupaIntroduction";
 
 const mapStateToProps = (state, action) => {
   return {

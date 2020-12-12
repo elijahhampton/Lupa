@@ -6,13 +6,11 @@ import { ADD_WORKOUT_TO_PROGRAM_ACTION, ADD_CURRENT_USER_SERVICE_ACTION, UPDATE_
 
 
 handleUserAttributeUpdate = (state, payload) => {
-  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
   let updatedState = state.currUserData;
 
   switch(payload.attribute)
   {
     case 'isTrainer':
-      console.log('updating trainer!!!')
       updatedState.isTrainer = payload.value;
       break;
     case 'photo_url':
@@ -27,6 +25,12 @@ handleUserAttributeUpdate = (state, payload) => {
     case 'location':
       updatedState.location = payload.value;
       break;
+    case 'experience_level':
+      updatedState.client_metadata.experience_level = payload.value
+      break;
+    case 'training_styles':
+      updatedState.trainer_metadata.training_styles = payload.value;
+      break;
     case 'bio':
       updatedState.bio = payload.value;
       break;
@@ -39,8 +43,6 @@ handleUserAttributeUpdate = (state, payload) => {
     default:
       return state;
   }
-
-  console.log('AAAAAAAAAAAAAAAAAAAAAAAASDFSDFSDFAAAAAAAAAA')
 
   return updatedState;
 }

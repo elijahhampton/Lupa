@@ -78,8 +78,7 @@ class BasicInformation extends React.Component {
             showLoadingIndicator: false,
             displayNameSet: false,
             avatarSet: false,
-            experienceLevel: 'Beginner',
-            experienceLevelChosen: false,
+            trainingStyles: []
         }
     }
 
@@ -187,33 +186,40 @@ class BasicInformation extends React.Component {
 
     }
 
-    handleOnPickExperienceLevel = async (level) => {
-        if (typeof(level) == 'undefined') {
+    handleOnPickTrainingStyle = async (style) => {
+        if (typeof(style) == 'undefined') {
             return;
         }
 
-        await this.setState({ experienceLevel: level, experienceLevelChosen: true }, () => {  
-            const reduxPayload = getUpdateCurrentUserAttributeActionPayload('experience_level', this.state.experienceLevel);
-            this.props.updateCurrentUserAttribute(reduxPayload)
-        });
+        let updatedTrainingStyleList = this.state.trainingStyles;
+        if (updatedTrainingStyleList.includes(style)) {
+            updatedTrainingStyleList.splice(updatedTrainingStyleList.indexOf(style), 1);
+        } else {
+            updatedTrainingStyleList.push(style);
+        }
 
-        this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.props.lupa_data.Users.currUserData.user_uuid, 'client_metadata').then((data) => {
-            let client_metadata = data;
-            client_metadata.experience_level = this.state.experienceLevel
-            this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('client_metadata', client_metadata);
+        await this.setState({ trainingStyles: updatedTrainingStyleList }, () => {
+            const reduxPayload = getUpdateCurrentUserAttributeActionPayload('training_styles', this.state.trainingStyles);
+            this.props.updateCurrentUserAttribute(reduxPayload)
         })
-    }
+
+        let trainer_metadata;
+        this.LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(this.props.lupa_data.Users.currUserData.user_uuid, 'trainer_metadata').then((data) => {
+            trainer_metadata = data;
+            trainer_metadata.trainer_styles = this.state.trainingStyles;
+            this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('trainer_metadata', trainer_metadata);
+        });
+    } 
 
 
     render() {
-       this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true && this.state.experienceLevelChosen == true ? this.enableNext() : this.disableNext()
+       this.state.displayNameSet == true && this.state.displayNameIsInvalid == true && this.state.avatarSet == true && this.state.trainingStyles.length > 0 == true ? this.enableNext() : this.disableNext()
         return (
-                <SafeAreaView style={[styles.flexFull, { }]}>
-           
-                
+                <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
                     <View style={{ marginVertical: 20}}>
-                        <View 
+                    <View 
                         style={{
+                            paddingHorizontal: 20,
                             width: '100%', 
                             flexDirection: 'row', 
                             alignItems: 'center', 
@@ -235,7 +241,6 @@ class BasicInformation extends React.Component {
                             Start by adding a profile picture and telling us your name.
                         </Text>
                         </View>
-               
 
                         <Input 
     placeholder="What is your full name?" 
@@ -247,7 +252,7 @@ class BasicInformation extends React.Component {
         keyboardType="default"
         keyboardAppearance="light"
         returnKeyLabel="done"
-        containerStyle={{borderRadius: 12, backgroundColor: '#EEEEEE', marginVertical: 20}}
+        containerStyle={{borderRadius: 12, backgroundColor: '#EEEEEE', alignSelf: 'center', width: Dimensions.get('window').width - 20, marginVertical: 20}}
         inputContainerStyle={{borderWidth: 0, borderBottomWidth: 0}}
         inputStyle={{fontSize: 15, fontFamily: 'Avenir-Medium'}}
     />
@@ -255,65 +260,55 @@ class BasicInformation extends React.Component {
 
                         <View style={{flex: 1,  justifyContent: 'space-evenly', alignItems: 'center'}}>
                             <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 18}}>
-                                What is your experience level?
+                                Choose your desired training styles
                             </Text>
 
-                            <TouchableOpacity onPress={() => this.handleOnPickExperienceLevel('Beginner')}>
-                            <View style={[styles.baseContainerStyle, this.state.experienceLevel == 'Beginner' ? styles.selectedContainerStyle : styles.unselectedContainerStyle]}>
-                                <Text style={[styles.baseTextStyle, this.state.experienceLevel == 'Beginner' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Beginner
+                            <TouchableOpacity onPress={() => this.handleOnPickTrainingStyle('In Home')}>
+                            <View style={[styles.baseContainerStyle, this.state.trainingStyles.includes('In Home') ? styles.selectedContainerStyle : styles.unselectedContainerStyle]}>
+                                <Text style={[styles.baseTextStyle, this.state.trainingStyles.includes('In Home') ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
+                                    In Home
                                 </Text>
-                                <Text style={[styles.baseSubTextStyle, this.state.experienceLevel == 'Beginner' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Less than 4 years
+                                <Text style={[styles.baseSubTextStyle, this.state.trainingStyles.includes('In Home') ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
+                                    Host training sessions at your home.
                                 </Text>
                             </View>
                             </TouchableOpacity>
                             
-                            <TouchableOpacity onPress={() => this.handleOnPickExperienceLevel('Intermediate')}>
-                            <View style={[styles.baseContainerStyle, this.state.experienceLevel == 'Intermediate' ? styles.selectedContainerStyle : styles.unselectedContainerStyle]}>
-                            <Text style={[styles.baseTextStyle, this.state.experienceLevel == 'Intermediate' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Intermediate
+                            <TouchableOpacity onPress={() => this.handleOnPickTrainingStyle('In Studio')}>
+                            <View style={[styles.baseContainerStyle, this.state.trainingStyles.includes('In Studio') ? styles.selectedContainerStyle : styles.unselectedContainerStyle]}>
+                            <Text style={[styles.baseTextStyle, this.state.trainingStyles.includes('In Studio') ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
+                                    In Studio
                                 </Text>
-                                <Text style={[styles.baseSubTextStyle, this.state.experienceLevel == 'Intermediate' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Less than 4 years
-                                </Text>
-                            </View>
-                            </TouchableOpacity>
-
-
-                            <TouchableOpacity onPress={() => this.handleOnPickExperienceLevel('Advanced')}>
-                            <View style={[styles.baseContainerStyle, this.state.experienceLevel == 'Advanced' ? styles.selectedContainerStyle : styles.unselectedContainerStyle]}>
-                            <Text style={[styles.baseTextStyle, this.state.experienceLevel == 'Advanced' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Advanced
-                                </Text>
-                                <Text style={[styles.baseSubTextStyle, this.state.experienceLevel == 'Advanced' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Less than 4 years
+                                <Text style={[styles.baseSubTextStyle, this.state.trainingStyles.includes('In Studio') ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
+                                    Host training sessions in a studio.
                                 </Text>
                             </View>
                             </TouchableOpacity>
 
 
-                            <TouchableOpacity onPress={() => this.handleOnPickExperienceLevel('Very Advanced')}>
-                            <View style={[styles.baseContainerStyle, this.state.experienceLevel == 'Very Advanced' ? styles.selectedContainerStyle : styles.unselectedContainerStyle]}>
-                            <Text style={[styles.baseTextStyle, this.state.experienceLevel == 'Very Advanced' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Very Advanced
+                            <TouchableOpacity onPress={() => this.handleOnPickTrainingStyle('Virtual')}>
+                            <View style={[styles.baseContainerStyle, this.state.trainingStyles.includes('Virtual') ? styles.selectedContainerStyle : styles.unselectedContainerStyle]}>
+                            <Text style={[styles.baseTextStyle, this.state.trainingStyles.includes('Virtual') ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
+                                    Virtual
                                 </Text>
-                                <Text style={[styles.baseSubTextStyle, this.state.experienceLevel == 'Very Advanced' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Less than 4 years
+                                <Text style={[styles.baseSubTextStyle, this.state.trainingStyles.includes('Virtual') ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
+                                    Host training sessions remotely.
+                                </Text>
+                            </View>
+                            </TouchableOpacity>
+
+
+                            <TouchableOpacity onPress={() => this.handleOnPickTrainingStyle('Outdoor')}>
+                            <View style={[styles.baseContainerStyle, this.state.trainingStyles.includes('Outdoor')  ? styles.selectedContainerStyle : styles.unselectedContainerStyle]}>
+                            <Text style={[styles.baseTextStyle, this.state.trainingStyles.includes('Outdoor') ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
+                                    Outdoor
+                                </Text>
+                                <Text style={[styles.baseSubTextStyle, this.state.trainingStyles.includes('Outdoor') ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
+                                    Host training sessions at an outdoor venue.
                                 </Text>
                             </View>
                             </TouchableOpacity>
                         </View>
-       
-             
-
-       
-    
-
-    
-
-
-
             </SafeAreaView>
         )
     }
@@ -325,7 +320,6 @@ const styles = StyleSheet.create({
     },
     flexFull: {
         flex: 1,
-        marginHorizontal: 20,
     },
     baseContainerStyle: {
         padding: 20, 
@@ -335,7 +329,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     selectedContainerStyle: {
-        backgroundColor: 'black', 
+        backgroundColor: '#1089ff', 
     },
     unselectedContainerStyle: {
         backgroundColor: 'white',

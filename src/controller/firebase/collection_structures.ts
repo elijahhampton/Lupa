@@ -56,6 +56,7 @@ var lupa_user : LupaUserStructure = {
     client_metadata: {
         physicalActivityStatus: "Non Active",
         hoursMovingPerDay: 0,
+        experience_level: 'Beginner',
         hasElevatedHeartRateDuringPhysicalActivity: false,
         currentlyExercises: false,
         daysPerWeekExercises: 0,
@@ -70,6 +71,7 @@ var lupa_user : LupaUserStructure = {
     trainer_metadata: {
         hasOwnExerciseSpace: false,
         belongsToTrainerGym: false,
+        training_styles: [],
         hasExperienceInSmallGroupSettings: false,
         smallGroupExperienceYears: 0,
         isInHomeTrainer: false,

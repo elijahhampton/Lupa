@@ -415,7 +415,7 @@ console.log(status)
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Terms and Conditions" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                     </View>
                     
-                    <HomeGymModal isVisible={homeGymModalIsVisible} closeModal={() => setHomeGymModalIsVisible(false)} />
+                 
                     <UpdateCard isVisible={updateCardModalIsVisible} closeModal={() => setUpdateCardModalIsVisible(false)} />
                     <StripeVerificationStatusModal isVisible={registrationModalIsVisible} closeModal={() => setRegistrationModalVisible(false)} userData={updatedUserData} verificationStatus={verificationStatus} verificationErrors={verificationErrors} />
                 </ScrollView>

@@ -14,6 +14,7 @@ import {
     Button,
     Chip,
     Divider,
+    Paragraph,
     Appbar,
     Surface,
     DataTable,
@@ -84,11 +85,30 @@ function TrainerDashboard(props) {
 
 
     const renderUpcomingBooking = () => {
-        if (true) {
+        if (userBookings.length === 0) {
             return (
-                <Caption style={{padding: 20}}>
-                    You don't have any scheduled bookings.
-                </Caption>
+                <View style={{padding: 10}}>
+  <Paragraph style={{color: '#212121', fontFamily: 'Avenir-Medium'}}>
+                <Text>
+                    You don't have any scheduled bookings.{" "}
+                    </Text>
+                    <Text>
+                       Visit the search page to find a variety of Lupa trainers and fitness programs.
+                    </Text>
+                </Paragraph>
+
+                <Button 
+                uppercase={false}
+                onPress={() => navigation.push('Search')} 
+                style={{marginVertical: 10, width: '100%', elevation: 0}} 
+                contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
+                mode="contained" 
+                theme={{roundness: 12}} 
+                color="#1089ff">
+                    Search Trainers and Fitness Programs
+                </Button>
+                </View>
+              
             )
         }
 

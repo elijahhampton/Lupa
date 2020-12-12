@@ -11,6 +11,7 @@ import AuthenticationNavigator from './src/ui/navigators/AuthenticationNavigator
 import Lupa from './src/Lupa';
 import SplashScreen from 'react-native-splash-screen'
 import { connect } from 'react-redux';
+import UserOnboarding from './src/ui/user/modal/WelcomeModal/UserOnboarding'
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -68,7 +69,7 @@ const App = () => {
           <AppNavigator />
         </PaperProvider>
       </StoreProvider>
-    </NavigationContainer>
+   </NavigationContainer>
   )
 }
 
