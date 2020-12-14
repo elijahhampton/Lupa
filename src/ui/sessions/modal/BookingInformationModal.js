@@ -114,6 +114,8 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                 currency: CURRENCY,
                 source: requesterUserData.stripe_metadata.card_source,
                 idempotencyKey: idempotencyKey,
+                trainer_uuid: trainerUserData.user_uuid,
+                purchaser_uuid: requesterUserData.user_uuid,
             })
         }).then(response => {
             console.log(response);
@@ -277,7 +279,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                                 </Paragraph>
                            </ View >
 
-                            <Divider />
+                          {/*  <Divider />
 
                            < View style={{  padding: 10, borderRadius: 3,   backgroundColor: 'white'}}>
                                 <Text style={{fontFamily: 'Avenir-Light', paddingVertical: 10}}>
@@ -288,11 +290,20 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                                     {renderEquipmentList()}
                                 </View>
                                 
-                           </ View>
+                          </ View> */}
 
 
-                           <Button mode="contained" color="#23374d" onPress={showBookingOptions} contentStyle={{height: 50, width: Dimensions.get('window').width - 10}} style={{marginVertical: 50, marginHorizontal: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 3, elevation: 5}}>
-                               Session Options
+                           <Button 
+                           mode="contained" 
+                           color="#23374d" 
+                           onPress={showBookingOptions} 
+                           theme={{roundness: 12}}
+                           uppercase={false}
+                           contentStyle={{height: 45, width: Dimensions.get('window').width - 10}} 
+                           style={{marginVertical: 50, marginHorizontal: 10, alignItems: 'center', justifyContent: 'center', elevation: 0}}>
+                               <Text style={{fontFamily: 'Avenir'}}>
+                                   Session Options
+                               </Text>
                            </Button>
 
                     </ScrollView>

@@ -75,9 +75,9 @@ export default class ProgramController {
 
     handleMatchAndCreatePack = (programData, chosenFourUUIDS, createNewPack) => {
         //create new pack structure
-        const newPack = initializeNewPackWithMembers('Lupa_Pack398', chosenFourUUIDS[0], programData, [], chosenFourUUIDS);
+       // const newPack = initializeNewPackWithMembers('Lupa_Pack398', chosenFourUUIDS[0], programData, [], chosenFourUUIDS);
         //create new pack
-        createNewPack(newPack)        
+       // createNewPack(newPack)        
     } 
 
     checkProgramWaitlistForMatches = async (programUID, userData, createNewPack) => {
@@ -203,20 +203,26 @@ export default class ProgramController {
     getAllUserPrograms = async (uuid) => {
         let programsList = [];
         let programDataList = [];
-        try {
-            await USERS_COLLECTION.doc(uuid).get().then(snapshot => {
-                programsList = snapshot.data().programs;
-            });
 
+            await USERS_COLLECTION
+            .doc(uuid)
+            .get()
+            .then(snapshot => {
+                programsList = snapshot.data().programs;
+            })
+            .catch(error => {
+                return Promise.resolve([]);
+            })
+
+            let programData = getLupaProgramInformationStructure()
             for (let i = 0; i < programsList.length; i++) {
                 await PROGRAM_COLLECTION.doc(programsList[i]).get().then(snapshot => {
-                    programDataList.push(snapshot.data());
+                    programData = snapshot.data();
+                    if (typeof(programData) != 'undefined') {
+                        programDataList.push(snapshot.data());
+                    }
                 })
             }
-        } catch (error) {
-
-            return Promise.resolve([]);
-        }
 
         return Promise.resolve(programDataList)
     }

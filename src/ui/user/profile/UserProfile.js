@@ -185,7 +185,7 @@ function UserProfile({uuid, userData, isCurrentUser }) {
     }
 
     const renderLocation = () => {
-        return <Text style={[styles.userAttributeText, { color: 'rgb(35, 73, 115)', fontFamily: 'Avenir-Heavy' }]}>{userData.location.city}, {userData.location.state}</Text>
+        return <Text style={[styles.userAttributeText, { color: 'rgb(35, 73, 115)', fontFamily: 'Avenir-Light' }]}>{userData.location.city}, {userData.location.state}</Text>
     }
 
     const renderDisplayName = () => {
@@ -233,13 +233,13 @@ function UserProfile({uuid, userData, isCurrentUser }) {
 
                                 return (
                                     <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: 'rgb(58, 58, 61)' }}>
-                                        {interest} {" "}
+                                        {interest}, {" "}
                                     </Text>
 
                                 )
                             })
                         }
-                        {trainingInterestTextVisible === true ? <Caption style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff' }}> and 3 more... </Caption> : null}
+                        {trainingInterestTextVisible === true ? <Caption style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff' }}> and more...</Caption> : null}
                     </View>
 
                 </View>
@@ -352,7 +352,7 @@ function UserProfile({uuid, userData, isCurrentUser }) {
             </Appbar.Header>
             <ScrollView>
                 <View>
-                <View style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+                <View style={{ backgroundColor: '#FFFFFF' }}>
                         <View style={styles.userInformationContainer}>
                             <View style={styles.infoContainer}>
                                 {renderDisplayName()}
@@ -383,7 +383,7 @@ function UserProfile({uuid, userData, isCurrentUser }) {
                     </View>
                     {renderInteractions()}
                 </View>
-                <Tabs tabBarUnderlineStyle={{ height: 0, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF' >
+                <Tabs tabBarUnderlineStyle={{ backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF' >
                     <Tab tabStyle={{backgroundColor: '#FFFFFF'}} activeTabStyle={{backgroundColor: '#FFFFFF'}}  activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
                         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                             {renderVlogs()}
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        backgroundColor: 'rgb(247, 247, 247)'
+        backgroundColor: '#FFFFFF'
     },
     infoContainer: {
         flex: 3,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Light',
     },
     appbar: {
-        backgroundColor: 'rgb(247, 247, 247)',
+        backgroundColor: '#FFFFFF',
         elevation: 0,
         justifyContent: 'space-between',
         paddingHorizontal: 20,
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
     },
     userAttributeText: {
         fontSize: 13,
-        fontFamily: 'Avenir',
+        fontFamily: 'Avenir-Light',
 
     }
 })

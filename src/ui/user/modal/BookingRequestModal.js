@@ -1,4 +1,4 @@
-import React, { useState, createRef } from 'react';
+import React, { useState, useEffect, createRef } from 'react';
 
 import {
     View,
@@ -49,7 +49,7 @@ import DeviceInfo from 'react-native-device-info';
 import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../controller/lupa/LupaController'
 import { getNewBookingStructure } from '../../../model/data_structures/user/booking';
-import { LUPA_AUTH } from '../../../controller/firebase/firebase';
+import LUPA_DB, { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import { BOOKING_STATUS, SESSION_TYPE } from '../../../model/data_structures/user/types';
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED} from '../../../modules/payments/stripe';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
@@ -109,7 +109,9 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
   const [bookingDate, setBookingDate] = useState(new Date());
   const [sessionTypeDialogIsVisible, setSessionTypeDialogIsVisible] = useState(false);
 
+  const [cardAddedToStripeStatus, setCardAddedToStripeStatus] = useState(false)
   const [timeBlockDialogVisible, setTimeBlockDialogVisible] = useState(false);
+  const updatedUserData = getLupaStoreState().Users.currUserData;
 
   const renderSessionTypeDialog = () => {
     return (
@@ -264,6 +266,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
     }
 
     const handleOnRequest = async () => {
+
       const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid, trainerNote, sessionType);
       const booking_id = booking.uid;
 
@@ -288,7 +291,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 
     const renderCardNeededDialog = () => {
       return (
-        <Dialog visible={showCardNeededDialog} style={{height: 'auto', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+        <Dialog visible={showCardNeededDialog} style={{borderRadius: 12, height: 'auto', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
 
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <Dialog.Title style={{alignSelf: 'center', fontWeight: 'bold', fontFamily: 'Avenir-Heavy'}}>
@@ -299,26 +302,14 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
            
 
               <Dialog.Content style={{alignSelf: 'flex-start', justifyContent: 'center'}}>
-                <Text style={{color: 'rgb(144, 144, 144)', paddingVertical: 5}}>
+                <Paragraph style={{fontFamily: 'Avenir'}}>
                   Lupa requires that you have a card saved before booking a session.  
-                </Text>
+                </Paragraph>
 
               </Dialog.Content>
 
               <Dialog.Actions style={{alignItems: 'center', justifyContent: 'flex-end'}}>
-             
-
-                <Button 
-                onPress={() => setShowCardNeededDialogVisible(false)}
-                uppercase={false} 
-                mode="outlined" 
-                color="#23374d"
-                style={{elevation: 0, marginHorizontal: 5}}
-                contentStyle={{padding: 3}}
-                theme={{roundness: 8}}>
-                  Cancel
-                </Button>
-
+            
                 <Button 
                 onPress={handleNavigateToSettings}
                 uppercase={false} 
@@ -327,7 +318,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
                 style={{elevation: 0, marginHorizontal: 5}}
                 contentStyle={{padding: 3}}
                 theme={{roundness: 8}}>
-                  Add Card
+                  Go to settings
                 </Button>
               
 
@@ -474,6 +465,8 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 </View>
 
 <Divider />
+
+<View>
 <Button 
 onPress={handleOnRequest}
 mode="contained" 
@@ -489,7 +482,7 @@ theme={{roundness: 12}}>
 
 <Button 
 onPress={closeModal}
-mode="text" 
+mode="outlined" 
 color="black"
 uppercase={false}
 style={{alignSelf: 'center', elevation: 0, marginVertical: 5}} 
@@ -497,6 +490,8 @@ contentStyle={{width: Dimensions.get('window').width - 20, height: 45}}
 theme={{roundness: 12}}>
   Cancel
 </Button>
+</View>
+
 
             
         </View>

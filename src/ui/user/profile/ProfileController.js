@@ -103,9 +103,6 @@ const ProfileController = ({ route }) => {
                 const userData = documentSnapshot.data()
                 setUserData(userData)
             });
-
-
-
         }
 
         try {

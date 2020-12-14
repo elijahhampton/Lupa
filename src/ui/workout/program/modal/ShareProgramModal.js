@@ -46,22 +46,6 @@ function ShareProgramModal({ navigation, route }) {
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
-    useEffect(() => {
-        let recentlyInteractedUsersList = retrieveAsyncData('RECENTLY_INTERACTED_USERS');
-        if (typeof(recentlyInteractedUsersList) == 'undefined' || typeof(recentlyInteractedUsersList) != 'object') {
-            setRecentlyInteractedUsers([])
-            storeAsyncData('RECENTLY_INTERACTED_USERS', []);
-        } else {
-            try {
-            LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(recentlyInteractedUsersList).then(data => {
-                setRecentlyInteractedUsers(data)
-            })
-        } catch(error) {
-            setRecentlyInteractedUsers([])
-        }
-        }
-    }, [])
-
     const handleAddToFollowList = (userObject) => {
         const updatedList = selectedUsers;
         const updatedDisplayedUserlist = displaydUsers;
@@ -130,17 +114,6 @@ function ShareProgramModal({ navigation, route }) {
         })
     }
 
-    const mapRecentlyInteractedUsers = () => {
-        return recentlyInteractedUsers.map(user => {
-            return <UserSearchResult 
-            userData={user} 
-            hasButton={true}
-            buttonTitle="Share"
-            buttonOnPress={() => handleAddToFollowList(user)}
-            />
-        })
-    }
-
     const performSearch = async searchQuery => {
         let searchResultsIn = []
 
@@ -195,25 +168,11 @@ function ShareProgramModal({ navigation, route }) {
                     </ScrollView>
                               <Divider />
                               <View>
-                <SearchBar placeholder="Search fitness programs"
-                    onChangeText={text => performSearch(text)}
-                    platform="ios"
-                    searchIcon={<FeatherIcon name="search" size={15} color="#1089ff" />}
-                    containerStyle={styles.searchContainerStyle}
-                    inputContainerStyle={styles.inputContainerStyle}
-                    inputStyle={styles.inputStyle}
-                    placeholderTextColor="#212121"
-                    value={searchValue} />
                    
         </View>
   
                     <ScrollView shouldRasterizeIOS={true}>
-                    {
-                        searching === true ?
-                        mapSearchResults()
-                        :
-                        mapRecentlyInteractedUsers()
-                    }
+                  
                 </ScrollView>
                     </View>
 

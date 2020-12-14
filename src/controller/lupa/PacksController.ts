@@ -57,25 +57,32 @@ export default class PackController {
 
     createPack = async (newPack : PackType) => {
         let newPackUUID = "";
+        const invitedMembers = newPack.invited_members;
 
         await PACKS_COLLECTION.add(newPack)
         .then((docRef) => {
             newPackUUID = docRef.id
-
-            const members = newPack.members;
-            PACKS_COLLECTION.doc(docRef.id)
-            .update({ uid: docRef.id, members: [newPack.leader] });
-            
-            this.sendPackInvite(newPack, members);
         }).catch(error => {
+            alert(error)
+            console.log(error)
             return Promise.resolve(-1);
         });
 
+        await PACKS_COLLECTION
+        .doc(newPackUUID)
+        .update({ uid: newPackUUID, members: [newPack.leader] })
+
+        
         if (typeof(newPackUUID) === 'undefined' || newPackUUID == "") {
             return Promise.resolve(-1);
-        } 
+        }  else {
+            newPack.uid = newPackUUID; //LOOK AT THIS AGAIN.. BAD
+            this.sendPackInvite(newPack, invitedMembers);
+        }
 
-        USERS_COLLECTION.doc(newPack.leader).get().then(documentSnapshot => {
+        USERS_COLLECTION.doc(newPack.leader)
+        .get()
+        .then(documentSnapshot => {
             let updatedPacks = documentSnapshot.data().packs;
             updatedPacks.push(newPackUUID)
 
@@ -88,6 +95,7 @@ export default class PackController {
     }
 
     inviteUserToPack = async (uuid, packData) => {
+        console.log('INVITING USER WITH ID: ' + uuid)
          //create notification
          const receivedPackInviteNotificationStructure = {
             notification_uuid: Math.random().toString(),
@@ -106,11 +114,12 @@ export default class PackController {
         const INVITED_USER_DOC_REF = USERS_COLLECTION.doc(uuid);
 
 
-
+        console.log('got the data')
         await INVITED_USER_DOC_REF.get().then(snapshot => {
             userNotifications = snapshot.data().notifications;
         });
 
+        console.log('about to udpate')
         await userNotifications.push(receivedPackInviteNotificationStructure);
 
         INVITED_USER_DOC_REF.update({
@@ -326,6 +335,9 @@ export default class PackController {
         const INVITED_USER_DOC_REF = USERS_COLLECTION.doc(userUID);
         const PACK_DOC_REF = PACKS_COLLECTION.doc(packUID);
 
+        console.log('USERID DSFSDFSD: ' + userUID);
+        console.log(packUID)
+
         //update user pack list
         let invitedUserData = getLupaUserStructurePlaceholder();
         await INVITED_USER_DOC_REF.get()
@@ -351,14 +363,18 @@ export default class PackController {
 
         //remove member from invite list
         updatedInviteList.splice(updatedInviteList.indexOf(userUID), 1);
+        packData.invited_members = updatedInviteList;
 
         //add to members list
-        updatedMembers.push(packUID)
+        updatedMembers.push(userUID)
+        packData.members = updatedMembers;
 
         PACK_DOC_REF.update({
             invited_members: updatedInviteList,
             members: updatedMembers
-        })
+        });
+
+        return Promise.resolve(packData);
     }
 
     handleOnDeclinePackInvite = async (packUID, userUID) => {

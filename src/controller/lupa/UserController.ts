@@ -2312,49 +2312,29 @@ export default class UserController {
     }
 
     fetchMyClients = async (uuid: String): Promise<Array<Object>> => {
-        let bookingDataEntry = {
-            user_uuid: undefined,
-            booking_date: undefined
-        }
-        let bookingData: Array<Object> = []
-        let docData = getBookingStructure();
+        let userData = getLupaUserStructurePlaceholder();
 
-        await LUPA_DB.collection('bookings').where('trainer_uuid', '==', uuid).get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                docData = doc.data();
-
-                //check if the user is undefined
-                if (typeof (docData) == 'undefined') {
-                    return;
-                }
-
-                //check if we have already added the user into the arr
-                for (let i = 0; i < bookingData.length; i++) {
-                    if (bookingData[i].user_uuid === docData.requester_uuid) {
-                        return;
-                    }
-                }
-
-                if (docData.status == BOOKING_STATUS.BOOKING_COMPLETED) {
-                    bookingDataEntry.user_uuid = docData.requester_uuid;
-                    bookingDataEntry.booking_date = docData.date_requested;
-                    bookingData.push(bookingDataEntry);
-                }
-
-            });
+        await USER_COLLECTION
+        .doc(uuid)
+        .get()
+        .then(documentSnapshot => {
+            userData = documentSnapshot.data();
         });
 
-        //Retrieve anymore relevant data from the user
-        docData = getLupaUserStructurePlaceholder()
-        for (let i = 0; i < bookingData.length; i++) {
-            await USER_COLLECTION.doc(bookingData[i].user_uuid).get().then(documentSnapshot => {
-                docData = documentSnapshot.data();
-                bookingData[i].display_name = docData.display_name;
-                bookingData[i].photo_url = docData.photo_url;
-            })
+        let clients = userData.clients;
+        let clientsData = []
+
+        if (typeof(clients) == 'undefined') {
+            clientsData = []
+        } else {
+            for (let i = 0; i < clients.length; i++) {
+                await this.getUserInformationByUUID(clients[i]).then(data => {
+                    clientsData.push(data);
+                })
+            }
         }
 
-        return Promise.resolve(bookingData);
+        return Promise.resolve(clientsData);
     }
 
     deleteBooking = (booking_uuid: String, trainer_uuid: String, requester_uuid: String): Boolean => {

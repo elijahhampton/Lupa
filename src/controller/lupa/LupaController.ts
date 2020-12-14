@@ -7,6 +7,7 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 import PackController from './PacksController';
+import { initializeNewPack } from '../../model/data_structures/packs/packs';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -460,7 +461,11 @@ export default class LupaController {
     }
 
     handleOnAcceptPackInvite = (packUID, userUID) => {
-      PACKS_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, userUID);
+      return new Promise((resolve, reject) => {
+        PACKS_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, userUID).then(data => {
+          resolve(data);
+        });
+      })
     }
 
     handleOnDeclinePackInvite = (packUID, userUID) => {

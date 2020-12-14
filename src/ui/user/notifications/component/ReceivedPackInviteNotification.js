@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     View,
     Text,
@@ -26,6 +26,8 @@ import getBookingStructure from '../../../../model/data_structures/user/booking'
 import { BOOKING_STATUS, SESSION_TYPE } from '../../../../model/data_structures/user/types';
 import moment from 'moment';
 import { LOG_ERROR } from '../../../../common/Logger';
+import { ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PACKS_ACTION } from '../../../../controller/redux/actionTypes';
+import { getLupaStoreState } from '../../../../controller/redux';
 
 const {windowWidth} = Dimensions.get('window').width
 
@@ -34,6 +36,7 @@ function ReceivedPackInviteNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const [packData, setPackData] = useState(notificationData.data);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+    const dispatch = useDispatch();
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -60,6 +63,17 @@ function ReceivedPackInviteNotification({ notificationData }) {
     const handleOnAcceptPackInvite = () => {
         const packUID = notificationData.data.uid;
         LUPA_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, currUserData.user_uuid)
+        .then(data => {
+            console.log('WOOO ACCEPTED AND GOT DATA back')
+            console.log(data);
+            dispatch({ type: ADD_CURRENT_USER_PACK, payload: data })
+        }).then(() => {
+            console.log('OKay now lets look at the data')
+            console.log(getLupaStoreState().Packs.currUserPacksData)
+        })
+
+
+        console.log(getLupaStoreState().Packs.currUserPacksData)
     }
 
     const handleOnDeclinePackInvite = () => {

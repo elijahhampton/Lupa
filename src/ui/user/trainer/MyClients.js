@@ -37,7 +37,7 @@ const MyClients = ({ navigation, route }) => {
 
     useEffect(() => {
         async function fetchClientData(uuid) {
-            LUPA_CONTROLLER_INSTANCE.fetchMyClients(uuid).then(data => {
+            await LUPA_CONTROLLER_INSTANCE.fetchMyClients(uuid).then(data => {
                 setMyClientData(data)
             })
             .catch(error => {

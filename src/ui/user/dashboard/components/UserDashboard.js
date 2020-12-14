@@ -86,11 +86,6 @@ function UserDashboard(props) {
 
     const handleOnRefresh =  React.useCallback(() => {
         setRefreshing(true);
-        /*const programsToCheck = currUserData.waitlisted_programs
-        for (let i = 0; i < programsToCheck.length; i++) {
-            alert('refreshing on: ' + programsToCheck[i])
-            LUPA_CONTROLLER_INSTANCE.checkProgramWaitlistForMatches(programsToCheck[i], currUserData);
-        }*/
         setRefreshing(false);
     }, []);
 

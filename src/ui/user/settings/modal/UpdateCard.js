@@ -14,7 +14,7 @@ import {
     TextInput
 } from 'react-native-paper';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import LupaColor from '../../../common/LupaColor';
@@ -22,6 +22,8 @@ import { createStripeCustomerAccount, createTokenFromCard, initStripe } from '..
 import { LOG_ERROR } from '../../../../common/Logger';
 import FullScreenLoadingIndicator from '../../../common/FullScreenLoadingIndicator';
 import { getLupaStoreState } from '../../../../controller/redux/index'
+import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../../controller/redux/actionTypes';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
 function UpdateCard({ closeModal, isVisible }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -45,8 +47,9 @@ function UpdateCard({ closeModal, isVisible }) {
     const [cvcInputFocused, setCvcInputFocused] = useState("");
 
     const [fullScreenIndicatorIsVisible, setFullScreenIndicatorVisible] = useState(false)
+    const dispatch = useDispatch();
 
-    const handleUpdateCard = () => {
+    const handleUpdateCard = async () => {
         setFullScreenIndicatorVisible(true)
         try {
             initStripe();
@@ -63,12 +66,14 @@ function UpdateCard({ closeModal, isVisible }) {
               }
 
               const updatedUserData = getLupaStoreState().Users.currUserData;
-              console.log(updatedUserData.stripe_metadata.stripe_id)
-              console.log('UTUTUTUTUTTU')
               const cardLastFour = cardNumber.substring(cardNumber.length - 4, cardNumber.length - 1);
     
               //TODO: REFRESH STRIPE ID IN REDUX
-            createTokenFromCard(params, updatedUserData.stripe_metadata.stripe_id, cardLastFour)
+            await createTokenFromCard(params, updatedUserData.stripe_metadata.stripe_id, cardLastFour).then(data => {
+                const payload = getUpdateCurrentUserAttributeActionPayload('stripe_metadata', data);
+                dispatch({ type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload })
+            })
+           
         } catch(error) {
             LOG_ERROR('UpdateCard.js', 'Caught unhandled exception in createTokenFromCard', error)
             setFullScreenIndicatorVisible();

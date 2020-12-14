@@ -2,7 +2,7 @@
 import React, {Component, createRef} from "react";
 import {Animated,ScrollView,  Image, Dimensions, Platform, Text, View, RefreshControl} from 'react-native';
 import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
-import { Banner, FAB, Appbar, Divider , Surface, Menu} from 'react-native-paper';
+import { Banner, FAB, Appbar, Divider , Surface, Menu, Dialog, Paragraph, Button} from 'react-native-paper';
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import GuestView from './GuestView';
@@ -33,6 +33,36 @@ const mapStateToProps = (state, action) => {
   }
 }
 
+function PackLeaderLimitDialog({ isVisible, closeDialog }) {
+  return (
+    <Dialog visible={isVisible} onDismiss={closeDialog} style={{borderRadius: 20}}>
+      <Dialog.Title>
+        Leader Limit Reached
+      </Dialog.Title>
+      <Dialog.Content>
+        <Paragraph>
+          You've reached the limit of packs that you are allowed to join.  Delete a pack or try creating a pack at a later date.
+        </Paragraph>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Button
+        style={{alignSelf: 'flex-end', elevation: 0}}
+        contentStyle={{paddingHorizontal: 10}}
+        color="#1089ff"
+        theme={{roundness: 8}}
+        uppercase={false}
+        mode="contained"
+        onPress={closeDialog}
+        >
+          <Text style={{fontFamily: 'Avenir', fontSize: 15}}>
+            Okay
+          </Text>
+        </Button>
+      </Dialog.Actions>
+    </Dialog>
+  )
+}
+
 export class LupaHome extends Component {
 
   constructor(props) {
@@ -44,6 +74,7 @@ export class LupaHome extends Component {
       refreshing: false,
       showTrainerContent: false,
       currTab: 0,
+      showPackLeaderLimitReachedDialog: false,
     }
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -76,18 +107,13 @@ export class LupaHome extends Component {
 
   renderAppropriateSecondaryTab = () => {
     const updatedUserState = getLupaStoreState().Users.currUserData;
-    if (updatedUserState.isTrainer == true) {
-      return (
-        <Tab heading="My Programs" {...TAB_PROPS}>
-          <MyPrograms />
-      </Tab>
-      )
+    if (updatedUserState.isTrainer == false) {
+      return null
     } else {
       return (
-       /* <Tab heading="Workout log" {...TAB_PROPS}>
-        <WorkoutLog navigation={this.props.navigation} />
-      </Tab>*/
-      null
+        <Tab heading="My Programs" {...TAB_PROPS}>
+        <MyPrograms />
+    </Tab>
       )
     }
   }
@@ -108,6 +134,22 @@ export class LupaHome extends Component {
   }
 
   handleOnChooseCreatePack = () => {
+    const userPacks = getLupaStoreState().Packs.currUserPacksData;
+    const updatedUserState = getLupaStoreState().Users.currUserData;
+
+    
+    let count = 0;
+    for (let i = 0; i < userPacks.length; i++) {
+        if (userPacks[i].leader == updatedUserState.user_uuid) {
+          count++;
+        }
+    }
+
+    if (count >= 2) {
+      this.setState({ showPackLeaderLimitReachedDialog: true })
+      return;
+    }
+
     this.setState({ createIsVisble: false }, this.handleOpenCreatePack);
   }
 
@@ -128,6 +170,7 @@ export class LupaHome extends Component {
                 <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} />}/>
                 }>
                     <Menu.Item 
+            
                     onPress={this.handleOnChooseCreatePack} 
                     theme={{roundness:20}} 
                     contentStyle={{borderRadius: 20, width: 'auto'}} 
@@ -172,6 +215,7 @@ export class LupaHome extends Component {
 
           {this.renderFAB()}
           <CreatePackDialog ref={this.createPackSheetRef} />
+          <PackLeaderLimitDialog isVisible={this.state.showPackLeaderLimitReachedDialog} closeDialog={() => this.setState({ showPackLeaderLimitReachedDialog: false })} />
       </View>
     );
   }

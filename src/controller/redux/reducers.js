@@ -38,6 +38,7 @@ handleUserAttributeUpdate = (state, payload) => {
       updatedState.certification = payload.value
       break;
     case 'stripe_metadata':
+      console.log('STATE UPDATED')
       updatedState.stripe_metadata = payload.value;
       break;
     default:

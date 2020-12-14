@@ -502,9 +502,12 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
             color="#23374d"
             mode="contained"
             theme={{roundness: 12}}
+            uppercase={false}
             contentStyle={{width: Dimensions.get('window').width - 50, height: 45}}
-            style={{marginVertical: 20, alignSelf: 'center', elevation: 8}}>
-              Finish
+            style={{marginVertical: 20, alignSelf: 'center', elevation: 0}}>
+              <Text style={{fontFamily: 'Avenir'}}>
+               Publish Program
+              </Text>
             </Button>
    
              </ScrollView>

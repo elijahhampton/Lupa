@@ -195,7 +195,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderLocation = () => {
-        return <Text style={[styles.userAttributeText, { color: 'rgb(35, 73, 115)', fontFamily: 'Avenir-Heavy' }]}>{userData.location.city}, {userData.location.state}</Text>
+        return <Text style={[styles.userAttributeText, { color: 'rgb(35, 73, 115)', fontFamily: 'Avenir-Light' }]}>{userData.location.city}, {userData.location.state}</Text>
     }
 
     const renderDisplayName = () => {
@@ -203,37 +203,39 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderTrainerType = () => {
-        if (userData.trainer_metadata.trainer_interest.length == 0) {
-            return;
-        }
+        if (userData.trainer_metadata.training_styles.length == 0) {
+            return (
+                <Caption>
+                    This user has not specified any fitness interest.
+                </Caption>
+            )
+        } else {
+            return (
+                <View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <Text style={styles.userAttributeText}>
+                            Interest: {" "}
+                        </Text>
+                        {
+                            userData.trainer_metadata.training_styles.map((interest, index, arr) => {
+                                if (index == 3) {
+                                    return;
+                                }
 
-        return (
+                                return (
+                                    <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: 'rgb(58, 58, 61)' }}>
+                                        {interest}, {" "}
+                                    </Text>
 
-            <View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
-                <Text numberOfLines={2} ellipsizeMode="tail">
-                <Text style={[styles.userAttributeText, { color: '#23374d' }]} >
-                    Trainer Interest: {" "}
-                </Text>
-                {
-                    userData.trainer_metadata.trainer_interest.map((type, index, arr) => {
-                        if (index == arr.length - 1) {
-                            return (
-                                <Text style={[styles.userAttributeText, { color: '#23374d' }]}>
-                                    {type}
-                                </Text>
-                            )
+                                )
+                            })
                         }
+                        {trainingInterestTextVisible === true ? <Caption style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: '#1089ff' }}> and more... </Caption> : null}
+                    </View>
 
-                        return (
-                            <Text style={[styles.userAttributeText, { color: '#23374d' }]}>
-                                {type}, {" "}
-                            </Text>
-                        );
-                    })
-                }
-                </Text>
-            </View>
-        )
+                </View>
+            )
+        }
     }
 
     const renderBio = () => {
@@ -243,7 +245,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                     You have not setup a bio.
           </Caption>
                 :
-                <Caption style={styles.bioText}>
+                <Caption style={styles.displayNameText}>
                     {userData.display_name} has not setup a bio.
         </Caption>
         }
@@ -326,11 +328,12 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
         return userPrograms.map((program, index, arr) => {
             if (typeof (program) === 'undefined') {
+
                 return;
             }
-
-
+         
             return (
+
                 <ProfileProgramCard programData={program} />
             )
         })
@@ -339,7 +342,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderInteractions = () => {
         if (!ready) { return null }
 
-       if (currUserData.user_uuid == uuid) { return; }
+       if (isCurrentUser) { return; }
 
         return (
             <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginVertical: 10 }}>
@@ -407,15 +410,16 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const fetchPrograms = async (uuid) => {
         let programs = [];
         let profilePrograms = [];
-        await LUPA_CONTROLLER_INSTANCE.getAllUserPrograms(uuid).then(data => {
+        await LUPA_CONTROLLER_INSTANCE
+        .getAllUserPrograms(uuid)
+        .then(data => {
             programs = data;
-        })
-
-        for (let i = 0; i < programs.length; i++) {
-            if (programs[i].isPublic === true) {
-                profilePrograms.push(programs[i]);
+            for (let i = 0; i < data.length; i++) {
+                if (programs[i].isPublic == true) {
+                    profilePrograms.push(programs[i]);
+                }
             }
-        }
+        })
 
         setUserPrograms(profilePrograms);
     }
@@ -438,8 +442,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             await fetchVlogs(userData.user_uuid);
 
             if (currUserData.user_uuid == userData.user_uuid) {
+          
                 setTrainerPrograms();
             } else {
+             
                 await fetchPrograms(userData.user_uuid);
             }
 
@@ -457,14 +463,14 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 setProfileImage(userData.photo_url);
                 await fetchVlogs(userData.user_uuid);
                if (currUserData.user_uuid == userData.user_uuid) {
-                setTrainerPrograms();
-            } else {
-                await fetchPrograms(userData.user_uuid);
-            }
+                    setTrainerPrograms();
+                } else {
+                    await fetchPrograms(userData.user_uuid);
+                }
 
-                let total = userData.interest.length
+                let total = userData.trainer_metadata.training_styles.length
 
-                if (userData.interest.length > 3) {
+                if (userData.trainer_metadata.training_styles.length > 3) {
                     setTrainingInterestLength(total - 3)
                     showTrailingInterestText(true)
                 } else {
@@ -481,7 +487,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         loadProfile()
         setReady(true)
         LOG('TrainerProfile.js', 'Running useEffect.')
-    }, [profileImage, ready])
+    }, [uuid])
 
     const handleOnRefresh = async () => {
         
@@ -499,10 +505,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 
                 {
                     isCurrentUser === true ?
-                    <FeatherIcon name="send" size={22} onPress={() => navigation.push('PrivateChat', {
-                        currUserUUID: currUserData.user_uuid,
-                        otherUserUUID: userData.user_uuid,
-                    })} />
+                    null
                         :
                         <FeatherIcon name="send" size={22} onPress={() => navigation.push('PrivateChat', {
                             currUserUUID: currUserData.user_uuid,
@@ -512,14 +515,8 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             </Appbar.Header>
             
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
-           {/* <View style={{paddingVertical: 5, flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', alignItems: 'flex-start', justifyContent: 'center', paddingHorizontal: 20}}>
-                <Feather1s name="info" />
-                            <Text style={{color: '#1089ff', paddingHorizontal: 20,  fontFamily: 'Avenir-Light', fontSize: 12}}>
-                                {userData.display_name} has a hourly rate of ${userData.hourly_payment_rate} for in person and virtual sessions.
-                            </Text>
-            </View> */}
                 <View>
-                    <View style={{ backgroundColor: 'rgb(247, 247, 247)' }}>
+                    <View style={{ backgroundColor: '#FFFFFF' }}>
                         <View style={styles.userInformationContainer}>
                             <View style={styles.infoContainer}>
                                 {renderDisplayName()}
@@ -556,7 +553,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                     </View>
                 </View>
 
-                <Tabs initialPage={2} tabBarUnderlineStyle={{ height: 0, backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF'>
+                <Tabs initialPage={2} tabBarUnderlineStyle={{  backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF'>
                     <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs">
                         <View style={{ backgroundColor: '#FFFFFF' }}>
                             {renderPrograms()}
@@ -594,11 +591,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        backgroundColor: 'rgb(247, 247, 247)'
+        backgroundColor: '#FFFFFF'
     },
     infoContainer: {
         flex: 3,
-        height: 90,
+        height: 120,
         justifyContent: 'space-evenly',
         paddingHorizontal: 10,
         alignItems: 'flex-start',
@@ -621,12 +618,12 @@ const styles = StyleSheet.create({
         elevation: 0,
         paddingHorizontal: 20,
         justifyContent: 'space-between',
-        backgroundColor: 'rgb(247, 247, 247)'
+        backgroundColor: '#FFFFFF'
     },
     displayNameText: {
         paddingVertical: 2,
         fontSize: 20,
-        fontFamily: 'Avenir-Heavy'
+        fontFamily: 'Avenir-Black'
     },
     inactiveTabHeading: {
         fontSize: 15,
@@ -642,7 +639,7 @@ color: '#1089ff'
     },
     userAttributeText: {
         fontSize: 13,
-        fontFamily: 'Avenir',
+        fontFamily: 'Avenir-Light',
     }
 })
 
