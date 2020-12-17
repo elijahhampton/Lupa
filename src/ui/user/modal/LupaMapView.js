@@ -89,7 +89,6 @@ class LupaMapView extends React.Component {
             }
         })
         .catch((error) => {
-            alert(error)
              // alert the user to change it from settings
                     //  alert('The Camera permission is required to use certain Lupa features.  You can enable it from the Lupa tab in the Settings app.')
         });
@@ -114,7 +113,7 @@ renderUnReadyView = () => {
 }
 
 handleOnFetchUserLocationError = (error) => {
-    alert(error.message)
+
 }
 
 handleOnFetchUserLocationSuccess = async (position) => {

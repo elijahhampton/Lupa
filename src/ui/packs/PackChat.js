@@ -43,7 +43,7 @@ function PackChat({route, navigation}) {
                 }
             })
             .catch(error => {
-                alert(error)
+
                 setComponentDidErr(true)
             })
         }
@@ -54,7 +54,6 @@ function PackChat({route, navigation}) {
                 setPackMemberData(data)
             })
             .catch(error => {
-                alert(error)
                 setPackMemberData([])
                 setComponentDidErr(true)
             })
@@ -144,8 +143,6 @@ function PackChat({route, navigation}) {
     if (extraData.type) {
         switch (extraData.type) {
             case 'PROGRAM_OFFER_INVITE':
-                console.log("OOOOO")
-                console.log(extraData)
                 return <ProgramOfferInviteMessage messageData={extraData} timeCreated={timestamp} />
         }
     }

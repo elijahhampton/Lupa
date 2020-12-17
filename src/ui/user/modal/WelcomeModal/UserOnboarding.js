@@ -43,7 +43,7 @@ function UserOnboarding(props) {
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                         <Pagination dotsLength={3} activeDotIndex={viewNumber} />
                         {
-                            viewNumber != 3 ? <Button disabled={isNextEnabled} color="#212121" mode="text" onPress={() => setViewNumber(viewNumber + 1)}> Next </Button> : null
+                            viewNumber != 2 ? <Button disabled={isNextEnabled} color="#212121" mode="text" onPress={() => setViewNumber(viewNumber + 1)}> Next </Button> : null
                         }
                     </View>
             </SafeAreaView>

@@ -80,7 +80,6 @@ const ProfileController = ({ route }) => {
             }
             setReady(true)
         } catch(error) {
-            alert(error)
             setReady(false);
             setIsCurrentUser(false)
         }

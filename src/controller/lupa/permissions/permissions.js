@@ -312,6 +312,5 @@ if (Platform.OS === 'android') {
 
     fcmService.requestNotificationPermissions();
   } catch(err) {
-    alert(err)
   }
 }

@@ -205,7 +205,6 @@ class LiveWorkout extends React.Component {
                 }
     
             } catch (err) {
-                alert(err)
                 await this.setState({ ready: false, componentDidErr: true })
             }
         }
@@ -392,7 +391,6 @@ class LiveWorkout extends React.Component {
 
             )
         } catch (err) {
-            alert(err)
             return (
 
                 <View style={{ flex: 1, borderRadius: 10, backgroundColor: '#212121', color: 'white', justifyContent: 'center', justifyContent: 'center' }}>
@@ -487,7 +485,6 @@ class LiveWorkout extends React.Component {
                 </>
             )
         } catch (err) {
-            alert(err)
             return (
 
                 <View style={{ flex: 1, backgroundColor: '#212121', color: 'white', justifyContent: 'center', justifyContent: 'center' }}>

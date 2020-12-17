@@ -63,8 +63,6 @@ export default class PackController {
         .then((docRef) => {
             newPackUUID = docRef.id
         }).catch(error => {
-            alert(error)
-            console.log(error)
             return Promise.resolve(-1);
         });
 
@@ -420,11 +418,7 @@ export default class PackController {
                     pack_data: packData,
                 })
             }).then(response => {
-                console.log(response)
-                console.log(response.data);
-                alert('Charged all pack members!')
             }).catch(err => {
-               alert(err)
                return Promise.resolve(false);
             })
         }
@@ -448,7 +442,6 @@ export default class PackController {
                 resolve(packData);
             })
             .catch(error => {
-                alert('Failed retrieivng pack info: ' + error)
                 resolve(initializeNewPack('', ''));
             })
         })

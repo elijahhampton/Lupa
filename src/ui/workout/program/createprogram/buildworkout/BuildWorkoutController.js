@@ -870,9 +870,9 @@ class BuildWorkoutController extends React.Component {
     }
 
     handleOnCloseAddExerciseRBSheet = () => {
-        console.log('BEGINNING ON CLOSE')
+
         this.setState({ folderIsSelected: false, folderSelected: ''})
-        console.log("ENDING ON CLOSE")
+
     }
 
     renderAddExerciseRBSheet = () => {

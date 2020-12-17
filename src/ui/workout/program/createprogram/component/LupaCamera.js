@@ -295,7 +295,7 @@ export default class CameraScreen extends React.Component {
         }
 
       } catch (e) {
-        alert(e)
+   
       }
     }
   };

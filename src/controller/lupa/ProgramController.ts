@@ -120,7 +120,6 @@ export default class ProgramController {
                 }
             })
             .catch(error => {
-                alert(error)
             })
 
         userDocRef.get()
@@ -376,7 +375,7 @@ export default class ProgramController {
         await PROGRAM_COLLECTION.orderBy("program_start_date").limit(5).get().then(docs => {
             let snapshot = getLupaProgramInformationStructure()
             docs.forEach(querySnapshot => {
-                console.log('getToPciks()')
+
                 snapshot = querySnapshot.data()
                 if (typeof (snapshot) != 'undefined' && snapshot != null && snapshot.program_image != "") {
                     recentlyAddedPrograms.push(snapshot)

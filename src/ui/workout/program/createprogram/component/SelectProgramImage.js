@@ -34,7 +34,6 @@ function SelectProgramImage({ captureImage, setProgramImageProp }) {
             }
         });
       } catch(err) {
-          alert(err)
           setIsPromiseImageSet(false)
       }
   

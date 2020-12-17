@@ -35,10 +35,7 @@ function MyPrograms(props) {
 
 
     const handleCardOnPress = async (program) => {
-        console.log('@@@@')
-        console.log(program)
         if (typeof(program) == 'undefined') {
-            alert('o')
             return;
         }
 

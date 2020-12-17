@@ -98,7 +98,6 @@ function ShareProgramModal({ navigation, route }) {
             LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, selectedUsers, route.params.programData);
             navigation.pop()
         } catch(err) {
-            alert(err)
             navigation.pop()
         }
     }

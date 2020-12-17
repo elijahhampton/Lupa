@@ -247,10 +247,8 @@ class GuestView extends React.Component {
           //udpate user in redux
           const payload = await getUpdateCurrentUserAttributeActionPayload('location', locationData, []);
           this.props.updateUserAttribute(payload);
-          console.log('hi')
         },
         async (error) => {
-          console.log('boo')
           const errLocationData = {
             city: 'Unknown',
             state: 'Unknown',
@@ -269,7 +267,6 @@ class GuestView extends React.Component {
         },
       );
     } catch (error) {
-      console.log('hi')
       const errLocationData = {
         city: 'Unknown',
         state: 'Unknown',

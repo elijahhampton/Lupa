@@ -123,7 +123,6 @@ const ProgramOfferInviteMessage = ({messageData, timeCreated}) => {
                 setSenderData(data);
             })
             .catch(error => {
-                alert(error)
                 setSenderData(getLupaUserStructurePlaceholder())
                 setComponentDidErr(true);
             })
@@ -159,7 +158,6 @@ const ProgramOfferInviteMessage = ({messageData, timeCreated}) => {
 
 
         }, (error) => {
-            alert(error)
             setComponentDidErr(true);
         })
         

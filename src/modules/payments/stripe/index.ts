@@ -219,11 +219,8 @@ export const addCardToStripeAccount = async (tokenId, stripeID, cardLastFour) =>
         })
       }).then(response => {
         const stripeData = response.data.stripeMetadata;
-        console.log('@@@@')
-        console.log(stripeData)
         if (response.status === 200) {
           resolve(stripeData);
-          console.log('Returning now')
         } else {
           resolve(-1);
         }

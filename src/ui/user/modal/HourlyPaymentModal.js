@@ -25,6 +25,8 @@ import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../controller/redux/
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
 
 function HourlyPaymentModal({ isVisible, closeModal }) {
+    const navigation = useNavigation();
+    const [hourlyPaymentRate, setHourlyPaymentRate] = useState(currUserData.hourly_payment_rate)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const dispatch = useDispatch();
 
@@ -47,10 +49,9 @@ function HourlyPaymentModal({ isVisible, closeModal }) {
 
         const payload = getUpdateCurrentUserAttributeActionPayload('hourly_payment_Rate', updatedHourlyPaymentRate);
         dispatch({ type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload });
-    }
 
-    const navigation = useNavigation();
-    const [hourlyPaymentRate, setHourlyPaymentRate] = useState(currUserData.hourly_payment_rate)
+        navigation.pop();
+    }
     return (
                 <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
                 <Appbar.Header style={{backgroundColor: 'white', elevation: 0, borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}>

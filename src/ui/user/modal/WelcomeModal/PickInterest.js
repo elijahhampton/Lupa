@@ -337,12 +337,11 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
     const handleOnPickInterest = (interest) => {
 
         if (pickedInterest.includes(interest)) {
-            console.log('umm')
+
             let updatedPickedInterest = pickedInterest;
             updatedPickedInterest.splice(updatedPickedInterest.indexOf(interest), 1);
             setPickedInterest(updatedPickedInterest)
         } else {
-            console.log('yo!')
             let updatedPickedInterest = pickedInterest;
             updatedPickedInterest.push(interest);
             setPickedInterest(updatedPickedInterest)
