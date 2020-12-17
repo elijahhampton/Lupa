@@ -7,6 +7,7 @@ import { getLupaProgramInformationStructure } from '../../model/data_structures/
 import { getLupaUserStructure } from '../firebase/collection_structures';
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 import PackController from './PacksController';
+import { initializeNewPack } from '../../model/data_structures/packs/packs';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -300,12 +301,16 @@ export default class LupaController {
               userResults.hits[i].resultType = "User"
               console.log('CCCCCC')
               finalResults.push(userResults.hits[i]);
+              console.log('@@@@@@@@@@@@@@@@')
+              console.log(finalResults.length)
         }
 
         for (let i = 0; i < programResults.hits.length; ++i)
         {
           programResults.hits[i].resultType = "Program"
             finalResults.push(programResults.hits[i]);
+            console.log('@@@@@@@@@@@@@@@@')
+            console.log(finalResults.length)
         }
 
         } catch(err)
@@ -460,7 +465,11 @@ export default class LupaController {
     }
 
     handleOnAcceptPackInvite = (packUID, userUID) => {
-      PACKS_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, userUID);
+      return new Promise((resolve, reject) => {
+        PACKS_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, userUID).then(data => {
+          resolve(data);
+        });
+      })
     }
 
     handleOnDeclinePackInvite = (packUID, userUID) => {
@@ -841,6 +850,10 @@ export default class LupaController {
 
     handleAcceptBooking = (booking_uid) => {
       USER_CONTROLLER_INSTANCE.handleAcceptedBooking(booking_uid);
+    }
+
+    handleDeclineBooking = (booking_uid) => {
+      USER_CONTROLLER_INSTANCE.handleDeclineBooking(booking_uid);
     }
 
     handleCancelBooking = (bookingData) => {

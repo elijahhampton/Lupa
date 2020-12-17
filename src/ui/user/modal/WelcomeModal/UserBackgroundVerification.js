@@ -178,7 +178,7 @@ function UserBackgroundVerification(props) {
     return (
         <View style={{ flex: 1, backgroundColor: '#FFFFFF', }}>
             <Appbar.Header style={{ backgroundColor: 'white', elevation: 0,  }}>
-                <Appbar.Content title="Fitness Background" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                <Appbar.Content title="Fitness Background" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <ScrollView contentContainerStyle={{ padding: 0, alignItems: 'center', backgroundColor: '#F2F2F2' }}>
                 <Surface style={styles.surface}>

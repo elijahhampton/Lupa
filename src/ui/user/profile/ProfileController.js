@@ -32,7 +32,6 @@ const ProfileController = ({ route }) => {
     const _getId = () => {
         let id = 0
         try {
-            if (route.params.userUUID) {
                 id = route.params.userUUID;
                 setUserUUID(id)
 
@@ -41,11 +40,6 @@ const ProfileController = ({ route }) => {
                 } else {
                     setIsCurrentUser(false)
                 }
-        } else {
-            id = currUserData.user_uuid
-            setIsCurrentUser(true)
-            setUserUUID(id)
-        }
 
             return id;
         } catch(error) {
@@ -57,11 +51,6 @@ const ProfileController = ({ route }) => {
     }
 
     const renderProfile = () => {
-        if (typeof(route.params.userUUID) == 'undefined' || !ready) {
-            tryReFetch()
-            return <View style={{flex: 1, backgroundColor: '#FFFFFF'}} />
-        }
-
             try {
             switch(userData.isTrainer) {
                 case true:
@@ -76,40 +65,19 @@ const ProfileController = ({ route }) => {
     }
     }
 
-    const tryReFetch = async () => {
-        const uuid = await _getId();
-        let userData = getLupaUserStructurePlaceholder();
-
-        await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(uuid).then(data => {
-            userData = data;
+    useEffect(() => {
+        const currUserSubscription = LUPA_DB.collection('users').doc(route.params.userUUID).onSnapshot(documentSnapshot => {
+            const userData = documentSnapshot.data()
+            setUserData(userData)
         });
 
-        setUserData(userData);
-
-        if (uuid == userData.user_uuid) {
-
-            setIsCurrentUser(true);
-        } else {
-            setIsCurrentUser(false);
-        }
-    }
-
-    useEffect(() => {
-        let currUserSubscription = function() {}
-    
-       async function fetchData() {
-            const uuid = await _getId();
-            currUserSubscription = LUPA_DB.collection('users').doc(uuid).onSnapshot(documentSnapshot => {
-                const userData = documentSnapshot.data()
-                setUserData(userData)
-            });
-
-
-
-        }
-
         try {
-            fetchData();
+            setUserUUID(route.params.userUUID)
+            if (currUserData.user_uuid == route.params.userUUID) {
+                setIsCurrentUser(true)
+            } else {
+                setIsCurrentUser(false)
+            }
             setReady(true)
         } catch(error) {
             alert(error)

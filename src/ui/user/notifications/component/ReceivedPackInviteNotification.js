@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     View,
     Text,
@@ -26,6 +26,8 @@ import getBookingStructure from '../../../../model/data_structures/user/booking'
 import { BOOKING_STATUS, SESSION_TYPE } from '../../../../model/data_structures/user/types';
 import moment from 'moment';
 import { LOG_ERROR } from '../../../../common/Logger';
+import { ADD_CURRENT_USER_PACK, UPDATE_CURRENT_USER_PACKS_ACTION } from '../../../../controller/redux/actionTypes';
+import { getLupaStoreState } from '../../../../controller/redux';
 
 const {windowWidth} = Dimensions.get('window').width
 
@@ -33,7 +35,9 @@ const {windowWidth} = Dimensions.get('window').width
 function ReceivedPackInviteNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const [packData, setPackData] = useState(notificationData.data);
+    const [componentDidErr, setComponentDidErr] = useState(false);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+    const dispatch = useDispatch();
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -53,22 +57,32 @@ function ReceivedPackInviteNotification({ notificationData }) {
             )
        
     } catch(error) {
-        alert(error)
+        setComponentDidErr(true)
     }
     }
 
     const handleOnAcceptPackInvite = () => {
         const packUID = notificationData.data.uid;
         LUPA_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, currUserData.user_uuid)
+        .then(data => {
+            dispatch({ type: ADD_CURRENT_USER_PACK, payload: data })
+        }).then(() => {
+            setComponentDidErr(true)
+        })
     }
 
     const handleOnDeclinePackInvite = () => {
+        try {
         const packUID = notificationData.data.uid;
 
-        LUPA_CONTROLLER_INSTANCE.handleOnDeclinePackInvite(packUID, currUserData.user_uuid)
+        LUPA_CONTROLLER_INSTANCE.handleOnDeclinePackInvite(packUID, currUserData.user_uuid);
+        } catch(error) {
+            setComponentDidErr(true)
+        }
     }
 
     const renderActionButtons = () => {
+        try {
         if (packData.invited_members.includes(currUserData.user_uuid)) {
             return (
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
@@ -84,12 +98,17 @@ function ReceivedPackInviteNotification({ notificationData }) {
         } else {
             return null;
         }
+    } catch(error) {
+        setComponentDidErr(true);
+    }
     }
 
     useEffect(() => {
         async function fetchData() {
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.from).then(data => {
                 setSenderUserData(data)
+            }).catch(() => {
+                setComponentDidErr(true);
             })
         }
 
@@ -98,15 +117,30 @@ function ReceivedPackInviteNotification({ notificationData }) {
                 const data = doc.data();
                 setPackData(data);
             })
+        }, error => {
+            setComponentDidErr(true)
         })
 
-        fetchData()
+        fetchData().catch(() => {
+            setComponentDidErr(true);
+        })
 
         return () => PACK_OBSERVER();
     }, []);
 
-    return (
-        <>
+     const renderComponentDisplay = () => {
+        if (componentDidErr == true) {
+            return (
+                <View style={{width: '100%', marginVertical: 15, padding: 20, alignItems: 'center', justifyContent: 'center'}}>
+                <Text>
+                    Error loading notificaiton
+                </Text>
+            </View>
+            )
+
+        } else {
+            return (
+                <>
                    <View style={{width: '100%', marginVertical: 15}}>
                        <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                            <Avatar.Image source={{uri: senderUserData.photo_url}} size={35} style={{marginHorizontal: 10}} />
@@ -119,7 +153,12 @@ function ReceivedPackInviteNotification({ notificationData }) {
                     
                    <Divider />
                    </>
-    )
+            )
+           
+        }
+    }
+
+    return renderComponentDisplay()
 }
 
 export default ReceivedPackInviteNotification;

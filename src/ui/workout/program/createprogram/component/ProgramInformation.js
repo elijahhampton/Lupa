@@ -90,7 +90,7 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
     <View style={styles.root}>
       <Appbar.Header style={{paddingHorizontal: 10, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: '#FFFFFF'}}>
       <FeatherIcon onPress={handleCancelOnPress} name="x" size={22} onPress={() => navigation.pop()} />
-      <Appbar.Content title="Design a fitness program" style={{alignSelf: 'center'}} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+      <Appbar.Content title="Design a fitness program" style={{alignSelf: 'center'}} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
       <FeatherIcon name="x" color="white" size={22} onPress={() => navigation.pop()} />
       </Appbar.Header>
       
@@ -146,6 +146,18 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {
                     daysOfTheWeek.map(day => {
+                      if (programWorkoutDays.includes(day)) {
+                        return (
+                        <Chip 
+                        onPress={() => handleOnPickDay(day)} 
+                        key={day} 
+                        textStyle={{color: 'white'}}
+                        style={{ elevation: 3, marginHorizontal: 10, backgroundColor: '#1089ff', width: 100, alignItems: 'center', justifyContent: 'center'}}>
+                        {day}
+                      </Chip>
+                        )
+                      }
+                      
                       return (
                         <Chip onPress={() => handleOnPickDay(day)} key={day} style={{ marginHorizontal: 10, backgroundColor: '#EEEEEE', width: 100, alignItems: 'center', justifyContent: 'center'}}>
                         {day}
@@ -174,7 +186,7 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 Add Workouts to Program
               </Button>
 
-              <Button mode="text" color="#1089ff" uppercase={false} onPress={() => setLearnMoreDialogIsVisible(true)}>
+              <Button mode="text" color="black" uppercase={false} onPress={() => setLearnMoreDialogIsVisible(true)}>
                     <Text style={{fontSize: 12}}>
                     Learn more about creating a program
                     </Text>

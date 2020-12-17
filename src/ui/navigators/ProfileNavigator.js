@@ -15,8 +15,11 @@ const Stack = createStackNavigator();
 
 function ProfileNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Profile" screenOptions={{ gestureEnabled: false }} headerMode='none'>
-     <Stack.Screen name="Profile" component={ProfileController} initialParams={{userUUID: 0, navFrom: 'BottomTabNavigator'}} />
+    <Stack.Navigator 
+    initialRouteName="ProfileController" 
+    screenOptions={{ gestureEnabled: false }} 
+    headerMode='none'>
+     <Stack.Screen name="ProfileController" component={ProfileController} initialParams={{ userUUID: 0 }} />
       <Stack.Screen name="FollowerView" component={FollowerView} />
       <Stack.Screen name="UserSettingsView" component={SettingsNavigator} />
       <Stack.Screen name="MessagesView" component={MessagesView} />

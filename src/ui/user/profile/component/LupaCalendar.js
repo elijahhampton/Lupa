@@ -480,7 +480,12 @@ height={300}>
   style={{height: HEIGHT}}
 />
 
-<BookingRequestModal ref={bookingRequestModalRef} isVisible={bookingRequestModalVisible} trainer={userData} closeModal={handleCloseRequestBookingDialog} />
+<BookingRequestModal 
+ref={bookingRequestModalRef} 
+isVisible={bookingRequestModalVisible} 
+trainer={userData} 
+closeModal={handleCloseRequestBookingDialog} 
+/>
 <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} displayDate={displayDate} entryDate={entryDate} />
     </View>
     );

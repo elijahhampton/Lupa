@@ -161,35 +161,12 @@ class LiveWorkout extends React.Component {
 
     async componentDidMount() {
         await this.setupLiveWorkout();
-        await this.setupFire();
         await this.setState({ ready: true });
     }
 
 
-    setupFire = async () => {
-        if (this.state.ready === false) {
-            return;
-        }
-
-        let privateChatUUID;
-
-        //check for shared chat uuid between users
-        await this.LUPA_CONTROLLER_INSTANCE.getPrivateChatUUID(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programOwnerData.user_uuid).then(result => {
-            privateChatUUID = result;
-        })
-
-        //init Fire
-        await Fire.shared.init(privateChatUUID);
-
-        await Fire.shared.on(message =>
-            this.setState(previousState => ({
-                messages: GiftedChat.append(previousState.messages, message),
-            }))
-        );
-    }
-
     componentWillUnmount() {
-       Fire.shared.off();
+     //  Fire.shared.off();
     }
 
     setupLiveWorkout = async () => {
@@ -632,29 +609,42 @@ class LiveWorkout extends React.Component {
 
    hideDialog = () => this.setState({ showFinishedDayDialog: false }) 
 
+   renderImageSource = () => {
+    const workout = this.state.currentWorkout;
+    switch(workout.default_media_uri) {
+        case '':
+            return <Image source={''} />
+        case 'Traps':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Traps.png')} />
+        case 'Chest':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Chest.png')} />
+        case 'Bicep':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain"source={require('../../images/buildworkout/singleworkout/Bicep.png')} />
+        case 'Calves':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Calves.png')} />
+        case 'Core':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Core.png')} />
+        case 'Glutes':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Glutes.png')} />
+        case 'Supr':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Supr.png')} />
+        case 'Triceps':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Triceps.png')} />
+        case 'Hip':
+            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Hip.png')} />
+        default:
+            return <Image source={''} />
+    }
+}
+
     renderComponentDisplay = () => {
         if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
             return (
-                <SafeAreaView style={{ flex: 1 }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                     <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height })} style={{ flex: 2.5, alignItems: 'center', justifyContent: 'center' }}>
 
-                        <Surface style={{ backgroundColor: 'black', height: '80%', borderRadius: 8, width: Dimensions.get('window').width - 20 }}>
-                            <Video
-                                source={require('../../videos/pushuppreview.mov')}
-                                rate={1.0}
-                                volume={0}
-                                isMuted={true}
-                                resizeMode="cover"
-                                shouldPlay={true}
-                                isLooping={true}
-                                style={{
-                                    flex: 1,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    width: '100%',
-                                    height: '100%',
-                                }}
-                            />
+                        <Surface style={{ backgroundColor: '#FFFFFF', height: '80%', borderRadius: 8, width: Dimensions.get('window').width - 20 }}>
+                            {this.renderImageSource()}
                             {/*this.renderContent()*/}
                         </Surface>
                     </View>
@@ -683,7 +673,7 @@ class LiveWorkout extends React.Component {
                                     <Text style={{ paddingVertical: 3 }}>
                                         Sets
                         </Text>
-                                    <View style={{width: 160, backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: 'Avenir-Light' }}>
                                             {this.renderWorkoutSets()}
                             </Text>
@@ -694,7 +684,7 @@ class LiveWorkout extends React.Component {
                                     <Text style={{ paddingVertical: 3 }}>
                                         Reps
                         </Text>
-                                    <View style={{width: 160, backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: 'Avenir-Light' }}>
                                             {this.renderWorkoutReps()}
                             </Text>
@@ -710,7 +700,7 @@ class LiveWorkout extends React.Component {
                                     <Text style={{ paddingVertical: 3 }}>
                                         Tempo
                         </Text>
-                                    <View style={{width: 160, backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <View style={{width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                         <Text style={{flexWrap: 'nowrap', fontFamily: 'Avenir-Light' }}>
                                            {this.renderWorkoutTempo()}
                             </Text>
@@ -721,7 +711,7 @@ class LiveWorkout extends React.Component {
         <Text style={{ paddingVertical: 3 }}>
             Rest Time
 </Text>
-        <View style={{width: 160, backgroundColor: '#E5E5E5', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontFamily: 'Avenir-Light' }}>
                {this.state.restTime}
 </Text>
@@ -810,7 +800,7 @@ class LiveWorkout extends React.Component {
                         </View>
                     </View>
                     <Divider />
-                    <View style={{ flex: 1, backgroundColor: '#E5E5E5' }}>
+                    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                         <GiftedChat
                             messages={this.state.messages}
                             onSend={Fire.shared.send}
@@ -903,25 +893,18 @@ class LiveWorkout extends React.Component {
                                 <Text style={{color: 'white'}}>
                                     National Association of Sports and Medicine
                                 </Text>
-                            </View>
-                            </View>
-            
-                        <Text style={[styles.RBSheetText, { paddingVertical: 10 }]} numberOfLines={4} ellipsizeMode="tail">
+                                <Text style={[styles.RBSheetText]} numberOfLines={4} ellipsizeMode="tail">
                             {this.state.programData.program_description}
                         </Text>
+                            </View>
+                            
+                            </View>
+        
                     </View>
 
 
-                    <View>
-                        <ListItem
-                            title=''
-                            titleStyle={styles.interactionsTitleText}
-                            subtitle=''
-                            subtitleStyle={styles.RBSheetText}
-                            containerStyle={{ backgroundColor: 'transparent' }}
-                            bottomDivider
-                        />
-                        <ListItem
+                    <View style={{marginVertical: 20}}>
+                       {/* <ListItem
                             title='Interactions'
                             titleStyle={[styles.RBSheetText, styles.interactionsTitleText]}
                             subtitle='Open interactions with your trainer.'
@@ -940,7 +923,7 @@ class LiveWorkout extends React.Component {
                             containerStyle={{ backgroundColor: 'transparent' }}
                             bottomDivider
                             onPress={this.showFeedbackDialog}
-                        />
+                       />*/}
                         <ListItem
                             title='Share'
                             titleStyle={[styles.RBSheetText, styles.interactionsTitleText]}
@@ -1107,7 +1090,7 @@ class LiveWorkout extends React.Component {
     render() {
         return (
             <>
-               <Appbar.Header style={{ backgroundColor: '#1089ff'}}>
+               <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0}}>
                     <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} onPress={this.showWarningDialog} />} />
 
                     <Appbar.Content title={this.renderLiveWorkoutTitle()} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
@@ -1115,9 +1098,8 @@ class LiveWorkout extends React.Component {
 
                    
 
-                    {this.state.programData.type === 'PROGRAM' ? 
-                     <TouchableWithoutFeedback style={{ position: 'absolute', bottom: 0, left: 0, marginLeft: 20 }} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })}>
-                     <Surface style={{ marginVertical: 5, elevation: 8, width: 35, height: 35, borderRadius: 65 }}>
+                     <TouchableWithoutFeedback style={{ marginRight: 20 }} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })}>
+                     <Surface style={{ marginVertical: 5, elevation: 3, width: 35, height: 35, borderRadius: 65 }}>
                          {this.props.lupa_data.Users.currUserData.photo_url == '' ?
                          null 
                          : 
@@ -1125,9 +1107,6 @@ class LiveWorkout extends React.Component {
                          }
                      </Surface>
                      </TouchableWithoutFeedback>
-                    : 
-                    null 
-                    }
                 </Appbar.Header>
                 
                 {this.renderComponentDisplay()}
@@ -1150,7 +1129,7 @@ class LiveWorkout extends React.Component {
 const styles = StyleSheet.create({
     modal: {
         margin: 0,
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "#FFFFFF",
         flex: 1
     },
     container: {

@@ -10,7 +10,6 @@ function DashboardNavigator() {
   return (
     <Stack.Navigator initialRouteName="Dashboard" headerMode='none'>
       <Stack.Screen name="Dashboard" component={DashboardController} />
-      <Stack.Screen name="MyData" component={MyData} />
     </Stack.Navigator>
   )
 }

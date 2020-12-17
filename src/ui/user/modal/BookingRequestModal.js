@@ -1,4 +1,4 @@
-import React, { useState, createRef } from 'react';
+import React, { useState, useEffect, createRef } from 'react';
 
 import {
     View,
@@ -36,7 +36,6 @@ import {
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import RNSwipeVerify from 'react-native-swipe-verify'
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { Dropdown } from 'react-native-material-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios'
 import moment from 'moment';
@@ -49,11 +48,13 @@ import DeviceInfo from 'react-native-device-info';
 import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../controller/lupa/LupaController'
 import { getNewBookingStructure } from '../../../model/data_structures/user/booking';
-import { LUPA_AUTH } from '../../../controller/firebase/firebase';
+import LUPA_DB, { LUPA_AUTH } from '../../../controller/firebase/firebase';
 import { BOOKING_STATUS, SESSION_TYPE } from '../../../model/data_structures/user/types';
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED} from '../../../modules/payments/stripe';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
 import { getLupaStoreState } from '../../../controller/redux';
+import { Input } from 'react-native-elements';
+import { KeyboardAvoidingView } from 'react-native';
 
 let data = [{
   value: 'Banana',
@@ -90,7 +91,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 
   const [timingBlockDuration, setTimingBlockDuration] = useState(60);
 
-  const [startTime, setStartTime] = useState(new Date(1598051730000))
+  const [startTime, setStartTime] = useState(new Date())
   const [startTimeFormatted, setStartTimeFormatted] = useState(moment(new Date()).format('LT').toString())
   const [endTimeFormatted, setEndTimeFormatted] = useState(moment(new Date()).add(60, 'minutes').format('LT').toString());
   const [endTime, setEndTime] = useState(new Date(1598051730000))
@@ -109,7 +110,16 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
   const [bookingDate, setBookingDate] = useState(new Date());
   const [sessionTypeDialogIsVisible, setSessionTypeDialogIsVisible] = useState(false);
 
+  const [cardAddedToStripeStatus, setCardAddedToStripeStatus] = useState(false)
   const [timeBlockDialogVisible, setTimeBlockDialogVisible] = useState(false);
+  const updatedUserData = getLupaStoreState().Users.currUserData;
+
+  useEffect(() => {
+    setStartTime(new Date())
+    setStartTimeFormatted(moment(new Date()).format('LT').toString())
+    setEndTime(new Date())
+    setEndTimeFormatted(moment(new Date()).add(1, 'hour').format('LT').toString())
+  }, [])
 
   const renderSessionTypeDialog = () => {
     return (
@@ -264,31 +274,48 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
     }
 
     const handleOnRequest = async () => {
+      const updatedUserData = getLupaStoreState().Users.currUserData;
+      if (updatedUserData.stripe_metadata.card_added_to_stripe == false) {
+        setShowCardNeededDialogVisible(true)
+        return;
+      }
+
       const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid, trainerNote, sessionType);
       const booking_id = booking.uid;
 
       try {
         await LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking, true)
+        resetState();
         closeModal()
       } catch(error) {
-        alert(error)
         LOG_ERROR('BookingRequestModal.js', 'Failed to creating booking.', error);
         //delete booking if it was created
         //check if booking was ever created?
-        LUPA_CONTROLLER_INSTANCE.deleteBooking(booking_id);
+        LUPA_CONTROLLER_INSTANCE.deleteBooking(booking_id, trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid);
         //show warning to user
         setBookingCreationErrorDialogVisible(true);
+        resetState();
       }
   }
 
     const handleNavigateToSettings = () => {
       closeModal();
+      setShowCardNeededDialogVisible(false);
+      resetState();
       navigation.push('Settings');
+    }
+
+    const resetState = () => {
+      setTrainerNote("")
+      setStartTime(new Date())
+      setStartTimeFormatted(moment(new Date()).format('LT').toString())
+      setBookingDate(new Date())
+      setBookingDisplayDate(moment(new Date()).format('LL').toString())
     }
 
     const renderCardNeededDialog = () => {
       return (
-        <Dialog visible={showCardNeededDialog} style={{height: 'auto', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
+        <Dialog visible={showCardNeededDialog} style={{borderRadius: 12, height: 'auto', width: Dimensions.get('window').width - 20, alignSelf: 'center'}}>
 
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <Dialog.Title style={{alignSelf: 'center', fontWeight: 'bold', fontFamily: 'Avenir-Heavy'}}>
@@ -299,26 +326,14 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
            
 
               <Dialog.Content style={{alignSelf: 'flex-start', justifyContent: 'center'}}>
-                <Text style={{color: 'rgb(144, 144, 144)', paddingVertical: 5}}>
+                <Paragraph style={{fontFamily: 'Avenir'}}>
                   Lupa requires that you have a card saved before booking a session.  
-                </Text>
+                </Paragraph>
 
               </Dialog.Content>
 
               <Dialog.Actions style={{alignItems: 'center', justifyContent: 'flex-end'}}>
-             
-
-                <Button 
-                onPress={() => setShowCardNeededDialogVisible(false)}
-                uppercase={false} 
-                mode="outlined" 
-                color="#23374d"
-                style={{elevation: 0, marginHorizontal: 5}}
-                contentStyle={{padding: 3}}
-                theme={{roundness: 8}}>
-                  Cancel
-                </Button>
-
+            
                 <Button 
                 onPress={handleNavigateToSettings}
                 uppercase={false} 
@@ -327,7 +342,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
                 style={{elevation: 0, marginHorizontal: 5}}
                 contentStyle={{padding: 3}}
                 theme={{roundness: 8}}>
-                  Add Card
+                  Go to settings
                 </Button>
               
 
@@ -405,14 +420,32 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
         }
       }}>
         <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+          <KeyboardAvoidingView style={{flex: 1}}>
+
             <Dialog.Title style={{fontFamily: 'Avenir'}}>
               Schedule a session with {trainer.display_name}
             </Dialog.Title>
-            <Text>
-              Contact Trainer
-            </Text>
 
   <View style={{flex: 1, justifyContent: 'space-evenly'}}>
+
+  <View style={{paddingHorizontal: 20}}>
+<View style={{ alignItems: 'center', justifyContent: 'space-between'}}>
+<Text style={{fontFamily: 'Avenir-Heavy', color: 'black', fontSize: 16}}>
+       What would you like to work on?   
+</Text>
+<Input 
+value={trainerNote}
+onChangeText={text => setTrainerNote(text)}
+returnKeyLabel="done"
+returnKeyType="done"
+keyboardType="default"
+keyboardAppearance="light"
+inputStyle={{fontSize: 16, fontFamily: 'Avenir-Roman'}} 
+containerStyle={{alignSelf: 'center', height: 55,}} 
+inputContainerStyle={{paddingLeft: 8, height: 55, alignSelf: 'flex-start', borderBottomWidth: 0, backgroundColor: '#EEEEEE', borderRadius: 12}} 
+/>
+</View>
+</View>
 
 <View style={{paddingHorizontal: 20}}>
   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -463,7 +496,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
           Date
         </Text>
         <TouchableWithoutFeedback onPress={openDatePicker}>
-              <View style={{marginVertical: 10,  alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center',justifyContent: 'space-evenly'}} icon={() => <FeatherIcon name="chevron-down" />}>
+              <View style={{marginVertical: 5,  alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center',justifyContent: 'space-evenly'}} icon={() => <FeatherIcon name="chevron-down" />}>
               <FeatherIcon name="chevron-down" style={{paddingRight: 5}} />
                       <Text style={{fontWeight: '500', fontSize: 13, color: '#1089ff'}}>
                         {bookingDisplayDate}
@@ -474,6 +507,8 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 </View>
 
 <Divider />
+
+<View>
 <Button 
 onPress={handleOnRequest}
 mode="contained" 
@@ -482,24 +517,29 @@ uppercase={false}
 style={{alignSelf: 'center', elevation: 0, marginVertical: 5}} 
 contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
 theme={{roundness: 12}}>
-  <Text>
+  <Text style={{fontFamily: 'Avenir'}}>
     Request Session
   </Text>
 </Button>
 
 <Button 
 onPress={closeModal}
-mode="text" 
+mode="outlined" 
 color="black"
 uppercase={false}
 style={{alignSelf: 'center', elevation: 0, marginVertical: 5}} 
 contentStyle={{width: Dimensions.get('window').width - 20, height: 45}} 
 theme={{roundness: 12}}>
-  Cancel
+  <Text style={{fontFamily: 'Avenir'}}>
+    Cancel
+  </Text>
 </Button>
+</View>
+
 
             
         </View>
+        </KeyboardAvoidingView>
         </View>
         {renderDisplayDatePicker()}
         {renderStartTimePicker()}

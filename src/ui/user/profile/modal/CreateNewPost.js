@@ -136,7 +136,7 @@ function CreateNewPost(props) {
         <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
             <Appbar.Header style={{ backgroundColor: 'white', elevation: 0 }}>
                 <Appbar.Action onPress={handleClose} style={{ alignSelf: 'flex-start' }} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />} />
-                <Appbar.Content title="New Vlog" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                <Appbar.Content title="New Vlog" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                 <Button mode="contained" theme={{ roundness: 5 }} uppercase={false} color="#1089ff" onPress={saveVlog}>
                     Post
     </Button>

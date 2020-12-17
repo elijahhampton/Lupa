@@ -25,6 +25,7 @@ import UserOnboarding from './ui/user/modal/WelcomeModal/UserOnboarding'
 import TrainerOnboarding from './ui/user/modal/WelcomeModal/TrainerOnboarding';
 import {Avatar} from 'react-native-elements';
 import WelcomeLupaIntroduction from "./ui/user/modal/WelcomeModal/WelcomeLupaIntroduction";
+import HourlyPaymentModal from "./ui/user/modal/HourlyPaymentModal";
 
 const mapStateToProps = (state, action) => {
   return {

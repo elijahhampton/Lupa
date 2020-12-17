@@ -100,7 +100,7 @@ function WorkoutDisplay({ workout, handleExerciseOnPress, handleSuperSetOnPress,
             case 'Core':
                 return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Core.png')} />
             case 'Glutes':
-                return <Image style={{flex: 1, width: '100%', height: '100%', alignSelf: 'center', backgroundColor: 'red'}} resizeMode="cover" source={require('../../../../../images/buildworkout/singleworkout/Glutes.png')} />
+                return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Glutes.png')} />
             case 'Supr':
                 return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../../../../images/buildworkout/singleworkout/Supr.png')} />
             case 'Triceps':
@@ -477,7 +477,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
 <View style={{flexDirection: 'row', alignItems: 'center'}}>
 
 
-<Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+<Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#FFFFFF'}}>
      {renderImageSource(workout)}
   </Surface>
 
@@ -553,7 +553,7 @@ onValueChange={(itemValue, itemIndex) => changeExerciseRestTime(workout, itemVal
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       
                       
-                      <Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#212121'}}>
+                      <Surface style={{width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#FFFFFF'}}>
                             {renderImageSource(superset)}
                           </Surface>
                 

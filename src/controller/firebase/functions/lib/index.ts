@@ -1,6 +1,3 @@
-import LOG from "../../../../common/Logger";
-
-
 const functions = require('firebase-functions')
 const admin = require("firebase-admin");
 
@@ -157,11 +154,13 @@ exports.createPackCharge = functions.https.onRequest(async (request, response) =
   })
 })
 
-//why doesn he need to talk to your gma so much?
-//france - your grandma - and traeling
+
 exports.makePaymentToTrainer = functions.https.onRequest(async (request, response) => {
   const actualAmount = request.body.amount * 100;
   const CURRENCY = request.body.currency;
+
+  const purchaserUUID = request.body.purchaser_uuid;
+  const trainerUUID = request.body.trainer_uuid;
 
   console.log('makePaymentToTrainer::started');
 
@@ -178,7 +177,7 @@ exports.makePaymentToTrainer = functions.https.onRequest(async (request, respons
   console.log('stripe fee without amount: ' + amountWithoutStripeFee)
 
   // Create a PaymentIntent:
-  const paymentIntent = await stripe.paymentIntents.create({
+  await stripe.paymentIntents.create({
     amount: actualAmount,
     currency: 'usd',
     payment_method: request.body.requester_card_source,
@@ -191,12 +190,22 @@ exports.makePaymentToTrainer = functions.https.onRequest(async (request, respons
     },
     application_fee_amount: lupaPayout,
   }, {
-    idempotencyKey: Math.random.toString(),
+    idempotencyKey: Math.random().toString(),
   }).then(intent => {
-    console.log('Successfull intent')
     console.log(intent)
+
+    admin.firestore().collection('users').doc(trainerUUID).get().then(documentSnapshot => {
+      const userData = documentSnapshot.data();
+
+      let updatedClientsList = userData.clients;
+      if (updatedClientsList.includes(purchaserUUID) == false) {
+        updatedClientsList.push(purchaserUUID);
+        admin.firestore().collection('users').doc(trainerUUID).update({
+          clients: updatedClientsList
+        })
+      }
+    })
   }).catch(err => {
-    console.log('OKOKOKOK ERRROOOORR')
     console.log(err)
   })
 })
@@ -475,7 +484,6 @@ exports.createAccountLink = functions.https.onRequest(async (request, response) 
   console.log('finished sending request')
 });
 
-
 /**
  * Handles adding a card to a stripe account
  * 
@@ -499,22 +507,49 @@ exports.addCardToStripeAccount = functions.https.onRequest((request, response) =
 
       const { last4, id } = customer.sources.data[0];
 
+      console.log('CUSSSSTOOOOMERERER')
+      console.log(customer)
+
       console.log('still right id here: ' + id)
       console.log('WORKKSS???')
       console.log(customer.sources.data[0])
-      //check this
-      let stripeMetadata = {
-        stripe_id: stripeID,
-        card_source: id,
-        card_last_four: last4,
-        card_added_to_stripe: true
-      }
 
-      console.log('AAAAAAAA')
-      console.log(stripeMetadata);
-      return admin.firestore().collection('users').doc(user_uuid).update({
+     
+      admin
+      .firestore()
+      .collection('users')
+      .doc(user_uuid)
+      .get()
+      .then(documentSnapshot => {
+        let userData, stripeMetadata;
+
+          userData = documentSnapshot.data();
+
+          if (typeof(userData) === 'undefined') {
+            response.setHeader('Content-Type', 'application/json');
+            response.status(400).send({ stripeMetadata: -1 })
+            return;
+          } else {
+             stripeMetadata = userData.stripe_metadata;
+           //  stripeMetadata.stripe_id = stripeID;
+             stripeMetadata.card_source = id;
+             stripeMetadata.card_last_four = last4;
+             stripeMetadata.card_added_to_stripe = true
+          }
+
+
+          admin.
+      firestore()
+      .collection('users')
+      .doc(user_uuid)
+      .update({
         stripe_metadata: stripeMetadata
-      }).catch(
+      })
+      .then(() => {
+        response.setHeader('Content-Type', 'application/json');
+        response.status(200).send({ stripeMetadata: stripeMetadata })
+      })
+      .catch(
         err => {
           stripeMetadata.card_added_to_stripe = false;
           console.log('BBBBBBBBB')
@@ -524,12 +559,23 @@ exports.addCardToStripeAccount = functions.https.onRequest((request, response) =
           })
 
           response.status(400).send({
-            error: err,
-            description: 'Error while updating firebase from cloud function in *addCardToStripeAccount*'
+            stripeMetadata: -1
           })
-        });
+        })
     })
     .catch(error => console.log('Error while adding card to serviceUser', error));
+      })
+
+      //check this
+      /*let stripeMetadata = {
+        stripe_id: stripeID,
+        card_source: id,
+        card_last_four: last4,
+        card_added_to_stripe: true
+      }*/
+
+      
+
 });
 
 exports.retrieveTrainerAccountInformation = functions.https.onRequest(async (request, response) => {

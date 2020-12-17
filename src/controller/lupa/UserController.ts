@@ -25,7 +25,7 @@ usersIndex.setSettings({
   highlightPostTag: ''
 });
 
-import { BOOKING_STATUS } from '../../model/data_structures/user/types';
+import { Booking, BOOKING_STATUS } from '../../model/data_structures/user/types';
 import { getBookingStructure } from '../../model/data_structures/user/booking'
 import { LupaUserStructure, UserCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
@@ -303,8 +303,13 @@ export default class UserController {
                 let currentUserUUID = await this.getCurrentUserUUID();
                 await USER_COLLECTION.where('user_uuid', '==', currentUserUUID).limit(1).get().then(docs => {
                     docs.forEach(doc => {
-                        currentUserInformation = doc.data();
-                        return;
+                        if (doc.exists) {
+                            currentUserInformation = doc.data();
+                            return;
+                        } else {
+                            throw 'User document does not exist.'
+                        }
+                       
                     })
                 })
 
@@ -318,8 +323,7 @@ export default class UserController {
             return Promise.resolve(data);
 
         } catch (error) {
-
-            let errdata = getLupaUserStructure()
+            let errdata = getLupaUserStructurePlaceholder();
             return Promise.resolve(errdata)
         }
 
@@ -560,10 +564,7 @@ export default class UserController {
                         value.program_metadata = {
                             workouts_completed: 0
                         }
-
-                        value.program_purchase_metadata = {
-                            date_purchased: new Date(),
-                        }
+                        value.date_purchased = new Date().getDate();
 
                         programDataList.push(value);
 
@@ -1656,7 +1657,7 @@ export default class UserController {
     }
 
     /**
-     * 
+     * WE DONT USE THIS ANYMORE! PURCHASE DATA MODIFICATION TAKES PLACE ON Server FROM WEBSITE
      * @param currentUserData 
      * @param programData 
      */
@@ -2077,30 +2078,6 @@ export default class UserController {
         //the requester
         if (isAuthenticatedUser === true) {
             this.updateCurrentUser('bookings', booking.uid, 'add');
-        } else {
-         /*   let unauthenticatedUserData = getLupaUserStructurePlaceholder()
-            await USER_COLLECTION.doc(unauthenticatedUserUUID).get().then(documentSnapshot => {
-                unauthenticatedUserData = documentSnapshot.data();
-            });
-
-            try {
-                let updatedBookings = unauthenticatedUserData.bookings;
-                updatedBookings.push(booking.uid);
-
-                USER_COLLECTION.doc(unauthenticatedUserUUID).update({
-                    bookings: updatedBookings
-                })
-
-                console.log('tried for user')
-            } catch (error) {
-                console.log('error')
-                let updatedBookings = []
-                updatedBookings.push(booking.uid);
-
-                USER_COLLECTION.doc(unauthenticatedUserUUID).update({
-                    bookings: updatedBookings
-                })
-            }*/
         }
 
         let userData = getLupaUserStructure();
@@ -2153,14 +2130,89 @@ export default class UserController {
         return Promise.resolve(true);
     }
 
+    handleDeclineBooking = async (booking_uid: String | Number) => {
+        const bookingID = booking_uid;
+        let booking : Booking = {} 
+        await LUPA_DB.collection('bookings').doc(bookingID).get().then(documentSnapshot => {
+            booking = documentSnapshot.data();
+            booking.status = BOOKING_STATUS.BOOKING_DENIED
+        });
+
+        const trainer_uuid = booking.trainer_uuid;
+        const requester_uuid = booking.requester_uuid;
+
+        let userData = getLupaUserStructure(), notifications = []
+
+        //Delete the booking from the trainers list
+        await USER_COLLECTION.doc(trainer_uuid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
+        if (!this.checkUserStructure(userData, getLupaUserStructure())) {
+            userData = Object.assign(getLupaUserStructure(), userData)
+        }
+
+        //remove the notification with any data that has the booking_uid field
+        notifications = userData.notifications;
+
+        let index = 0, notificationType = "";
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].hasOwnProperty('type')) {
+                notificationType = notifications[i]['type'];
+                if (notificationType == 'BOOKING_REQUEST') {
+                    if (notifications[i].data.uid == booking_uid) {
+                        index = i;
+                    }
+                }
+            }
+        }
+
+        let updatedNotifications = notifications;
+        updatedNotifications.splice(index, 1);
+       
+
+        USER_COLLECTION.doc(trainer_uuid).update({
+            notifications: updatedNotifications
+        });
+
+        
+
+        //Delete the booking from the requesters list
+        await USER_COLLECTION.doc(requester_uuid).get().then(documentSnapshot => {
+            userData = documentSnapshot.data();
+        });
+        if (!this.checkUserStructure(userData, getLupaUserStructure())) {
+            userData = Object.assign(getLupaUserStructure(), userData)
+        }
+
+        //remove the notification with any data that has the booking_uid field
+        notifications = userData.notifications;
+        index = 0, notificationType = "";
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].hasOwnProperty('type')) {
+                notificationType = notifications[i]['type'];
+                if (notificationType == 'BOOKING_REQUEST') {
+                    if (notifications[i].data.uid == booking_uid) {
+                        index = i;
+                    }
+                }
+            }
+        }
+
+        updatedNotifications = notifications;
+        updatedNotifications.splice(index, 1);
+
+        USER_COLLECTION.doc(trainer_uuid).update({
+            notifications: updatedNotifications
+        });
+    }
+
     handleAcceptedBooking = async (booking_uid: String | Number) => {
         const bookingID = booking_uid;
         let booking = {}
         await LUPA_DB.collection('bookings').doc(bookingID).get().then(documentSnapshot => {
             booking = documentSnapshot.data();
+            booking.status = BOOKING_STATUS.BOOKING_ACCEPTED
         });
-
-        booking.status = BOOKING_STATUS.BOOKING_ACCEPTED
 
         const trainer_uuid = booking.trainer_uuid;
         const requester_uuid = booking.requester_uuid;
@@ -2268,7 +2320,7 @@ export default class UserController {
         const trainer_uid = booking.trainer_uuid;
         const requester_uid = booking.requester_uuid;
 
-        let userData = getLupaUserStructure(), bookings = [];
+        let userData = getLupaUserStructure(), bookings = [], notifications = []
 
         //Delete the booking from the trainers list
         await USER_COLLECTION.doc(trainer_uid).get().then(documentSnapshot => {
@@ -2280,9 +2332,32 @@ export default class UserController {
 
         bookings = userData.bookings;
         bookings.splice(bookings.indexOf(booking_uid, 1));
+
+        //remove the notification with any data that has the booking_uid field
+        notifications = userData.notifications;
+
+        let index = 0, notificationType = "";
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].hasOwnProperty('type')) {
+                notificationType = notifications[i]['type'];
+                if (notificationType == 'BOOKING_REQUEST') {
+                    if (notifications[i].data.uid == booking_uid) {
+                        index = i;
+                    }
+                }
+            }
+        }
+
+        let updatedNotifications = notifications;
+        updatedNotifications.splice(index, 1);
+       
+
         USER_COLLECTION.doc(trainer_uid).update({
-            bookings: bookings
+            bookings: bookings,
+            notifications: updatedNotifications
         });
+
+        
 
         //Delete the booking from the requesters list
         await USER_COLLECTION.doc(requester_uid).get().then(documentSnapshot => {
@@ -2292,11 +2367,33 @@ export default class UserController {
             userData = Object.assign(getLupaUserStructure(), userData)
         }
 
+        //remove this from the user's booking list
         bookings = userData.bookings;
         bookings.splice(bookings.indexOf(booking_uid, 1));
-        USER_COLLECTION.doc(requester_uid).update({
-            bookings: bookings
+
+        //remove the notification with any data that has the booking_uid field
+        notifications = userData.notifications;
+        index = 0, notificationType = "";
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].hasOwnProperty('type')) {
+                notificationType = notifications[i]['type'];
+                if (notificationType == 'BOOKING_REQUEST') {
+                    if (notifications[i].data.uid == booking_uid) {
+                        index = i;
+                    }
+                }
+            }
+        }
+
+        updatedNotifications = notifications;
+        updatedNotifications.splice(index, 1);
+       
+
+        USER_COLLECTION.doc(trainer_uid).update({
+            bookings: bookings,
+            notifications: updatedNotifications
         });
+    
 
         //Delete the booking from the collection
         await LUPA_DB.collection('bookings').doc(booking_uid).delete();
@@ -2312,49 +2409,29 @@ export default class UserController {
     }
 
     fetchMyClients = async (uuid: String): Promise<Array<Object>> => {
-        let bookingDataEntry = {
-            user_uuid: undefined,
-            booking_date: undefined
-        }
-        let bookingData: Array<Object> = []
-        let docData = getBookingStructure();
+        let userData = getLupaUserStructurePlaceholder();
 
-        await LUPA_DB.collection('bookings').where('trainer_uuid', '==', uuid).get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                docData = doc.data();
-
-                //check if the user is undefined
-                if (typeof (docData) == 'undefined') {
-                    return;
-                }
-
-                //check if we have already added the user into the arr
-                for (let i = 0; i < bookingData.length; i++) {
-                    if (bookingData[i].user_uuid === docData.requester_uuid) {
-                        return;
-                    }
-                }
-
-                if (docData.status == BOOKING_STATUS.BOOKING_COMPLETED) {
-                    bookingDataEntry.user_uuid = docData.requester_uuid;
-                    bookingDataEntry.booking_date = docData.date_requested;
-                    bookingData.push(bookingDataEntry);
-                }
-
-            });
+        await USER_COLLECTION
+        .doc(uuid)
+        .get()
+        .then(documentSnapshot => {
+            userData = documentSnapshot.data();
         });
 
-        //Retrieve anymore relevant data from the user
-        docData = getLupaUserStructurePlaceholder()
-        for (let i = 0; i < bookingData.length; i++) {
-            await USER_COLLECTION.doc(bookingData[i].user_uuid).get().then(documentSnapshot => {
-                docData = documentSnapshot.data();
-                bookingData[i].display_name = docData.display_name;
-                bookingData[i].photo_url = docData.photo_url;
-            })
+        let clients = userData.clients;
+        let clientsData = []
+
+        if (typeof(clients) == 'undefined') {
+            clientsData = []
+        } else {
+            for (let i = 0; i < clients.length; i++) {
+                await this.getUserInformationByUUID(clients[i]).then(data => {
+                    clientsData.push(data);
+                })
+            }
         }
 
-        return Promise.resolve(bookingData);
+        return Promise.resolve(clientsData);
     }
 
     deleteBooking = (booking_uuid: String, trainer_uuid: String, requester_uuid: String): Boolean => {
@@ -2423,6 +2500,59 @@ export default class UserController {
      * @param time 
      */
 
+     transformIntoUsableDateString = (formattedDate) => {
+        const dateParts = formattedDate.split(" ");
+        let month = dateParts[0], day = dateParts[1].replace(',', ''), year = dateParts[2];
+
+        switch(month) {
+            case 'January':
+                month = 1;
+                break
+            case 'February':
+                month = 2;
+                break;
+            case 'March':
+                month = 3;
+                break;
+            case 'April':
+                month = 4;
+                break;
+            case 'May':
+                month = 5;
+                break;
+            case 'June':
+                month = 6;
+                break;
+            case 'July':
+                month = 7;
+                break;
+            case 'August':
+                month = 8;
+                break;
+            case 'September':
+                month = 9;
+                break;
+            case 'October':
+                month = 10;
+                break;
+            case 'November':
+                month = 11;
+                break;
+            case 'December':
+                month = 12;
+                break;
+            default:
+                month = 1;
+        }
+
+        if (day.length == 1) {
+            day = "0" + day;
+        }
+
+        const updatedDateString = year+"-"+month+"-"+day
+        return updatedDateString;
+     }
+
 
     /**
      * Returns available trainers given a date and time block.
@@ -2440,26 +2570,28 @@ export default class UserController {
                 if (typeof (trainer) == 'undefined') {
                     //delete doc
                 } else {
-                    trainers.push(trainer);
+                   trainers.push(trainer);
                 }
-
-                /*   if (typeof(trainer.scheduler_times[date.toString()]) == 'undefined') {
-                       //we dont do anything 
-                   } else {
-                       trainerScheduler = trainer.scheduler_times;
-                       dateQueryObject = trainerScheduler[date.toString()];
-                       for (let i = 0; i < dateQueryObject.length; i++) {
-                           let timeBlockStartTime = moment(dateQueryObject[i].startTime);
-                           let timeBlockEndTime = moment(dateQueryObject[i].endTime);
-                           let timeQuery = moment(time);
-   
-                           if (timeQuery.isAfter(timeBlockStartTime) && timeQuery.isBefore(timeBlockEndTime)) {
-                               trainers.push(trainer);
-                           }
-                       }
-                   }*/
             })
+
+                             /*  if (typeof(trainer.scheduler_times[date.toString()]) == 'undefined') {
+                    //we dont do anything 
+                    } else {
+                    trainerScheduler = trainer.scheduler_times;
+                    dateQueryObject = trainerScheduler[date.toString()];
+                    for (let i = 0; i < dateQueryObject.length; i++) {
+                        let timeBlockStartTime = moment(dateQueryObject[i].startTime);
+                        let timeBlockEndTime = moment(dateQueryObject[i].endTime);
+                        let timeQuery = moment(time);
+
+                        if (timeQuery.isAfter(timeBlockStartTime) && timeQuery.isBefore(timeBlockEndTime)) {
+                            trainers.push(trainer);
+                        }
+                    }
+                } */
+        
         });
+    
 
         this.shuffle(trainers);
 

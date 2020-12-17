@@ -7,6 +7,7 @@ import axios from 'axios';
 import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../controller/redux/actionTypes';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
 import { getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
+import { rejects } from 'assert';
 export function initStripe() {
   stripe.setOptions({
     publishableKey: 'pk_live_51GlmH9Cfww9muTLL3x1ey79iTIgxf8gUkcTKODIodBukFttIC9MXRVAJ6TlEjpWheGkLNopSy2CN0WNM4BxwNMD400tuClEWOM'
@@ -173,40 +174,62 @@ export async function createTokenFromCard(params, stripeID, cardLastFour) {
   console.log('LOOOOOOOOL')
   console.log(stripeID);
   console.log(params)
-  return await stripe.createTokenWithCard(params)
-    .then(token => {
+  return new Promise(async (resolve, reject) => {
+    await stripe.createTokenWithCard(params)
+    .then(async token => {
       console.log('ummm')
-      addCardToStripeAccount(token.tokenId, stripeID, cardLastFour);
+      await addCardToStripeAccount(token.tokenId, stripeID, cardLastFour).then(data => {
+        resolve(data);
+      })
     }).catch(error => {
       console.log(error)
       LOG_ERROR('index.js', 'Error in modules/payments/index.js while creating token from card', error)
-    });
+      resolve(-1)
+    })
+  })
 }
+
+
+const updateStripeMetadata = (data) => {
+  return {
+    type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION,
+    payload: data
+  }
+}
+
 
 export const addCardToStripeAccount = async (tokenId, stripeID, cardLastFour) => {
   const user_uuid = LUPA_AUTH.currentUser.uid;
   console.log(LUPA_AUTH.currentUser)
-  await LUPA_AUTH.currentUser.getIdToken(true).then(async idToken => {
-    console.log('OOOOH: ' + idToken)
-
-    axios({
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      url: 'https://us-central1-lupa-cd0e3.cloudfunctions.net/addCardToStripeAccount',
-      data: JSON.stringify({
-        tokenId: tokenId,
-        stripeID: stripeID,
-        user_uuid: user_uuid
-      })
-    }).then(response => {
-      if (response.status === 200) {
-        //  dispatch({ type: 'ADD_CARD_TO_ACCOUNT_SUCCESS', payload: stripeMetadata });
-      }
+  return new Promise(async (resolve, reject)=> {
+  return await LUPA_AUTH.currentUser.getIdToken(true).then(async idToken => {
+      console.log('OOOOH: ' + idToken)
+  
+      await axios({
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        url: 'https://us-central1-lupa-cd0e3.cloudfunctions.net/addCardToStripeAccount',
+        data: JSON.stringify({
+          tokenId: tokenId,
+          stripeID: stripeID,
+          user_uuid: user_uuid
+        })
+      }).then(response => {
+        const stripeData = response.data.stripeMetadata;
+        console.log('@@@@')
+        console.log(stripeData)
+        if (response.status === 200) {
+          resolve(stripeData);
+          console.log('Returning now')
+        } else {
+          resolve(-1);
+        }
+      }).catch(err => console.log(err))
     }).catch(err => console.log(err))
-  }).catch(err => console.log(err))
+  })
 }
 
 /*

@@ -16,6 +16,7 @@ import {
 import {
     Surface,
     Caption,
+    Snackbar,
     Appbar,
     Button,
     Divider,
@@ -40,6 +41,7 @@ import { LOG_ERROR } from '../../../../../common/Logger';
 import { DebugInstructions } from 'react-native/Libraries/NewAppScreen';
 import WorkoutDisplay from './component/WorkoutDisplay';
 import { Constants } from 'react-native-unimodules';
+import { weekdays } from 'moment';
 
 const PLACEMENT_TYPES = {
     SUPERSET: 'superset',
@@ -49,12 +51,22 @@ const PLACEMENT_TYPES = {
 const CATEGORIES = [
     'Bodyweight',
     'Barbell',
-    'Dumbell',
+    'Dumbbell',
     'Kettlebell',
     'Machine Assisted',
     'Medicine Ball',
     'Plyometric'
 
+]
+
+const weekDays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
 ]
 
 //Redux::mapStateToProps
@@ -107,6 +119,8 @@ class BuildWorkoutController extends React.Component {
             bottomViewIndex: 0,
             folderIsSelected: false,
             folderSelected: '',
+            snackBarVisible: false,
+            snackBarReason: '',
             workoutDays: [],
             numWorkoutsAdded: 0,
             currDayIndex: 0,
@@ -124,7 +138,7 @@ class BuildWorkoutController extends React.Component {
                     data: this.props.lupa_data.Application_Workouts.applicationWorkouts.barbell
                 },
                 {
-                    title: "Dumbell",
+                    title: "Dumbbell",
                     data: this.props.lupa_data.Application_Workouts.applicationWorkouts.dumbell
                 },
                 {
@@ -155,7 +169,6 @@ class BuildWorkoutController extends React.Component {
         let weeks = [], workoutDays = [];
         const programDuration = this.props.programData.program_duration;
 
-        if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
             workoutDays = new Array(programDuration);
             for (let i = 0; i < programDuration; i++) {
                 await weeks.push(i);
@@ -169,19 +182,6 @@ class BuildWorkoutController extends React.Component {
                     Sunday: []
                 }
             }
-        } else {
-            workoutDays = new Array(1)
-            await weeks.push(0)
-            workoutDays[0] = {
-                Monday: [],
-                Tuesday: [],
-                Wednesday: [],
-                Thursday: [],
-                Friday: [],
-                Saturday: [],
-                Sunday: []
-            }
-        }
 
 
         await this.setState({ ready: true, weeks: weeks, workoutDays: workoutDays })
@@ -200,6 +200,19 @@ class BuildWorkoutController extends React.Component {
      * @param {*} workoutDays 
      */
     handleSaveProgramData = (workoutDays) => {
+        for (let i = 0; i < workoutDays.length; i++) {
+            let days = workoutDays[i];
+            for (let j = 0; j < weekDays.length; j++) {
+                if (days[weekDays[j]].length == 0 && this.props.program_workout_days.includes(weekDays[j])) {
+                    this.setState({ 
+                        snackBarVisible: true,
+                        snackBarReason: 'You must add atleast one exercise to week ' + (i + 1) + ' for ' + weekDays[j]
+                    })
+                    return;
+                }
+            }
+        }
+
         this.props.saveProgramWorkoutData(workoutDays)
     }
 
@@ -367,7 +380,7 @@ class BuildWorkoutController extends React.Component {
     /**
      * Renders the supersets for any populated workout in the workout options bottom sheet.
      */
-    renderCurrWorkoutSupersets = () => {
+   /* renderCurrWorkoutSupersets = () => {
         if (typeof (this.state.currPressedPopulatedWorkout) == 'undefined') {
             return (
                 <View>
@@ -398,7 +411,7 @@ class BuildWorkoutController extends React.Component {
                 }
             </ScrollView>
         )
-    }
+    }*/
 
     /**
      * Renders the workout options bottom sheet.
@@ -466,16 +479,9 @@ class BuildWorkoutController extends React.Component {
                     dragFromTopOnly={true}
                 >
                     <View style={{ flex: 1 }}>
-                        <View style={{ width: '100%' }}>
-                        <Button color="#1089ff" style={{ alignSelf: 'center', marginVertical: 10 }} contentStyle={{width: Dimensions.get('window').width- 20}} mode="contained" onPress={this.closeWeekDayPicker}>
-                                <Text>
-                                    Done
-                        </Text>
-                            </Button>
-                        </View>
                         <Picker
                             selectedValue={this.getCurrentDay()}
-                            style={{ height: '100%', width: '100%' }}
+                            style={{ width: '100%' }}
                             onValueChange={(itemValue, itemIndex) =>
                                 this.setState({ currDayIndex: itemIndex })
                             }>
@@ -485,10 +491,22 @@ class BuildWorkoutController extends React.Component {
                                 })
                             }
                         </Picker>
+                        <Button 
+                        color="#1089ff" 
+                        theme={{roundness: 12}}
+                        style={{elevation: 0, alignSelf: 'center', marginVertical: 10 }} 
+                        contentStyle={{width: Dimensions.get('window').width- 20, height: 45}} 
+                        mode="contained" 
+                        uppercase={false}
+                        onPress={this.closeWeekDayPicker}
+                        >
+                                <Text style={{fontFamily: 'Avenir'}}>
+                                    Done
+                        </Text>
+                            </Button>
+                         
                     </View>
-                    <SafeAreaView />
                 </RBSheet>
-
             )
         } else {
             //we don't need to do anything here because the currDayIndex is already 0
@@ -571,16 +589,9 @@ class BuildWorkoutController extends React.Component {
                     dragFromTopOnly={true}
                 >
                     <View style={{ flex: 1 }}>
-                        <View style={{ width: '100%' }}>
-                            <Button color="#1089ff" style={{ alignSelf: 'center', marginVertical: 10 }} contentStyle={{width: Dimensions.get('window').width - 20}} mode="contained" onPress={this.closeWeekPicker}>
-                                <Text>
-                                    Done
-                        </Text>
-                            </Button>
-                        </View>
                         <Picker
                             selectedValue={this.getCurrentWeek()}
-                            style={{ height: '100%', width: '100%' }}
+                            style={{ width: '100%' }}
                             onValueChange={(itemValue, itemIndex) => this.setState({ currWeekIndex: itemIndex })}>
                             {
                                 this.state.weeks.map((week, index, arr) => {
@@ -588,6 +599,22 @@ class BuildWorkoutController extends React.Component {
                                 })
                             }
                         </Picker>
+                        <View style={{ width: '100%' }}>
+                            <Button 
+                            color="#1089ff" 
+                            theme={{roundness: 12}}
+                            style={{elevation: 0, alignSelf: 'center', marginVertical: 10 }} 
+                            contentStyle={{width: Dimensions.get('window').width- 20, height: 45}} 
+                            mode="contained" 
+                            uppercase={false}
+                            onPress={this.closeWeekPicker}
+
+                            >
+                                <Text>
+                                    Done
+                        </Text>
+                            </Button>
+                        </View>
                     </View>
                     <SafeAreaView />
                 </RBSheet>
@@ -638,7 +665,7 @@ class BuildWorkoutController extends React.Component {
             case 'Bodyweight':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
-                    <ScrollView>
+                    <ScrollView showsHorizontalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
                         {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.bodyweight.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
@@ -656,17 +683,15 @@ class BuildWorkoutController extends React.Component {
                         })
                         }
                     </ScrollView>
-                    <Button color="#1089ff" onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 50}} style={{marginVertical: 10, alignSelf: 'center'}}>
-                        Back
-                    </Button>         
+                        
                     </View>
                 )
             case 'Dumbbell':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
-                    <ScrollView>
+                    <ScrollView showsHorizontalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
                         {
-                        this.props.lupa_data.Application_Workouts.applicationWorkouts.dumbbell.map((item, index, value) => {
+                        this.props.lupa_data.Application_Workouts.applicationWorkouts.dumbell.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
                                 return;
                             }
@@ -681,16 +706,13 @@ class BuildWorkoutController extends React.Component {
                             )
                         })
                         }
-                    </ScrollView>
-                    <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
-                        Back
-                    </Button>         
+                    </ScrollView>     
                     </View>
                 )
             case 'Plyometric':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
-                    <ScrollView>
+                    <ScrollView showsHorizontalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
                         {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
@@ -707,16 +729,36 @@ class BuildWorkoutController extends React.Component {
                             )
                         })
                         }
-                    </ScrollView>
-                    <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
-                        Back
-                    </Button>         
+                    </ScrollView>     
                     </View>
                 )
+                case 'Kettlebell':
+                    return (
+                        <View style={{width: Dimensions.get('window').width}}>
+                        <ScrollView showsHorizontalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+                            {
+                            this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric.map((item, index, value) => {
+                                if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
+                                    return;
+                                }
+                                this.checkShowSelectedStyle(item)
+                                return (
+                                    <SingleWorkout
+                                        onPress={() => this.captureWorkout(item, this.state.currPlacementType)}
+                                        key={item.workout_name}
+                                        showSelectStyle={item.showSelectStyle}
+                                        workout={item}
+                                    />
+                                )
+                            })
+                            }
+                        </ScrollView>     
+                        </View>
+                    )
             case 'Medicine Ball':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
-                    <ScrollView>
+                    <ScrollView showsHorizontalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
                         {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.medicine_ball.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
@@ -733,16 +775,13 @@ class BuildWorkoutController extends React.Component {
                             )
                         })
                         }
-                    </ScrollView>
-                    <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
-                        Back
-                    </Button>         
+                    </ScrollView>       
                     </View>
                 )
             case 'Barbell':
                 return (
                     <View style={{width: Dimensions.get('window').width}}>
-                    <ScrollView>
+                    <ScrollView showsHorizontalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
                         {
                         this.props.lupa_data.Application_Workouts.applicationWorkouts.barbell.map((item, index, value) => {
                             if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
@@ -759,16 +798,13 @@ class BuildWorkoutController extends React.Component {
                             )
                         })
                         }
-                    </ScrollView>
-                    <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
-                        Back
-                    </Button>         
+                    </ScrollView>        
                     </View>
                 )
                 case 'Machine Assisted':
                     return (
                         <View style={{width: Dimensions.get('window').width}}>
-                        <ScrollView>
+                        <ScrollView showsHorizontalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
                             {
                             this.props.lupa_data.Application_Workouts.applicationWorkouts.machine_assisted.map((item, index, value) => {
                                 if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
@@ -785,10 +821,7 @@ class BuildWorkoutController extends React.Component {
                                 )
                             })
                             }
-                        </ScrollView>
-                        <Button color="#1089ff"  onPress={this.handlerLeaveFolder} mode="contained" theme={{roundness: 8}} contentStyle={{height: 40, width: Dimensions.get('window').width - 20}} style={{marginVertical: 10, alignSelf: 'center'}}>
-                            Back
-                        </Button>         
+                        </ScrollView>       
                         </View>
                     )
         }
@@ -815,7 +848,22 @@ class BuildWorkoutController extends React.Component {
         } else {
             return (
             <View style={{flex: 1}}>
+                                         <Button 
+                         icon={() => <FeatherIcon name="arrow-left" color="white" />} 
+                         color="#1089ff" 
+                         onPress={this.handlerLeaveFolder} 
+                         mode="contained" 
+                         theme={{roundness: 12}} 
+                         contentStyle={{height: 40, width: Dimensions.get('window').width - 50}} 
+                         style={{elevation: 0, marginVertical: 10, alignSelf: 'center'}}
+                         uppercase={false}
+                         >
+                        <Text style={{fontFamily: 'Avenir'}}>
+                            Categories
+                        </Text>
+                    </Button>   
                 {this.renderFolderContent()}
+                
             </View>
             )
         }
@@ -844,7 +892,7 @@ class BuildWorkoutController extends React.Component {
                         borderTopLeftRadius: 10,
                     },
                     draggableIcon: {
-                        backgroundColor: 'grey',
+                        backgroundColor: this.state.folderIsSelected == true ? 'white' : 'grey',
                     }
                 }}
             >
@@ -902,10 +950,10 @@ class BuildWorkoutController extends React.Component {
                 return (
                     <View style={styles.container}>
                         <Appbar.Header style={{ elevation: 0, alignItems: 'center', backgroundColor: '#23374d', }}>
-                            <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
+                          {/*  <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
                                 Back
-                                    </Button>
-                            <Appbar.Content title="Add Exercises" />
+                </Button> */}
+                            <Appbar.Content title="Add Exercises" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                             <Button color="white" uppercase={false} onPress={() => this.handleSaveProgramData(this.state.workoutDays)}>
                                 Next
                                     </Button>
@@ -921,6 +969,17 @@ class BuildWorkoutController extends React.Component {
                         {this.renderDayOfTheWeekDropdownPicker()}
                         {this.renderAddExerciseRBSheet()}
                         {this.renderWorkoutOptionsSheet()}
+                        <Snackbar
+        visible={this.state.snackBarVisible}
+        onDismiss={() => this.setState({ snackBarVisible: false })}
+        action={{
+          label: 'Okay',
+          onPress: () => {
+            this.setState({ snackBarVisible: false })
+          },
+        }}>
+        {this.state.snackBarReason}
+      </Snackbar>
                     </View>
                 );
             case 1:

@@ -87,16 +87,20 @@ function StartPackDialog({ isVisible, closeModal, program }) {
       }
     
       const handleOnPressSend = async () => {
-       // const newPack =  initializeNewPack('LupaPack837', currUserData.user_uuid, program, [usersUUIDToShare])
-       // LUPA_CONTROLLER_INSTANCE.sendPackInvite(newPack, usersUUIDToShare);
-
-       LUPA_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(currUserData.user_uuid, chosenPack.uid, program.program_structure_uuid)
-
+        LUPA_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(currUserData.user_uuid, chosenPack.uid, program.program_structure_uuid)
         closeModal()
       }
     
       const renderUserAvatars = () => {
+        if (getLupaStoreState().Packs.currUserPacksData.length == 0) {
+            return null;
+        }
+
         return getLupaStoreState().Packs.currUserPacksData.map((user, index, arr) => {
+            if (user.members <= 1 == false) {
+                return null;
+            }
+
           if (chosenPack.uid == user.uid) {
             return (
               <TouchableWithoutFeedback key={user.user_uuid} onPress={() => handleAvatarOnPress(user)}>
@@ -142,16 +146,38 @@ function StartPackDialog({ isVisible, closeModal, program }) {
 
 
     return (
-        <Dialog visible={isVisible} animationType="fade" animated={true} style={{borderRadius: 15, height: 500}}>
+        <Dialog visible={isVisible} animationType="fade" animated={true} style={{borderRadius: 15, height: 'auto', justifyContent: 'space-evenly',}}>
             <Dialog.Title>
                 Invite your pack
             </Dialog.Title>
             <Dialog.Content>
-                <Paragraph style={{fontFamily: 'Avenir'}}>
+                {
+                    getLupaStoreState().Packs.currUserPacksData.length == 0 ?
+                        <View>
+                            <Text style={{fontFamily: 'Avenir-Medium', fontSize: 16, fontWeight: '700', color: 'rgb(116, 126, 136)'}}>
+        
+        
+                        <Text style={{color: '#1089ff'}}>
+                            Join{" "}
+                        </Text>
+                        <Text>
+                            or{" "}
+                        </Text>
+                        <Text style={{color: '#1089ff'}}>
+                            create{" "}
+                        </Text>
+                        <Text>
+                            your own pack to invite your friends to participate in this program.
+                        </Text>
+                        </Text>
+                        </View>
+                    :
+                    <Paragraph style={{fontFamily: 'Avenir'}}>
                     You are about to invite your pack to start {program.program_name} with you.  
                 </Paragraph>
+                }
                 <View style={{height: 200, alignItems: 'flex-start', width: '100%'}}>
-                    <ScrollView>
+                    <ScrollView centerContent contentContainerStyle={{justifyContent: 'flex-start', alignItems: 'flex-start'}}>
                     {renderUserAvatars()}
                     </ScrollView>
                 </View>
@@ -173,6 +199,7 @@ function StartPackDialog({ isVisible, closeModal, program }) {
                 </Button>
 
                 <Button 
+                disabled={getLupaStoreState().Packs.currUserPacksData.length == 0}
                 uppercase={false}
                 mode="contained" 
                 color="#1089ff"
@@ -241,7 +268,7 @@ function WaitListDialog({ isVisible, closeModal, program, userIsWaitlisted }) {
     )
 }
 
-function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
+function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const [showProfileModal, setShowProfileModal] = useState(false)
     const [showWorkoutPreviewModal, setShowWorkoutPreviewModal] = useState(false)
@@ -284,14 +311,7 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
 
         LOG('ProgramInformationPreview.js', 'Running useEffect');
 
-        const PROGRAM_WAITLIST_OBSERVER = LUPA_DB.collection('program_waitlist').doc(program.program_structure_uuid).onSnapshot(documentSnapshot => {
-            const data = documentSnapshot.data();
-            setProgramWaitlistData(data.waitlist)
-        });
-
         fetchData();
-
-        return () => PROGRAM_WAITLIST_OBSERVER();
     }, [])
 
     const checkUserIsWaitlisted = () => {
@@ -399,9 +419,9 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
         try {
             return program.program_tags.map((tag, index, arr) => {
                 return (
-                    <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: '#23374d'}} style={{backgroundColor: 'transparent', borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
+                    <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: '#23374d'}} style={{borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
                     
-                        <Caption style={{color: '#23374d'}}>
+                        <Caption>
                         {tag}
                         </Caption>
                     </Chip>
@@ -411,26 +431,6 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
         } catch (err) {
             return null
         }
-    }
-
-    /**
-     * Returns the program owners display name
-     * @return String progam owner's display name
-     */
-    const getOwnerDisplayName = () => {
-        if (typeof(programOwnerData) == 'undefined')
-        {
-            return ''
-        }
-
-            try {
-            return programOwnerData.display_name
-            } catch(error) {
-                LOG_ERROR('ProgramInformationPreview.js', 'Unhandled exception in getOwnerDisplayName()', error)
-                return ''
-            }
-
-        return ''
     }
 
       /**
@@ -487,83 +487,6 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
             }
     }
 
-    /**
-     * Returns the program price
-     * @return String representing the program price, otherwise, ''
-     */
-    const getProgramPrice = () => {
-        if (typeof(program) == 'undefined')
-        {
-            return 0
-        }
-
-            try {
-                return program.program_price;
-            } catch(error) {
-                return 0;
-            }
-    }
-
-    const getLocationLatitude = () => {
-        if (typeof(program) == 'undefined' || program == null)
-        {
-            return 0
-        }
-
-        try {
-            return program.program_location.location.lat
-        } catch(error) {
-            return 0;
-        }
-    }
-
-    const getLocationLongitude = () => {
-        if (typeof(program) == 'undefined' || program == null)
-        {
-            return 0
-        }
-
-        try {
-            return program.program_location.location.long;
-        } catch(error) {
-            return 0;
-        }
-    }
-
-    const renderProgramLocationName = () => {
-        if (typeof(program) == 'undefined' || program == null)
-        {
-            return "";
-        }
-
-        try {
-            return program.program_location.name;
-        } catch(error) {
-            return "";
-        }
-    }
-
-    const renderProgramLocationAddress = () => {
-        if (typeof(program) == 'undefined' || program == null)
-        {
-            return "";
-        }
-
-        try {
-            return program.program_location.address;
-        } catch(error) {
-            return "";
-        }
-    }
-
-    const renderAddToWaitlist = () => {
-        if (checkUserIsWaitlisted() == false) {
-            return "You're on the list!"
-        } else {
-            return "Add to Waitlist"
-        }
-    }
-
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} style={styles.container} animated={true} animationType="slide">
               <SafeAreaView style={styles.container}>
@@ -573,10 +496,11 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
                           primary: '#FFFFFF'
                       },
                   }}>
-                      <Appbar.Action icon={() => <FeatherIcon name="x" size={20}/>} onPress={closeModalMethod} />
-                    
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
 
+<Appbar.Action icon={() => <FeatherIcon name="x" size={20} onPress={() => closeModalMethod()} />} onPress={() => closeModalMethod()} />
+
+                    
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                     <TouchableOpacity onPress={() => setStartPackDialogIsVisible(true)}>
                         <View style={{marginHorizontal: 5, alignItems: 'center', justifyContent: 'center',}}>
                         <View style={{borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 30, height: 30, backgroundColor: 'rgb(245, 245, 245)',}}>
@@ -585,18 +509,6 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
                         </View>
                         </View>
                         </TouchableOpacity>
-
-                        <TouchableOpacity onPress={() => setWaitlistDialogIsVisible(true)}>
-
-
-                        <View style={{marginHorizontal: 5, alignItems: 'center', justifyContent: 'center',}}>
-                        <View style={{borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 30, height: 30, backgroundColor: 'rgb(245, 245, 245)',}}>
-                            <MaterialIcon name="playlist-add" size={20} />
-                          
-                        </View>
-                        </View>
-                        </TouchableOpacity>
-
                     </View>
                   </Appbar.Header>
                    <View style={{flexGrow: 2}}>
@@ -650,7 +562,6 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
                         mode="contained"
                         theme={{
                         roundness: 8,
-             
                     }}
                     color="#1089ff"
                     style={{width: '100%'}}>
@@ -661,10 +572,11 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod}) {
                    <PurchaseProgramWebView 
                     isVisible={lupaPurchasePageOpen} 
                     closeModal={() => setLupaPurchasePageOpen(false)}
-                    programProps={getProgramProps()}
+                    programUUID={program.program_structure_uuid}
+                    programOwnerUUID={programOwnerData.user_uuid}
+                    purchaserUUID={currUserData.user_uuid}
                     />
                    </SafeAreaView>
-                   <WaitListDialog isVisible={waitlistDialogIsVisible} closeModal={() => setWaitlistDialogIsVisible(false)} program={program} userIsWaitlisted={checkUserIsWaitlisted()} />
                    <StartPackDialog isVisible={startPackDialogIsVisible} closeModal={() => setStartPackDialogIsVisible(false)} program={program} />
             </Modal>
     )
@@ -742,9 +654,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
     },
     programDescriptionText: {
-        color: '#212121', 
         fontFamily: 'Avenir-Light',
-        paddingVertical: 10
+        paddingVertical: 5
     },
     programPriceText: {
         fontSize: 30, 

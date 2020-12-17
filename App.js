@@ -17,7 +17,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import LupaController from './src/controller/lupa/LupaController';
 import LUPA_DB, { LUPA_AUTH, registerAppWithFCM, generateMessagingToken, UserAuthenticationHandler } from './src/controller/firebase/firebase';
-import { getLupaUserStructure, getLupaPackStructure } from './src/controller/firebase/collection_structures';
+import { getLupaUserStructure, getLupaPackStructure, getLupaUserStructurePlaceholder } from './src/controller/firebase/collection_structures';
 import { getLupaProgramInformationStructure } from './src/model/data_structures/programs/program_structures';
 import CreateProgram from './src/ui/workout/program/createprogram/CreateProgram';
 import LupaDrawerNavigator from './src/ui/navigators/LupaDrawerNavigator'
@@ -60,6 +60,7 @@ import PackChat from './src/ui/packs/PackChat';
 import { UPDATE_CURRENT_USER_PACKS_ACTION } from './src/controller/redux/actionTypes';
 import Achievements from './src/ui/user/Achievements'
 import Community from './src/ui/community/Community';
+import HourlyPaymentModal from './src/ui/user/modal/HourlyPaymentModal';
 
 const App = () => {
   return (
@@ -100,8 +101,9 @@ function AppNavigator() {
       <StackApp.Screen name="Settings" component={SettingsStackNavigator} />
       <StackApp.Screen name="LiveWorkout" component={LiveWorkout} />
       <StackApp.Screen name="TrainerInsights" component={TrainerInsights} />
-      <StackApp.Screen name="Profile" component={ProfileNavigator} />
+      <StackApp.Screen name="Profile" component={ProfileController} />
       <StackApp.Screen name="Notifications" component={NotificationsView} />
+      <StackApp.Screen name="HourlyPayment" component={HourlyPaymentModal} />
       <StackApp.Screen name="Messages" component={MessagesView} />
       <StackApp.Screen name="PackChat" component={PackChat} />
       <StackApp.Screen name="Search" component={Search} />
@@ -191,7 +193,7 @@ const SwitchNavigator = () => {
         currUserData = result;
       });
 
-      await setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
+     // await setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
 
       userPayload = {
         userData: currUserData,
@@ -204,26 +206,32 @@ const SwitchNavigator = () => {
     }
 
     //we have an authenticated user and we shall continue normally
-    await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid).then(result => {
+    await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid)
+    .then(async result => {
       currUserData = result;
-    });
+    })
 
     await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPacks(uuid).then(result => {
       currUserPacks = result;
     });
 
-    await setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
+   // await setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
 
     userPayload = {
       userData: currUserData,
     }
 
     // Load user program data if the user is a trainer
-    if (currUserData.isTrainer) {
-      await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
-        currUserPrograms = result;
-      });
+    if (typeof(currUserData) == 'undefined') {
+      currUserPrograms = []
+    } else {
+      if (currUserData.isTrainer) {
+        await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPrograms().then(result => {
+          currUserPrograms = result;
+        });
+      }
     }
+
 
     await dispatch({ type: 'UPDATE_CURRENT_USER', payload: userPayload });
     await dispatch({ type: 'UPDATE_CURRENT_USER_PROGRAMS', payload: currUserPrograms });

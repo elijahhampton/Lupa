@@ -15,11 +15,12 @@ import {
     Avatar
 } from 'react-native-paper';
 
-
 import LupaController from '../../../controller/lupa/LupaController';
 
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { getLupaStoreState } from '../../../controller/redux';
+import { verifyAuth } from '../../../controller/lupa/auth/auth';
 
 function UserSearchResultCard(props) {
     const navigation = useNavigation()
@@ -27,10 +28,16 @@ function UserSearchResultCard(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
    const _handleViewProfile = () => {
-        navigation.navigate('Profile', {
-            userUUID: props.user.user_uuid,
-            navFrom: 'SearchView',
-        });
+        const LUPA_STATE = getLupaStoreState();
+
+        if (LUPA_STATE.Auth.isAuthenticated == false) {
+            navigation.navigate('SignUp');
+        } else {
+            navigation.navigate('Profile', {
+                userUUID: props.user.user_uuid,
+                navFrom: 'SearchView',
+            });
+        }
     }
 
     const renderUserAvatar = () => {

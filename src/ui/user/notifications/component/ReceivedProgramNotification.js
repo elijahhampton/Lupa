@@ -29,17 +29,24 @@ function ReceivedProgramNotification({ notificationData }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
     const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
+    const [componentDidErr, setComponentDidErr] = useState(false);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
 
     useEffect(() => {
         async function fetchData() {
-            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.data.program_owner).then(data => {
+            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.data.program_owner)
+            .then(data => {
                 setSenderUserData(data)
+            })
+            .catch(() => {
+                setComponentDidErr(true);
             })
         }
 
-        fetchData()
+        fetchData().catch(() => {
+            setComponentDidErr(true)
+        })
     }, [])
 
     const currUserData = useSelector(state => {
@@ -47,6 +54,7 @@ function ReceivedProgramNotification({ notificationData }) {
     })
 
     const handleOnPress = () => {
+        try {
         if (notificationData.data.program_participants.includes(currUserData.user_uuid))
         {
             setProgramOptionsModalVisible(true)
@@ -57,36 +65,56 @@ function ReceivedProgramNotification({ notificationData }) {
             setProgramModalVisible(true)
          //   LUPA_CONTROLLER_INSTANCE.addProgramView(notificationData.data.program_structure_uuid);
         }
+    } catch(error) {
+        setComponentDidErr(true)
+    }
     }
 
-    return (
-                   <>
-                   <TouchableWithoutFeedback style={{width: windowWidth, }} onPress={handleOnPress}>
-                   <View style={{width: windowWidth, marginVertical: 15}}>
-                       <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                           <Avatar.Image source={{uri: senderUserData.photo_url}} size={45} style={{marginHorizontal: 10}} />
-                           <View>
-                               <Text>
-                               <Text style={{fontWeight: '500'}}>
-       {senderUserData.display_name}{" "}
-       </Text>
-       <Text>
-       sent you a program preview.
-       </Text>
-                               </Text>
-       <Caption>
-           {notificationData.data.program_name}
-       </Caption>
-                           </View>
-                       </View>
-                   </View>
-                  
-                   </TouchableWithoutFeedback>
-                   <ProgramInformationPreview isVisible={programModalVisible} program={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
-                   <ProgramOptionsModal program={notificationData.data} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
-                   <Divider />
-                   </>
-    )
+    const renderComponentDisplay = () => {
+        if (componentDidErr == true) {
+            return (
+                <View style={{width: '100%', marginVertical: 15, padding: 20, alignItems: 'center', justifyContent: 'center'}}>
+                <Text>
+                    Error loading notificaiton
+                </Text>
+            </View>
+            )
+
+        } else {
+            return (
+                <>
+                <TouchableWithoutFeedback style={{width: windowWidth, }} onPress={handleOnPress}>
+                <View style={{width: windowWidth, marginVertical: 15}}>
+                    <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                        <Avatar.Image source={{uri: senderUserData.photo_url}} size={45} style={{marginHorizontal: 10}} />
+                        <View>
+                            <Text>
+                            <Text style={{fontWeight: '500'}}>
+    {senderUserData.display_name}{" "}
+    </Text>
+    <Text>
+    sent you a program preview.
+    </Text>
+                            </Text>
+    <Caption>
+        {notificationData.data.program_name}
+    </Caption>
+                        </View>
+                    </View>
+                </View>
+               
+                </TouchableWithoutFeedback>
+                <ProgramInformationPreview isVisible={programModalVisible} program={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
+                <ProgramOptionsModal program={notificationData.data} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
+                <Divider />
+                </>
+            )
+           
+        }
+    }
+
+
+    return renderComponentDisplay()
 }
 
 export default ReceivedProgramNotification;

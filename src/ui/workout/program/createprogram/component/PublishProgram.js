@@ -371,7 +371,7 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
     <View style={{flex: 1}}>
                   <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0,  borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
                     <Appbar.Action onPress={goBack} icon={() =>  <FeatherIcon name="arrow-left" color="#000000" size={22} style={{margin: 18}} />} />
-                    <Appbar.Content title="Publish Program" titleStyle={{fontFamily: 'HelveticaNeue-Medium', fontSize: 15, fontWeight: '600'}} />
+                    <Appbar.Content title="Publish Program" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                 </Appbar.Header>
                 <ScrollView>
                 <View style={{marginVertical: 10}}>
@@ -459,7 +459,7 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
               Edit
             </Text>
             </View>
-            <View style={{padding: 10}}>
+            <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}}>
               {renderProgramTags()}
             </View>
           </View>
@@ -502,9 +502,12 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
             color="#23374d"
             mode="contained"
             theme={{roundness: 12}}
+            uppercase={false}
             contentStyle={{width: Dimensions.get('window').width - 50, height: 45}}
-            style={{marginVertical: 20, alignSelf: 'center', elevation: 8}}>
-              Finish
+            style={{marginVertical: 20, alignSelf: 'center', elevation: 0}}>
+              <Text style={{fontFamily: 'Avenir'}}>
+               Publish Program
+              </Text>
             </Button>
    
              </ScrollView>

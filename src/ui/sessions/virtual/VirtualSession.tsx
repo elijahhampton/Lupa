@@ -211,6 +211,7 @@ class VirtualSession extends Component<Props, State> {
     endCall = async () => {
         await this._engine?.leaveChannel()
         this.setState({peerIds: [], joinSucceed: false})
+        this.props.navigation.pop();
     }
 
     getDisplayImageURI = () => {

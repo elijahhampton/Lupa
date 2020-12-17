@@ -51,6 +51,8 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     },
     type: 'PROGRAM',
     isPublic: false,
+    num_programs_completed: 0,
+    program_started: false,
 }
 
 function initializeNewProgram(uuid: String | Number, programOwner: String, programParticipants: Array<String>, duration: Number, workoutDays: Array<String>) : LupaProgramInformationStructure {

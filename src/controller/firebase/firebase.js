@@ -321,8 +321,9 @@ signUpUser = async (USER_UUID, username, email, password) => {
       //Add user to users collection with UID.
       await LUPA_DB.collection('users').doc(USER_UUID).set(userData, { merge: true });
   } catch (err) {
-
+    return Promise.resolve(false);
   }
+  
 
   return Promise.resolve(true);
 }

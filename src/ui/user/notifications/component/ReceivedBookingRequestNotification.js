@@ -33,6 +33,7 @@ const {windowWidth} = Dimensions.get('window').width
 function ReceivedBookingRequestNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const [bookingData, setBookingData] = useState(notificationData.data);
+    const [componentDidErr, setComponentDidErr] = useState(false);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     const currUserData = useSelector(state => {
@@ -41,17 +42,10 @@ function ReceivedBookingRequestNotification({ notificationData }) {
 
 
     const renderBookingButtons = () => {
+        try {
         if (typeof(bookingData) == 'undefined') {
             return (
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
-            <Button uppercase={false} color="#1089ff" onPress={() => LUPA_CONTROLLER_INSTANCE.handleAcceptBooking(notificationData.data.uid)}>
-                Accept
-            </Button>
-
-            <Button uppercase={false} color="#1089ff">
-                Decline
-            </Button>
-        </View>
+            null
             )
         }
         
@@ -61,18 +55,22 @@ function ReceivedBookingRequestNotification({ notificationData }) {
             Accept
         </Button>
 
-        <Button uppercase={false} color="#1089ff" onPress={() => {}}>
+        <Button uppercase={false} color="#1089ff" onPress={() => LUPA_CONTROLLER_INSTANCE.handleDeclineBooking(notificationData.data.uid)}>
             Decline
         </Button>
     </View>
                             :
                          null
+
+    }catch(errror) {
+        setComponentDidErr(true);
+    }
         
     }
 
     const renderNotificationMessage = () => {
         try {
-        if (bookingData.session_type == SESSION_TYPE.REMOTE) {
+        if (bookingData.session_type == 'remote') { //SESSION_TYPE.REMOTE
             return (
                 <Text>
                                <Text style={{fontWeight: '500'}}>
@@ -83,7 +81,7 @@ function ReceivedBookingRequestNotification({ notificationData }) {
        </Text>
                                </Text>
             )
-        } else if (bookingData.session_type == SESSION_TYPE.IN_PERSON) {
+        } else if (bookingData.session_type == 'in_person') { //SESSION_TYPE.IN_PERSION ? 
             return (
                 <Text>
                                <Text style={{fontWeight: '500'}}>
@@ -106,14 +104,10 @@ function ReceivedBookingRequestNotification({ notificationData }) {
         }
     } catch(error) {
         LOG_ERROR('ReceivedBookingRequestNotificaiton.js', 'renderNotificationMessage::Caught exception trying to render the notification message.  Returning default message.', error);
+        setComponentDidErr(true);
         return (
             <Text>
-                               <Text style={{fontWeight: '500'}}>
-       {senderUserData.display_name}{" "}
-       </Text>
-       <Text>
-       has requested a training session with you.
-       </Text>
+            Error loading notification.
                                </Text>
         )
     }
@@ -123,47 +117,69 @@ function ReceivedBookingRequestNotification({ notificationData }) {
         async function fetchData() {
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.from).then(data => {
                 setSenderUserData(data)
+            }).catch(() => {
+                setComponentDidErr(true)
             })
         }
 
 
-        const bookingsObserver = LUPA_DB.collection('bookings').doc(notificationData.data.uid).onSnapshot(documentSnapshot => {
+
+        const bookingsObserver = LUPA_DB.collection('bookings')
+        .doc(notificationData.data.uid)
+        .onSnapshot(documentSnapshot => {
             const bookingData = documentSnapshot.data();
-            console.log('@@@@@@@')
-            console.log(notificationData.data.uid)
-            console.log(bookingData)
             setBookingData(bookingData)
+        }, err => {
+            setComponentDidErr(true);
         })
 
-        fetchData()
+        fetchData().catch(() => {
+            setComponentDidErr(true);
+        })
         return () => bookingsObserver();
     }, []);
 
-    return (
-        <>
-                   <View style={{width: '100%', marginVertical: 15}}>
-                       <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                           <Avatar.Image source={{uri: senderUserData.photo_url}} size={35} style={{marginHorizontal: 10}} />
-                           <View>
-                               {renderNotificationMessage()}
-       <Caption>
-           {
-           notificationData.data.start_time
-            } 
-            - 
-            {
-            notificationData.data.end_time
-            }
-       </Caption>
-                           </View>
-                       </View>
-                       {renderBookingButtons()}
-                      
-                   </View>
-                  
-                   <Divider />
-                   </>
-    )
+    const renderComponentDisplay = () => {
+        if (componentDidErr == true) {
+            return (
+                <View style={{width: '100%', marginVertical: 15, padding: 20, alignItems: 'center', justifyContent: 'center'}}>
+                <Text>
+                    Error loading notificaiton
+                </Text>
+            </View>
+            )
+
+        } else {
+            return (
+                <>
+                <View style={{width: '100%', marginVertical: 15}}>
+                    <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                        <Avatar.Image source={{uri: senderUserData.photo_url}} size={35} style={{marginHorizontal: 10}} />
+                        <View>
+                            {renderNotificationMessage()}
+    <Caption>
+        {
+        notificationData.data.start_time
+         } 
+         - 
+         {
+         notificationData.data.end_time
+         }
+    </Caption>
+                        </View>
+                    </View>
+                    {renderBookingButtons()}
+                   
+                </View>
+               
+                <Divider />
+                </>
+            )
+           
+        }
+    }
+
+    return renderComponentDisplay()
 }
 
 export default ReceivedBookingRequestNotification;

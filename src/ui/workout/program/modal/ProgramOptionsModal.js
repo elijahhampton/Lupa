@@ -106,21 +106,24 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
     }
     
     const renderProgramOwnerOptions = () => {
-            return TRAINER_OPTIONS.map((option, index, arr) => {
-                return (
-                    <>
-                    <TouchableWithoutFeedback key={index} onPress={() => handleDefaultOptionsOnPress(option.optionTitle)}>
-                    <View key={index} style={styles.optionContainerStyle}>
-                        <Text style={[styles.textStyle, option.customTextStyle]}>
-                            {option.optionTitle}
-                        </Text>
-                    </View>
-                    </TouchableWithoutFeedback>
-                    <Divider />
-                    </>
-                )
-            });
-    }
+            if ((currUserData.user_uuid == program.program_structure_uuid) == false) {
+                return TRAINER_OPTIONS.map((option, index, arr) => {
+                    return (
+                        <>
+                        <TouchableWithoutFeedback key={index} onPress={() => handleDefaultOptionsOnPress(option.optionTitle)}>
+                        <View key={index} style={styles.optionContainerStyle}>
+                            <Text style={[styles.textStyle, option.customTextStyle]}>
+                                {option.optionTitle}
+                            </Text>
+                        </View>
+                        </TouchableWithoutFeedback>
+                        <Divider />
+                        </>
+                    )
+                });
+        }
+            }
+
 
     const renderDefaultOptions = () => {
             return DEFAULT_OPTIONS.map((option, index, arr) => {
@@ -164,7 +167,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     }
                 }}>
                     <Appbar.Action onPress={closeModal} icon={() => <Feather1s thin={true} name="x" size={20} />} />
-                    <Appbar.Content title="Program Options" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                    <Appbar.Content title="Program Options" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                 </Appbar.Header>
             <View style={styles.container}>
                 {
@@ -174,7 +177,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     renderCurrUserOptions()
                 }
                 {
-                    currUserData.isTrainer && program.program_owner == currUserData.user_uuid ? renderProgramOwnerOptions() : null
+                    renderProgramOwnerOptions()
                 }
             </View>
         </Modal>

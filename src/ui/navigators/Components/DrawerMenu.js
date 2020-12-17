@@ -102,13 +102,20 @@ function DrawerMenu(props) {
       return null;
     }
 
-    if (lupaStoreState.Packs.currUserPacksData.length === 0) {
+    const lupaStorePacks = getLupaStoreState().Packs.currUserPacksData;
+
+    if (lupaStorePacks.length === 0) {
       return (
-        null
+        <View style={{paddingLeft: 30, flexDirection: 'row', alignItems: 'center'}}>
+  <Caption style={{paddingHorizontal: 20}}>
+          Click the globe icon on the explore page to create a pack.
+        </Caption>
+        </View>
+      
       )
     }
 
-    return lupaStoreState.Packs.currUserPacksData.map(pack => {
+    return lupaStorePacks.map(pack => {
       return (
         <TouchableWithoutFeedback onPress={() => navigateToPackChat(pack.uid)}>
         <View style={{height: 'auto', marginLeft: 50, marginVertical: 5}}>
@@ -313,7 +320,7 @@ export default DrawerMenu;
     },
     buttonText: {
       color: '#000000',
-        fontSize: 15, 
+        fontSize: 18, 
         fontWeight: '300',
     }
   });

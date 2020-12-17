@@ -360,10 +360,10 @@ class GuestView extends React.Component {
         return (
           <TouchableWithoutFeedback onPress={() => this.navigateToProfile(trainer.user_uuid)} key={trainer.user_uuid} style={{ paddingHorizontal: 10, borderRadius: 12, marginVertical: 10 }}>
             <View style={{borderRadius: 12}}>
-              <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
+              <View style={{ alignItems: 'center', flexDirection: 'row' }}>
 
-                <Surface style={{ elevation: 5, borderRadius: 12 }}>
-                  <Avatar size={45} containerStyle={{borderRadius: 12}} source={{ uri: trainer.photo_url }} />
+                <Surface style={{ elevation: 0, borderRadius: 12 }}>
+                  <PaperAvatar.Image source={{uri: trainer.photo_url}}  key={trainer.user_uuid} size={45} rounded containerStyle={{borderRadius: 12}} />
                 </Surface>
 
                 <View style={{ paddingHorizontal: 10 }}>
@@ -411,10 +411,10 @@ class GuestView extends React.Component {
         return (
           <TouchableWithoutFeedback onPress={() => this.navigateToProfile(trainer.user_uuid)} key={trainer.user_uuid} style={{ paddingHorizontal: 10, marginVertical: 10 }}>
             <View>
-              <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
+              <View style={{ alignItems: 'center', flexDirection: 'row' }}>
 
-                <Surface style={{ elevation: 5 }}>
-                  <Avatar size={45} source={{ uri: trainer.photo_url }} />
+                <Surface style={{ elevation: 0 }}>
+                  <PaperAvatar.Image key={trainer.user_uuid} rounded size={45} source={{ uri: trainer.photo_url }} />
                 </Surface>
 
                 <View style={{ paddingHorizontal: 10 }}>
@@ -503,7 +503,7 @@ class GuestView extends React.Component {
 
                   <View style={{borderRadius: 12}}>
 
-                    <Image style={{borderRadius: 12, width: 120, height: 120}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
+                    <Image style={{borderRadius: 12, borderWidth: 0.5, borderColor: '#EEEEEE', width: 120, height: 120}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
 
                     <Surface style={{ elevation: 5, width: 30, height: 30, alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, right: 0, margin: 12, borderRadius: 30 }}>
                       <Feather1s name="calendar" color="#1089ff" />
@@ -512,16 +512,14 @@ class GuestView extends React.Component {
 
                   </View>
 
-                  <View style={{ height: 50, justifyContent: 'space-evenly' }}>
+                  <View style={{alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <FeatherIcon name="info" color="#1089ff" style={{ paddingHorizontal: 3 }} />
                       <Text style={{ fontFamily: 'Avenir-Light', fontSize: 12, }}>
                         {trainer.display_name}
                       </Text>
                     </View>
 
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <FeatherIcon name="map-pin" color="#1089ff" style={{ paddingHorizontal: 3 }} />
                       <Text style={{ fontFamily: 'Avenir-Light', fontSize: 12, }}>
                         {trainer.location.city}, {trainer.location.state}
                       </Text>
@@ -717,17 +715,13 @@ class GuestView extends React.Component {
                     <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
 
                     <View style={{ paddingVertical: 15, flexDirection: 'row', alignItems: 'center' }}>
-                        <PaperAvatar.Image style={{ borderWidth: 1, borderColor: 'grey' }} size={35} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} />
+                        <PaperAvatar.Image style={{ borderWidth: 1, borderColor: 'grey' }} size={35} source={{ uri: trainer.photo_url }} />
                         <View style={{ paddingHorizontal: 10 }}>
                           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 15, fontWeight: '500' }}>
+                            <Text style={{ fontSize: 15, fontFamily: 'Avenir-Medium' }}>
                               {trainer.display_name}
                             </Text>
                           </View>
-
-                          <Text style={{flexWrap: 'wrap', fontWeight: '400', fontSize: 12, color: 'rgb(158, 154, 170)' }}>
-                            {trainer.bio}
-                          </Text>
                         </View>
                       </View>
 
@@ -995,7 +989,7 @@ class GuestView extends React.Component {
             {this.renderPaymentInformationBanner()}
             {this.renderRequestAuthenticationMessage()}
               <View style={{marginVertical: 5}}>
-                <Text style={{fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy'}}>
+                <Text style={{fontSize: 18, padding: 10, fontFamily: 'Avenir-Heavy'}}>
                   Book trainers near you
                 </Text>
               <View>
@@ -1005,7 +999,7 @@ class GuestView extends React.Component {
             <Divider style={{ marginVertical: 10, height: 8, backgroundColor: 'rgb(245, 246, 249)' }} />
             <View style={{ padding: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 16, fontFamily: 'Avenir-Heavy' }}>
+                <Text style={{ fontSize: 18, fontFamily: 'Avenir-Heavy' }}>
                   Book by your availability
                 </Text>
               </View>
@@ -1034,7 +1028,7 @@ class GuestView extends React.Component {
                 uppercase={false} 
                 mode="contained" 
                 contentStyle={{ height: 40 }}>
-                  <Text style={{fontFamily: 'Avenir', fontWeight: '800'}}>
+                  <Text style={{fontFamily: 'Avenir'}}>
                   Find Trainer
                   </Text>
 
@@ -1054,7 +1048,7 @@ class GuestView extends React.Component {
             {this.renderCreateAccountSection()}
             <View style={{ marginVertical: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 15, padding: 10, fontFamily: 'Avenir-Heavy' }}>
+                <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
                   By Lupa
           </Text>
               </View>
