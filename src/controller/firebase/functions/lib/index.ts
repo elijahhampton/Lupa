@@ -192,21 +192,20 @@ exports.makePaymentToTrainer = functions.https.onRequest(async (request, respons
   }, {
     idempotencyKey: Math.random().toString(),
   }).then(intent => {
-    console.log('Successfull intent')
     console.log(intent)
 
     admin.firestore().collection('users').doc(trainerUUID).get().then(documentSnapshot => {
       const userData = documentSnapshot.data();
 
       let updatedClientsList = userData.clients;
-      updatedClientsList.push(purchaserUUID);
-
-      admin.firestore().collection('users').doc(trainerUUID).update({
-        clients: updatedClientsList
-      })
+      if (updatedClientsList.includes(purchaserUUID) == false) {
+        updatedClientsList.push(purchaserUUID);
+        admin.firestore().collection('users').doc(trainerUUID).update({
+          clients: updatedClientsList
+        })
+      }
     })
   }).catch(err => {
-    console.log('OKOKOKOK ERRROOOORR')
     console.log(err)
   })
 })
@@ -532,7 +531,7 @@ exports.addCardToStripeAccount = functions.https.onRequest((request, response) =
             return;
           } else {
              stripeMetadata = userData.stripe_metadata;
-             stripeMetadata.stripe_id = stripeID;
+           //  stripeMetadata.stripe_id = stripeID;
              stripeMetadata.card_source = id;
              stripeMetadata.card_last_four = last4;
              stripeMetadata.card_added_to_stripe = true

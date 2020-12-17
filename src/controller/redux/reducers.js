@@ -13,11 +13,20 @@ handleUserAttributeUpdate = (state, payload) => {
     case 'isTrainer':
       updatedState.isTrainer = payload.value;
       break;
+    case 'hourly_payment_rate':
+      updatedState.hourly_payment_rate = payload.value;
+      break;
     case 'photo_url':
       updatedState.photo_url = payload.value;
       break;
     case 'display_name':
       updatedState.display_name = payload.value;
+      break;
+    case 'followers':
+      updatedState.followers = payload.value;
+      break;
+    case 'following':
+      updatedState.following = payload.value;
       break;
     case 'homegym':
       updatedState.homegym = payload.value;
@@ -38,7 +47,6 @@ handleUserAttributeUpdate = (state, payload) => {
       updatedState.certification = payload.value
       break;
     case 'stripe_metadata':
-      console.log('STATE UPDATED')
       updatedState.stripe_metadata = payload.value;
       break;
     default:
@@ -222,8 +230,6 @@ const userReducer = (state = initialUserReducerState, action) => {
      });
      case UPDATE_CURRENT_USER_ATTRIBUTE_ACTION:
       const updatedState = handleUserAttributeUpdate(state, action.payload);
-      console.log('updating state!')
-      console.log('AAAAAAAAAAAAAAAAAASFSDSDFSDFSDFSDFSDFAAAAAAAAAAAAAAAA')
       return Object.assign({}, state, updatedState)
       default:
       return newState;

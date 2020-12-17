@@ -14,6 +14,7 @@ import {
     Surface, 
     Appbar, 
     Caption,
+    FAB,
     Button
 } from 'react-native-paper';
 
@@ -33,8 +34,11 @@ import LupaController from '../../../controller/lupa/LupaController';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import VlogFeedCard from '../component/VlogFeedCard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EditBioModal from './settings/modal/EditBioModal';
+import { getLupaStoreState } from '../../../controller/redux';
+import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../controller/redux/actionTypes';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
 
 function UserProfile({uuid, userData, isCurrentUser }) {
     const navigation = useNavigation();
@@ -45,6 +49,9 @@ function UserProfile({uuid, userData, isCurrentUser }) {
     const [trainingInterestTextVisible, showTrailingInterestText] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [ready, setReady] = useState(false);
+    const [forceUpdate, setForceUpdate] = useState(false);
+
+    const dispatch = useDispatch();
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -94,15 +101,13 @@ function UserProfile({uuid, userData, isCurrentUser }) {
 
                 setProfileImage(response.uri);
 
-                let imageURL;
                 //update in FB storage
-                LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
-                    imageURL = result;
+                LUPA_CONTROLLER_INSTANCE
+                .saveUserProfileImage(response.uri)
+                .then(result => {
+                     //update in Firestore
+                LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', result, "");
                 });
-
-                //update in Firestore
-                LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
-      
             }
         });
         //TODO
@@ -112,13 +117,13 @@ function UserProfile({uuid, userData, isCurrentUser }) {
 
     const renderAvatar = () => {
         try {
-            if (isCurrentUser) {
+            if (isCurrentUser == true) {
                 return (
                     <Avatar key={userData.photo_url} raised={true} rounded size={60} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
                 )
             }
 
-            return <Avatar key={userData.photo_url} rounded size={80} source={{ uri: profileImage }} />
+            return <Avatar key={userData.photo_url} rounded size={60} source={{ uri: profileImage }} />
         } catch (error) {
             if (isCurrentUser) {
                 return (
@@ -129,6 +134,12 @@ function UserProfile({uuid, userData, isCurrentUser }) {
             } else {
                 return <PaperAvatar.Icon style={{ backgroundColor: 'white' }} icon={() => <FeatherIcon name="user" size={30} />} />
             }
+        }
+    }
+
+    const renderFAB = () => {
+        if (isCurrentUser == true) {
+            return <FAB onPress={() => navigation.push('CreatePost')} icon="video" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
         }
     }
 
@@ -195,11 +206,11 @@ function UserProfile({uuid, userData, isCurrentUser }) {
     const renderBio = () => {
         if (userData.bio.length == 0) {
             return isCurrentUser === true ?
-            <Caption style={styles.bioText}>
+            <Caption>
             You have not setup a bio.
           </Caption>
           :
-          <Caption style={styles.bioText}>
+          <Caption>
              {userData.display_name} has not setup a bio.
         </Caption>
         }
@@ -283,47 +294,77 @@ function UserProfile({uuid, userData, isCurrentUser }) {
     }
 
     const renderInteractions = () => {
-        if (  currUserData.user_uuid == uuid ) { return; }
+        if (!ready) { return null }
 
-        return (
-            <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
+        if (isCurrentUser == true) { return; }
+ 
+         return (
+             <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginVertical: 10 }}>
+                 {renderFollowButton()}
+ 
+                 <TouchableOpacity onPress={() => navigation.push('PrivateChat', {
+                            currUserUUID: currUserData.user_uuid,
+                            otherUserUUID: userData.user_uuid,
+                        })}>
+                     <View style={{ backgroundColor: '#FFFFFF', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                         <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
+                             Message
+                     </Text>
+                     </View>
+                 </TouchableOpacity>
+             </View>
+         )
+    }
 
-                {renderFollowButton()}
+    const handleUnFollowUser = () => {
 
-            </View>
-        )
+        LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid);
+        
+        let updatedFollowList = currUserData.following;
+        updatedFollowList.splice(updatedFollowList.indexOf(userData.user_uuid), 1);
+
+        const payload = getUpdateCurrentUserAttributeActionPayload('following', updatedFollowList);
+        dispatch({ type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload })
+
+        setForceUpdate(!forceUpdate);
+    }
+
+    const handleFollowUser = () => {
+        LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)
+
+        let updatedFollowerList = currUserData.following;
+        updatedFollowerList.push(userData.user_uuid);
+
+        const payload = getUpdateCurrentUserAttributeActionPayload('followers', updatedFollowerList);
+        dispatch({ type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload })
+        
+        setForceUpdate(!forceUpdate);
     }
 
     const renderFollowButton = () => {
         if (  currUserData.user_uuid == uuid ) { return; }
+
+        const updatedCurrUserData = getLupaStoreState().Users.currUserData;
    
-           if (currUserData.following.includes(userData.user_uuid)) {
+           if (updatedCurrUserData.following.includes(userData.user_uuid) == false) {
                return (
-                   <Button
-                       onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}
-                       icon={() => <FeatherIcon name="user" />}
-                       theme={{ roundness: 5 }}
-                       uppercase={false}
-                       color="#E5E5E5"
-                       mode="outlined"
-                       style={{ elevation: 0 }}>
-                           Unfollow {userData.display_name}
-                       </Button>
+                <TouchableOpacity onPress={handleFollowUser}>
+                <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                    <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
+                        Follow
+                </Text>
+                </View>
+            </TouchableOpacity>
                )
            } else {
                return (
-                   <Button
-                       onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)}
-                       icon={() => <FeatherIcon size={15} name="user" color="white" />}
-                       theme={{ roundness: 5 }}
-                       uppercase={false}
-                       color="#1089ff"
-                       mode="contained"
-                       style={{ elevation: 0, width: '100%',   alignItems: 'center', justifyContent: 'center'}}>
-                       <Text style={{fontSize: 13}}>
-                           Follow {userData.display_name}
-                       </Text>
-                   </Button>
+                <TouchableOpacity onPress={handleUnFollowUser}>
+                <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                    <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
+                        Unfollow
+                </Text>
+                </View>
+            </TouchableOpacity>
                )
            }
        }
@@ -340,15 +381,6 @@ function UserProfile({uuid, userData, isCurrentUser }) {
             <Appbar.Header style={styles.appbar}>
                 <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
                 
-                {
-                    isCurrentUser === true ?
-                    null
-                    :
-                    <Feather1s name="send" size={22} onPress={() => navigation.push('PrivateChat', {
-                        currUserUUID: currUserData.user_uuid,
-                        otherUserUUID: userData.user_uuid,
-                    })} />
-                }
             </Appbar.Header>
             <ScrollView>
                 <View>
@@ -366,7 +398,6 @@ function UserProfile({uuid, userData, isCurrentUser }) {
                                 {renderFollowers()}
                             </View>
                         </View>
-                        {renderInteractions()}
                     </View>
 
                     <View style={{ padding: 10, }}>
@@ -375,7 +406,7 @@ function UserProfile({uuid, userData, isCurrentUser }) {
                             Learn more
                 </Text>
 
-                <Text onPress={() => setEditHoursModalVisible(true)} style={{ color: '#1089ff', fontWeight: '600', fontSize: 12 }}>
+                <Text onPress={() => setEditBioModalIsVisible(true)} style={{ color: '#1089ff', fontWeight: '600', fontSize: 12 }}>
                             Edit Bio
                 </Text>
                         </View>
@@ -392,6 +423,7 @@ function UserProfile({uuid, userData, isCurrentUser }) {
                 </Tabs>
             </ScrollView>
 
+            {renderFAB()}
             <EditBioModal isVisible={editBioModalIsVisible} closeModalMethod={() => setEditBioModalIsVisible(false)} />
             <SafeAreaView />
         </View>

@@ -59,7 +59,7 @@ function EditBioModal(props) {
     //use effect hook
     useEffect(() => {
         setBioText(currUserBio)
-    }, [])
+    }, []) 
 
     /**
      * 
@@ -78,9 +78,9 @@ function EditBioModal(props) {
     return (
     <Modal presentationStyle="fullScreen" animated={true} animationType="slide" visible={props.isVisible} style={{backgroundColor: 'white'}}>
        <SafeAreaView style={{flex: 1}}>
-        <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center', borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',}}>
+        <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center'}}>
             <Appbar.Action icon={() => <Feather1s name="x" size={22} />} onPress={() => props.closeModalMethod()}/>
-            <Appbar.Content title="Biography" titleStyle={{  color: '#212121', fontSize: 20, fontWeight: '600', alignSelf: 'center'}}/>
+            <Appbar.Content title="Biography" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             <Button theme={{colors: {
                 primary: 'rgb(33,150,243)'
             }}}
@@ -91,9 +91,9 @@ function EditBioModal(props) {
             </Button>
         </Appbar.Header>
        <View style={{padding: 10}}>
-       <Caption>
+       <Text style={{fontFamily: 'Avenir-Medium', fontSize: 18}}>
             Why are you using Lupa?
-        </Caption>
+        </Text>
        </View>
 
 

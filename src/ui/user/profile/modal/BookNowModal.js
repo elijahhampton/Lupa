@@ -135,7 +135,7 @@ class BookNowModal extends React.Component {
             
                         <Appbar.Header style={styles.appbar}>
                             <Appbar.Action icon={() => <Feather1s name="x" size={20} color="#212121" />} />
-                            <Appbar.Content title="Booking Request" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                            <Appbar.Content title="Booking Request" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                         </Appbar.Header>
                         <ScrollView>
                         <View style={styles.container}>

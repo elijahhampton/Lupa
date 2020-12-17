@@ -67,13 +67,20 @@ const [searchValue, setSearchValue] = useState("")
             dispatch({ type: ADD_CURRENT_USER_PACK, payload: data });
           });
         }
+
+        resetPackState();
       })
       .catch(error => {
         LOG_ERROR('CreatePackDialog.js', 'Caught exception creating pack.', error)
-         //TODO: error creating pack show dialog
+        resetPackState(); 
+        //TODO: error creating pack show dialog
       })
+    }
 
-
+    const resetPackState = () => {
+      setPackName("")
+      setUsersUUIDToShare([])
+      setUsersToShare([])
     }
 
     const onOpen = () => {
@@ -225,10 +232,7 @@ const [searchValue, setSearchValue] = useState("")
                       New Pack
                   </Text>
 
-                       
-                <Button icon={() => <FeatherIcon name={shouldShowMoreOptions == false ? 'chevron-down' : 'chevron-up'}/>} color="#1089ff" onPress={handleMoreOptions} uppercase={false} mode="text" contentStyle={{height: 'auto'}}>
-                        More Options
-                    </Button>
+                      
               </View>
                 <Divider />
                 <View style={{marginVertical: 10}}>
@@ -263,25 +267,6 @@ const [searchValue, setSearchValue] = useState("")
           contentStyle={{width: Dimensions.get('window').width - 20, height: 45}}>
               Create Pack
           </Button>
-
-          <Divider />
-          <View style={{flex: 1, justifyContent: 'space-evenly'}}>
-              <View style={{alignItems: 'flex-start'}}>
-              <Button style={{marginVertical: 3}} contentStyle={{height: 40}} icon={() => <FeatherIcon name="airplay" color="#1089ff"/>} uppercase={false} color="#1089ff">
-                  Attach a program
-              </Button>
-              <Caption style={{paddingLeft: 12}}>
-                  Add a program for you and your friends to progress
-              </Caption>
-              </View>
-
-              <View>
-                <ScrollView horizontal contentContainerStyle={{paddingHorizontal: 10, marginVertical: 10, alignItems: 'center', justifyContent: 'center'}}>
-                  {renderPrograms()}
-                </ScrollView>
-              </View>
-
-          </View>
 
 
             </View>

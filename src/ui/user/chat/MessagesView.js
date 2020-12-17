@@ -213,6 +213,7 @@ class MessagesView extends React.Component {
                     onStartShouldSetResponder={event => false}
                     onStartShouldSetResponderCapture={event => false}
                     placeholder="Search "
+                    onChangeText={text => this.setState({ searchValue: text})}
                     placeholderTextColor="rgb(199, 201, 203)"
                     value={this.state.searchValue}
                     inputStyle={styles.inputStyle}
@@ -247,7 +248,7 @@ class MessagesView extends React.Component {
                         null
                     }
                     
-                    <Appbar.Content title="Messages" titleStyle={{ fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                    <Appbar.Content title="Messages" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                     <Appbar.Action onPress={() => {}} icon="delete" disabled={!this.state.showChat === true}  color={!this.state.viewReady ? "black" : "grey"} />
 
                 </Appbar.Header>

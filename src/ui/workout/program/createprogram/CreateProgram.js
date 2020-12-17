@@ -13,6 +13,9 @@ import PublishProgram from './component/PublishProgram';
 import initializeNewProgram, { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 import BuildWorkoutController from './buildworkout/BuildWorkoutController';
 import LOG, { LOG_ERROR } from '../../../../common/Logger';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
+import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../../controller/redux/actionTypes';
+import LUPA_DB from '../../../../controller/firebase/firebase';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -34,6 +37,12 @@ const mapDispatchToProps = dispatch => {
                 payload: programUUID
             })
         },
+        updateUserAttribute: (payload) => {
+            dispatch({
+                type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION,
+                payload: payload
+            })
+        }
     }
 }
 
@@ -69,6 +78,12 @@ class CreateProgram extends React.Component {
     }
 
     saveProgramInformation = (programDuration, programDays) => {
+        const newProgramData = {
+            ...this.state.programData,
+            programDuration: programDuration,
+            program_workout_days: programDays
+        }
+
         this.initializeProgram(programDuration, programDays).then(() => {
             this.goToIndex(1)
         })
@@ -87,18 +102,21 @@ class CreateProgram extends React.Component {
             if (result) {
                 const programUUID = this.state.programData.program_structure_uuid;
                 await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', programUUID, 'add');
-                await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(programUUID).then(data => {
+                await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('program_data', this.state.programData, 'add');
+                await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(programUUID).then(async data => {
                 this.props.addProgram(data);
+
+                let updatedProgramData = this.props.lupa_data.Users.currUserData.program_data;
+                updatedProgramData.push(data);
+
+                const payload = await getUpdateCurrentUserAttributeActionPayload('program_data', updatedProgramData);
+                this.props.updateUserAttribute(payload);
                 });
-                this.handleExitCreateProgram();
+                this.exit();
             } else {
                 //show problem  dialog
             }
         })
-    }
-
-    handleExitCreateProgram = () => {
-        this.exit();
     }
 
 
@@ -120,18 +138,12 @@ class CreateProgram extends React.Component {
         })
     }
 
+    handleUnfinishedProgram = () => {
+        this.LUPA_CONTROLLER_INSTANCE.eraseProgram(this.state.programData.program_structure_uuid)
+    }
+
     exit = () => {
-        this.props.navigation.navigate('Train');
-
-        this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.state.programData.program_structure_uuid)
-        .then(programData => {
-            if (programData.completedProgram == false)  {
-                this.LUPA_CONTROLLER_INSTANCE.deleteProgram(programData.program_structure_uuid);
-            }
-        }).catch(error => {
-            //cleanup program and safely exit component
-
-        })
+        this.props.navigation.navigate('Train')
     }
 
     renderAppropriateDisplay = () => {
@@ -152,13 +164,28 @@ class CreateProgram extends React.Component {
                         saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} 
                         /> 
             case 2:
-                return <PublishProgram uuid={this.state.programData.program_structure_uuid} saveProgramMetadata={this.saveProgramMetadata} goBack={this.prevIndex} exit={this.handleExitCreateProgram} />
+                return <PublishProgram uuid={this.state.programData.program_structure_uuid} saveProgramMetadata={this.saveProgramMetadata} goBack={this.prevIndex} exit={this.exit} />
             default:
         }
     }
 
     componentDidErr() {
-        this.handleExitCreateProgram()
+        this.exit();
+        LUPA_DB.collection('programs').doc(this.state.uuid).delete();
+    }
+
+    componentWillUnmount() {
+        if (this.state.currIndex == 0) {
+            this.exit();
+            return;
+        }
+        
+        this.exit();
+        this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.state.uuid).then(data => {
+            if (data.program_name == "" || typeof(data.program_name) == 'undefined') {
+                LUPA_DB.collection('programs').doc(this.state.uuid).delete();
+            }
+        })
     }
 
 

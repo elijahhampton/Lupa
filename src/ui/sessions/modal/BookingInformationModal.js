@@ -48,16 +48,16 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     const showTrainerBookingOptions = () => {
         ActionSheetIOS.showActionSheetWithOptions(
             {
-              options: ["Cancel", "Session Completed", "Cancel Session"],
-              destructiveButtonIndex: 0,
-              cancelButtonIndex: 0
+              options: ["Session Completed", "Cancel Session", "Cancel"],
+              destructiveButtonIndex: 2,
+              cancelButtonIndex: 2,
             },
             buttonIndex => {
               if (buttonIndex === 0) {
                 // cancel action
-              } else if (buttonIndex === 1) {
+              } else if (buttonIndex === 0) {
                   handleBookingSessionCompleted()
-              } else if (buttonIndex === 2) {
+              } else if (buttonIndex === 1) {
                   handleCancelBookingSession()
               }
             }

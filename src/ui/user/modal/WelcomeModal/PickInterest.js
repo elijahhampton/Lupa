@@ -133,7 +133,7 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
                 if (pickedInterest.includes(skill)) {
                     return (
                         <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Power')}>
-                            <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../../../images/interest_icons/selected/Power.png')} />
+                            <Image style={{ width: 30, height: 75, alignSelf: 'center' }} source={require('../../../images/interest_icons/selected/Power.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
                                 </Text>
@@ -142,7 +142,7 @@ function PickInterest({ setNextDisabled, isOnboarding, route, navigation }) {
                 } else {
                     return (
                         <TouchableOpacity style={{marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => handleOnPickInterest('Power')}>
-                            <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../../../images/interest_icons/unselected/Power.png')} />
+                            <Image style={{ width: 30, height: 75, alignSelf: 'center' }} source={require('../../../images/interest_icons/unselected/Power.png')} />
                             <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
                                 </Text>

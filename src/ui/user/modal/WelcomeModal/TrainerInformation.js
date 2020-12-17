@@ -142,7 +142,7 @@ class TrainerInformation extends React.Component {
                             }
                         }}>
                             <Appbar.BackAction onPress={() => this.props.navigation.goBack()} />
-                            <Appbar.Content title="Trainer Registration" titleStyle={{fontSize: 20, fontWeight: 'bold', fontFamily: 'Avenir-Heavy'}} />
+                            <Appbar.Content title="Trainer Registration" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                         </Appbar.Header>
                     )
                 }

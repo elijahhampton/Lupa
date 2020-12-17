@@ -87,13 +87,20 @@ function StartPackDialog({ isVisible, closeModal, program }) {
       }
     
       const handleOnPressSend = async () => {
-       LUPA_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(currUserData.user_uuid, chosenPack.uid, program.program_structure_uuid)
-
+        LUPA_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(currUserData.user_uuid, chosenPack.uid, program.program_structure_uuid)
         closeModal()
       }
     
       const renderUserAvatars = () => {
+        if (getLupaStoreState().Packs.currUserPacksData.length == 0) {
+            return null;
+        }
+
         return getLupaStoreState().Packs.currUserPacksData.map((user, index, arr) => {
+            if (user.members <= 1 == false) {
+                return null;
+            }
+
           if (chosenPack.uid == user.uid) {
             return (
               <TouchableWithoutFeedback key={user.user_uuid} onPress={() => handleAvatarOnPress(user)}>
@@ -139,16 +146,38 @@ function StartPackDialog({ isVisible, closeModal, program }) {
 
 
     return (
-        <Dialog visible={isVisible} animationType="fade" animated={true} style={{borderRadius: 15, height: 500}}>
+        <Dialog visible={isVisible} animationType="fade" animated={true} style={{borderRadius: 15, height: 'auto', justifyContent: 'space-evenly',}}>
             <Dialog.Title>
                 Invite your pack
             </Dialog.Title>
             <Dialog.Content>
-                <Paragraph style={{fontFamily: 'Avenir'}}>
+                {
+                    getLupaStoreState().Packs.currUserPacksData.length == 0 ?
+                        <View>
+                            <Text style={{fontFamily: 'Avenir-Medium', fontSize: 16, fontWeight: '700', color: 'rgb(116, 126, 136)'}}>
+        
+        
+                        <Text style={{color: '#1089ff'}}>
+                            Join{" "}
+                        </Text>
+                        <Text>
+                            or{" "}
+                        </Text>
+                        <Text style={{color: '#1089ff'}}>
+                            create{" "}
+                        </Text>
+                        <Text>
+                            your own pack to invite your friends to participate in this program.
+                        </Text>
+                        </Text>
+                        </View>
+                    :
+                    <Paragraph style={{fontFamily: 'Avenir'}}>
                     You are about to invite your pack to start {program.program_name} with you.  
                 </Paragraph>
+                }
                 <View style={{height: 200, alignItems: 'flex-start', width: '100%'}}>
-                    <ScrollView>
+                    <ScrollView centerContent contentContainerStyle={{justifyContent: 'flex-start', alignItems: 'flex-start'}}>
                     {renderUserAvatars()}
                     </ScrollView>
                 </View>
@@ -170,6 +199,7 @@ function StartPackDialog({ isVisible, closeModal, program }) {
                 </Button>
 
                 <Button 
+                disabled={getLupaStoreState().Packs.currUserPacksData.length == 0}
                 uppercase={false}
                 mode="contained" 
                 color="#1089ff"
@@ -389,9 +419,9 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
         try {
             return program.program_tags.map((tag, index, arr) => {
                 return (
-                    <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: '#23374d'}} style={{backgroundColor: 'transparent', borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
+                    <Chip mode="flat" textStyle={{fontSize: 12, fontWeight: 'bold', color: '#23374d'}} style={{borderRadius: 10, alignItems: 'center', justifyContent: 'center', margin: 5}}>
                     
-                        <Caption style={{color: '#23374d'}}>
+                        <Caption>
                         {tag}
                         </Caption>
                     </Chip>
@@ -532,7 +562,6 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
                         mode="contained"
                         theme={{
                         roundness: 8,
-             
                     }}
                     color="#1089ff"
                     style={{width: '100%'}}>
@@ -625,9 +654,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
     },
     programDescriptionText: {
-        color: '#212121', 
         fontFamily: 'Avenir-Light',
-        paddingVertical: 10
+        paddingVertical: 5
     },
     programPriceText: {
         fontSize: 30, 

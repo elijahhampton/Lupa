@@ -22,6 +22,8 @@ import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 import ProgramInformationPreview from '../ProgramInformationPreview';
 import LUPA_DB, { LUPA_AUTH } from '../../../../controller/firebase/firebase';
 import { TouchableHighlight } from 'react-native-gesture-handler';
+import { getLupaStoreState } from '../../../../controller/redux';
+import { useNavigation } from '@react-navigation/native';
 
 function ProgramInformationComponent({ program }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
@@ -30,6 +32,8 @@ function ProgramInformationComponent({ program }) {
     const [newCurrUserData, setNewCurrUserData] = useState(getLupaUserStructure())
     const [userPurchased, setUserPurchased] = useState(false)
 
+    const navigation = useNavigation();
+
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const currUserData = useSelector(state => {
@@ -37,6 +41,12 @@ function ProgramInformationComponent({ program }) {
     })
 
     const handleCardOnPress = () => {
+        const LUPA_STATE = getLupaStoreState();
+        if (LUPA_STATE.Auth.isAuthenticated == false) {
+            navigation.navigate('SignUp');
+            return;
+        }
+
         if (newCurrUserData.programs.includes(program.program_structure_uuid)) {
             setProgramOptionsModalVisible(true)
         }
@@ -47,7 +57,8 @@ function ProgramInformationComponent({ program }) {
     }
 
     useEffect(() => {
-        const currUserSubscription = LUPA_DB.collection('users').doc(LUPA_AUTH.currentUser.uid).onSnapshot(documentSnapshot => {
+    
+        const currUserSubscription = LUPA_DB.collection('users').doc(currUserData.user_uuid).onSnapshot(documentSnapshot => {
             let userData = documentSnapshot.data()
             setNewCurrUserData(userData)
 
@@ -55,7 +66,15 @@ function ProgramInformationComponent({ program }) {
         });
 
         async function checkUserPurchased() {
-            await newCurrUserData.programs.includes(program.program_structure_uuid) ? setUserPurchased(true) : setUserPurchased(false)
+            let userProgramData = newCurrUserData.program_data;
+            for (let i = 0; i < userProgramData.length; i++) {
+                if (userProgramData[i].program_structure_uuid == program.program_structure_uuid) {
+                   setUserPurchased(true);
+                   return;
+                }
+            }
+
+            setUserPurchased(false)
         }
 
         checkUserPurchased()
@@ -66,7 +85,7 @@ function ProgramInformationComponent({ program }) {
     return (
         <TouchableOpacity key={program.program_structure_uuid} style={{ width: '100%' }} onPress={handleCardOnPress}>
             <View style={{ backgroundColor: 'white', width: Dimensions.get('window').width, marginVertical: 10 }}>
-                <View style={{ alignItems: 'center', flexDirection: 'row', height: 'auto', }} >
+                <View style={{ alignItems: 'center', flexDirection: 'row', height: 'auto', padding: 5, }} >
                     <Avatar.Image style={{margin: 5}} source={{ uri: program.program_image }}  size={35} />
                     <View style={{ paddingHorizontal: 10, width: '100%' }} >
                        <Text>

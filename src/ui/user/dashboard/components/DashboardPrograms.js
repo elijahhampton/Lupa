@@ -104,10 +104,11 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                 </View>
             )
         } else {
+            return (
             <ScrollView>
                 {
                     programs.map((result, index, arr) => {
-                        if (typeof(result) == 'undefined' || typeof(result.program_structure_uuid) == 'undefined' || result.program_image == "") {
+                        if (typeof(result) == 'undefined' || typeof(result.program_structure_uuid) == 'undefined'  /*|| result.program_image == "" */) {
                             return;
                         }
                         return (
@@ -155,6 +156,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                     })
                 }
             </ScrollView>
+            )
         }
     }
 
@@ -162,7 +164,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
         <Modal animated={true} animationType="slide" visible={isVisible} presentationStyle="fullScreen" onDismiss={closeModal}>
             <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
                     <Appbar.Action color="black" onPress={closeModal} icon={() =>  <FeatherIcon name="arrow-left" color="black" size={20} />} />
-                    <Appbar.Content title="My Programs" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                    <Appbar.Content title="My Programs" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <View style={{flex: 1}}>
                {renderMyPrograms()}

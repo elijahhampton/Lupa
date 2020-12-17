@@ -457,36 +457,45 @@ export default class PackController {
     loadCurrentUserPacks = async (): Promise<Array<Object>> => {
         let packUUIDS = [], packsData = [];
         let temp = getLupaUserStructurePlaceholder()
-        let uuid = await LUPA_AUTH.currentUser.uid
+        let uuid = await LUPA_AUTH.currentUser.uid;
 
-        if (typeof (uuid) == 'undefined') {
+        if (typeof(uuid) == 'undefined' || uuid == null) {
             return Promise.resolve([])
         }
 
         try {
 
-            await USERS_COLLECTION.doc(uuid).get().then(snapshot => {
-                temp = snapshot.data();
-            });
-
-            packUUIDS = temp.packs;
-
-            for (let i = 0; i < packUUIDS.length; i++) {
-                await PACKS_COLLECTION.doc(packUUIDS[i]).get().then(snapshot => {
-                    temp = snapshot.data();
-                })
-
-
-                try {
-                    if (typeof (temp) != 'undefined' && temp != null) {
-                        packsData.push(temp);
-                    }
-                } catch (error) {
-                    LOG_ERROR('PacksController.ts', 'Unhandled exception in loadCurrentUserPacks()', error)
-                    continue;
+            await USERS_COLLECTION.doc(uuid).get().then(async documentSnapshot => {
+                if (documentSnapshot.exists) {
+                    temp = documentSnapshot.data();
+                } else {
+                    return Promise.resolve([]);
                 }
 
-            }
+                packUUIDS = temp.packs;
+                let packData = initializeNewPack('', '', '', []);
+                for (let i = 0; i < packUUIDS.length; i++) {
+                
+                    await PACKS_COLLECTION.doc(packUUIDS[i]).get().then(documentSnapshot => {
+                        if (documentSnapshot.exists) {
+                            packData = documentSnapshot.data();
+                        } else {
+                            packData = null
+                        }
+                    })
+    
+    
+                    try {
+                        if (typeof (packData) != 'undefined' && packData != null) {
+                            packsData.push(packData);
+                        }
+                    } catch (error) {
+                        LOG_ERROR('PacksController.ts', 'Unhandled exception in loadCurrentUserPacks()', error)
+                        continue;
+                    }
+    
+                }
+            });
         } catch (error) {
             LOG_ERROR('PacksController.ts', 'Unhandled exception in loadCurrentUserPacks()', error)
             packsData = [];

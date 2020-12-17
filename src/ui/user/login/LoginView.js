@@ -351,7 +351,6 @@ const resetFormState = () => {
        <View style={{ width: '100%', margin: 5 }}>
        <Input
        id="loginEmail"
-       label="Email"
        placeholder="Email"
        editable={true}
        onInputChange={inputChangeHandler}
@@ -367,8 +366,7 @@ const resetFormState = () => {
        <View style={{ width: '100%', margin: 5}}>
        <Input
        id="loginPassword"
-       label="Password"
-       placeholder="Enter your password" 
+       placeholder="Password" 
        placeholderTextColor={INPUT_PLACEHOLDER_COLOR}
        editable={true}
        onInputChange={inputChangeHandler}
@@ -381,8 +379,15 @@ const resetFormState = () => {
        />
        </View>
 
-       <Button onPress={onLogin} uppercase={false} mode="contained" contentStyle={{height: 45, width: Dimensions.get('window').width - 50}} style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', alignItems: 'center', justifyContent: 'center', marginTop: 20, alignSelf: 'center'}}>
-          <Text>
+       <Button 
+       onPress={onLogin} 
+       uppercase={false} 
+       mode="contained" 
+       contentStyle={{height: 45, width: Dimensions.get('window').width - 50}} 
+       style={{shadowColor: '#23374d', elevation: 0, backgroundColor: '#23374d', alignItems: 'center', justifyContent: 'center', marginTop: 20, alignSelf: 'center'}}
+       theme={{roundness: 12}}
+       >
+          <Text style={{fontFamily: 'Avenir'}}>
             Login
           </Text>
        </Button>

@@ -33,7 +33,7 @@ import ImagePicker from 'react-native-image-picker';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useNavigation } from '@react-navigation/native';
 import LupaCalendar from './component/LupaCalendar';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import LupaController from '../../../controller/lupa/LupaController';
 import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
@@ -41,11 +41,15 @@ import VlogFeedCard from '../component/VlogFeedCard'
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import EditBioModal from './settings/modal/EditBioModal'
 import BookingRequestModal from '../modal/BookingRequestModal';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
+import { getLupaStoreState } from '../../../controller/redux';
+import HourlyPaymentModal from '../modal/HourlyPaymentModal';
 
 function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const navigation = useNavigation();
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
+    const [showHourlyPaymentModal, setShowHourlyPaymentModalVisible] = useState(false);
     const [userPrograms, setUserPrograms] = useState([])
     const [userVlogs, setUserVlogs] = useState([])
     const [editBioModalVisible, setEditBioModalVisible] = useState(false);
@@ -57,6 +61,9 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const [trailingInterestLength, setTrainingInterestLength] = useState(0);
     const [trainingInterestTextVisible, showTrailingInterestText] = useState(false)
     const [trainerBookingModalVisible, setTrainerBookingModalVisible] = useState(false);
+    
+    const dispatch = useDispatch();
+    
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
@@ -96,14 +103,13 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
                 setProfileImage(response.uri)
 
-                let imageURL;
                 //update in FB storage
                 LUPA_CONTROLLER_INSTANCE.saveUserProfileImage(response.uri).then(result => {
-                    imageURL = result;
+                     //update in Firestore
+                LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', result, "");
                 });
 
-                //update in Firestore
-                LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', imageURL, "");
+               
 
             }
         });
@@ -116,14 +122,14 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         try {
             if (isCurrentUser == false) {
                 return (
-                    <Avatar key={userData.photo_url} rounded size={80} source={{ uri: profileImage }} />
+                    <Avatar key={userData.photo_url} rounded size={60} source={{ uri: profileImage }} />
                 )
             }
 
-            return <Avatar key={userData.photo_url} rounded size={80} source={{ uri: profileImage }} />
+            return <Avatar key={userData.photo_url} rounded size={60} source={{ uri: profileImage }} showEditButton={true} onPress={_chooseProfilePictureFromCameraRoll} />
         } catch (error) {
             if (isCurrentUser == false) {
-                return <PaperAvatar.Icon style={{ backgroundColor: 'white' }} icon={() => <FeatherIcon name="user" size={30} />} />
+                return <PaperAvatar.Icon style={{ backgroundColor: 'white' }} icon={() => <FeatherIcon name="user" size={60} />} />
 
             } else {
                 return (
@@ -241,11 +247,11 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderBio = () => {
         if (userData.bio.length == 0) {
             return isCurrentUser === true ?
-                <Caption style={styles.bioText}>
+                <Caption>
                     You have not setup a bio.
           </Caption>
                 :
-                <Caption style={styles.displayNameText}>
+                <Caption>
                     {userData.display_name} has not setup a bio.
         </Caption>
         }
@@ -264,23 +270,24 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             return (
                 <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
-                        currUserData.user_uuid == uuid ?
-                        
-                
-                        <Text style={{paddingHorizontal: 10}}>
+                        isCurrentUser === false ?
                         <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
-                    <Text>
-                    You haven't created any vlogs.{" "}
-                    </Text>
-                    <Text onPress={() => navigation.push('CreateNewPost')} style={{color: '#1089ff', fontSize: 15, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
-                    Start creating content on Lupa.
-                    </Text>
-                </Text>
-                </Text>
+                        No Vlogs have been created by {userData.display_name}.
+                     </Text>
+                
+                    
                 :
+                <Text style={{paddingHorizontal: 10}}>
                 <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
-                   No Vlogs have been created by {userData.display_name}.
-                </Text>
+            <Text>
+            You haven't created any vlogs.{" "}
+            </Text>
+            <Text onPress={() => navigation.push('CreateNewPost')} style={{color: '#1089ff', fontSize: 15, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
+            Start creating content on Lupa.
+            </Text>
+        </Text>
+        </Text>
+               
                 
 
                     }
@@ -306,20 +313,21 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
                         isCurrentUser === false ?
-                        <Text>
-                        <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
-                    <Text>
-                        You haven't created any programs.{" "}
-                    </Text>
-                    <Text onPress={() => navigation.push('CreateProgram')} style={{color: '#1089ff', fontSize: 15, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
-                        Get started with your first.
-                    </Text>
-                </Text>
-                </Text>
-                :
                         <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
                     No programs have been created by {userData.display_name}.
                 </Text>
+                :
+                <Text>
+                <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
+            <Text>
+                You haven't created any programs.{" "}
+            </Text>
+            <Text onPress={() => navigation.push('CreateProgram')} style={{color: '#1089ff', fontSize: 15, fontFamily: 'Avenir-Medium', fontWeight: '800'}}>
+                Get started with your first.
+            </Text>
+        </Text>
+        </Text>
+                       
                     }
 
                 </View>
@@ -348,7 +356,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             <View style={{ paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginVertical: 10 }}>
                 {renderFollowButton()}
 
-                <TouchableOpacity onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}>
+                <TouchableOpacity onPress={() => navigation.push('PrivateChat', {
+                            currUserUUID: currUserData.user_uuid,
+                            otherUserUUID: userData.user_uuid,
+                        })}>
                     <View style={{ backgroundColor: '#FFFFFF', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
                         <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
                             Message
@@ -359,38 +370,62 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         )
     }
 
-    const renderFollowButton = () => {
-        if (!ready) { return null }
+    const handleUnFollowUser = () => {
 
-        if (currUserData.user_uuid == uuid) { return; }
+        LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid);
+        
+        let updatedFollowList = currUserData.following;
+        updatedFollowList.splice(updatedFollowList.indexOf(userData.user_uuid), 1);
 
-        if (currUserData.following.includes(userData.user_uuid)) {
-            return (
+        const payload = getUpdateCurrentUserAttributeActionPayload('following', updatedFollowList);
+        dispatch({ type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload })
 
-                <TouchableOpacity onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(userData.user_uuid, currUserData.user_uuid)}>
-                    <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
-                        <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
-                            Follow
-                    </Text>
-                    </View>
-                </TouchableOpacity>
-            )
-        } else {
-            return (
-                <TouchableOpacity onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)}>
-                    <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
-                        <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
-                            Follow
-                    </Text>
-                    </View>
-                </TouchableOpacity>
-            )
-        }
+        setForceUpdate(!forceUpdate);
     }
 
+    const handleFollowUser = () => {
+        LUPA_CONTROLLER_INSTANCE.followUser(userData.user_uuid, currUserData.user_uuid)
+
+        let updatedFollowerList = currUserData.following;
+        updatedFollowerList.push(userData.user_uuid);
+
+        const payload = getUpdateCurrentUserAttributeActionPayload('followers', updatedFollowerList);
+        dispatch({ type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload })
+        
+        setForceUpdate(!forceUpdate);
+    }
+
+    const renderFollowButton = () => {
+        if (  currUserData.user_uuid == uuid ) { return; }
+
+        const updatedCurrUserData = getLupaStoreState().Users.currUserData;
+   
+           if (updatedCurrUserData.following.includes(userData.user_uuid) == false) {
+               return (
+                <TouchableOpacity onPress={handleFollowUser}>
+                <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                    <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
+                        Follow
+                </Text>
+                </View>
+            </TouchableOpacity>
+               )
+           } else {
+               return (
+                <TouchableOpacity onPress={handleUnFollowUser}>
+                <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                    <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
+                        Unfollow
+                </Text>
+                </View>
+            </TouchableOpacity>
+               )
+           }
+       }
+
     const renderFAB = () => {
-        if (isCurrentUser == false) {
-            return <FAB onPress={() => navigation.push('CreatePost')} icon="rss" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
+        if (isCurrentUser == true) {
+            return <FAB onPress={() => navigation.push('CreatePost')} icon="video" style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
         }
     }
 
@@ -496,22 +531,21 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         await setRefreshing(false);
     }
 
+    const handleHourPaymentOnPress = () => {
+        if (isCurrentUser == false) {
+            return;
+        }
+
+        navigation.push('HourlyPayment');
+    }
+
+
+
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
-                
-                <Appbar.Content title="$15/HR" titleStyle={{fontFamily: 'Avenir-Medium'}}/>
-                
-                {
-                    isCurrentUser === true ?
-                    null
-                        :
-                        <FeatherIcon name="send" size={22} onPress={() => navigation.push('PrivateChat', {
-                            currUserUUID: currUserData.user_uuid,
-                            otherUserUUID: userData.user_uuid,
-                        })} />
-                }
+            <Appbar.Action icon={() => <FeatherIcon name="arrow-left" style={{padding: 3}} size={20} onPress={() => navigation.pop()} />} />
+                <Appbar.Content onPress={handleHourPaymentOnPress} title={`$${userData.hourly_payment_rate}/HR`} titleStyle={{color: isCurrentUser == false ? 'black' : '#1089ff', fontWeight: '500', alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontSize: 22}}/>
             </Appbar.Header>
             
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
@@ -532,19 +566,17 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         </View>
                         {renderInteractions()}
                     </View>
-                    <Divider />
-
-
+                
                     <View style={{ padding: 10, }}>
                         <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: "space-between" }}>
                             <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 13 }}>
                                 Learn more
-                </Text>
+                            </Text>
                             {
                                 isCurrentUser === true ?
-                                    <Text onPress={() => setEditHoursModalVisible(true)} style={{ color: '#1089ff', fontWeight: '600', fontSize: 12 }}>
+                                    <Text onPress={() => setEditBioModalVisible(true)} style={{ color: '#1089ff', fontWeight: '600', fontSize: 12 }}>
                                         Edit Bio
-    </Text>
+                                    </Text>
                                     :
                                     null
                             }
@@ -616,7 +648,6 @@ const styles = StyleSheet.create({
     },
     appbar: {
         elevation: 0,
-        paddingHorizontal: 20,
         justifyContent: 'space-between',
         backgroundColor: '#FFFFFF'
     },

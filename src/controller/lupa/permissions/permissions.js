@@ -31,13 +31,11 @@ export const _checkCameraAndPhotoLibraryPermissions = () => {
             alert('It looks like camera permissions are not available on your device.');
           } else {
             //otherwise the services have been granted and there is nothing to do
-            this.getLocationAsync();
           }
         });
         break;
       case RESULTS.GRANTED:
         // nothing to do
-        this.getLocationAsync();
         break;
       case RESULTS.BLOCKED:
         // alert the user to change it from settings

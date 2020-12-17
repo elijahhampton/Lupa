@@ -91,7 +91,7 @@ function ShowTopPicksModal({ isVisible, closeModal }) {
         <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType='slide'>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
                     <Appbar.Action icon={() => <FeatherIcon name="x" size={20} />} onPress={closeModal} />
-                    <Appbar.Content title="Top Picks" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 20, fontWeight: '600'}} />
+                    <Appbar.Content title="Top Picks" titleStyle={{fontFamily: 'HelveticaNeue-Bold', fontSize: 25, fontWeight: '600'}} />
                 </Appbar.Header>
                 <View style={{flex: 1}}>
                 <ScrollView>

@@ -23,35 +23,54 @@ const {windowWidth} = Dimensions.get('window').width
 
 function ReceivedNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure());
-
+    const [componentDidErr, setComponentDidErr] = useState(false);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     useEffect(() => {
         async function fetchData() {
-            let userData = getLupaUserStructure();
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.data.from).then(data => {
-                setSenderUserData(userData)
+                setSenderUserData(data)
+            }).catch(() => {
+                setComponentDidErr(true);
             })
         }
 
-        fetchData();
+        fetchData().catch(() => {
+            setComponentDidErr(true);
+        })
     }, []);
 
-    return (
-                   <>
-                   <View style={{width: '100%', marginVertical: 15}}>
-                       <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                           <Avatar.Image source={{uri: senderUserData.photo_url}} size={45} style={{marginHorizontal: 10}} />
-                           <View>
-                               <Text>
-                                   {notificationData.data.message}
-                               </Text>
-                           </View>
-                       </View>
-                   </View>
-                   <Divider />
-                   </>
-    )
+    const renderComponentDisplay = () => {
+        if (componentDidErr == true) {
+            return (
+                <View style={{width: '100%', marginVertical: 15, padding: 20, alignItems: 'center', justifyContent: 'center'}}>
+                <Text>
+                    Error loading notificaiton
+                </Text>
+            </View>
+            )
+
+        } else {
+            return (
+                <>
+                <View style={{width: '100%', marginVertical: 15}}>
+                    <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                        <Avatar.Image source={{uri: senderUserData.photo_url}} size={45} style={{marginHorizontal: 10}} />
+                        <View>
+                            <Text>
+                                {notificationData.data.message}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+                <Divider />
+                </>
+            )
+           
+        }
+    }
+
+    return renderComponentDisplay()
 }
 
 export default ReceivedNotification;

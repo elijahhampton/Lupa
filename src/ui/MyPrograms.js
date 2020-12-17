@@ -34,8 +34,15 @@ function MyPrograms(props) {
     })
 
 
-    const handleCardOnPress = (program) => {
-        setCurrentProgram(program)
+    const handleCardOnPress = async (program) => {
+        console.log('@@@@')
+        console.log(program)
+        if (typeof(program) == 'undefined') {
+            alert('o')
+            return;
+        }
+
+        await setCurrentProgram(program)
         setProgramOptionsModalIsVisible(true)
     }
 
@@ -73,11 +80,10 @@ function MyPrograms(props) {
                 <View style={{width: Dimensions.get('window').width - 20, margin: 20, alignSelf: 'center'}}>
                 <Card key={program.program_structure_uuid} style={{elevation: 3, width: '100%', alignSelf: 'center'}} onPress={() => handleCardOnPress(program)}>
                 <Card.Cover source={{ uri: program.program_image }} />
-                <Card.Actions style={{justifyContent: 'space-between', paddingVertical: 10}}>
-                    <Text style={{fontSize: 15, fontFamily: 'HelveticaNeue'}}>
+                <Card.Actions style={{justifyContent: 'center', paddingVertical: 10}}>
+                    <Text style={{fontSize: 15, fontFamily: 'Avenir-Medium', alignSelf: 'center'}}>
                         {program.program_name}
                     </Text>
-                    <FeatherIcon name="more-vertical" size={20} onPress={() => setProgramOptionsModalIsVisible(true)} />
                 </Card.Actions>
               </Card>
               </View>

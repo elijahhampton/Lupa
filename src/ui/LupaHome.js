@@ -23,8 +23,8 @@ const COLOR = "#FFFFFF";
 const TAB_PROPS = {
   tabStyle: {backgroundColor: COLOR},
   activeTabStyle: {backgroundColor: COLOR},
-  textStyle: {color: "rgba(35, 55, 77, 0.75)", fontFamily: 'Avenir-Heavy'},
-  activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold'}
+  textStyle: {color: "rgba(35, 55, 77, 0.75)", fontFamily: 'Avenir-Heavy', fontSize: 20},
+  activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}
 };
 
 const mapStateToProps = (state, action) => {
@@ -120,11 +120,11 @@ export class LupaHome extends Component {
 
   renderFAB = () => {
     if (this.props.lupa_data.Auth.isAuthenticated == true) {
-      if (this.props.lupa_data.Users.currUserData.isTrainer == true && this.state.currTab == 3) {
+      if (this.props.lupa_data.Users.currUserData.isTrainer == true && this.state.currTab == 2) {
         return (
           <FAB small onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
         )
-      } else if (this.props.lupa_data.Users.currUserData.isTrainer == false && this.state.currTab == 2) {
+      } else if (this.props.lupa_data.Users.currUserData.isTrainer == false && this.state.currTab == 1) {
         return (
           <FAB small onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
         )
@@ -157,8 +157,8 @@ export class LupaHome extends Component {
     return (
         <View style={{flex: 1}}>
           <Header style={{backgroundColor: COLOR}} noShadow={false} hasTabs>
-            <Left style={{flexDirection: 'row', alignItems: 'center'}}>
-              <MenuIcon onPress={() => this.props.navigation.openDrawer()}/>
+            <Left>
+              <MenuIcon key="menu-icon" customStyle={{padding: 3}} onPress={() => this.props.navigation.openDrawer()}/>
             </Left>
 
             <Body>
@@ -175,7 +175,7 @@ export class LupaHome extends Component {
                     theme={{roundness:20}} 
                     contentStyle={{borderRadius: 20, width: 'auto'}} 
                     style={{ height: 30}} 
-                    icon={() => <FeatherIcon name="globe" color="rgb(34, 74, 115)" size={15} />} 
+                    icon={() => <FeatherIcon key="globe" name="globe" color="black" style={{padding: 5}} size={18} />} 
                     titleStyle={{fontSize: 13, fontFamily: 'Avenir-Heavy'}} 
                     title="Create a Pack" />
                   {
@@ -185,7 +185,7 @@ export class LupaHome extends Component {
                     theme={{roundness:20}} 
                     contentStyle={{borderRadius: 20, width: 'auto'}} 
                     style={{ height: 30}} 
-                    icon={() => <FeatherIcon name="globe" color="rgb(34, 74, 115)" size={15} />} 
+                    icon={() => <FeatherIcon name="globe" color="black" size={18} />} 
                     titleStyle={{fontSize: 13, fontFamily: 'Avenir'}} 
                   title="Create a Community" /> 
                   :
@@ -200,9 +200,9 @@ export class LupaHome extends Component {
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })} 
           style={{backgroundColor: '#FFFFFF'}}
           tabBarUnderlineStyle={{backgroundColor: '#FFFFFF', height: 1}}
-          tabContainerStyle={{borderBottomWidth: 0, height: 0}}xw
+          tabContainerStyle={{borderBottomWidth: 0, height: 0}}
           renderTabBar={(props) =>
-            <ScrollableTab {...props} style={{borderBottomWidth: 0, borderColor: 'rgb(174, 174, 178)',  height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 1, elevation: 0, borderRadius: 8}}/>}>
+            <ScrollableTab {...props}  style={{borderBottomWidth: 0, borderColor: 'rgb(174, 174, 178)',  height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 1, elevation: 0, borderRadius: 8}}/>}>
             
             <Tab heading='Explore' {...TAB_PROPS} >
                 {this.renderAppropriateFirstTab(this.props.navigation)}

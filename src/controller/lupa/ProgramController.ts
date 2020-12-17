@@ -37,26 +37,8 @@ export default class ProgramController {
     }
 
     createProgram = async (programStructure: LupaProgramInformationStructure) => {
-        let userData = getLupaUserStructurePlaceholder(), userProgramData = [], id = -1;
-        const userDocumentRef = await USERS_COLLECTION.doc(programStructure.program_owner);
-        await userDocumentRef.get()
-            .then(documentSnapshot => {
-                userData = documentSnapshot.data()
-            }).catch(error => {
-                console.log(error)
-                id = -1;
-                return Promise.resolve(-1);
-            });
-
-        userProgramData = userData.program_data;
-
-        if (typeof (userProgramData) !== 'undefined') {
-            userProgramData.push(programStructure);
-        } else {
-            userProgramData = [];
-            userProgramData.push(programStructure)
-        }
-
+        let id = -1;
+    
         await PROGRAM_COLLECTION.add(programStructure)
             .then(docRef => {
                 id = docRef.id;
@@ -495,12 +477,39 @@ export default class ProgramController {
     }
 
     eraseProgram = async (uuid) => {
-        let programParticipants = []
-        await PROGRAM_COLLECTION.doc(uuid).get().then(snapshot => {
-            programParticipants = snapshot.data().program_participants;
+        let programData = getLupaProgramInformationStructure()
+
+        await PROGRAM_COLLECTION.doc(uuid).get().then(documentSnapshot => {
+            programData = documentSnapshot.data();
         });
 
-        for (let i = 0; i < programParticipants.length; i++) {
+        await USERS_COLLECTION.doc(programData.program_owner).get().then(documentSnapshot => {
+            let userData = documentSnapshot.data();
+
+            let updatedPrograms = userData.programs;
+            updatedPrograms.splice(updatedPrograms.indexOf(uuid) , 1);
+
+            let updatedProgramData = userData.program_data;
+            let index = 0;
+            for (let i = 0; i < updatedProgramData.length; i++) {
+                if (updatedProgramData[i].program_structure_uuid == uuid) {
+                    index = i;
+                }
+            }
+
+            updatedProgramData.splice(index, 1);
+
+            USERS_COLLECTION.doc(programData.program_owner).update({
+                programs: updatedPrograms,
+                program_data: updatedProgramData
+            })
+        })
+
+        PROGRAM_COLLECTION.doc(uuid).delete();
+
+        //delete any notifications
+
+       /* for (let i = 0; i < programParticipants.length; i++) {
             let userPrograms = [], userProgramsDataList = []
             let userRef = USERS_COLLECTION.doc(programParticipants[i]).get().then(snapshot => {
                 userPrograms = snapshot.data().programs;
@@ -520,9 +529,7 @@ export default class ProgramController {
                 programs: updatedProgramsList,
                 program_data: updatedProgramsDataList,
             })
-        }
-
-        PROGRAM_COLLECTION.doc(uuid).delete();
+        }*/
     }
 
     deleteWorkout = async (uuid) => {

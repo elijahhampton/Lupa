@@ -33,6 +33,7 @@ const {windowWidth} = Dimensions.get('window').width
 function ReceivedPackProgramInviteNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
+    const [componentDidErr, setComponentDidErr] = useState(false);
     const navigation = useNavigation();
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -52,11 +53,12 @@ function ReceivedPackProgramInviteNotification({ notificationData }) {
             )
        
     } catch(error) {
-        alert(error)
+        setComponentDidErr(true)
     }
     }
 
     const renderActionButtons = () => {
+        try {
         return (
         <View style={{width: '100%'}}>
             <Button 
@@ -80,34 +82,58 @@ function ReceivedPackProgramInviteNotification({ notificationData }) {
             </Button>
         </View>
         )
+        } catch(error) {
+            setComponentDidErr(true)
+        }
     }
 
     useEffect(() => {
         async function fetchData() {
-            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.from).then(data => {
+            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.from)
+            .then(data => {
                 setSenderUserData(data)
+            }).catch(() => {
+                setComponentDidErr(true)
             })
         }
 
         LOG('ReceivedPackProgramInviteNotification.js', 'Running useEffect::Fetching sender data from notification.')
-        fetchData()
+        fetchData().catch(() => {
+            setComponentDidErr(true)
+        })
     }, []);
 
-    return (
-        <>
-                   <View style={{width: '100%', marginVertical: 15}}>
-                       <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                           <Avatar.Image source={{uri: senderUserData.photo_url}} size={35} style={{marginHorizontal: 10}} />
-                           <View>
-                               {renderNotificationMessage()}
-                           </View>
-                       </View>
-                       {renderActionButtons()}
-                   </View>
-                    
-                   <Divider />
-                   </>
-    )
+    const renderComponentDisplay = () => {
+        if (componentDidErr == true) {
+            return (
+                <View style={{width: '100%', marginVertical: 15, padding: 20, alignItems: 'center', justifyContent: 'center'}}>
+                <Text>
+                    Error loading notificaiton
+                </Text>
+            </View>
+            )
+
+        } else {
+            return (
+                <>
+                <View style={{width: '100%', marginVertical: 15}}>
+                    <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                        <Avatar.Image source={{uri: senderUserData.photo_url}} size={35} style={{marginHorizontal: 10}} />
+                        <View>
+                            {renderNotificationMessage()}
+                        </View>
+                    </View>
+                    {renderActionButtons()}
+                </View>
+                 
+                <Divider />
+                </>
+            )
+           
+        }
+    }
+
+    return renderComponentDisplay()
 }
 
 export default ReceivedPackProgramInviteNotification;

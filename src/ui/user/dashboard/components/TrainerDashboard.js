@@ -41,6 +41,7 @@ import { getLupaStoreState } from '../../../../controller/redux/index'
 import BookingInformationModal from '../../../sessions/modal/BookingInformationModal';
 import axios from 'axios';
 import SessionDashboardComponent from '../../../sessions/modal/component/SessionDashboardComponent';
+import { Constants } from 'react-native-unimodules';
 function TrainerDashboard(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -61,7 +62,7 @@ function TrainerDashboard(props) {
                 booking = doc.data();
                 if (typeof (booking.uid) == 'undefined'
                     || booking.uid === 0
-                    || booking.status == BOOKING_STATUS.BOOKING_COMPLETED) {
+                    || booking.status == Number(BOOKING_STATUS.BOOKING_COMPLETED)) {
 
                 } else {
                     if (moment(booking.date).isAfter(moment(new Date())) && moment(new Date().getTime()).isAfter(moment(booking.end_time))) {
@@ -87,7 +88,7 @@ function TrainerDashboard(props) {
     const renderUpcomingBooking = () => {
         if (userBookings.length === 0) {
             return (
-                <View style={{padding: 10}}>
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 10}}>
   <Paragraph style={{color: '#212121', fontFamily: 'Avenir-Medium'}}>
                 <Text>
                     You don't have any scheduled bookings.{" "}
@@ -112,7 +113,11 @@ function TrainerDashboard(props) {
             )
         }
 
-        return <SessionDashboardComponent booking={userBookings[0]} />
+        return userBookings.map((booking, index, arr) => {
+            return (
+                <SessionDashboardComponent key={index} booking={booking} />
+            )
+        })
     }
 
     return (
@@ -122,11 +127,11 @@ function TrainerDashboard(props) {
         }}>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
-                <Appbar.Content title='Dashboard' titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                <Appbar.Content title='Dashboard' titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <ScrollView>
             <View style={{ flex: 1, }}>
-                <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
+               {/* <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
                     <View style={{ margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
                         <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
                             Total Sessions Completed
@@ -178,11 +183,11 @@ function TrainerDashboard(props) {
                             </View>
                         </View>
                     </View>
-                </View>
+    </View>*/}
                 <View style={{ flex: 2, marginVertical: 10, }}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                    <Text style={{fontFamily: 'Avenir-Heavy'}}>
-                        Upcoming Session
+                    <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
+                        Bookings
                     </Text>
                     </View>
 

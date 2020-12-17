@@ -320,7 +320,7 @@ export default DrawerMenu;
     },
     buttonText: {
       color: '#000000',
-        fontSize: 15, 
+        fontSize: 18, 
         fontWeight: '300',
     }
   });

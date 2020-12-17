@@ -254,7 +254,7 @@ return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animated={true} animationType="slide">
             <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0,         borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)',}}>
                 <Appbar.Action icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}  onPress={closeModal}/>
-                <Appbar.Content title="Update Availability" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                <Appbar.Content title="Update Availability" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                 <Button color="#1089ff" onPress={handleOnSave}>
                   Save
                 </Button>

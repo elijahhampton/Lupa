@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import {
+  ActivityIndicator,
   Button,
 } from 'react-native-paper';
 
@@ -69,6 +70,7 @@ const formReducer = (state, action) => {
 const SignUp = props => {
 
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -89,6 +91,7 @@ const SignUp = props => {
   })
 
   const signupHandler = async () => {
+    setLoading(true);
     const attemptedEmail = formState.inputValues.email.trim();
     const attemptedPassword = formState.inputValues.password.trim();
 
@@ -127,7 +130,10 @@ const SignUp = props => {
 
       handleLoginError()
       navigation.navigate('GuestView')
+      setLoading(false);
     }
+
+    setLoading(false);
     }
   
 
@@ -185,14 +191,6 @@ const SignUp = props => {
         style={styles.keyboardAvoidingView}>
         <View style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 2 }}>
-            <View>
-            <Button color="#23374d" uppercase={false} mode="text" onPress={() => navigation.navigate('GuestView')}>
-         <Text>
-           See trainers 
-         </Text>
-         <FeatherIcon name="arrow-right"  />
-       </Button>
-            </View>
 
 
             <View style={{ alignItems: 'center', width: "100%", }}>
@@ -268,12 +266,30 @@ const SignUp = props => {
 
             </View>
 
-            <View style={{  justifyContent: 'flex-end', width: '100%', alignSelf: 'center' }}>
-            <Button onPress={signupHandler} uppercase={false} mode="contained" style={{shadowColor: '#23374d', elevation: 5, backgroundColor: '#23374d', height: 45, alignItems: 'center', justifyContent: 'center', marginTop: 20, width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
-          <Text>
-            Sign Up
-          </Text>
-       </Button>
+            <View style={{  justifyContent: 'center', width: '100%', alignSelf: 'center', alignItems: 'center' }}>
+              {
+                loading == false ?
+                <Button 
+                onPress={signupHandler} 
+                uppercase={false} 
+                mode="contained" 
+                theme={{roundness: 12}}
+                contentStyle={{width: Dimensions.get('window').width - 50, height: 45,}}
+                style={{
+                 elevation: 0, 
+                 backgroundColor: '#23374d', 
+                 alignItems: 'center', 
+                 justifyContent: 'center', 
+                 marginTop: 20, 
+                 alignSelf: 'center'}}>
+              <Text style={{fontFamily: 'Avenir'}}>
+                Sign Up
+              </Text>
+           </Button>
+           :
+           <ActivityIndicator size="small" color="#23374d" animating={true} />
+              }
+
 
             </View>
 

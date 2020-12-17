@@ -49,7 +49,7 @@ function AccountSettings({ navigation, route }) {
         <SafeAreaView style={styles.container}>
              <Appbar.Header style={{ backgroundColor: 'white', elevation: 0 }}>
                 <Appbar.Action onPress={() => navigation.pop()} icon={() => <Feather1s name="arrow-left" size={20} />} />
-                <Appbar.Content title="Account Settings" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                <Appbar.Content title="Account Settings" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                 <Button color="#1089ff" onPress={handleOnSave}>
                     Save
                 </Button>

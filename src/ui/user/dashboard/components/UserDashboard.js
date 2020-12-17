@@ -52,7 +52,7 @@ function UserDashboard(props) {
             booking = doc.data();
             if (typeof(booking.uid) == 'undefined' 
             || booking.uid === 0 
-            || booking.status == BOOKING_STATUS.BOOKING_COMPLETED) {
+            || booking.status == Number(BOOKING_STATUS.BOOKING_COMPLETED)) {
                 
             } else {
                 if (moment(booking.date).isAfter(moment(new Date())) && moment(new Date().getTime()).isAfter(moment(booking.end_time))) {
@@ -92,7 +92,7 @@ function UserDashboard(props) {
     const renderUpcomingBooking = () => {
         if (userBookings.length === 0) {
             return (
-                <View style={{padding: 10}}>
+                <View style={{alignItems: 'center', justifyContent: 'center', padding: 10}}>
   <Paragraph style={{color: '#212121', fontFamily: 'Avenir-Medium'}}>
                 <Text>
                     You don't have any scheduled bookings.{" "}
@@ -117,7 +117,11 @@ function UserDashboard(props) {
             )
         }
 
-        return <SessionDashboardComponent booking={userBookings[0]} />
+        return userBookings.map((booking, index, arr) => {
+            return (
+                <SessionDashboardComponent key={index} booking={booking} />
+            )
+        })
     }
     
     return (
@@ -127,13 +131,13 @@ function UserDashboard(props) {
         }}>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
                 <MenuIcon onPress={() => navigation.openDrawer()} />
-                <Appbar.Content title='Dashboard' titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                <Appbar.Content title='Dashboard' titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}> 
             <View style={{marginVertical: 10}}>
                     <ListItem 
                     title="My Programs" 
-                    titleStyle={{fontSize: 16, fontFamily: 'Avenir-Medium'}} 
+                    titleStyle={{fontSize: 20, fontFamily: 'Avenir-Heavy'}} 
                     subtitle="Access all of your programs." 
                     subtitleStyle={{fontSize: 15, fontFamily: 'Avenir-Roman'}} 
               
@@ -144,7 +148,7 @@ function UserDashboard(props) {
                 </View>
                 
             <View style={{ flex: 1, }}>
-                <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
+               {/* <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
                     <Surface style={{elevation: 0, margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
                         <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
                             Total Sessions Completed
@@ -187,13 +191,13 @@ function UserDashboard(props) {
                             </Text>
                         </View>
                         </TouchableWithoutFeedback>
-                    </View>
-                </View>
+    </View> 
+    </View> */}
 
                 <View style={{ flex: 2, marginVertical: 15}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                    <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 18}}>
-                        Upcoming Session
+                    <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 20}}>
+                       Bookings
                     </Text>
                     </View>
 

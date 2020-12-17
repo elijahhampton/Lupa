@@ -301,12 +301,16 @@ export default class LupaController {
               userResults.hits[i].resultType = "User"
               console.log('CCCCCC')
               finalResults.push(userResults.hits[i]);
+              console.log('@@@@@@@@@@@@@@@@')
+              console.log(finalResults.length)
         }
 
         for (let i = 0; i < programResults.hits.length; ++i)
         {
           programResults.hits[i].resultType = "Program"
             finalResults.push(programResults.hits[i]);
+            console.log('@@@@@@@@@@@@@@@@')
+            console.log(finalResults.length)
         }
 
         } catch(err)
@@ -846,6 +850,10 @@ export default class LupaController {
 
     handleAcceptBooking = (booking_uid) => {
       USER_CONTROLLER_INSTANCE.handleAcceptedBooking(booking_uid);
+    }
+
+    handleDeclineBooking = (booking_uid) => {
+      USER_CONTROLLER_INSTANCE.handleDeclineBooking(booking_uid);
     }
 
     handleCancelBooking = (bookingData) => {

@@ -39,7 +39,7 @@ import {
 
 import { ListItem, Input, CheckBox } from 'react-native-elements'
 
- 
+
 
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
@@ -61,6 +61,7 @@ import { createStripeCustomerAccount, STRIPE_VERIFICATION_STATUS } from '../../.
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import StripeVerificationStatusModal from '../../settings/modal/StripeVerificationStatusModal'
 import HomeGymModal from '../../modal/HomeGymModal';
+import { getLupaStoreState } from '../../../../controller/redux';
 
 const SECTION_SEPARATOR = 15;
 const SUB_SECTION_SEPARATOR = 25;
@@ -128,11 +129,55 @@ const SettingsModal = () => {
         LOG('SettingsModal.js', 'Fetching user stripe data.')
 
         const stripeAccountID = updatedUserData.stripe_metadata.account_id;
-        if (typeof(stripeAccountID) == 'undefined' || stripeAccountID == "") {
+        if (typeof (stripeAccountID) == 'undefined' || stripeAccountID == "") {
             handleSetVerificationStatus('unregistered')
             return;
         }
 
+        /* We need to check and see if the user has submitted for verification before.. if so then we just load the verification data.
+        If not then we need to set that verification status as well */
+        //check of the user has submitted for verification
+
+            axios({
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                url: FETCH_STRIPE_ACCOUNT_DATA_ENDPOINT,
+                data: JSON.stringify({
+                    trainer_account_id: stripeAccountID
+                })
+            }).then(response => {
+                LOG('SettingsModal.js', 'Finished running axios request.');
+                setStripeData(response.data.account_data)
+                setVerificationCurrentlyDue(response.data.account_data.requirements.currently_due)
+                setVerificationErrors(response.data.account_data.requirements.errors)
+                handleSetVerificationStatus('unregistered')
+                setComponentDidErr(false);
+                setIsLoading(false)
+                setIsReady(true);
+            }).catch(error => {
+                LOG_ERROR('SettingsModal.js', 'Error running axios request.', error);
+                console.log(error)
+                setComponentDidErr(true)
+                setStripeData(undefined);
+                setIsLoading(false)
+                setIsReady(true)
+            })
+
+    }
+
+    const fetchExistingStripeData = () => {
+        LOG('SettingsModal.js', 'User account id is set to : ' + updatedUserData.stripe_metadata.account_id);
+        LOG('SettingsModal.js', 'Fetching user stripe data.')
+
+        console.log('fetching existing')
+        const stripeAccountID = updatedUserData.stripe_metadata.account_id;
+
+        if (typeof (stripeAccountID) == 'undefined' || stripeAccountID == "") {
+            return;
+        }
         /* We need to check and see if the user has submitted for verification before.. if so then we just load the verification data.
         If not then we need to set that verification status as well */
         //check of the user has submitted for verification
@@ -151,60 +196,18 @@ const SettingsModal = () => {
             setStripeData(response.data.account_data)
             setVerificationCurrentlyDue(response.data.account_data.requirements.currently_due)
             setVerificationErrors(response.data.account_data.requirements.errors)
-            handleSetVerificationStatus('unregistered')
+            setVerificationDeadline(response.data.account_data.requirements.current_deadline);
+            handleSetVerificationStatus(response.data.account_data.individual.verification.status)
             setComponentDidErr(false);
             setIsLoading(false)
             setIsReady(true);
         }).catch(error => {
             LOG_ERROR('SettingsModal.js', 'Error running axios request.', error);
-            console.log(error)
             setComponentDidErr(true)
             setStripeData(undefined);
             setIsLoading(false)
             setIsReady(true)
-        })
-    }
-
-    const fetchExistingStripeData = () => {
-        LOG('SettingsModal.js', 'User account id is set to : ' + updatedUserData.stripe_metadata.account_id);
-        LOG('SettingsModal.js', 'Fetching user stripe data.')
-
-       console.log('fetching existing')
-        const stripeAccountID = updatedUserData.stripe_metadata.account_id;
-
-        if (typeof(stripeAccountID) == 'undefined' || stripeAccountID == "") {
-            return;
-        }
-        /* We need to check and see if the user has submitted for verification before.. if so then we just load the verification data.
-        If not then we need to set that verification status as well */
-        //check of the user has submitted for verification
-            axios({
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                url: FETCH_STRIPE_ACCOUNT_DATA_ENDPOINT,
-                data: JSON.stringify({
-                    trainer_account_id: stripeAccountID
-                })
-            }).then(response => {
-                LOG('SettingsModal.js', 'Finished running axios request.');
-                setStripeData(response.data.account_data)
-                setVerificationCurrentlyDue(response.data.account_data.requirements.currently_due)
-                setVerificationErrors(response.data.account_data.requirements.errors)
-                setVerificationDeadline(response.data.account_data.requirements.current_deadline);
-                handleSetVerificationStatus(response.data.account_data.individual.verification.status)
-                setComponentDidErr(false);
-                setIsLoading(false)
-                setIsReady(true);
-            }).catch(error => {
-                LOG_ERROR('SettingsModal.js', 'Error running axios request.', error);
-                setComponentDidErr(true)
-                setStripeData(undefined);
-                setIsLoading(false)
-                setIsReady(true)
-            });
+        });
     }
 
     const handleOnRefresh = () => {
@@ -215,9 +218,9 @@ const SettingsModal = () => {
         const currentVerificationStatus = Number(updatedUserData.stripe_metadata.connected_account_verification_status);
         //check if account is disabled
         //TODO
-console.log('a')
+        console.log('a')
 
-console.log(status)
+        console.log(status)
         //handle status
         switch (status) {
             case 'verified':
@@ -255,8 +258,26 @@ console.log(status)
         }
     }
 
+    const updateCardIsDisabled = () => {
+        if (updatedUserData.stripe_metadata.stripe_id == null
+            || updatedUserData.stripe_metadata.stripe_id == ""
+            || typeof(updatedUserData.stripe_metadata.stripe_id) == 'undefined' ) {
+                return true
+            }  else {
+                return false;
+            }
+    }
+
     const renderCardData = () => {
         let cardMessage = "";
+
+        if (updatedUserData.stripe_metadata.stripe_id == null
+            || updatedUserData.stripe_metadata.stripe_id == ""
+            || typeof(updatedUserData.stripe_metadata.stripe_id) == 'undefined' ) {
+                cardMessage = "Enable payments before updating your card information."
+                return cardMessage;
+            }  
+
         try {
             if (typeof (updatedUserData.stripe_metadata.card_last_four) == 'undefined' || updatedUserData.stripe_metadata.card_last_four == "") {
                 cardMessage = "You have not saved a card.";
@@ -317,7 +338,7 @@ console.log(status)
         }
     }
 
-    handleTrainerPayoutsOnPress = async () => {
+   const handleTrainerPayoutsOnPress = async () => {
         const status = Number(updatedUserData.stripe_metadata.connected_account_verification_status);
 
         if (componentDidErr) {
@@ -338,8 +359,8 @@ console.log(status)
                 setIsLoading(true);
                 const email = updatedUserData.email;
                 const uuid = updatedUserData.user_uuid;
-                const isTrainer = updatedUserData.isTrainer;
-                await createStripeCustomerAccount(email, uuid, isTrainer).then(() => {
+
+                await createStripeCustomerAccount(email, uuid, true).then(() => {
                     setIsLoading(false);
                 }).catch(error => {
                     setComponentDidErr(true);
@@ -351,11 +372,65 @@ console.log(status)
         }
     }
 
-    handleChangeHomeGymOnPress = () => {
+    const handleUserPaymentsOnPress = async () => {
+        if (componentDidErr) {
+            return;
+        }
+
+        setIsLoading(true);
+
+        const email = updatedUserData.email;
+        const uuid = updatedUserData.user_uuid;
+        await createStripeCustomerAccount(email, uuid, false).then(() => {
+            setIsLoading(false);
+        }).catch(error => {
+            setComponentDidErr(true);
+            setIsLoading(false);
+        })
+    }
+
+    const handleChangeHomeGymOnPress = () => {
         setHomeGymModalIsVisible(true);
     }
 
-    renderLupaTrainerOptions = () => {
+    const renderPaymentsOptions = () => {
+
+        let userSubtitleText = ""
+        let styling = {}
+        if (updatedUserData.stripe_metadata.stripe_id == ""
+            || typeof (updatedUserData.stripe_metadata.stripe_id) == 'undefined'
+            || updatedUserData.stripe_metadata.stripe_id == null) {
+            userSubtitleText = "Lupa uses Stripe's infrastructure to provide a secure payment gateway.  Click here to register your account with stripe.";
+            styling={
+                color: 'grey'
+            }
+        } else {
+            userSubtitleText = "Your account has been enabled to make payments."
+            styling={
+                color: 'green'
+            }
+        }
+
+        return (
+            <View>
+                <Text style={styles.listItemTitleStyle}>
+                    Payments
+                </Text>
+
+                {
+                    updatedUserData.isTrainer == false ?
+                        <ListItem onPress={handleUserPaymentsOnPress} title="Enable Payments" titleStyle={styles.titleStyle} subtitle={userSubtitleText} subtitleStyle={[{ fontSize: 12 }, styling]} bottomDivider />
+                        :
+                        <ListItem onPress={handleTrainerPayoutsOnPress} title="Trainer Payouts" titleStyle={styles.titleStyle} subtitle={renderVerificationStatusData()} subtitleStyle={[{ fontSize: 12 }, getTrainerPayoutsSubtitleStyle()]} bottomDivider />
+                }
+
+                <ListItem onPress={() => setUpdateCardModalIsVisible(true)} disabled={updateCardIsDisabled()} title="Update Card" subtitle={renderCardData()} titleStyle={[styles.titleStyle, {color: updateCardIsDisabled() == true ? 'grey' : 'black'}]} subtitleStyle={[updateCardIsDisabled() == true ? { color: 'grey' } :  { color: 'black' } , { fontSize: 12,  }]} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
+            </View>
+        )
+    }
+
+    const renderLupaTrainerOptions = () => {
+
         if (updatedUserData.isTrainer === true) {
             return (
                 <View>
@@ -363,7 +438,6 @@ console.log(status)
                         Lupa Trainer
                             </Text>
 
-                    <ListItem onPress={handleTrainerPayoutsOnPress} title="Trainer Payouts" titleStyle={styles.titleStyle} subtitle={renderVerificationStatusData()} subtitleStyle={[{ fontSize: 12 }, getTrainerPayoutsSubtitleStyle()]} bottomDivider />
                     <ListItem onPress={handleChangeHomeGymOnPress} title="Change Home Gym" titleStyle={styles.titleStyle} subtitle='Change the location of your home gym.' subtitleStyle={[{ fontSize: 12 }, getTrainerPayoutsSubtitleStyle()]} bottomDivider />
                 </View>
             )
@@ -374,7 +448,7 @@ console.log(status)
         <View style={styles.root}>
             <Appbar.Header statusBarHeight={false} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <Appbar.Action icon={() => <Feather1s name="arrow-left" size={20} />} onPress={() => navigation.pop()} />
-                <Appbar.Content title="Settings" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }} />
+                <Appbar.Content title="Settings" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <TouchableOpacity onPress={() => navigation.push('AccountSettings')}>
                 <Appbar theme={{ colors: { primary: '#FFFFFF' } }} style={{ borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', paddingHorizontal: 15, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -399,12 +473,7 @@ console.log(status)
 
                 <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}>
                     {renderLupaTrainerOptions()}
-                    <View>
-                        <Text style={styles.listItemTitleStyle}>
-                            Payments
-                            </Text>
-                        <ListItem onPress={() => setUpdateCardModalIsVisible(true)} title="Update Card" subtitle={renderCardData()} titleStyle={styles.titleStyle} subtitleStyle={{ fontSize: 12 }} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
-                    </View>
+                    {renderPaymentsOptions()}
 
                     <View>
                         <Text style={styles.listItemTitleStyle}>
@@ -414,10 +483,16 @@ console.log(status)
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_d6bd8c33999e4e5ba4191b65eaf89048.pdf')} title="Privacy Policy" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Terms and Conditions" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                     </View>
-                    
-                 
+
+
                     <UpdateCard isVisible={updateCardModalIsVisible} closeModal={() => setUpdateCardModalIsVisible(false)} />
-                    <StripeVerificationStatusModal isVisible={registrationModalIsVisible} closeModal={() => setRegistrationModalVisible(false)} userData={updatedUserData} verificationStatus={verificationStatus} verificationErrors={verificationErrors} />
+                    <StripeVerificationStatusModal 
+                    isVisible={registrationModalIsVisible} 
+                    closeModal={() => setRegistrationModalVisible(false)} 
+                    userData={updatedUserData} 
+                    verificationStatus={verificationStatus} 
+                    verificationErrors={verificationErrors} />
+                    <FullScreenLoadingIndicator isVisible={loading} />
                 </ScrollView>
             </SafeAreaView>
         </View>

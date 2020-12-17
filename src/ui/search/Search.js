@@ -15,7 +15,7 @@ import {
 } from 'react-native'
 
 import LupaController from '../../controller/lupa/LupaController'
-import { Avatar, Surface, Divider, Button, Appbar } from 'react-native-paper'
+import { Avatar, Surface, Divider, Button, Appbar, Chip, Paragraph } from 'react-native-paper'
 import {
     SearchBar
 } from 'react-native-elements'
@@ -25,6 +25,8 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Constants } from 'react-native-unimodules'
 import { connect } from 'react-redux';
 import UserSearchResult from '../user/profile/component/UserSearchResult';
+import LargeProgramSearchResultCard from '../workout/program/components/LargeProgramSearchResultCard'
+import ProgramInformationComponent from '../workout/program/components/ProgramInformationComponent'
 
 const CATEGORY_SEPARATION = 15
 
@@ -60,6 +62,7 @@ class Search extends React.Component {
             searching: false,
             searchValue: "",
             searchResults: [],
+            resultsContainerHeight: 0,
             refreshing: false,
             popularPrograms: [],
             locationResults: [],
@@ -112,7 +115,7 @@ class Search extends React.Component {
             case 'Power':
                 return (
                     <TouchableOpacity style={{ marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Power')}>
-                        <Image style={{ width: 63, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Power.png')} />
+                        <Image style={{ width: 25, height: 80, alignSelf: 'center' }} source={require('../images/interest_icons/selected/Power.png')} />
                         <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
                         </Text>
@@ -129,8 +132,8 @@ class Search extends React.Component {
                 )
             case 'Reaction Time':
                 return (
-                    <TouchableOpacity style={{ marginVertical: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Reaction Time')}>
-                        <Image style={{ width: 80, height: 77, alignSelf: 'center' }} source={require('../images/interest_icons/selected/ReactionTime.png')} />
+                    <TouchableOpacity style={{ marginVertical: 15, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Reaction Time')}>
+                        <Image style={{ width: 70, height: 70, alignSelf: 'center' }} source={require('../images/interest_icons/selected/ReactionTime.png')} />
                         <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
                             {skill}
                         </Text>
@@ -238,7 +241,7 @@ class Search extends React.Component {
             searchResults: []
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+        await this.LUPA_CONTROLLER_INSTANCE.searchTrainersAndPrograms(searchQuery).then(searchData => {
             this.setState({ searchResults: searchData })
         })
 
@@ -266,19 +269,33 @@ class Search extends React.Component {
         }
 
         if (this.state.searchResults.length === 0 && this.categoryIsPressed === false) {
-            return this.renderSkills()
+            return;
         } else if (this.state.categoryIsPressed === true) {
             return this.renderCategoryResults();
         } else if (this.state.searching === true) {
             return this.renderSearchResults()
         } else {
-            return this.renderSkills()
+            return (
+                <View style={{flex: 1, height: this.state.resultsContainerHeight / 2 ,backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
+                   <Text style={{fontFamily: 'Avenir-Medium', fontSize: 20}}>
+                       No results to show
+                   </Text>
+                   <Paragraph>
+                       Please check spelling or try different keywords
+                   </Paragraph>
+                </View>
+            )
         }
     }
 
     renderSearchResults = () => {
         return this.state.searchResults.map(result => {
-            return <UserSearchResult buttonOnPress={() => this.props.navigation.push('Profile', { userUUID: result.user_uuid })} userData={result} />
+            switch(result.resultType) {
+                case 'User':
+                    return <UserSearchResult buttonOnPress={() => this.props.navigation.push('Profile', { userUUID: result.user_uuid })} userData={result} />
+                case 'Program':
+                    return <ProgramInformationComponent program={result} />
+            }
         })
     }
 
@@ -306,6 +323,7 @@ class Search extends React.Component {
             <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <FeatherIcon onPress={() => this.props.navigation.pop()} name="arrow-left" size={20} color="#212121" style={{ paddingHorizontal: 10, marginTop: Constants.statusBarHeight }} />
                 <ScrollView
+                    onLayout={event => this.setState({ resultsContainerHeight: event.nativeEvent.layout.height })}
                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
                     scrollEventThrottle={1}
                     bounces={false}
@@ -315,17 +333,17 @@ class Search extends React.Component {
                             Explore Trainers and Fitness Programs
                         </Text>
                     </View>
-                    <View style={{ backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                    <View style={{ backgroundColor: 'white', }}>
                         <SearchBar
                             placeholder="Search trainers"
-                            placeholderTextColor="#000000"
+                            placeholderTextColor="rgb(199, 201, 203)"
                             onChangeText={text => this.performSearch(text)}
                             value={this.state.searchValue}
                             inputStyle={styles.inputStyle}
                             platform="ios"
-                            containerStyle={{ backgroundColor: 'white', borderColor: 'white', width: '90%' }}
+                            containerStyle={{ backgroundColor: 'white', borderColor: 'white', width: Dimensions.get('window').width - 10 }}
                             inputContainerStyle={{ borderColor: 'white', backgroundColor: '#EEEEEE' }}
-                            searchIcon={() => <MaterialIcon name="search" color="#1089ff" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+                            searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
                         />
                     </View>
                     {
@@ -375,6 +393,15 @@ const styles = StyleSheet.create({
     category: {
         marginVertical: CATEGORY_SEPARATION,
         padding: 20
+    },
+    searchRowTouchable: {
+        flexDirection: 'row', margin: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderRadius: 10, borderColor: 'black', padding: 5, 
+    },
+    searchRowImage: {
+       width: 20, height: 24, alignSelf: 'center'
+    },
+    seachRowText: {
+        paddingHorizontal: 5, fontFamily: 'Avenir-Medium', fontSize: 10, paddingVertical: 10
     }
 })
 

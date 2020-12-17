@@ -4,9 +4,9 @@ import {
     View,
     Text,
     StyleSheet,
+    Image,
     Dimensions,
     Modal,
-    Button,
     SafeAreaView,
     KeyboardAvoidingView,
     TouchableOpacity,
@@ -15,7 +15,9 @@ import {
 import {
     Headline,
     TextInput,
+    Button,
     Surface,
+    Paragraph,
 } from 'react-native-paper';
 
 import { Avatar, Input } from 'react-native-elements';
@@ -24,16 +26,20 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import ThinFeatherIcon from 'react-native-feather1s'
 
 import ImagePicker from 'react-native-image-picker';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 import _requestPermissionsAsync, { _checkCameraAndPhotoLibraryPermissions } from '../../../../controller/lupa/permissions/permissions';
 
 import LupaController from '../../../../controller/lupa/LupaController';
 
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility'
+import { connect, useDispatch, useSelector} from 'react-redux';
 
-import { connect } from 'react-redux';
 import { LOG_ERROR } from '../../../../common/Logger';
 import { Constants } from 'react-native-unimodules';
+import FullScreenLoadingIndicator from '../../../common/FullScreenLoadingIndicator';
+import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../../controller/redux/actionTypes';
 
 mapStateToProps = (state) => {
     return { 
@@ -51,6 +57,122 @@ mapStateToProps = (state) => {
       }
     }
   }
+
+  const certificationItems = [
+    {label: 'National Association of Sports Medicine', value: 'NASM' },
+    {label: 'American Council on Exercise', value: 'ACE'},
+    {label: 'American College of Sports and Medicine', value: 'ACSM'},
+    {label: 'National Council on Strength and Fitness', value: 'NCSF'},
+]
+
+function TrainerCertificationModal({ isVisible, closeModal }) {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    const [certificationNumber, setCertificationNumber] = useState("")
+    const [verificationSubmitted, setVerificationSubmitted] = useState(false);
+    const [certification, setCertification] = useState("");
+
+    const dispatch = useDispatch();
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
+
+    const handleOnSubmit = async () => {
+        setIsLoading(true)
+        if (certificationNumber.length === 0 || certificationNumber.length < 5) {
+            setIsLoading(false);
+            alert('You must enter a valid certification number!')
+            return;
+        }
+        
+        try {
+            LUPA_CONTROLLER_INSTANCE.submitCertificationNumber(currUserData.user_uuid, certificationNumber);
+
+         const payload = getUpdateCurrentUserAttributeActionPayload('isTrainer', true);
+         const certificationUpdatePayload = getUpdateCurrentUserAttributeActionPayload('certification', certification);
+
+         dispatch({type: UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: certificationUpdatePayload});
+         dispatch({ type:  UPDATE_CURRENT_USER_ATTRIBUTE_ACTION, payload: payload });
+
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('certification', certification);
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('isTrainer', true);
+
+
+        } catch(error) {
+            LOG_ERROR('WelcomeLupaIntroduction.js', 'Caught unhandled exception in handleOnSubmit()', error);
+            setIsLoading(false);
+            handleOnClose();
+        }
+
+        //send email about certification
+        setIsLoading(false);
+        handleOnClose();
+    }
+
+    const handleOnClose = () => {
+        closeModal();
+    }
+    
+    return (
+        <Modal visible={isVisible} presentationStyle="fullScreen" animated={true} animationType="slide">
+            <SafeAreaView style={{flex: 1}}>
+                <KeyboardAvoidingView style={{flex: 1, justifyContent: 'space-between',}}>
+                   
+                 <View style={{padding: 20}}>
+                 <Image style={{width: 150, height: 150, alignSelf: 'center'}} source={require('../../../images/certificate.jpeg')} />
+
+<View style={{alignItems: 'center'}}>
+    <View style={{width: '100%', justifyContent: 'center', alignItems: 'center',}}>
+    <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+        Verify your certificate
+    </Text>
+    <Paragraph style={{color: 'rgb(137, 137, 138)', textAlign: 'center', fontWeight: '600'}}>
+        After entering in your certification number it will take up 24 hours to verify your account.
+    </Paragraph>
+    </View>
+                 </View>
+
+   
+ 
+    <TextInput
+    value={certificationNumber} 
+    onChangeText={text => setCertificationNumber(text)}
+    keyboardAppearance="light"
+    keyboardType="default"
+    returnKeyLabel="done"
+    returnKeyType="done"
+    theme={{
+        colors: {
+            primary: '#1089ff'
+        }
+    }} style={{marginVertical: 10, fontSize: 12}} mode="flat" label="Certification Number" placeholder="Enter your certification number." />
+<DropDownPicker
+    items={certificationItems}
+    defaultValue={certification}
+    containerStyle={{height: 40}}
+    style={{backgroundColor: '#fafafa'}}
+    itemStyle={{
+        justifyContent: 'flex-start'
+    }}
+    dropDownStyle={{backgroundColor: '#fafafa'}}
+    onChangeItem={item => setCertification(item.value)}
+/>
+                    </View>
+
+<Button onPress={handleOnSubmit} color="#1089ff" theme={{roundness: 5}} mode="contained" style={{alignSelf: 'center', height: 45, alignItems: 'center', marginVertical: 20, justifyContent: 'center', width: '90%'}}>
+                        Submit Verification
+                    </Button>
+                  
+        </KeyboardAvoidingView>
+            </SafeAreaView> 
+           <FullScreenLoadingIndicator isVisible={isLoading} />
+        </Modal>
+
+    )
+}
 
 class BasicInformation extends React.Component {
     constructor(props) {
@@ -78,11 +200,13 @@ class BasicInformation extends React.Component {
             showLoadingIndicator: false,
             displayNameSet: false,
             avatarSet: false,
-            trainingStyles: []
+            trainingStyles: [],
+            verificationModalVisible: false,
         }
     }
 
     componentDidMount = async () => {
+       this.setState({ verificationModalVisible: true })
        await this.disableNext();
        await _checkCameraAndPhotoLibraryPermissions()
     }
@@ -309,6 +433,7 @@ class BasicInformation extends React.Component {
                             </View>
                             </TouchableOpacity>
                         </View>
+                   <TrainerCertificationModal isVisible={this.state.verificationModalVisible} closeModal={() => this.setState({ verificationModalVisible: false })} />
             </SafeAreaView>
         )
     }

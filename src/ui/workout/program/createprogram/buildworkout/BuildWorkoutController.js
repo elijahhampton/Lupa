@@ -16,6 +16,7 @@ import {
 import {
     Surface,
     Caption,
+    Snackbar,
     Appbar,
     Button,
     Divider,
@@ -40,6 +41,7 @@ import { LOG_ERROR } from '../../../../../common/Logger';
 import { DebugInstructions } from 'react-native/Libraries/NewAppScreen';
 import WorkoutDisplay from './component/WorkoutDisplay';
 import { Constants } from 'react-native-unimodules';
+import { weekdays } from 'moment';
 
 const PLACEMENT_TYPES = {
     SUPERSET: 'superset',
@@ -55,6 +57,16 @@ const CATEGORIES = [
     'Medicine Ball',
     'Plyometric'
 
+]
+
+const weekDays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
 ]
 
 //Redux::mapStateToProps
@@ -107,6 +119,8 @@ class BuildWorkoutController extends React.Component {
             bottomViewIndex: 0,
             folderIsSelected: false,
             folderSelected: '',
+            snackBarVisible: false,
+            snackBarReason: '',
             workoutDays: [],
             numWorkoutsAdded: 0,
             currDayIndex: 0,
@@ -155,7 +169,6 @@ class BuildWorkoutController extends React.Component {
         let weeks = [], workoutDays = [];
         const programDuration = this.props.programData.program_duration;
 
-        if (this.props.lupa_data.Users.currUserData.isTrainer === true) {
             workoutDays = new Array(programDuration);
             for (let i = 0; i < programDuration; i++) {
                 await weeks.push(i);
@@ -169,19 +182,6 @@ class BuildWorkoutController extends React.Component {
                     Sunday: []
                 }
             }
-        } else {
-            workoutDays = new Array(1)
-            await weeks.push(0)
-            workoutDays[0] = {
-                Monday: [],
-                Tuesday: [],
-                Wednesday: [],
-                Thursday: [],
-                Friday: [],
-                Saturday: [],
-                Sunday: []
-            }
-        }
 
 
         await this.setState({ ready: true, weeks: weeks, workoutDays: workoutDays })
@@ -200,6 +200,19 @@ class BuildWorkoutController extends React.Component {
      * @param {*} workoutDays 
      */
     handleSaveProgramData = (workoutDays) => {
+        for (let i = 0; i < workoutDays.length; i++) {
+            let days = workoutDays[i];
+            for (let j = 0; j < weekDays.length; j++) {
+                if (days[weekDays[j]].length == 0 && this.props.program_workout_days.includes(weekDays[j])) {
+                    this.setState({ 
+                        snackBarVisible: true,
+                        snackBarReason: 'You must add atleast one exercise to week ' + (i + 1) + ' for ' + weekDays[j]
+                    })
+                    return;
+                }
+            }
+        }
+
         this.props.saveProgramWorkoutData(workoutDays)
     }
 
@@ -367,7 +380,7 @@ class BuildWorkoutController extends React.Component {
     /**
      * Renders the supersets for any populated workout in the workout options bottom sheet.
      */
-    renderCurrWorkoutSupersets = () => {
+   /* renderCurrWorkoutSupersets = () => {
         if (typeof (this.state.currPressedPopulatedWorkout) == 'undefined') {
             return (
                 <View>
@@ -398,7 +411,7 @@ class BuildWorkoutController extends React.Component {
                 }
             </ScrollView>
         )
-    }
+    }*/
 
     /**
      * Renders the workout options bottom sheet.
@@ -937,10 +950,10 @@ class BuildWorkoutController extends React.Component {
                 return (
                     <View style={styles.container}>
                         <Appbar.Header style={{ elevation: 0, alignItems: 'center', backgroundColor: '#23374d', }}>
-                            <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
+                          {/*  <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
                                 Back
-                                    </Button>
-                            <Appbar.Content title="Add Exercises" />
+                </Button> */}
+                            <Appbar.Content title="Add Exercises" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                             <Button color="white" uppercase={false} onPress={() => this.handleSaveProgramData(this.state.workoutDays)}>
                                 Next
                                     </Button>
@@ -956,6 +969,17 @@ class BuildWorkoutController extends React.Component {
                         {this.renderDayOfTheWeekDropdownPicker()}
                         {this.renderAddExerciseRBSheet()}
                         {this.renderWorkoutOptionsSheet()}
+                        <Snackbar
+        visible={this.state.snackBarVisible}
+        onDismiss={() => this.setState({ snackBarVisible: false })}
+        action={{
+          label: 'Okay',
+          onPress: () => {
+            this.setState({ snackBarVisible: false })
+          },
+        }}>
+        {this.state.snackBarReason}
+      </Snackbar>
                     </View>
                 );
             case 1:

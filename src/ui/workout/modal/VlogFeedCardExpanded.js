@@ -111,7 +111,7 @@ function VlogFeedCardExpanded({ route, navigation }) {
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={{backgroundColor: 'white', borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', elevation: 0}}>
                 <Appbar.Action icon={() =>  <Feather1s  size={22} name="x" color="black" onPress={() => navigation.pop()}/>} />
-                <Appbar.Content title="Vlog"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                <Appbar.Content title="Vlog"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
            <ScrollView>
            <VlogFeedCard vlogData={route.params.vlogData} clickable={false} />

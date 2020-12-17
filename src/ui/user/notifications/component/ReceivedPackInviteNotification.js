@@ -35,6 +35,7 @@ const {windowWidth} = Dimensions.get('window').width
 function ReceivedPackInviteNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const [packData, setPackData] = useState(notificationData.data);
+    const [componentDidErr, setComponentDidErr] = useState(false);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
     const dispatch = useDispatch();
 
@@ -56,7 +57,7 @@ function ReceivedPackInviteNotification({ notificationData }) {
             )
        
     } catch(error) {
-        alert(error)
+        setComponentDidErr(true)
     }
     }
 
@@ -64,25 +65,24 @@ function ReceivedPackInviteNotification({ notificationData }) {
         const packUID = notificationData.data.uid;
         LUPA_CONTROLLER_INSTANCE.handleOnAcceptPackInvite(packUID, currUserData.user_uuid)
         .then(data => {
-            console.log('WOOO ACCEPTED AND GOT DATA back')
-            console.log(data);
             dispatch({ type: ADD_CURRENT_USER_PACK, payload: data })
         }).then(() => {
-            console.log('OKay now lets look at the data')
-            console.log(getLupaStoreState().Packs.currUserPacksData)
+            setComponentDidErr(true)
         })
-
-
-        console.log(getLupaStoreState().Packs.currUserPacksData)
     }
 
     const handleOnDeclinePackInvite = () => {
+        try {
         const packUID = notificationData.data.uid;
 
-        LUPA_CONTROLLER_INSTANCE.handleOnDeclinePackInvite(packUID, currUserData.user_uuid)
+        LUPA_CONTROLLER_INSTANCE.handleOnDeclinePackInvite(packUID, currUserData.user_uuid);
+        } catch(error) {
+            setComponentDidErr(true)
+        }
     }
 
     const renderActionButtons = () => {
+        try {
         if (packData.invited_members.includes(currUserData.user_uuid)) {
             return (
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
@@ -98,12 +98,17 @@ function ReceivedPackInviteNotification({ notificationData }) {
         } else {
             return null;
         }
+    } catch(error) {
+        setComponentDidErr(true);
+    }
     }
 
     useEffect(() => {
         async function fetchData() {
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(notificationData.from).then(data => {
                 setSenderUserData(data)
+            }).catch(() => {
+                setComponentDidErr(true);
             })
         }
 
@@ -112,15 +117,30 @@ function ReceivedPackInviteNotification({ notificationData }) {
                 const data = doc.data();
                 setPackData(data);
             })
+        }, error => {
+            setComponentDidErr(true)
         })
 
-        fetchData()
+        fetchData().catch(() => {
+            setComponentDidErr(true);
+        })
 
         return () => PACK_OBSERVER();
     }, []);
 
-    return (
-        <>
+     const renderComponentDisplay = () => {
+        if (componentDidErr == true) {
+            return (
+                <View style={{width: '100%', marginVertical: 15, padding: 20, alignItems: 'center', justifyContent: 'center'}}>
+                <Text>
+                    Error loading notificaiton
+                </Text>
+            </View>
+            )
+
+        } else {
+            return (
+                <>
                    <View style={{width: '100%', marginVertical: 15}}>
                        <View style={{width: '80%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                            <Avatar.Image source={{uri: senderUserData.photo_url}} size={35} style={{marginHorizontal: 10}} />
@@ -133,7 +153,12 @@ function ReceivedPackInviteNotification({ notificationData }) {
                     
                    <Divider />
                    </>
-    )
+            )
+           
+        }
+    }
+
+    return renderComponentDisplay()
 }
 
 export default ReceivedPackInviteNotification;

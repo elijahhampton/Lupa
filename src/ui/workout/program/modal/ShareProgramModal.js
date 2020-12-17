@@ -28,7 +28,7 @@ import LupaController from '../../../../controller/lupa/LupaController'
 import UserSearchResult from '../../../user/profile/component/UserSearchResult'
 import ProfileProgramCard from '../components/ProfileProgramCard';
 
-import ThinFeatherIcon from 'react-native-feather1s'
+import ThinFeatherIcon from 'react-native-vector-icons/Feather'
 import { retrieveAsyncData, storeAsyncData } from '../../../../controller/lupa/storage/async';
 
 function ShareProgramModal({ navigation, route }) {
@@ -108,7 +108,7 @@ function ShareProgramModal({ navigation, route }) {
             return <UserSearchResult 
             userData={user} 
             hasButton={true}
-            buttonTitle="Share"
+            buttonTitle={selectedUsers.includes(user.user_uuid) == false ? 'Share' : 'Remove'}
             buttonOnPress={() => handleAddToFollowList(user)}
             />
         })
@@ -140,7 +140,7 @@ function ShareProgramModal({ navigation, route }) {
     const renderSelectedUsers = () => {
         return displaydUsers.map((user) => {
             return (
-                <Chip avatar={() => <Avatar.Image source={{ uri: user.photo_url }} />}>
+                <Chip key={user.user_uuid} style={{marginHorizontal: 10, width: 150}} avatar={() => <Avatar.Image source={{ uri: user.photo_url }} />}>
                 {user.display_name}
             </Chip>
             )
@@ -155,14 +155,29 @@ function ShareProgramModal({ navigation, route }) {
                     }
                 }}>
                     <Appbar.Action onPress={() => navigation.pop()} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}/>
-                    <Appbar.Content title="Share Program" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
+                    <Appbar.Content title="Share Program" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                     <Button color="#1089ff" mode="text" onPress={handleApply}>
                         Save
                     </Button>
                 </Appbar.Header>
+              
+        
 
                 <View style={styles.contentContainer}>
                 <ProfileProgramCard programData={route.params.programData} />
+                <View>		                        
+                <SearchBar placeholder="Who would you like to send this to?"		              
+                    onChangeText={text => performSearch(text)}		                 
+                    platform="ios"
+                    searchIcon={<FeatherIcon name="search" color="black" size={20} />}	
+                    placeholderTextColor="rgb(199, 201, 203)"	                  
+                    containerStyle={styles.searchContainerStyle}		                  
+                    inputContainerStyle={styles.inputContainerStyle}		                   
+                    inputStyle={styles.inputStyle}		                  	                    
+                    value={searchValue} />		                    
+               
+                   		                   
+        </View>
                 <ScrollView horizontal contentContainerStyle={{marginBottom: 10}}>
                         {renderSelectedUsers()}
                     </ScrollView>
@@ -172,7 +187,7 @@ function ShareProgramModal({ navigation, route }) {
         </View>
   
                     <ScrollView shouldRasterizeIOS={true}>
-                  
+                    {mapSearchResults()}
                 </ScrollView>
                     </View>
 
