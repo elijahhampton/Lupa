@@ -26,6 +26,7 @@ import TrainerOnboarding from './ui/user/modal/WelcomeModal/TrainerOnboarding';
 import {Avatar} from 'react-native-elements';
 import WelcomeLupaIntroduction from "./ui/user/modal/WelcomeModal/WelcomeLupaIntroduction";
 import HourlyPaymentModal from "./ui/user/modal/HourlyPaymentModal";
+import RequestCommunity from './ui/community/RequestCommunity'; 
 
 const mapStateToProps = (state, action) => {
   return {
@@ -66,7 +67,7 @@ class Lupa extends React.Component {
     return (
       <View style={{flex: 1}}>
        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-       <LupaDrawerNavigator />
+      <LupaDrawerNavigator />
       </View>
     )
   }

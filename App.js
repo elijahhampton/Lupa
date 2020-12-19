@@ -61,6 +61,7 @@ import { UPDATE_CURRENT_USER_PACKS_ACTION } from './src/controller/redux/actionT
 import Achievements from './src/ui/user/Achievements'
 import Community from './src/ui/community/Community';
 import HourlyPaymentModal from './src/ui/user/modal/HourlyPaymentModal';
+import CommunityFeed from './src/ui/community/CommunityFeed';
 
 const App = () => {
   return (
@@ -117,6 +118,7 @@ function AppNavigator() {
       <StackApp.Screen name="VirtualSession" component={VirtualSession} />
       <StackApp.Screen name="Achievements" component={Achievements} />
       <StackApp.Screen name="Community" component={Community} />
+      <StackApp.Screen name="CommunityFeed" component={CommunityFeed} />
       </StackApp.Navigator>
   )
 }

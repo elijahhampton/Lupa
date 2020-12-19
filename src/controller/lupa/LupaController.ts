@@ -930,5 +930,20 @@ export default class LupaController {
   loadAchievements = () => {
     return USER_CONTROLLER_INSTANCE.loadAchievements();
   }
+  
+  createCommunityRequest = async (communityName, communityAddress, communityZipcode, 
+    communityCity, communityState, communityOwnerName, communityPhoneNumber, images, associatedLupaAccount) => {
+      return new Promise(async (resolve, reject) => {
+        await USER_CONTROLLER_INSTANCE.createCommunityRequest(communityName, communityAddress, communityZipcode, 
+          communityCity, communityState, communityOwnerName, images, associatedLupaAccount)
+          .then(communityUID => {
+            resolve(communityUID)
+          })
+          .catch(error => {
+            resolve(-1);
+          })
+      })
+     
+    }
 
 }

@@ -31,6 +31,7 @@ var lupa_user : LupaUserStructure = {
     tokens: {},
     notifications: [],
     programs: [],
+    communities: [],
     hourly_payment_rate: 15,
     vlogs: [],
     waitlisted_programs: [],

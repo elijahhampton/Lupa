@@ -50,7 +50,7 @@ const items = [
   'g',
 ]
 
-function Community({ navigation, route}) {
+function Community({ navigation, route }) {
   const renderFeaturedTrainer = () => {
     return (
       <View style={{marginVertical: 10, paddingHorizontal: 10, width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

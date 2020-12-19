@@ -12,6 +12,8 @@ const USER_COLLECTION = LUPA_DB.collection('users');
 const PROGRAMS_COLLECTION = LUPA_DB.collection('programs');
 const VLOGS_COLLECTION = LUPA_DB.collection('vlogs');
 const WORKOUTS_COLLECTION = LUPA_DB.collection('workouts');
+const COMMUNITY_COLLECTION = LUPA_DB.collection('communities');
+
 //import * as algoliasearch from 'algoliasearch'; // When using TypeScript
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -29,7 +31,7 @@ import { Booking, BOOKING_STATUS } from '../../model/data_structures/user/types'
 import { getBookingStructure } from '../../model/data_structures/user/booking'
 import { LupaUserStructure, UserCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
-
+import { initializeNewCommunity } from '../../model/data_structures/community/community';
 import LOG, { LOG_ERROR } from '../../common/Logger';
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../firebase/collection_structures';
 import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
@@ -2757,6 +2759,80 @@ export default class UserController {
 
         return achievementCategories;
     }
+
+    saveCommunityImage = async (imageURI, metadata, communityUUID) => {
+            const blob = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.onload = function () {
+                    resolve(xhr.response);
+                };
+                xhr.onerror = function (e) {
+                    reject(new TypeError('Network request failed'));
+                };
+                xhr.responseType = 'blob';
+                xhr.open('GET', imageURI, true);
+                xhr.send(null);
+            });
+    
+            let imageURL;
+            return new Promise(async (resolve, reject) => {
+                await this.fbStorage.saveCommunityImage(blob, metadata, communityUUID).then(url => {
+                    resolve(url);
+                })
+            })
+    }
+
+    createCommunityRequest = async (communityName, communityAddress, communityZipcode, 
+        communityCity, communityState, communityOwnerName, communityPhoneNumber, images, associatedLupaAccount) => {
+            let uploadedPictures  = [];
+            console.log('A')
+         
+            
+            const newCommunity = initializeNewCommunity(communityName, communityAddress, [], [], communityZipcode, communityOwnerName, communityPhoneNumber, associatedLupaAccount);
+            console.log('B')
+            let communityUID = -1;
+            await LUPA_DB.collection('communities')
+            .add(newCommunity)
+            .then(docRef => {
+                communityUID = docRef.id
+                LUPA_DB.collection('communities').doc(docRef.id).update({
+                    uid: docRef.id
+                })  
+            })
+            .catch(error => {
+                console.log(error)
+            })
+
+           /* var metadata = {
+                customMetadata: {
+                    'community_uid': communityUID.toString()
+                }
+              }
+
+            if (images.length != 0) {
+                for (let i = 0; i < images.length; i++) {
+                    await this.saveCommunityImage(images[i], metadata, communityUID)
+                    .then(uri => {
+                        uploadedPictures.push(uri)
+console.log('pushing now!!')
+                        
+                        // LOG('PublishProgram.js', 'handleChooseProgramImage::Successfully retrieved image uri and set state: ' + programImage)
+                    })
+                    .catch(error => {
+                        console.log('dsfsjdfoisjdfoisjfosidjfosidjfsodifjsdoif')
+                        console.log(error)
+                        //LOG_ERROR('PublishProgram.js', 'handleChooseProgramImage::Caught exception trying to retrieve new image uri.' ,error)
+                    })
+                }
+            }
+
+            console.log('UPDAINGL: ' + uploadedPictures.length)
+            LUPA_DB.collection('communities').doc(communityUID).update({
+                pictures: uploadedPictures
+            })     */
+
+            return Promise.resolve(communityUID);
+        }
 }
 
 //me

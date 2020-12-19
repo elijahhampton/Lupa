@@ -127,6 +127,7 @@ const LUPA_PACK_EVENT_IMAGE_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('pack_
 const LUPA_USER_PROGRAMS_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('program_workout_images')
 const LUPA_PROGRAM_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('program_images')
 const LUPA_VLOG_MEDIA_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('vlog_media')
+const LUPA_COMMUNITY_IMAGES_STORAGE_REF = LUPA_STORAGE_BUCKET.ref().child('community_images')
 //save every user image as: useruuid_imgname
 
 
@@ -430,12 +431,23 @@ export class FirebaseStorageBucket {
       
      LUPA_PROGRAM_IMAGES_STORAGE_REF.child(programUUID).put(blob).then(ref => {
       LUPA_PROGRAM_IMAGES_STORAGE_REF.child(programUUID).getDownloadURL().then(url => {
-        console.log('IIQIIWIWIWIWIWWIWIWIWIIW: ' + url)
           resolve(url)
         })
       })
 
     })
+  }
+
+  saveCommunityImage = async (blob, metadata, communityUUID) => {
+    console.log("ASDIJUUUUUUUUUID: " + communityUUID)
+    return new Promise((resolve, reject) => {
+      LUPA_COMMUNITY_IMAGES_STORAGE_REF.child(communityUUID).put(blob, metadata).then(ref => {
+       LUPA_COMMUNITY_IMAGES_STORAGE_REF.child(communityUUID).getDownloadURL().then(url => {
+           resolve(url)
+         })
+       })
+ 
+     })
   }
 
   saveUserProfileImage = async (blob) => {

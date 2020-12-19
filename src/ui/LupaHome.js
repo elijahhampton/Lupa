@@ -1,24 +1,45 @@
 
 import React, {Component, createRef} from "react";
-import {Animated,ScrollView,  Image, Dimensions, Platform, Text, View, RefreshControl} from 'react-native';
-import {Body, Header, List, ListItem as Item, ScrollableTab, Tab, Right, Tabs, Title, Left} from "native-base";
-import { Banner, FAB, Appbar, Divider , Surface, Menu, Dialog, Paragraph, Button} from 'react-native-paper';
+
+import {
+  Image, 
+  Dimensions, 
+  Text, 
+  View, 
+} from 'react-native';
+
+import {
+  Body, 
+  Header, 
+  ScrollableTab, 
+  Tab, 
+  Right, 
+  Tabs, 
+  Left
+} from "native-base";
+
+import {
+   FAB, 
+   Appbar, 
+   Menu, 
+   Dialog, 
+   Paragraph, 
+   Button
+  } from 'react-native-paper';
+
 import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import GuestView from './GuestView';
 import { MenuIcon } from "./icons";
-import CreateWorkout from "./workout/createworkout/CreateWorkout";
-import Feather1s from "react-native-feather1s/src/Feather1s";
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import WorkoutLog from "./WorkoutLog";
 import { connect } from 'react-redux';
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import MyClients from './user/trainer/MyClients'
 import { getLupaStoreState } from "../controller/redux";
 import LupaController from "../controller/lupa/LupaController";
 import CreatePackDialog from "./packs/dialogs/CreatePackDialog";
-const NAVBAR_HEIGHT = 50;
-const {width: SCREEN_WIDTH} = Dimensions.get("window");
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
+import RequestCommunity from "./community/RequestCommunity";
+import CommunityFeed from "./community/CommunityFeed";
+
 const COLOR = "#FFFFFF";
 const TAB_PROPS = {
   tabStyle: {backgroundColor: COLOR},
@@ -75,6 +96,8 @@ export class LupaHome extends Component {
       showTrainerContent: false,
       currTab: 0,
       showPackLeaderLimitReachedDialog: false,
+      showCommunityRequestModal: false,
+      createIsVisble: false,
     }
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -101,14 +124,14 @@ export class LupaHome extends Component {
     this.createPackSheetRef.current.close();
   }
 
-  renderAppropriateFirstTab = (navigation) => {
+  renderAppropriateFirstTab = () => {
     return <GuestView navigation={this.props.navigation} />
   }
 
   renderAppropriateSecondaryTab = () => {
     const updatedUserState = getLupaStoreState().Users.currUserData;
     if (updatedUserState.isTrainer == false) {
-      return null
+      return null;
     } else {
       return (
         <Tab heading="My Programs" {...TAB_PROPS}>
@@ -116,6 +139,19 @@ export class LupaHome extends Component {
     </Tab>
       )
     }
+  }
+
+  renderCommunityTabs = () => {
+    const updatedUserState = getLupaStoreState().Users.currUserData;
+    const userCommunities = updatedUserState.communities;
+
+    return userCommunities.map((communityUID, index, arr) => {
+      return (
+        <Tab heading={`Walt's Gym ${index}`} {...TAB_PROPS}>
+          <CommunityFeed communityUID={communityUID} navigation={this.props.navigation} />
+        </Tab>
+      )
+    })
   }
 
   renderFAB = () => {
@@ -153,6 +189,10 @@ export class LupaHome extends Component {
     this.setState({ createIsVisble: false }, this.handleOpenCreatePack);
   }
 
+  handleOnChooseAddCommunity = () => {
+    this.setState({ showCommunityRequestModal: true })
+  }
+
   render() {
     return (
         <View style={{flex: 1}}>
@@ -169,8 +209,7 @@ export class LupaHome extends Component {
             <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
                 <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} />}/>
                 }>
-                    <Menu.Item 
-            
+                    <Menu.Item
                     onPress={this.handleOnChooseCreatePack} 
                     theme={{roundness:20}} 
                     contentStyle={{borderRadius: 20, width: 'auto'}} 
@@ -179,19 +218,15 @@ export class LupaHome extends Component {
                     titleStyle={{fontSize: 13, fontFamily: 'Avenir-Heavy'}} 
                     title="Create a Pack" />
                   {
-                    this.props.lupa_data.Users.currUserData.user_uuid == '3kwSiuirFdTAg4463DCBrYfNFfR2' ?
                     <Menu.Item 
-                    onPress={() => this.props.navigation.push('Community')} 
+                    onPress={() => this.setState({ showCommunityRequestModal: true })} 
                     theme={{roundness:20}} 
                     contentStyle={{borderRadius: 20, width: 'auto'}} 
                     style={{ height: 30}} 
-                    icon={() => <FeatherIcon name="globe" color="black" size={18} />} 
+                    icon={() => <MaterialIcon name="business" color="black" size={18} />} 
                     titleStyle={{fontSize: 13, fontFamily: 'Avenir'}} 
-                  title="Create a Community" /> 
-                  :
-                  null
+                  title="Add your community" /> 
                   }
-           
                 </Menu>
            
             </Right>
@@ -205,17 +240,22 @@ export class LupaHome extends Component {
             <ScrollableTab {...props}  style={{borderBottomWidth: 0, borderColor: 'rgb(174, 174, 178)',  height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR}} tabsContainerStyle={{justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0}} underlineStyle={{backgroundColor: "#1089ff", height: 1, elevation: 0, borderRadius: 8}}/>}>
             
             <Tab heading='Explore' {...TAB_PROPS} >
-                {this.renderAppropriateFirstTab(this.props.navigation)}
+                {this.renderAppropriateFirstTab()}
             </Tab>
            {this.renderAppropriateSecondaryTab()}
            <Tab heading="Community" {...TAB_PROPS}>
            <Featured navigation={this.props.navigation} />
            </Tab>
+           {this.renderCommunityTabs()}
           </Tabs>
 
           {this.renderFAB()}
           <CreatePackDialog ref={this.createPackSheetRef} />
-          <PackLeaderLimitDialog isVisible={this.state.showPackLeaderLimitReachedDialog} closeDialog={() => this.setState({ showPackLeaderLimitReachedDialog: false })} />
+          <PackLeaderLimitDialog 
+          isVisible={this.state.showPackLeaderLimitReachedDialog} 
+          closeDialog={() => this.setState({ showPackLeaderLimitReachedDialog: false })} 
+          />
+          <RequestCommunity isVisible={this.state.showCommunityRequestModal} closeModal={() => this.setState({ showCommunityRequestModal: false })} />
       </View>
     );
   }

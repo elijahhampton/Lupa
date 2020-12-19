@@ -91,6 +91,7 @@ export type LupaUserStructure = {
     tokens: Object,
     notifications: Array<Object>,
     programs: Array<String>,
+    communities: Array<string>,
     pack_programs: Array<String>,
     hourly_payment_rate: Number,
     vlogs: Array<String>,
