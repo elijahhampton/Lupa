@@ -92,7 +92,7 @@ function UserDashboard(props) {
     const renderUpcomingBooking = () => {
         if (userBookings.length === 0) {
             return (
-                <View style={{alignItems: 'center', justifyContent: 'center', padding: 10}}>
+                <View style={{top: (Dimensions.get('window').height) / 3.5, alignItems: 'center', justifyContent: 'center', padding: 10}}>
   <Paragraph style={{color: '#212121', fontFamily: 'Avenir-Medium'}}>
                 <Text>
                     You don't have any scheduled bookings.{" "}
@@ -130,7 +130,8 @@ function UserDashboard(props) {
             backgroundColor: '#FFFFFF'
         }}>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
-                <MenuIcon onPress={() => navigation.openDrawer()} />
+            <FeatherIcon name="message-circle" size={20} style={{padding: 3}} onPress={() => navigation.openDrawer()} />
+            
                 <Appbar.Content title='Dashboard' titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}> 
@@ -195,11 +196,16 @@ function UserDashboard(props) {
     </View> */}
 
                 <View style={{ flex: 2, marginVertical: 15}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                    <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 20}}>
-                       Bookings
-                    </Text>
-                    </View>
+                {
+                      userBookings.length === 0 ?
+                      null
+                      :
+                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+                      <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
+                          Bookings
+                      </Text>
+                      </View>
+                  }
 
                     {renderUpcomingBooking()}
                    

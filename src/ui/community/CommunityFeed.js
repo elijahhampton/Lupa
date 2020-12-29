@@ -20,6 +20,7 @@ import {
 import {
     Divider,
     Caption,
+    FAB,
 } from 'react-native-paper';
 
 import LupaController from '../../controller/lupa/LupaController';
@@ -61,7 +62,7 @@ class CommunityFeed extends React.Component {
     }
 
     fetchCommunityVlogs = () => {
-        const VLOG_QUERY = LUPA_DB.collection('communities').doc(this.props.communityUID).collection('vlogs')
+        const VLOG_QUERY = LUPA_DB.collection('communities').doc(this.props.community.uid).collection('vlogs')
         communityVlogObserver = VLOG_QUERY.onSnapshot(querySnapshot => {
             const updatedState = [];
 
@@ -96,8 +97,12 @@ class CommunityFeed extends React.Component {
                         No Community Vlogs
                     </Text>
                     <Caption style={{fontFamily: 'Avenir', paddingHorizontal: 20}}>
-                        This community has no vlogs.  Check back again later or create the first one.
+                        This community has no vlogs.  Check back again later or {" "}
+                        <Caption>
+                    create the first one.
                     </Caption>
+                    </Caption>
+
                     </View>
                    
                    <Image source={require('../images/vlogs/novlog.png')} style={{marginTop: 40, width: 220, height: 300}} />
@@ -117,6 +122,19 @@ class CommunityFeed extends React.Component {
         })
     }
 
+    renderFAB = () => {
+        if (this.props.lupa_data.Auth.isAuthenticated == true) {
+          if (this.props.lupa_data.Users.currUserData.isTrainer == true) {
+              return (
+                <FAB small={false} onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+              )
+    
+          } else if (this.props.lupa_data.Users.currUserData.isTrainer == false) {
+              return  <FAB small={false} onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+            }
+          }
+      }
+
     render() {
         return (
             <View style={styles.root}>
@@ -130,7 +148,7 @@ class CommunityFeed extends React.Component {
                     <View style={{marginVertical: 5, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
                         <View style={{alignItems: 'center', justifyContent: 'center'}}>
                         <Feather1s name="home" size={20} style={{padding: 3}} onPress={() => this.props.navigation.push('Community', {
-                            communityUID: this.props.communityUID
+                            community: this.props.community
                         })} />
                         <Text style={{fontFamily: 'Avenir'}}>
                             Home
@@ -140,6 +158,7 @@ class CommunityFeed extends React.Component {
                     <Divider style={{height: 5, width: Dimensions.get('window').width, backgroundColor: '#EEEEEE'}} />
                     {this.renderVlogs()}
                 </ScrollView>
+                {this.renderFAB()}
             </View>
         );
     }

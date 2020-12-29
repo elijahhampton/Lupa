@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import UserSearchResult from '../user/profile/component/UserSearchResult';
 import LargeProgramSearchResultCard from '../workout/program/components/LargeProgramSearchResultCard'
 import ProgramInformationComponent from '../workout/program/components/ProgramInformationComponent'
+import { Header } from 'native-base'
 
 const CATEGORY_SEPARATION = 15
 
@@ -321,30 +322,27 @@ class Search extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <FeatherIcon onPress={() => this.props.navigation.pop()} name="arrow-left" size={20} color="#212121" style={{ paddingHorizontal: 10, marginTop: Constants.statusBarHeight }} />
+                <Header>
+                <SearchBar
+                            placeholder="Search trainers"
+                            placeholderTextColor="rgb(150, 150, 150)"
+                            onChangeText={text => this.performSearch(text)}
+                            value={this.state.searchValue}
+                            inputStyle={styles.inputStyle}
+                            platform="ios"
+                            containerStyle={{ backgroundColor: 'white', borderColor: 'white', width: Dimensions.get('window').width - 10 }}
+                            inputContainerStyle={{ borderColor: 'white', backgroundColor: '#E5E5E5' }}
+                            searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+                        />
+                </Header>
                 <ScrollView
                     onLayout={event => this.setState({ resultsContainerHeight: event.nativeEvent.layout.height })}
                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
                     scrollEventThrottle={1}
                     bounces={false}
                     showsVerticalScrollIndicator={false}>
-                    <View noShadow={true} style={{ elevation: 0, marginTop: 10, marginBottom: 10, alignItems: 'center', justifyContent: 'center', borderBottomColor: 'white', backgroundColor: 'white' }} span={true}>
-                        <Text style={{ padding: 10, width: '80%', fontFamily: 'Avenir-Heavy', alignSelf: 'flex-start', marginLeft: 20, fontSize: 20 }}>
-                            Explore Trainers and Fitness Programs
-                        </Text>
-                    </View>
                     <View style={{ backgroundColor: 'white', }}>
-                        <SearchBar
-                            placeholder="Search trainers"
-                            placeholderTextColor="rgb(199, 201, 203)"
-                            onChangeText={text => this.performSearch(text)}
-                            value={this.state.searchValue}
-                            inputStyle={styles.inputStyle}
-                            platform="ios"
-                            containerStyle={{ backgroundColor: 'white', borderColor: 'white', width: Dimensions.get('window').width - 10 }}
-                            inputContainerStyle={{ borderColor: 'white', backgroundColor: '#EEEEEE' }}
-                            searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
-                        />
+                      
                     </View>
                     {
                         this.renderComponentDisplay()

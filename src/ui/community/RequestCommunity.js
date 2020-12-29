@@ -251,8 +251,6 @@ const RequestCommunity = ({ isVisible, closeModal }) => {
             if (!response.didCancel) {
                 const uri = response.uri;
                 setImages(imgArr => [uri, ...imgArr]);
-                alert(images.length)
-
             }
             else if (response.error) {
 
@@ -323,7 +321,7 @@ const RequestCommunity = ({ isVisible, closeModal }) => {
                 <Text style={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', paddingVertical: 10, fontWeight: 'bold', fontSize: 25 }}>
                     Add your community
                 </Text>
-                <View>
+              {/*  <View>
                     <Text style={[styles.labelStyle, { padding: 10, color: 'rgb(115, 128, 140)' }]}>
                         Link Lupa Account
                     </Text>
@@ -345,7 +343,7 @@ const RequestCommunity = ({ isVisible, closeModal }) => {
                     {renderAssociatedLupaAccount()}
                 </View>
                 <Divider style={{ height: 5, backgroundColor: '#EEEEEE' }} />
-
+              */}
                 <Input
                     label="Gym, Studio, or Apartment Name"
                     placeholder="Enter a name"

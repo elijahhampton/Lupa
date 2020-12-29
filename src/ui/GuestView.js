@@ -977,7 +977,7 @@ class GuestView extends React.Component {
                 value={this.state.searchValue}
                 inputStyle={styles.inputStyle}
                 platform="ios"
-                containerStyle={{ backgroundColor: 'white', borderColor: 'white' }}
+                containerStyle={{ backgroundColor: 'white', borderColor: 'white', width: Dimensions.get('window').width - 10, alignSelf: 'center' }}
                 inputContainerStyle={{borderColor: 'white', backgroundColor: 'rgb(245, 246, 249)' }}
                 searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
                 onFocus={() => this.setState({ searchBarFocused: true })}
@@ -1018,14 +1018,14 @@ class GuestView extends React.Component {
               </View>
               <Button 
                 onPress={this.handleOnRequestFutureBooking} 
-                style={{ marginVertical: 15, elevation: 0}} 
+                style={{ marginVertical: 15, elevation: 0, width: Dimensions.get('window').width - 20, alignSelf: 'center'}} 
                 theme={{roundness: 12}}
                 disabled={false} 
                 color="rgb(34, 74, 115)" 
                 uppercase={false} 
                 mode="contained" 
-                contentStyle={{ height: 40 }}>
-                  <Text style={{fontFamily: 'Avenir'}}>
+                contentStyle={{ height: 55 }}>
+                  <Text style={{fontSize: 16, fontFamily: 'Avenir', fontWeight: 'bold'}}>
                   Find Trainer
                   </Text>
 

@@ -32,7 +32,7 @@ import { logoutUser } from '../../../controller/lupa/auth/auth';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { getLupaStoreState }from '../../../controller/redux/index';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-
+import FeatherIcon from 'react-native-vector-icons/Feather'
 const ICON_SIZE = 20;
 const ICON_COLOR = "rgb(203, 209, 214)"
 
@@ -41,7 +41,7 @@ const ICON_COLOR = "rgb(203, 209, 214)"
  * drawer.
  * @param {Object} props Properties that this component receives.
  */
-function DrawerMenu(props) {
+function DrawerMenu({ }) {
   const [lupaStoreState, setLupaStoreState] = useState(getLupaStoreState())
   const navigation = useNavigation()
   const dispatch = useDispatch();
@@ -98,9 +98,7 @@ function DrawerMenu(props) {
   }
 
   const renderPacksDisplay = () => {
-    if (packsAreVisible == false) {
-      return null;
-    }
+ 
 
     const lupaStorePacks = getLupaStoreState().Packs.currUserPacksData;
 
@@ -135,29 +133,32 @@ function DrawerMenu(props) {
       forceInset={{top: 'always', horizontal: 'never'}}>
         <View style={{flex: 1, justifyContent: 'space-between'}}>
 <View>
-      <TouchableOpacity onPress={navigateToProfile}>
+   
       <View style={styles.drawerHeader}>
-        <View>
-              <Text style={styles.drawerHeaderText}>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+        <FeatherIcon size={20} style={{padding: 3}} name="arrow-left" onPress={() => navigation.closeDrawer} />
+        
+        <Text style={styles.drawerHeaderText}>
                 {currUserData.display_name}
               </Text>
-              <Text style={styles.drawerHeaderSubText}>
-                {currUserData.isTrainer ? 'Lupa Trainer' : 'Lupa User'}
-              </Text>
-            </View>
+        </View>
+             
 
           <Avatar.Image source={{uri: currUserData.photo_url}} size={40} />
         </View>
-      </TouchableOpacity>
 
-<TouchableOpacity onPress={navigateToProfile}>
+
+      <Divider />
+
+      <TouchableOpacity onPress={togglePacksVisibility}>
         <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="file-text" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
+          <DrawerIcon name="message-circle" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={styles.buttonText}>
-           Profile
+           Messages
           </Text>
         </View>
         </TouchableOpacity>
+
 
         <TouchableOpacity onPress={togglePacksVisibility}>
         <View style={styles.navigationButtonContaner}>
@@ -171,94 +172,11 @@ function DrawerMenu(props) {
           renderPacksDisplay()
         }
 
-<TouchableOpacity onPress={() => navigation.push('Achievements')}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="globe" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Achievements
-          </Text>
-        </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={navigateToPickInterest}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="file-text" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Interest
-          </Text>
-        </View>
-        </TouchableOpacity>
-
-{/*
-
-        <TouchableOpacity onPress={navigateToTrainerInformation}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="file-text" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Register Trainer Account
-          </Text>
-        </View>
-        </TouchableOpacity>
-
-*/}
-
         
 
-        {
-          currUserData.isTrainer ?
-          <>
-          <TouchableOpacity onPress={() => navigation.push('MyClients')}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="user" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           My Clients
-          </Text>
-        </View>
-        </TouchableOpacity>
-          </>
-          :
-          null
-        }
+
 
         </View>
-
-        <View style={{paddingVertical: 50}}>
-        <Divider style={{width: Dimensions.get('window').width}} />
-
-        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="settings" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Settings
-          </Text>
-        </View>
-        </TouchableOpacity>
-
-       {
-       /* <TouchableOpacity onPress={() => Linking.openURL('https://rheasilvialupaheal.wixsite.com/lupahealth/')}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="help-circle" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Support
-          </Text>
-        </View>
-        </TouchableOpacity>
-      */}
-
-
-<View style={{width: '100%'}}>
-<TouchableOpacity onPress={_handleLogout}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="log-out" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Log out
-          </Text>
-        </View>
-        </TouchableOpacity>
-</View> 
-        </View>
-
-
 
         </View>
     </SafeAreaView>

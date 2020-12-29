@@ -31,12 +31,13 @@ import { Booking, BOOKING_STATUS } from '../../model/data_structures/user/types'
 import { getBookingStructure } from '../../model/data_structures/user/booking'
 import { LupaUserStructure, UserCollectionFields } from './common/types';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
-import { initializeNewCommunity } from '../../model/data_structures/community/community';
+import { createCommunityReview, initializeNewCommunity } from '../../model/data_structures/community/community';
 import LOG, { LOG_ERROR } from '../../common/Logger';
 import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../firebase/collection_structures';
 import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
 import ProgramController from './ProgramController';
 import moment from 'moment';
+import { CommunityEvent } from '../../model/data_structures/community/types.js';
 
 export default class UserController {
     private static _instance: UserController;
@@ -2787,14 +2788,16 @@ export default class UserController {
             let uploadedPictures  = [];
             console.log('A')
          
-            
-            const newCommunity = initializeNewCommunity(communityName, communityAddress, [], [], communityZipcode, communityOwnerName, communityPhoneNumber, associatedLupaAccount);
+            const id = await LUPA_AUTH.currentUser.uid;
+           // const newCommunity = initializeNewCommunity(communityName, communityAddress, communityCity, communityState, [], [], [associatedLupaAccount], communityZipcode, communityOwnerName, communityPhoneNumber, associatedLupaAccount);
+            const newCommunity = initializeNewCommunity(communityName, communityAddress, communityCity, communityState, [], [], [id], communityZipcode, communityOwnerName, communityPhoneNumber, id);
             console.log('B')
             let communityUID = -1;
             await LUPA_DB.collection('communities')
             .add(newCommunity)
             .then(docRef => {
                 communityUID = docRef.id
+                
                 LUPA_DB.collection('communities').doc(docRef.id).update({
                     uid: docRef.id
                 })  
@@ -2832,6 +2835,111 @@ console.log('pushing now!!')
             })     */
 
             return Promise.resolve(communityUID);
+        }
+
+        deleteCommunity = async (uid) => {
+            COMMUNITY_COLLECTION.doc(uid).delete();
+        }
+
+        updateCommunityPictures = (uid, images) => {
+            COMMUNITY_COLLECTION.doc(uid).update({
+                pictures: images
+            })
+        }
+
+        addCommunityReview = async (communityUID, reviewerUID, reviewText) => {
+            const newReview = createCommunityReview(reviewerUID, reviewText, communityUID);
+
+            let reviews = [];
+            await COMMUNITY_COLLECTION.doc(communityUID).get()
+            .then(documentSnapshot => {
+                reviews = documentSnapshot.data().reviews;
+                reviews.push(newReview);
+
+                COMMUNITY_COLLECTION.doc(communityUID).update({
+                    reviews: reviews
+                })
+            })
+            .catch(error => {
+
+            })
+        }
+
+        subscribeToCommunity = async (userUID, communityUID) => {
+            let subscribers = [];
+            await COMMUNITY_COLLECTION.doc(communityUID).get()
+            .then(documentSnapshot => {
+                subscribers = documentSnapshot.data().reviews;
+                subscribers.push(userUID);
+
+                COMMUNITY_COLLECTION.doc(communityUID).update({
+                   subscribers: subscribers
+                })
+            })
+            .catch(error => {
+
+            })
+        }
+
+        unsubscribeUserFromCommunity = async (userUID, communityUID) => {
+let subscribers = [];
+            await COMMUNITY_COLLECTION.doc(communityUID).get()
+            .then(documentSnapshot => {
+                subscribers = documentSnapshot.data().reviews;
+                subscribers.splice(subscribers.indexOf(userUID));
+
+                COMMUNITY_COLLECTION.doc(communityUID).update({
+                   subscribers: subscribers
+                })
+            })
+            .catch(error => {
+                
+            })
+        }
+
+
+        createCommunityEvent = async (communityUID: string | number, communityEvent: CommunityEvent, images: Array<string>) => {
+            const communityDocRef = await COMMUNITY_COLLECTION.doc(communityUID);
+            
+            let communityEvents : Object = {}
+
+            await COMMUNITY_COLLECTION.doc(communityUID).get()
+            .then(documentSnapshot => {
+                communityEvents = documentSnapshot.data().events;
+                const date = communityEvent.startDate.toString();
+                if (Object.keys(communityEvents).includes(date)) {
+                    for (const key in communityEvents) {
+                       
+                        if (key == date) {
+
+                            communityEvents[date] = [communityEvent, ...communityEvents[date].daily_events];
+
+                        } 
+                    }
+                } else {
+                    alert('o')
+                    console.log(communityEvents)
+                    communityEvents = Object.defineProperty(communityEvents, date, {
+                        value: {
+                            daily_events: [communityEvent]
+                        },
+                        writable: true,
+                        enumerable: true
+                    });
+                    console.log(communityEvents)
+                }
+                console.log('OUSDFSDFSDFSD')
+
+                console.log(communityEvents)
+                COMMUNITY_COLLECTION.doc(communityUID).update({
+                    events: communityEvents
+                });
+
+                console.log('oOOoooOOOOO')
+            })
+            .catch(error => {
+                alert(error)
+            })
         }
 }
 

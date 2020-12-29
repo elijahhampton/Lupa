@@ -1,7 +1,8 @@
 
 import React from 'react';
 import {
-  View
+  View,
+  Dimensions,
 } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
@@ -24,6 +25,7 @@ function LupaDrawerNavigator() {
           <Drawer.Navigator 
           initialRouteName="Lupa" 
           drawerPosition="left" 
+          drawerStyle={{width: Dimensions.get('window').width}}
           drawerContent={(props) => <DrawerMenu {...props}  />}
           screenOptions={{
           headerShown: false
@@ -74,6 +76,8 @@ function LupaBottomTabNavigator() {
 
           switch (route.name)
           {
+            case 'Search':
+              return focused === true ? <FeatherIcon name='search' size={20} color="#1089ff" /> : <Feather1s name='search' size={20} color={INACTIVE_COLOR} />
             case 'Dashboard':
               return focused === true ? <FeatherIcon name='clipboard' size={20} color="#1089ff" /> : <Feather1s name='clipboard' size={20} color={INACTIVE_COLOR} />
             case 'Train':
@@ -89,10 +93,7 @@ function LupaBottomTabNavigator() {
         },
         headerShown: false
       })} >
-             
-             <Tab.Screen name="Train" component={LupaHomeNavigator} />
-             <Tab.Screen name="Inbox" component={MessagesView} />
-            {
+         {
                 currUserData.isTrainer === true ?
                 <Tab.Screen name="Create" component={PlaceHolder} options={{animationsEnabled: true}} listeners={({ navigation }) => ({
                   tabPress: event => {
@@ -103,7 +104,15 @@ function LupaBottomTabNavigator() {
                 :
                 null
               }
-              <Tab.Screen name="Alerts" component={NotificationsView} />
+
+              <Tab.Screen name="Train" component={LupaHomeNavigator} />
+             
+
+<Tab.Screen name="Search" component={Search} />
+
+       
+           
+
             <Tab.Screen name="Dashboard" component={DashboardNavigator} />
     </Tab.Navigator>
   );

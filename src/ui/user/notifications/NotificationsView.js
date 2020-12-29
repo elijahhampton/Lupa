@@ -11,6 +11,7 @@ import {
     Appbar
 } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
+import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useSelector } from 'react-redux'
 import LupaController from '../../../controller/lupa/LupaController'
 import LUPA_DB from '../../../controller/firebase/firebase'
@@ -97,6 +98,7 @@ function NotificationsView({ navigation, route }) {
     return (
         <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <Appbar.Header style={styles.appbar}>
+            <Appbar.Action icon={() => <FeatherIcon name="arrow-left" size={20} />} onPress={() => navigation.pop()} />
             <Appbar.Content title="Notifications" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <View style={{flex: 1}}>

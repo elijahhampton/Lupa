@@ -8,6 +8,7 @@ import { getLupaUserStructure } from '../firebase/collection_structures';
 import { getLupaWorkoutInformationStructure } from '../../model/data_structures/workout/workout_collection_structures';
 import PackController from './PacksController';
 import { initializeNewPack } from '../../model/data_structures/packs/packs';
+import { CommunityEvent } from '../../model/data_structures/community/types';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -935,7 +936,7 @@ export default class LupaController {
     communityCity, communityState, communityOwnerName, communityPhoneNumber, images, associatedLupaAccount) => {
       return new Promise(async (resolve, reject) => {
         await USER_CONTROLLER_INSTANCE.createCommunityRequest(communityName, communityAddress, communityZipcode, 
-          communityCity, communityState, communityOwnerName, images, associatedLupaAccount)
+          communityCity, communityState, communityOwnerName, communityPhoneNumber, images, associatedLupaAccount)
           .then(communityUID => {
             resolve(communityUID)
           })
@@ -945,5 +946,46 @@ export default class LupaController {
       })
      
     }
+
+  deleteCommunity = (uid) => {
+    USER_CONTROLLER_INSTANCE.deleteCommunity(uid);
+  }
+
+  saveCommunityImage = async (imageURI, metadata, communityUUID) => {
+    let retVal = -1;
+    await USER_CONTROLLER_INSTANCE.saveCommunityImage(imageURI, metadata, communityUUID).then(uri => {
+      retVal = uri;
+    });
+
+    return Promise.resolve(retVal);
+  }
+
+  updateCommunityPictures = (uid, images) => {
+    USER_CONTROLLER_INSTANCE.updateCommunityPictures(uid, images);
+  }
+
+  addCommunityReview = (communityUID, reviewerUID, reviewText) => {
+    USER_CONTROLLER_INSTANCE.addCommunityReview(communityUID, reviewerUID, reviewText);
+  }
+
+  getProgramInformationFromGroup = async (uuidArr) => {
+    return new Promise((resolve, reject) => {
+      PROGRAMS_CONTROLLER_INSTANCE.getProgramInformationFromGroup(uuidArr).then(data => {
+        resolve(data);
+      })
+    })
+  }
+
+  subscribeToCommunity = (userUID, communityUID) => {
+    USER_CONTROLLER_INSTANCE.subscribeToCommunity(userUID, communityUID);
+  }
+
+  unsubscribeUserFromCommunity = (userUID, communityUID) => {
+    USER_CONTROLLER_INSTANCE.unsubscribeUserFromCommunity(userUID, communityUID);
+  }
+
+  createCommunityEvent = async (communityUID: string | number, communityEvent: CommunityEvent, images: Array<string>) => {
+    USER_CONTROLLER_INSTANCE.createCommunityEvent(communityUID, communityEvent, images);
+  }
 
 }

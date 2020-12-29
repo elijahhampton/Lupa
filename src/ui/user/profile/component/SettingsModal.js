@@ -10,7 +10,8 @@ import {
     Image,
     ScrollView,
     SafeAreaView,
-    Dimensions
+    Dimensions,
+    Button
 } from 'react-native';
 
 import {
@@ -22,7 +23,6 @@ import {
 } from 'native-base';
 
 import {
-    Button,
     IconButton,
     Title,
     Caption,
@@ -47,7 +47,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 import LupaColor from '../../../common/LupaColor'
-import { connect, useSelector } from 'react-redux';
+import { connect, useSelector, dispatch } from 'react-redux';
 import LupaController from '../../../../controller/lupa/LupaController';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -62,6 +62,7 @@ import LUPA_DB from '../../../../controller/firebase/firebase';
 import StripeVerificationStatusModal from '../../settings/modal/StripeVerificationStatusModal'
 import HomeGymModal from '../../modal/HomeGymModal';
 import { getLupaStoreState } from '../../../../controller/redux';
+import { logoutUser } from '../../../../controller/lupa/auth/auth';
 
 const SECTION_SEPARATOR = 15;
 const SUB_SECTION_SEPARATOR = 25;
@@ -73,6 +74,7 @@ const SettingsModal = () => {
         return state.Users.currUserData.user_uuid;
     });
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     const [homeGymModalIsVisible, setHomeGymModalIsVisible] = useState(false);
 
@@ -444,11 +446,20 @@ const SettingsModal = () => {
         }
     }
 
+      /**
+   * Logs the user out.
+   */
+  const _handleLogout = async () => {
+    await dispatch(logoutUser());
+    await navigation.navigate('GuestView');
+  }
+
+
     return (
         <View style={styles.root}>
             <Appbar.Header statusBarHeight={false} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <Appbar.Action icon={() => <Feather1s name="arrow-left" size={20} />} onPress={() => navigation.pop()} />
-                <Appbar.Content title="Settings" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
+                <Appbar.BackAction size={20} onPress={() => navigation.pop()} />
+                <Appbar.Content title="Settings" titleStyle={{alignSelf: 'flex-start', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <TouchableOpacity onPress={() => navigation.push('AccountSettings')}>
                 <Appbar theme={{ colors: { primary: '#FFFFFF' } }} style={{ borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', paddingHorizontal: 15, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -482,6 +493,10 @@ const SettingsModal = () => {
 
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_d6bd8c33999e4e5ba4191b65eaf89048.pdf')} title="Privacy Policy" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Terms and Conditions" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
+                    </View>
+
+                    <View style={{marginVertical: 10}}>
+                    <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Sign out" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                     </View>
 
 

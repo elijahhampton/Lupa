@@ -21,6 +21,13 @@ import {
     Caption,
 } from 'react-native-paper';
 
+import {
+    Header,
+    Right,
+    Left,
+    Body
+} from 'native-base';
+
 import { Avatar } from 'react-native-elements';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useSelector } from 'react-redux'
@@ -88,7 +95,7 @@ function TrainerDashboard(props) {
     const renderUpcomingBooking = () => {
         if (userBookings.length === 0) {
             return (
-                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 10}}>
+                <View style={{top: (Dimensions.get('window').height) / 3.5, alignItems: 'center', justifyContent: 'center', padding: 10}}>
   <Paragraph style={{color: '#212121', fontFamily: 'Avenir-Medium'}}>
                 <Text>
                     You don't have any scheduled bookings.{" "}
@@ -125,10 +132,25 @@ function TrainerDashboard(props) {
             flex: 1,
             backgroundColor: '#FFFFFF'
         }}>
-            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
-                <MenuIcon onPress={() => navigation.openDrawer()} />
-                <Appbar.Content title='Dashboard' titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
-            </Appbar.Header>
+            <Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
+            
+        <Left>
+            <Text style={{fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}}>
+                Dashboard
+            </Text>
+
+        </Left>
+
+        <Right style={{flexDirection: 'row', alignItems: 'center'}}>
+       
+               <FeatherIcon  name="bell" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Notifications')} />
+               <FeatherIcon name="award" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Achievements')} />
+               <FeatherIcon name="heart" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('PickInterest')} />
+               <FeatherIcon name="settings" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Settings')} />
+               
+        </Right>
+             
+            </Header>
             <ScrollView>
             <View style={{ flex: 1, }}>
                {/* <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
@@ -185,11 +207,17 @@ function TrainerDashboard(props) {
                     </View>
     </View>*/}
                 <View style={{ flex: 2, marginVertical: 10, }}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                    <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
-                        Bookings
-                    </Text>
-                    </View>
+                  {
+                      userBookings.length === 0 ?
+                      null
+                      :
+                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+                      <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
+                          Bookings
+                      </Text>
+                      </View>
+                  }
+                 
 
                     {renderUpcomingBooking()}
                    

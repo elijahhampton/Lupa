@@ -120,8 +120,8 @@ class MessagesView extends React.Component {
         }
       }
 
-      componentWillUnmount() {
-        return () => Fire.shared.off();
+      async componentWillUnmount() {
+        await Fire.shared.off();
       }
 
       renderTextInput = () => {
@@ -152,9 +152,6 @@ class MessagesView extends React.Component {
                             <View>
                                 <Text style={{fontSize: 16, fontFamily: 'Avenir-Heavy'}}>
                                     {userData.display_name}
-                                </Text>
-                                <Text style={{fontSize: 13, fontFamily: 'Avenir-Light'}}>
-                                    Last Message
                                 </Text>
                             </View>
                             </View>

@@ -707,6 +707,17 @@ export default class ProgramController {
         })
     }
 
+    getProgramInformationFromGroup = async (uuidArr) => {
+        let programArr = [];
+        for (let i = 0; i < uuidArr.length; i++) {
+            await this.getProgramInformationFromUUID(uuidArr).then(data => {
+                programArr.push(data);
+            })
+        }
+
+        return Promise.resolve(programArr);
+    }
+
 }
 
 function constructUserWaitlistMetadataEntry(userData: LupaUserStructure) {

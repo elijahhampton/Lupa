@@ -39,6 +39,8 @@ import CreatePackDialog from "./packs/dialogs/CreatePackDialog";
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import RequestCommunity from "./community/RequestCommunity";
 import CommunityFeed from "./community/CommunityFeed";
+import LUPA_DB from "../controller/firebase/firebase";
+import { LOG_ERROR } from "../common/Logger";
 
 const COLOR = "#FFFFFF";
 const TAB_PROPS = {
@@ -98,6 +100,7 @@ export class LupaHome extends Component {
       showPackLeaderLimitReachedDialog: false,
       showCommunityRequestModal: false,
       createIsVisble: false,
+      userCommunities: [],
     }
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -108,7 +111,27 @@ export class LupaHome extends Component {
       this.setState({ showTrainerContent: attribute })
     }).catch(error => {
       this.setState({ showTrainerContent: false })
+    });
+
+    let communityData = [];
+    this.COMMUNITY_OBSERVER = LUPA_DB.collection('communities').where('members', 'array-contains', this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(querySnapshot => {
+  
+      querySnapshot.docs.forEach(doc => {
+        if (doc.data().approved != -1) {
+          communityData.push(doc.data());
+        }
     })
+    }, error => {
+      LOG_ERROR('LupaHome.js', 'Error while fetching community data.', error)
+    })
+
+
+    this.setState({ userCommunities: communityData })
+
+  }
+
+  componentWillUnmount() {
+    return () => this.COMMUNITY_OBSERVER();
   }
 
   handleOnRefresh = () => {
@@ -142,13 +165,10 @@ export class LupaHome extends Component {
   }
 
   renderCommunityTabs = () => {
-    const updatedUserState = getLupaStoreState().Users.currUserData;
-    const userCommunities = updatedUserState.communities;
-
-    return userCommunities.map((communityUID, index, arr) => {
+    return this.state.userCommunities.map((community, index, arr) => {
       return (
-        <Tab heading={`Walt's Gym ${index}`} {...TAB_PROPS}>
-          <CommunityFeed communityUID={communityUID} navigation={this.props.navigation} />
+        <Tab heading={community.name} {...TAB_PROPS}>
+          <CommunityFeed community={community} navigation={this.props.navigation} />
         </Tab>
       )
     })
@@ -156,17 +176,19 @@ export class LupaHome extends Component {
 
   renderFAB = () => {
     if (this.props.lupa_data.Auth.isAuthenticated == true) {
-      if (this.props.lupa_data.Users.currUserData.isTrainer == true && this.state.currTab == 2) {
-        return (
-          <FAB small onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
-        )
-      } else if (this.props.lupa_data.Users.currUserData.isTrainer == false && this.state.currTab == 1) {
-        return (
-          <FAB small onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
-        )
+      if (this.props.lupa_data.Users.currUserData.isTrainer == true) {
+        if (this.state.currTab != 0 || this.state.currTab != 1) {
+          return (
+            <FAB small={false} onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+          )
+        }
+
+      } else if (this.props.lupa_data.Users.currUserData.isTrainer == false) {
+        if (this.state.currTab != 0) {
+          return  <FAB small={false} onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+        }
       }
     }
- 
   }
 
   handleOnChooseCreatePack = () => {
@@ -198,7 +220,7 @@ export class LupaHome extends Component {
         <View style={{flex: 1}}>
           <Header style={{backgroundColor: COLOR}} noShadow={false} hasTabs>
             <Left>
-              <MenuIcon key="menu-icon" customStyle={{padding: 3}} onPress={() => this.props.navigation.openDrawer()}/>
+            <Appbar.Action key='message-circle' onPress={() => this.props.navigation.openDrawer()} icon={() => <FeatherIcon name="message-circle" size={20} style={{padding: 0, margin: 0}} color="#00000" />}/>
             </Left>
 
             <Body>
@@ -207,7 +229,7 @@ export class LupaHome extends Component {
 
             <Right>
             <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
-                <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} />}/>
+                <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} color="#00000" />}/>
                 }>
                     <Menu.Item
                     onPress={this.handleOnChooseCreatePack} 
@@ -249,7 +271,6 @@ export class LupaHome extends Component {
            {this.renderCommunityTabs()}
           </Tabs>
 
-          {this.renderFAB()}
           <CreatePackDialog ref={this.createPackSheetRef} />
           <PackLeaderLimitDialog 
           isVisible={this.state.showPackLeaderLimitReachedDialog} 

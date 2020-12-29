@@ -150,6 +150,18 @@ class Featured extends React.Component {
         })
     }
 
+    renderFAB = () => {
+        if (this.props.lupa_data.Auth.isAuthenticated == true) {
+          if (this.props.lupa_data.Users.currUserData.isTrainer == true) {
+              return (
+                <FAB small={false} onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+              )
+          } else if (this.props.lupa_data.Users.currUserData.isTrainer == false) {
+              return  <FAB small={false} onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+          }
+        }
+      }
+
     render() {
         return (
             <View style={styles.root}>
@@ -157,7 +169,7 @@ class Featured extends React.Component {
                                 <ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />} contentContainerStyle={{backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
                                     {this.renderVlogs()}
                                 </ScrollView>
-
+{this.renderFAB()}
             </View>
         );
     }
