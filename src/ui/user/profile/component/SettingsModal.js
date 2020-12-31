@@ -392,7 +392,13 @@ const SettingsModal = () => {
     }
 
     const handleChangeHomeGymOnPress = () => {
-        setHomeGymModalIsVisible(true);
+        navigation.navigate('ChangeHomeGym', {
+            navigateNextView: handleNavigateNextView()
+        })
+    }
+
+    handleNavigateNextView = () => {
+        navigation.pop();
     }
 
     const renderPaymentsOptions = () => {
@@ -496,10 +502,10 @@ const SettingsModal = () => {
                     </View>
 
                     <View style={{marginVertical: 10}}>
-                    <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Sign out" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
+                    <ListItem onPress={_handleLogout} title="Sign out" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                     </View>
 
-
+                    
                     <UpdateCard isVisible={updateCardModalIsVisible} closeModal={() => setUpdateCardModalIsVisible(false)} />
                     <StripeVerificationStatusModal 
                     isVisible={registrationModalIsVisible} 

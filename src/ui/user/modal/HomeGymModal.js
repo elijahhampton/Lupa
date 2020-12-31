@@ -338,6 +338,13 @@ handleOnFetchUserLocationSuccess = async (position) => {
         await this.closeConfirmHomeGymDialog()
     }
 
+    handleOnPressNext = () => {
+        console.log(this.props)
+        if (typeof(this.props.navigateNextView) == 'undefined') {
+            this.props.navigation.pop()
+        }
+    }
+
     render() {
         return (
             <View style={{flex: 1}}>
@@ -368,7 +375,7 @@ handleOnFetchUserLocationSuccess = async (position) => {
                             
                             
                       <Button
-                      onPress={() => this.props.navigateNextView()}
+                      onPress={this.handleOnPressNext}
                         uppercase={false}
                         color="#1089ff"
                         mode="contained" 

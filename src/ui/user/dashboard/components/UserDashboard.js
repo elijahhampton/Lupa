@@ -7,6 +7,7 @@ import {
     Text,
     ScrollView,
     RefreshControl,
+    TouchableOpacity,
     ActionSheetIOS
 } from 'react-native';
 
@@ -20,6 +21,13 @@ import {
     Paragraph,
     Caption, 
 } from 'react-native-paper';
+
+import {
+    Header,
+    Left,
+    Right,
+    Body,
+} from 'native-base';
 
 import { Avatar, ListItem } from 'react-native-elements';
 import FeatherIcon from 'react-native-vector-icons/Feather'
@@ -129,11 +137,32 @@ function UserDashboard(props) {
             flex: 1,
             backgroundColor: '#FFFFFF'
         }}>
-            <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
-            <FeatherIcon name="message-circle" size={20} style={{padding: 3}} onPress={() => navigation.openDrawer()} />
+            <Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
             
-                <Appbar.Content title='Dashboard' titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
-            </Appbar.Header>
+            <Left>
+            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+            <TouchableOpacity onPress={{}}>
+              <Avatar rounded source={{uri: currUserData.photo_url}} size={40} />
+              </TouchableOpacity>
+            <Text style={{ padding: 10,
+          fontSize: 18,
+          fontFamily: 'Avenir-Black'}}>
+                    {currUserData.display_name}
+                  </Text>
+            </View>
+    
+            </Left>
+    
+            <Right style={{flexDirection: 'row', alignItems: 'center'}}>
+           
+                   <FeatherIcon  name="bell" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Notifications')} />
+                   <FeatherIcon name="award" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Achievements')} />
+                   <FeatherIcon name="heart" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('PickInterest')} />
+                   <FeatherIcon name="settings" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Settings')} />
+                   
+            </Right>
+                 
+                </Header>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}> 
             <View style={{marginVertical: 10}}>
                     <ListItem 

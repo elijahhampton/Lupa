@@ -269,8 +269,15 @@ class Search extends React.Component {
             return this.renderSearchResults()
         }
 
-        if (this.state.searchResults.length === 0 && this.categoryIsPressed === false) {
-            return;
+        if (this.state.searchResults.length == 0 && this.state.categoryIsPressed == false) {
+            return <View>
+                  <View style={{borderWidth: 1, margin: 10, borderRadius: 5, borderColor: '#E5E5E5', padding: 10, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
+                    <Paragraph style={{fontFamily: 'Avenir-Medium', fontSize: 18}}>
+                       Select a category or use the search bar
+                   </Paragraph>
+                    </View>
+                    {this.renderSkills()}
+            </View>
         } else if (this.state.categoryIsPressed === true) {
             return this.renderCategoryResults();
         } else if (this.state.searching === true) {
@@ -324,7 +331,7 @@ class Search extends React.Component {
             <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <Header>
                 <SearchBar
-                            placeholder="Search trainers"
+                            placeholder="Search trainers and fitness programs"
                             placeholderTextColor="rgb(150, 150, 150)"
                             onChangeText={text => this.performSearch(text)}
                             value={this.state.searchValue}
@@ -341,9 +348,7 @@ class Search extends React.Component {
                     scrollEventThrottle={1}
                     bounces={false}
                     showsVerticalScrollIndicator={false}>
-                    <View style={{ backgroundColor: 'white', }}>
-                      
-                    </View>
+                  
                     {
                         this.renderComponentDisplay()
                     }

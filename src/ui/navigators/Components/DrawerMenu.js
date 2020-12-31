@@ -12,6 +12,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
+    ScrollView, 
     Dimensions,
     SafeAreaView,
     Linking,
@@ -22,17 +23,19 @@ import {
   TouchableRipple,
   Button,
   Divider,
+  Appbar,
 } from 'react-native-paper';
-
+import { GiftedChat } from 'react-native-gifted-chat'
 import { Constants } from 'react-native-unimodules';
 import TrainerInsights from '../../user/trainer/TrainerInsights';
 import { useNavigation, CommonActions } from '@react-navigation/native';
-import { LUPA_AUTH } from '../../../controller/firebase/firebase';
+import { Fire, LUPA_AUTH } from '../../../controller/firebase/firebase';
 import { logoutUser } from '../../../controller/lupa/auth/auth';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { getLupaStoreState }from '../../../controller/redux/index';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather'
+import LupaController from '../../../controller/lupa/LupaController';
 const ICON_SIZE = 20;
 const ICON_COLOR = "rgb(203, 209, 214)"
 
@@ -42,6 +45,14 @@ const ICON_COLOR = "rgb(203, 209, 214)"
  * @param {Object} props Properties that this component receives.
  */
 function DrawerMenu({ }) {
+
+  const [messages, setMessages] = useState([])
+  const [userMessageData, setUserMessageData]  = useState([])
+  const [currMessagesIndex, setCurrMessagesIndex] = useState(0)
+  const [inboxEmpty, setEmptyInbox] = useState(false);
+  const [avatarIndex, setAvatarIndex] = useState(0)
+  const [viewReady, setViewReady] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const [lupaStoreState, setLupaStoreState] = useState(getLupaStoreState())
   const navigation = useNavigation()
   const dispatch = useDispatch();
@@ -49,11 +60,146 @@ function DrawerMenu({ }) {
     return state.Users.currUserData;
   })
 
+  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+
   const [packsAreVisible, setPacksVisible] = useState(false);
 
   useEffect(() => {
-    setLupaStoreState(getLupaStoreState())
+    async function initComponent() {
+      await setupUserMessageData()
+      await setupFire()
+    }
+
+   setLupaStoreState(getLupaStoreState())
+   initComponent()
+
+ 
+   return () => Fire.shared.off()
   }, [])
+
+  handleAvatarOnPress = async (avatarIndex) => {
+    setCurrMessagesIndex(avatarIndex)
+    setAvatarIndex(avatarIndex)
+    setShowChat(true)
+  }
+
+  renderAvatarList = () => {
+    if (userMessageData)
+    {
+        if (userMessageData.length == 0)
+        {
+          return;
+        }
+        else
+        {
+         return userMessageData.map((userData, index, arr) => {
+              return (
+                  <TouchableOpacity key={userData.user_uuid} style={{marginVertical: 10, alignItems: 'flex-start'}} onPress={() => handleAvatarOnPress(index)}>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Avatar.Image key={userData.photo_url} source={{uri: userData.photo_url}} key={index} size={50}  style={{ elevation: 10, marginHorizontal: 20 }}  />
+                      <View>
+                          <Text style={{fontSize: 16, fontFamily: 'Avenir-Heavy'}}>
+                              {userData.display_name}
+                          </Text>
+                      </View>
+                      </View>
+                   
+                  </TouchableOpacity>
+              )
+          })
+        }
+    }
+  
+}
+
+renderChatComponent = () => {
+  if (showChat === true) {
+      return (
+          <View style={{flex: 1}}>
+         
+                 <GiftedChat 
+messages={messages} 
+onSend={Fire.shared.send} 
+user={Fire.shared.getUser()} 
+showAvatarForEveryMessage={true} 
+placeholder="Begin typing here" 
+isTyping={true} 
+renderUsernameOnMessage={true}
+showUserAvatar={true}
+alwaysShowSend={true}
+/>
+</View>
+   
+      )
+  } else {
+      return (
+          <ScrollView  shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
+          {renderAvatarList()}
+</ScrollView>
+      )
+  }
+}
+
+
+
+  setupUserMessageData = async () => {
+      let currUserChats, userMessageDataIn = [];
+    await LUPA_CONTROLLER_INSTANCE.getAllCurrentUserChats().then(chats => {
+        currUserChats = chats;
+    });
+
+    if (currUserChats.length >= 1)
+    {
+        for (let i = 0; i < currUserChats.length; ++i)
+        {
+            await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(currUserChats[i].user).then(userData => {
+                userMessageDataIn.push(userData);
+            });
+        }
+    }
+
+    if (userMessageDataIn.length >= 1)
+    {
+      setUserMessageData(userMessageDataIn)
+      setEmptyInbox(false)
+    }
+  }
+
+  setupFire = async () => {
+    //clear messages
+    setMessages([])
+    let privateChatUUID;
+
+                //check for shared chat uuid between users
+    await LUPA_CONTROLLER_INSTANCE.getPrivateChatUUID(currUserData.user_uuid, userMessageData[currMessagesIndex].user_uuid).then(result => {
+        privateChatUUID = result;
+    }).then(() => {
+      setViewReady(true)
+    })
+    .catch(error => {
+      setViewReady(false)
+    })
+  
+
+    try {
+                 //init Fire
+    await Fire.shared.init(privateChatUUID);
+
+    await Fire.shared.on(message => {
+      setMessages(previousMessages => GiftedChat.append(previousMessages, message))
+      setViewReady(true)
+    /*  this.setState(previousState => ({
+        messages: GiftedChat.append(previousState.messages, message),
+       // viewReady: true,
+      }))*/
+    })
+
+    } catch(error) {
+      setViewReady(false);
+    }
+  }
+
 
   /**
    * Navigates to the ProfileView
@@ -135,32 +281,29 @@ function DrawerMenu({ }) {
 <View>
    
       <View style={styles.drawerHeader}>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <FeatherIcon size={20} style={{padding: 3}} name="arrow-left" onPress={() => navigation.closeDrawer} />
-        
+        <View style={{flexDirection: 'row', alignItems: 'center',}}>
+        <Appbar.BackAction />
         <Text style={styles.drawerHeaderText}>
                 {currUserData.display_name}
               </Text>
         </View>
              
 
+          <TouchableOpacity onPress={navigateToProfile}>
           <Avatar.Image source={{uri: currUserData.photo_url}} size={40} />
+          </TouchableOpacity>
+
         </View>
 
 
       <Divider />
 
-      <TouchableOpacity onPress={togglePacksVisibility}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="message-circle" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           Messages
-          </Text>
-        </View>
-        </TouchableOpacity>
+      {renderChatComponent()}
+
+     
 
 
-        <TouchableOpacity onPress={togglePacksVisibility}>
+       {/* <TouchableOpacity onPress={togglePacksVisibility}>
         <View style={styles.navigationButtonContaner}>
           <DrawerIcon name="globe" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
           <Text style={styles.buttonText}>
@@ -170,7 +313,7 @@ function DrawerMenu({ }) {
         </TouchableOpacity>
         {
           renderPacksDisplay()
-        }
+        }*/}
 
         
 

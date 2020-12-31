@@ -4,6 +4,7 @@ import SettingsView from '../user/profile/component/SettingsModal';
 import { createStackNavigator } from '@react-navigation/stack';
 import AccountSettings from '../user/settings/AccountSettings'
 import PaymentSettings from '../user/settings/PaymentSettings';
+import HomeGymModal from '../user/modal/HomeGymModal';
 
 const Stack = createStackNavigator();
 

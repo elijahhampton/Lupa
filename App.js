@@ -63,6 +63,7 @@ import Community from './src/ui/community/Community';
 import HourlyPaymentModal from './src/ui/user/modal/HourlyPaymentModal';
 import CommunityFeed from './src/ui/community/CommunityFeed';
 import CommunityHome from './src/ui/community/CommunityHome';
+import HomeGymModal from './src/ui/user/modal/HomeGymModal';
 
 const App = () => {
   return (
@@ -120,6 +121,7 @@ function AppNavigator() {
       <StackApp.Screen name="Achievements" component={Achievements} />
       <StackApp.Screen name="Community" component={CommunityHome} />
       <StackApp.Screen name="CommunityFeed" component={CommunityFeed} />
+      <StackApp.Screen name="ChangeHomeGym" component={HomeGymModal} />
       </StackApp.Navigator>
   )
 }

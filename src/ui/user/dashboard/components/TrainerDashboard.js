@@ -7,7 +7,8 @@ import {
     Text,
     ScrollView,
     RefreshControl,
-    ActionSheetIOS
+    ActionSheetIOS,
+    TouchableOpacity
 } from 'react-native';
 
 import {
@@ -132,12 +133,20 @@ function TrainerDashboard(props) {
             flex: 1,
             backgroundColor: '#FFFFFF'
         }}>
+            
             <Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
             
         <Left>
-            <Text style={{fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}}>
-                Dashboard
-            </Text>
+        <View style={{flexDirection: 'row', alignItems: 'center',}}>
+        <TouchableOpacity onPress={{}}>
+          <Avatar rounded source={{uri: currUserData.photo_url}} size={40} />
+          </TouchableOpacity>
+        <Text style={{ padding: 10,
+      fontSize: 18,
+      fontFamily: 'Avenir-Black'}}>
+                {currUserData.display_name}
+              </Text>
+        </View>
 
         </Left>
 
@@ -151,6 +160,7 @@ function TrainerDashboard(props) {
         </Right>
              
             </Header>
+          
             <ScrollView>
             <View style={{ flex: 1, }}>
                {/* <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
