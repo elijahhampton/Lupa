@@ -37,6 +37,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaController from '../../../controller/lupa/LupaController';
 import { DrawerActions } from '@react-navigation/native';
+import { Input } from 'native-base';
 const ICON_SIZE = 20;
 const ICON_COLOR = "rgb(203, 209, 214)"
 
@@ -117,7 +118,6 @@ function DrawerMenu({ }) {
 renderChatComponent = () => {
   if (showChat === true) {
       return (
-          <View style={{flex: 1}}>
          
                  <GiftedChat 
 messages={messages} 
@@ -130,8 +130,6 @@ renderUsernameOnMessage={true}
 showUserAvatar={true}
 alwaysShowSend={true}
 />
-</View>
-   
       )
   } else {
       return (
@@ -291,11 +289,11 @@ alwaysShowSend={true}
       style={styles.safeAreaView}
       forceInset={{top: 'always', horizontal: 'never'}}>
         <View style={{flex: 1, justifyContent: 'space-between'}}>
-<View>
+<View style={{flex: 1}}>
    
       <View style={styles.drawerHeader}>
         <View style={{flexDirection: 'row', alignItems: 'center',}}>
-        <Appbar.BackAction onPress={() => navigation.dispatch(DrawerActions.closeDrawer())} color="black" size={20} />
+        <Appbar.BackAction onPress={showChat === true ? () => setShowChat(false) : () => navigation.dispatch(DrawerActions.closeDrawer())} color="black" size={20} />
         <View style={{paddingHorizontal: 10}}>
           <Text style={styles.drawerHeaderText}>
                 {currUserData.display_name}
@@ -318,12 +316,12 @@ alwaysShowSend={true}
 
 
       <Divider />
+
       {renderPacksDisplay()}
    
 
     {renderChatComponent()}
         </View>
-
         </View>
     </SafeAreaView>
   </View>

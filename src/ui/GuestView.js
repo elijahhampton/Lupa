@@ -67,6 +67,8 @@ import { LOG_ERROR } from '../common/Logger';
 import Geolocation from '@react-native-community/geolocation';
 import PurchaseProgramWebView from './workout/program/modal/PurchaseProgramWebView'
 import { extractDateStringFromMoment } from '../common/service/DateTimeService';
+import ProgramInformationPreview from './workout/program/ProgramInformationPreview';
+import ProgramOptionsModal from './workout/program/modal/ProgramOptionsModal';
 
 const mapStateToProps = (state, action) => {
   return {
@@ -85,29 +87,6 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const availabilityTimeBlocks = [
-  {
-    label: '6 a.m. - 9 a.m.',
-    value: '6.am-9.pm'
-  },
-  {
-    label: '9 a.m. - 12 p.m.',
-    value: '9.am-12.pm',
-  },
-  {
-    label: '12 p.m. - 4 p.m.',
-    value: '12.pm-4.pm',
-  },
-  {
-    label: '4 p.m. - 7 p.m.',
-    value: '4.pm-7.pm',
-  },
-  {
-    label: '7 p.m. - 10 p.m.',
-    value: '7.pm-10.pm',
-  }
-]
-
 class GuestView extends React.Component {
   constructor(props) {
     super(props);
@@ -124,6 +103,8 @@ class GuestView extends React.Component {
       refreshing: false,
       searchValue: "",
       searchResults: [],
+      programModalVisible: false,
+      programOptionsVisible: false,
       searching: false,
       trainWithSwiperIndex: 0, //approved,
       featuredProgramsCurrentIndex: 0,
@@ -134,6 +115,7 @@ class GuestView extends React.Component {
       featuredTrainers: [],
       inviteFriendsIsVisible: false,
       showLiveWorkoutPreview: false,
+      programsBasedOnInterest: [],
       feedVlogs: [],
       suggestionBannerVisisble: false,
       bookingRequestModalIsVisible: false,
@@ -150,12 +132,6 @@ class GuestView extends React.Component {
       endTimeIsSet: false,
       futureBookingDisplayDate: new Date(),
       futureBookingDisplayDateFormatted: moment(new Date()).format('LL').toString(),
-      futureBookingEndTime: new Date(1598051730000),
-      futureBookingStartTime: availabilityTimeBlocks[0].value,
-      futureBookingEndTimeFormatted: moment(new Date(1598051730000)).format('LT').toString(),
-      futureBookingStartTimeFormatted: availabilityTimeBlocks[0].label,
-      futureBookingTrainerNote: "",
-      timeBlockSet: false,
       timeBlockBookingDialogVisible: false,
       availableTrainersModalIsVisible: false,
       availableTrainers: [],
@@ -225,6 +201,14 @@ class GuestView extends React.Component {
     })
     .catch(error => {
       this.setState({ availableTrainers: [] })
+    })
+
+    await this.LUPA_CONTROLLER_INSTANCE.getProgramsBasedOnInterest()
+    .then(data => {
+      this.setState({ programsBasedOnInterest: data });
+    })
+    .catch(error => {
+      this.setState({ programsBasedOnInterest: [] });
     })
 
     this.setState({ componentIsFetching: false })
@@ -360,6 +344,53 @@ class GuestView extends React.Component {
         // …
         // alert('Oops.  It looks like there was an error while trying to anable the Camera permission.  You can enable it from the Lupa tab in the Settings app.')
       });
+  }
+
+  handleCardOnPress = (program) => {
+    const { currUserData } = this.props.lupa_data.Users;
+
+    try {
+    if (program.program_participants.includes(currUserData.user_uuid))
+    {
+      this.setState({ programOptionsVisible: true })
+    }
+    else
+    {
+      this.setState({ programModalVisible: true })
+    }
+} catch(error) {
+    
+}
+}
+
+  renderProgramBasedOnInterest = () => {
+    const { programsBasedOnInterest } = this.state;
+
+    return programsBasedOnInterest.map((program, index, arr) => {
+      return (
+        <View style={{width: Dimensions.get('window').width - 40, margin: 20, alignSelf: 'center'}}>
+        <Card key={program.program_structure_uuid} style={{elevation: 3, width: '100%', alignSelf: 'center'}} onPress={() => this.handleCardOnPress(program)}>
+        <Card.Cover source={{ uri: program.program_image }} style={{height: 120}} />
+        <Card.Actions style={{justifyContent: 'center', paddingVertical: 10}}>
+            <Text style={{fontSize: 15, fontFamily: 'Avenir-Medium', alignSelf: 'center'}}>
+                {program.program_name}
+            </Text>
+        </Card.Actions>
+      </Card>
+      <ProgramInformationPreview 
+      isVisible={this.state.programModalVisible} 
+      program={program} 
+      closeModalMethod={() => this.setState({programModalVisible: false })} 
+      />
+      <ProgramOptionsModal 
+      program={program} 
+      isVisible={this.state.programOptionsVisible} 
+      closeModal={() => this.setState({ programOptionsVisible: false })} 
+      />
+      </View>
+      )
+    })
+
   }
 
   renderPromotedTrainers = () => {
@@ -530,7 +561,7 @@ class GuestView extends React.Component {
 
                   <View style={{alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{ fontFamily: 'Avenir-Light', fontSize: 12, }}>
+                      <Text style={{ fontFamily: 'Avenir-Heavy', fontSize: 12, }}>
                         {trainer.display_name}
                       </Text>
                     </View>
@@ -576,124 +607,16 @@ class GuestView extends React.Component {
     this.setState({ refreshing: false })
   }
 
-  renderFutureBookingDatePicker = () => {
-    return (
-      <RBSheet
-        ref={this.futureBookingDateRef}
-        height={300}>
-        <View style={{ flex: 1 }}>
-          <DateTimePicker
-            customStyles={{
-              datePicker: {
-                backgroundColor: '#d1d3d8',
-                justifyContent: 'center'
-              }
-            }}
-            value={new Date(this.state.futureBookingDisplayDate)}
-            mode='date'
-            is24Hour={false}
-            display='spinner'
-            onChange={this.onChangeFutureBookingDate}
-          />
-        </View>
-        <SafeAreaView>
-          <Button onPress={this.handleOnPickFutureBookingDate} color="#1089ff" mode="contained" style={{ marginVertical: 10, elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center' }}>
-            Done
-              </Button>
-        </SafeAreaView>
-      </RBSheet>
-    )
-  }
-
-  renderFutureStartTimePicker = () => {
-    return (
-      <RBSheet
-        ref={this.startTimePickerRef}
-        height={300}>
-        <View style={{ flex: 1 }}>
-          <ScrollView>
-            {
-
-              availabilityTimeBlocks.map(block => {
-                return (
-                  <TouchableWithoutFeedback style={{ marginVertical: 10 }} key={block.value} onPress={() => this.onChangeFutureStartTime(block)}>
-                    <Text>
-                      {block.label}
-                    </Text>
-                  </TouchableWithoutFeedback>
-
-                )
-              })
-            }
-          </ScrollView>
-        </View>
-        <SafeAreaView>
-          <Button onPress={this.handleOnPickFutureStartTime} color="#1089ff" mode="contained" style={{ marginVertical: 10, elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center' }}>
-            Done
-              </Button>
-        </SafeAreaView>
-      </RBSheet>
-    )
-  }
-
-  handleOnPickFutureStartTime = async () => {
-    await this.LUPA_CONTROLLER_INSTANCE.getAvailableTrainersByDateTime(this.state.futureBookingDisplayDate, this.state.futureBookingStartTime).then(data => {
-      this.setState({ availableTrainers: data })
-    })
-
-    this.setStartTimeIsSet(true);
-    this.closeStartTimePicker();
-  }
-
-  handleOnPickFutureBookingDate = async () => {
-    await this.LUPA_CONTROLLER_INSTANCE.getAvailableTrainersByDateTime(this.state.futureBookingDisplayDate, this.state.futureBookingStartTime).then(data => {
-      this.setState({ availableTrainers: data })
-    })
-
-    this.closeFutureBookingDatePicker()
-  }
-
-
-  onChangeFutureStartTime = (block) => {
-    this.setState({ futureBookingStartTime: block.value, futureBookingStartTimeFormatted: block.label });
-    this.startTimePickerRef.current.close()
-  };
-
-
-  onChangeFutureBookingDate = (event, date) => {
-    const currentDate = extractDateStringFromMoment(moment(date));
-    const currentDateFormatted = moment(new Date(date)).format('LL').toString()
-    this.setState({ futureBookingDisplayDate: currentDate, futureBookingDisplayDateFormatted: currentDateFormatted });
-  }
 
   handleOnNavigateToCreateAccount = () => {
     this.bookingRef.current.close()
     this.props.navigation.navigate('SignUp')
   }
 
-  openFutureBookingStartTimePicker = () => {
-    if (this.startTimePickerRef) {
-      this.startTimePickerRef.current.open()
-    }
-  }
-
 
   closeFutureBookingStartTimePicker = () => {
     if (this.startTimePickerRef) {
       this.endTimePickerRef.current.close()
-    }
-  }
-
-
-  openFutureBookingDatePicker = () => {
-    if (this.futureBookingDateRef) {
-      this.futureBookingDateRef.current.open()
-    }
-  }
-
-  closeFutureBookingDatePicker = () => {
-    if (this.futureBookingDateRef) {
-      this.futureBookingDateRef.current.close()
     }
   }
 
@@ -706,7 +629,8 @@ class GuestView extends React.Component {
   }
 
   handleOnPressTrainerBookingTime = (time) => {
-    this.closeFutureBookingDatePicker();
+    this.bookingRequestRef.current.open()
+    this.bookingRef.current.close();
   }
 
   renderRBSheet = () => {
@@ -814,35 +738,6 @@ class GuestView extends React.Component {
     this.setState({ bookingRequestDialogVisible: true })
   }
 
-  onCloseRequestBookingDialog = () => {
-    //reset state
-    this.setState({ requestedTrainer: undefined })
-  }
-
-  handleOnRequestBooking = (userData) => {
-    if (typeof (userData) == 'undefined') {
-      return;
-    }
-
-    if (moment(this.state.bookingEndTime).isBefore(moment(this.state.bookingStartTime))) {
-      //invalid times
-      this.setState({ snackBarMessage: "Invalid time period", setSnackBarVisible: true });
-      return;
-    }
-
-    const trainerUUID = userData.uuid;
-    const requesterUUID = this.props.lupa_data.currUserData.user_uuid;
-    const isSet = false;
-
-    //create a booking structure
-    const booking = getBookingStructure(moment(this.state.bookingStartTime).format('LT').toString(), moment(this.state.bookingEndTime).format('LT').toString(), trainerUUID, requesterUUID, isSet, entryDate)
-
-    //send to backend
-    this.LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking);
-
-    this.handleCloseRequestBookingDialog();
-  }
-
   openBookingBottomSheet = async (trainer) => {
     if (typeof (trainer) == 'undefined') {
       return;
@@ -887,14 +782,6 @@ class GuestView extends React.Component {
     this.openBookingBottomSheet(trainer)
   }
 
-  handleOnScrollTrainerView = (e) => {
-    let contentOffset = e.nativeEvent.contentOffset;
-    let viewSize = e.nativeEvent.layoutMeasurement;
-
-    // Divide the horizontal offset by the width of the view to see which page is visible
-    let pageNum = Math.floor(contentOffset.x / viewSize.width);
-    this.setState({ featuredTrainerHorizontalScrollIndex: pageNum })
-  }
 
   checkSearchBarState = () => {
     if (this.state.searchBarFocused === true) {
@@ -1033,7 +920,7 @@ class GuestView extends React.Component {
             {this.renderPaymentInformationBanner()}
             {this.renderRequestAuthenticationMessage()}
               <View style={{marginVertical: 5}}>
-                <Text style={{fontSize: 18, padding: 10, fontFamily: 'Avenir-Heavy'}}>
+              <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
                   Book trainers near you
                 </Text>
               <View>
@@ -1041,37 +928,11 @@ class GuestView extends React.Component {
               </View>
             </View>
             <Divider style={{ marginVertical: 10, height: 8, backgroundColor: 'rgb(245, 246, 249)' }} />
-            <View style={{ padding: 10, width: '100%' }}>
-              <View style={{ paddingHorizontal: 5, paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 18, fontFamily: 'Avenir-Heavy' }}>
-                  Book by your availability
+            <View style={{ width: '100%' }}>
+              <View style={{  paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
+                  Book a trainer today
                 </Text>
-              </View>
-              <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center',}}>
-                <TouchableOpacity 
-                onPress={this.openFutureBookingDatePicker} 
-                style={{ 
-                  alignSelf: 'center', 
-                  width: Dimensions.get('window').width - 20, 
-                  marginVertical: 10, 
-                  alignSelf: 'center', 
-                  padding: 10, 
-                  borderRadius: 5, 
-                  flexDirection: 'row', 
-                  alignItems: 'center', 
-                  backgroundColor: 'rgb(250, 250, 250)', 
-                  borderWidth: 0.5, 
-                  borderColor: '#E5E5E5', 
-                  justifyContent: 'center' 
-                  }} 
-                  icon={() => <FeatherIcon name="chevron-down" />}>
-      
-                  <Text style={{ paddingHorizontal: 10, fontWeight: '500', fontSize: 12 }}>
-                    {this.state.futureBookingDisplayDateFormatted}
-                  </Text>
-                  <FeatherIcon name="chevron-down" />
-                </TouchableOpacity>
-
               </View>
               <Button 
                 onPress={this.handleOnRequestFutureBooking} 
@@ -1089,6 +950,19 @@ class GuestView extends React.Component {
                 </Button>
             </View>
             <Divider style={{ marginVertical: 10, height: 8, backgroundColor: 'rgb(245, 246, 249)' }} />
+            <View style={{ marginVertical: 10, width: '100%' }}>
+              <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
+                  Find your perfect program
+          </Text>
+              </View>
+              <ScrollView 
+              
+              horizontal 
+              showsHorizontalScrollIndicator={false}>
+                {this.renderProgramBasedOnInterest()}
+              </ScrollView>
+            </View>
             <View style={{ marginVertical: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
@@ -1112,8 +986,6 @@ class GuestView extends React.Component {
             </View>
           </ScrollView>
           <SafeAreaView />
-          {this.renderFutureStartTimePicker()}
-          {this.renderFutureBookingDatePicker()}
           {this.renderRBSheet()}
 
          <BookingRequestModal 

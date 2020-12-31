@@ -181,6 +181,27 @@ export default class ProgramController {
         })
     }
 
+    getProgramsBasedOnInterest = async () : Promise<Array<LupaProgramInformationStructure>> => {
+        let programDataList : Array<LupaProgramInformationStructure> = [];
+        
+        return new Promise(async (resolve, reject) => {
+            await PROGRAM_COLLECTION
+            .where('isPublic', '==', true)
+            .where('completedProgram', '==', true)
+            .get()
+            .then(querySnapshot => {
+                querySnapshot.docs.forEach(doc => {
+                    programDataList.push(doc.data());
+                })
+            })
+            .catch(error => {
+                resolve(programDataList);
+            })
+
+            resolve(programDataList);
+        });
+    }
+
     getAllUserPrograms = async (uuid) => {
         let programsList = [];
         let programDataList = [];

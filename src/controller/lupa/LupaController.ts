@@ -988,4 +988,15 @@ export default class LupaController {
     USER_CONTROLLER_INSTANCE.createCommunityEvent(communityUID, communityEvent, images);
   }
 
+  getProgramsBasedOnInterest = async () : Promise<Array<LupaProgramInformationStructure>> => {
+    return new Promise(async (resolve, reject) => {
+      await PROGRAMS_CONTROLLER_INSTANCE.getProgramsBasedOnInterest()
+      .then(data => {
+        resolve(data)
+      });
+    })
+
+  
+  }
+
 }
