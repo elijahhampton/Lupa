@@ -393,7 +393,7 @@ const SettingsModal = () => {
 
     const handleChangeHomeGymOnPress = () => {
         navigation.navigate('ChangeHomeGym', {
-            navigateNextView: handleNavigateNextView()
+            navigateNextView: handleNavigateNextView
         })
     }
 

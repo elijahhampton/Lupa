@@ -1000,21 +1000,31 @@ class GuestView extends React.Component {
                   Book by your availability
                 </Text>
               </View>
-              <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                <TouchableOpacity onPress={this.openFutureBookingDatePicker} style={{ marginRight: 15, marginVertical: 10, alignSelf: 'center', padding: 10, borderRadius: 5, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgb(250, 250, 250)', borderWidth: 0.5, borderColor: '#E5E5E5', justifyContent: 'space-evenly' }} icon={() => <FeatherIcon name="chevron-down" />}>
+              <View style={{ width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center',}}>
+                <TouchableOpacity 
+                onPress={this.openFutureBookingDatePicker} 
+                style={{ 
+                  alignSelf: 'center', 
+                  width: Dimensions.get('window').width - 20, 
+                  marginVertical: 10, 
+                  alignSelf: 'center', 
+                  padding: 10, 
+                  borderRadius: 5, 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  backgroundColor: 'rgb(250, 250, 250)', 
+                  borderWidth: 0.5, 
+                  borderColor: '#E5E5E5', 
+                  justifyContent: 'center' 
+                  }} 
+                  icon={() => <FeatherIcon name="chevron-down" />}>
       
                   <Text style={{ paddingHorizontal: 10, fontWeight: '500', fontSize: 12 }}>
                     {this.state.futureBookingDisplayDateFormatted}
                   </Text>
                   <FeatherIcon name="chevron-down" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.openFutureBookingStartTimePicker} style={{ marginRight: 15, padding: 10, borderRadius: 5, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgb(250, 250, 250)', borderWidth: 0.5, borderColor: '#E5E5E5' }} icon={() => <FeatherIcon name="chevron-down" />}>
-           
-                  <Text style={{ paddingHorizontal: 10, fontWeight: '500', fontSize: 12 }}>
-                    {this.state.futureBookingStartTimeFormatted}
-                  </Text>
-                  <FeatherIcon name="chevron-down" />
-                </TouchableOpacity>
+
               </View>
               <Button 
                 onPress={this.handleOnRequestFutureBooking} 
@@ -1026,7 +1036,7 @@ class GuestView extends React.Component {
                 mode="contained" 
                 contentStyle={{ height: 55 }}>
                   <Text style={{fontSize: 16, fontFamily: 'Avenir', fontWeight: 'bold'}}>
-                  Find Trainer
+                  See available trainers
                   </Text>
 
                 </Button>
