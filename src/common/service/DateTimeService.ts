@@ -1,11 +1,18 @@
 import { Moment } from "moment";
 
-export function extractTimeFromMomentDateString(moment : Moment) {
+export function extractTimeStringFromMomentDateString(moment : Moment) {
 
 }
 
-export function extractDateFromMomentDateString(moment : Moment) {
-
+/**
+ * 
+ * @param moment 
+ *
+ */
+export function extractDateStringFromMoment(moment : Moment) {
+    const fullISOString = moment.subtract(1, 'day').toISOString(); ////2020-03-01T04:23:56.000Z - moment() is adding one day on to the date from the parameter?
+    const dateString = fullISOString.split('T')[0];
+    return dateString;
 }
 
 export function extractTimePeriodFromMomentTimeString(moment : Moment) {

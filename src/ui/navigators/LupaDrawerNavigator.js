@@ -25,9 +25,11 @@ function LupaDrawerNavigator() {
           <Drawer.Navigator 
           initialRouteName="Lupa" 
           drawerPosition="left" 
+        
           drawerStyle={{width: Dimensions.get('window').width}}
           drawerContent={(props) => <DrawerMenu {...props}  />}
           screenOptions={{
+            gestureEnabled:false,
           headerShown: false
           }}
           >
@@ -77,17 +79,13 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Search':
-              return focused === true ? <FeatherIcon name='search' size={20} color="#1089ff" /> : <Feather1s name='search' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='search' size={25} color="#1089ff" /> : <Feather1s name='search' size={25} color={INACTIVE_COLOR} />
             case 'Dashboard':
-              return focused === true ? <FeatherIcon name='clipboard' size={20} color="#1089ff" /> : <Feather1s name='clipboard' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='clipboard' size={25} color="#1089ff" /> : <Feather1s name='clipboard' size={25} color={INACTIVE_COLOR} />
             case 'Train':
-              return focused === true ? <FeatherIcon name='home' size={20} color="#1089ff" /> : <Feather1s name='home' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='home' size={25} color="#1089ff" /> : <Feather1s name='home' size={25} color={INACTIVE_COLOR} />
             case 'Create':
-              return focused === true ? <FeatherIcon name='plus-circle' size={20} color="#1089ff" /> : <Feather1s name='plus-circle' size={20} color={INACTIVE_COLOR} />
-              case 'Alerts':
-              return focused === true ? <FeatherIcon name='bell' size={20} color="#1089ff" /> : <Feather1s name='bell' size={20} color={INACTIVE_COLOR} />
-              case 'Inbox':
-              return focused === true ? <FeatherIcon name='message-square' size={20} color="#1089ff" /> : <Feather1s name='message-square' size={20} color={INACTIVE_COLOR} />
+              return focused === true ? <FeatherIcon name='plus-circle' size={25} color="#1089ff" /> : <Feather1s name='plus-circle' size={25} color={INACTIVE_COLOR} />
           }
 
         },

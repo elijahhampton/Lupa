@@ -117,7 +117,7 @@ function UserDashboard(props) {
                 contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
                 mode="contained" 
                 theme={{roundness: 12}} 
-                color="#1089ff">
+                color="rgb(34, 74, 115)">
                     Search Trainers and Fitness Programs
                 </Button>
                 </View>
@@ -144,11 +144,19 @@ function UserDashboard(props) {
             <TouchableOpacity onPress={{}}>
               <Avatar rounded source={{uri: currUserData.photo_url}} size={40} />
               </TouchableOpacity>
-            <Text style={{ padding: 10,
-          fontSize: 18,
-          fontFamily: 'Avenir-Black'}}>
-                    {currUserData.display_name}
-                  </Text>
+              <View style={{paddingHorizontal: 10}}>
+          <Text style={{ 
+      fontSize: 18,
+      fontFamily: 'Avenir-Black'}}>
+                {currUserData.display_name}
+              </Text>
+              <Text style={{
+                  color: 'rgb(180, 180, 180)',
+      fontSize: 15,
+      fontFamily: 'Avenir-Medium'}}>
+                Dashboard
+              </Text>
+          </View>
             </View>
     
             </Left>

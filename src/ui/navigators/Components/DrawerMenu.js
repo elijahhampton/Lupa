@@ -36,6 +36,7 @@ import { getLupaStoreState }from '../../../controller/redux/index';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaController from '../../../controller/lupa/LupaController';
+import { DrawerActions } from '@react-navigation/native';
 const ICON_SIZE = 20;
 const ICON_COLOR = "rgb(203, 209, 214)"
 
@@ -134,9 +135,13 @@ alwaysShowSend={true}
       )
   } else {
       return (
-          <ScrollView  shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
+<>
+  <ScrollView shouldRasterizeIOS={true} showsHorizontalScrollIndicator={false}>
           {renderAvatarList()}
 </ScrollView>
+</>
+   
+        
       )
   }
 }
@@ -248,28 +253,36 @@ alwaysShowSend={true}
 
     const lupaStorePacks = getLupaStoreState().Packs.currUserPacksData;
 
-    if (lupaStorePacks.length === 0) {
+    if (true) {
       return (
-        <View style={{paddingLeft: 30, flexDirection: 'row', alignItems: 'center'}}>
-  <Caption style={{paddingHorizontal: 20}}>
-          Click the globe icon on the explore page to create a pack.
+  <Caption style={{padding: 10}}>
+    Search for packs to join from the search page or create your own from the explore page.
         </Caption>
-        </View>
-      
       )
     }
 
-    return lupaStorePacks.map(pack => {
-      return (
-        <TouchableWithoutFeedback onPress={() => navigateToPackChat(pack.uid)}>
-        <View style={{height: 'auto', marginLeft: 50, marginVertical: 5}}>
-        <Text style={{fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}> 
-        {pack.name}
-        </Text>
-      </View>
-      </TouchableWithoutFeedback>
-      )
-    })
+    return (
+      <>
+      <Text style={{padding: 10, fontFamily: 'Avenir-Heavy'}}>
+ Packs
+</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} shouldRasterizeIOS={true}>
+        {
+             lupaStorePacks.map(pack => {
+              return (
+                <TouchableWithoutFeedback style={{padding:8,  marginHorizontal: 10, borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 8, marginVertical: 5}} onPress={() => navigateToPackChat(pack.uid)}>
+                <Text style={{fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}> 
+                {pack.name}
+                </Text>
+              </TouchableWithoutFeedback>
+              )
+            })
+        }
+      </ScrollView>
+      </>
+    )
+
+
   }
 
   return (
@@ -282,43 +295,33 @@ alwaysShowSend={true}
    
       <View style={styles.drawerHeader}>
         <View style={{flexDirection: 'row', alignItems: 'center',}}>
-        <Appbar.BackAction />
-        <Text style={styles.drawerHeaderText}>
+        <Appbar.BackAction onPress={() => navigation.dispatch(DrawerActions.closeDrawer())} color="black" size={20} />
+        <View style={{paddingHorizontal: 10}}>
+          <Text style={styles.drawerHeaderText}>
                 {currUserData.display_name}
               </Text>
+              <Text style={{
+                  color: 'rgb(180, 180, 180)',
+      fontSize: 15,
+      fontFamily: 'Avenir-Medium'}}>
+                Messages
+              </Text>
+          </View>
         </View>
              
 
           <TouchableOpacity onPress={navigateToProfile}>
-          <Avatar.Image source={{uri: currUserData.photo_url}} size={40} />
+          <Avatar.Image source={{uri: currUserData.photo_url}} size={40} style={{marginHorizontal: 10}} />
           </TouchableOpacity>
 
         </View>
 
 
       <Divider />
+      {renderPacksDisplay()}
+   
 
-      {renderChatComponent()}
-
-     
-
-
-       {/* <TouchableOpacity onPress={togglePacksVisibility}>
-        <View style={styles.navigationButtonContaner}>
-          <DrawerIcon name="globe" color={ICON_COLOR} size={ICON_SIZE} style={styles.iconMargin}/>
-          <Text style={styles.buttonText}>
-           My Packs
-          </Text>
-        </View>
-        </TouchableOpacity>
-        {
-          renderPacksDisplay()
-        }*/}
-
-        
-
-
-
+    {renderChatComponent()}
         </View>
 
         </View>
@@ -339,9 +342,9 @@ export default DrawerMenu;
       backgroundColor: 'transparent',
     },
     drawerHeader: {
-      margin: 15, 
+      paddingVertical: 10,
       flexDirection: 'row', 
-      paddingHorizontal: 10,
+
       alignItems: 'center', 
       justifyContent: 'space-between'
     },

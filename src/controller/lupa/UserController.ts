@@ -2564,35 +2564,18 @@ export default class UserController {
      * @param time 
      */
     getAvailableTrainersByDateTime = async (date, time): Promise<Array<Object>> => {
+        LOG('UserController.ts', `getAvailableTrainerByDateTime::Starting function with parameters: Date(${date})`);
         let trainers = [];
         let trainer = getLupaUserStructurePlaceholder();
-        let trainerScheduler = {}, dateQueryObject = []
         await USER_COLLECTION.where('isTrainer', '==', true).get().then(queryReference => {
             queryReference.forEach(doc => {
                 trainer = doc.data();
-                if (typeof (trainer) == 'undefined') {
-                    //delete doc
-                } else {
-                   trainers.push(trainer);
+
+                if (Object.keys(trainer.scheduler_times).includes(date.toString())) {
+                    console.log(trainer.scheduler_times)
+                    trainers.push(trainer);
                 }
             })
-
-                             /*  if (typeof(trainer.scheduler_times[date.toString()]) == 'undefined') {
-                    //we dont do anything 
-                    } else {
-                    trainerScheduler = trainer.scheduler_times;
-                    dateQueryObject = trainerScheduler[date.toString()];
-                    for (let i = 0; i < dateQueryObject.length; i++) {
-                        let timeBlockStartTime = moment(dateQueryObject[i].startTime);
-                        let timeBlockEndTime = moment(dateQueryObject[i].endTime);
-                        let timeQuery = moment(time);
-
-                        if (timeQuery.isAfter(timeBlockStartTime) && timeQuery.isBefore(timeBlockEndTime)) {
-                            trainers.push(trainer);
-                        }
-                    }
-                } */
-        
         });
     
 

@@ -15,7 +15,7 @@ import {
 } from 'react-native'
 
 import LupaController from '../../controller/lupa/LupaController'
-import { Avatar, Surface, Divider, Button, Appbar, Chip, Paragraph } from 'react-native-paper'
+import { Avatar, Surface, Divider, Button, Appbar, Chip, Paragraph, Caption } from 'react-native-paper'
 import {
     SearchBar
 } from 'react-native-elements'
@@ -270,14 +270,16 @@ class Search extends React.Component {
         }
 
         if (this.state.searchResults.length == 0 && this.state.categoryIsPressed == false) {
-            return <View>
-                  <View style={{borderWidth: 1, margin: 10, borderRadius: 5, borderColor: '#E5E5E5', padding: 10, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
-                    <Paragraph style={{fontFamily: 'Avenir-Medium', fontSize: 18}}>
+            return (
+                 <View>
+                  <View style={{ margin: 10, padding: 10, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
+                    <Caption>
                        Select a category or use the search bar
-                   </Paragraph>
+                   </Caption>
                     </View>
                     {this.renderSkills()}
             </View>
+            )
         } else if (this.state.categoryIsPressed === true) {
             return this.renderCategoryResults();
         } else if (this.state.searching === true) {
@@ -329,7 +331,7 @@ class Search extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <Header>
+                <Header style={{backgroundColor: 'white'}}>
                 <SearchBar
                             placeholder="Search trainers and fitness programs"
                             placeholderTextColor="rgb(150, 150, 150)"

@@ -66,6 +66,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { LOG_ERROR } from '../common/Logger';
 import Geolocation from '@react-native-community/geolocation';
 import PurchaseProgramWebView from './workout/program/modal/PurchaseProgramWebView'
+import { extractDateStringFromMoment } from '../common/service/DateTimeService';
 
 const mapStateToProps = (state, action) => {
   return {
@@ -170,9 +171,16 @@ class GuestView extends React.Component {
     let promotedTrainersIn = [];
     let byLupaTrainersIn = []
 
-    this.setState({ componentIsFetching: true })
+    this.setState({ 
+      componentIsFetching: true, 
+      futureBookingDisplayDate: extractDateStringFromMoment(moment(new Date())), 
+      futureBookingDisplayDateFormatted: moment(new Date()).format("LL").toString()
+    });
 
-    this.PROMOTED_TRAINERS_OBSERVER = LUPA_DB.collection('users').limit(3).where('isTrainer', '==', true).onSnapshot(querySnapshot => {
+    this.PROMOTED_TRAINERS_OBSERVER = LUPA_DB.collection('users')
+    .limit(3)
+    .where('isTrainer', '==', true)
+    .onSnapshot(querySnapshot => {
       promotedTrainersIn = [];
       querySnapshot.docs.forEach(doc => {
         docData = doc.data();
@@ -185,9 +193,14 @@ class GuestView extends React.Component {
 
       this.shuffle(promotedTrainersIn);
       this.setState({ promotedTrainers: promotedTrainersIn })
+    }, error => {
+      this.setState({ promotedTrainers: [] })
     });
 
-    this.BY_LUPA_TRAINERS = LUPA_DB.collection('users').limit(3).where('isTrainer', '==', true).onSnapshot(querySnapshot => {
+    this.BY_LUPA_TRAINERS = LUPA_DB.collection('users')
+    .limit(3)
+    .where('isTrainer', '==', true)
+    .onSnapshot(querySnapshot => {
       byLupaTrainersIn = [];
       querySnapshot.docs.forEach(doc => {
         docData = doc.data();
@@ -200,12 +213,18 @@ class GuestView extends React.Component {
 
       this.shuffle(byLupaTrainersIn);
       this.setState({ byLupaTrainers: byLupaTrainersIn })
-    });
+    }, error => {
+      this.setState({ byLupaTrainers: [] })
+    })
 
     await this.fetchCuratedTrainers();
 
-    await this.LUPA_CONTROLLER_INSTANCE.getAvailableTrainersByDateTime(this.state.futureBookingDisplayDate, this.state.futureBookingStartTime).then(data => {
+    await this.LUPA_CONTROLLER_INSTANCE.getAvailableTrainersByDateTime(this.state.futureBookingDisplayDate, this.state.futureBookingStartTime)
+    .then(data => {
       this.setState({ availableTrainers: data })
+    })
+    .catch(error => {
+      this.setState({ availableTrainers: [] })
     })
 
     this.setState({ componentIsFetching: false })
@@ -570,10 +589,10 @@ class GuestView extends React.Component {
                 justifyContent: 'center'
               }
             }}
-            value={this.state.futureBookingDisplayDate}
+            value={new Date(this.state.futureBookingDisplayDate)}
             mode='date'
             is24Hour={false}
-            display="default"
+            display='spinner'
             onChange={this.onChangeFutureBookingDate}
           />
         </View>
@@ -631,7 +650,6 @@ class GuestView extends React.Component {
       this.setState({ availableTrainers: data })
     })
 
-    alert('dfsdfd')
     this.closeFutureBookingDatePicker()
   }
 
@@ -643,7 +661,7 @@ class GuestView extends React.Component {
 
 
   onChangeFutureBookingDate = (event, date) => {
-    const currentDate = date;
+    const currentDate = extractDateStringFromMoment(moment(date));
     const currentDateFormatted = moment(new Date(date)).format('LL').toString()
     this.setState({ futureBookingDisplayDate: currentDate, futureBookingDisplayDateFormatted: currentDateFormatted });
   }
@@ -687,12 +705,23 @@ class GuestView extends React.Component {
     this.navigateToProfile(trainer.user_uuid)
   }
 
+  handleOnPressTrainerBookingTime = (time) => {
+    this.closeFutureBookingDatePicker();
+  }
+
   renderRBSheet = () => {
 
     return (
       <RBSheet
         height={400}
-        ref={this.bookingRef}>
+        ref={this.bookingRef}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
+          }
+        }}
+        >
         <View style={{ flex: 1, padding: 10, }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={{ fontFamily: 'Avenir-Heavy', fontSize: 18 }}>
@@ -707,7 +736,7 @@ class GuestView extends React.Component {
                 :
                 this.state.availableTrainers.map((trainer, index, arr) => {
                   return (
-                    <>
+                    <View>
 
                     <View style={{flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
 
@@ -744,10 +773,28 @@ class GuestView extends React.Component {
                     
                 </Button>
                     </View>
+
+                    <View style={{marginVertical: 10}}>
+                      <ScrollView 
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      shouldRasterizeIOS={true}
+                      >
+                        {
+                          trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].times.map(time => {
+                            return (
+                              <Chip onPress={() => this.handleOnPressTrainerBookingTime(time)} mode="outlined" style={{marginHorizontal: 10}} textStyle={{color: '#1089ff', fontFamily: 'Avenir'}}>
+                                {time}
+                              </Chip>
+                            )
+                          })
+                        }
+                      </ScrollView>
+                    </View>
                      
                   
                       <Divider style={{ width: Dimensions.get('window').width, alignSelf: 'center', }} />
-                    </>
+                    </View>
                   )
                 })
             }
@@ -852,7 +899,7 @@ class GuestView extends React.Component {
   checkSearchBarState = () => {
     if (this.state.searchBarFocused === true) {
       if (this.props.navigation) {
-        this.props.navigation.push('Search')
+        this.props.navigation.navigate('Search')
       }
 
       this.searchBarRef.current.blur();
