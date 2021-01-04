@@ -16,6 +16,7 @@ import {
     Chip,
     Divider,
     Paragraph,
+    FAB,
     Appbar,
     Surface,
     DataTable,
@@ -242,7 +243,9 @@ function TrainerDashboard(props) {
                    
                 </View>
             </View>
+
             </ScrollView>
+            <FAB onPress={() => navigation.push('MyClients')} icon={() => <FeatherIcon name="users" size={22} color="white" />} style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
         </View>
     )
 }

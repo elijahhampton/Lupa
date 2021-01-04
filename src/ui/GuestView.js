@@ -69,6 +69,24 @@ import PurchaseProgramWebView from './workout/program/modal/PurchaseProgramWebVi
 import { extractDateStringFromMoment } from '../common/service/DateTimeService';
 import ProgramInformationPreview from './workout/program/ProgramInformationPreview';
 import ProgramOptionsModal from './workout/program/modal/ProgramOptionsModal';
+import { Pagination } from 'react-native-snap-carousel';
+import { ActionSheetIOS } from 'react-native';
+import Swiper from 'react-native-swiper';
+
+const SKILL_BASED_INTEREST = [
+  'Agility',
+  'Balance',
+  'Speed',
+  'Power',
+  'Coordination',
+  'Reaction Time',
+  'Weight Loss',
+  'Test Preparation',
+  'Sport Specific',
+  'Bodybuilding',
+  'Fitness Coach',
+  'Injury Prevention',
+]
 
 const mapStateToProps = (state, action) => {
   return {
@@ -141,6 +159,174 @@ class GuestView extends React.Component {
       componentIsFetching: false,
     }
   }
+
+  renderImage = (skill, index) => {
+    switch (skill) {
+        case 'Agility':
+            return (
+                <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+                    <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+                    <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Agility.png')} />
+                    </Surface>
+
+                    <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                        {skill}
+                    </Text>
+                </TouchableOpacity>
+            )
+        case 'Speed':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Speed.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Balance':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Balance.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Power':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Power.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Coordination':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Coordination.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir', fontSize: 15, paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Reaction Time':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5,  alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/ReactionTime.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center', paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Weight Loss':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/WeightLoss.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center',  paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Test Preparation':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/TestPreparation.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '80%', textAlign: 'center',  paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Sport Specific':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/SportSpecific.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center',  paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Bodybuilding':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Bodybuilding.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Fitness Coach':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Health:FitnessCoach.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center',  paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        case 'Injury Prevention':
+            return (
+              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
+              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
+              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/InjuryPrevention.png')} />
+              </Surface>
+
+              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center',  paddingVertical: 10 }}>
+                  {skill}
+              </Text>
+          </TouchableOpacity>
+            )
+        default:
+    }
+}
+
+renderSkills = () => {
+    return (  
+       <ScrollView showsHorizontalScrollIndicator={false} horizontal>
+              {
+                SKILL_BASED_INTEREST.map((skill, index, arr) => {
+                    return  (
+                      <Chip onPress={() => this.props.navigation.navigate('Search')} mode="outlined" textStyle={{fontWeight: '800', fontFamily: 'Avenir-Heavy', color: '#FFFFFF'}} style={{backgroundColor: 'transparent', marginHorizontal: 10, borderRadius: 12}}>
+                     
+                          {skill}
+                    
+                      </Chip>
+                    )
+                })
+              }
+       </ScrollView>
+    )
+}
 
   async componentDidMount() {
     let docData = getLupaUserStructure();
@@ -365,18 +551,16 @@ class GuestView extends React.Component {
 
   renderProgramBasedOnInterest = () => {
     const { programsBasedOnInterest } = this.state;
-
+    
     return programsBasedOnInterest.map((program, index, arr) => {
       return (
-        <View style={{width: Dimensions.get('window').width - 40, margin: 20, alignSelf: 'center'}}>
-        <Card key={program.program_structure_uuid} style={{elevation: 3, width: '100%', alignSelf: 'center'}} onPress={() => this.handleCardOnPress(program)}>
-        <Card.Cover source={{ uri: program.program_image }} style={{height: 120}} />
-        <Card.Actions style={{justifyContent: 'center', paddingVertical: 10}}>
-            <Text style={{fontSize: 15, fontFamily: 'Avenir-Medium', alignSelf: 'center'}}>
-                {program.program_name}
-            </Text>
-        </Card.Actions>
-      </Card>
+        <TouchableOpacity style={{margin: 10, alignItems: 'center'}}>
+          <Surface style={{width: 110, height: 110, borderRadius: 5, elevation: 0}}>
+              <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 5, width: '100%', height: '100%'}} />
+          </Surface>
+          <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+            {program.program_name}
+          </Text>
       <ProgramInformationPreview 
       isVisible={this.state.programModalVisible} 
       program={program} 
@@ -387,10 +571,40 @@ class GuestView extends React.Component {
       isVisible={this.state.programOptionsVisible} 
       closeModal={() => this.setState({ programOptionsVisible: false })} 
       />
-      </View>
+      </TouchableOpacity>
       )
     })
 
+  }
+
+  renderProgramOfTheDay = () => {
+    const { programsBasedOnInterest } = this.state;
+    const program = programsBasedOnInterest[0]
+
+    if (typeof(program) == 'undefined') {
+      return;
+    }
+
+    return (
+      <TouchableOpacity style={{margin: 10, alignItems: 'center'}}>
+        <Surface style={{width: Dimensions.get('window').width - 80, height: 400, borderRadius: 12, elevation: 3}}>
+            <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 12, width: '100%', height: '100%'}} />
+        </Surface>
+        <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+          {program.program_name}
+        </Text>
+    <ProgramInformationPreview 
+    isVisible={this.state.programModalVisible} 
+    program={program} 
+    closeModalMethod={() => this.setState({programModalVisible: false })} 
+    />
+    <ProgramOptionsModal 
+    program={program} 
+    isVisible={this.state.programOptionsVisible} 
+    closeModal={() => this.setState({ programOptionsVisible: false })} 
+    />
+    </TouchableOpacity>
+    )
   }
 
   renderPromotedTrainers = () => {
@@ -504,7 +718,7 @@ class GuestView extends React.Component {
     if (curatedTrainers.length === 0) {
       if (updatedAppState.Auth.isAuthenticated === false) {
         return (
-          <View style={{ padding: 20 }}>
+          <View style={{ padding: 20, backgroundColor: 'transparent' }}>
             <Text style={{ fontFamily: 'Avenir-Medium' }}>
               <Text>
                 Sorry we were not able to find any trainers in your area.{" "}
@@ -537,6 +751,7 @@ class GuestView extends React.Component {
         snapToInterval={Dimensions.get('window').width}
         horizontal
         showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{backgroundColor: 'transparent'}}
       >
         {
           curatedTrainers.map(trainer => {
@@ -545,34 +760,34 @@ class GuestView extends React.Component {
             }
 
             return (
-              <TouchableOpacity  onPress={() => this.handleBookTrainerOnPress(trainer)}>
-                <Surface style={{elevation: 0, marginHorizontal: 15, marginVertical: 12 }} >
+              <TouchableOpacity style={{backgroundColor: 'transparent'}}  onPress={() => this.handleBookTrainerOnPress(trainer)}>
+                <Surface style={{backgroundColor: 'transparent', elevation: 0, marginHorizontal: 15, marginVertical: 12 }} >
 
                   <View style={{borderRadius: 12}}>
 
-                    <Image style={{borderRadius: 12, borderWidth: 0.5, borderColor: '#EEEEEE', width: 120, height: 120}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
+                    <Image style={{borderRadius: 12, borderWidth: 0.5, width: 120, height: 120}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
 
                     <Surface style={{ elevation: 5, width: 30, height: 30, alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, right: 0, margin: 12, borderRadius: 30 }}>
                       <Feather1s name="calendar" color="#1089ff" />
-                    </Surface>
+                    </Surface> 
 
 
                   </View>
 
-                  <View style={{alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
+                  <View style={{backgroundColor: 'transparent', alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{ fontFamily: 'Avenir-Heavy', fontSize: 12, }}>
+                      <Text style={{color: 'white', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
                         {trainer.display_name}
                       </Text>
                     </View>
 
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{ fontFamily: 'Avenir-Light', fontSize: 12, }}>
+                      <Text style={{color: 'white', fontFamily: 'Avenir-Light', fontSize: 12, }}>
                         {trainer.location.city}, {trainer.location.state}
                       </Text>
                     </View>
                   </View>
-                  <View style={{ width: '100%', height: '100%', backgroundColor: 'rgba(255, 255, 255, 0.2)', position: 'absolute' }} />
+                  <View style={{ width: '100%', height: '100%', backgroundColor: 'transparent', position: 'absolute' }} />
                 </Surface>
               </TouchableOpacity>
 
@@ -629,12 +844,14 @@ class GuestView extends React.Component {
   }
 
   handleOnPressTrainerBookingTime = (time) => {
-    this.bookingRequestRef.current.open()
-    this.bookingRef.current.close();
+    this.setState({ preFilledStartTime: time }, () => {
+      this.bookingRequestRef.current.open()
+      this.bookingRef.current.close();
+    })
+   
   }
 
   renderRBSheet = () => {
-
     return (
       <RBSheet
         height={400}
@@ -674,7 +891,6 @@ class GuestView extends React.Component {
                           </View>
                         </View>
                       </View>
-
 
                     <Button
                         onPress={() => {
@@ -865,7 +1081,6 @@ class GuestView extends React.Component {
   openBookingRequestModal = () => this.bookingRequestRef.current.open();
   closeBookingRequestModal = () => this.bookingRequestRef.current.close();
 
-
   renderPaymentInformationBanner = () => {
     try {
       const updatedAppState = getLupaStoreState();
@@ -891,11 +1106,142 @@ class GuestView extends React.Component {
     }
   }
 
+  openTrainerActionSheet = (uuid) =>  {
+  const { navigation } = this.props;
+  const { currUserData } = this.props.lupa_data.Users;
+  ActionSheetIOS.showActionSheetWithOptions(
+    {
+      options: ["Cancel", "Send a Message", "View Profile"],
+      destructiveButtonIndex: 0,
+      cancelButtonIndex: 0
+    },
+    buttonIndex => {
+      if (buttonIndex === 0) {
+        // cancel action
+      } else if (buttonIndex === 1) {
+        this.props.navigation.push('PrivateChat', {
+          currUserUUID: currUserData.user_uuid,
+          otherUserUUID: uuid
+        })
+      } else if (buttonIndex === 2) {
+        this.props.navigation.push('Profile', {
+          userUUID: uuid
+        })
+      } 
+    }
+  )
+  }
+
+  renderAvailableTrainers = () => {
+    if (this.state.availableTrainers.length == 0) {
+      return (
+        <View style={{flex: 1}}>
+  <View style={{ padding: 20 }}>
+            <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
+              <Text style={{color: 'white'}}>
+                There are no trainers available today.{" "}
+              </Text>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.navigate('Search')}>
+                Find trainers by searching and book for a future date.
+              </Text>
+            </Text>
+          </View>
+        </View>
+        
+      )
+    } else {
+      return (
+        <ScrollView showsHorizontalScrollIndicator={false} centerContent horizontal>
+{
+  this.state.availableTrainers.map(trainer => {
+    return (
+      <View style={{backgroundColor: 'transparent'}}>
+           
+
+      <View style={{flexDirection: 'row', alignItems: 'center', width: '100%'}}>
+
+      <View style={{ paddingVertical: 15, flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+          <Avatar onPress={() => this.openTrainerActionSheet(trainer.user_uuid)} containerStyle={{ padding: 3, borderWidth: 2, margin: 10, borderColor: '#1089ff'}}rounded size={80} source={{ uri: trainer.photo_url }} />
+          <View style={{ paddingHorizontal: 10 }}>
+            <View style={{ alignItems: 'flex-start' }}>
+              <Text style={{color: 'white', fontSize: 16, fontFamily: 'Avenir-Medium' }}>
+                {trainer.display_name}
+              </Text>
+           
+              <View style={{flexDirection: 'row', flexWrap: 'wrap', width: '83%', alignItems: 'center'}}>
+             <Caption style={{color: 'white'}}>
+               This trainer prefers:{" "}
+             </Caption>
+              {trainer.trainer_metadata.training_styles.map((style, index, arr) => {
+                if (index == arr.length - 1) {
+                    return (
+                      <Caption style={{color: 'white'}}>
+                      {style}
+                    </Caption>
+                    )
+                }
+
+                if (index == arr.length - 2) {
+                  return (
+                    <Caption style={{color: 'white'}}>
+                    {style} and 
+                  </Caption>
+                  )
+                }
+
+                return (
+                  <Caption style={{color: 'white'}}>
+                    {style},{" "}
+                  </Caption>
+                )
+              })}
+              <Caption style={{color: 'white'}}>
+               {" "}training.
+             </Caption>
+                </View>
+            </View>
+          </View>
+        </View>
+
+
+      </View>
+
+      <View style={{marginVertical: 0}}>
+        <ScrollView 
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        shouldRasterizeIOS={true}
+        
+        >
+          {
+            trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].times.map(time => {
+              return (
+                <Chip onPress={() => this.handleOnPressTrainerBookingTime(time)} mode="outlined" style={{marginHorizontal: 10}} textStyle={{color: '#1089ff', fontFamily: 'Avenir'}}>
+                  {time}
+                </Chip>
+              )
+            })
+          }
+        </ScrollView>
+      </View>
+       
+
+      </View>
+    )
+  })
+}
+        </ScrollView>
+      )
+      
+    }
+  }
+
+
   render() {
    this.checkSearchBarState()
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-        <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, backgroundColor: 'white' }}>
+        <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, backgroundColor: '#23374d' }}>
           <ScrollView
             refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
             scrollEventThrottle={1}
@@ -911,78 +1257,128 @@ class GuestView extends React.Component {
                 value={this.state.searchValue}
                 inputStyle={styles.inputStyle}
                 platform="ios"
-                containerStyle={{ backgroundColor: 'white', borderColor: 'white', width: Dimensions.get('window').width - 10, alignSelf: 'center' }}
-                inputContainerStyle={{borderColor: 'white', backgroundColor: 'rgb(245, 246, 249)' }}
+                containerStyle={{ backgroundColor: 'transparent', borderColor: 'white', width: Dimensions.get('window').width - 10, alignSelf: 'center' }}
+                inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE' }}
                 searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
                 onFocus={() => this.setState({ searchBarFocused: true })}
                 onBlur={() => this.setState({ searchBarFocused: false })} />
             </TouchableWithoutFeedback>
             {this.renderPaymentInformationBanner()}
             {this.renderRequestAuthenticationMessage()}
-              <View style={{marginVertical: 5}}>
-              <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
+            <View style={{marginVertical: 10, height: 200, backgroundColor: 'black'}}>
+              <Swiper dotColor="#FFFFFF" autoplay={true} >
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
+                <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                <Image resizeMode="center" style={{alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}} source={require('./images/banner_images/banner1.jpeg')} />
+                  <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />
+       
+                 <Text style={{fontSize: 20, color: '#FFFFFF', position: 'absolute', alignSelf: 'center', fontFamily: 'Avenir-Heavy'}}>
+                    Book a virtual coach
+                </Text>
+               
+          
+
+                 <Chip style={{backgroundColor: 'white', position: 'absolute', bottom: 10, right: 10, height: 20, alignItems: 'center', justifyContent: 'center'}} textStyle={{fontFamily: 'Avenir-Medium'}}>
+                  Book now
+                </Chip>
+               
+                </View>
+                </TouchableWithoutFeedback>
+
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
+                <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                <Image resizeMode="center" style={{alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}} source={require('./images/banner_images/banner2.jpeg')} />
+                <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />
+                <Text style={{fontSize: 20, color: '#FFFFFF', position: 'absolute', alignSelf: 'center', fontFamily: 'Avenir-Black'}}>
+                    Book a movement coach
+                </Text>
+
+                <Chip style={{backgroundColor: 'white', position: 'absolute', bottom: 10, right: 10, height: 20, alignItems: 'center', justifyContent: 'center'}} textStyle={{fontFamily: 'Avenir-Medium'}}>
+                  Book now
+                </Chip>
+                </View>
+                </TouchableWithoutFeedback>
+
+
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
+                <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                <Image resizeMode="center" style={{width: '100%', height: '100%'}} source={require('./images/banner_images/banner3.jpeg')} />
+                <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />
+                <Text style={{fontSize: 20, color: '#FFFFFF', position: 'absolute', alignSelf: 'center', fontFamily: 'Avenir-Black'}}>
+                    Book a personal trainer
+                </Text>
+
+                <Chip style={{backgroundColor: 'white', position: 'absolute', bottom: 10, right: 10, height: 20, alignItems: 'center', justifyContent: 'center'}} textStyle={{fontFamily: 'Avenir-Medium'}}>
+                  Book now
+                </Chip>
+                </View>
+                </TouchableWithoutFeedback>
+
+              </Swiper>
+           
+            </View>
+            {this.renderSkills()}
+            <View style={{ paddingVertical: 15, width: '100%' }}>
+              <View style={{  width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Text style={styles.sectionHeaderText}>
+                  Book a trainer now
+                </Text>
+              </View>
+
+              {this.renderAvailableTrainers()}
+      
+             <Pagination 
+             dotColor="#FFFFFF"
+             dotStyle={{backgroundColor: '#FFFFFF'}}
+             dotsLength={3} 
+             activeDotIndex={0} 
+             />
+            </View>
+
+              <View style={{marginVertical: 10}}>
+              <Text style={styles.sectionHeaderText}>
                   Book trainers near you
                 </Text>
               <View>
                 {this.renderCuratedTrainers()}
               </View>
             </View>
-            <Divider style={{ marginVertical: 10, height: 8, backgroundColor: 'rgb(245, 246, 249)' }} />
-            <View style={{ width: '100%' }}>
-              <View style={{  paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
-                  Book a trainer today
-                </Text>
-              </View>
-              <Button 
-                onPress={this.handleOnRequestFutureBooking} 
-                style={{ marginVertical: 15, elevation: 0, width: Dimensions.get('window').width - 20, alignSelf: 'center'}} 
-                theme={{roundness: 12}}
-                disabled={false} 
-                color="rgb(34, 74, 115)" 
-                uppercase={false} 
-                mode="contained" 
-                contentStyle={{ height: 55 }}>
-                  <Text style={{fontSize: 16, fontFamily: 'Avenir', fontWeight: 'bold'}}>
-                  See available trainers
-                  </Text>
-
-                </Button>
-            </View>
-            <Divider style={{ marginVertical: 10, height: 8, backgroundColor: 'rgb(245, 246, 249)' }} />
+    
             <View style={{ marginVertical: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
+                <Text style={styles.sectionHeaderText}>
                   Find your perfect program
           </Text>
               </View>
+        
               <ScrollView 
-              
               horizontal 
               showsHorizontalScrollIndicator={false}>
                 {this.renderProgramBasedOnInterest()}
               </ScrollView>
             </View>
-            <View style={{ marginVertical: 10, width: '100%' }}>
-              <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
-                  Promoted Trainers
-          </Text>
-              </View>
-              <ScrollView scrollEnabled={false}>
-                {this.renderPromotedTrainers()}
-              </ScrollView>
-            </View>
             {this.renderCreateAccountSection()}
             <View style={{ marginVertical: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 16, padding: 10, fontFamily: 'Avenir-Heavy' }}>
-                  By Lupa
-          </Text>
+                <Text style={styles.sectionHeaderText}>
+                  Program of the day
+                </Text>
               </View>
-              <ScrollView scrollEnabled={false}>
-                {this.renderByLupaTrainers()}
-              </ScrollView>
+        
+              <View>
+                {this.renderProgramOfTheDay()}
+              </View>
+            </View>
+            <View style={{ marginVertical: 10, width: '100%' }}>
+              <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={styles.sectionHeaderText}>
+                  Communities in your area
+                </Text>
+              </View>
+        
+              <View>
+                {this.renderCuratedTrainers()}
+              </View>
             </View>
           </ScrollView>
           <SafeAreaView />
@@ -1048,7 +1444,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   sectionHeaderText: {
-    fontSize: RFValue(15), fontFamily: 'Avenir-Heavy', fontSize: 15,
+    color: 'white', fontSize: 16, paddingHorizontal: 10, fontFamily: 'Avenir-Black'
   },
 
   inputStyle: {

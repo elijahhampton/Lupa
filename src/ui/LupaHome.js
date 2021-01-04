@@ -42,11 +42,11 @@ import CommunityFeed from "./community/CommunityFeed";
 import LUPA_DB from "../controller/firebase/firebase";
 import { LOG_ERROR } from "../common/Logger";
 
-const COLOR = "#FFFFFF";
+const COLOR = "#23374d";
 const TAB_PROPS = {
   tabStyle: {backgroundColor: COLOR},
   activeTabStyle: {backgroundColor: COLOR},
-  textStyle: {color: "rgba(35, 55, 77, 0.75)", fontFamily: 'Avenir-Heavy', fontSize: 20},
+  textStyle: {color: "white", fontFamily: 'Avenir-Heavy', fontSize: 20},
   activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}
 };
 
@@ -220,16 +220,21 @@ export class LupaHome extends Component {
         <View style={{flex: 1}}>
           <Header style={{backgroundColor: COLOR}} noShadow={false} hasTabs>
             <Left>
-            <Appbar.Action key='message-circle' onPress={() => this.props.navigation.openDrawer()} icon={() => <FeatherIcon name="message-circle" size={20} style={{padding: 0, margin: 0}} color="#00000" />}/>
+            <Appbar.Action key='message-circle' onPress={() => this.props.navigation.openDrawer()} icon={() => <FeatherIcon name="message-circle" size={20} style={{padding: 0, margin: 0}} color="#FFFFFF" />}/>
             </Left>
 
-            <Body>
-              <Image source={require('./icons/logo.jpg')} style={{marginTop: 5, width: 35, height: 35}} />
-            </Body>
+ <Body>
+   <Text style={{color: 'white', fontFamily: 'Avenir-Black', fontSize: 18}}>
+     Explore
+   </Text>
+             {/* <Image source={require('./icons/logo.jpg')} style={{marginTop: 5, width: 35, height: 35}} /> */}
+           
+           </Body>
+
 
             <Right>
             <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
-                <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} color="#00000" />}/>
+                <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} color="#FFFFFF" />}/>
                 }>
                     <Menu.Item
                     onPress={this.handleOnChooseCreatePack} 
