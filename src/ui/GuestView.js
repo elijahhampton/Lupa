@@ -333,9 +333,11 @@ renderSkills = () => {
     let promotedTrainersIn = [];
     let byLupaTrainersIn = []
 
+    const bookingDate = extractDateStringFromMoment(moment());
     this.setState({ 
       componentIsFetching: true, 
-      futureBookingDisplayDate: extractDateStringFromMoment(moment(new Date())), 
+      prefilledDate: bookingDate,
+      futureBookingDisplayDate: bookingDate, 
       futureBookingDisplayDateFormatted: moment(new Date()).format("LL").toString()
     });
 
@@ -843,12 +845,12 @@ renderSkills = () => {
     this.navigateToProfile(trainer.user_uuid)
   }
 
-  handleOnPressTrainerBookingTime = (time) => {
-    this.setState({ preFilledStartTime: time }, () => {
-      this.bookingRequestRef.current.open()
-      this.bookingRef.current.close();
-    })
+  handleOnPressTrainerBookingTime = async (startTime, endTime, index, trainer) => {
+    const updatedTime  = moment(startTime).add(index, 'hour').format()
    
+    this.setState({ preFilledStartTime: updatedTime, requestedTrainer: trainer}, () => {
+      this.bookingRequestRef.current.open()
+    });
   }
 
   renderRBSheet = () => {
@@ -921,9 +923,11 @@ renderSkills = () => {
                       shouldRasterizeIOS={true}
                       >
                         {
+                     
                           trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].times.map(time => {
+                            
                             return (
-                              <Chip onPress={() => this.handleOnPressTrainerBookingTime(time)} mode="outlined" style={{marginHorizontal: 10}} textStyle={{color: '#1089ff', fontFamily: 'Avenir'}}>
+                              <Chip onPress={() => alert(time)} mode="outlined" style={{marginHorizontal: 10}} textStyle={{color: '#1089ff', fontFamily: 'Avenir'}}>
                                 {time}
                               </Chip>
                             )
@@ -1214,9 +1218,9 @@ renderSkills = () => {
         
         >
           {
-            trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].times.map(time => {
+            trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].times.map((time, index, arr) => {
               return (
-                <Chip onPress={() => this.handleOnPressTrainerBookingTime(time)} mode="outlined" style={{marginHorizontal: 10}} textStyle={{color: '#1089ff', fontFamily: 'Avenir'}}>
+                <Chip onPress={() => this.handleOnPressTrainerBookingTime(trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].startTime, trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].endTime, index, trainer)} mode="outlined" style={{marginHorizontal: 10}} textStyle={{color: '#1089ff', fontFamily: 'Avenir'}}>
                   {time}
                 </Chip>
               )
@@ -1239,6 +1243,7 @@ renderSkills = () => {
 
   render() {
    this.checkSearchBarState()
+   const { preFilledStartTime } = this.state;
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
         <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, backgroundColor: '#23374d' }}>
@@ -1387,7 +1392,7 @@ renderSkills = () => {
          <BookingRequestModal 
           closeModal={this.closeBookingRequestModal}
           trainer={this.state.requestedTrainer}
-          preFilledStartTime={this.state.preFilledStartTime}
+          preFilledStartTime={preFilledStartTime}
           preFilledEndTime={this.state.preFilledEndTime}
           preFilledTrainerNote={this.state.preFilledTrainerNote}
           prefilledDate={this.state.futureBookingDisplayDate}

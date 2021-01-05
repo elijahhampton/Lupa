@@ -4,13 +4,18 @@ export function extractTimeStringFromMomentDateString(moment : Moment) {
 
 }
 
+export function extractDateStringFromFormattedMoment(moment : String) {
+    const dateString = moment.split('T')[0];
+    return dateString;
+}
+
 /**
  * 
  * @param moment 
  *
  */
 export function extractDateStringFromMoment(moment : Moment) {
-    const fullISOString = moment.subtract(1, 'day').toISOString(); ////2020-03-01T04:23:56.000Z - moment() is adding one day on to the date from the parameter?
+    const fullISOString = moment.format(); ////2020-03-01T04:23:56-05.00 - moment() is adding one day on to the date from the parameter?
     const dateString = fullISOString.split('T')[0];
     return dateString;
 }

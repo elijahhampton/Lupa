@@ -85,8 +85,8 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
       const times = createTimeBlockArray();
 
       const timeBlock = {
-        startTime: moment(startTime).format('LT').toString(),
-        endTime: moment(endTime).format('LT').toString(),
+        startTime: moment(startTime).toISOString(),
+        endTime: moment(endTime).toISOString(),
         times: times
       }
 
@@ -176,25 +176,23 @@ function SchedulerModal({ closeModal, isVisible, displayDate, entryDate }) {
         <RBSheet
         ref={startTimePickerRef}
         height={300}
-        customStyles={
-          wrapper={
-
-          },
-          container={
-            
+        customStyles={{
+          container: {
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
           }
-        }>
+        }}>
           <View style={{flex: 1}}>
           <DateTimePicker
           value={startTime}
           mode='time'
           is24Hour={false}
-          display="default"
+          display='spinner'
           onChange={onChangeStartTime}
         />
           </View>
           <View>
-            <Button onPress={handleOnPickStartTime} color="#1089ff" mode="contained" style={{elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+            <Button onPress={handleOnPickStartTime} color="#1089ff" mode="contained" contentStyle={{height: 45, width: Dimensions.get('window').width - 50,}}  style={{marginVertical: 10, borderRadius: 8, elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
               Done
             </Button>
             <SafeAreaView />
@@ -207,18 +205,24 @@ const renderEndTimePicker = () => {
 return (
   <RBSheet
   ref={endTimePickerRef}
+  customStyles={{
+    container: {
+      borderTopRightRadius: 20,
+      borderTopLeftRadius: 20,
+    }
+  }}
   height={300}>
     <View style={{flex: 1}}>
     <DateTimePicker
           value={endTime}
           mode='time'
           is24Hour={false}
-          display="default"
+          display='spinner'
           onChange={onChangeEndTime}
         />
     </View>
     <View>
-            <Button onPress={handleOnPickEndTime} color="#1089ff" mode="contained" style={{elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center', width: Dimensions.get('window').width - 50, alignSelf: 'center'}}>
+            <Button onPress={handleOnPickEndTime} color="#1089ff" mode="contained" contentStyle={{height: 45, width: Dimensions.get('window').width - 50,}} style={{borderRadius: 8, marginVertical: 10, elevation: 0, height: 45, alignItems: 'center', justifyContent: 'center',  alignSelf: 'center'}}>
               Done
             </Button>
             <SafeAreaView />

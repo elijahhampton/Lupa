@@ -233,7 +233,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
         value={startTime}
         mode='time'
         is24Hour={false}
-        display="default"
+        display='spinner'
         onChange={onChangeStartTime}
       />
         </View>
@@ -256,7 +256,7 @@ height={300}>
         value={endTime}
         mode='time'
         is24Hour={false}
-        display="default"
+        display='spinner'
         onChange={onChangeEndTime}
       />
   </View>
