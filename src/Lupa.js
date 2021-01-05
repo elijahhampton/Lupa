@@ -68,6 +68,7 @@ class Lupa extends React.Component {
       <View style={{flex: 1}}>
        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
       <LupaDrawerNavigator />
+      
       </View>
     )
   }

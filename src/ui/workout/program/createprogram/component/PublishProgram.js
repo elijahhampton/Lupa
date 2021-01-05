@@ -52,17 +52,38 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import LOG, { LOG_ERROR } from '../../../../../common/Logger';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function AddTagsModal({ captureTags, isVisible, closeModal }) {
-  let [tags, setTags] = useState([]);
-  let [inputValue, setInputValue] = useState('');
+const PRE_FILLED_TAGS = [
+  'Advanced',
+  'Agility',
+  'Balance',
+  'Beginner',
+  'Intermmediate',
+  'Speed',
+  'Power',
+  'Coordination',
+  'Reaction Time',
+  'Weight Loss',
+  'Sport Specific',
+  'Bodybuilding',
+  'Injury Prevention',
+  'Very Advanced'
+]
 
-  const handleAddTags = () => {
-    if (tags.length == 10) {
-      return;
+function AddTagsModal({ captureTags, isVisible, closeModal }) {
+  const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [forceUpdate, setForceUpdate] = useState(false);
+
+  const handleAddTags = (tagString) => {
+    if (tags.includes(tagString)) {
+      let updatedTagList = tags;
+      updatedTagList.splice(updatedTagList.indexOf(tagString), 1)
+      setTags(updatedTagList)
+    } else {
+      setTags((prevState) => prevState.concat(tagString))
     }
 
-    setTags((prevState) => [...prevState].concat(inputValue))
-    setInputValue('')
+    setForceUpdate(!forceUpdate)
   }
 
   const handleFinish = () => {
@@ -74,63 +95,78 @@ function AddTagsModal({ captureTags, isVisible, closeModal }) {
     closeModal()
   }
 
-  return (
-
-    <PaperModal contentContainerStyle={{ borderRadius: 10, alignSelf: 'center', top: 120, position: 'absolute', backgroundColor: 'white', width: Dimensions.get('window').width - 30, height: 400 }} visible={isVisible}>
-      <KeyboardAvoidingView style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <View style={{ flex: 1 }}>
-            <Text style={{ padding: 10, fontSize: 20, fontWeight: 'bold' }}>
-              Make your program discoverable
-          </Text>
-          </View>
-
-          <View style={{ flex: 3, flexWrap: 'wrap', flexDirection: 'row', margin: 10 }}>
-            {
-              tags.map(tag => {
-                return (
-                  <Chip style={{ margin: 5, borderRadius: 5, width: 'auto' }} textStyle={{ fontSize: 15 }} theme={{
+  const renderPreFilledTags = (tagString) => {
+    if (tags.includes(tagString)) {
+      return (
+<Chip 
+onPress={() => handleAddTags(tagString)} 
+mode="flat" 
+style={[styles.tagsChipStyle, {backgroundColor: '#23374d'}]} 
+textStyle={[styles.tagsChipTextStyle, { color: 'white' }]} 
+theme={{
                     roundness: 0,
                   }}>
-                    {tag}
+                    {tagString}
                   </Chip>
+      )
+    } else {
+      return (
+        <Chip 
+          onPress={() => handleAddTags(tagString)} 
+          mode="outlined" 
+          style={styles.tagsChipStyle} 
+          textStyle={styles.tagsChipTextStyle} 
+          theme={{
+          roundness: 0,
+        }}>
+          {tagString}
+        </Chip>
+      )
+    }
+  }
+
+  return (
+
+    <Modal presentationStyle="fullScreen" visible={isVisible}>
+        <View style={{ flex: 1, padding: 20 }}>
+          <View style={{padding: 10, marginVertical: 20}}>
+            <Text style={{fontFamily: 'Avenir-Black', fontSize: 30}}>
+              Make your program discoverable
+          </Text>
+          <Caption>
+            Choose tags that best fit the purpose of your program
+          </Caption>
+          </View>
+
+          <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row', margin: 10 }}>
+            {
+              PRE_FILLED_TAGS.map(tag => {
+                return (
+                  renderPreFilledTags(tag)
                 )
               })
             }
           </View>
 
-          <View style={{ justifyContent: 'center', borderRadius: 10, flex: 1.5, backgroundColor: '#E3F2FD' }}>
-            <Input
-              placeholder='Try "cardio"'
-              value={inputValue}
-              inputStyle={{ fontSize: 12, padding: 10, }}
-              inputContainerStyle={{ backgroundColor: 'white', borderWidth: 1, borderBottomWidth: 1, borderColor: '#BBDEFB' }}
-             // onSubmitEditing={() => handleAddTags()}
-              onBlur={handleAddTags}
-              onChangeText={text => setInputValue(text)}
-              keyboardAppearance="light"
-              keyboardType="default"
-              returnKeyLabel="submit"
-              returnKeyType="done"
-            />
 
-            <View style={{ alignItems: 'flex-end', justifyContent: 'flex-end', flexDirection: 'row' }}>
-              <Button mode="text" color="#e53935" onPress={handleCancel}>
-                <Text>
-                  Cancel
-            </Text>
-              </Button>
-              <Button mode="text" color="#1E88E5" onPress={handleFinish}>
-                <Text>
+
+              <Button 
+              mode="contained" 
+              color="#23374d" 
+              theme={{roundness: 8}}
+              contentStyle={{width: Dimensions.get('window').width - 20, height: 45}}
+              contentStyle={{width: Dimensions.get('window').width - 20, height: 45}}
+              onPress={handleFinish}
+              uppercase={false}>
+                <Text style={{fontWeight: '800', fontFamily: 'Avenir-Medium'}}>
                   Done
             </Text>
               </Button>
-            </View>
+            
 
-          </View>
+ 
         </View>
-      </KeyboardAvoidingView>
-    </PaperModal>
+    </Modal>
 
   )
 }
@@ -258,8 +294,8 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
     } else {
         return programTags.map((tag, index, arr) => {
             return (
-                <Chip style={{marginHorizontal: 10, width: 120, alignItems: 'center', justifyContent: 'center'}} key={tag}>
-                    <Text style={{fontFamily: 'Avenir-Light'}}>
+                <Chip style={{margin: 10, alignItems: 'center', justifyContent: 'center'}} key={tag} textStyle={{fontFamily: 'Avenir-Heavy'}}>
+                    <Text>
                       {tag}
                     </Text>
                 </Chip>
@@ -368,12 +404,12 @@ function PublishProgram({uuid, saveProgramMetadata, goBack, exit}) {
   }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
                   <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0,  borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
                     <Appbar.Action onPress={goBack} icon={() =>  <FeatherIcon name="arrow-left" color="#000000" size={22} style={{margin: 18}} />} />
                     <Appbar.Content title="Publish Program" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                 </Appbar.Header>
-                <ScrollView>
+                <ScrollView contentContainerStyle={{backgroundColor: '#FFFFFF'}}>
                 <View style={{marginVertical: 10}}>
              {renderProgramImage()}
           </View>
@@ -526,6 +562,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  tagsChipStyle: {
+    margin: 8, 
+    borderRadius: 20,
+    padding: 5,
+  },
+  tagsChipTextStyle: {
+    fontSize: 15, 
+    fontFamily: 'Avenir-Heavy', 
+    fontWeight: '800'
   },
   topView: {
     flex: 2,
