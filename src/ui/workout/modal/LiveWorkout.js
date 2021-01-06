@@ -1114,7 +1114,7 @@ class LiveWorkout extends React.Component {
                 {typeof(this.props.route.params.programData) == 'undefined' ? null : this.renderDescriptionDialog()}
                 {this.renderRestTimerRBSheetPicker()}
            
-                <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
+                <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
                
              

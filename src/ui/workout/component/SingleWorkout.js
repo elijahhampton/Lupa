@@ -1,26 +1,15 @@
-import React, { useState } from 'react';
-
-import { Video } from 'expo-av';
+import React from 'react';
 
 import {
     StyleSheet,
-    Button as NativeButton,
     TouchableOpacity,
     Dimensions,
     Image,
-    PanResponder,
     Text,
-    Animated,
     View,
 } from 'react-native';
 
-import {
-    Surface,
-    Caption,
-} from 'react-native-paper';
-
 import FeatherIcon from "react-native-vector-icons/Feather"
-import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 
 class SingleWorkout extends React.Component {
@@ -32,8 +21,7 @@ class SingleWorkout extends React.Component {
             showSelectStyle: false
         }
 
-        this.animatedViewRef = React.createRef();
-        
+        this.animatedViewRef = React.createRef(); 
     }
 
     static getDerivedStateFromProps = (props, state) => {
@@ -72,11 +60,8 @@ class SingleWorkout extends React.Component {
 
     render() {
 return (
-    <>
-    <View style={[{marginVertical: 10, width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}]}>
-    
-   <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 5}}>
-   <View style={{flexDirection: 'row',  alignItems: 'center',}}>
+    <View style={styles.container}>
+   <View style={styles.contentContainer}>
        <TouchableOpacity onPress={this.props.onPress}>
 
    <View style={{height: 70, width: 100}}>
@@ -100,40 +85,23 @@ return (
           </Text>
     </View>   
    </View>
-   </View>
 
    
     </View>
-    </>
 )
- 
-            
-  
     }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        marginVertical: 10, width: Dimensions.get('window').width, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'
+    },
+    contentContainer: {
+        flexDirection: 'row',  alignItems: 'center', paddingHorizontal: 5
+    },
     selectStyle: {
         borderColor: '#1089ff', shadowColor: '#1089ff',
     },
-    videoContainer: {
-        backgroundColor: "rgb(58,58,60)",
-        borderRadius: 60,
-        marginHorizontal: 10,
-        width: 60,
-        height: 60,
-        elevation: 3,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    pressed: {
-        borderColor: '#FFFFFF',
-        borderWidth: 0.5,
-    },
-    notPressed: {
-        borderColor: '#212121',
-        borderWidth: 0.5,
-    }
 })
 
 export default SingleWorkout;
