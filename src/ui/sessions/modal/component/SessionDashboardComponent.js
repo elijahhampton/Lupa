@@ -11,7 +11,8 @@ import {
     Surface,
     Button,
     Caption,
-    Dialog
+    Dialog,
+    Divider
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
@@ -96,7 +97,8 @@ function SessionDashboardComponent({ booking }) {
         }
     }
     return (
-        <Surface key={booking.uid} style={{elevation: 0, alignSelf: 'center', width: Dimensions.get('window').width - 10, borderRadius: 8, borderWidth: 0.5, borderColor: '#E5E5E5', marginVertical: 10, padding: 10}}>
+        <>
+        <Surface key={booking.uid} style={{elevation: 0, alignSelf: 'center', width: Dimensions.get('window').width - 10, borderColor: '#E5E5E5', marginVertical: 10, padding: 10}}>
              <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
                         {moment(booking.date).format('LL').toString()}
                     </Text>
@@ -105,7 +107,7 @@ function SessionDashboardComponent({ booking }) {
                 <View style={{paddingVertical: 5, flexDirection: 'row', alignItems: 'center'}}>
                     <FeatherIcon name="clock" style={{paddingRight: 5}} />
                     <Text style={{color: '#23374d', fontSize: 15, fontFamily: 'Avenir-Medium'}}>
-                       { booking.start_time}
+                       { moment(booking.start_time).format('LT').toString()}
                     </Text>
                 </View>
 
@@ -143,7 +145,8 @@ function SessionDashboardComponent({ booking }) {
             </Button>
                 <BookingInformationModal trainerUserData={trainerUserData} requesterUserData={requesterUserData} isVisible={bookingInformationModalVisible} closeModal={() => setBookingInformationModalVisible(false)} booking={booking} />
             </Surface>
-       
+       <Divider />
+       </>
 
             
     )

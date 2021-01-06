@@ -55,14 +55,7 @@ import LOG, { LOG_ERROR } from '../../../common/Logger';
 import { getLupaStoreState } from '../../../controller/redux';
 import { Input } from 'react-native-elements';
 import { KeyboardAvoidingView } from 'react-native';
-
-let data = [{
-  value: 'Banana',
-}, {
-  value: 'Mango',
-}, {
-  value: 'Pear',
-}];
+import { extractDateStringFromFormattedMoment, extractDateStringFromMoment } from '../../../common/service/DateTimeService';
 
 const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledStartTime, preFilledEndTime, preFilledDate, preFilledTrainerNote}, ref) => {
 
@@ -114,12 +107,26 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
   const [timeBlockDialogVisible, setTimeBlockDialogVisible] = useState(false);
   const updatedUserData = getLupaStoreState().Users.currUserData;
 
+
   useEffect(() => {
-    setStartTime(new Date())
-    setStartTimeFormatted(moment(new Date()).format('LT').toString())
-    setEndTime(new Date())
-    setEndTimeFormatted(moment(new Date()).add(1, 'hour').format('LT').toString())
-  }, [])
+    setBookingDate(preFilledDate || bookingDate)
+    setBookingDisplayDate(moment(bookingDate).format('LL').toString())
+
+    if (typeof(preFilledStartTime) != 'undefined') {
+      setStartTime(preFilledStartTime)
+      setStartTimeFormatted(moment(preFilledStartTime).format('LT').toString())
+      
+      setEndTime(moment(preFilledStartTime).add(1, 'hour').format())
+      setEndTimeFormatted(moment(preFilledStartTime).add(1, 'hour').format('LT').toString())
+    } else {
+      setStartTime(moment())
+      setStartTimeFormatted(moment().format('LT').toString())
+
+      setEndTime(moment().add(1, 'hour'))
+      setEndTimeFormatted(moment().add(1, 'hour').format('LT').toString())
+    }
+   
+  }, [preFilledStartTime])
 
   const renderSessionTypeDialog = () => {
     return (
@@ -179,7 +186,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
         value={bookingDate}
         mode='date'
         is24Hour={false}
-        display="default"
+        display='spinner'
         onChange={onChangeDisplayDate}
       />
         </View>
@@ -199,10 +206,10 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
         height={300}>
           <View style={{flex: 1}}>
           <DateTimePicker
-          value={startTime}
+          value={new Date(startTime)}
           mode='time'
           is24Hour={false}
-          display="default"
+          display='spinner'
           onChange={onChangeStartTime}
         />
           </View>
@@ -280,7 +287,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
         return;
       }
 
-      const booking = getNewBookingStructure(startTimeFormatted, endTimeFormatted, bookingDate, new Date(), trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid, trainerNote, sessionType);
+      const booking = getNewBookingStructure(moment(startTime).format(), moment(endTime).format(), extractDateStringFromFormattedMoment(moment(bookingDate).format().toString()), new Date(), trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid, trainerNote, sessionType);
       const booking_id = booking.uid;
 
       try {
@@ -449,7 +456,7 @@ inputContainerStyle={{paddingLeft: 8, height: 55, alignSelf: 'flex-start', borde
 
 <View style={{paddingHorizontal: 20}}>
   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16}}>
+  <Text style={{fontFamily: 'Avenir-Medium', fontSize: 16}}>
     Session Type
   </Text>
   
@@ -469,7 +476,7 @@ inputContainerStyle={{paddingLeft: 8, height: 55, alignSelf: 'flex-start', borde
 
 <View style={{paddingHorizontal: 20}}>
   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16}}>
+  <Text style={{fontFamily: 'Avenir-Medium', fontSize: 16}}>
     Start Time
   </Text>
   <TouchableWithoutFeedback  onPress={openStartTimePicker}>
@@ -492,7 +499,7 @@ inputContainerStyle={{paddingLeft: 8, height: 55, alignSelf: 'flex-start', borde
 
 <View style={{paddingHorizontal: 20}}>
 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-<Text style={{fontFamily: 'Avenir-Heavy', color: 'black', fontSize: 16}}>
+<Text style={{fontFamily: 'Avenir-Medium', color: 'black', fontSize: 16}}>
           Date
         </Text>
         <TouchableWithoutFeedback onPress={openDatePicker}>
@@ -517,7 +524,7 @@ uppercase={false}
 style={{alignSelf: 'center', elevation: 0, marginVertical: 5}} 
 contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
 theme={{roundness: 12}}>
-  <Text style={{fontFamily: 'Avenir'}}>
+  <Text style={{fontWeight: '600'}}>
     Request Session
   </Text>
 </Button>

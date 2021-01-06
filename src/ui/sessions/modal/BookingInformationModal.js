@@ -218,19 +218,19 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                             </Text>
                         </View>
                         <Divider />
-                        <View style={{  padding: 10, borderRadius: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly',  backgroundColor: 'white'}}>
+                        <View style={{  padding: 10, borderRadius: 0,  alignItems: 'flex-start', justifyContent: 'space-evenly',  backgroundColor: 'white'}}>
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <FeatherIcon name="map-pin" style={{paddingHorizontal: 5}} />
-                                <Text>
+                                <Caption>
                                     {trainerUserData.homegym.address}
-                                </Text>
+                                </Caption>
                             </View>
 
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <FeatherIcon name="home" style={{paddingHorizontal: 5}} />
-                                <Text>
+                                <Caption>
                                 {trainerUserData.homegym.name}
-                                </Text>
+                                </Caption>
                             </View>
                            </View >
                            <Divider />
@@ -245,7 +245,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                                             Starting Time
                                         </Text>
                                         <Chip>
-                                            {booking.start_time}
+                                            {moment(booking.start_time).format('LT').toString()}
                                         </Chip>
                                     </View>
 
@@ -254,7 +254,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                                             End Time
                                         </Text>
                                         <Chip>
-                                          {booking.end_time}
+                                          {moment(booking.end_time).format('LT').toString()}
                                         </Chip>
                                     </View>
                                 </View>
@@ -301,7 +301,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                            uppercase={false}
                            contentStyle={{height: 45, width: Dimensions.get('window').width - 10}} 
                            style={{marginVertical: 50, marginHorizontal: 10, alignItems: 'center', justifyContent: 'center', elevation: 0}}>
-                               <Text style={{fontFamily: 'Avenir'}}>
+                               <Text style={{fontFamily: 'Avenir-Heavy', fontWeight: '800'}}>
                                    Session Options
                                </Text>
                            </Button>
