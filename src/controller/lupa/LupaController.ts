@@ -759,6 +759,14 @@ export default class LupaController {
       USER_CONTROLLER_INSTANCE.saveVlog(vlogStructure);
     }
 
+    publishCommunityVlog = (communityUID, vlogStructure) => {
+      if (typeof(vlogStructure) == 'undefined' || vlogStructure == null || typeof(communityUID) == 'undefined') {
+        return;
+      }
+
+      USER_CONTROLLER_INSTANCE.saveCommunityVlog(vlogStructure);
+    }
+
     deleteVlog = (userID, vlogID) => {
       if (typeof(userID) == 'undefined' || typeof(vlogID) == 'undefined') {
         return;
@@ -988,15 +996,46 @@ export default class LupaController {
     USER_CONTROLLER_INSTANCE.createCommunityEvent(communityUID, communityEvent, images);
   }
 
-  getProgramsBasedOnInterest = async () : Promise<Array<LupaProgramInformationStructure>> => {
+  getProgramsBasedOnInterest = async (interestArr : Array<String>, experienceLevel : String) : Promise<Array<LupaProgramInformationStructure>> => {
+    if (typeof(interestArr) == null || typeof(interestArr) == 'undefined') {
+      interestArr = []
+    }
+
+    while (interestArr.includes(null)) {
+      interestArr.splice(interestArr.indexOf(null), 1);
+    }
+
+    if (typeof(experienceLevel) != 'string') {
+      experienceLevel = "Beginner"
+    }
+
+    if (interestArr.length > 10) {
+      interestArr = interestArr.slice(0, 9);
+    }
+
     return new Promise(async (resolve, reject) => {
-      await PROGRAMS_CONTROLLER_INSTANCE.getProgramsBasedOnInterest()
+      await PROGRAMS_CONTROLLER_INSTANCE.getProgramsBasedOnInterest(interestArr, experienceLevel)
       .then(data => {
         resolve(data)
       });
     })
+  }
 
-  
+  getProgramOfTheDay = async () => {
+    return new Promise(async (resolve, reject) => {
+      await PROGRAMS_CONTROLLER_INSTANCE.getProgramOfTheDay()
+      .then(data => {
+        resolve(data);
+      });
+    });
+  }
+
+  getNearbyCommunitiesBasedOnCityAndState = async (city, state) => {
+    return new Promise(async (resolve, reject) => {
+      await USER_CONTROLLER_INSTANCE.getNearbyCommunitiesBasedOnCityAndState(city, state).then(data => {
+        resolve(data);
+      });
+    });
   }
 
 }

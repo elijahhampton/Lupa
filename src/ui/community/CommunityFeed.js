@@ -123,16 +123,17 @@ class CommunityFeed extends React.Component {
     }
 
     renderFAB = () => {
-        if (this.props.lupa_data.Auth.isAuthenticated == true) {
-          if (this.props.lupa_data.Users.currUserData.isTrainer == true) {
               return (
-                <FAB small={false} onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+                <FAB 
+                small={false} 
+                onPress={() => this.props.navigation.push('CreatePost', {
+                    communityUID: this.props.community.uid,
+                    vlogType: 'Community'
+                })} 
+                icon="video" 
+                style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" 
+                />
               )
-    
-          } else if (this.props.lupa_data.Users.currUserData.isTrainer == false) {
-              return  <FAB small={false} onPress={() => this.props.navigation.push('CreatePost')} icon="video" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
-            }
-          }
       }
 
     render() {

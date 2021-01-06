@@ -440,7 +440,8 @@ function AddReviewDialog({ isVisible, closeModal, community }) {
     }
 
     LUPA_CONTROLLER_INSTANCE.addCommunityReview(community.uid, currUserData.user_uuid, reviewText)
-    closeModal
+    setReviewText("")
+    closeModal()
   }
 
   return (
@@ -795,7 +796,7 @@ function Community({ community }) {
        
           </View>
 
-          <View>
+         {/* <View>
             <View style={{  flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
 
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -818,6 +819,7 @@ function Community({ community }) {
             
             {renderProgramOffers()}
           </View>
+         */}
               
           <CreateEventModal 
           community={community} 

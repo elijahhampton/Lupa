@@ -29,10 +29,8 @@ import { useNavigation } from '@react-navigation/native';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { getLupaVlogStructure } from '../../../../model/data_structures/vlog';
 
-function CreateNewPost(props) {
+function CreateNewPost({ route, navigation }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-
-    const navigation = useNavigation();
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
@@ -104,8 +102,19 @@ function CreateNewPost(props) {
     }
 
     const saveVlog = () => {
-        //Get a vlog structure
-        const vlogStructure = getLupaVlogStructure(titleText, postText, postMediaURI, postMediaType, currUserData.user_uuid, currUserData.location.longitude, currUserData.location.latitude, currUserData.location.city, currUserData.location.state, currUserData.location.country, new Date().getTime(), new Date());
+                //Get a vlog structure
+                const vlogStructure = getLupaVlogStructure(titleText, postText, postMediaURI, postMediaType, currUserData.user_uuid, currUserData.location.longitude, currUserData.location.latitude, currUserData.location.city, currUserData.location.state, currUserData.location.country, new Date().getTime(), new Date());
+
+        if (route.params) {
+            if (typeof(route.params['vlogType'])) {
+                if (route.params.vlogType == 'Community') {
+                    LUPA_CONTROLLER_INSTANCE.publishCommunityVlog(route.params.communityUID, vlogStructure);
+                    handleClose();
+                    return;
+                }
+            }
+        }
+    
 
         //save vlog to firestore
         LUPA_CONTROLLER_INSTANCE.publishVlog(vlogStructure);

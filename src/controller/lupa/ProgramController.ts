@@ -181,13 +181,16 @@ export default class ProgramController {
         })
     }
 
-    getProgramsBasedOnInterest = async () : Promise<Array<LupaProgramInformationStructure>> => {
+    getProgramsBasedOnInterest = async (interestArr : Array<String>, experienceLevel : String) : Promise<Array<LupaProgramInformationStructure>> => {
         let programDataList : Array<LupaProgramInformationStructure> = [];
+
+        interestArr.push(experienceLevel);
         
         return new Promise(async (resolve, reject) => {
             await PROGRAM_COLLECTION
             .where('isPublic', '==', true)
             .where('completedProgram', '==', true)
+            .where('program_tags', 'array-contains-any', [...interestArr])
             .get()
             .then(querySnapshot => {
                 querySnapshot.docs.forEach(doc => {
@@ -195,10 +198,31 @@ export default class ProgramController {
                 })
             })
             .catch(error => {
-                resolve(programDataList);
+                resolve([]);
             })
 
             resolve(programDataList);
+        });
+    }
+
+    getProgramOfTheDay = async () => {
+        return new Promise(async (resolve, reject) => {
+            let luckyProgram = getLupaProgramInformationStructure();
+
+            await PROGRAM_COLLECTION
+            .where('isPublic', '==', true)
+            .where('completedProgram', '==', true)
+            .get()
+            .then(querySnapshot => {
+                querySnapshot.docs.forEach(doc => {
+                    luckyProgram = doc.data();
+                    resolve(luckyProgram)
+                    return;
+                })
+            })
+            .catch(error => {
+                resolve(-1);
+            })
         });
     }
 

@@ -1870,6 +1870,30 @@ export default class UserController {
         VLOGS_COLLECTION.doc(VLOG_UUID).set(vlogStructure);
     }
 
+    saveCommunityVlog = async (communityUID, vlogStructure: Object) => {
+        let generatedURL;
+        if (typeof (vlogStructure.vlog_media.uri) == 'undefined' || vlogStructure.vlog_media.uri == null || vlogStructure.vlog_media.uri == '') {
+
+        } else {
+            await this.saveVlogMedia(vlogStructure.vlog_media.uri).then(mediaURL => {
+                generatedURL = mediaURL;
+            });
+
+            //Update the existing uri with the newly generated uri we retrieve from firestore storage.
+            vlogStructure.vlog_media.uri = generatedURL;
+        }
+
+        //generate a uuid for the vlog using the vlog test
+        const VLOG_UUID = Math.random().toString()
+        vlogStructure.vlog_uuid = VLOG_UUID;
+
+        //Add the UUID to the users vlog list
+        this.updateCurrentUser('vlogs', VLOG_UUID, 'add', '');
+
+        //Add the vlog structure to the vlog collection
+        COMMUNITY_COLLECTION.doc(communityUID).collection('vlogs').doc(VLOG_UUID).set(vlogStructure);
+    }
+
     /**
      * Deletes a vlog based on a user's id and vlog id.
      * @param userID User UUID of vlogs to delete.
@@ -2923,6 +2947,38 @@ let subscribers = [];
             .catch(error => {
                 alert(error)
             })
+        }
+
+        getNearbyCommunitiesBasedOnCityAndState = async (city, state) => {
+            let communities = []
+
+            return new Promise(async (resolve, reject) => {
+                await COMMUNITY_COLLECTION.where('city', '==', city)
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.docs.forEach(doc => {
+                        communities.push(doc.data());
+                    })
+                })
+                .catch(error => {
+                    communities = []
+                })
+    
+    
+                await COMMUNITY_COLLECTION.where('city', '==', state)
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.docs.forEach(doc => {
+                        communities.push(doc.data());
+                    })
+                })
+                .catch(error => {
+                    communities = []
+                })
+
+                resolve(communities);
+            })
+           
         }
 }
 

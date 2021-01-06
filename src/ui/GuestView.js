@@ -72,6 +72,7 @@ import ProgramOptionsModal from './workout/program/modal/ProgramOptionsModal';
 import { Pagination } from 'react-native-snap-carousel';
 import { ActionSheetIOS } from 'react-native';
 import Swiper from 'react-native-swiper';
+import { getLupaProgramInformationStructure } from '../model/data_structures/programs/program_structures';
 
 const SKILL_BASED_INTEREST = [
   'Agility',
@@ -123,6 +124,7 @@ class GuestView extends React.Component {
       searchResults: [],
       programModalVisible: false,
       programOptionsVisible: false,
+      programOfTheDayPreviewVisible: false,
       searching: false,
       trainWithSwiperIndex: 0, //approved,
       featuredProgramsCurrentIndex: 0,
@@ -131,6 +133,7 @@ class GuestView extends React.Component {
       topPicks: [],
       featuredPrograms: [],
       featuredTrainers: [],
+      nearbyCommunities: [],
       inviteFriendsIsVisible: false,
       showLiveWorkoutPreview: false,
       programsBasedOnInterest: [],
@@ -138,6 +141,7 @@ class GuestView extends React.Component {
       suggestionBannerVisisble: false,
       bookingRequestModalIsVisible: false,
       searchBarFocused: false,
+      programOfTheDay: getLupaProgramInformationStructure(),
       bookingRequestDialogVisible: false,
       bookingEndTime: new Date(1598051730000),
       bookingStartTime: new Date(1598051730000),
@@ -156,6 +160,7 @@ class GuestView extends React.Component {
       curatedTrainers: [],
       promotedTrainers: [],
       byLupaTrainers: [],
+      currAvailableTrainersPage: 0,
       componentIsFetching: false,
     }
   }
@@ -316,7 +321,9 @@ renderSkills = () => {
               {
                 SKILL_BASED_INTEREST.map((skill, index, arr) => {
                     return  (
-                      <Chip onPress={() => this.props.navigation.navigate('Search')} mode="outlined" textStyle={{fontWeight: '800', fontFamily: 'Avenir-Heavy', color: '#FFFFFF'}} style={{backgroundColor: 'transparent', marginHorizontal: 10, borderRadius: 12}}>
+                      <Chip onPress={() => this.props.navigation.navigate('Search', {
+                        categoryToSearch: skill
+                      })} mode="outlined" textStyle={{fontWeight: '800', fontFamily: 'Avenir-Heavy', color: '#FFFFFF'}} style={{borderColor: '#FFFFFF', backgroundColor: 'transparent', marginHorizontal: 10, borderRadius: 12}}>
                      
                           {skill}
                     
@@ -389,13 +396,25 @@ renderSkills = () => {
       this.setState({ availableTrainers: [] })
     })
 
-    await this.LUPA_CONTROLLER_INSTANCE.getProgramsBasedOnInterest()
-    .then(data => {
-      this.setState({ programsBasedOnInterest: data });
-    })
-    .catch(error => {
-      this.setState({ programsBasedOnInterest: [] });
-    })
+      await this.LUPA_CONTROLLER_INSTANCE.getProgramsBasedOnInterest(this.props.lupa_data.Users.currUserData.interest, this.props.lupa_data.Users.currUserData.client_metadata.experience_level)
+      .then(data => {
+        this.setState({ programsBasedOnInterest: data });
+      })
+      .catch(error => {
+        this.setState({ programsBasedOnInterest: [] });
+      })
+
+      await this.LUPA_CONTROLLER_INSTANCE.getProgramOfTheDay().then(data => {
+        if (data == -1) {
+          this.setState({ programOfTheDay: getLupaProgramInformationStructure() })
+        } else {
+          this.setState({ programOfTheDay: data})
+        }
+      })
+
+      await this.LUPA_CONTROLLER_INSTANCE.getNearbyCommunitiesBasedOnCityAndState(this.props.lupa_data.Users.currUserData.location.city, this.props.lupa_data.Users.currUserData.location.state).then(data => {
+        this.setState({ nearbyCommunities: data })
+      })
 
     this.setState({ componentIsFetching: false })
   }
@@ -551,42 +570,63 @@ renderSkills = () => {
 
   renderProgramBasedOnInterest = () => {
     const { programsBasedOnInterest } = this.state;
-    
-    return programsBasedOnInterest.map((program, index, arr) => {
+
+    if (programsBasedOnInterest.length == 0) {
       return (
-        <TouchableOpacity style={{margin: 10, alignItems: 'center'}}>
-          <Surface style={{width: 110, height: 110, borderRadius: 5, elevation: 0}}>
-              <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 5, width: '100%', height: '100%'}} />
-          </Surface>
-          <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
-            {program.program_name}
-          </Text>
-      <ProgramInformationPreview 
-      isVisible={this.state.programModalVisible} 
-      program={program} 
-      closeModalMethod={() => this.setState({programModalVisible: false })} 
-      />
-      <ProgramOptionsModal 
-      program={program} 
-      isVisible={this.state.programOptionsVisible} 
-      closeModal={() => this.setState({ programOptionsVisible: false })} 
-      />
-      </TouchableOpacity>
+      <View style={{flex: 1}}>
+      <View style={{ padding: 20 }}>
+            <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
+              <Text style={{color: 'white'}}>
+                There are no programs available based on your interest and experience level.{" "}
+              </Text>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.navigate('Search')}>
+                Find more programs by searching.
+              </Text>
+            </Text>
+          </View>
+      </View>
       )
-    })
+    }
+    
+    return (
+      <ScrollView 
+      horizontal 
+      showsHorizontalScrollIndicator={false}>
+       {
+          programsBasedOnInterest.map((program, index, arr) => {
+            return (
+              <TouchableOpacity style={{margin: 10, alignItems: 'center'}}>
+                <Surface style={{width: 110, height: 110, borderRadius: 5, elevation: 0}}>
+                    <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 5, width: '100%', height: '100%'}} />
+                </Surface>
+                <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+                  {program.program_name}
+                </Text>
+            <ProgramInformationPreview 
+            isVisible={this.state.programModalVisible} 
+            program={program} 
+            closeModalMethod={() => this.setState({programModalVisible: false })} 
+            />
+            <ProgramOptionsModal 
+            program={program} 
+            isVisible={this.state.programOptionsVisible} 
+            closeModal={() => this.setState({ programOptionsVisible: false })} 
+            />
+            </TouchableOpacity>
+            )
+          })
+       }
+      </ScrollView>
+    )
+
 
   }
 
   renderProgramOfTheDay = () => {
-    const { programsBasedOnInterest } = this.state;
-    const program = programsBasedOnInterest[0]
-
-    if (typeof(program) == 'undefined') {
-      return;
-    }
+    const program = this.state.programOfTheDay;
 
     return (
-      <TouchableOpacity style={{margin: 10, alignItems: 'center'}}>
+      <TouchableOpacity style={{margin: 10, alignItems: 'center'}} onPress={() => this.setState({ programOfTheDayPreviewVisible: true })}>
         <Surface style={{width: Dimensions.get('window').width - 80, height: 400, borderRadius: 12, elevation: 3}}>
             <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 12, width: '100%', height: '100%'}} />
         </Surface>
@@ -709,6 +749,63 @@ renderSkills = () => {
         </View>
       );
     }
+  }
+
+  renderNearbyCommunities = () => {
+    if (this.state.nearbyCommunities.length == 0) {
+      return (
+        <View style={{flex: 1}}>
+      <View style={{ padding: 20 }}>
+            <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
+              <Text style={{color: 'white'}}>
+                There are no communities in your area.{" "}
+              </Text>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.navigate('Search')}>
+                Find more communities by searching.
+              </Text>
+            </Text>
+          </View>
+      </View>
+      )
+    }
+
+    return (
+      <ScrollView
+      horizontal
+      >
+        {
+          this.state.nearbyCommunities.map(community => {
+            return (
+            <TouchableOpacity style={{backgroundColor: 'transparent'}}  onPress={() => {}}>
+            <Surface style={{backgroundColor: 'transparent', elevation: 0, marginHorizontal: 15, marginVertical: 12 }} >
+
+              <View style={{borderRadius: 12}}>
+
+                <Image style={{borderRadius: 12, borderWidth: 0.5, width: 120, height: 120}} key={community.uid} source={{ uri: typeof(community.pictures[0]) == 'undefined' ? "" : community.pictures[0] }} size={120} />
+
+              </View>
+
+              <View style={{backgroundColor: 'transparent', alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{color: 'white', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
+                    {community.name}
+                  </Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={{color: 'white', fontFamily: 'Avenir-Light', fontSize: 12, }}>
+                    {community.city}, {community.state}
+                  </Text>
+                </View>
+              </View>
+              <View style={{ width: '100%', height: '100%', backgroundColor: 'transparent', position: 'absolute' }} />
+            </Surface>
+          </TouchableOpacity>
+            )
+          })
+        }
+      </ScrollView>
+    )
   }
 
   renderCuratedTrainers = () => {
@@ -1151,11 +1248,17 @@ renderSkills = () => {
       )
     } else {
       return (
-        <ScrollView showsHorizontalScrollIndicator={false} centerContent horizontal>
+        <ScrollView 
+        horizontal={true}
+        pagingEnabled={true}
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={(event) => this.setState({ currAvailableTrainersPage: event.nativeEvent.contentOffset.x })}
+          centerContent
+        >
 {
   this.state.availableTrainers.map(trainer => {
     return (
-      <View style={{backgroundColor: 'transparent'}}>
+      <View style={{backgroundColor: 'transparent', width: Dimensions.get('window').width}}>
            
 
       <View style={{flexDirection: 'row', alignItems: 'center', width: '100%'}}>
@@ -1233,6 +1336,14 @@ renderSkills = () => {
         </ScrollView>
       )
       
+    }
+  }
+
+  renderProgramPreviewModal = () => {
+    if (typeof(this.state.programOfTheDay) != 'undefined' && this.state.programOfTheDay.completedProgram == true) {
+      return (
+        <ProgramInformationPreview isVisible={this.state.programOfTheDayPreviewVisible} closeModalMethod={() => this.setState({ programOfTheDayPreviewVisible: false })} program={this.state.programOfTheDay} />
+      )
     }
   }
 
@@ -1330,8 +1441,8 @@ renderSkills = () => {
              <Pagination 
              dotColor="#FFFFFF"
              dotStyle={{backgroundColor: '#FFFFFF'}}
-             dotsLength={3} 
-             activeDotIndex={0} 
+             dotsLength={this.state.availableTrainers.length} 
+             activeDotIndex={this.state.currAvailableTrainersPage} 
              />
             </View>
 
@@ -1350,12 +1461,9 @@ renderSkills = () => {
                   Find your perfect program
           </Text>
               </View>
-        
-              <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}>
-                {this.renderProgramBasedOnInterest()}
-              </ScrollView>
+
+              {this.renderProgramBasedOnInterest()}
+      
             </View>
             {this.renderCreateAccountSection()}
             <View style={{ marginVertical: 10, width: '100%' }}>
@@ -1376,9 +1484,9 @@ renderSkills = () => {
                 </Text>
               </View>
         
-              <View>
-                {this.renderCuratedTrainers()}
-              </View>
+           
+                {this.renderNearbyCommunities()}
+             
             </View>
           </ScrollView>
           <SafeAreaView />
@@ -1392,6 +1500,8 @@ renderSkills = () => {
           preFilledTrainerNote={this.state.preFilledTrainerNote}
           prefilledDate={this.state.futureBookingDisplayDate}
          ref={this.bookingRequestRef} />
+
+        {this.renderProgramPreviewModal()}
         </KeyboardAwareScrollView>
       </SafeAreaView>
     );

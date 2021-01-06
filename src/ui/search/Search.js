@@ -52,6 +52,8 @@ const SKILL_BASED_INTEREST = [
     'Injury Prevention',
 ]
 
+let navigationListenerSubscription;
+
 class Search extends React.Component {
     constructor(props) {
         super(props);
@@ -78,6 +80,22 @@ class Search extends React.Component {
             categoryToSearch: '',
         }
 
+    }
+
+    componentDidMount() {
+        const { navigation, route } = this.props;
+   
+        navigationListenerSubscription = navigation.addListener('focus', () => {
+            // Prevent default action
+           // e.preventDefault();
+                    if (typeof(route.params['categoryToSearch']) != 'undefined') {
+                        this.setState({ categoryIsPressed: true, categoryToSearch: route.params['categoryToSearch']})
+                    }
+          });
+    }
+
+    componentWillUnmount() {
+        return navigationListenerSubscription;
     }
 
     handleOnPressCategory = (category) => {
