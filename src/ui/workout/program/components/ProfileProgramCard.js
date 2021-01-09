@@ -11,22 +11,18 @@ import {
 } from 'react-native';
 
 import {
-    Caption,
     Surface,
 } from 'react-native-paper';
+
 import ProgramInformationPreview from '../ProgramInformationPreview';
 import ProgramOptionsModal from '../modal/ProgramOptionsModal';
-import LupaController from '../../../../controller/lupa/LupaController'
 
 function ProfileProgramCard({ programData }) {
-
     const [programModalVisible, setProgramModalVisible] = useState(false);
     const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     });
-
-    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const handleOnPress = () => {
 
@@ -37,37 +33,28 @@ function ProfileProgramCard({ programData }) {
         else
         {
             setProgramModalVisible(true);
-          //  LUPA_CONTROLLER_INSTANCE.addProgramView(programData.program_structure_uuid);
         }
     }
 
     return (
-        <View style={{width: '100%', alignSelf: 'center', marginHorizontal: 20}}>
-
+        <View style={styles.contentContainer}>
         <TouchableWithoutFeedback onPress={handleOnPress}>
         <Surface style={styles.container}>
         <View style={styles.imageContainer}>
         <Image source={{uri: programData.program_image}} style={styles.image} />
         </View>
-      
-        
         <View style={styles.informationContentContainer}>
             <View style={styles.programInformationContainer}>
-
             <Text style={styles.programNameText}>
             {programData.program_name}
-          </Text>
-
+            </Text>
           <Text numberOfLines={2} style={styles.programDescriptionText}>
          {programData.program_description}
           </Text>
             </View>
-
           </View>
-  </Surface>
-
+        </Surface>
       </TouchableWithoutFeedback>
-
       <ProgramInformationPreview isVisible={programModalVisible} program={programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
       <ProgramOptionsModal program={programData} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
       </View>
@@ -77,6 +64,9 @@ function ProfileProgramCard({ programData }) {
 const styles = StyleSheet.create({
     container: {
         alignSelf: 'center', elevation: 3, shadowOpacity: 0.1,  borderRadius: 10, width: Dimensions.get('window').width - 70, height: 200, margin: 5, marginVertical: 15
+    },
+    contentContainer: {
+        width: '100%', alignSelf: 'center', marginHorizontal: 20
     },
     image: {
         width: '100%', height: '100%', borderTopLeftRadius: 10, borderTopRightRadius: 10,

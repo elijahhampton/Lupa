@@ -9,13 +9,13 @@ import {
     ScrollView,
     SafeAreaView,
 } from 'react-native';
- 
+
 import {
     Appbar,
     FAB,
     Divider,
     Chip,
-     Avatar, Button
+    Avatar, Button
 } from 'react-native-paper';
 
 import { useSelector } from 'react-redux'
@@ -51,24 +51,21 @@ function ShareProgramModal({ navigation, route }) {
         const updatedDisplayedUserlist = displaydUsers;
 
         var found = false;
-        for(let i = 0; i < selectedUsers.length; i++)
-        {
-            if (selectedUsers[i] == userObject.user_uuid)
-            {
+        for (let i = 0; i < selectedUsers.length; i++) {
+            if (selectedUsers[i] == userObject.user_uuid) {
 
-              updatedList.splice(i, 1);
-              updatedDisplayedUserlist.splice(i, 1);
-              found = true;
-              break;
+                updatedList.splice(i, 1);
+                updatedDisplayedUserlist.splice(i, 1);
+                found = true;
+                break;
             }
         }
 
-        if (found == false)
-        {
-            
+        if (found == false) {
+
             updatedList.push(userObject.user_uuid);
             updatedDisplayedUserlist.push(userObject);
-            
+
         }
 
         setSelectedUsers(updatedList)
@@ -76,39 +73,27 @@ function ShareProgramModal({ navigation, route }) {
         setForcedUpdate(!forcedUpdate)
     }
 
-    const waitListIncludesUser = (userObject) => {
-        for(let i = 0; i < selectedUsers.length; i++)
-        {
-            if (selectedUsers[i] == userObject.user_uuid)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     const handleApply = () => {
         if (selectedUsers.length === 0) {
-          navigation.pop();
-          return;
+            navigation.pop();
+            return;
         }
 
         try {
             LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, selectedUsers, route.params.programData);
             navigation.pop()
-        } catch(err) {
+        } catch (err) {
             navigation.pop()
         }
     }
 
     const mapSearchResults = () => {
         return searchResults.map(user => {
-            return <UserSearchResult 
-            userData={user} 
-            hasButton={true}
-            buttonTitle={selectedUsers.includes(user.user_uuid) == false ? 'Share' : 'Remove'}
-            buttonOnPress={() => handleAddToFollowList(user)}
+            return <UserSearchResult
+                userData={user}
+                hasButton={true}
+                buttonTitle={selectedUsers.includes(user.user_uuid) == false ? 'Share' : 'Remove'}
+                buttonOnPress={() => handleAddToFollowList(user)}
             />
         })
     }
@@ -130,85 +115,64 @@ function ShareProgramModal({ navigation, route }) {
         await setSearchValue(searchQuery);
 
 
-            await LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
-                setSearchResults(searchData);
-            });
-
+        await LUPA_CONTROLLER_INSTANCE.search(searchQuery).then(searchData => {
+            setSearchResults(searchData);
+        });
     }
 
     const renderSelectedUsers = () => {
         return displaydUsers.map((user) => {
             return (
-                <Chip key={user.user_uuid} style={{marginHorizontal: 10, width: 150}} avatar={() => <Avatar.Image source={{ uri: user.photo_url }} />}>
-                {user.display_name}
-            </Chip>
+                <Chip key={user.user_uuid} style={{ marginHorizontal: 10, width: 150 }} avatar={() => <Avatar.Image source={{ uri: user.photo_url }} />}>
+                    {user.display_name}
+                </Chip>
             )
         })
     }
 
     return (
         <ScrollView style={styles.container}>
-                    <Appbar.Header style={styles.appbar} theme={{
-                    colors: {
-                        primary: '#FFFFFF'
-                    }
-                }}>
-                    <Appbar.BackAction onPress={() => navigation.pop()} />
-                    <Appbar.Content title="Share Program" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
-                    <Button color="#1089ff" mode="text" onPress={handleApply}>
-                        Save
+            <Appbar.Header style={styles.appbar}>
+                <Appbar.BackAction onPress={() => navigation.pop()} />
+                <Appbar.Content title="Share Program" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25 }} />
+                <Button color="#1089ff" mode="text" onPress={handleApply}>
+                    Save
                     </Button>
-                </Appbar.Header>
-              
-        
-
-                <View style={styles.contentContainer}>
+            </Appbar.Header>
+            <View style={styles.container}>
                 <ProfileProgramCard programData={route.params.programData} />
-                <View>		                        
-                <SearchBar placeholder="Who would you like to send this to?"		              
-                    onChangeText={text => performSearch(text)}		                 
-                    platform="ios"
-                    searchIcon={<FeatherIcon name="search" color="black" size={20} />}	
-                    placeholderTextColor="rgb(199, 201, 203)"	                  
-                    containerStyle={styles.searchContainerStyle}		                  
-                    inputContainerStyle={styles.inputContainerStyle}		                   
-                    inputStyle={styles.inputStyle}		                  	                    
-                    value={searchValue} />		                    
-               
-                   		                   
-        </View>
-                <ScrollView horizontal contentContainerStyle={{marginBottom: 10}}>
-                        {renderSelectedUsers()}
-                    </ScrollView>
-                              <Divider />
-                              <View>
-                   
-        </View>
-  
-                    <ScrollView shouldRasterizeIOS={true}>
+                <View>
+                    <SearchBar placeholder="Who would you like to send this to?"
+                        onChangeText={text => performSearch(text)}
+                        platform="ios"
+                        searchIcon={<FeatherIcon name="search" color="black" size={20} />}
+                        placeholderTextColor="rgb(199, 201, 203)"
+                        containerStyle={styles.searchContainerStyle}
+                        inputContainerStyle={styles.inputContainerStyle}
+                        inputStyle={styles.inputStyle}
+                        value={searchValue} />
+                </View>
+                <ScrollView horizontal contentContainerStyle={{ marginBottom: 10 }}>
+                    {renderSelectedUsers()}
+                </ScrollView>
+                <Divider />
+                <ScrollView shouldRasterizeIOS={true}>
                     {mapSearchResults()}
                 </ScrollView>
-                    </View>
-
-            
-                    <SafeAreaView />
-            </ScrollView>
+            </View>
+            <SafeAreaView />
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, 
+        flex: 1,
         backgroundColor: '#FFFFFF'
     },
     appbar: {
-        elevation: 0
-    },
-    fab: {
-        position: 'absolute', bottom: 0, right: 0, margin: 16, backgroundColor: '#1089ff'
-    },
-    contentContainer: {
-        flex: 1
+        elevation: 0,
+        backgroundColor: '#FFFFFF'
     },
     searchContainerStyle: {
         backgroundColor: "transparent", width: '100%'
@@ -217,7 +181,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#eeeeee',
     },
     inputStyle: {
-        fontSize: 15, color: 'black',  fontFamily: 'Avenir-Roman'
+        fontSize: 15, color: 'black', fontFamily: 'Avenir-Roman'
     },
     iconContainer: {
         width: '10%', alignItems: 'center', justifyContent: 'center'
