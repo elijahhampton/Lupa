@@ -4,7 +4,8 @@ import {
   Modal,
   View,
   Animated,
-  Text
+  Text,
+  StyleSheet,
 } from 'react-native';
 
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
