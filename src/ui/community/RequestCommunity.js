@@ -87,7 +87,7 @@ function AssociateAccountModal({ isVisible, closeModal, setAssociatedAccount }) 
         <Modal presentationStyle="fullScreen" visible={isVisible}>
             <Header>
                 <Left>
-                    <Appbar.Action icon={() => <FeatherIcon name="arrow-left" size={20} style={{ padding: 3 }} onPress={closeModal} />} />
+                    <Appbar.BackAction onPress={closeModal} />
                 </Left>
 
                 <Body>
@@ -308,7 +308,7 @@ const RequestCommunity = ({ isVisible, closeModal }) => {
         <Modal presentationStyle="fullScreen" animationType="slide" visible={isVisible} onDismiss={closeModal}>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF' }}>
                 <Left>
-                    <Appbar.Action onPress={closeModal} icon={() => <FeatherIcon name="x" size={20} style={{ padding: 3 }} />} />
+                    <Appbar.BackAction onPress={closeModal} />
                 </Left>
 
                 <Body>

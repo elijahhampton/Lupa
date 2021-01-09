@@ -19,8 +19,10 @@ import LupaController from '../../../controller/lupa/LupaController';
 import { getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure } from '../../../controller/lupa/common/types';
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { Surface, Button, Caption } from 'react-native-paper';
+import { Surface, Button, Caption, FAB } from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import LUPA_DB from '../../../controller/firebase/firebase'
+import VirtualLiveWorkout from '../../workout/modal/VirtualLiveWorkout'
 interface Props {
 }
 
@@ -41,7 +43,11 @@ interface State {
     trainerData: LupaUserStructure,
     requesterData: LupaUserStructure,
     componentDidError: boolean,
+    isFirstSession: boolean,
+    firstSessionTimer: 100
 }
+
+//VIRTUAL TO DO - set countdown timer and exit out of session
 
 const mapStateToProps = (state, props) => {
     return {
@@ -66,6 +72,9 @@ class VirtualSession extends Component<Props, State> {
             trainerData: getLupaUserStructurePlaceholder(),
             requesterData: getLupaUserStructurePlaceholder(),
             componentDidError: false,
+            isFirstSession: false,
+            firstSessionTimer: 100,
+            showVirtualLiveWorkout: false,
         }
 
         this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -73,6 +82,12 @@ class VirtualSession extends Component<Props, State> {
 
     async componentDidMount() {
         await this.generateUserData()
+
+        const bookingInfo = this.props.route.params.booking;
+        if (Object.hasOwnProperty('isFirstSession') == true) {
+            this.setState({ isFirstSession: true })
+        }
+
         await this.generateUID();
         await this.generateChannelName();
         await this.generateToken();
@@ -222,6 +237,29 @@ class VirtualSession extends Component<Props, State> {
         }
     }
 
+    renderFirstSessionCaption = () => {
+            return (
+                <Caption style={{color: 'white', marginVertical: 10}}>
+                This is your first consulation with {this.state.trainerData.display_name}.  This session will end in 15 minutes.
+            </Caption>
+            )
+    }
+
+    renderVirtualHeaderContent = () => {
+        if (this.state.joinSucceed == true) {
+            return (
+        <View style={{marginVertical: 10, alignItems: 'flex-end', padding: 20, width: Dimensions.get('window').width, backgroundColor: 'transparent', alignSelf: 'center', position: 'absolute', top: 0}}>
+                  <TouchableOpacity  onPress={this.endCall}>
+              <Caption style={{color: 'white'}}>
+                  Leave Session
+              </Caption>
+              </TouchableOpacity>
+        {this.renderFirstSessionCaption()}
+          </View>
+            )
+        }
+    }
+
     renderJoinSessionView = () => {
         return (
             <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(255, 255, 255)', justifyContent: 'space-between'}}>
@@ -282,6 +320,24 @@ class VirtualSession extends Component<Props, State> {
         }
     }
 
+    renderFAB = () => {
+        if (this.state.joinSucceed == true && this.state.showVirtualLiveWorkout != true) {
+            return  <FAB small={false} onPress={() => this.setState({ showVirtualLiveWorkout: true })} icon="activity" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
+      }
+             
+      }
+      
+      renderVirtualLiveWorkout = () => {
+      //    alert(this.props.route.params.programUID)
+          if (this.state.joinSucceed == true) {
+                return <VirtualLiveWorkout 
+                isVisible={this.state.showVirtualLiveWorkout} 
+                uuid={this.props.route.params.programUID} 
+                sessionID={this.props.route.params.booking.uid}
+                />
+          }
+      }
+
     render() {
         return (
             <View style={styles.max}>
@@ -298,6 +354,10 @@ class VirtualSession extends Component<Props, State> {
                     }
                     
                 </View>
+    
+                {this.renderFAB()}
+              {this.renderVirtualLiveWorkout()}
+             {this.renderVirtualHeaderContent()}
             </View>
         )
     }
@@ -326,18 +386,6 @@ class VirtualSession extends Component<Props, State> {
                     )
                 })
                 }   
-                <View style={{width: Dimensions.get('window').width, backgroundColor: 'transparent', alignSelf: 'center', position: 'absolute', bottom: 0}}>
-                <TouchableOpacity  onPress={this.endCall}>
-                    <View style={{alignItems: 'center'}}>
-                    <Surface style={{elevation: 0, backgroundColor: 'rgb(246, 61, 70)', height: 70, width: 70, borderRadius: 70, alignItems: 'center', justifyContent: 'center'}}>
-                            <MaterialIcon name="close" size={24} color="white" />
-                    </Surface>
-                    <Caption>
-                        Leave Session
-                    </Caption>
-                    </View>
-                    </TouchableOpacity>
-                </View>
             </View>
         )
     }

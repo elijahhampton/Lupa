@@ -10,7 +10,7 @@ import {
     SafeAreaView,
     ActionSheetIOS,
 } from 'react-native';
-import { Chip, Paragraph, Caption, Divider, Surface, Button} from 'react-native-paper';
+import { Chip, Paragraph, Caption, Dialog, Divider, Snackbar, Surface, Button, Appbar} from 'react-native-paper';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Avatar } from 'react-native-elements'
 import Feather1s from 'react-native-feather1s'
@@ -33,6 +33,26 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     const [paymentComplete, setPaymentComplete] = useState(false);
     const [paymentSuccessful, setPaymentSuccessful] = useState(false);
 
+
+    const [linkedProgram, setLinkedProgram] = useState("");
+    const [linkProgramDialogVisible, setLinkProgramDialogVisible] = useState(false);
+    const [snackBarVisible, setSnackBarVisible] = useState(false);
+    const [snackBarReason, setSnackBarReason] = useState("")
+
+    useEffect(() => {
+        async function fetchLinkedProgram() {
+            const clients = trainerUserData.clients;
+            await clients.forEach(clientData => {
+                if (clientData.client == requesterUserData.user_uuid) {
+                    setLinkedProgram(clientData.linked_program)
+                }
+            })
+        }
+
+        fetchLinkedProgram();
+       
+    }, [linkedProgram])
+
     const showBookingOptions = () => {
         //show trainer sheet
         if (trainerUserData.user_uuid == currUserData.user_uuid) {
@@ -48,17 +68,18 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     const showTrainerBookingOptions = () => {
         ActionSheetIOS.showActionSheetWithOptions(
             {
-              options: ["Session Completed", "Cancel Session", "Cancel"],
+              options: ["Session Completed", "Link Program to Client", "Cancel Session", "Cancel"],
               destructiveButtonIndex: 2,
               cancelButtonIndex: 2,
             },
             buttonIndex => {
-              if (buttonIndex === 0) {
-                // cancel action
-              } else if (buttonIndex === 0) {
+             if (buttonIndex === 0) {
                   handleBookingSessionCompleted()
-              } else if (buttonIndex === 1) {
-                  handleCancelBookingSession()
+             }
+            else if (buttonIndex === 1) {
+               setLinkProgramDialogVisible(true);
+              } else if (buttonIndex === 2) {
+                handleCancelBookingSession()
               }
             }
           );
@@ -139,7 +160,11 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
 
          //Send request to make payment
          try {
-             await makePaymentToTrainer(amount)
+             if (booking.hasOwnProperty('isFirstSession') == true) {
+                 await makePaymentToTrainer(15.00)
+             } else {
+                await makePaymentToTrainer(amount)
+             }
          } catch (error) {
              await setPaymentComplete(false)
              await setPaymentSuccessful(false)
@@ -150,7 +175,19 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
         await setLoading(false);
     }
 
+    const handleLinkProgramToClient = (clientUID, program) => {
+        //TODO: update in redux
+        LUPA_CONTROLLER_INSTANCE.linkProgramToClient(clientUID, program);
+        setLinkProgramDialogVisible(false);
+    }
+
     const handleBookingSessionCompleted = async () => {
+        if (linkedProgram == "") {
+            setSnackBarVisible(true);
+            setSnackBarReason('Link a program to this client first.')
+            return;
+        }
+
         const updatedUserData = getLupaStoreState().Users.currUserData;
         //handlepayment request
         try {
@@ -185,6 +222,76 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
         }
     }
 
+    renderLinkedProgramStatus = () => {
+        if (linkedProgram == "") {
+            return (
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                          <FeatherIcon name="x" color="red" />
+   <Caption style={{color: 'red'}}>
+                    Link a program to this client though the session options before completing this session.
+                </Caption>
+                </View>
+             
+            )
+        } else {
+            return (
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                          <FeatherIcon name="check" color="#1089ff" />
+ <Caption style={{color: '#1089ff'}}>
+                    {" "} Program Linked 
+                </Caption>
+          
+                </View>
+               
+            )
+        }
+    }
+
+    const renderPaymentStatus = () => {
+        if (booking.hasOwnProperty('isFirstSession') == true) {
+            if (currUserData.user_uuid == requesterUserData.user_uuid) {
+                return (
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <FeatherIcon name="dollar-sign" color="#1089ff" style={{paddingRight: 5}} />
+                    <Caption style={{color: '#1089ff'}}>
+                        This is your first session with {trainerUserData.display_name}.  You will be charged a fixed price of $15.00.
+                    </Caption>
+                    </View>
+                )
+            } else {
+                return (
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <FeatherIcon name="dollar-sign" color="#1089ff" style={{paddingRight: 5}} />
+                    <Caption style={{color: '#1089ff'}}>
+                        This is your first session with {requesterUserData.display_name}.  {requesterUserData.display_name} will be charged a fixed price of $15.00.
+                    </Caption>
+                    </View>
+                )
+            }
+        } else {
+            if (currUserData.user_uuid == requesterUserData.user_uuid) {
+                return (
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <FeatherIcon name="dollar-sign" color="#1089ff" style={{paddingRight: 5}} />
+                    <Caption style={{color: '#1089ff'}}>
+                        This is your first session with {trainerUserData.display_name}.  You will be charged {trainerUserData.hourly_payment_rate}.
+                    </Caption>
+                    </View>
+                )
+            } else {
+                return (
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <FeatherIcon name="dollar-sign" color="#1089ff" style={{paddingRight: 5}} />
+                    <Caption style={{color: '#1089ff'}}>
+                        This is your first session with {requesterUserData.display_name}.  {requesterUserData.display_name} will be charged {trainerUserData.hourly_payment_rate}.
+                    </Caption>
+                    </View>
+                )
+            }
+        }
+      
+    }
+
     const renderSessionDuration = () => {
        let startTime = booking.start_time.split(" ")[0];
        let updatedStartTime = startTime.split(":")[1];
@@ -199,13 +306,54 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
        }
     }
 
+    const renderLinkProgramDialog = () => {
+        return (
+            <Dialog visible={linkProgramDialogVisible} style={{borderRadius: 20}}>
+                <Dialog.Title>
+                    Link a program to this client
+                </Dialog.Title>
+                <Dialog.Content>
+                    <Dialog.ScrollArea>
+                        <ScrollView>
+                            {
+                                getLupaStoreState().Programs.currUserProgramsData.map(program => {
+                                    if (program.program_structure_uuid == linkedProgram.program_structure_uuid) {
+                                        return <Text style={{marginVertical: 10, fontSize: 20, fontWeight: 'bold'}} onPress={() => setLinkedProgram(program)}> {program.program_name} </Text>
+                                    }
+                                    
+                                    return (
+                                        <Text style={{marginVertical: 10, fontSize: 20}} onPress={() => setLinkedProgram(program)}> {program.program_name} </Text>
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                    </Dialog.ScrollArea>
+                    <Button 
+                    uppercase={false}
+                    mode="contained"
+                    color="#23374d"
+                    theme={{roundness: 12}}
+                    contentStyle={{width: '90%', height: 45}}
+                    style={{width: '90%', height: 45, marginVertical: 20, alignSelf: 'center'}}
+                    onPress={() => handleLinkProgramToClient(requesterUserData.user_uuid , linkedProgram)}
+                    >
+                        <Text style={{fontWeight: '700'}}>
+                            Link Program
+                        </Text>
+                    </Button>
+                </Dialog.Content>
+            </Dialog>
+        )
+    }
+
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animationType="slide">
-            <SafeAreaView />
+            <Appbar.Header style={{backgroundColor: 'white'}}>
+                <Appbar.BackAction onPress={closeModal} />
+            </Appbar.Header>
             <View style={{flex: 1, backgroundColor: 'white'}}>
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{height: Dimensions.get('window').height, backgroundColor: 'rgba(0,0,0,0)'}}>
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{backgroundColor: 'rgba(0,0,0,0)'}}>
                      
-                            <FeatherIcon name="x" size={22} style={{margin: 10}} onPress={closeModal}  />
                       
                         <View style={{justifyContent: 'flex-start', backgroundColor: 'white', padding: 15, }}>
                             <Avatar source={{ uri: trainerUserData.photo_url }} size={120}  style={{marginVertical: 10, width: 120, height: 120, borderRadius: 10}} />
@@ -260,12 +408,18 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                                 </View>
 
 
-                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <View>
+
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                     <Feather1s name="clock" size={12} style={{paddingRight: 5, }} color='#1089ff' />
                                 <Caption style={{color: '#1089ff'}}>
                                     {renderSessionDuration()} minutes session
                                 </Caption>
                                 </View>
+                                        {renderLinkedProgramStatus()}
+                                        {renderPaymentStatus()}
+                                    </View>
+                               
                                
                            </ View>
                             <Divider />
@@ -309,7 +463,19 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                     </ScrollView>
                     
             </View>
+            {renderLinkProgramDialog()}
 
+            <Snackbar
+        visible={snackBarVisible}
+        onDismiss={() => setSnackBarVisible(false)}
+        action={{
+          label: 'Okay',
+          onPress: () => {
+            // Do something
+          },
+        }}>
+        {snackBarReason}
+      </Snackbar>
         </Modal>  
     )
 }

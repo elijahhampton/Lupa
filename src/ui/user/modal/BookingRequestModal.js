@@ -56,8 +56,9 @@ import { getLupaStoreState } from '../../../controller/redux';
 import { Input } from 'react-native-elements';
 import { KeyboardAvoidingView } from 'react-native';
 import { extractDateStringFromFormattedMoment, extractDateStringFromMoment } from '../../../common/service/DateTimeService';
+import FullScreenLoadingIndicator from '../../common/FullScreenLoadingIndicator';
 
-const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledStartTime, preFilledEndTime, preFilledDate, preFilledTrainerNote}, ref) => {
+const BookingRequestModal = ({trainer, closeModal, isVisible, preFilledStartTime, preFilledEndTime, preFilledDate, preFilledTrainerNote}) => {
 
    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -72,13 +73,6 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
   const bookingRef = createRef();
   const swipeToVerifyRef = createRef();
 
-  const [sixtyRadioButtonChecked, setSixtyRadioButtonChecked] = useState('checked')
-  const [ninetyRadioButtonChecked, setNinetyRadioButtonChecked] = useState('unchecked')
-
-  const [paymentSuccessful, setPaymentSuccessful] = useState(false)
-  const [paymentComplete, setPaymentComplete] = useState(true)
-  const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState("")
   const [showCardNeededDialog, setShowCardNeededDialogVisible] = useState(false);
   const [bookingCreationError, setBookingCreationErrorDialogVisible] = useState(false);
 
@@ -97,16 +91,17 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
 
   const [startTimeIsSet, setStartTimeIsSet] = useState(false);
   const [endTimeIsSet, setEndTimeIsSet] = useState(false);
-
+  const [currPage, setCurrPage] = useState(0);
   const [sessionMenuVisible, setSessionMenuVisible] = useState(false)
   const [bookingDisplayDate, setBookingDisplayDate] = useState(moment(new Date()).format('LL').toString());
   const [bookingDate, setBookingDate] = useState(new Date());
   const [sessionTypeDialogIsVisible, setSessionTypeDialogIsVisible] = useState(false);
-
+  const [creatingBookingSession, setIsCreatingBookingSession] = useState(false);
   const [cardAddedToStripeStatus, setCardAddedToStripeStatus] = useState(false)
   const [timeBlockDialogVisible, setTimeBlockDialogVisible] = useState(false);
   const updatedUserData = getLupaStoreState().Users.currUserData;
 
+  const [confirmingSession, setConfirmingSession] = useState(false);
 
   useEffect(() => {
     setBookingDate(preFilledDate || bookingDate)
@@ -281,6 +276,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
     }
 
     const handleOnRequest = async () => {
+      setConfirmingSession(true)
       const updatedUserData = getLupaStoreState().Users.currUserData;
       if (updatedUserData.stripe_metadata.card_added_to_stripe == false) {
         setShowCardNeededDialogVisible(true)
@@ -291,8 +287,9 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
       const booking_id = booking.uid;
 
       try {
-        await LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking, true)
+        await LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking, true);
         resetState();
+        setConfirmingSession(false);
         closeModal()
       } catch(error) {
         LOG_ERROR('BookingRequestModal.js', 'Failed to creating booking.', error);
@@ -302,6 +299,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
         //show warning to user
         setBookingCreationErrorDialogVisible(true);
         resetState();
+        setConfirmingSession(false);
       }
   }
 
@@ -313,6 +311,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
     }
 
     const resetState = () => {
+      setCurrPage(0)
       setTrainerNote("")
       setStartTime(new Date())
       setStartTimeFormatted(moment(new Date()).format('LT').toString())
@@ -358,86 +357,22 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, preFilledSta
       )
     }
 
-    const renderFollowButton = () => {
-      try {
-      const updatedUserData = getLupaStoreState();
-      return updatedUserData.following.includes(trainer.user_uuid) === true ?
-        <Button 
-        contentStyle={{width: 140}}
-      theme={{
-        roundness: 12
-      }}
-      onPress={() => LUPA_CONTROLLER_INSTANCE.unfollowUser(trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid)} color="#1089ff" 
-      uppercase={false} 
-      mode="outlined" 
-      style={{marginVertical: 20, marginHorizontal: 10}}>
-      <Text style={{fontSize: 12}}>
-        Unfollow
-      </Text>
-      </Button>
-                 :
-                 <Button 
-                 contentStyle={{width: 140}}
-               theme={{
-                 roundness: 3
-               }}
-               onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid)} color="#1089ff" 
-               uppercase={false} 
-               mode="outlined" 
-               style={{marginVertical: 20, marginHorizontal: 10}}>
-               <Text style={{fontSize: 12}}>
-                 Follow
-               </Text>
-               </Button>
-    } catch(error) {
+  const renderComponent = () => {
+    switch(currPage) {
+      case 0:
         return (
-          <Button 
-          contentStyle={{width: 140}}
-        theme={{
-          roundness: 12
-        }}
-        onPress={() => LUPA_CONTROLLER_INSTANCE.followUser(trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid)} color="#1089ff" 
-        uppercase={false} 
-        mode="outlined" 
-        style={{marginVertical: 20, marginHorizontal: 10}}>
-        <Text style={{fontSize: 12}}>
-          Follow
-        </Text>
-        </Button>
-        )
-    }
-  }
-  
-  return (
-    <RBSheet
-    dragFromTopOnly={true}
-      height={650}
-      ref={ref}
-      
-      customStyles={{
-        wrapper: {
-
-        },
-        container: {
-            borderTopRightRadius: 15,
-            borderTopLeftRadius: 15,
-        },
-        draggableIcon: {
-
-        }
-      }}>
-        <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+          <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
           <KeyboardAvoidingView style={{flex: 1}}>
 
-            <Dialog.Title style={{fontFamily: 'Avenir'}}>
-              Schedule a session with {trainer.display_name}
-            </Dialog.Title>
 
   <View style={{flex: 1, justifyContent: 'space-evenly'}}>
+  <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 20, paddingHorizontal: 20}}>
+              Schedule a session with {trainer.display_name}
+            </Text>
 
   <View style={{paddingHorizontal: 20}}>
 <View style={{ alignItems: 'center', justifyContent: 'space-between'}}>
-<Text style={{fontFamily: 'Avenir-Heavy', color: 'black', fontSize: 16}}>
+<Text style={{fontFamily: 'Avenir-Medium', color: 'black', fontSize: 16}}>
        What would you like to work on?   
 </Text>
 <Input 
@@ -517,9 +452,9 @@ inputContainerStyle={{paddingLeft: 8, height: 55, alignSelf: 'flex-start', borde
 
 <View>
 <Button 
-onPress={handleOnRequest}
+onPress={() => setCurrPage(1)}
 mode="contained" 
-color="#1089ff"
+color="#23374d"
 uppercase={false}
 style={{alignSelf: 'center', elevation: 0, marginVertical: 5}} 
 contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
@@ -548,15 +483,100 @@ theme={{roundness: 12}}>
         </View>
         </KeyboardAvoidingView>
         </View>
+        )
+      case 1:
+        return (
+          <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+           
+              <View style={{paddingHorizontal: 15, alignItems: 'flex-start', justifyContent: 'center', flex: 1, backgroundColor: '#23374d'}}>
+              <Caption onPress={() => setCurrPage(0)} style={{color: 'white'}}>
+              Back
+            </Caption>
+                <View style={{marginVertical: 10, borderRadius: 60, width: 60, height: 60,backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center'}}>
+                  <FeatherIcon size={20} name="check" />
+                </View>
+                <Text style={{marginVertical: 10, color: 'white', fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
+                  {LUPA_STATE.Users.currUserData.display_name}
+                </Text>
+                <Text style={{marginVertical: 10, fontFamily: 'Avenir-Heavy', fontSize: 26, color: 'white'}}>
+                  Thank you for booking a personal trainer using Lupa.  Here are the details.
+                </Text>
+              </View>
+              <View style={{flex: 1, padding: 20, justifyContent: 'space-evenly'}}>
+                <View>
+
+             
+                <View>
+                  <Text style={{fontSize: 20, fontFamily: 'Avenir-Medium'}}>
+                    Session Date: {bookingDisplayDate}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text style={{fontSize: 20, fontFamily: 'Avenir-Medium'}}>
+                    Session Start Time: {startTimeFormatted}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text style={{fontSize: 20, fontFamily: 'Avenir-Medium'}}>
+                    Gym: {trainer.homegym.name}
+                  </Text>
+                  <Text style={{fontSize: 20, fontFamily: 'Avenir-Medium'}}>
+                    Address: {trainer.homegym.address}
+                  </Text>
+                </View>
+                </View>
+
+                <View>
+                  <Paragraph>
+                    {trainerNote}
+                  </Paragraph>
+                </View>
+
+                <Caption>
+                  Your session with {trainer.display_name} is {sessionType == SESSION_TYPE.REMOTE ? 'a Remote' : 'an In Person'} session.
+                </Caption>
+
+                <Divider />
+
+                <Button 
+onPress={handleOnRequest}
+mode="contained" 
+color="#23374d"
+uppercase={false}
+style={{alignSelf: 'center', elevation: 0, marginVertical: 5}} 
+contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
+theme={{roundness: 12}}>
+  <Text style={{fontWeight: '600'}}>
+    Confirm Session
+  </Text>
+</Button>
+                
+              </View>
+          </View>
+        )
+      default:
+
+    }
+  }
+  
+  return (
+    <Modal
+    presentationStyle="fullScreen"
+    visible={isVisible}>
+      {renderComponent()}
+        
         {renderDisplayDatePicker()}
         {renderStartTimePicker()}
         {renderCardNeededDialog()}
         {renderBookingCreationErrorDialog()}
         {renderSessionTypeDialog()}
+        <FullScreenLoadingIndicator isVisible={confirmingSession} />
         <SafeAreaView />
-      </RBSheet>
+      </Modal>
   )
-    })
+    }
 
 
 const styles = StyleSheet.create({

@@ -55,7 +55,7 @@ function HourlyPaymentModal({ isVisible, closeModal }) {
     return (
                 <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
                 <Appbar.Header style={{backgroundColor: 'white', elevation: 0, borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}>
-                <Appbar.Action icon={() => <FeatherIcon name="arrow-left" size={20} style={{padding: 3}} />} onPress={() => navigation.pop()} />
+                <Appbar.BackAction onPress={() => navigation.pop()} />
                 <Appbar.Content  title="Hourly Payment" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 26}} />
                 <Button mode="text" color="#1089ff" compact onPress={handleOnSave}>
                     Save

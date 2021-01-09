@@ -79,7 +79,7 @@ function EditBioModal(props) {
     <Modal presentationStyle="fullScreen" animated={true} animationType="slide" visible={props.isVisible} style={{backgroundColor: 'white'}}>
        <SafeAreaView style={{flex: 1}}>
         <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0, alignItems: 'center'}}>
-            <Appbar.Action icon={() => <Feather1s name="x" size={22} />} onPress={() => props.closeModalMethod()}/>
+            <Appbar.BackAction onPress={() => props.closeModalMethod()}/>
             <Appbar.Content title="Biography" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             <Button theme={{colors: {
                 primary: 'rgb(33,150,243)'

@@ -95,38 +95,31 @@ function VlogFeedCardExpanded({ route, navigation }) {
                         {program.program_duration} Weeks
                     </Text>
                     </View>
-                    
-
-               
-    </View>
+                </View>
                 )
             })
 
         } catch(error) {
             LOG_ERROR('LiveWorkoutFullScreenContentModal', 'Caught unhandled exception in renderVlogOwnerPrograms', error);
+            return null;
         }
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header style={{backgroundColor: 'white', borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', elevation: 0}}>
-                <Appbar.Action icon={() =>  <Feather1s  size={22} name="x" color="black" onPress={() => navigation.pop()}/>} />
+                <Appbar.BackAction onPress={() => navigation.pop()} />
                 <Appbar.Content title="Vlog"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
            <ScrollView>
            <VlogFeedCard vlogData={route.params.vlogData} clickable={false} />
-
             <Divider style={{marginVertical: 10, marginHorizontal: 10}} />
-
-            
            <View>
                <Text style={{fontSize: 15, fontFamily: 'Avenir-Heavy', padding: 10}}>
                    By {vlogOwnerData.display_name}
                </Text>
                {renderVlogOwnerPrograms()}
            </View>
-
-
            </ScrollView>
         </SafeAreaView>
     )

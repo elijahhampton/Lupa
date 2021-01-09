@@ -40,7 +40,6 @@ import LOG, { LOG_ERROR } from '../../../common/Logger';
 import VlogFeedCard from '../component/VlogFeedCard'
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import EditBioModal from './settings/modal/EditBioModal'
-import BookingRequestModal from '../modal/BookingRequestModal';
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
 import { getLupaStoreState } from '../../../controller/redux';
 import HourlyPaymentModal from '../modal/HourlyPaymentModal';
@@ -60,7 +59,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const [forceUpdate, setForceUpdate] = useState(false);
     const [trailingInterestLength, setTrainingInterestLength] = useState(0);
     const [trainingInterestTextVisible, showTrailingInterestText] = useState(false)
-    const [trainerBookingModalVisible, setTrainerBookingModalVisible] = useState(false);
     
     const dispatch = useDispatch();
     
@@ -544,7 +542,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-            <Appbar.Action icon={() => <FeatherIcon name="arrow-left" style={{padding: 3}} size={20} onPress={() => navigation.pop()} />} />
+            <Appbar.BackAction onPress={() => navigation.pop()} />
                 <Appbar.Content onPress={handleHourPaymentOnPress} title={`$${userData.hourly_payment_rate}/HR`} titleStyle={{color: isCurrentUser == false ? 'black' : '#1089ff', fontWeight: '500', alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontSize: 22}}/>
             </Appbar.Header>
             
@@ -607,7 +605,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
             {renderFAB()}
 
-            <BookingRequestModal closeModal={() => setTrainerBookingModalVisible(false)} isVisible={trainerBookingModalVisible} trainer={userData} />
             <EditBioModal isVisible={editBioModalVisible} closeModalMethod={() => setEditBioModalVisible(false)} />
         <SafeAreaView />
         </View>

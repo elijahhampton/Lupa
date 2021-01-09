@@ -20,7 +20,7 @@ function FullScreenLoadingIndicator({ isVisible }) {
         presentationStyle="overFullScreen"
         >
                     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.8)'}}>
-          <ActivityIndicator size="large" color="#FFFFFF" />
+          <ActivityIndicator animating={true} size="large" color="#FFFFFF" />
       </View>
         </Modal>
     )

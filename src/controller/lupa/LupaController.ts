@@ -1038,4 +1038,8 @@ export default class LupaController {
     });
   }
 
+  linkProgramToClient = (clientUID, program) => {
+    USER_CONTROLLER_INSTANCE.linkProgramToClient(clientUID, program);
+  }
+
 }

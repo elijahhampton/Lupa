@@ -153,7 +153,7 @@ function ShareProgramModal({ navigation, route }) {
                         primary: '#FFFFFF'
                     }
                 }}>
-                    <Appbar.Action onPress={() => navigation.pop()} icon={() => <ThinFeatherIcon name="arrow-left" size={20} />}/>
+                    <Appbar.BackAction onPress={() => navigation.pop()} />
                     <Appbar.Content title="Share Program" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                     <Button color="#1089ff" mode="text" onPress={handleApply}>
                         Save

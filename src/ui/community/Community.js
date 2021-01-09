@@ -288,7 +288,7 @@ function CreateEventModal({ isVisible, closeModal, community }) {
     <Modal presentationStyle="fullScreen" visible={isVisible} animationType="slide">
       <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
           <Appbar.Header style={{backgroundColor: '#FFFFFF', elevation: 0}}>
-            <Appbar.Action icon={() => <FeatherIcon name="arrow-left" size={20} style={{padding: 3}} onPress={closeModal} />} onPress={closeModal} />
+            <Appbar.BackAction onPress={closeModal} />
             <Appbar.Content title="Create Event" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', borderBottomColor: '#EEEEEE', borderBottomWidth: 1, fontWeight: 'bold', fontSize: 25}} />
          
           </Appbar.Header>

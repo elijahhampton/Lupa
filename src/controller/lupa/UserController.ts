@@ -706,6 +706,24 @@ export default class UserController {
                     has_completed_onboarding: true
                 })
                 break;
+            case 'clients':
+                let clients = [];
+                await currentUserDocument.get().then(snapshot => {
+                    clients = snapshot.data().clients;
+                });
+
+                clients.push(value);
+
+                if (optionalData == 'add') {
+                    clients.push(value);
+                } else if (optionalData == 'remove') {
+                   clients.splice(clients.indexOf(value), 1);
+                }
+
+                currentUserDocument.update({
+                    clients: clients
+                })
+                break;
         }
     }
 
@@ -2091,6 +2109,19 @@ export default class UserController {
         const requesterUUID = booking.requester_uuid;
         const trainerUUID = booking.trainer_uuid;
 
+        LUPA_DB.collection('bookings')
+        .where('requester_uuid', '==', requesterUUID)
+        .where('trainer_uuid', '==', trainerUUID)
+        .get()
+        .then(querySnapshot => {
+            if (querySnapshot.docs.size == 0) {
+                Object.defineProperty(booking, 'isFirstSession', {
+                    value: true,
+                    writable: false
+                  });
+            }
+        })
+
         //create booking
         await LUPA_DB.collection('bookings').doc(booking.uid).set(booking)
             .then(docRef => {
@@ -2236,6 +2267,7 @@ export default class UserController {
     handleAcceptedBooking = async (booking_uid: String | Number) => {
         const bookingID = booking_uid;
         let booking = {}
+
         await LUPA_DB.collection('bookings').doc(bookingID).get().then(documentSnapshot => {
             booking = documentSnapshot.data();
             booking.status = BOOKING_STATUS.BOOKING_ACCEPTED
@@ -2243,6 +2275,8 @@ export default class UserController {
 
         const trainer_uuid = booking.trainer_uuid;
         const requester_uuid = booking.requester_uuid;
+
+        this.updateCurrentUser('clients', {client: requester_uuid, linked_program: ""}, "add", "");
 
         LUPA_DB.collection('bookings').doc(bookingID).update({
             status: BOOKING_STATUS.BOOKING_ACCEPTED
@@ -2452,7 +2486,7 @@ export default class UserController {
             clientsData = []
         } else {
             for (let i = 0; i < clients.length; i++) {
-                await this.getUserInformationByUUID(clients[i]).then(data => {
+                await this.getUserInformationByUUID(clients[i].client).then(data => {
                     clientsData.push(data);
                 })
             }
@@ -2979,6 +3013,29 @@ let subscribers = [];
                 resolve(communities);
             })
            
+        }
+
+        linkProgramToClient = async (clientUID, program) => {
+            const userDocRef = USER_COLLECTION.doc(clientUID);
+            await userDocRef.get().then(documentSnapshot => {
+                let userData = documentSnapshot.data();
+                let updatedClientsList = userData.clients;
+
+                console.log('clients: ' + updatedClientsList)
+
+                for (let i = 0; i < updatedClientsList.length; i++) {
+                    if (updatedClientsList[i].client == clientUID) {
+                        console.log('@@@@@@@@@@@@@@@@')
+                        console.log(program);
+                        updatedClientsList[i].linked_program = program.program_structure_uuid
+                        continue;
+                    }
+                }
+
+                userDocRef.update({
+                    clients: updatedClientsList
+                })
+            })
         }
 }
 

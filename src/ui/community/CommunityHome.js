@@ -102,7 +102,7 @@ function EditPhotosModal({ closeModal, isVisible, community }) {
     return (
       <Modal visible={isVisible} presentationStyle="fullScreen" animationType="slide">
          <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
-                  <Appbar.Action icon={() => <FeatherIcon name="arrow-left" size={20} />} onPress={closeModal} />
+                  <Appbar.BackAction onPress={closeModal} />
                   <Appbar.Content title="Edit Photos" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', borderBottomColor: '#EEEEEE', borderBottomWidth: 1,  fontWeight: 'bold', fontSize: 25}} />
                   <Button onPress={handleOnLeaveModal} mode="text" color="#1089ff" uppercase={false}>
                     Save
@@ -231,14 +231,14 @@ const CommunityHome = ({ navigation, route }) => {
         <View style={{flex: 1}}>
           <Header style={{backgroundColor: COLOR}} noShadow={false} hasTabs>
          <Left>
-         <Appbar.Action icon={() => <FeatherIcon onPress={() => navigation.pop()} name="arrow-left" size={20} style={{padding: 3}} />} />
+         <Appbar.BackAction onPress={() => navigation.pop()} />
          </Left>
 
          <Right>
         
 {
   community.associatedAccount == currUserData.user_uuid ?
-<Appbar.Action icon={() => <FeatherIcon name="more-vertical" size={20} style={{padding: 3}} onPress={openActionSheet} />} onPress={openActionSheet} />
+<Appbar.BackAction onPress={openActionSheet} />
 :
 null
 }

@@ -124,7 +124,7 @@ const MyClients = ({ navigation, route }) => {
     return (
         <View style={{flex: 1, backgroundColor: 'white'}}>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0}}>
-                <Appbar.Action onPress={() => navigation.pop()} icon={() => <Feather1s thin={true} name="arrow-left" size={20} />}/>
+                <Appbar.BackAction onPress={() => navigation.pop()} />
                 <Appbar.Content title="My Clients" subtitle={`${myClientData.length} client(s)`}  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
 
             </Appbar.Header> 

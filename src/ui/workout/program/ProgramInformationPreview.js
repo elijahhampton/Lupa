@@ -497,7 +497,7 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
                       },
                   }}>
 
-<Appbar.Action icon={() => <FeatherIcon name="x" size={20} onPress={() => closeModalMethod()} />} onPress={() => closeModalMethod()} />
+<Appbar.BackAction onPress={() => closeModalMethod()} />
 
                     
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>

@@ -163,7 +163,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
     return (
         <Modal animated={true} animationType="slide" visible={isVisible} presentationStyle="fullScreen" onDismiss={closeModal}>
             <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
-                    <Appbar.Action color="black" onPress={closeModal} icon={() =>  <FeatherIcon name="arrow-left" color="black" size={20} />} />
+                    <Appbar.BackAction onPress={closeModal} />
                     <Appbar.Content title="My Programs" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <View style={{flex: 1}}>

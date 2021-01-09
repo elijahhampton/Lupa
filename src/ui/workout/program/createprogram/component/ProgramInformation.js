@@ -88,24 +88,19 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
 
   return (
     <View style={styles.root}>
-      <Appbar.Header style={{paddingHorizontal: 10, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: '#FFFFFF'}}>
+      <Appbar.Header style={styles.appBar}>
       <FeatherIcon onPress={handleCancelOnPress} name="x" size={22} onPress={() => navigation.pop()} />
-      <Appbar.Content title="Design a fitness program" style={{alignSelf: 'center'}} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
+      <Appbar.Content title="Design a fitness program" style={{alignSelf: 'center'}} titleStyle={styles.appBarTextStyle} />
       <FeatherIcon name="x" color="white" size={22} onPress={() => navigation.pop()} />
       </Appbar.Header>
-      
-
-            <View style={{flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20}}>
-
+            <View style={styles.contentContainer}>
               <View style={{ paddingHorizontal: 20, paddingVertical: 10,}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <FeatherIcon name="clock" size={15} style={{marginRight: 5}} />
                 <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
                 Select the duration
               </Text>
-             
                 </View>
-             
               <Text style={{color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
                 How long will this program last?
               </Text>
@@ -120,10 +115,8 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 {programDuration} Weeks
               </Caption>
                 </View>
-
                 <View style={{paddingVertical: 10,}}>
                   <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
-
               <View style={{ flexDirection: 'row', paddingVertical: 5, alignItems: 'center', justifyContent: 'space-between'}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <FeatherIcon name="calendar" size={18} style={{marginRight: 5}} />
@@ -131,7 +124,6 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 Add workout days 
               </Text>
               </View>
-              
               <Caption>
                   ({programWorkoutDays.length}) selected
                 </Caption>
@@ -140,8 +132,6 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 Which days will exercise be required?
               </Text>
               </View>
-            
-            
               <View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {
@@ -157,7 +147,6 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                       </Chip>
                         )
                       }
-                      
                       return (
                         <Chip onPress={() => handleOnPickDay(day)} key={day} style={{ marginHorizontal: 10, backgroundColor: '#EEEEEE', width: 100, alignItems: 'center', justifyContent: 'center'}}>
                         {day}
@@ -165,13 +154,10 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                       )
                     })
                   }
-
-                 
                 </ScrollView>
               </View>
                 </View>
             </View>
-
             <View style={{flex: 2, padding: 20, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-evenly'}}>
               <Button
               onPress={handleSaveProgramInformation}
@@ -185,14 +171,12 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
               contentStyle={{height: 60, width: Dimensions.get('window').width - 50}}>
                 Add Workouts to Program
               </Button>
-
               <Button mode="text" color="black" uppercase={false} onPress={() => setLearnMoreDialogIsVisible(true)}>
                     <Text style={{fontSize: 12}}>
                     Learn more about creating a program
                     </Text>
                  </Button>
                </View>
-
                <ProgramLearnMoreDialog isVisible={learnMoreDialogIsVisible} closeDialog={() => setLearnMoreDialogIsVisible(false)} />
                 </View>
   )
@@ -205,56 +189,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  topView: {
-    flex: 2,
-    backgroundColor: '#FFFFFF',
-    elevation: 15,
-    justifyContent: 'space-between'
+  appBar: {
+    paddingHorizontal: 10, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: '#FFFFFF'
   },
-  bottomView: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center'
+  appBarTextStyle: {
+    alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25
   },
-  divider: {
-    width: Dimensions.get('window').width - 150,
-    alignSelf: 'center'
-  },
-  container: {
-    width: "100%",
-    height: 320,
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    color: 'white',
-    margin: 10,
-    backgroundColor: 'transparent'
-  },
-  selectedType: {
-    backgroundColor: '#d4e5ff',
-    borderColor: '#BBDEFB',
-    borderWidth: 0.5
-  },
-  unselectedType: {
-    backgroundColor: '#FFFFFF',
-    borderColor: 'transparent',
-    borderWidth: 0
-  },
-  textInput: {
-    margin: 3,
-    width: '100%',
-    alignSelf: 'flex-start',
-    marginVertical: 10,
-    paddingVertical: 15,
-    fontSize: 13,
-    fontFamily: 'Avenir-Light',
-  },
-  questionText: {
-    fontFamily: "Avenir-Medium",
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#23374d'
+  contentContainer: {
+    flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20
   }
 })
 

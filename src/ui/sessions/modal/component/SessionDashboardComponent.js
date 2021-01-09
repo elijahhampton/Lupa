@@ -41,38 +41,83 @@ function SessionDashboardComponent({ booking }) {
     const [trainerUserData, setTrainerUserData] = useState(getLupaUserStructurePlaceholder());
     const [requesterUserData, setRequesterUserData] = useState(getLupaUserStructurePlaceholder());
 
+    const [programUID, setProgramUID] = useState("");
+
     useEffect(() => {
         async function fetchComponentData() {
             const updatedUserData = getLupaStoreState().Users.currUserData;
-            if (booking.requester_uuid == currUserData.user_uuid) {
-                setRequesterUserData(updatedUserData);
-                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.trainer_uuid).then(data => {
-                    setTrainerUserData(data);
-                });
-            } else {
-                setTrainerUserData(updatedUserData);
-                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.requester_uuid).then(data => {
-                    setRequesterUserData(data);
-                });
-            }
 
-            if (currUserData.user_uuid == booking.trainer_uuid) {
-                await LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(booking.trainer_uuid, 'display_name').then(attribute => {
-                    setDisplayName(attribute)
-                })
-            } else {
-                await LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(booking.requester_uuid, 'display_name').then(attribute => {
-                    setDisplayName(attribute)
-                })
+            if (trainerUserData.user_uuid != 0 && requesterUserData.user_uuid != 0) {
+                if (booking.requester_uuid == currUserData.user_uuid) {
+                    setRequesterUserData(updatedUserData);
+                    await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.trainer_uuid).then(data => {
+                        setTrainerUserData(data);
+                    });
+                } else {
+                    setTrainerUserData(updatedUserData);
+                    await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.requester_uuid).then(data => {
+                        setRequesterUserData(data);
+                    });
+                }
+    
+                if (currUserData.user_uuid == booking.trainer_uuid) {
+                    await LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(booking.trainer_uuid, 'display_name').then(attribute => {
+                        setDisplayName(attribute)
+                    })
+                } else {
+                    await LUPA_CONTROLLER_INSTANCE.getAttributeFromUUID(booking.requester_uuid, 'display_name').then(attribute => {
+                        setDisplayName(attribute)
+                    })
+                }
             }
+           
         }
         
         fetchComponentData()
-    }, [])
+
+        const clients = trainerUserData.clients;
+         clients.forEach(clientData => {
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            if (clientData.client == requesterUserData.user_uuid) {
+                console.log(clientData.linked_program)
+                setProgramUID(clientData.linked_program)
+            }
+        })
+    }, [programUID])
 
     const navigateToVirtualSession = () => {
-       navigation.push('VirtualSession', {
-           booking: booking
+        const clients = trainerUserData.clients;
+         clients.forEach(clientData => {
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            if (clientData.client == requesterUserData.user_uuid) {
+                console.log(clientData.linked_program)
+                navigation.push('VirtualSession', {
+                    booking: booking,
+                    programUID: clientData.linked_program
+                })
+
+                setProgramUID(clientData.linked_program)
+            } else {
+                alert('Please link a program to this client from the session options!')
+            }
+        })
+    }
+
+    const navigateToLiveSession = () => {
+        const clients = trainerUserData.clients;
+        clients.forEach(clientData => {
+           if (clientData.client == requesterUserData.user_uuid) {
+               console.log(clientData.linked_program)
+               navigation.push('LiveWorkout', {
+                   sessionID: booking.uid,
+                   uuid: clientData.linked_program,
+                   workoutType: 'PROGRAM',
+               })
+
+               setProgramUID(clientData.linked_program)
+           } else {
+               alert('Please link a program to this client from the session options!')
+           }
        })
     }
 
@@ -81,6 +126,12 @@ function SessionDashboardComponent({ booking }) {
             return (
                 <Caption style={{color: '#1089ff'}} onPress={navigateToVirtualSession}>
                     Join Session
+                </Caption>
+            )
+        } else if (booking.session_type == SESSION_TYPE.IN_PERSON) {
+            return (
+                <Caption style={{color: '#1089ff'}} onPress={navigateToLiveSession}>
+                    Join Live Workout
                 </Caption>
             )
         }

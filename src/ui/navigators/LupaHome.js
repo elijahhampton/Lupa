@@ -7,9 +7,7 @@ import MyPrograms from "./MyPrograms";
 import Featured from "./Featured";
 import GuestView from './GuestView';
 import { MenuIcon } from "./icons";
-import CreateWorkout from "./workout/createworkout/CreateWorkout";
 import Feather1s from "react-native-feather1s/src/Feather1s";
-import WorkoutLog from "./WorkoutLog";
 import { connect } from 'react-redux';
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import MyClients from './user/trainer/MyClients'
@@ -71,9 +69,6 @@ export class   extends Component {
       )
     } else {
       return (
-       /* <Tab heading="Workout log" {...TAB_PROPS}>
-        <WorkoutLog navigation={this.props.navigation} />
-      </Tab>*/
       null
       )
     }

@@ -25,7 +25,6 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Constants } from 'react-native-unimodules'
 import { connect } from 'react-redux';
 import UserSearchResult from '../user/profile/component/UserSearchResult';
-import LargeProgramSearchResultCard from '../workout/program/components/LargeProgramSearchResultCard'
 import ProgramInformationComponent from '../workout/program/components/ProgramInformationComponent'
 import { Header } from 'native-base'
 

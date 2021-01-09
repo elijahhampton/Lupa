@@ -35,7 +35,6 @@ import ProfileController from './src/ui/user/profile/ProfileController';
 import CreateNewPost from './src/ui/user/profile/modal/CreateNewPost';
 import ProfileNavigator from './src/ui/navigators/ProfileNavigator';
 import SettingsStackNavigator from './src/ui/navigators/SettingsNavigator';
-import CreateWorkout from './src/ui/workout/createworkout/CreateWorkout';
 import { localNotificationService } from './src/controller/firebase/service/LocalNotificationsService'
 import { fcmService } from './src/controller/firebase/service/FCMService';
 import Search from './src/ui/search/Search';

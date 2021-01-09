@@ -29,7 +29,7 @@ function ChangeHourlyRateModal({ isVisible, closeModal }) {
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible} animationType="slide" animated={true}>
                 <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomColor: 'rgb(199, 199, 204)', borderBottomWidth: 0.8 }}>
-                   <Appbar.Action icon={() => <FeatherIcon name="x" size={20} />} onPress={closeModal} />
+                   <Appbar.BackAction onPress={closeModal} />
                    <Appbar.Content title="Change Rate" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}}} />
                 </Appbar.Header>
             <View style={{flex: 1, justifyContent: 'space-between'}}>

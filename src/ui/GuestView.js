@@ -73,6 +73,8 @@ import { Pagination } from 'react-native-snap-carousel';
 import { ActionSheetIOS } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { getLupaProgramInformationStructure } from '../model/data_structures/programs/program_structures';
+import VirtualSession from './sessions/virtual/VirtualSession';
+import VirtualLiveWorkout from './workout/modal/VirtualLiveWorkout';
 
 const SKILL_BASED_INTEREST = [
   'Agility',
@@ -135,7 +137,6 @@ class GuestView extends React.Component {
       featuredTrainers: [],
       nearbyCommunities: [],
       inviteFriendsIsVisible: false,
-      showLiveWorkoutPreview: false,
       programsBasedOnInterest: [],
       feedVlogs: [],
       suggestionBannerVisisble: false,
@@ -946,7 +947,7 @@ renderSkills = () => {
     const updatedTime  = moment(startTime).add(index, 'hour').format()
    
     this.setState({ preFilledStartTime: updatedTime, requestedTrainer: trainer}, () => {
-      this.bookingRequestRef.current.open()
+      this.setState({ bookingRequestModalIsVisible: true })
     });
   }
 
@@ -1086,7 +1087,7 @@ renderSkills = () => {
     }
 
     this.setState({ componentIsFetching: false }, () => {
-      this.openBookingRequestModal()
+      this.setState({ bookingRequestModalIsVisible: true })
     });
   }
 
@@ -1498,15 +1499,18 @@ renderSkills = () => {
           {this.renderRBSheet()}
 
          <BookingRequestModal 
-          closeModal={this.closeBookingRequestModal}
+         isVisible={this.state.bookingRequestModalIsVisible}
+          closeModal={() => this.setState({ bookingRequestModalIsVisible: false })}
           trainer={this.state.requestedTrainer}
           preFilledStartTime={preFilledStartTime}
           preFilledEndTime={this.state.preFilledEndTime}
           preFilledTrainerNote={this.state.preFilledTrainerNote}
           prefilledDate={this.state.futureBookingDisplayDate}
-         ref={this.bookingRequestRef} />
+          />
 
         {this.renderProgramPreviewModal()}
+
+       
         </KeyboardAwareScrollView>
       </SafeAreaView>
     );

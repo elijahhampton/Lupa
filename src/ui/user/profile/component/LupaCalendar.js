@@ -81,7 +81,6 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
     return state.Users.currUserData;
   });
 
-  const bookingRequestModalRef = createRef();
   const [markedDates, setMarkedDates] = useState({});
   const [displayDate, setDisplayDate] = useState(new Date());
   const [entryDate, setEntryDate] = useState('');
@@ -136,7 +135,7 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
     
   }
 
-  const renderTimeBlocks = (timeBlock, year, month, day) => {
+  const renderTimeBlocks = (timeBlock, date) => {
   if (typeof(timeBlock) == 'undefined') {
     return;
   }
@@ -170,16 +169,16 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
 
   const handleCloseRequestBookingDialog = () => {
     onCloseRequestBookingDialog();
-    bookingRequestModalRef.current.close();
+    setBookingRequestModalVisible(false)
   }
 
   const handleOpenRequestBookingDialog = () => {
-    bookingRequestModalRef.current.open();
+    setBookingRequestModalVisible(true)
 
   }
 
   handleOpenBookingRequest = () => {
-        bookingRequestModalRef.current.open();
+    setBookingRequestModalVisible(true)
   }
 
   const onCloseRequestBookingDialog = () => {
@@ -360,9 +359,9 @@ height={300}>
   // Initially selected day
   selected={new Date()}
   // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-  minDate={Date()}
+  minDate={new Date()}
   // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-  maxDate={'2020-31-12'}
+  maxDate={'2025-31-12'}
   // Max amount of months allowed to scroll to the past. Default = 50
   pastScrollRange={50}
   // Max amount of months allowed to scroll to the future. Default = 50
@@ -393,7 +392,7 @@ height={300}>
              </View>
        
       
-        {renderTimeBlocks(items[entryDate])}
+        {renderTimeBlocks(items[entryDate], day)}
 <View>
      
 </View>
@@ -468,12 +467,7 @@ height={300}>
   refreshControl={null}
   // Agenda theme
   theme={{
-    selectedDayTextColor: 'black',
-    agendaDayTextColor: 'yellow',
-    agendaDayNumColor: 'green',
-    agendaTodayColor: 'red',
-    agendaKnobColor: 'rgb(199, 199, 204)',
-    backgroundColor: 'rgb(248, 248, 248)',
+  agendaDayTextColor: '#000000'
   }}
 
   // Agenda container style
@@ -481,10 +475,9 @@ height={300}>
 />
 
 <BookingRequestModal 
-ref={bookingRequestModalRef} 
 isVisible={bookingRequestModalVisible} 
 trainer={userData} 
-closeModal={handleCloseRequestBookingDialog} 
+closeModal={() => setBookingRequestModalVisible(false)} 
 />
 <SchedulerModal isVisible={editHoursModalVisible} closeModal={() => setEditHoursModalVisible(false)} displayDate={displayDate} entryDate={entryDate} />
     </View>

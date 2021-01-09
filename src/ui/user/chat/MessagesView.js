@@ -240,7 +240,7 @@ class MessagesView extends React.Component {
                 }}>
                     {
                         this.state.showChat === true ?
-                        <Appbar.Action icon={() => <FeatherIcon thin={true} name="arrow-left" size={20} />} onPress={() => this.setState({ showChat: false })} />
+                        <Appbar.BackAction onPress={() => this.setState({ showChat: false })} />
                         :
                         null
                     }

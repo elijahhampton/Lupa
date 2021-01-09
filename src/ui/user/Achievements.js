@@ -24,7 +24,7 @@ function AchievementPageModal({ isVisible, closeModal, achievementGroup, achieve
     return (
         <Modal visible={isVisible} onDismiss={closeModal} presentationStyle="fullScreen">
             <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
-                <Appbar.Action icon={() => <Feather1s name="arrow-left" size={20} />} onPress={closeModal} />
+                <Appbar.BackAction onPress={closeModal} />
                 <Appbar.Content title={achievementGroup} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap'}}>
@@ -156,7 +156,7 @@ function Achievements({ route, navigation }) {
     return (
         <View style={styles.container}>
             <Appbar.Header style={{justifyContent: 'space-between', backgroundColor: '#FFFFFF', elevation: 0}}>
-                <Appbar.Action icon={() => <FeatherIcon name="arrow-left" size={20} />} onPress={() => navigation.pop()} />
+                <Appbar.BackAction onPress={() => navigation.pop()} />
                 <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy', padding: 10}}>
                     0/500
                 </Text>

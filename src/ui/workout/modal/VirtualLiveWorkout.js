@@ -8,6 +8,7 @@ import {
     ScrollView,
     Image,
     SafeAreaView,
+    ActionSheetIOS,
     Dimensions,
     TouchableOpacity,
     TouchableWithoutFeedback,
@@ -114,7 +115,7 @@ function WorkoutFinishedModal({ isVisible, closeModal }) {
     )
   }
 
-class LiveWorkout extends React.Component {
+class VirtualLiveWorkout extends React.Component {
     constructor(props) {
         super(props);
 
@@ -163,7 +164,7 @@ class LiveWorkout extends React.Component {
     }
 
     async componentDidMount() {
-        const { sessionID } = this.props.route.params;
+        const { sessionID } = this.props;
         await this.setupLiveWorkout();
         this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData);
         await this.workoutService.initLiveWorkoutSession();
@@ -185,19 +186,14 @@ class LiveWorkout extends React.Component {
      //  Fire.shared.off();
     }
 
-    setupLiveWorkout = async () => {
-        if (this.props.route.params.programData) {
-            await this.setState({ programData: this.props.route.params.programData });
+    //this.props.programData
+    //this.props.programData.program_owner
 
-            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(this.props.route.params.programData.program_owner).then(data => {
-                this.setState({ programOwnerData: data })
-            });
-        } else if (this.props.route.params.uuid) {
+    setupLiveWorkout = async () => {
+        if (this.props.uuid) {
             try {
                 let programData = getLupaProgramInformationStructure();
-                switch(this.props.route.params.workoutType) {
-                    case 'PROGRAM':
-                        await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.route.params.uuid).then(data => {
+                        await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.props.uuid).then(data => {
                             programData = data;
                             this.setState({ programData: data })
                         })
@@ -205,21 +201,6 @@ class LiveWorkout extends React.Component {
                         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(programData.program_owner).then(data => {
                             this.setState({ programOwnerData: data })
                         });
-                        break;
-                    case 'WORKOUT':
-                        await this.LUPA_CONTROLLER_INSTANCE.getWorkoutInformationFromUUID(this.props.route.params.uuid).then(data => {
-                            programData = data;
-                            this.setState({ programData: data })
-                        })
-
-                        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(programData.program_owner).then(data => {
-                            this.setState({ programOwnerData: data })
-                        });
-                        break;
-                    default:
-                        this.setState({ ready: false, componentDidErr: true })
-                }
-    
             } catch (err) {
                 await this.setState({ ready: false, componentDidErr: true })
             }
@@ -285,7 +266,9 @@ class LiveWorkout extends React.Component {
 
     renderExercisePreviewContainer = () => {
         return (
-        <View style={{flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, justifyContent: 'space-evenly'}}>
+            <View style={{width: Dimensions.get('window').width}}>
+
+<View style={{flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
             <Surface style={{borderRadius: 12, width: 50, height: 50}}>
                  {this.renderImageSource(this.state.previousWorkout)}
@@ -322,6 +305,34 @@ class LiveWorkout extends React.Component {
             </Caption>
             </View>
         </View>
+
+
+        <View style={{backgroundColor: 'transparent', marginVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+            
+            <Button
+            onPress={this.openActionSheet}
+             mode="outlined"
+             theme={{roundness: 8}}
+             contentStyle={{height: 45}}
+             style={{height: 45}}
+             color="#23374d"
+            >
+                Session Options
+            </Button>
+
+            <Button
+            onPress={this.advanceExercise}
+               mode="outlined"
+               theme={{roundness: 8}}
+               contentStyle={{height: 45}}
+               style={{height: 45}}
+               color="#23374d"
+            >
+                Next Exercise
+            </Button>
+        </View>
+            </View>
+        
         )
     }
 
@@ -555,21 +566,41 @@ class LiveWorkout extends React.Component {
 }
 }
 
+openActionSheet = () => {
+const { closeModal } = this.props; 
+ActionSheetIOS.showActionSheetWithOptions(
+  {
+    options: ["Cancel", "End Workout", "Reset Workout", "Change Workout" ],
+    destructiveButtonIndex: 1,
+    cancelButtonIndex: 0
+  },
+  buttonIndex => {
+    if (buttonIndex === 0) {
+      // cancel action
+    } else if (buttonIndex === 1) {
+      // end workout
+      closeModal()
+    } else if (buttonIndex === 2) {
+        this.workoutService.initLiveWorkoutSession();
+    } else if (buttonIndex === 3) {
+        //
+    }
+  }
+)
+}
+
     renderComponentDisplay = () => {
         if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
             return (
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                    <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height })} style={{ flex: 2.5, alignItems: 'center', justifyContent: 'center' }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
+                    <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height })} style={{backgroundColor: 'transparent', flex: 2.5, alignItems: 'center', justifyContent: 'center' }}>
 
-                        <Surface style={{ backgroundColor: '#FFFFFF', height: '80%', borderRadius: 8, width: Dimensions.get('window').width - 20 }}>
-                            {this.renderImageSource(this.state.currentWorkout)}
-                            {/*this.renderContent()*/}
-                        </Surface>
+                        
                     </View>
 
                     {this.renderExercisePreviewContainer()}
 
-                    <View style={{ flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                 {/*   <View style={{backgroundColor: 'transparent', flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
                         <View style={{ paddingHorizontal: 10, flex: 2.5, alignItems: 'flex-start', justifyContent: 'center' }}>
                             <Text style={{ fontFamily: 'Avenir-Heavy' }}>
                                 {this.state.currentWorkout.workout_name}
@@ -583,8 +614,8 @@ class LiveWorkout extends React.Component {
                        </Text>
                         </View>
                     </View>
-                    <Divider style={{width: '100%'}} />
-                    <View style={{ flex: 2.5, justifyContent: 'flex-start',  alignItems: 'center'}}>
+            <Divider style={{width: '100%'}} /> */}
+                  {/*  <View style={{ flex: 2.5, justifyContent: 'flex-start',  alignItems: 'center'}}>
                                 <View style={{marginVertical: 10, flexDirection: 'row',  justifyContent: 'space-evenly', alignItems: 'center'}}>
                                 <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly', paddingHorizontal: 20}}>
                                     <Text style={{ paddingVertical: 3 }}>
@@ -641,15 +672,9 @@ class LiveWorkout extends React.Component {
 
 
                        
-                    </View>
+        </View> */}
 
                  
-
-                    <TouchableOpacity style={{ position: 'absolute', bottom: 0, right: 0, }} onPress={() => this.advanceExercise()}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: '#1089ff', width: 80, height: 80, borderTopLeftRadius: 100 }}>
-                            <ThinFeatherIcon name="arrow-right" size={30} color="white" />
-                        </View>
-                    </TouchableOpacity>
 
                 </SafeAreaView>
             )
@@ -989,56 +1014,32 @@ class LiveWorkout extends React.Component {
 
     renderLiveWorkoutTitle = () => {
         if (this.state.ready) {
-            if (this.props.route.params.programData) {
-                return this.props.route.params.programData.program_name;
-            } else if (this.props.route.params.uuid) {
-                if (this.props.route.params.workoutType == 'WORKOUT') {
-                    return null;
-                } else if (this.props.route.params.workoutType == 'PROGRAM') {
-                    return this.state.programData.program_name;
-                }
+            if (this.props.uuid) {
+                return this.state.programData.program_name;
             }
         } else {
-            return null;
+            return ''
         }
        
     }
 
     render() {
         return (
-            <>
-               <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0}}>
-                    <Appbar.BackAction onPress={this.showWarningDialog} />
-
-                    <Appbar.Content title={this.renderLiveWorkoutTitle()} titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}} />
-
-
-                   
-
-                     <TouchableWithoutFeedback style={{ marginRight: 20 }} onPress={() => this.setState({ liveWorkoutOptionsVisible: true })}>
-                     <Surface style={{ marginVertical: 5, elevation: 3, width: 35, height: 35, borderRadius: 65 }}>
-                         {this.props.lupa_data.Users.currUserData.photo_url == '' ?
-                         null 
-                         : 
-                         <Avatar.Image style={{ flex: 1 }} size={35} source={{ uri: this.props.lupa_data.Users.currUserData.photo_url }} />
-                         }
-                     </Surface>
-                     </TouchableWithoutFeedback>
-                </Appbar.Header>
+            <Modal animationType="slide" visible={this.props.isVisible} presentationStyle="overFullScreen" transparent style={{flex: 1}}>
                 
                 {this.renderComponentDisplay()}
                 {this.renderFinishWorkoutWarningDialog()}
-                {typeof(this.props.route.params.programData) == 'undefined' ? null : this.renderLiveWorkoutOptions()}
+                {typeof(this.state.programData) == 'undefined' ? null : this.renderLiveWorkoutOptions()}
                 {this.renderInteractionBottomSheet()}
                 {this.renderFeedbackDialog()}
-                {typeof(this.props.route.params.programData) == 'undefined' ? null : this.renderDescriptionDialog()}
+                {typeof(this.state.programData) == 'undefined' ? null : this.renderDescriptionDialog()}
                 {this.renderRestTimerRBSheetPicker()}
            
                 <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
                
              
-            </>
+            </Modal>
         )
     }
 }
@@ -1076,4 +1077,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps)(LiveWorkout);
+export default connect(mapStateToProps)(VirtualLiveWorkout);

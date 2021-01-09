@@ -88,7 +88,7 @@ function UpdateCard({ closeModal, isVisible }) {
         <Modal presentationStyle="fullScreen" visible={isVisible} animated={true} animationType="slide">
             <View style={styles.container}>
                 <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0, }}>
-                    <Appbar.Action onPress={closeModal} icon={() => <Feather1s thin={true} name="x" size={20} />} />
+                    <Appbar.BackAction onPress={closeModal} />
                     <Appbar.Content title="Update Card" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
                 </Appbar.Header>
                 <ScrollView contentContainerStyle={{ alignItems: 'flex-start', paddingHorizontal: 10 }}>

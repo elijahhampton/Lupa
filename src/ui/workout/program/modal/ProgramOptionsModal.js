@@ -8,11 +8,8 @@ import {
     Dimensions,
     TouchableWithoutFeedback
 } from 'react-native'
-
 import { Divider, Appbar } from 'react-native-paper'
-
 import { useSelector } from 'react-redux'
-
 import { useNavigation } from '@react-navigation/native'
 import Feather1s from 'react-native-feather1s/src/Feather1s'
 import LupaController from '../../../../controller/lupa/LupaController'
@@ -44,9 +41,9 @@ const CURR_USER_OPTIONS = [
     {
         optionTitle: 'View Trainer Profile',      
     },
-   /* {
+    {
         optionTitle: 'Launch Live Workout',
-    },*/
+    },
   /* {
         optionTitle: 'Show Program Preview',
     }*/
@@ -92,6 +89,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
             navigation.navigate('LiveWorkout', {
                 uuid: program.program_structure_uuid,
                 workoutType: 'PROGRAM',
+                
             });
         }
 
@@ -160,15 +158,21 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 }
 
     return (
-        <Modal presentationStyle="fullScreen" animated={true} animationType="slide" style={styles.modal} visible={isVisible}>
-                                               <Appbar.Header style={styles.appBar} theme={{
-                    colors: {
-                        primary: '#FFFFFF'
-                    }
-                }}>
-                    <Appbar.Action onPress={closeModal} icon={() => <Feather1s thin={true} name="x" size={20} />} />
-                    <Appbar.Content title="Program Options" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
-                </Appbar.Header>
+        <Modal 
+            presentationStyle="fullScreen" 
+            animated={true} 
+            animationType="slide" 
+            style={styles.modal} 
+            visible={isVisible}>
+             <Appbar.Header style={styles.appBar}>
+                <Appbar.BackAction 
+                onPress={closeModal} 
+                />
+                <Appbar.Content 
+                    title="Program Options" 
+                    titleStyle={styles.appBarTitleStyle} 
+                    />
+            </Appbar.Header>
             <View style={styles.container}>
                 {
                     renderDefaultOptions()
@@ -200,6 +204,9 @@ const styles = StyleSheet.create({
     appBar: {
         elevation: 0,
         backgroundColor: '#FFFFFF'
+    },
+    appBarTitleStyle: {
+        alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25
     }
 })
 

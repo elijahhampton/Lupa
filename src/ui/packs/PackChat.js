@@ -162,7 +162,7 @@ function PackChat({route, navigation}) {
             <View style={styles.container}>
             <Appbar.Header style={{ backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', elevation: 0,}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Appbar.Action onPress={() => navigation.pop()} icon={() => <FeatherIcon name="arrow-left" size={20} />} />
+                    <Appbar.BackAction onPress={() => navigation.pop()} />
                
                 </View>
                 

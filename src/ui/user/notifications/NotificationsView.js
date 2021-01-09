@@ -98,7 +98,7 @@ function NotificationsView({ navigation, route }) {
     return (
         <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
             <Appbar.Header style={styles.appbar}>
-            <Appbar.Action icon={() => <FeatherIcon name="arrow-left" size={20} />} onPress={() => navigation.pop()} />
+            <Appbar.BackAction onPress={() => navigation.pop()} />
             <Appbar.Content title="Notifications" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <View style={{flex: 1}}>
