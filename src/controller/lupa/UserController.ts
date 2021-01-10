@@ -2276,7 +2276,18 @@ export default class UserController {
         const trainer_uuid = booking.trainer_uuid;
         const requester_uuid = booking.requester_uuid;
 
-        this.updateCurrentUser('clients', {client: requester_uuid, linked_program: ""}, "add", "");
+        await USER_COLLECTION.doc(trainer_uuid).get().then(documentSnapshot => {
+            let userData = documentSnapshot.data();
+
+            for (let i = 0; i < userData.clients; i++) {
+                if (userData.clients[i].client == requester_uuid) {
+                    continue;
+                } else {
+                    this.updateCurrentUser('clients', {client: requester_uuid, linked_program: ""}, "add", "");
+                }
+            }
+        })
+        
 
         LUPA_DB.collection('bookings').doc(bookingID).update({
             status: BOOKING_STATUS.BOOKING_ACCEPTED

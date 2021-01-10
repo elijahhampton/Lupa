@@ -16,8 +16,9 @@ import {
 } from 'react-native-paper';
 import LiveWorkout from '../../../workout/modal/LiveWorkout';
 
-import ProgramInformationPreview from '../../../workout/program/ProgramInformationPreview';
-import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
+import axios from 'axios';
+
+import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../../controller/firebase/collection_structures';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { useNavigation } from '@react-navigation/native';
 import ProgramOptionsModal from '../../../workout/program/modal/ProgramOptionsModal';
@@ -26,6 +27,8 @@ import getBookingStructure from '../../../../model/data_structures/user/booking'
 import { BOOKING_STATUS, SESSION_TYPE } from '../../../../model/data_structures/user/types';
 import moment from 'moment';
 import { LOG_ERROR } from '../../../../common/Logger';
+import { getLupaStoreState } from '../../../../controller/redux';
+import { CURRENCY, initStripe, PAY_TRAINER_ENDPOINT } from '../../../../modules/payments/stripe';
 
 const {windowWidth} = Dimensions.get('window').width
 
@@ -34,11 +37,102 @@ function ReceivedBookingRequestNotification({ notificationData }) {
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const [bookingData, setBookingData] = useState(notificationData.data);
     const [componentDidErr, setComponentDidErr] = useState(false);
+
+    const [loading, setLoading] = useState(false);
+    const [paymentComplete, setPaymentComplete] = useState(false);
+    const [paymentSuccessful, setPaymentSuccessful] = useState(false);
+
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
+
+           /**
+     * Sends request to server to complete payment
+     */
+    const makePaymentToTrainer = async (amount) => {
+        let requesterUserData = getLupaUserStructurePlaceholder();
+        await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingData.requester_uuid).then(data => {
+            requesterUserData = data;
+        })
+
+        try {
+        //generate idempotencyKey to prevent double transactions
+        const idempotencyKey = await Math.random().toString()
+
+        //Get a copy of the current user data to pass some fields into the request
+        const updatedUserData = getLupaStoreState().Users.currUserData;
+
+        //Make the payment request to firebase with axios
+        axios({
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            url: PAY_TRAINER_ENDPOINT,
+            data: JSON.stringify({
+                requester_card_source: requesterUserData.stripe_metadata.card_source,
+                customer_id: requesterUserData.stripe_metadata.stripe_id,
+                trainer_card_source: updatedUserData.stripe_metadata.card_source,
+                trainer_account_id: updatedUserData.stripe_metadata.account_id,
+                amount: amount,
+                currency: CURRENCY,
+                source: requesterUserData.stripe_metadata.card_source,
+                idempotencyKey: idempotencyKey,
+                trainer_uuid: trainerUserData.user_uuid,
+                purchaser_uuid: requesterUserData.user_uuid,
+            })
+        }).then(response => {
+            console.log(response);
+        }).catch(err => {
+            console.log(err)
+            setPaymentSuccessful(false)
+            setPaymentComplete(true)
+        })
+    } catch(error ) {
+        console.log(error)
+    }
+    }
+  
+    /**
+     * Handles program purchase process
+     */
+    const handlePayBookingCost = async (amount) => {
+        await setLoading(true)
+         //handle stripe
+         await initStripe()
+
+         //Send request to make payment
+         try {
+             if (bookingData.hasOwnProperty('isFirstSession') == true) {
+                 await makePaymentToTrainer(15.00)
+             } else {
+                await makePaymentToTrainer(amount)
+             }
+         } catch (error) {
+             await setPaymentComplete(false)
+             await setPaymentSuccessful(false)
+             setLoading(false);
+             return;
+         }
+  
+        await setLoading(false);
+    }
+
+    const handleAcceptBooking = () => {
+        LUPA_CONTROLLER_INSTANCE.handleAcceptBooking(notificationData.data.uid).then(() => {
+            const updatedUserData = getLupaStoreState().Users.currUserData;
+            //handlepayment request
+            try {
+            handlePayBookingCost(updatedUserData.hourly_payment_rate);
+            } catch(error) {
+                LOG_ERROR('TrainerDashboard.js', 'Failed payment in handlePayBookingCost', error);
+                return;
+            }
+        })
+    }
 
 
     const renderBookingButtons = () => {
@@ -51,7 +145,7 @@ function ReceivedBookingRequestNotification({ notificationData }) {
         
         return bookingData.status === BOOKING_STATUS.BOOKING_REQUESTED ?
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
-        <Button uppercase={false} color="#1089ff" onPress={() => LUPA_CONTROLLER_INSTANCE.handleAcceptBooking(notificationData.data.uid)}>
+        <Button uppercase={false} color="#1089ff" onPress={handleAcceptBooking}>
             Accept
         </Button>
 

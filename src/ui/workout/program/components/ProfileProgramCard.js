@@ -19,7 +19,12 @@ import ProgramOptionsModal from '../modal/ProgramOptionsModal';
 
 function ProfileProgramCard({ programData }) {
     const [programModalVisible, setProgramModalVisible] = useState(false);
-    const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
+    const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false);
+    
+    const programPreviewRef = createRef();
+    const openProgramPreview = () => programPreviewRef.current.open();
+    const closeProgramPreview = () => programPreviewRef.current.close();
+
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     });
@@ -55,7 +60,7 @@ function ProfileProgramCard({ programData }) {
           </View>
         </Surface>
       </TouchableWithoutFeedback>
-      <ProgramInformationPreview isVisible={programModalVisible} program={programData} closeModalMethod={() => setProgramModalVisible(false)} /> 
+      <ProgramInformationPreview ref={programPreviewRef} program={programData} /> 
       <ProgramOptionsModal program={programData} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
       </View>
     )

@@ -41,6 +41,7 @@ import RequestCommunity from "./community/RequestCommunity";
 import CommunityFeed from "./community/CommunityFeed";
 import LUPA_DB from "../controller/firebase/firebase";
 import { LOG_ERROR } from "../common/Logger";
+import CommunityHome from "./community/CommunityHome";
 
 const COLOR = "#23374d";
 const TAB_PROPS = {
@@ -168,7 +169,7 @@ export class LupaHome extends Component {
     return this.state.userCommunities.map((community, index, arr) => {
       return (
         <Tab heading={community.name} {...TAB_PROPS}>
-          <CommunityFeed community={community} navigation={this.props.navigation} />
+          <CommunityHome communityData={community} />
         </Tab>
       )
     })
@@ -236,15 +237,6 @@ export class LupaHome extends Component {
             <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
                 <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{padding: 0, margin: 0}} color="#FFFFFF" />}/>
                 }>
-                    <Menu.Item
-                    onPress={this.handleOnChooseCreatePack} 
-                    theme={{roundness:20}} 
-                    contentStyle={{borderRadius: 20, width: 'auto'}} 
-                    style={{ height: 30}} 
-                    icon={() => <FeatherIcon key="globe" name="globe" color="black" style={{padding: 5}} size={18} />} 
-                    titleStyle={{fontSize: 13, fontFamily: 'Avenir-Heavy'}} 
-                    title="Create a Pack" />
-                  {
                     <Menu.Item 
                     onPress={() => this.setState({ showCommunityRequestModal: true })} 
                     theme={{roundness:20}} 
@@ -253,7 +245,6 @@ export class LupaHome extends Component {
                     icon={() => <MaterialIcon name="business" color="black" size={18} />} 
                     titleStyle={{fontSize: 13, fontFamily: 'Avenir'}} 
                   title="Add your community" /> 
-                  }
                 </Menu>
            
             </Right>

@@ -158,8 +158,8 @@ export default class LupaController {
       PROGRAMS_CONTROLLER_INSTANCE.updateProgramData(programUUID, programData);
     }
 
-    updateProgramWorkoutData = (programUUID, workoutData) => {
-      PROGRAMS_CONTROLLER_INSTANCE.updateProgramWorkoutData(programUUID, workoutData);
+    updateProgramWorkoutData = (programUUID, workoutData, numWorkoutsAdded, equipmentList) => {
+      PROGRAMS_CONTROLLER_INSTANCE.updateProgramWorkoutData(programUUID, workoutData, numWorkoutsAdded, equipmentList);
     }
 
     updateWorkoutInformation = (workoutUUID, workoutData) =>  {
@@ -849,16 +849,16 @@ export default class LupaController {
       PROGRAMS_CONTROLLER_INSTANCE.setProgramPublic(uuid, isPublic);
     }
 
-    createBookingRequest = (booking: Object, isAuthenticatedUser?: Boolean, unauthenticatedUserUUID?: String) => {
+    createBookingRequest = async (booking: Object, isAuthenticatedUser?: Boolean, unauthenticatedUserUUID?: String) => {
       if (typeof(booking) == 'undefined') {
         return;
       };
       
-      USER_CONTROLLER_INSTANCE.createBookingRequest(booking, isAuthenticatedUser, unauthenticatedUserUUID);
+      await USER_CONTROLLER_INSTANCE.createBookingRequest(booking, isAuthenticatedUser, unauthenticatedUserUUID);
     }
 
-    handleAcceptBooking = (booking_uid) => {
-      USER_CONTROLLER_INSTANCE.handleAcceptedBooking(booking_uid);
+    handleAcceptBooking = async (booking_uid) => {
+      await USER_CONTROLLER_INSTANCE.handleAcceptedBooking(booking_uid);
     }
 
     handleDeclineBooking = (booking_uid) => {

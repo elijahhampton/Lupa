@@ -51,6 +51,7 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import moment from 'moment'
 import { getLupaExerciseStructure } from '../../../model/data_structures/workout/exercise_collections';
 import LiveWorkoutService, { LIVE_SESSION_REF } from '../../../common/service/LiveWorkoutService';
+import StepIndicator from 'react-native-step-indicator';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -158,7 +159,10 @@ class LiveWorkout extends React.Component {
             descriptionDialogVisible: false,
             restTime: 3,
             previousWorkout: getLupaExerciseStructure("", "", "", ""),
-            nextWorkout: getLupaExerciseStructure("", "", "", "")
+            nextWorkout: getLupaExerciseStructure("", "", "", ""),
+            participants: [],
+            timelineData: [],
+            labelData: [],
         }
     }
 
@@ -176,6 +180,8 @@ class LiveWorkout extends React.Component {
             this.setState({ ...newState })
             console.log(data);
         })
+
+        this.workoutService.addParticipant(this.props.lupa_data.Users.currUserData);
 
         await this.setState({ ready: true });
     }
@@ -250,6 +256,19 @@ class LiveWorkout extends React.Component {
     handleCloseWarningDialog = () => {
         this.hideWarningDialog();
         this.props.navigation.pop();
+    }
+
+    renderParticipants = () => {
+        return this.state.participants.map(user => {
+            return (
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                     <Avatar.Image style={{ marginHorizontal: 10 }} size={40} source={{ uri: user.photo_url }} />
+                    <Text>
+                        {user.display_name}
+                    </Text>
+                </View>
+            )
+        })
     }
 
     renderFinishWorkoutWarningDialog = () => {
@@ -500,6 +519,7 @@ class LiveWorkout extends React.Component {
         return this.state.currentWorkout.workout_rest_time
     }
 
+
    showDialog = () => this.setState({ showFinishedDayDialog: true }) 
 
    hideDialog = () => this.setState({ showFinishedDayDialog: false }) 
@@ -572,8 +592,6 @@ class LiveWorkout extends React.Component {
                         </Surface>
                     </View>
 
-                    {this.renderExercisePreviewContainer()}
-
                     <View style={{ flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
                         <View style={{ paddingHorizontal: 10, flex: 2.5, alignItems: 'flex-start', justifyContent: 'center' }}>
                             <Text style={{ fontFamily: 'Avenir-Heavy' }}>
@@ -589,8 +607,10 @@ class LiveWorkout extends React.Component {
                         </View>
                     </View>
                     <Divider style={{ width: '100%' }} />
-                    <View style={{ flex: 2.5, justifyContent: 'flex-start', alignItems: 'center' }}>
-                        <View style={{ marginVertical: 10, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                    <View style={{ flex: 2.5, flexDirection: 'row', }}>
+                        <View style={{flex: 1, justifyContent: 'space-between' }}>
+
+                  
                             <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly', paddingHorizontal: 20 }}>
                                 <Text style={{ paddingVertical: 3 }}>
                                     Sets
@@ -612,12 +632,11 @@ class LiveWorkout extends React.Component {
                                     </Text>
                                 </View>
                             </View>
-                        </View>
+                     
 
 
 
 
-                        <View style={{ marginVertical: 10, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
                             <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
                                 <Text style={{ paddingVertical: 3 }}>
                                     Tempo
@@ -639,22 +658,67 @@ class LiveWorkout extends React.Component {
                                     </Text>
                                 </View>
                             </View>
-
                         </View>
 
 
+<View style={{flex: 1}}>
 
+<View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
+{this.renderParticipants()}
+</View>
+
+<View style={{flex: 0.5, backgroundColor: '#1089ff', justifyContent: 'flex-end'}}>
+<TouchableOpacity  style={{flex: 1, backgroundColor: '##1089ff', alignItems: 'center', justifyContent: 'center'}} onPress={() => this.advanceExercise()}>
+                        <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', height: 80 }}>
+                           <Text style={{color: '#FFFFFF', fontFamily: 'Avenir-Heavy'}}>
+                               Next Exercise
+                           </Text>
+                            <ThinFeatherIcon name="arrow-right" size={30} color="#FFFFFF" />
+                        </View>
+                    </TouchableOpacity>
+</View>
+
+</View>
 
 
                     </View>
 
+                    <View style={{flex: 0.8,  justifyContent: 'center'}}>
+                        <StepIndicator 
+                        currentPosition={this.state.currentWorkoutIndex}
+                        labels={this.state.labelData}
+                        steps={this.state.timelineData} 
+                        stepCount={this.state.timelineData.length}
+                        customStyles={{
+                            stepIndicatorSize: 25,
+  currentStepIndicatorSize:30,
+  separatorStrokeWidth: 2,
+  currentStepStrokeWidth: 3,
+  stepStrokeCurrentColor: '#1089ff', //outline
+  stepStrokeWidth: 3,
+  stepStrokeFinishedColor: '#1089ff',
+  stepStrokeUnFinishedColor: '#1089ff', //unfinished outline
+  separatorFinishedColor: '#1089ff',
+  separatorUnFinishedColor: '#1089ff',
+  stepIndicatorFinishedColor: '#1089ff',
+  stepIndicatorUnFinishedColor: '#1089ff',
+  stepIndicatorCurrentColor: '#ffffff',
+  stepIndicatorLabelFontSize: 13,
+  currentStepIndicatorLabelFontSize: 13,
+  stepIndicatorLabelCurrentColor: '#1089ff',
+  stepIndicatorLabelFinishedColor: '#ffffff',
+  stepIndicatorLabelUnFinishedColor: '#FFFFFF',
+  labelColor: '#1089ff',
+  labelSize: 13,
+  currentStepLabelColor: '#1089ff'
+                        }}
+                         />
+                    </View>
 
 
-                    <TouchableOpacity style={{ position: 'absolute', bottom: 0, right: 0, }} onPress={() => this.advanceExercise()}>
-                        <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: '#1089ff', width: 80, height: 80, borderTopLeftRadius: 100 }}>
-                            <ThinFeatherIcon name="arrow-right" size={30} color="white" />
-                        </View>
-                    </TouchableOpacity>
+
+
+                  
 
                 </SafeAreaView>
             )

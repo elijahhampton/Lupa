@@ -89,9 +89,9 @@ class CreateProgram extends React.Component {
         })
     }
 
-    saveProgramWorkoutData = async (workoutData) => {
+    saveProgramWorkoutData = async (workoutData, numWorkoutsAdded, equipmentList) => {
         LOG('CreateProgram.js', 'Updating workout data for program: ' + this.state.programData.program_structure_uuid);
-        this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.programData.program_structure_uuid, workoutData)
+        this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.programData.program_structure_uuid, workoutData, numWorkoutsAdded, equipmentList)
         this.goToIndex(2);
     }
 
@@ -157,11 +157,12 @@ class CreateProgram extends React.Component {
                 )
             case 1:
                 return <BuildWorkoutController 
+                        isEditing={false}
                         navigation={this.props.navigation} 
                         programData={this.state.programData} 
                         program_workout_days={this.state.programData.program_workout_days}
                         goToIndex={this.goToIndex} 
-                        saveProgramWorkoutData={workoutData => this.saveProgramWorkoutData(workoutData)} 
+                        saveProgramWorkoutData={(workoutData, numWorkoutsAdded, equipmentList) => this.saveProgramWorkoutData(workoutData, numWorkoutsAdded, equipmentList)} 
                         /> 
             case 2:
                 return <PublishProgram uuid={this.state.programData.program_structure_uuid} saveProgramMetadata={this.saveProgramMetadata} goBack={this.prevIndex} exit={this.exit} />

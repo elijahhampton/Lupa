@@ -27,6 +27,8 @@ export type LupaProgramInformationStructure = {
     program_workout_structure: Array<ProgramWorkoutStructureEntry>,
     num_programs_completed: Number,
     program_started: false,
+    num_exercises: Number,
+    required_equipment: Array<string>,
 }
 
 export type ProgramWorkoutStructureEntry = {

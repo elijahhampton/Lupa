@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 
 import {
     StyleSheet,
@@ -56,6 +56,7 @@ import FullScreenLoadingIndicator from '../../common/FullScreenLoadingIndicator'
 import LUPA_DB from '../../../controller/firebase/firebase';
 import { getLupaStoreState } from '../../../controller/redux';
 import { initializeNewPack } from '../../../model/data_structures/packs/packs';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 
 const { windowWidth } = Dimensions.get('window').width
@@ -268,7 +269,7 @@ function WaitListDialog({ isVisible, closeModal, program, userIsWaitlisted }) {
     )
 }
 
-function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
+const ProgramInformationPreview = forwardRef(({ isVisible, program, closeModalMethod }, ref) => {
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
     const [showProfileModal, setShowProfileModal] = useState(false)
     const [showWorkoutPreviewModal, setShowWorkoutPreviewModal] = useState(false)
@@ -278,6 +279,8 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
     const [paymentComplete, setPaymentComplete] = useState(false)
     const [waitlistDialogIsVisible, setWaitlistDialogIsVisible] = useState(false);
     const [startPackDialogIsVisible, setStartPackDialogIsVisible] = useState(false);
+
+    const [numExercises, setNumExercises] = useState(0);
 
     const [waitlistProgramData, setProgramWaitlistData] = useState([]);
 
@@ -299,15 +302,16 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
 
     useEffect(() => {
         async function fetchData() {
-            try {
-                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(program.program_owner).then(data => {
+                await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(program.program_owner)
+                .then(data => {
                     setProgramOwnerData(data)
+                }).catch((error) => {
+                    alert(err)
+                    setProgramOwnerData(getLupaProgramInformationStructure())
                 })
-            } catch(err) {
-                alert(err)
-                setProgramOwnerData(getLupaProgramInformationStructure())
-            }
         }
+
+
 
         LOG('ProgramInformationPreview.js', 'Running useEffect');
 
@@ -470,6 +474,40 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
             }
     }
 
+    const renderEquipmentList = () => {
+        if (program.required_equipment.length <= 1) {
+            return (
+                    <Caption style={{color: '#23374d'}}>
+                        Equipment Required: No equipment is required for this program!
+                    </Caption>
+                )
+        }
+        return (
+        <Caption style={{color: '#23374d'}}>
+            <Caption>
+                Equipment Required:
+            </Caption>
+            {
+                program.required_equipment.map((equipmentString, index, arr) => {
+                    if (index == arr.length) {
+                        return (
+                            <Caption>
+                                and {equipmentString}.
+                            </Caption>
+                        )
+                    }
+
+                    return (
+                        <Caption>
+                            {equipmentString},
+                        </Caption>
+                    )
+                })
+            }
+        </Caption>
+        )
+    }
+
     /**
      * Returns the program image
      * @return URI Returns a uri for the program image, otherwise ''
@@ -488,20 +526,31 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
     }
 
     return (
-        <Modal presentationStyle="fullScreen" visible={isVisible} style={styles.container} animated={true} animationType="slide">
-              <SafeAreaView style={styles.container}>
-               
-                  <Appbar.Header style={styles.appbar} theme={{
-                      colors: {
-                          primary: '#FFFFFF'
-                      },
-                  }}>
-
-<Appbar.BackAction onPress={() => closeModalMethod()} />
-
-                    
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <TouchableOpacity onPress={() => setStartPackDialogIsVisible(true)}>
+        <RBSheet 
+        ref={ref}
+        closeOnDragDown={true}
+        dragFromTopOnly={false}
+        closeOnPressMask={true}
+        animationType="slide"
+        style={styles.container}
+        height={600}
+        customStyles={{
+            container: {
+                borderTopRightRadius: 20,
+                borderTopLeftRadius: 20
+            },
+            draggableIcon: {
+                backgroundColor: 'grey'
+            }
+        }}
+        >
+              <View style={styles.container}>
+                  <ScrollView 
+                  onStartShouldSetResponderCapture={event => true}
+                  onStartShouldSetResponder={event => true}
+                  >
+                <View style={{width: '100%', justifyContent: 'flex-end', flexDirection: 'row', paddingHorizontal: 20}}>
+                <TouchableOpacity style={{alignSelf: 'flex-end'}} onPress={() => setStartPackDialogIsVisible(true)}>
                         <View style={{marginHorizontal: 5, alignItems: 'center', justifyContent: 'center',}}>
                         <View style={{borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 30, height: 30, backgroundColor: 'rgb(245, 245, 245)',}}>
                             <MaterialIcon name="group-add" size={18} />
@@ -509,8 +558,7 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
                         </View>
                         </View>
                         </TouchableOpacity>
-                    </View>
-                  </Appbar.Header>
+                </View>
                    <View style={{flexGrow: 2}}>
                        <Text style={{alignSelf: 'center', paddingVertical: 10}}>
                        {getProgramName()}
@@ -524,63 +572,82 @@ function ProgramInformationPreview({ isVisible, program, closeModalMethod }) {
                            ${program.program_price}
                        </Text>
                        
-                   </View>
-
-                   <View style={styles.programOwnerDetailsContainer}>
-                      
-                      <View style={styles.programOwnerDetailsSubContainer}>
-                      <View>
-                              <Avatar rounded source={{uri: programOwnerData.photo_url}} color="#FFFFFF" size={50} />
-                          </View>
-                          <View>
-                              <Text style={styles.mapViewText}>
-                                {programOwnerData.display_name}
-                              </Text>
-                              <Text style={styles.mapViewText}>
-                                  National Association of Sports Medicine
-                              </Text>
-                          </View>
-                      </View>
-                  </View>
-
-                   <View style={styles.programInformationContainer}>
-                       
-                       <Paragraph style={styles.programDescriptionText}>
-                           {getProgramDescription()}
-                       </Paragraph>
                        <View style={[styles.programTags, styles.alignRowAndCenter]}>
                            {getProgramTags()}
                        </View>
                    </View>
 
+                   <View style={styles.programOwnerDetailsContainer}>
+                      
+                      <View style={styles.programOwnerDetailsSubContainer}>
+                  
+                              <Avatar containerStyle={{marginHorizontal: 10}} rounded source={{uri: programOwnerData.photo_url}} color="#FFFFFF" size={50} />
+                        
+                          <View style={{justifyContent: 'center'}}>
+                              <Text style={styles.mapViewText}>
+                                {programOwnerData.display_name}
+                              </Text>
+                              <Text style={styles.mapViewText}>
+                                  {programOwnerData.certification}
+                              </Text>
+                          </View>
+                      </View>
+
+                       <Paragraph style={styles.programDescriptionText}>
+                           {getProgramDescription()}
+                       </Paragraph>
+                  </View>
+
+
+                  <View style={{justifyContent: 'center', paddingHorizontal: 10}}>
+                      <Caption style={{color: '#23374d'}}>
+                          This workout contains {program.num_exercises} different exercises.
+                      </Caption>
+
+                      <Caption style={{color: '#23374d'}}>
+                         {renderEquipmentList()}
+                      </Caption>
+                  </View>
                    </View>
+
+
+               
+                   </ScrollView>
                    <View style={styles.purchaseContainer}>
 
-                  <Button 
-                  icon={() => <FeatherIcon name="shopping-cart" color="white" size={15} />}
-                        onPress={() => setLupaPurchasePageOpen(true)} 
-                        mode="contained"
-                        theme={{
-                        roundness: 8,
-                    }}
-                    color="#1089ff"
-                    style={{width: '100%'}}>
-                        Proceed to Checkout
-                </Button>
+                   {
+                       currUserData.user_uuid != programOwnerData.user_uuid ?
+                       null
+                       :
+                       <Button 
+                       icon={() => <FeatherIcon name="shopping-cart" color="white" size={15} />}
+                             onPress={() => setLupaPurchasePageOpen(true)} 
+                             mode="contained"
+                             theme={{
+                             roundness: 8,
+                         }}
+                         color="#1089ff"
+                         style={{width: '100%'}}
+                         contentStyle={{height: 50}}
+                         >
+                             Proceed to Checkout
+                     </Button>
+                   }
                 </View>
                    <FullScreenLoadingIndicator isVisible={loading} />
-                   <PurchaseProgramWebView 
-                    isVisible={lupaPurchasePageOpen} 
-                    closeModal={() => setLupaPurchasePageOpen(false)}
-                    programUUID={program.program_structure_uuid}
-                    programOwnerUUID={programOwnerData.user_uuid}
-                    purchaserUUID={currUserData.user_uuid}
-                    />
-                   </SafeAreaView>
+                  
+                       <PurchaseProgramWebView 
+                       isVisible={lupaPurchasePageOpen} 
+                       closeModal={() => setLupaPurchasePageOpen(false)}
+                       programUUID={program.program_structure_uuid}
+                       programOwnerUUID={programOwnerData.user_uuid}
+                       purchaserUUID={currUserData.user_uuid}
+                       />
+                   </View>
                    <StartPackDialog isVisible={startPackDialogIsVisible} closeModal={() => setStartPackDialogIsVisible(false)} program={program} />
-            </Modal>
+            </RBSheet>
     )
-}
+})
 
 const styles = StyleSheet.create({
     container: {
@@ -645,7 +712,11 @@ const styles = StyleSheet.create({
         marginVertical: VERTICAL_SEPARATION,
     },
     programOwnerDetailsSubContainer: {
-        width: Dimensions.get('window').width, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'
+        width: Dimensions.get('window').width, 
+        paddingVertical: 10, 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'flex-start'
 },
     programInformationContainer: {
         marginVertical: VERTICAL_SEPARATION,
@@ -655,14 +726,15 @@ const styles = StyleSheet.create({
     },
     programDescriptionText: {
         fontFamily: 'Avenir-Light',
-        paddingVertical: 5
+        paddingVertical: 5,
+        paddingHorizontal: 10,
     },
     programPriceText: {
         fontSize: 30, 
         color: '#212121'
     },
     programTags: {
-        justifyContent: 'flex-start'
+       marginVertical: 5,
     },
     alignRowAndCenter: {
         flexDirection: 'row',

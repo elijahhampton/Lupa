@@ -32,6 +32,10 @@ function ProgramInformationComponent({ program }) {
     const [newCurrUserData, setNewCurrUserData] = useState(getLupaUserStructure())
     const [userPurchased, setUserPurchased] = useState(false)
 
+    const programPreviewRef = createRef();
+    const openProgramPreview = () => programPreviewRef.current.open();
+    const closeProgramPreview = () => programPreviewRef.current.close();
+
     const navigation = useNavigation();
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -105,7 +109,7 @@ function ProgramInformationComponent({ program }) {
                 </View>
 
                 <ProgramOptionsModal isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} program={program} />
-                <ProgramInformationPreview isVisible={programModalVisible} closeModalMethod={() => setProgramModalVisible(false)} program={program} />
+                <ProgramInformationPreview ref={programPreviewRef} program={program} />
             </View>
         </TouchableOpacity>
     )

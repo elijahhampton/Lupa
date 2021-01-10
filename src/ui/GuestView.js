@@ -113,12 +113,14 @@ class GuestView extends React.Component {
     super(props);
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
-    this.searchBarRef = createRef()
+    this.searchBarRef = createRef();
     this.bookingRef = createRef();
-    this.startTimePickerRef = createRef()
+    this.startTimePickerRef = createRef();
     this.endTimePickerRef = createRef();
     this.futureBookingDateRef = createRef();
     this.bookingRequestRef = createRef();
+
+    this.programPreview = createRef();
 
     this.state = {
       refreshing: false,
@@ -163,158 +165,17 @@ class GuestView extends React.Component {
       byLupaTrainers: [],
       currAvailableTrainersPage: 0,
       componentIsFetching: false,
+      previewingProgram: getLupaProgramInformationStructure()
     }
   }
 
-  renderImage = (skill, index) => {
-    switch (skill) {
-        case 'Agility':
-            return (
-                <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-                    <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-                    <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Agility.png')} />
-                    </Surface>
+  openProgramPreview = (program) => {
+    this.setState({ previewingProgram: program }, () => {
+      this.programPreview.current.open()
+    })
+  }
 
-                    <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
-                        {skill}
-                    </Text>
-                </TouchableOpacity>
-            )
-        case 'Speed':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Speed.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Balance':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Balance.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Power':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Power.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Coordination':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Coordination.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir', fontSize: 15, paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Reaction Time':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5,  alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/ReactionTime.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center', paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Weight Loss':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/WeightLoss.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center',  paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Test Preparation':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/TestPreparation.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '80%', textAlign: 'center',  paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Sport Specific':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/SportSpecific.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center',  paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Bodybuilding':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Bodybuilding.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Fitness Coach':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/Health:FitnessCoach.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center',  paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        case 'Injury Prevention':
-            return (
-              <TouchableOpacity style={{ marginHorizontal: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} onPress={() => this.handleOnPressCategory('Agility')}>
-              <Surface style={{elevation: 0, backgroundColor: 'rgb(245, 245, 245)', width: 'auto', height: 'auto', padding: 10, borderRadius: 20}}>
-              <Image style={{ width: 20, height: 25,  alignSelf: 'center' }} source={require('../ui/images/interest_icons/selected/InjuryPrevention.png')} />
-              </Surface>
-
-              <Text style={{ fontFamily: 'Avenir-Light', fontSize: 15, width: '70%', textAlign: 'center',  paddingVertical: 10 }}>
-                  {skill}
-              </Text>
-          </TouchableOpacity>
-            )
-        default:
-    }
-}
+  closeProgramPreview = () => this.programPreview.current.close();
 
 renderSkills = () => {
     return (  
@@ -324,7 +185,7 @@ renderSkills = () => {
                     return  (
                       <Chip onPress={() => this.props.navigation.navigate('Search', {
                         categoryToSearch: skill
-                      })} mode="outlined" textStyle={{fontWeight: '800', fontFamily: 'Avenir-Heavy', color: '#FFFFFF'}} style={{borderColor: '#FFFFFF', backgroundColor: 'transparent', marginHorizontal: 10, borderRadius: 12}}>
+                      })} key={skill} mode="outlined" textStyle={{fontWeight: '800', fontFamily: 'Avenir-Heavy', color: '#FFFFFF'}} style={{borderColor: '#FFFFFF', backgroundColor: 'transparent', marginHorizontal: 10, borderRadius: 12}}>
                      
                           {skill}
                     
@@ -598,18 +459,13 @@ renderSkills = () => {
        {
           programsBasedOnInterest.map((program, index, arr) => {
             return (
-              <TouchableOpacity style={{margin: 10, alignItems: 'center'}}>
+              <TouchableOpacity style={{margin: 10, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
                 <Surface style={{width: 110, height: 110, borderRadius: 5, elevation: 0}}>
                     <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 5, width: '100%', height: '100%'}} />
                 </Surface>
                 <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
                   {program.program_name}
                 </Text>
-            <ProgramInformationPreview 
-            isVisible={this.state.programModalVisible} 
-            program={program} 
-            closeModalMethod={() => this.setState({programModalVisible: false })} 
-            />
             <ProgramOptionsModal 
             program={program} 
             isVisible={this.state.programOptionsVisible} 
@@ -629,18 +485,13 @@ renderSkills = () => {
     const program = this.state.programOfTheDay;
 
     return (
-      <TouchableOpacity style={{margin: 10, alignItems: 'center'}} onPress={() => this.setState({ programOfTheDayPreviewVisible: true })}>
+      <TouchableOpacity style={{margin: 10, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
         <Surface style={{width: Dimensions.get('window').width - 80, height: 400, borderRadius: 12, elevation: 3}}>
             <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 12, width: '100%', height: '100%'}} />
         </Surface>
         <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
           {program.program_name}
         </Text>
-    <ProgramInformationPreview 
-    isVisible={this.state.programModalVisible} 
-    program={program} 
-    closeModalMethod={() => this.setState({programModalVisible: false })} 
-    />
     <ProgramOptionsModal 
     program={program} 
     isVisible={this.state.programOptionsVisible} 
@@ -947,7 +798,7 @@ renderSkills = () => {
     const updatedTime  = moment(startTime).add(index, 'hour').format()
    
     this.setState({ preFilledStartTime: updatedTime, requestedTrainer: trainer}, () => {
-      this.setState({ bookingRequestModalIsVisible: true })
+      this.openBookingBottomSheet(trainer)
     });
   }
 
@@ -1083,7 +934,7 @@ renderSkills = () => {
     if (typeof (trainer) == 'undefined') {
       return;
     } else {
-      await this.setState({ requestedTrainer: trainer });
+      await this.openBookingBottomSheet(trainer)
     }
 
     this.setState({ componentIsFetching: false }, () => {
@@ -1344,15 +1195,6 @@ renderSkills = () => {
     }
   }
 
-  renderProgramPreviewModal = () => {
-    if (typeof(this.state.programOfTheDay) != 'undefined' && this.state.programOfTheDay.completedProgram == true) {
-      return (
-        <ProgramInformationPreview isVisible={this.state.programOfTheDayPreviewVisible} closeModalMethod={() => this.setState({ programOfTheDayPreviewVisible: false })} program={this.state.programOfTheDay} />
-      )
-    }
-  }
-
-
   render() {
    this.checkSearchBarState()
    const { preFilledStartTime } = this.state;
@@ -1383,7 +1225,7 @@ renderSkills = () => {
             {this.renderPaymentInformationBanner()}
             {this.renderRequestAuthenticationMessage()}
             <View style={{marginVertical: 10, height: 200, backgroundColor: 'black'}}>
-              <Swiper dotColor="#FFFFFF" autoplay={true} >
+              <Swiper showsPagination={false} showsButtons={false} dotColor="#FFFFFF" autoplay={true} >
                 <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
                 <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                 <Image resizeMode="center" style={{alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}} source={require('./images/banner_images/banner1.jpeg')} />
@@ -1499,8 +1341,7 @@ renderSkills = () => {
           {this.renderRBSheet()}
 
          <BookingRequestModal 
-         isVisible={this.state.bookingRequestModalIsVisible}
-          closeModal={() => this.setState({ bookingRequestModalIsVisible: false })}
+          ref={this.bookingRef}
           trainer={this.state.requestedTrainer}
           preFilledStartTime={preFilledStartTime}
           preFilledEndTime={this.state.preFilledEndTime}
@@ -1508,8 +1349,10 @@ renderSkills = () => {
           prefilledDate={this.state.futureBookingDisplayDate}
           />
 
-        {this.renderProgramPreviewModal()}
-
+        <ProgramInformationPreview 
+    ref={this.programPreview}
+    program={this.state.previewingProgram} 
+    />
        
         </KeyboardAwareScrollView>
       </SafeAreaView>

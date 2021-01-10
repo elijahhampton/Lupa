@@ -26,7 +26,10 @@ class PurchaseProgramWebView extends React.Component {
         const programOwnerUUID = this.props.programOwnerUUID;
         const purchaserUUID = this.props.lupa_data.Users.currUserData.user_uuid;
         return (
-            <Modal presentationStyle="formSheet" visible={this.props.isVisible}>
+            <Modal 
+            presentationStyle="fullScreen" 
+            visible={this.props.isVisible}
+            >
               <WebView 
                 ref={ref => this.webviewRef = ref}
                 style={{flex: 1, width: Dimensions.get('window').width}} 

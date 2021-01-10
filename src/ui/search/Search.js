@@ -51,7 +51,7 @@ const SKILL_BASED_INTEREST = [
     'Injury Prevention',
 ]
 
-let navigationListenerSubscription;
+let navigationListenerSubscription, navigationBlurListenerSubscription;
 
 class Search extends React.Component {
     constructor(props) {
@@ -87,14 +87,26 @@ class Search extends React.Component {
         navigationListenerSubscription = navigation.addListener('focus', () => {
             // Prevent default action
            // e.preventDefault();
-                    if (typeof(route.params['categoryToSearch']) != 'undefined') {
-                        this.setState({ categoryIsPressed: true, categoryToSearch: route.params['categoryToSearch']})
-                    }
+
+           if (this.props.route.params.hasOwnProperty('categoryToSearch') == true) {
+               if (this.props.route.params.categoryToSearch != '' || this.props.route.params.categoryToSearch != undefined) {
+                this.setState({ categoryIsPressed: true, categoryToSearch: this.props.route.params['categoryToSearch']})
+               }
+           } else {
+               this.setState({ categoryIsPressed: false, categoryToSearch: '' })
+           }
           });
+
+        navigationBlurListenerSubscription = navigation.addListener('blur', () => {
+            this.setState({ categoryIsPressed: false, categoryIsPressed: ''})
+        })
     }
 
     componentWillUnmount() {
-        return navigationListenerSubscription;
+        return () => {
+            () => navigationListenerSubscription();
+            () => navigationBlurListenerSubscription();
+        }
     }
 
     handleOnPressCategory = (category) => {
@@ -297,9 +309,9 @@ class Search extends React.Component {
                     {this.renderSkills()}
             </View>
             )
-        } else if (this.state.categoryIsPressed === true) {
+        } else if (this.state.categoryIsPressed == true) {
             return this.renderCategoryResults();
-        } else if (this.state.searching === true) {
+        } else if (this.state.searching == true) {
             return this.renderSearchResults()
         } else {
             return (

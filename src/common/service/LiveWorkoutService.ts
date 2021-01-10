@@ -10,7 +10,7 @@ export const LIVE_SESSION_REF = 'live_session/';
 
 function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData: Array<LupaUserStructure>, program: LupaProgramInformationStructure) {
     this.trainer = trainerData;
-    this.participants = userData;
+    this.participants = []
     this.workoutStructure = ['Workout Name', 'Workout Name', 'Workout Name'],
     this.currentWorkout = getLupaExerciseStructure()
     this.currentWorkoutOriginalReps = 0,
@@ -24,6 +24,8 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
     this.showFinishedDayDialog = false;
     this.restTimerStarted = false;
     this.restTimerVisible = false;
+    this.timelineData = []
+    this.labelData = []
 
     if (sessionID.includes('.')) {
         this.sessionID = sessionID.split('.')[1];
@@ -59,6 +61,19 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         }
 
         return workoutStructure;
+    }
+
+    this.addParticipant = (data) => {
+        LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value').then((snapshot) => {
+            let updatedParticipantList = (snapshot.val() && snapshot.val().participants) || [];
+            updatedParticipantList.push(data);
+
+            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
+                participants: updatedParticipantList
+            }, () => {
+                this.participants = updatedParticipantList;
+            })
+          });
     }
 
     this.loadCurrentDayWorkouts = async () => {
@@ -99,12 +114,6 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         this.currentWorkoutIndex = 0;
         updatedState['currentWorkoutIndex'] = 0;
 
-        this.previousWorkout = await this.getPreviousExercise();
-        updatedState['previousWorkout'] = await this.getPreviousExercise();
-
-        this.nextWorkout = await this.getNextExercise();
-        updatedState['nextWorkout'] = await this.getNextExercise();
-
         this.showFinishedDayDialog = false;
         updatedState['showFinishedDayDialog'] = false;
 
@@ -114,6 +123,55 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         this.restTimerVisible = false;
         updatedState['restTimerVisible'] = false;
 
+        if (workoutStructure.length != 0) {
+            let exercise = getLupaExerciseStructure();
+            let stepperData = []
+            let labelData = []
+            let title : String = ""
+            let icon = ""
+            for (let i = 0; i < workoutStructure.length; i++) {
+                exercise = workoutStructure[i];
+                title = exercise.workout_name;
+                    switch(exercise.default_media_uri) {
+                        case '':
+                            icon =  ''
+                        case 'Traps':
+                            icon =  '../../images/buildworkout/singleworkout/Traps.png'
+                        case 'Chest':
+                            icon =  '../../images/buildworkout/singleworkout/Chest.png'
+                        case 'Bicep':
+                            icon =  '../../images/buildworkout/singleworkout/Bicep.png'
+                        case 'Calves':
+                            icon =  '../../images/buildworkout/singleworkout/Calves.png'
+                        case 'Core':
+                            icon =  '../../images/buildworkout/singleworkout/Core.png'
+                        case 'Glutes':
+                            icon =  '../../images/buildworkout/singleworkout/Glutes.png'
+                        case 'Supr':
+                            icon =  '../../images/buildworkout/singleworkout/Supr.png'
+                        case 'Triceps':
+                            icon =  '../../images/buildworkout/singleworkout/Triceps.png'
+                        case 'Hip':
+                            icon =  '../../images/buildworkout/singleworkout/Hip.png'
+                        default:
+                            icon = ''
+                    }
+                
+                labelData.push(title);
+                stepperData.push({
+                    title: title,
+                    icon: icon
+                })
+    
+                title = ""
+                icon = ""
+            }
+            this.labelData = labelData;
+            this.timelineData = stepperData;
+            updatedState['labelData'] = labelData;
+            updatedState['timelineData'] = stepperData;
+        }
+
         return updatedState;
     }
 
@@ -122,14 +180,6 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
     }
 
     this.advanceWorkout = async () => {
-        const currentWeek = this.currentWeek;
-        if (this.currentWorkoutIndex === this.currentWorkoutStructure.length - 1) {
-            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ showFinishedDayDialog: true });
-            this.showFinishedDayDialog = true;
-            return;
-        }
-
-
         await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
             restTimerVisible: true, 
             restTimerStarted: true 
@@ -138,14 +188,67 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         this.restTimerVisible = true;
         this.restTimerStarted = true;
 
-        if (this.currentWorkout.workout_sets == 1) {
+        if (this.currentWorkout.workout_reps > 1) {
+            let newCurrentWorkoutObj = {
+                ...this.currentWorkout,
+                workout_reps: this.currentWorkout.workout_reps
+            }
+
+            newCurrentWorkoutObj.workout_reps -= 1;
+
+
+            this.currentWorkout = newCurrentWorkoutObj;
+            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+            .update({ 
+                currentWorkout: this.currentWorkout
+            }).then(() => {
+
+            })
+        } else if (this.currentWorkout.workout_reps == 1) {
+            if (this.currentWorkout.workout_sets == 1) {
+                if (this.currentWorkoutIndex === this.currentWorkoutStructure.length - 1) {
+                    LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ showFinishedDayDialog: true });
+                    this.showFinishedDayDialog = true;
+                    return;
+                }
+
+                LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
+                    currentWorkout: this.currentWorkoutStructure[this.currentWorkoutIndex + 1],
+                    currentWorkoutIndex: this.currentWorkoutIndex + 1,
+                    currentWorkoutOriginalReps: this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_reps
+                }).then(() => {
+                    this.currentWorkout = this.currentWorkoutStructure[this.currentWorkoutIndex + 1];
+                    this.currentWorkoutIndex = this.currentWorkoutIndex + 1;
+                    this.currentWorkoutOriginalReps = this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_reps
+                });
+            } else { // > 0 sets
+                console.log('@@@@@@')
+                let newCurrentWorkoutObj = {
+                    ...this.currentWorkout,
+                }
+    
+                newCurrentWorkoutObj.workout_sets -= 1;
+                newCurrentWorkoutObj.workout_reps = this.currentWorkoutOriginalReps;
+    
+                LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+                .update({ 
+                    currentWorkout: newCurrentWorkoutObj,
+                }).then(() => {
+                    this.currentWorkout = newCurrentWorkoutObj;
+                })
+            }
+        }
+
+        /* old */
+
+       /* if (this.currentWorkout.workout_sets == 1) {
             LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
                 currentWorkout: this.currentWorkoutStructure[this.currentWorkoutIndex + 1],
                 currentWorkoutIndex: this.currentWorkoutIndex + 1
+            }).then(() => {
+                this.currentWorkout = this.currentWorkoutStructure[this.currentWorkoutIndex + 1];
+                this.currentWorkoutIndex = this.currentWorkoutIndex + 1;
             });
-
-            this.currentWorkout = this.currentWorkoutStructure[this.currentWorkoutIndex + 1];
-            this.currentWorkoutIndex = this.currentWorkoutIndex + 1;
 
         } else if (this.currentWorkout.workout_sets > 1) {
             let newCurrentWorkoutObj = {
@@ -157,52 +260,13 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
 
 
             this.currentWorkout = newCurrentWorkoutObj;
-            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
+            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+            .update({ 
                 currentWorkout: this.currentWorkout
-            });
-        }
-    }
+            }).then(() => {
 
-    this.getNextExercise = () => {
-        if (typeof(this.currentWorkoutStructure[this.currentWorkoutIndex + 1]) == 'undefined' 
-        || typeof(this.currentWorkoutStructure[this.currentWorkoutIndex + 1]) == null) {
-            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
-                nextExercise: -1
-            });
-            this.nextExercise = -1;
-        } else {
-            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
-                nextExercise:  this.currentWorkoutStructure[this.currentWorkoutIndex + 1]
-            });
-            this.nextExercise = this.currentWorkoutStructure[this.currentWorkoutIndex + 1];
-        }
-    }
-
-    this.getPreviousExercise = () => {
-        if (typeof(this.currentWorkoutStructure[this.currentWorkoutIndex - 1]) == 'undefined' 
-        || typeof(this.currentWorkoutStructure[this.currentWorkoutIndex - 1]) == null) {
-            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
-                previousExercise: -1
-            });
-            this.previousExercise = -1;
-        } else {
-            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
-                previousExercise:  this.currentWorkoutStructure[this.currentWorkoutIndex - 1]
-            });
-            this.previousExercise = this.currentWorkoutStructure[this.currentWorkoutIndex - 1];
-        }
-    }
-
-    this.getCurrentExercise = () => {
-        if (typeof(this.currentWorkout) == 'undefined' 
-        || typeof(this.currentWorkout) == null) {
-            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
-                currentWorkout: -1
-            });
-            this.currentWorkout = -1;
-        }
-
-        return this.currentWorkout;
+            })
+        }*/
     }
 }
 

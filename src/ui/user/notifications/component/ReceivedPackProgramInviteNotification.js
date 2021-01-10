@@ -14,9 +14,6 @@ import {
     Caption,
     Divider,
 } from 'react-native-paper';
-import LiveWorkout from '../../../workout/modal/LiveWorkout';
-
-import ProgramInformationPreview from '../../../workout/program/ProgramInformationPreview';
 import { getLupaUserStructure } from '../../../../controller/firebase/collection_structures';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { useNavigation } from '@react-navigation/native';

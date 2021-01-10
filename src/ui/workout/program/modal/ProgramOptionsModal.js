@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createRef, useState } from 'react'
 
 import {
     Modal,
@@ -13,11 +13,16 @@ import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import Feather1s from 'react-native-feather1s/src/Feather1s'
 import LupaController from '../../../../controller/lupa/LupaController'
+import EditProgramWorkouts from '../createprogram/buildworkout/EditProgramWorkouts'
+import ProgramInformationPreview from '../ProgramInformationPreview'
 
 const TRAINER_OPTIONS = [
-  /*  {
+    {
         optionTitle: 'Edit Program',
-    },*/
+    },
+    {
+        optionTitle: 'Preview Program'
+    },
     {
         optionTitle: 'Share Program',
     },
@@ -52,6 +57,7 @@ const CURR_USER_OPTIONS = [
 const { windowWidth } = Dimensions.get('window').width
 
 function ProgramOptionsModal({ program, isVisible, closeModal }) {
+    
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
@@ -60,7 +66,19 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 
     const navigation = useNavigation()
 
+    const [editWorkoutsModalIsVisible, setEditWorkoutsModalIsVisible] = useState(false);
+    const programPreviewRef = createRef();
+    const openProgramPreview = () => programPreviewRef.current.open();
+    const closeProgramPreview = () => programPreviewRef.current.close();
+
     const handleDefaultOptionsOnPress = (optionTitle) => {
+        if (optionTitle == 'Preview Program') {
+            openProgramPreview()
+        }
+        
+        if (optionTitle == 'Edit Program') {
+            setEditWorkoutsModalIsVisible(true)
+        }
 
         if (optionTitle == 'Share Program') {
             shareProgramOnPress(program);
@@ -87,9 +105,9 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 
         if (optionTitle == 'Launch Live Workout') {
             navigation.navigate('LiveWorkout', {
+                sessionID: currUserData.user_uuid,
                 uuid: program.program_structure_uuid,
                 workoutType: 'PROGRAM',
-                
             });
         }
 
@@ -184,6 +202,9 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     renderProgramOwnerOptions()
                 }
             </View>
+   
+            <EditProgramWorkouts isVisible={editWorkoutsModalIsVisible} closeModal={() => setEditWorkoutsModalIsVisible(false)} programData={program} />
+            <ProgramInformationPreview ref={programPreviewRef} program={program} trainerView={true} />
         </Modal>
     )
 }

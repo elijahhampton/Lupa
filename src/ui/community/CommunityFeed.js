@@ -146,17 +146,6 @@ class CommunityFeed extends React.Component {
                         onRefresh={this.handleOnRefresh} />
                     } 
                     contentContainerStyle={{backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
-                    <View style={{marginVertical: 5, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width}}>
-                        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <Feather1s name="home" size={20} style={{padding: 3}} onPress={() => this.props.navigation.push('Community', {
-                            community: this.props.community
-                        })} />
-                        <Text style={{fontFamily: 'Avenir'}}>
-                            Home
-                        </Text>
-                        </View>
-                    </View>
-                    <Divider style={{height: 5, width: Dimensions.get('window').width, backgroundColor: '#EEEEEE'}} />
                     {this.renderVlogs()}
                 </ScrollView>
                 {this.renderFAB()}

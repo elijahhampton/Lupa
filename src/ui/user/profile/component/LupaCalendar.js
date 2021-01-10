@@ -81,6 +81,8 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
     return state.Users.currUserData;
   });
 
+  const bookingRef = createRef();
+
   const [markedDates, setMarkedDates] = useState({});
   const [displayDate, setDisplayDate] = useState(new Date());
   const [entryDate, setEntryDate] = useState('');
@@ -475,7 +477,7 @@ height={300}>
 />
 
 <BookingRequestModal 
-isVisible={bookingRequestModalVisible} 
+ref={bookingRef}
 trainer={userData} 
 closeModal={() => setBookingRequestModalVisible(false)} 
 />

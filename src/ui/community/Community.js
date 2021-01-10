@@ -15,7 +15,7 @@ import {
 
 import { Input } from 'react-native-elements';
 
-import { Surface, Avatar, Dialog, Paragraph } from 'react-native-paper';
+import { Surface, Avatar, Dialog, Paragraph, FAB } from 'react-native-paper';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import moment from 'moment';
@@ -41,6 +41,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import { createCommunityEvent, initializeNewCommunity } from '../../model/data_structures/community/community';
 import { getAbbreviatedDayOfTheWeekFromDate, getDayOfMonthStringFromDate, getDayOfTheWeekStringFromDate } from '../../common/service/DateTimeService';
 import LUPA_DB from '../../controller/firebase/firebase';
+import VlogFeedCard from '../user/component/VlogFeedCard';
 const imageArr = [
   ProgramImageOne,
   ProgramImageTwo,
@@ -559,6 +560,8 @@ function Community({ community }) {
   const [createEventModalIsVisible, setCreateEventModalIsVisible] = useState(false);
   const [reviewModalIsVisible, setReviewModalIsVisible] = useState(false);
   const currUserData = useStore().getState().Users.currUserData;
+
+  const [feedVlogs, setFeedVlogs] = useState([])
   
 
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -572,6 +575,32 @@ function Community({ community }) {
   handleOnPressUnsubscribeUser = () => {
     LUPA_CONTROLLER_INSTANCE.unsubscribeUserFromCommunity(currUserData.user_uuid, route.params.community.uid)
   }
+
+  useEffect(() => {
+    
+  async function fetchCommunityVlogs() {
+    const VLOG_QUERY = await LUPA_DB.collection('communities').doc(this.props.community.uid).collection('vlogs')
+    communityVlogObserver = VLOG_QUERY.onSnapshot(querySnapshot => {
+        let updatedState = [];
+
+        querySnapshot.forEach(doc => {
+            let data = doc.data();
+
+            if (typeof (data) != 'undefined') {
+                updatedState.push(data);
+            }
+        });
+
+        updatedState.concat(feedVlogs)
+        setFeedVlogs(updatedState);
+
+    }, error => {
+        LOG_ERROR('CommunityFeed.js', 'Error fetching community vlog data.', error)
+    });
+}
+
+fetchCommunityVlogs();
+  }, [])
   
   const renderFeaturedTrainer = () => {
 
@@ -611,7 +640,53 @@ function Community({ community }) {
       )
   }
 
+renderVlogs = () => {
+  if (feedVlogs.length === 0) {
+      return (
+          <View style={{alignItems: 'center', marginVertical: 20, width: '100%', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+              <View style={{marginVertical: 10, alignItems: 'center'}}>
+              <Text style={{fontSize: 25, fontFamily: 'Avenir-Heavy'}}>
+                  No Community Vlogs
+              </Text>
+              <Caption style={{fontFamily: 'Avenir', paddingHorizontal: 20}}>
+                  This community has no vlogs.  Check back again later or {" "}
+                  <Caption>
+              create the first one.
+              </Caption>
+              </Caption>
 
+              </View>
+             
+             <Image source={require('../images/vlogs/novlog.png')} style={{marginTop: 40, width: 220, height: 300}} />
+          </View>
+      )
+  }
+
+
+  return feedVlogs.map((vlog, index, arr) => {
+      if (index == 0) {
+          return <VlogFeedCard key={index} vlogData={vlog} showTopDivider={false} />
+      }
+
+      return (
+          <VlogFeedCard key={index} clickable={true} vlogData={vlog} showTopDivider={true} />  
+      )
+  })
+}
+
+renderFAB = () => {
+        return (
+          <FAB 
+          small={false} 
+          onPress={() => this.props.navigation.push('CreatePost', {
+              communityUID: this.props.community.uid,
+              vlogType: 'Community'
+          })} 
+          icon="video" 
+          style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" 
+          />
+        )
+}
  
 
       const renderReviews = () => {
@@ -678,7 +753,6 @@ function Community({ community }) {
           )
         }
       }
-  
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -720,37 +794,10 @@ function Community({ community }) {
           <View>
             <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
               {renderSubscribeButton()}
-                
-
-                <TouchableOpacity onPress={() => setReviewDialogVisible(true)}>
-                <View style={{alignItems: 'center', justifyContent: 'center'}}> 
-                <Feather1s name="edit-2" size={20} style={{padding: 3}} />
-                <Text style={{fontFamily: 'Avenir'}}>
-                  Add Review
-                </Text>
-              </View>
-                </TouchableOpacity>
             </View>
 
 
             <Divider style={{alignSelf: 'center', width: Dimensions.get('window').width}} />
-
-            <View style={{marginVertical: 15}}>
-              <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <View>
-                <Text>
-                  Reviews
-                </Text>
-                <Rating ratingCount={5} showRating={false}  imageSize={10}/>
-                </View>
-                
-                <Caption style={{color: '#1089ff'}} onPress={() => setReviewModalIsVisible(true)}>
-                  See all reviews
-                </Caption>
-              </View>
-           
-                {renderReviews()}
-              </View>
 
                 <View style={{backgroundColor: '#EEEEEE'}}>
                 <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -796,6 +843,10 @@ function Community({ community }) {
        
           </View>
 
+          <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+
+          {renderVlogs()}
+
          {/* <View>
             <View style={{  flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
 
@@ -829,6 +880,7 @@ function Community({ community }) {
           <AddReviewDialog isVisible={reviewDialogVisible} closeModal={() => setReviewDialogVisible(false)} community={community} />
          
           <SafeAreaView />
+          {renderFAB()}
         </ScrollView>
     </View>
   )

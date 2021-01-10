@@ -78,6 +78,7 @@ function SessionDashboardComponent({ booking }) {
         const clients = trainerUserData.clients;
          clients.forEach(clientData => {
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+
             if (clientData.client == requesterUserData.user_uuid) {
                 console.log(clientData.linked_program)
                 setProgramUID(clientData.linked_program)
@@ -90,6 +91,11 @@ function SessionDashboardComponent({ booking }) {
          clients.forEach(clientData => {
             console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             if (clientData.client == requesterUserData.user_uuid) {
+
+                if (typeof(clientData.linked_program) == null || typeof(clientData.linked_program) == 'undefined' || clientData.linked_program == '') {
+                    alert('Please link a program to this client from the session options!')
+                    return;
+                }
                 console.log(clientData.linked_program)
                 navigation.push('VirtualSession', {
                     booking: booking,
@@ -107,7 +113,11 @@ function SessionDashboardComponent({ booking }) {
         const clients = trainerUserData.clients;
         clients.forEach(clientData => {
            if (clientData.client == requesterUserData.user_uuid) {
-               console.log(clientData.linked_program)
+            if (typeof(clientData.linked_program) == null || typeof(clientData.linked_program) == 'undefined' || clientData.linked_program == '') {
+                alert('Please link a program to this client from the session options!')
+                return;
+            }
+            
                navigation.push('LiveWorkout', {
                    sessionID: booking.uid,
                    uuid: clientData.linked_program,

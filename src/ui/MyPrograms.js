@@ -21,6 +21,7 @@ import ProgramOptionsModal from './workout/program/modal/ProgramOptionsModal'
 import { getLupaProgramInformationStructure } from '../model/data_structures/programs/program_structures'
 import { useNavigation } from '@react-navigation/native'
 import LUPA_DB from '../controller/firebase/firebase'
+import EditProgramWorkouts from './workout/program/createprogram/buildworkout/EditProgramWorkouts'
 
 function MyPrograms(props) {
     const [programOptionsModalIsVisible, setProgramOptionsModalIsVisible] = useState(false)

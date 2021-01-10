@@ -111,6 +111,8 @@ class BuildWorkoutController extends React.Component {
         this.addExerciseRBSheetRef = createRef();
         this.addExerciseNestedRBSheetRef = createRef()
 
+        this.trackedExercises = []
+
         this.state = {
             addedWorkoutsScrollViewWidth: 0,
             currPressedPopulatedWorkout: getLupaExerciseStructure(),
@@ -128,6 +130,7 @@ class BuildWorkoutController extends React.Component {
             ready: false,
             currPlacementType: PLACEMENT_TYPES.EXERCISE,
             customWorkoutModalVisible: false,
+            equipmentList: [],
             libraryData: [
                 {
                     title: "Bodyweight",
@@ -168,7 +171,13 @@ class BuildWorkoutController extends React.Component {
     async componentDidMount() {
         let weeks = [], workoutDays = [];
         const programDuration = this.props.programData.program_duration;
-
+            
+        if (this.props.isEditing == true) {
+            for (let i = 0; i < programDuration; i++) {
+                await weeks.push(i);
+            }
+            workoutDays = this.props.programData.program_workout_structure
+        } else {
             workoutDays = new Array(programDuration);
             for (let i = 0; i < programDuration; i++) {
                 await weeks.push(i);
@@ -182,6 +191,8 @@ class BuildWorkoutController extends React.Component {
                     Sunday: []
                 }
             }
+        }
+            
 
 
         await this.setState({ ready: true, weeks: weeks, workoutDays: workoutDays })
@@ -213,7 +224,7 @@ class BuildWorkoutController extends React.Component {
             }
         }
 
-        this.props.saveProgramWorkoutData(workoutDays)
+        this.props.saveProgramWorkoutData(workoutDays, this.state.numWorkoutsAdded, this.state.equipmentList)
     }
 
     /**
@@ -286,9 +297,10 @@ class BuildWorkoutController extends React.Component {
 
                 for (let i = 0; i < this.state.workoutDays[currWeek][workoutDay].length; i++) {
                     if (this.state.workoutDays[currWeek][workoutDay].workout_uid == workoutToUpdate.workout_uid) {
-                        newWorkoutData[currWeek][workoutDay][i] = workoutToUpdate
+                        newWorkoutData[currWeek][workoutDay][i] = workoutToUpdate;
                     }
                 }
+
                 break;
             case PLACEMENT_TYPES.EXERCISE:
                 newWorkoutData[currWeek][workoutDay].push(updatedWorkout);
@@ -299,8 +311,27 @@ class BuildWorkoutController extends React.Component {
 
 
         const num = this.state.numWorkoutsAdded + 1;
-        this.setState({ workoutDays: Array.from(newWorkoutData), numWorkoutsAdded: num})
+        this.updateEquipmentList(updatedWorkout)
+
+        this.setState({ 
+            workoutDays: Array.from(newWorkoutData), 
+            numWorkoutsAdded: num,
+        })
     }
+
+    updateEquipmentList = (exercise) => {
+        let updatedEquipmentList = this.state.equipmentList;
+        for (let i = 0; i < exercise.required_equipment; i++) {
+            if (updatedEquipmentList.includes(exercise.required_equipment[i]) == false) {
+                updatedEquipmentList.push(exercise.required_equipment[i])
+            }
+        }
+
+        this.setState({ 
+            equipmentList: updatedEquipmentList
+        })
+    }
+
     /**
      * Returns the workouts for the current day and week.
      */
@@ -935,7 +966,23 @@ class BuildWorkoutController extends React.Component {
         )
     }
 
+    renderAppropriateNextButton = () => {
+        const { isEditing } = this.props;
 
+        if (isEditing == true) {
+            return (
+                <Button color="white" uppercase={false} onPress={() => this.handleSaveProgramData(this.state.workoutDays)}>
+                   Save
+                </Button>
+            )
+        } else {
+            return (
+                <Button color="white" uppercase={false} onPress={() => this.handleSaveProgramData(this.state.workoutDays)}>
+                    Next
+                </Button>
+            )
+        }
+    }
 
     /**
      * Renders the component display basd on currView
@@ -954,9 +1001,7 @@ class BuildWorkoutController extends React.Component {
                                 Back
                 </Button> */}
                             <Appbar.Content title="Add Exercises" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
-                            <Button color="white" uppercase={false} onPress={() => this.handleSaveProgramData(this.state.workoutDays)}>
-                                Next
-                                    </Button>
+                            {this.renderAppropriateNextButton()}
                         </Appbar.Header>
                         <View style={styles.content}>
                            

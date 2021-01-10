@@ -106,7 +106,7 @@ function LupaBottomTabNavigator() {
               <Tab.Screen name="Train" component={LupaHomeNavigator} />
              
 
-<Tab.Screen name="Search" component={Search} />
+<Tab.Screen name="Search" component={Search} initialParams={{categoryToSearch: undefined}} />
 
        
            

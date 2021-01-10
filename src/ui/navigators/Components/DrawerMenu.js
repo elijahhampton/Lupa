@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {createRef, useEffect, useState} from 'react';
 import DrawerIcon from 'react-native-vector-icons/Feather'
 
 import { 
@@ -20,10 +20,14 @@ import {
 import {
   Avatar,
   Caption,
+  Surface,
+  Dialog,
+  Paragraph,
   TouchableRipple,
   Button,
   Divider,
   Appbar,
+  Chip,
 } from 'react-native-paper';
 import { GiftedChat } from 'react-native-gifted-chat'
 import { Constants } from 'react-native-unimodules';
@@ -38,8 +42,41 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaController from '../../../controller/lupa/LupaController';
 import { DrawerActions } from '@react-navigation/native';
 import { Input } from 'native-base';
+import Swiper from 'react-native-swiper';
+import CreatePackDialog from '../../packs/dialogs/CreatePackDialog';
+
 const ICON_SIZE = 20;
 const ICON_COLOR = "rgb(203, 209, 214)"
+
+function PackLeaderLimitDialog({ isVisible, closeDialog }) {
+  return (
+    <Dialog visible={isVisible} onDismiss={closeDialog} style={{borderRadius: 20}}>
+      <Dialog.Title>
+        Pack Leader Limit Reached
+      </Dialog.Title>
+      <Dialog.Content>
+        <Paragraph>
+          You've reached the limit of packs that you are allowed to join.  Delete a pack or try creating a pack at a later date.
+        </Paragraph>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Button
+        style={{alignSelf: 'flex-end', elevation: 0}}
+        contentStyle={{paddingHorizontal: 10}}
+        color="#1089ff"
+        theme={{roundness: 8}}
+        uppercase={false}
+        mode="contained"
+        onPress={closeDialog}
+        >
+          <Text style={{fontFamily: 'Avenir', fontWeight: '700'}}>
+            Okay
+          </Text>
+        </Button>
+      </Dialog.Actions>
+    </Dialog>
+  )
+}
 
 /**
  * This component render a drawer menu. The drawer menu contains all of the content for the
@@ -58,6 +95,12 @@ function DrawerMenu({ }) {
   const [lupaStoreState, setLupaStoreState] = useState(getLupaStoreState())
   const navigation = useNavigation()
   const dispatch = useDispatch();
+  const createPackSheetRef = createRef();
+  
+
+  const [createIsVisble, setCreateIsVisible] = useState(false);
+  const [packLeaderLimitReachedDialogIsVisible, setPackLeaderLimitReachedDialogIsVisible] = useState(false);
+
   const currUserData = useSelector(state => {
     return state.Users.currUserData;
   })
@@ -79,6 +122,8 @@ function DrawerMenu({ }) {
  
    return () => Fire.shared.off()
   }, [])
+
+  
 
   handleAvatarOnPress = async (avatarIndex) => {
     setCurrMessagesIndex(avatarIndex)
@@ -246,42 +291,124 @@ alwaysShowSend={true}
     })
   }
 
+  const renderContentSwiper = () => {
+    return (
+      <View style={{width: '100%', alignSelf: 'center', height: 190}}>
+      <Swiper 
+      paginationStyle={{marginTop: 20}}
+        showsPagination={true} 
+        autoplayTimeout={3}
+        showsButtons={false} 
+        dotColor="#E5E5E5" 
+        autoplay={true}
+        style={{alignItems: 'center', justifyContent: 'center'}}
+         >
+     <View style={styles.swiperEntryContentContainer}>
+       <Text style={styles.swiperEntryContentText}>
+            Whether working out or taking a break don't do it alone. Invite your friends to start a pack.
+      </Text>
+          <Button onPress={handleOpenCreatePack} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
+          <Text style={{fontFamily: 'Avenir'}}>
+            Start a pack
+          </Text>
+          </Button>
+     </View>
+
+
+     <View style={styles.swiperEntryContentContainer}>
+       <Text style={styles.swiperEntryContentText}>
+          Looking for workout partners?  Let us search through your community and find your perfect match.
+      </Text>
+          <Button theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
+          <Text style={{fontFamily: 'Avenir'}}>
+            Match me
+          </Text>
+          </Button>
+     </View>
+
+
+
+     <View style={styles.swiperEntryContentContainer}>
+       <Text style={styles.swiperEntryContentText}>
+           Find the perfect trainer for you and your friends today.
+      </Text>
+          <Button theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
+          <Text style={{fontFamily: 'Avenir'}}>
+            Find a trainer
+          </Text>
+          </Button>
+     </View>
+
+    </Swiper>
+    </View>
+    )
+  }
+
   const renderPacksDisplay = () => {
- 
-
     const lupaStorePacks = getLupaStoreState().Packs.currUserPacksData;
-
-    if (true) {
-      return (
-  <Caption style={{padding: 10}}>
-    Search for packs to join from the search page or create your own from the explore page.
-        </Caption>
-      )
+    if (lupaStorePacks.length == 0) {
+      return;
     }
 
     return (
-      <>
-      <Text style={{padding: 10, fontFamily: 'Avenir-Heavy'}}>
+      <View>
+        {renderContentSwiper()}
+        <View>
+      <Text style={styles.sectionHeaderText}>
  Packs
 </Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} shouldRasterizeIOS={true}>
         {
              lupaStorePacks.map(pack => {
               return (
-                <TouchableWithoutFeedback style={{padding:8,  marginHorizontal: 10, borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 8, marginVertical: 5}} onPress={() => navigateToPackChat(pack.uid)}>
-                <Text style={{fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}> 
+                <Chip 
+                icon={() => pack.members >= 3 ? <FeatherIcon color="#1089ff" name="globe" /> :  <FeatherIcon color="#1089ff" name="lock" />}
+                mode="outlined"
+                textStyle={{color: '#1089ff', fontSize: 13, fontFamily: 'Avenir', fontWeight: '500'}}
+                style={{ marginHorizontal: 10, borderRadius: 8, marginVertical: 5}} onPress={() => navigateToPackChat(pack.uid)}>
+                  <Text> 
                 {pack.name}
                 </Text>
-              </TouchableWithoutFeedback>
+                </Chip>
               )
             })
         }
       </ScrollView>
-      </>
+      </View>
+      </View>
     )
-
-
   }
+
+  handleOnChooseCreatePack = () => {
+    const userPacks = getLupaStoreState().Packs.currUserPacksData;
+    const updatedUserState = getLupaStoreState().Users.currUserData;
+
+    
+    let count = 0;
+    for (let i = 0; i < userPacks.length; i++) {
+        if (userPacks[i].leader == updatedUserState.user_uuid) {
+          count++;
+        }
+    }
+
+    if (count >= 2) {
+      setPackLeaderLimitReachedDialogIsVisible(true);
+      return;
+    }
+
+    setCreateIsVisible(false);
+    handleOpenCreatePack();
+  }
+
+  handleOpenCreatePack = () => {
+    createPackSheetRef.current.open();
+  }
+
+  handleOnCloseCreatePack = () => {
+    createPackSheetRef.current.close();
+  }
+
+
 
   return (
     <View style={styles.container}>
@@ -298,12 +425,7 @@ alwaysShowSend={true}
           <Text style={styles.drawerHeaderText}>
                 {currUserData.display_name}
               </Text>
-              <Text style={{
-                  color: 'rgb(180, 180, 180)',
-      fontSize: 15,
-      fontFamily: 'Avenir-Medium'}}>
-                Messages
-              </Text>
+            
           </View>
         </View>
              
@@ -317,13 +439,25 @@ alwaysShowSend={true}
 
       <Divider />
 
-      {renderPacksDisplay()}
+<View>
+{renderPacksDisplay()}
+</View>
+
+<Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+<Text style={styles.sectionHeaderText}>
+ Messages
+</Text>
    
 
     {renderChatComponent()}
         </View>
         </View>
     </SafeAreaView>
+    <CreatePackDialog ref={createPackSheetRef} />
+    <PackLeaderLimitDialog 
+          isVisible={packLeaderLimitReachedDialogIsVisible} 
+          closeDialog={() => setPackLeaderLimitReachedDialogIsVisible(false)} 
+          />
   </View>
   )
 }
@@ -384,6 +518,17 @@ export default DrawerMenu;
       color: '#000000',
         fontSize: 18, 
         fontWeight: '300',
+    },
+    swiperEntryContentContainer: {
+      marginVertical: 10, flex: 1, padding: 20, alignItems: 'center', justifyContent: 'center'
+    },
+    swiperEntryContentText: {
+      fontFamily: 'Avenir', textAlign: 'center'
+    },
+    sectionHeaderText: {
+      fontSize: 16,
+      padding: 10,
+      fontFamily: 'Avenir-Heavy'
     }
   });
 

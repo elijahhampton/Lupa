@@ -137,10 +137,12 @@ export default class ProgramController {
             })
     }
 
-    updateProgramWorkoutData = (programUUID, workoutData) => {
+    updateProgramWorkoutData = (programUUID, workoutData, numWorkoutsAdded, equipmentList) => {
         const programDocumentRef = PROGRAM_COLLECTION.doc(programUUID);
         programDocumentRef.update({
-            program_workout_structure: workoutData
+            program_workout_structure: workoutData,
+            num_exercises: numWorkoutsAdded,
+            required_equipment: equipmentList,
         })
     }
 

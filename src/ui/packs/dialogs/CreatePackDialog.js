@@ -130,6 +130,7 @@ const [searchValue, setSearchValue] = useState("")
       }
 
     const renderUserAvatars = () => {
+
         return currUserFollowers.map((user, index, arr) => {
           if (usersUUIDToShare.includes(user.user_uuid)) {
             return (
@@ -242,7 +243,7 @@ const [searchValue, setSearchValue] = useState("")
         <Divider style={{height: 12, backgroundColor: 'rgb(245, 246, 249)'}} />
 
                 <View>
-                <SearchBar
+               {/* <SearchBar
                 placeholder="Invite Friends"
                 placeholderTextColor="#212121"
                 value={searchValue}
@@ -250,11 +251,21 @@ const [searchValue, setSearchValue] = useState("")
                 platform="ios"
                 containerStyle={{ backgroundColor: 'white', borderColor: 'white' }}
                 inputContainerStyle={{ borderColor: 'white', backgroundColor: 'rgb(245, 246, 249)' }}
-                searchIcon={() => <FeatherIcon name="search" color="black" size={15} />}/>
-
-            <ScrollView horizontal contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
-              {renderUserAvatars()}
-            </ScrollView>
+               searchIcon={() => <FeatherIcon name="search" color="black" size={15} />}/> */}
+            {
+              currUserFollowers.length == 0 ?
+          <View>
+            <Caption style={{padding: 10, }}>
+            You aren't following anyone!  Find your friends on Lupa using the search page.
+          </Caption>
+          </View>
+          :
+          <ScrollView horizontal contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}>
+          {renderUserAvatars()}
+        </ScrollView>
+          
+            }
+         
           </View>
 
           <Button 

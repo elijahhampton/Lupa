@@ -21,6 +21,7 @@ import { initStripe, PAY_TRAINER_ENDPOINT, CURRENCY } from '../../../modules/pay
 import { getLupaStoreState } from '../../../controller/redux/index'
 import axios from 'axios';
 import moment from 'moment';
+import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 
 function BookingInformationModal({ trainerUserData, requesterUserData, isVisible, closeModal, booking }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -29,12 +30,8 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
         return state.Users.currUserData
     });
 
-    const [loading, setLoading] = useState(false);
-    const [paymentComplete, setPaymentComplete] = useState(false);
-    const [paymentSuccessful, setPaymentSuccessful] = useState(false);
 
-
-    const [linkedProgram, setLinkedProgram] = useState("");
+    const [linkedProgram, setLinkedProgram] = useState(getLupaProgramInformationStructure());
     const [linkProgramDialogVisible, setLinkProgramDialogVisible] = useState(false);
     const [snackBarVisible, setSnackBarVisible] = useState(false);
     const [snackBarReason, setSnackBarReason] = useState("")
@@ -51,7 +48,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
 
         fetchLinkedProgram();
        
-    }, [linkedProgram])
+    }, [])
 
     const showBookingOptions = () => {
         //show trainer sheet
@@ -107,73 +104,6 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
         closeModal()
     }
 
-        /**
-     * Sends request to server to complete payment
-     */
-    const makePaymentToTrainer = async (amount) => {
-        try {
-        //generate idempotencyKey to prevent double transactions
-        const idempotencyKey = await Math.random().toString()
-
-        //Get a copy of the current user data to pass some fields into the request
-        const updatedUserData = getLupaStoreState().Users.currUserData;
-
-        //Make the payment request to firebase with axios
-        axios({
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            url: PAY_TRAINER_ENDPOINT,
-            data: JSON.stringify({
-                requester_card_source: requesterUserData.stripe_metadata.card_source,
-                customer_id: requesterUserData.stripe_metadata.stripe_id,
-                trainer_card_source: updatedUserData.stripe_metadata.card_source,
-                trainer_account_id: updatedUserData.stripe_metadata.account_id,
-                amount: amount,
-                currency: CURRENCY,
-                source: requesterUserData.stripe_metadata.card_source,
-                idempotencyKey: idempotencyKey,
-                trainer_uuid: trainerUserData.user_uuid,
-                purchaser_uuid: requesterUserData.user_uuid,
-            })
-        }).then(response => {
-            console.log(response);
-        }).catch(err => {
-            console.log(err)
-            setPaymentSuccessful(false)
-            setPaymentComplete(true)
-        })
-    } catch(error ) {
-        console.log(error)
-    }
-    }
-  
-    /**
-     * Handles program purchase process
-     */
-    const handlePayBookingCost = async (amount) => {
-        await setLoading(true)
-         //handle stripe
-         await initStripe()
-
-         //Send request to make payment
-         try {
-             if (booking.hasOwnProperty('isFirstSession') == true) {
-                 await makePaymentToTrainer(15.00)
-             } else {
-                await makePaymentToTrainer(amount)
-             }
-         } catch (error) {
-             await setPaymentComplete(false)
-             await setPaymentSuccessful(false)
-             setLoading(false);
-             return;
-         }
-  
-        await setLoading(false);
-    }
 
     const handleLinkProgramToClient = (clientUID, program) => {
         //TODO: update in redux
@@ -182,18 +112,9 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     }
 
     const handleBookingSessionCompleted = async () => {
-        if (linkedProgram == "") {
+        if (linkedProgram.program_structure_uuid == "0") {
             setSnackBarVisible(true);
             setSnackBarReason('Link a program to this client first.')
-            return;
-        }
-
-        const updatedUserData = getLupaStoreState().Users.currUserData;
-        //handlepayment request
-        try {
-        await handlePayBookingCost(updatedUserData.hourly_payment_rate);
-        } catch(error) {
-            LOG_ERROR('TrainerDashboard.js', 'Failed payment in handlePayBookingCost', error);
             return;
         }
 
@@ -223,7 +144,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     }
 
     renderLinkedProgramStatus = () => {
-        if (linkedProgram == "") {
+        if (linkedProgram.program_structure_uuid == "0") {
             return (
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                           <FeatherIcon name="x" color="red" />
@@ -317,8 +238,9 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                         <ScrollView>
                             {
                                 getLupaStoreState().Programs.currUserProgramsData.map(program => {
+                                    
                                     if (program.program_structure_uuid == linkedProgram.program_structure_uuid) {
-                                        return <Text style={{marginVertical: 10, fontSize: 20, fontWeight: 'bold'}} onPress={() => setLinkedProgram(program)}> {program.program_name} </Text>
+                                        return <Text style={{marginVertical: 10, fontSize: 20, fontWeight: 'bold'}}> {program.program_name} </Text>
                                     }
                                     
                                     return (

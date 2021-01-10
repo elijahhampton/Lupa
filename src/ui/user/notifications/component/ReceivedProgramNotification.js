@@ -30,6 +30,11 @@ function ReceivedProgramNotification({ notificationData }) {
     const [programOptionsVisible, setProgramOptionsModalVisible] = useState(false)
     const [senderUserData, setSenderUserData] = useState(getLupaUserStructure())
     const [componentDidErr, setComponentDidErr] = useState(false);
+
+    const programPreviewRef = createRef();
+    const openProgramPreview = () => programPreviewRef.current.open();
+    const closeProgramPreview = () => programPreviewRef.current.close();
+
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
 
@@ -62,7 +67,7 @@ function ReceivedProgramNotification({ notificationData }) {
         }
         else
         {
-            setProgramModalVisible(true)
+            openProgramPreview()
          //   LUPA_CONTROLLER_INSTANCE.addProgramView(notificationData.data.program_structure_uuid);
         }
     } catch(error) {
@@ -104,7 +109,7 @@ function ReceivedProgramNotification({ notificationData }) {
                 </View>
                
                 </TouchableWithoutFeedback>
-                <ProgramInformationPreview isVisible={programModalVisible} program={notificationData.data} closeModalMethod={() => setProgramModalVisible(false)} />
+                <ProgramInformationPreview ref={programPreviewRef} program={notificationData.data}  />
                 <ProgramOptionsModal program={notificationData.data} isVisible={programOptionsVisible} closeModal={() => setProgramOptionsModalVisible(false)} />
                 <Divider />
                 </>

@@ -31,17 +31,31 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import LOG, { LOG_ERROR } from '../../../../../common/Logger';
 
 const PRE_FILLED_TAGS = [
+  'Interval Training',
   'Advanced',
+  'HIIT',
+  'Body Weight',
+  'Strength',
   'Agility',
+  'Cardiovascular',
+  'Speed',
   'Balance',
   'Beginner',
   'Intermmediate',
   'Speed',
+  'Endurance',
+  'Olympic Weightlifting',
+  'Mobility',
   'Power',
+  'Circuit',
   'Coordination',
   'Reaction Time',
+  'Powerlifting',
+  'Plyometric',
+  'Stability',
   'Weight Loss',
   'Sport Specific',
+  'Flexibility',
   'Bodybuilding',
   'Injury Prevention',
   'Very Advanced'
@@ -121,9 +135,6 @@ function AddTagsModal({ captureTags, isVisible, closeModal }) {
             })
           }
         </View>
-
-
-
         <Button
           mode="contained"
           color="#23374d"
@@ -536,7 +547,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tagsChipStyle: {
-    margin: 8,
+    margin: 5,
     borderRadius: 20,
     padding: 5,
   },

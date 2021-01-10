@@ -131,7 +131,7 @@ function EditPhotosModal({ closeModal, isVisible, community }) {
     )
   }
 
-const CommunityHome = ({ navigation, route }) => {
+const CommunityHome = ({ communityData }) => {
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [programOffers, setProgramOffers] = useState([])
@@ -144,7 +144,7 @@ const CommunityHome = ({ navigation, route }) => {
         return state.Users.currUserData;
     })
 
-    const [community, setCommunity] = useState(initializeNewCommunity('', '', '', '', [], [], [], '', '' ,'', ''))
+    const [community, setCommunity] = useState(communityData)
   
     const handleSelectInviteUser = (user) => {
     setInvitedUsers([user, ...invitedUsers]);
@@ -216,38 +216,15 @@ const CommunityHome = ({ navigation, route }) => {
             setTrainerData([])
           })
         }
-    
-        const COMMUNITY_OBSERVER = LUPA_DB.collection('communities').doc(route.params.community.uid).onSnapshot(documentSnapshot => {
-          setCommunity(documentSnapshot.data())
-        });
-    
-        return () => COMMUNITY_OBSERVER();
-    
+
        //fetchProgramOffers();
         //fetchTrainerData();
-      }, [route.params.community.uid])
+      }, [])
+
+    
 
     return (
         <View style={{flex: 1}}>
-          <Header style={{backgroundColor: COLOR}} noShadow={false} hasTabs>
-         <Left>
-         <Appbar.BackAction onPress={() => navigation.pop()} />
-         </Left>
-
-         <Right>
-        
-{
-  community.associatedAccount == currUserData.user_uuid ?
-<Appbar.BackAction onPress={openActionSheet} />
-:
-null
-}
-         </Right>
-
-
-
-
-          </Header>
           <Tabs 
           style={{backgroundColor: '#FFFFFF'}}
           tabBarUnderlineStyle={{backgroundColor: '#FFFFFF', height: 1}}
@@ -265,11 +242,6 @@ null
 
             <Tab heading='Events' {...TAB_PROPS} >
                 <CommunityEvents events={community.events} />
-            </Tab>
-
-            <Tab heading='Ratings and Reviews' {...TAB_PROPS} >
-      
-            <CommunityReviews reviews={community.reviews} />
             </Tab>
             </Tabs>
 

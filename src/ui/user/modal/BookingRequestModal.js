@@ -58,9 +58,8 @@ import { KeyboardAvoidingView } from 'react-native';
 import { extractDateStringFromFormattedMoment, extractDateStringFromMoment } from '../../../common/service/DateTimeService';
 import FullScreenLoadingIndicator from '../../common/FullScreenLoadingIndicator';
 
-const BookingRequestModal = ({trainer, closeModal, isVisible, preFilledStartTime, preFilledEndTime, preFilledDate, preFilledTrainerNote}) => {
-
-   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+const BookingRequestModal = React.forwardRef(({trainer, closeModal, isVisible, preFilledStartTime, preFilledEndTime, preFilledDate, preFilledTrainerNote}, ref) => {
+  const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
   const LUPA_STATE = useSelector(state => {
     return state;
@@ -303,6 +302,15 @@ const BookingRequestModal = ({trainer, closeModal, isVisible, preFilledStartTime
       }
   }
 
+  const handleNavigateToConfirmation = () => {
+    if (moment(bookingDate).diff(moment(), 'days') < 0) {
+      alert('You must pick a date on or before the current day!')
+      return;
+    } 
+
+    setCurrPage(1)
+  }
+
     const handleNavigateToSettings = () => {
       closeModal();
       setShowCardNeededDialogVisible(false);
@@ -370,25 +378,6 @@ const BookingRequestModal = ({trainer, closeModal, isVisible, preFilledStartTime
               Schedule a session with {trainer.display_name}
             </Text>
 
-  <View style={{paddingHorizontal: 20}}>
-<View style={{ alignItems: 'center', justifyContent: 'space-between'}}>
-<Text style={{fontFamily: 'Avenir-Medium', color: 'black', fontSize: 16}}>
-       What would you like to work on?   
-</Text>
-<Input 
-value={trainerNote}
-onChangeText={text => setTrainerNote(text)}
-returnKeyLabel="done"
-returnKeyType="done"
-keyboardType="default"
-keyboardAppearance="light"
-inputStyle={{fontSize: 16, fontFamily: 'Avenir-Roman'}} 
-containerStyle={{alignSelf: 'center', height: 55,}} 
-inputContainerStyle={{paddingLeft: 8, height: 55, alignSelf: 'flex-start', borderBottomWidth: 0, backgroundColor: '#EEEEEE', borderRadius: 12}} 
-/>
-</View>
-</View>
-
 <View style={{paddingHorizontal: 20}}>
   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
   <Text style={{fontFamily: 'Avenir-Medium', fontSize: 16}}>
@@ -452,7 +441,7 @@ inputContainerStyle={{paddingLeft: 8, height: 55, alignSelf: 'flex-start', borde
 
 <View>
 <Button 
-onPress={() => setCurrPage(1)}
+onPress={() => handleNavigateToConfirmation()}
 mode="contained" 
 color="#23374d"
 uppercase={false}
@@ -465,7 +454,7 @@ theme={{roundness: 12}}>
 </Button>
 
 <Button 
-onPress={closeModal}
+onPress={() => ref.current.close()}
 mode="outlined" 
 color="black"
 uppercase={false}
@@ -535,7 +524,7 @@ theme={{roundness: 12}}>
                 </View>
 
                 <Caption>
-                  Your session with {trainer.display_name} is {sessionType == SESSION_TYPE.REMOTE ? 'a Remote' : 'an In Person'} session.
+                  Your session with {trainer.display_name} is {sessionType == SESSION_TYPE.REMOTE ? 'a Remote' : 'an In Person'} session.  You will not be charged until {trainer.display_name} chooses to complete the session.
                 </Caption>
 
                 <Divider />
@@ -562,9 +551,24 @@ theme={{roundness: 12}}>
   }
   
   return (
-    <Modal
-    presentationStyle="fullScreen"
-    visible={isVisible}>
+    <RBSheet
+    ref={ref}
+    height={700}
+    dragFromTopOnly={false}
+    closeOnDragDown={true}
+    closeOnPressMask={true}
+    closeOnPressBack={true}
+    animationType="slide"
+    customStyles={{
+      container: {
+        borderTopRightRadius: 20,
+        borderTopLeftRadius: 20
+      },
+      draggableIcon: {
+        backgroundColor: 'grey'
+      }
+    }}
+    >
       {renderComponent()}
         
         {renderDisplayDatePicker()}
@@ -574,9 +578,9 @@ theme={{roundness: 12}}>
         {renderSessionTypeDialog()}
         <FullScreenLoadingIndicator isVisible={confirmingSession} />
         <SafeAreaView />
-      </Modal>
+      </RBSheet>
   )
-    }
+    })
 
 
 const styles = StyleSheet.create({
