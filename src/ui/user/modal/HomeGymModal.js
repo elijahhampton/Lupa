@@ -342,6 +342,8 @@ handleOnFetchUserLocationSuccess = async (position) => {
         console.log(this.props)
         if (typeof(this.props.navigateNextView) == 'undefined') {
             this.props.navigation.pop()
+        } else {
+            this.props.navigateNextView()
         }
     }
 

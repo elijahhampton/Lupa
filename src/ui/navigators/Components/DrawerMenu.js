@@ -122,7 +122,7 @@ function DrawerMenu({ }) {
    initComponent()
 
  
-   return () => Fire.shared.off()
+  // return () => Fire.shared.off()
   }, [])
 
   
@@ -349,7 +349,9 @@ alwaysShowSend={true}
   const renderPacksDisplay = () => {
     const lupaStorePacks = getLupaStoreState().Packs.currUserPacksData;
     if (lupaStorePacks.length == 0) {
-      return;
+      return (
+        renderContentSwiper()
+      )
     }
 
     return (
