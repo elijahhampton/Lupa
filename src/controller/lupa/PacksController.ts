@@ -23,6 +23,7 @@ import { PackType } from '../../model/data_structures/packs/types.js';
 import axios from 'axios'
 import { send } from 'process';
 import { getLupaProgramInformationStructure } from '../../model/data_structures/programs/program_structures';
+import { ProgramParticipantCategory } from '../../model/data_structures/programs/common/types.js';
 export default class PackController {
     private static _instance: PackController;
     private fbStorage = new FirebaseStorageBucket();
@@ -196,43 +197,82 @@ export default class PackController {
     }
 
     handleStartPackProgramOffer = async (packProgramUID) => {
-        let programUID = 0, members = []
-        await LUPA_DB.collection('pack_programs').doc(packProgramUID).get().then(documentSnapshot => {
-            const data = documentSnapshot.data();
-            programUID = data.program_uid;
-            members = data.members;
-        });
+        return Promise.resolve(async (resolve, reject) => {
+            let programUID = 0, members = [], packProgramData = initializeNewPackProgramWithMembers('', '', [])
 
-        let programData = getLupaProgramInformationStructure();
-        await LUPA_DB.collection('programs').doc(programUID).get().then(documentSnapshot => {
-            const data = documentSnapshot.data();
-            programData = data;
-        });
-
-        LUPA_DB.collection('pack_programs').doc(packProgramUID).update({
-            is_live: true,
-            program: programData
-        })
-
-
-        //TODO: Charge each members
-
-
-        //add individual program data
-        let userData = getLupaUserStructurePlaceholder()
-        for (let i = 0; i < members.length; i++) {
-            
-            await USERS_COLLECTION.doc(members[i]).get().then(documentSnapshot => {
-                userData = documentSnapshot.data();
-            });
-
-            let updatedPackPrograms = userData.pack_programs
-            updatedPackPrograms.push(packProgramUID)
-
-            USERS_COLLECTION.doc(members[i]).update({
-                pack_programs: updatedPackPrograms
+            //Fetch pack program data and get the program uid and members 
+            await LUPA_DB.collection('pack_programs').doc(packProgramUID).get()
+            .then(documentSnapshot => {
+                const data = documentSnapshot.data();
+                packProgramData = data;
+                programUID = data.program_uid;
+                members = data.members;
             })
-        }
+            .catch(error => {
+                resolve(false);
+            })
+    
+            //fetch program data
+            let programData = getLupaProgramInformationStructure();
+            await LUPA_DB.collection('programs').doc(programUID).get()
+            .then(documentSnapshot => {
+                const data = documentSnapshot.data();
+                programData = data;
+            })
+            .catch(error => {
+                resolve(false)
+            })
+    
+            //mark the programs participant category
+            programData.program_participant_category = ProgramParticipantCategory.PACK;
+    
+            //update the program data for the pack_program entry and mark the program as live
+            LUPA_DB.collection('pack_programs').doc(packProgramUID).update({
+                is_live: true,
+                program: programData
+            })
+
+            try {
+            //add individual program data
+            //notify all users that the program has started and they have been charged
+            let userData = getLupaUserStructurePlaceholder()
+            for (let i = 0; i < members.length; i++) {
+                
+                await USERS_COLLECTION.doc(members[i]).get().then(documentSnapshot => {
+                    userData = documentSnapshot.data();
+                });
+    
+                let userNotifications = []
+            //add notification to users notification array
+            if (userData.hasOwnProperty('notifications')) {
+                userNotifications = userData.notifications;
+            } else {
+                userNotifications = []
+            }
+    
+            let receivedPackProgramStartedNotificationStructure = {
+                notification_uuid: Math.random().toString(),
+                data: packProgramData,
+                from: LUPA_AUTH.currentUser.uid,
+                to: members[i],
+                read: false,
+                type: NOTIFICATION_TYPES.BOOKING_REQUEST,
+                actions: ['Accept', 'View', 'Delete'],
+                timestamp: new Date().getTime()
+            }
+    
+            await userNotifications.push(receivedPackProgramStartedNotificationStructure);
+    
+            await USERS_COLLECTION.doc(members[i]).update({
+                notifications: userNotifications,
+            });
+            }
+            } catch(error) {
+
+            }
+            
+            resolve(true);
+        })
     }
 
     handleDeclinePackProgramOfferInvite = async (packProgramUID, userUID) => {
@@ -251,9 +291,9 @@ export default class PackController {
         });
     }
 
-    handleSendProgramOfferInvite = async (senderUUID, packUUID, programUUID) => {
+    handleSendProgramOfferInvite = async (programOwnerUID, senderUUID, packUUID, programUUID) => {
         // Create new pack program
-        const newPackProgram = initializeNewPackProgramWithMembers(packUUID, programUUID, [senderUUID]);
+        const newPackProgram = initializeNewPackProgramWithMembers(programOwnerUID, packUUID, programUUID, [senderUUID]);
 
         //Add the program to the database and update the uid
         let newPackProgramUID = 0;
@@ -496,5 +536,22 @@ export default class PackController {
 
 
         return Promise.resolve(packsData);
+    }
+
+    fetchCuratedPacks = async () => {
+        return new Promise(async (resolve, reject) => {
+            let curatedPacks = []
+            let pack = initializeNewPack('', '', '', []);
+            await PACKS_COLLECTION.get().then(querySnapshot => {
+                querySnapshot.docs.forEach(doc => {
+                    pack = doc.data();
+                    if (pack.isPublic == true) {
+                        curatedPacks.push(pack)
+                    }
+                });
+            });
+
+            resolve(curatedPacks);
+        });
     }
 }

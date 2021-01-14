@@ -163,6 +163,17 @@ function ReceivedBookingRequestNotification({ notificationData }) {
     }
 
     const renderNotificationMessage = () => {
+        if (typeof(bookingData.session_type) == 'undefined') {
+            return (
+                <Text style={{alignSelf: 'flex-start'}}>
+                     Error loading notification.
+                </Text>
+                              
+            )
+            
+           
+        }
+
         try {
         if (bookingData.session_type == 'remote') { //SESSION_TYPE.REMOTE
             return (

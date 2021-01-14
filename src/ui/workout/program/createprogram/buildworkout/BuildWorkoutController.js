@@ -88,10 +88,12 @@ function Exercise(workoutObject, workoutDay) {
     this.workout_uid = Math.random().toString()
     this.workout_tempo = '0-0-0'
     this.workout_rest_time = 0
+    this.intensity = 0;
     this.workout_day = workoutDay
     this.superset = []
-    this.default_media_type = workoutObject.default_media_type
-    this.default_media_uri = workoutObject.default_media_uri
+    this.default_media_type = workoutObject.default_media_type;
+    this.default_media_uri = workoutObject.default_media_uri;
+    this.index = workoutObject.index;
 }
 
 /**
@@ -353,7 +355,7 @@ class BuildWorkoutController extends React.Component {
             const content = currWorkoutDaysState.map((exercise, index, arr) => {
                 return (
                    <TouchableWithoutFeedback key={index} style={[styles.populatedExerciseTouchableContainer, { width: this.state.addedWorkoutsScrollViewWidth - 10, }]}>
-                         <WorkoutDisplay workout={exercise} programDuration={0}  handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} />
+                         <WorkoutDisplay programType={this.props.programType} currProgramUUID={this.props.programData.program_structure_uuid} workout={exercise} programDuration={0}  handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} />
                     </TouchableWithoutFeedback>
                 
                 )
@@ -997,14 +999,13 @@ class BuildWorkoutController extends React.Component {
                 return (
                     <View style={styles.container}>
                         <Appbar.Header style={{ elevation: 0, alignItems: 'center', backgroundColor: '#23374d', }}>
-                          {/*  <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
+                            <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
                                 Back
-                </Button> */}
+                            </Button> 
                             <Appbar.Content title="Add Exercises" titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
-                            {this.renderAppropriateNextButton()}
-                        </Appbar.Header>
+                                {this.renderAppropriateNextButton()}
+                            </Appbar.Header>
                         <View style={styles.content}>
-                           
                                 {this.getCurrentDayContent()}
                             </View>
                         <View style={{ position: 'absolute', bottom: 0 }} /* style={styles.toolbar} */>

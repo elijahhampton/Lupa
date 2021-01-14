@@ -38,6 +38,7 @@ import { NOTIFICATION_TYPES } from '../../model/notifications/common/types'
 import ProgramController from './ProgramController';
 import moment from 'moment';
 import { CommunityEvent } from '../../model/data_structures/community/types.js';
+import { PackType } from '../../model/data_structures/packs/types.js';
 
 export default class UserController {
     private static _instance: UserController;
@@ -455,7 +456,7 @@ export default class UserController {
                         bookings: bookings
                     });
                 }
-
+                break;
             case 'last_completed_workout':
                 currentUserDocument.update({
                     last_completed_workout: value
@@ -614,10 +615,7 @@ export default class UserController {
                 })
 
                 if (optionalData == 'add') {
-                    for (let i = 0; i < value.length; i++) {
-                        let pack = value[i];
-                        updatedPacksData.push(pack);
-                    }
+                    updatedPacksData.push(value);
 
                     currentUserDocument.update({
                         packs: updatedPacksData
@@ -3048,6 +3046,58 @@ let subscribers = [];
                 })
             })
         }
+
+        fetchPackWaitlist = async () => {
+            return new Promise(async (resolve, reject) => {
+                let waitlistData = []
+                await LUPA_DB.collection('pack_programs').get().then(querySnapshot => {
+                    querySnapshot.docs.forEach(doc => {
+                        waitlistData.push(doc.data());
+                    });
+                })
+
+                resolve(waitlistData);
+            })
+           
+        }
+
+        addUserToPack = async (userData : LupaUserStructure, packData : PackType) => { 
+            this.updateCurrentUser('packs', packData.uid, 'add', '');
+            
+            let updatedPackMemberList = packData.members;
+            updatedPackMemberList.push(userData.user_uuid);
+
+            LUPA_DB.collection('packs').doc(packData.uid).update({
+                members: updatedPackMemberList
+            })
+         }
+
+         updateCompletedExerciseEquipment = async (userData : LupaUserStructure, exerciseID, exerciseEquipment) => {
+             let updatedCompletedExerciseList = userData.completed_exercises;
+             for (let i = 0; i < updatedCompletedExerciseList.length; i++) {
+                if (updatedCompletedExerciseList[i].index == exerciseID) {
+                    updatedCompletedExerciseList[i].equipment_used = exerciseEquipment;
+                }
+
+             USER_COLLECTION.doc(userData.user_uuid).update({
+                completed_exercises: updatedCompletedExerciseList
+            });
+         }
+    }        
+
+    updateCompletedExerciseStats = (userData, exerciseID, editedExerciseWeightUsed, editedExerciseOneRepMax) => {
+        let updatedCompletedExerciseList = userData.completed_exercises;
+        for (let i = 0; i < updatedCompletedExerciseList.length; i++) {
+           if (updatedCompletedExerciseList[i].index == exerciseID) {
+               updatedCompletedExerciseList[i].equipment_weight = editedExerciseWeightUsed;
+               updatedCompletedExerciseList[i].one_rep_max = editedExerciseOneRepMax;
+           }
+
+        USER_COLLECTION.doc(userData.user_uuid).update({
+           completed_exercises: updatedCompletedExerciseList
+       });
+    }
+    }
 }
 
 //me

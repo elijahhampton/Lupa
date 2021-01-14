@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     View,
@@ -15,12 +15,18 @@ import {
     Appbar, 
     Surface,
     Caption,
+    Button,
+    Dialog,
+    Paragraph
  } from 'react-native-paper';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaController from '../../controller/lupa/LupaController';
 import { CATEGORIES_ARR } from '../../model/data_structures/achievement/types';
+import { Input } from 'react-native-elements';
+
 
 function AchievementPageModal({ isVisible, closeModal, achievementGroup, achievements }) {
+   
     return (
         <Modal visible={isVisible} onDismiss={closeModal} presentationStyle="fullScreen">
             <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
@@ -56,6 +62,8 @@ function Achievements({ route, navigation }) {
     const [achievementsModalIsVisible, setAchievementsModalIsVisible] = useState(false);
     const [achievementGroup, setAchievementGroup] = useState("");
     const [achievementGroupObjects, setAchievementGroupObjects] = useState([]);
+
+    const [feedbackText, setFeedbackText] = useState("");
 
     const renderRecentAchievements = () => {
         if (true) {
@@ -153,6 +161,48 @@ function Achievements({ route, navigation }) {
         }
     }
 
+    const renderConstructionDialog = () => {
+        return (
+            <Dialog visible={true} style={{borderRadius: 20}}>
+                <Dialog.Title>
+                    Under Construction!
+                </Dialog.Title>
+                <Dialog.Content>
+                    <Paragraph>
+                        Thank you for using Lupa! Unfortunately we are still working on our achievements.  
+                        Send us some achievements you would like to see on Lupa.
+                    </Paragraph>
+                    <Input 
+value={feedbackText}
+onChangeText={text => setFeedbackText(text)}
+returnKeyLabel="done"
+returnKeyType="done"
+placeholder="What achievements would you like to see on Lupa?"
+keyboardType="default"
+keyboardAppearance="light"
+multiline
+style={{alignItems: 'center'}}
+inputStyle={{fontSize: 16, fontFamily: 'Avenir-Roman', alignItems: 'center'}} 
+containerStyle={{alignSelf: 'center', height: 150, width: '100%', margin: 10,}} 
+inputContainerStyle={{paddingLeft: 8, height: '100%',  alignItems: 'center', alignSelf: 'flex-start', borderBottomWidth: 0, backgroundColor: '#EEEEEE', borderRadius: 20}} 
+/>
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button 
+                    disabled={feedbackText.length == 0}
+                    color="#23374d"
+                    onPress={() => navigation.pop()}>
+                        Send Feedback
+                    </Button>
+
+                    <Button color="#23374d" onPress={() => navigation.pop()}>
+                        I understand
+                    </Button>
+                </Dialog.Actions>
+            </Dialog>
+        )
+    }
+
     return (
         <View style={styles.container}>
             <Appbar.Header style={{justifyContent: 'space-between', backgroundColor: '#FFFFFF', elevation: 0}}>
@@ -177,6 +227,8 @@ function Achievements({ route, navigation }) {
             </ScrollView>
             </View>
             <AchievementPageModal isVisible={achievementsModalIsVisible} closeModal={() => setAchievementsModalIsVisible(false)} achievements={achievementGroupObjects} achievementGroup={achievementGroup} />
+            {renderConstructionDialog()}
+ 
         </View>
     )
 }

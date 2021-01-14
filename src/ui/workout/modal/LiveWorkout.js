@@ -37,7 +37,7 @@ import { Video } from 'expo-av'
 import FeatherIcon from "react-native-vector-icons/Feather"
 import { connect } from 'react-redux';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { Fire, LUPA_DB_FIREBASE } from '../../../controller/firebase/firebase';
+import LUPA_DB, { Fire, LUPA_DB_FIREBASE } from '../../../controller/firebase/firebase';
 import LupaController from '../../../controller/lupa/LupaController';
 import ThinFeatherIcon from "react-native-feather1s";
 import { Constants } from 'react-native-unimodules';
@@ -137,6 +137,7 @@ class LiveWorkout extends React.Component {
             currentDayIndex: 0,
             currentWorkoutIndex: 0,
             playVideo: false,
+            showWeightUsedQuery: false,
             contentShowing: false,
             ready: false,
             programData: getLupaProgramInformationStructure(),
@@ -163,10 +164,13 @@ class LiveWorkout extends React.Component {
             participants: [],
             timelineData: [],
             labelData: [],
+            hasWorkouts: true,
+            completed_exercise_weight_used: 0,
         }
     }
 
     async componentDidMount() {
+        
         const { sessionID } = this.props.route.params;
         await this.setupLiveWorkout();
         this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData);
@@ -176,9 +180,35 @@ class LiveWorkout extends React.Component {
         await LUPA_DB_FIREBASE.ref(refString.toString()).on('value', (snapshot) => {
             const data = snapshot.val();
 
+            //this.setState({ noWorkoutsDialogVisible: true })
+
             var newState = Object.assign({}, data);
-            this.setState({ ...newState })
+            this.setState({ ...newState }, () => {
+                if (this.state.hasWorkouts == false) {
+                   // alert('No Workouts')
+                }
+            })
             console.log(data);
+        })
+
+        await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(documentSnapshot => {
+            const data = documentSnapshot.data();
+            const completedExercises = data.completed_exercises;
+
+            let found = false;
+
+            for (let i = 0; i < completedExercises.length; i++) {
+                if (completedExercises[i].index == this.state.currentWorkout.index) {
+                    found = true;
+                    this.setState({ completed_exercise_weight_used: completedExercises[i].weight_used })
+                }
+            }
+
+            if (found != true) {
+                this.setState({ showWeightUsedQuery: true })
+            } else {
+                this.setState({ showWeightUsedQuery: false })
+            }
         })
 
         this.workoutService.addParticipant(this.props.lupa_data.Users.currUserData);
@@ -234,6 +264,26 @@ class LiveWorkout extends React.Component {
 
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
             this.setState({ currUserFollowing: data })
+        })
+    }
+
+    updateWeightUsed = (weight) => {
+        let completedExercises = []
+        LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).get().then(documentSnapshot => {
+            completedExercises = documentSnapshot.data().completed_exercises;
+
+            for (let i = 0; i < completedExercises.length; i++) {
+                if (completedExercises[i].index == this.state.currentWorkout.index) {
+                   this.setState({ completed_exercise_weight_used: weight })
+                   completedExercises[i].weight_used = weight;
+                }
+            }
+
+            LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).update({
+                completed_exercises: completedExercises
+            })
+        }, (error) => {
+
         })
     }
 
@@ -492,7 +542,7 @@ class LiveWorkout extends React.Component {
     }
 
     advanceExercise = () => {
-        this.workoutService.advanceWorkout()
+        this.workoutService.advanceWorkout();
     }
 
     renderWorkoutReps = () => {
@@ -580,39 +630,95 @@ class LiveWorkout extends React.Component {
 }
 }
 
+renderStepIndicator = () => {
+    if (true == false) {
+        return (
+            <StepIndicator 
+            
+            currentPosition={this.state.currentWorkoutIndex}
+            steps={this.state.timelineData} 
+            stepCount={this.state.timelineData.length}
+            customStyles={{
+                stepIndicatorSize: 25,
+currentStepIndicatorSize:30,
+separatorStrokeWidth: 2,
+currentStepStrokeWidth: 3,
+stepStrokeCurrentColor: '#1089ff', //outline
+stepStrokeWidth: 3,
+stepStrokeFinishedColor: '#1089ff',
+stepStrokeUnFinishedColor: '#1089ff', //unfinished outline
+separatorFinishedColor: '#1089ff',
+separatorUnFinishedColor: '#1089ff',
+stepIndicatorFinishedColor: '#1089ff',
+stepIndicatorUnFinishedColor: '#1089ff',
+stepIndicatorCurrentColor: '#ffffff',
+stepIndicatorLabelFontSize: 13,
+currentStepIndicatorLabelFontSize: 13,
+stepIndicatorLabelCurrentColor: '#1089ff',
+stepIndicatorLabelFinishedColor: '#ffffff',
+stepIndicatorLabelUnFinishedColor: '#FFFFFF',
+labelColor: '#1089ff',
+labelSize: 13,
+currentStepLabelColor: '#1089ff'
+            }}
+             />
+        )
+    }
+}
+
+    renderWeightUsed = () => {
+        try {
+            return this.state.completed_exercise_weight_used
+        } catch(error) {
+            return 0;
+        }
+    }
+
+    renderWeightUsedQuery = () => {
+       if (this.state.showWeightUsedQuery == true) {
+        return (
+            <View style={{flex: 0.5, alignItems: 'center', justifyContent: 'space-evenly', flexDirection: 'row'}}>
+                    <View style={{flex: 3, padding: 10}}>
+                    <Caption>
+                        What was the weight used for this exercise?
+                  </Caption>
+                    </View>
+               
+<View style={{flex: 1}}>
+<Input 
+onChangeText={text => this.setState({ completed_exercise_weight_used: text })}
+onBlur={() => this.updateWeightUsed(this.state.completed_exercise_weight_used)}
+value={this.renderWeightUsed()}
+containerStyle={{width: 80}} 
+inputContainerStyle={{borderWidth: 1, height: 30}} 
+/>
+</View>
+
+                    </View>
+        )
+        }
+    }
+
     renderComponentDisplay = () => {
         if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
             return (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                    <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height })} style={{ flex: 2.5, alignItems: 'center', justifyContent: 'center' }}>
+                    <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height })} style={{ flex: 2.5, alignItems: 'center', justifyContent: 'space-evenly' }}>
 
                         <Surface style={{ backgroundColor: '#FFFFFF', height: '80%', borderRadius: 8, width: Dimensions.get('window').width - 20 }}>
                             {this.renderImageSource(this.state.currentWorkout)}
-                            {/*this.renderContent()*/}
-                        </Surface>
+                        </Surface>                        
                     </View>
 
-                    <View style={{ flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                        <View style={{ paddingHorizontal: 10, flex: 2.5, alignItems: 'flex-start', justifyContent: 'center' }}>
-                            <Text style={{ fontFamily: 'Avenir-Heavy' }}>
-                                {this.state.currentWorkout.workout_name}
-                            </Text>
-                        </View>
-
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-
-                            <Text>
-                                Week: {this.state.currentWeek + 1}
-                            </Text>
-                        </View>
-                    </View>
+                    {this.renderWeightUsedQuery()}
+                    
                     <Divider style={{ width: '100%' }} />
                     <View style={{ flex: 2.5, flexDirection: 'row', }}>
                         <View style={{flex: 1, justifyContent: 'space-between' }}>
 
                   
                             <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly', paddingHorizontal: 20 }}>
-                                <Text style={{ paddingVertical: 3 }}>
+                                <Text style={{ paddingVertical: 3, fontSize: 13 }}>
                                     Sets
                         </Text>
                                 <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
@@ -623,7 +729,7 @@ class LiveWorkout extends React.Component {
                             </View>
 
                             <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-                                <Text style={{ paddingVertical: 3 }}>
+                                <Text style={{ paddingVertical: 3, fontSize: 13 }}>
                                     Reps
                         </Text>
                                 <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
@@ -632,13 +738,9 @@ class LiveWorkout extends React.Component {
                                     </Text>
                                 </View>
                             </View>
-                     
-
-
-
 
                             <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-                                <Text style={{ paddingVertical: 3 }}>
+                                <Text style={{ paddingVertical: 3, fontSize: 13 }}>
                                     Tempo
                         </Text>
                                 <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
@@ -649,12 +751,23 @@ class LiveWorkout extends React.Component {
                             </View>
 
                             <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-                                <Text style={{ paddingVertical: 3 }}>
+                                <Text style={{ paddingVertical: 3, fontSize: 13 }}>
                                     Rest Time
 </Text>
                                 <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                     <Text style={{ fontFamily: 'Avenir-Light' }}>
                                         {this.state.restTime}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly', paddingHorizontal: 20 }}>
+                                <Text style={{ paddingVertical: 3, fontSize: 13 }}>
+                                    One Rep Max
+                        </Text>
+                                <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ fontFamily: 'Avenir-Light' }}>
+                                        -
                                     </Text>
                                 </View>
                             </View>
@@ -683,38 +796,10 @@ class LiveWorkout extends React.Component {
 
                     </View>
 
-                    <View style={{flex: 0.8,  justifyContent: 'center'}}>
-                        <StepIndicator 
-                        currentPosition={this.state.currentWorkoutIndex}
-                        labels={this.state.labelData}
-                        steps={this.state.timelineData} 
-                        stepCount={this.state.timelineData.length}
-                        customStyles={{
-                            stepIndicatorSize: 25,
-  currentStepIndicatorSize:30,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: '#1089ff', //outline
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: '#1089ff',
-  stepStrokeUnFinishedColor: '#1089ff', //unfinished outline
-  separatorFinishedColor: '#1089ff',
-  separatorUnFinishedColor: '#1089ff',
-  stepIndicatorFinishedColor: '#1089ff',
-  stepIndicatorUnFinishedColor: '#1089ff',
-  stepIndicatorCurrentColor: '#ffffff',
-  stepIndicatorLabelFontSize: 13,
-  currentStepIndicatorLabelFontSize: 13,
-  stepIndicatorLabelCurrentColor: '#1089ff',
-  stepIndicatorLabelFinishedColor: '#ffffff',
-  stepIndicatorLabelUnFinishedColor: '#FFFFFF',
-  labelColor: '#1089ff',
-  labelSize: 13,
-  currentStepLabelColor: '#1089ff'
-                        }}
-                         />
+                 <View style={{flex: 0.8, justifyContent: 'center'}}>
+                     {this.renderStepIndicator()}
                     </View>
-
+                    
 
 
 

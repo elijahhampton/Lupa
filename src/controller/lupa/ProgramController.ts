@@ -96,45 +96,10 @@ export default class ProgramController {
         })
     }
 
-    addUserToProgramWaitlist = async (programUID, userData) => {
+    addUserToProgramWaitlist = async (userData) => {
         //add user to program waitlist
-        const waitlistDocRef = PROGRAM_WAITLIST_COLLECTION.doc(programUID);
-        const userDocRef = USERS_COLLECTION.doc(userData.user_uuid);
         const userWaitlistDataEntry = constructUserWaitlistMetadataEntry(userData);
-        let updatedWaitlist = [];
-       
-
-        waitlistDocRef.get()
-            .then((documentSnapshot) => {
-                if (documentSnapshot.exists) {
-                    //get waitlist data
-                    const data = documentSnapshot.data();
-                    updatedWaitlist = data.waitlist;
-                    updatedWaitlist.push(userWaitlistDataEntry);
-                    
-                    waitlistDocRef.update({
-                        waitlist: updatedWaitlist
-                    });
-                } else {
-                    waitlistDocRef.set({ waitlist: [constructUserWaitlistMetadataEntry(userData)]}); // create the document
-                }
-            })
-            .catch(error => {
-            })
-
-        userDocRef.get()
-            .then(documentSnapshot => {
-                const data = documentSnapshot.data();
-                let updatedWaitlist = data.waitlisted_programs;
-                updatedWaitlist.push(programUID);
-
-                userDocRef.update({
-                    waitlist: updatedWaitlist
-                })
-            })
-            .catch(error => {
-
-            })
+        const waitlistDocRef = PROGRAM_WAITLIST_COLLECTION.doc(userData.user_uuid).set(userWaitlistDataEntry)
     }
 
     updateProgramWorkoutData = (programUUID, workoutData, numWorkoutsAdded, equipmentList) => {
@@ -773,7 +738,8 @@ function constructUserWaitlistMetadataEntry(userData: LupaUserStructure) {
         city: userData.location.city,
         state: userData.location.state,
         country: userData.location.country,
-        position: [userData.location.longitude, userData.location.latitude] //[long, lat] - [x, y]
+        position: [userData.location.longitude, userData.location.latitude], //[long, lat] - [x, y]
+        interest: userData.interest
     };
 
     return entry;

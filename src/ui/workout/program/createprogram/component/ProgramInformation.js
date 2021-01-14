@@ -25,6 +25,7 @@ import {
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Input} from 'react-native-elements';
+import { ProgramType } from '../../../../../model/data_structures/programs/common/types';
 
 const MIN_TITLE_LENGTH = 6
 const MAX_TITLE_LENGTH = 40
@@ -72,10 +73,11 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
 
   const [programDuration, setProgramDuration] = useState(1);
   const [programWorkoutDays, setProgramWorkoutDays] = useState([]);
+  const [programType, setProgramType] = useState('normal')
   const [learnMoreDialogIsVisible, setLearnMoreDialogIsVisible] = useState(false);
 
   const handleSaveProgramInformation = () => {
-    saveProgramInformation(programDuration, programWorkoutDays);
+    saveProgramInformation(programType, programDuration, programWorkoutDays);
   }
 
   const handleOnPickDay = (day) => {
@@ -83,6 +85,14 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
       setProgramWorkoutDays(days => [...days, day])
     } else {
       setProgramWorkoutDays(days => days.splice(days.indexOf(day), 1));
+    }
+  }
+
+  const getProgramTypeColor = (type) => {
+    if (programType == type) {
+      return '#1089ff'
+    } else {
+      return 'grey'
     }
   }
 
@@ -157,6 +167,35 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 </ScrollView>
               </View>
                 </View>
+
+                <View style={{paddingVertical: 10,}}>
+                  <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
+              <View style={{ flexDirection: 'row', paddingVertical: 5, alignItems: 'center', justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <FeatherIcon name="calendar" size={18} style={{marginRight: 5}} />
+              <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
+                Choose a program type
+              </Text>
+              </View>
+              </View>
+              <Text style={{ color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
+                Which type of program will you be creating?
+              </Text>
+              </View>
+
+              <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                  <Button mode="text" onPress={() => setProgramType('normal')} color={getProgramTypeColor('normal')}>
+                    Normal
+                  </Button>
+
+                  <Button mode="text" onPress={() => setProgramType('template')} color={getProgramTypeColor('template')}>
+                    Template
+                  </Button>
+              </View>
+   
+                </View>
+
+
             </View>
             <View style={{flex: 2, padding: 20, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-evenly'}}>
               <Button

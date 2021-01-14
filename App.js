@@ -63,6 +63,7 @@ import HourlyPaymentModal from './src/ui/user/modal/HourlyPaymentModal';
 import CommunityFeed from './src/ui/community/CommunityFeed';
 import CommunityHome from './src/ui/community/CommunityHome';
 import HomeGymModal from './src/ui/user/modal/HomeGymModal';
+import ExerciseDataLog from './src/ui/workout/modal/ExerciseDataLog';
 
 const App = () => {
   return (
@@ -121,6 +122,7 @@ function AppNavigator() {
       <StackApp.Screen name="Community" component={CommunityHome} />
       <StackApp.Screen name="CommunityFeed" component={CommunityFeed} />
       <StackApp.Screen name="ChangeHomeGym" component={HomeGymModal} />
+      <StackApp.Screen name="ExerciseDataLog" component={ExerciseDataLog} />
       </StackApp.Navigator>
   )
 }
@@ -175,6 +177,14 @@ const SwitchNavigator = () => {
   }
 
   /**
+ * Ensures the user's model matches the current schema.
+ * */
+function checkUserSchema(userData, schema) {
+  return Object.keys(userData).length === Object.keys(schema).length
+  && Object.keys(userData).every(k => schema.hasOwnProperty(k));
+}
+
+  /**
  * Sets up redux by loading the current user's data, packs, and programs
  * as well as Lupa application data (assessments, workouts);
  */
@@ -213,7 +223,7 @@ const SwitchNavigator = () => {
     await LUPA_CONTROLLER_INSTANCE.getCurrentUserData(uuid)
     .then(async result => {
       currUserData = result;
-    })
+    });
 
     await LUPA_CONTROLLER_INSTANCE.loadCurrentUserPacks(uuid).then(result => {
       currUserPacks = result;

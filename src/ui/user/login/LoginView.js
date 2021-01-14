@@ -285,9 +285,9 @@ const resetFormState = () => {
 
     setUserHasCompletedOnboarding(currUserData.has_completed_onboarding);
     
-    //We need to ensure that the user's structure matches the current schema. If it
+   /* //We need to ensure that the user's structure matches the current schema. If it
     //does not we simply add the missing fields with the default properties.
-    /*if (!checkUserSchema(currUserData, getLupaUserStructure())) {
+    if (!checkUserSchema(currUserData, getLupaUserStructure())) {
       currUserData = Object.assign(getLupaUserStructure(), currUserData)
     }*/
 

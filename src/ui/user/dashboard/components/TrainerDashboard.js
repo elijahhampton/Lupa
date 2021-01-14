@@ -165,6 +165,7 @@ function TrainerDashboard(props) {
                <FeatherIcon  name="bell" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Notifications')} />
                <FeatherIcon name="award" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Achievements')} />
                <FeatherIcon name="heart" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('PickInterest')} />
+               <FeatherIcon name="activity" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('ExerciseDataLog')} />
                <FeatherIcon name="settings" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Settings')} />
                
         </Right>

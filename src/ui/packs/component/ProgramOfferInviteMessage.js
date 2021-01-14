@@ -71,6 +71,26 @@ const ProgramOfferInviteMessage = ({messageData, timeCreated}) => {
     const handleStartPackProgram = () => {
         const { packProgramUID } = messageData
         LUPA_CONTROLLER_INSTANCE.handleStartPackProgramOffer(packProgramUID);
+
+        const CHARGE_PACK_PROGRAM_MEMBERS_ENDPOINT = "https://us-central1-lupa-cd0e3.cloudfunctions.net/chargePackProgramMembers";
+
+        axios({
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            url: CHARGE_PACK_PROGRAM_MEMBERS_ENDPOINT,
+            data: JSON.stringify({
+                purchasing_members: acceptedMembersUUIDs,
+                program: programData,
+                pack_program_uid: packProgramUID
+            })
+        }).then(response => {
+            
+        }).catch(error => {
+           alert('Error starting pack program. Contact customer support!')
+        })
     }
 
     const handleAcceptPackProgram = () => {
@@ -146,7 +166,8 @@ const ProgramOfferInviteMessage = ({messageData, timeCreated}) => {
             refreshAcceptedMembers()
         }
 
-        const PACK_PROGRAM_OBSERVER = LUPA_DB.collection('pack_programs').doc(packProgramUID)
+        const PACK_PROGRAM_OBSERVER = LUPA_DB.collection('pack_programs')
+        .doc(packProgramUID)
         .onSnapshot(documentSnapshot => {
             const data = documentSnapshot.data();
             if (typeof(data) === 'undefined') {
@@ -159,7 +180,7 @@ const ProgramOfferInviteMessage = ({messageData, timeCreated}) => {
 
         }, (error) => {
             setComponentDidErr(true);
-        })
+        });
         
         if (componentDidErr === false) {
             fetchProgramData()
@@ -216,7 +237,7 @@ const ProgramOfferInviteMessage = ({messageData, timeCreated}) => {
             return;
         }
 
-        if (acceptedMembersUUIDs.length > 1 && currUserData.user_uuid == senderUID) {
+        if (acceptedMembersUUIDs.length > 2 && currUserData.user_uuid == senderUID) {
             return (
                 <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                 <Button 
@@ -270,23 +291,44 @@ const ProgramOfferInviteMessage = ({messageData, timeCreated}) => {
     }
 
     const renderSubHeaderMessage = () => {
-        if (programIsLive === false) {
+        if (componentDidErr == true) {
             return (
                 <Caption>
-                {senderData.display_name} may close this after enough members accept the invite.
+                    Oops! Something went wrong.  This program invite has expired.
+                </Caption>
+            )
+        } else if (programIsLive == true) {
+            return (
+                <Caption>
+                    This program has been started and is now live.  
+                </Caption>
+            )
+        } else if (programIsLive == false && componentDidErr == false) {
+            return (
+                <Caption>
+                This invitation will expire 30 minutes after it was sent.  {senderData.display_name} may close this after enough members accept the invite.
             </Caption>
             )
         } else {
             return  (
-            <Caption>
-                This invitation will expire soon.
-            </Caption>
+                    <Caption>
+                    This invitation will expire 30 minutes after it was sent.  {senderData.display_name} may close this after enough members accept the invite.
+                </Caption>
             )
         }
     }
 
     const renderComponent = () => {
-        if (componentDidErr === true || programIsLive === true) {
+        if (componentDidErr == true) {
+            return (
+                <Surface style={{backgroundColor: 'rgb(244, 245, 251)', borderRadius: 10, elevation: 0, marginVertical: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10}}>
+                          <Caption>
+                    Oops! Something went wrong. This program invite has expired.
+                </Caption>
+                </Surface>
+              
+            )
+        } else if (programIsLive == true) {
             return (
                 <Surface style={{backgroundColor: 'rgb(244, 245, 251)', borderRadius: 10, elevation: 0, marginVertical: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10}}>
                           <Caption>
@@ -330,6 +372,7 @@ const ProgramOfferInviteMessage = ({messageData, timeCreated}) => {
             )
         }
     }
+
     return renderComponent()
 }
 

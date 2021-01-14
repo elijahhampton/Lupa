@@ -1,3 +1,5 @@
+import { firestore } from "firebase";
+
 const functions = require('firebase-functions')
 const admin = require("firebase-admin");
 
@@ -605,3 +607,84 @@ exports.retrieveTrainerAccountInformation = functions.https.onRequest(async (req
   response.setHeader('Content-Type', 'application/json');
   response.status(200).send(accountData)
 });
+
+exports.chargePackProgramMembers = functions.https.onRequest(async (request, response) => {
+  const purchasingMembersList = request.body.purchasing_members;
+  let purchasingProgram = request.body.program;
+  const packProgramUID = request.body.pack_program_uid;
+
+  let cardSourceArr = []
+
+  //collect card source
+  for (let i = 0; i < purchasingMembersList.length; i++) {
+    await admin
+    .firestore()
+    .collection('users')
+    .doc(purchasingMembersList[i])
+    .get()
+    .then(documentSnapshot => {
+      let userData = documentSnapshot.data();
+      cardSourceArr.push({
+        card_source: userData.stripe_metadata.card_source,
+        customer_id: userData.stripe_metadata.stripe_id,
+      });
+    })
+  }
+
+  let externalAccountsList = []
+  await admin
+  .firestore()
+  .collection('users')
+  .doc(purchasingProgram.program_owner)
+  .get()
+  .then(async documentSnapshot => {
+    let userData = documentSnapshot.data();
+    const account_id = userData.stripe_metadata.account_id;
+
+ //collect trainer account id
+ externalAccountsList = await stripe.accounts.listExternalAccounts(
+  account_id,
+  { object: 'bank_account', limit: 1 }
+);
+  })
+
+  const actualAmount = purchasingProgram.program_price;
+  const externalAccount = externalAccountsList.data[0].id;
+  const lupaPayout = (actualAmount * 0.16)
+
+  for (let i = 0; i < cardSourceArr.length; i++) {
+// Create a PaymentIntent:
+await stripe.paymentIntents.create({
+  amount: actualAmount,
+  currency: 'usd',
+  payment_method: cardSourceArr[i].card_source,
+  customer: cardSourceArr[i].customer_id,
+  payment_method_types: ['card'],
+  transfer_group: packProgramUID,
+  confirm: true,
+  transfer_data: {
+    destination: externalAccount
+  },
+  application_fee_amount: lupaPayout,
+}, {
+  idempotencyKey: Math.random().toString(),
+}).then(intent => {
+  admin.firestore().collection('users').doc(cardSourceArr[i].user_uuid).get().then(documentSnapshot => {
+    let userData = documentSnapshot.data();
+    let pack_programs = userData.pack_programs;
+    purchasingProgram.program_participant_category = 'pack';
+    pack_programs.push(purchasingProgram.program_structure_uuid)
+
+    admin.firestore().collection('users').doc(cardSourceArr[i].user_uuid).update({
+      pack_programs: pack_programs
+    })
+
+    admin.firestore().collection('pack_programs').doc(packProgramUID).set({
+      program_data: purchasingProgram
+    }, {
+      merge: true
+    })
+  })
+})
+  }
+})

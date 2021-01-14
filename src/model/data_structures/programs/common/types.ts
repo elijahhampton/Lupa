@@ -9,7 +9,6 @@ export type LupaProgramInformationStructure = {
     program_time: String,
     program_price: Number,
     program_location: Object,
-    program_type: String,
     program_allow_waitlist: Boolean,
     program_structure_uuid: String | Number,
     program_workout_data: Object,
@@ -29,6 +28,8 @@ export type LupaProgramInformationStructure = {
     program_started: false,
     num_exercises: Number,
     required_equipment: Array<string>,
+    program_type: ProgramType,
+    program_participant_category: ProgramParticipantCategory
 }
 
 export type ProgramWorkoutStructureEntry = {
@@ -53,4 +54,14 @@ export type ProgramMetaData = {
     num_interactions: Number,
     shares: Number,
     views: Number,
+}
+
+export enum ProgramParticipantCategory {
+    INDIVIDUAL='individual',
+    PACK='pack'
+}
+
+export enum ProgramType {
+    NORMAL='normal',
+    TEMPLATE='template'
 }

@@ -1,4 +1,4 @@
-import { LupaProgramInformationStructure, ProgramWorkoutStructureEntry} from "./common/types";
+import { LupaProgramInformationStructure, ProgramWorkoutStructureEntry, ProgramType, ProgramParticipantCategory} from "./common/types";
 
 var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_name: "",
@@ -17,7 +17,6 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
             lat: 0
         }
     },
-    program_type: "",
     program_allow_waitlist: false,
     program_structure_uuid: "0",
     program_workout_data: {
@@ -55,14 +54,17 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_started: false,
     num_exercises: 0,
     required_equipment: [],
+    program_type: 'normal',
+    program_participant_category: 'individual'
 }
 
-function initializeNewProgram(uuid: String | Number, programOwner: String, programParticipants: Array<String>, duration: Number, workoutDays: Array<String>) : LupaProgramInformationStructure {
+function initializeNewProgram(uuid: String | Number, programOwner: String, programParticipants: Array<String>, programType, duration: Number, workoutDays: Array<String>) : LupaProgramInformationStructure {
     lupa_program_information_structure.program_structure_uuid = uuid;
     lupa_program_information_structure.program_duration = duration;
     lupa_program_information_structure.program_workout_days = workoutDays;
     lupa_program_information_structure.program_participants = programParticipants;
     lupa_program_information_structure.program_owner = programOwner;
+    lupa_program_information_structure.program_type = programType;
 
     return lupa_program_information_structure;
 }

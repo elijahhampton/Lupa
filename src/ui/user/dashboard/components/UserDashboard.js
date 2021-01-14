@@ -19,7 +19,7 @@ import {
     Surface,
     DataTable,
     Paragraph,
-    Caption, 
+    Caption,
 } from 'react-native-paper';
 
 import {
@@ -57,19 +57,19 @@ function UserDashboard(props) {
             let bookingData = []
             let booking = {}
             documentSnapshot.forEach(doc => {
-            booking = doc.data();
-            if (typeof(booking.uid) == 'undefined' 
-            || booking.uid === 0 
-            || booking.status == Number(BOOKING_STATUS.BOOKING_COMPLETED)) {
-                
-            } else {
-                if (moment(booking.date).isAfter(moment(new Date())) && moment(new Date().getTime()).isAfter(moment(booking.end_time))) {
-                    LUPA_CONTROLLER_INSTANCE.markBookingSessionCompleted(booking);
+                booking = doc.data();
+                if (typeof (booking.uid) == 'undefined'
+                    || booking.uid === 0
+                    || booking.status == Number(BOOKING_STATUS.BOOKING_COMPLETED)) {
+
                 } else {
-                    bookingData.push(doc.data());
+                    if (moment(booking.date).isAfter(moment(new Date())) && moment(new Date().getTime()).isAfter(moment(booking.end_time))) {
+                        LUPA_CONTROLLER_INSTANCE.markBookingSessionCompleted(booking);
+                    } else {
+                        bookingData.push(doc.data());
+                    }
                 }
-            }
-           });
+            });
 
             setUserBookings(bookingData);
         });
@@ -92,7 +92,7 @@ function UserDashboard(props) {
     const [refreshing, setRefreshing] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    const handleOnRefresh =  React.useCallback(() => {
+    const handleOnRefresh = React.useCallback(() => {
         setRefreshing(true);
         setRefreshing(false);
     }, []);
@@ -100,28 +100,28 @@ function UserDashboard(props) {
     const renderUpcomingBooking = () => {
         if (userBookings.length === 0) {
             return (
-                <View style={{top: (Dimensions.get('window').height) / 3.5, alignItems: 'center', justifyContent: 'center', padding: 10}}>
-  <Paragraph style={{color: '#212121', fontFamily: 'Avenir-Medium'}}>
-                <Text>
-                    You don't have any scheduled bookings.{" "}
-                    </Text>
-                    <Text>
-                       Visit the search page to find a variety of Lupa trainers and fitness programs.
-                    </Text>
-                </Paragraph>
+                <View style={{ top: ((Dimensions.get('window').height) / 3.5) - 65, alignItems: 'center', justifyContent: 'center', padding: 10 }}>
+                    <Paragraph style={{ color: '#212121', fontFamily: 'Avenir-Medium' }}>
+                        <Text>
+                            You don't have any scheduled bookings.{" "}
+                        </Text>
+                        <Text>
+                            Visit the search page to find a variety of Lupa trainers and fitness programs.
+                        </Text>
+                    </Paragraph>
 
-                <Button 
-                uppercase={false}
-                onPress={() => navigation.navigate('Search')} 
-                style={{marginVertical: 10, width: '100%', elevation: 0}} 
-                contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
-                mode="contained" 
-                theme={{roundness: 12}} 
-                color="rgb(34, 74, 115)">
-                    Search Trainers and Fitness Programs
+                    <Button
+                        uppercase={false}
+                        onPress={() => navigation.navigate('Search')}
+                        style={{ marginVertical: 10, width: '100%', elevation: 0 }}
+                        contentStyle={{ width: Dimensions.get('window').width - 20, height: 55 }}
+                        mode="contained"
+                        theme={{ roundness: 12 }}
+                        color="rgb(34, 74, 115)">
+                        Search Trainers and Fitness Programs
                 </Button>
                 </View>
-              
+
             )
         }
 
@@ -129,64 +129,74 @@ function UserDashboard(props) {
             return (
                 <SessionDashboardComponent key={index} booking={booking} />
             )
-        })
+        });
     }
-    
+
     return (
         <View style={{
             flex: 1,
             backgroundColor: '#FFFFFF'
         }}>
-            <Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
-            
-            <Left>
-            <View style={{flexDirection: 'row', alignItems: 'center',}}>
-            <TouchableOpacity onPress={{}}>
-              <Avatar rounded source={{uri: currUserData.photo_url}} size={40} />
-              </TouchableOpacity>
-              <View style={{paddingHorizontal: 10}}>
-          <Text style={{ 
-      fontSize: 18,
-      fontFamily: 'Avenir-Black'}}>
-                {currUserData.display_name}
-              </Text>
-              <Text style={{
-                  color: 'rgb(180, 180, 180)',
-      fontSize: 15,
-      fontFamily: 'Avenir-Medium'}}>
-                Dashboard
-              </Text>
-          </View>
-            </View>
-    
-            </Left>
-    
-            <Right style={{flexDirection: 'row', alignItems: 'center'}}>
-           
-                   <FeatherIcon  name="bell" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Notifications')} />
-                   <FeatherIcon name="award" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Achievements')} />
-                   <FeatherIcon name="heart" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('PickInterest')} />
-                   <FeatherIcon name="settings" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Settings')} />
-                   
-            </Right>
+            <Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
+                <Left>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        <TouchableOpacity onPress={{}}>
+                            <Avatar rounded source={{ uri: currUserData.photo_url }} size={40} />
+                        </TouchableOpacity>
+                        <View style={{ paddingHorizontal: 10 }}>
+                            <Text style={{
+                                fontSize: 18,
+                                fontFamily: 'Avenir-Black'
+                            }}>
+                                {currUserData.display_name}
+                            </Text>
+                            <Text style={{
+                                color: 'rgb(180, 180, 180)',
+                                fontSize: 15,
+                                fontFamily: 'Avenir-Medium'
+                            }}>
+                                Dashboard
+                            </Text>
+                        </View>
+                    </View>
+                </Left>
+
+                <Right style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FeatherIcon name="bell" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('Notifications')} />
+                    <FeatherIcon name="award" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('Achievements')} />
+                    <FeatherIcon name="heart" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('PickInterest')} />
+                    <FeatherIcon name="activity" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('ExerciseDataLog')} />
+                    <FeatherIcon name="settings" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('Settings')} />
                  
-                </Header>
-            <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}> 
-            <View style={{marginVertical: 10}}>
-                    <ListItem 
-                    title="My Programs" 
-                    titleStyle={{fontSize: 20, fontFamily: 'Avenir-Heavy'}} 
-                    subtitle="Access all of your programs." 
-                    subtitleStyle={{fontSize: 15, fontFamily: 'Avenir-Roman'}} 
-              
-                    bottomDivider
-                    rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}
-                    onPress={() => setProgramModalIsOpen(true)}
+                </Right>
+            </Header>
+            <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}>
+                <View style={{ marginVertical: 10 }}>
+                    <ListItem
+                        title="My Programs"
+                        titleStyle={{ fontSize: 18, fontFamily: 'Avenir-Heavy' }}
+                        subtitle="Access all of your personal programs."
+                        subtitleStyle={{ fontSize: 15, fontFamily: 'Avenir-Roman' }}
+
+                        bottomDivider
+                        rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}
+                        onPress={() => setProgramModalIsOpen(true)}
                     />
+
+                   {/* <ListItem
+                        title="Pack Programs "
+                        titleStyle={{ fontSize: 18, fontFamily: 'Avenir-Heavy' }}
+                        subtitle="Access programs shared with your workout buddies."
+                        subtitleStyle={{ fontSize: 15, fontFamily: 'Avenir-Roman' }}
+
+                        bottomDivider
+                        rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}
+                        onPress={() => { }}
+                   />*/}
                 </View>
-                
-            <View style={{ flex: 1, }}>
-               {/* <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
+
+                <View style={{ flex: 1, }}>
+                    {/* <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
                     <Surface style={{elevation: 0, margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
                         <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
                             Total Sessions Completed
@@ -232,22 +242,22 @@ function UserDashboard(props) {
     </View> 
     </View> */}
 
-                <View style={{ flex: 2, marginVertical: 15}}>
-                {
-                      userBookings.length === 0 ?
-                      null
-                      :
-                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                      <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
-                          Bookings
+                    <View style={{ flex: 2, marginVertical: 15 }}>
+                        {
+                            userBookings.length === 0 ?
+                                null
+                                :
+                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
+                                    <Text style={{ fontSize: 20, fontFamily: 'Avenir-Heavy' }}>
+                                        Bookings
                       </Text>
-                      </View>
-                  }
+                                </View>
+                        }
 
-                    {renderUpcomingBooking()}
-                   
+                        {renderUpcomingBooking()}
+
+                    </View>
                 </View>
-            </View>
             </ScrollView>
             <DashboardPrograms isVisible={programsModalIsOpen} closeModal={() => setProgramModalIsOpen(false)} />
         </View>

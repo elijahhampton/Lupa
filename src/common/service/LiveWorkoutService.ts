@@ -1,10 +1,11 @@
 import { LupaUserStructure } from "../../controller/lupa/common/types";
 import { LupaProgramInformationStructure } from "../../model/data_structures/programs/common/types";
 import LiveSession from "../../model/data_structures/workout/live_session";
-import { LUPA_DB_FIREBASE } from '../../controller/firebase/firebase';
+import LUPA_DB, { LUPA_DB_FIREBASE } from '../../controller/firebase/firebase';
 import { getLupaExerciseStructure } from "../../model/data_structures/workout/exercise_collections";
 
 import moment from 'moment';
+import { getLupaUserStructurePlaceholder } from "../../controller/firebase/collection_structures";
 
 export const LIVE_SESSION_REF = 'live_session/';
 
@@ -26,6 +27,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
     this.restTimerVisible = false;
     this.timelineData = []
     this.labelData = []
+    this.hasWorkouts = false;
 
     if (sessionID.includes('.')) {
         this.sessionID = sessionID.split('.')[1];
@@ -95,6 +97,15 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
 
         workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[currentWeek][day]);
         this.workoutStructure = workoutStructure;
+
+        if (this.workoutStructure.length != 0) {
+            this.hasWorkouts = true;
+            updatedState['hasWorkouts'] = true;
+        } else {
+            this.hasWorkouts = false;
+            updatedState['hasWorkouts'] = false;
+            return updatedState;
+        }
 
         this.currentWorkoutDay = day;
         updatedState['currentWorkoutDay'] = day;
@@ -176,17 +187,59 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
     }
 
     this.handleOnChangeWorkout = () => {
+        
+    }
 
+    this.createExerciseStructure = () => {
+        const exerciseStructure = {
+            exercise_name: this.currentWorkout.workout_name,
+            exercise_weight: 0,
+            one_rep_max: 0,
+            equipment_used: [],
+            index: this.currentWorkout.index
+        }
+
+        return exerciseStructure;
     }
 
     this.advanceWorkout = async () => {
-        await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
+        let userData = getLupaUserStructurePlaceholder();
+        let updatedCompletedExerciseList = [];
+        const newExerciseEntry = this.createExerciseStructure()
+        let addExercise = true;
+        await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+        .update({ 
             restTimerVisible: true, 
             restTimerStarted: true 
+        }).then(async () => {
+            for (let i = 0; i < this.participants.length; i++) {
+                
+                await LUPA_DB.collection('users').doc(this.participants[i].user_uuid).get().then(documentSnapshot => {
+                    userData = documentSnapshot.data();
+                }).then(() => {
+                   updatedCompletedExerciseList = userData.completed_exercises;
+                    
+                    for (let i = 0; i < updatedCompletedExerciseList.length; i++) {
+                        if (updatedCompletedExerciseList[i].index == newExerciseEntry.index) {
+                            addExercise = false
+                        }
+                    }
+
+                    if (addExercise == true) {
+                        updatedCompletedExerciseList.push(newExerciseEntry);
+
+                    LUPA_DB.collection('users').doc(this.participants[i].user_uuid).update({
+                        completed_exercises: updatedCompletedExerciseList
+                    })
+                    }
+                })
+
+
+            }
         });
 
         this.restTimerVisible = true;
-        this.restTimerStarted = true;
+        this.restTimerStarteds = true;
 
         if (this.currentWorkout.workout_reps > 1) {
             let newCurrentWorkoutObj = {

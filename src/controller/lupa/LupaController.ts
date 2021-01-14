@@ -429,8 +429,8 @@ export default class LupaController {
       PACKS_CONTROLLER_INSTANCE.setPackProgramLive(packProgramUID, bool);
     }
 
-    handleSendProgramOfferInvite = (senderUUID, packData, programData) => {
-      PACKS_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(senderUUID, packData, programData);
+    handleSendProgramOfferInvite = (programOwnerUID, senderUUID, packData, programData) => {
+      PACKS_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(programOwnerUID, senderUUID, packData, programData);
     }
 
     handleAcceptPackProgramOfferInvite = (packProgramUID, userUID) => {
@@ -456,9 +456,9 @@ export default class LupaController {
       await PROGRAMS_CONTROLLER_INSTANCE.checkProgramWaitlistForMatches(programUID, userData, this.createNewPack);
     }
 
-    addUserToProgramWaitlist = async (programUID, userData) => {
+    addUserToProgramWaitlist = async (userData) => {
       return new Promise(async (resolve, reject) => {
-        await PROGRAMS_CONTROLLER_INSTANCE.addUserToProgramWaitlist(programUID, userData)
+        await PROGRAMS_CONTROLLER_INSTANCE.addUserToProgramWaitlist(userData)
         .then(result => {
           resolve(result);
         })
@@ -1040,6 +1040,34 @@ export default class LupaController {
 
   linkProgramToClient = (clientUID, program) => {
     USER_CONTROLLER_INSTANCE.linkProgramToClient(clientUID, program);
+  }
+
+  fetchPackWaitlist = async () => {
+    return new Promise(async (resolve, reject) => {
+      await USER_CONTROLLER_INSTANCE.fetchPackWaitlist().then(data => {
+        resolve(data);
+      })
+    })
+  }
+
+  fetchCuratedPacks = async () => {
+    return new Promise(async (resolve, reject) => {
+      await PACKS_CONTROLLER_INSTANCE.fetchCuratedPacks().then(data => {
+        resolve(data);
+      })
+    })
+  }
+
+  addUserToPack = async (userData : LupaUserStructure, packData : PackType) => { 
+    await USER_CONTROLLER_INSTANCE.addUserToPack(userData, packData);
+  }
+
+  updateCompletedExerciseEquipment = (userData, exerciseID, exerciseEquipment) => {
+    USER_CONTROLLER_INSTANCE.updateCompletedExerciseEquipment(userData, exerciseID, exerciseEquipment);
+  }
+
+  updateCompletedExerciseStats = (userData, exerciseID, editedExerciseWeightUsed, editedExerciseOneRepMax) => {
+    USER_CONTROLLER_INSTANCE.updateCompletedExerciseStats(userData, exerciseID, editedExerciseWeightUsed, editedExerciseOneRepMax);
   }
 
 }

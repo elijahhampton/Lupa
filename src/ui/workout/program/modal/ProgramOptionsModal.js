@@ -71,7 +71,14 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
     const openProgramPreview = () => programPreviewRef.current.open();
     const closeProgramPreview = () => programPreviewRef.current.close();
 
+    handleOpenProgramPreview = async () => {
+        await closeModal()
+        openProgramPreview()
+    }
+
     const handleDefaultOptionsOnPress = (optionTitle) => {
+  
+
         if (optionTitle == 'Preview Program') {
             openProgramPreview()
         }
@@ -91,8 +98,6 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         if (optionTitle == 'Post to Profile') {
             LUPA_CONTROLLER_INSTANCE.markProgramPublic(program.program_structure_uuid);
         }
-
-        closeModal()
     }
 
     const handleCurrUserOptions = (optionTitle) => {

@@ -61,12 +61,13 @@ class CreateProgram extends React.Component {
         }
     }
 
-    initializeProgram = async (programDuration, programDays) => {
+    initializeProgram = async (programType, programDuration, programDays) => {
        const { user_uuid } = this.props.lupa_data.Users.currUserData
-       const newProgramData = await initializeNewProgram(0, user_uuid, [user_uuid], programDuration, programDays);
+       const newProgramData = await initializeNewProgram(0, user_uuid, [user_uuid], programType, programDuration, programDays);
        await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(newProgramData).then(programUUID => {
             this.setState({
-                programData: initializeNewProgram(programUUID, user_uuid, [user_uuid], programDuration, programDays),
+                programType: programType,
+                programData: initializeNewProgram(programUUID, user_uuid, [user_uuid], programType, programDuration, programDays),
                 uuid: programUUID
             }, () => console.log(this.state.programData.program_structure_uuid));
         }).catch(error => {
@@ -77,14 +78,14 @@ class CreateProgram extends React.Component {
         });
     }
 
-    saveProgramInformation = (programDuration, programDays) => {
+    saveProgramInformation = (programType, programDuration, programDays) => {
         const newProgramData = {
             ...this.state.programData,
             programDuration: programDuration,
             program_workout_days: programDays
         }
 
-        this.initializeProgram(programDuration, programDays).then(() => {
+        this.initializeProgram(programType, programDuration, programDays).then(() => {
             this.goToIndex(1)
         })
     }
@@ -152,13 +153,14 @@ class CreateProgram extends React.Component {
                 return (
                     <ProgramInformation 
                     handleCancelOnPress={this.exit}
-                    saveProgramInformation={(programDuration, programDays) => this.saveProgramInformation(programDuration, programDays)}
+                    saveProgramInformation={(programType, programDuration, programDays) => this.saveProgramInformation(programType, programDuration, programDays)}
                      />
                 )
             case 1:
                 return <BuildWorkoutController 
                         isEditing={false}
                         navigation={this.props.navigation} 
+                        programType={this.state.programType}
                         programData={this.state.programData} 
                         program_workout_days={this.state.programData.program_workout_days}
                         goToIndex={this.goToIndex} 

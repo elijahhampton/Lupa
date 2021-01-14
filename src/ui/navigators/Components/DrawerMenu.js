@@ -44,6 +44,7 @@ import { DrawerActions } from '@react-navigation/native';
 import { Input } from 'native-base';
 import Swiper from 'react-native-swiper';
 import CreatePackDialog from '../../packs/dialogs/CreatePackDialog';
+import MatchMe from '../../packs/modal/MatchMe';
 
 const ICON_SIZE = 20;
 const ICON_COLOR = "rgb(203, 209, 214)"
@@ -92,6 +93,7 @@ function DrawerMenu({ }) {
   const [avatarIndex, setAvatarIndex] = useState(0)
   const [viewReady, setViewReady] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [matchMeIsVisible, setMatchMeIsVisible] = useState(false);
   const [lupaStoreState, setLupaStoreState] = useState(getLupaStoreState())
   const navigation = useNavigation()
   const dispatch = useDispatch();
@@ -319,7 +321,7 @@ alwaysShowSend={true}
        <Text style={styles.swiperEntryContentText}>
           Looking for workout partners?  Let us search through your community and find your perfect match.
       </Text>
-          <Button theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
+          <Button onPress={() => setMatchMeIsVisible(true)} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
           <Text style={{fontFamily: 'Avenir'}}>
             Match me
           </Text>
@@ -453,6 +455,7 @@ alwaysShowSend={true}
         </View>
         </View>
     </SafeAreaView>
+    <MatchMe isVisible={matchMeIsVisible} closeModal={() => setMatchMeIsVisible(false)} />
     <CreatePackDialog ref={createPackSheetRef} />
     <PackLeaderLimitDialog 
           isVisible={packLeaderLimitReachedDialogIsVisible} 

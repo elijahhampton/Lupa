@@ -88,7 +88,7 @@ function StartPackDialog({ isVisible, closeModal, program }) {
       }
     
       const handleOnPressSend = async () => {
-        LUPA_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(currUserData.user_uuid, chosenPack.uid, program.program_structure_uuid)
+        LUPA_CONTROLLER_INSTANCE.handleSendProgramOfferInvite(program.program_owner, currUserData.user_uuid, chosenPack.uid, program.program_structure_uuid)
         closeModal()
       }
     
@@ -98,7 +98,7 @@ function StartPackDialog({ isVisible, closeModal, program }) {
         }
 
         return getLupaStoreState().Packs.currUserPacksData.map((user, index, arr) => {
-            if (user.members <= 1 == false) {
+            if (user.is_live == false) {
                 return null;
             }
 
@@ -173,15 +173,20 @@ function StartPackDialog({ isVisible, closeModal, program }) {
                         </Text>
                         </View>
                     :
+                    <View>
+
+                
                     <Paragraph style={{fontFamily: 'Avenir'}}>
                     You are about to invite your pack to start {program.program_name} with you.  
                 </Paragraph>
+          <View style={{height: 200, alignItems: 'flex-start', width: '100%'}}>
+          <ScrollView centerContent contentContainerStyle={{justifyContent: 'flex-start', alignItems: 'flex-start'}}>
+          {renderUserAvatars()}
+          </ScrollView>
+      </View>
+      </View>
                 }
-                <View style={{height: 200, alignItems: 'flex-start', width: '100%'}}>
-                    <ScrollView centerContent contentContainerStyle={{justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-                    {renderUserAvatars()}
-                    </ScrollView>
-                </View>
+
          
 
             </Dialog.Content>
@@ -617,8 +622,6 @@ const ProgramInformationPreview = forwardRef(({ isVisible, program, closeModalMe
 
                    {
                        currUserData.user_uuid != programOwnerData.user_uuid ?
-                       null
-                       :
                        <Button 
                        icon={() => <FeatherIcon name="shopping-cart" color="white" size={15} />}
                              onPress={() => setLupaPurchasePageOpen(true)} 
@@ -632,6 +635,8 @@ const ProgramInformationPreview = forwardRef(({ isVisible, program, closeModalMe
                          >
                              Proceed to Checkout
                      </Button>
+                       :
+                    null
                    }
                 </View>
                    <FullScreenLoadingIndicator isVisible={loading} />
