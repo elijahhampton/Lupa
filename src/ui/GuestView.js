@@ -670,7 +670,7 @@ renderSkills = () => {
       if (updatedAppState.Auth.isAuthenticated === false) {
         return (
           <View style={{ padding: 20, backgroundColor: 'transparent' }}>
-            <Text style={{ fontFamily: 'Avenir-Medium' }}>
+            <Text style={{ fontFamily: 'Avenir-Medium', color: 'white' }}>
               <Text>
                 Sorry we were not able to find any trainers in your area.{" "}
               </Text>
@@ -683,15 +683,23 @@ renderSkills = () => {
             </Text>
           </View>
         )
-      }
-
-      return (
-        <View style={{ padding: 20 }}>
-          <Caption>
-            Sorry we were not able to find any trainers in your area.
-              </Caption>
+      } else {
+        return (
+          <View style={{ padding: 20, backgroundColor: 'transparent' }}>
+          <Text style={{ fontFamily: 'Avenir-Medium', color: 'white' }}>
+            <Text>
+              Sorry we were not able to find any trainers in your area.{" "}
+            </Text>
+            <Text style={{ color: '#1089ff' }} onPress={this.handleFetchUserLocation}>
+              Try enabling location services{" "}
+            </Text>
+            <Text>
+              or check back again at a later date.
+              </Text>
+          </Text>
         </View>
-      )
+        )
+      }
     }
 
     return (
