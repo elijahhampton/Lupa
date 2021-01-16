@@ -274,54 +274,41 @@ function WaitListDialog({ isVisible, closeModal, program, userIsWaitlisted }) {
     )
 }
 
-const ProgramInformationPreview = forwardRef(({ isVisible, program, closeModalMethod }, ref) => {
+const ProgramInformationPreview = forwardRef(({ program}, ref) => {
     const [programOwnerData, setProgramOwnerData] = useState(getLupaUserStructure())
-    const [showProfileModal, setShowProfileModal] = useState(false)
-    const [showWorkoutPreviewModal, setShowWorkoutPreviewModal] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [token, setToken] = useState("")
-    const [paymentSuccessful, setPaymentSuccessful] = useState(false)
-    const [paymentComplete, setPaymentComplete] = useState(false)
     const [waitlistDialogIsVisible, setWaitlistDialogIsVisible] = useState(false);
     const [startPackDialogIsVisible, setStartPackDialogIsVisible] = useState(false);
-
-    const [numExercises, setNumExercises] = useState(0);
-
     const [waitlistProgramData, setProgramWaitlistData] = useState([]);
-
     const [lupaPurchasePageOpen, setLupaPurchasePageOpen] = useState(false)
-
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
-
-    const dispatch = useDispatch()
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
 
-    const getProgramProps = () => {
-        const id = program.program_structure_uuid
-        return id;
-
-    }
+    const [readyToPurchase, setReadyToPurchase] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
                 await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(program.program_owner)
                 .then(data => {
                     setProgramOwnerData(data)
-                }).catch((error) => {
-                    alert(err)
-                    setProgramOwnerData(getLupaProgramInformationStructure())
                 })
         }
 
-
-
         LOG('ProgramInformationPreview.js', 'Running useEffect');
 
-        fetchData();
-    }, [])
+        fetchData()
+        .then(() => {
+           setReadyToPurchase(true);
+        })
+        .catch((error) => {
+            setReadyToPurchase(false);
+        })
+
+      
+    }, [program.program_structure_uuid])
 
     const checkUserIsWaitlisted = () => {
         let retVal = false;
@@ -333,95 +320,6 @@ const ProgramInformationPreview = forwardRef(({ isVisible, program, closeModalMe
 
         retVal = false;
         return retVal;
-    }
-
-    /**
-     * Sends request to server to complete payment
-     */
-    const makePayment = async (token, amount) => {
-        //Create an idemptoencyKey to prevent double transactions
-        const idempotencyKey = await Math.random().toString()
-
-        //Get a copy of the current user data to pass some fields into the request
-        const userData = currUserData;
-
-        //Make the payment request to firebase with axios
-        axios({
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            url: STRIPE_ENDPOINT,
-            data: JSON.stringify({
-                seller_stripe_id: programOwnerData.stripe_metadata.stripe_id,
-                amount: amount,
-                currency: CURRENCY,
-                token: token,
-                idempotencyKey: idempotencyKey,
-            })
-        }).then(response => {
-            setLoading(false)
-        }).catch(err => {
-            setPaymentSuccessful(false)
-            setPaymentComplete(true)
-        })
-    }
-
-    /**
-     * Handles program purchase process
-     */
-    const handlePurchaseProgram = async (amount) => {
-        await setLoading(true)
-         //handle stripe
-         await initStripe();
- 
-         //collect payment information and generate payment token
-         try {
-             setToken(null)
-             const token = await stripe.paymentRequestWithCardForm({
-                 requiredBillingAddressFields: 'zip'
-             });
- 
-             if (token == undefined) {
-                 throw LUPA_ERR_TOKEN_UNDEFINED;
-             }
-             
-             await setToken(token)
-         } catch (error) {
-             setLoading(false)
-             return;
-         }
- 
-         //get the token from the state
-         const generatedToken = await token;
- 
-         //Send request to make payment
-         try {
-             await makePayment(generatedToken, amount)
-         } catch (error) {
-             await setPaymentComplete(false)
-             await setPaymentSuccessful(false)
-             return;
-         }
-
-        //If the payment is complete and successful then update database
-        if (paymentComplete == true && paymentSuccessful == true) {
-
-            //handle program in backend
-            try {
-                const updatedProgramData = await LUPA_CONTROLLER_INSTANCE.purchaseProgram(currUserData, program);
-                await dispatch({ type: "ADD_CURRENT_USER_PROGRAM" , ...updatedProgramData})
-            } catch (err) {
-                setLoading(false);
-                alert(err)
-                //need to handle the case where there is an error when we add the program
-                closeModalMethod()
-            }
-        }
-        await setLoading(false);
-        //close modal
-        closeModalMethod()
     }
 
     const getProgramTags = () => {
@@ -487,6 +385,7 @@ const ProgramInformationPreview = forwardRef(({ isVisible, program, closeModalMe
                     </Caption>
                 )
         }
+        
         return (
         <Caption style={{color: '#23374d'}}>
             <Caption>
@@ -528,6 +427,30 @@ const ProgramInformationPreview = forwardRef(({ isVisible, program, closeModalMe
             } catch(err) {
                 return ''
             }
+    }
+
+    const renderPurchaseButton = () => {
+        if (readyToPurchase == false) {
+            return;
+        }
+
+        if (currUserData.user_uuid != programOwnerData.user_uuid) {
+            return (
+                <Button 
+                icon={() => <FeatherIcon name="shopping-cart" color="white" size={15} />}
+                      onPress={() => setLupaPurchasePageOpen(true)} 
+                      mode="contained"
+                      theme={{
+                      roundness: 8,
+                  }}
+                  color="#1089ff"
+                  style={{width: '100%'}}
+                  contentStyle={{height: 50}}
+                  >
+                      Proceed to Checkout
+              </Button>
+            )
+        }
     }
 
     return (
@@ -619,25 +542,7 @@ const ProgramInformationPreview = forwardRef(({ isVisible, program, closeModalMe
                
                    </ScrollView>
                    <View style={styles.purchaseContainer}>
-
-                   {
-                       currUserData.user_uuid != programOwnerData.user_uuid ?
-                       <Button 
-                       icon={() => <FeatherIcon name="shopping-cart" color="white" size={15} />}
-                             onPress={() => setLupaPurchasePageOpen(true)} 
-                             mode="contained"
-                             theme={{
-                             roundness: 8,
-                         }}
-                         color="#1089ff"
-                         style={{width: '100%'}}
-                         contentStyle={{height: 50}}
-                         >
-                             Proceed to Checkout
-                     </Button>
-                       :
-                    null
-                   }
+                   {renderPurchaseButton()}
                 </View>
                    <FullScreenLoadingIndicator isVisible={loading} />
                   
