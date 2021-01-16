@@ -211,7 +211,6 @@ class LiveWorkout extends React.Component {
                     this.setState({ noWorkoutsDialogVisible: true })
                 }
             })
-            console.log(data);
         })
 
         await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(documentSnapshot => {
