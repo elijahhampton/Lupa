@@ -21,9 +21,9 @@ function Onboarding(props) {
     const renderComponent = () => {
         switch(accountType) {
             case 0:
-                return <TrainerOnboarding />
-            case 1:
                 return <UserOnboarding />
+            case 1:
+                return <TrainerOnboarding />
             default:
                 return <WelcomeLupaIntroduction setUserAccountTypeIsSelected={setAccountTypeIsSelected} setUserAccountType={setAccountType} setNextDisabled={() => {}}/>
         } 
