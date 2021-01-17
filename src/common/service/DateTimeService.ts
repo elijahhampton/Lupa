@@ -59,7 +59,7 @@ export function getAbbreviatedDayOfTheWeekFromDate(dateString) {
 
      switch (dayOfTheWeek) {
         case 0:
-            return 'Sund';
+            return 'Sun';
         case 1:
             return 'Mon';
         case 2:

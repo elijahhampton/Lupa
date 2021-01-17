@@ -115,6 +115,28 @@ function WorkoutFinishedModal({ isVisible, closeModal }) {
     )
 }
 
+function NoExercisesDialogVisible({ isVisible  }) {
+    const navigation = useNavigation();
+
+    return (
+        <Dialog visible={isVisible}>
+            <Dialog.Title>
+                No Exercises
+            </Dialog.Title>
+            <Dialog.Content>
+                <Paragraph>
+                    It looks like there are no exercises scheduled for this program today.  Check back tomorrow.
+                </Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+                <Button onPress={() => navigation.pop()}>
+                    Okay
+                </Button>
+            </Dialog.Actions>
+        </Dialog>
+    )
+}
+
 class LiveWorkout extends React.Component {
     constructor(props) {
         super(props);
@@ -138,6 +160,7 @@ class LiveWorkout extends React.Component {
             currentWorkoutIndex: 0,
             playVideo: false,
             showWeightUsedQuery: false,
+            showOneRepMaxQuery: false,
             contentShowing: false,
             ready: false,
             programData: getLupaProgramInformationStructure(),
@@ -165,7 +188,9 @@ class LiveWorkout extends React.Component {
             timelineData: [],
             labelData: [],
             hasWorkouts: true,
+            noWorkoutsDialogVisible: false,
             completed_exercise_weight_used: 0,
+            completed_exercise_one_rep_max: 0
         }
     }
 
@@ -180,15 +205,12 @@ class LiveWorkout extends React.Component {
         await LUPA_DB_FIREBASE.ref(refString.toString()).on('value', (snapshot) => {
             const data = snapshot.val();
 
-            //this.setState({ noWorkoutsDialogVisible: true })
-
             var newState = Object.assign({}, data);
             this.setState({ ...newState }, () => {
                 if (this.state.hasWorkouts == false) {
-                   // alert('No Workouts')
+                    this.setState({ noWorkoutsDialogVisible: true })
                 }
             })
-            console.log(data);
         })
 
         await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(documentSnapshot => {
@@ -200,14 +222,14 @@ class LiveWorkout extends React.Component {
             for (let i = 0; i < completedExercises.length; i++) {
                 if (completedExercises[i].index == this.state.currentWorkout.index) {
                     found = true;
-                    this.setState({ completed_exercise_weight_used: completedExercises[i].weight_used })
+                    this.setState({ completed_exercise_weight_used: completedExercises[i].weight_used, completed_exercise_one_rep_max: completedExercises[i].one_rep_max })
                 }
             }
 
             if (found != true) {
-                this.setState({ showWeightUsedQuery: true })
+                this.setState({ showWeightUsedQuery: true, showOneRepMaxQuery: true })
             } else {
-                this.setState({ showWeightUsedQuery: false })
+                this.setState({ showWeightUsedQuery: false, showOneRepMaxQuery: false  })
             }
         })
 
@@ -631,7 +653,7 @@ class LiveWorkout extends React.Component {
 }
 
 renderStepIndicator = () => {
-    if (true == false) {
+    if (this.state.ready == true) {
         return (
             <StepIndicator 
             
@@ -663,6 +685,14 @@ currentStepLabelColor: '#1089ff'
             }}
              />
         )
+    }
+}
+
+renderOneRepMax = () => {
+    try {
+        return this.state.completed_exercise_one_rep_max;
+    } catch(error) {
+        return '-'
     }
 }
 
@@ -767,7 +797,7 @@ inputContainerStyle={{borderWidth: 1, height: 30}}
                         </Text>
                                 <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                     <Text style={{ fontFamily: 'Avenir-Light' }}>
-                                        -
+                                        {this.state.completed_exercise_one_rep_max}
                                     </Text>
                                 </View>
                             </View>
@@ -1193,9 +1223,13 @@ inputContainerStyle={{borderWidth: 1, height: 30}}
                 {typeof (this.props.route.params.programData) == 'undefined' ? null : this.renderDescriptionDialog()}
                 {this.renderRestTimerRBSheetPicker()}
 
-                <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible} closeModal={() => this.setState({ restTimerVisible: false })} />
+                <RestTimer 
+                restTime={this.state.restTime} 
+                currentExercise={this.state.currentWorkout}
+                closeModal={() => this.setState({ restTimerVisible: false })} 
+                />
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
-
+                <NoExercisesDialogVisible isVisible={this.state.noWorkoutsDialogVisible} />
 
             </>
         )

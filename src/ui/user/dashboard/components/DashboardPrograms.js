@@ -42,7 +42,8 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
         closeModal();
 
         navigation.push('LiveWorkout', {
-            programData: programData
+            programData: programData,
+            sessionID: currUserData.user_uuid
         })
     }
     
