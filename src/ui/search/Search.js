@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import UserSearchResult from '../user/profile/component/UserSearchResult';
 import ProgramInformationComponent from '../workout/program/components/ProgramInformationComponent'
 import { Header } from 'native-base'
+import Feather1s from 'react-native-feather1s/src/Feather1s'
 
 const CATEGORY_SEPARATION = 15
 
@@ -83,12 +84,12 @@ class Search extends React.Component {
 
     componentDidMount() {
         const { navigation, route } = this.props;
-   
+
         navigationListenerSubscription = navigation.addListener('focus', () => {
             // Prevent default action
            // e.preventDefault();
 
-           if (this.props.route.params.hasOwnProperty('categoryToSearch') == true) {
+           if (this.props.route.params?.hasOwnProperty('categoryToSearch') == true) {
                if (this.props.route.params.categoryToSearch != '' || this.props.route.params.categoryToSearch != undefined) {
                 this.setState({ categoryIsPressed: true, categoryToSearch: this.props.route.params['categoryToSearch']})
                }
@@ -360,19 +361,20 @@ class Search extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <Header style={{backgroundColor: 'white'}}>
-                <SearchBar
+                <Appbar.Header  style={{elevation: 0, flexDirection: 'row', justifyContent: 'space-evenly',  alignItems: 'center', backgroundColor: 'white'}}>
+                    <Appbar.BackAction onPress={() => this.props.navigation.navigate('Train')} />
+                    <SearchBar
                             placeholder="Search trainers and fitness programs"
                             placeholderTextColor="rgb(150, 150, 150)"
                             onChangeText={text => this.performSearch(text)}
                             value={this.state.searchValue}
                             inputStyle={styles.inputStyle}
                             platform="ios"
-                            containerStyle={{ backgroundColor: 'white', borderColor: 'white', width: Dimensions.get('window').width - 10 }}
+                            containerStyle={{ backgroundColor: 'white', borderColor: 'white', width: Dimensions.get('window').width - 40 }}
                             inputContainerStyle={{ borderColor: 'white', backgroundColor: '#E5E5E5' }}
                             searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
                         />
-                </Header>
+                </Appbar.Header>
                 <ScrollView
                     onLayout={event => this.setState({ resultsContainerHeight: event.nativeEvent.layout.height })}
                     refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}

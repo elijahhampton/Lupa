@@ -275,7 +275,7 @@ class BasicInformation extends React.Component {
                                     Intermediate
                                 </Text>
                                 <Text style={[styles.baseSubTextStyle, this.state.experienceLevel == 'Intermediate' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Less than 4 years
+                                    Between 4 and 8 years
                                 </Text>
                             </View>
                             </TouchableOpacity>
@@ -287,7 +287,7 @@ class BasicInformation extends React.Component {
                                     Advanced
                                 </Text>
                                 <Text style={[styles.baseSubTextStyle, this.state.experienceLevel == 'Advanced' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Less than 4 years
+                                    Between 8 and 12 years
                                 </Text>
                             </View>
                             </TouchableOpacity>
@@ -299,7 +299,7 @@ class BasicInformation extends React.Component {
                                     Very Advanced
                                 </Text>
                                 <Text style={[styles.baseSubTextStyle, this.state.experienceLevel == 'Very Advanced' ? styles.selectedTextStyle : styles.unselectedTextStyle]}>
-                                    Less than 4 years
+                                    Over 12 years
                                 </Text>
                             </View>
                             </TouchableOpacity>

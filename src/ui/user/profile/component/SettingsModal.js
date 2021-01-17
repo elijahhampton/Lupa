@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createRef } from 'react';
 
 import {
     Modal,
@@ -11,7 +11,6 @@ import {
     ScrollView,
     SafeAreaView,
     Dimensions,
-    Button
 } from 'react-native';
 
 import {
@@ -28,12 +27,14 @@ import {
     Caption,
     Divider,
     List,
+    Button,
     Snackbar,
     Switch,
     Banner,
     Appbar,
     Avatar,
-    Surface
+    Surface,
+    Paragraph
 } from 'react-native-paper';
 
 
@@ -63,10 +64,108 @@ import StripeVerificationStatusModal from '../../settings/modal/StripeVerificati
 import HomeGymModal from '../../modal/HomeGymModal';
 import { getLupaStoreState } from '../../../../controller/redux';
 import { logoutUser } from '../../../../controller/lupa/auth/auth';
+import sendFeedbackSubmission from '../../../../common/service/EmailService';
+
+import FeatherIcon from 'react-native-vector-icons/Feather'
 
 const SECTION_SEPARATOR = 15;
 const SUB_SECTION_SEPARATOR = 25;
 const FETCH_STRIPE_ACCOUNT_DATA_ENDPOINT = "https://us-central1-lupa-cd0e3.cloudfunctions.net/retrieveTrainerAccountInformation";
+
+function FeedbackModal({ isVisible, closeModal }) {
+    const [feedbackText, setFeedbackText] = useState("");
+    const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+    
+    const navigation = useNavigation();
+    const currUserData = useSelector(state => {
+        return state.Users.currUserData;
+    })
+
+    const onFeedbackSubmitted = () => {
+        if (currUserData && currUserData.email) {
+            sendFeedbackSubmission(currUserData.email, feedbackText)
+        }
+
+        setFeedbackSubmitted(true);
+    }
+
+    const onReturn = () => {
+        setFeedbackSubmitted(false);
+        setFeedbackText("")
+        closeModal()
+    }
+
+    const renderComponent = () => {
+        if (feedbackSubmitted == true) {
+            return (
+            <View style={[styles.root, { backgroundColor: '#FFFFFF', alignItems: 'flex-start', padding: 20, justifyContent: 'center' }]}>
+                <FeatherIcon name="thumbs-up" size={40} color="#1089ff" />
+                <Text style={{fontSize: 22, paddingVertical: 10, fontFamily: 'Avenir-Medium'}}>
+                    Thank you for your submission.
+                </Text>
+                <Text onPress={onReturn} style={{fontFamily: 'Avenir-Heavy', fontSize: 16, color: '#1089ff'}}>
+                    Return to settings
+                </Text>
+            </View>    
+            )
+        } else {
+            return (
+                <View style={{flex: 1}}>
+                <Appbar.Header statusBarHeight={false} style={{ backgroundColor: '#FFFFFF', elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <Appbar.BackAction size={20} onPress={closeModal} />
+                <Appbar.Content title="Can you help us?" titleStyle={{alignSelf: 'flex-start', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 22}} />
+            </Appbar.Header>
+            <Divider style={{height: 10, backgroundColor: '#EEEEEE', marginVertical: 10}} />
+                <View style={[styles.root, { backgroundColor: '#FFFFFF' }]}>
+            <Input 
+            value={feedbackText}
+            onChangeText={text => setFeedbackText(text)}
+containerStyle={{ width: Dimensions.get('window').width,  alignSelf: 'center'}} 
+inputContainerStyle={{padding: 10, borderColor: '#e5e5e5', borderWidth: 1, width: '100%', height: 200, borderRadius: 8}} 
+inputStyle={{fontFamily: 'Avenir'}}
+placeholder="Tell us how can improve your experience..."
+value={0}
+returnKeyLabel="done"
+returnKeyType="done"
+/>
+
+<View style={{alignItems: 'center',  marginVertical: 50, paddingHorizontal: 20}}>
+<Text style={{fontFamily: 'Avenir-Heavy', fontSize: 20,}}>
+    Help is on the way!
+</Text>
+
+<Text style={{fontFamily: 'Avenir', paddingVertical: 10, textAlign: 'center'}}>
+    We're glad you're interested in helping us improve the experience.  Send us feedback so we know what we can do better.
+</Text >
+</View>
+
+<Button
+                onPress={onFeedbackSubmitted}
+                disabled={feedbackText.length === 0}
+                mode="contained"
+                uppercase={false}
+                color="rgb(32, 82, 122)"
+                theme={{ roundness: 12 }}
+                contentStyle={{ width: Dimensions.get('window').width - 20, height: 55 }}
+                style={{position: 'absolute', bottom: 0, alignSelf: 'center', marginVertical: 10, width: Dimensions.get('window').width - 20 }}
+            >
+                <Text style={{ fontFamily: 'Avenir' }}>
+                    Send Feedback
+                        </Text>
+            </Button>
+
+            </View> 
+            </View>   
+            )
+        }
+    }
+
+    return (
+        <Modal visible={isVisible} presentationStyle="fullScreen" animationType="slide">
+            {renderComponent()}
+        </Modal>
+    )
+}
 
 const SettingsModal = () => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -92,6 +191,8 @@ const SettingsModal = () => {
     const [verificationErrors, setVerificationErrors] = useState([])
     const [verificationStatus, setVerificationStatus] = useState('')
     const [verificationDeadline, setVerificationDeadline] = useState(new Date());
+
+    const [feedbackModalIsVisible, setFeedbackModalIsVisible] = useState(false);
 
     useEffect(() => {
         LOG('SettingsModal.js', 'Running use effect in SettingsModal.js.  Fetching public IP address and requesting stripe account data for the current user.');
@@ -502,6 +603,7 @@ const SettingsModal = () => {
                     </View>
 
                     <View style={{marginVertical: 10}}>
+                    <ListItem onPress={() => setFeedbackModalIsVisible(true)} title="Send feedback" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} bottomDivider />
                     <ListItem onPress={_handleLogout} title="Sign out" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                     </View>
 
@@ -515,6 +617,8 @@ const SettingsModal = () => {
                     verificationErrors={verificationErrors} />
                     <FullScreenLoadingIndicator isVisible={loading} />
                 </ScrollView>
+
+            <FeedbackModal isVisible={feedbackModalIsVisible} closeModal={() => setFeedbackModalIsVisible(false)} />
             </SafeAreaView>
         </View>
     )

@@ -444,8 +444,9 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
                       roundness: 8,
                   }}
                   color="#1089ff"
-                  style={{width: '100%'}}
+                  style={{width: '100%', marginVertical: 10}}
                   contentStyle={{height: 50}}
+                  disabled={getLupaStoreState().Auth.isAuthenticated == false}
                   >
                       Proceed to Checkout
               </Button>
@@ -478,7 +479,7 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
                   onStartShouldSetResponder={event => true}
                   >
                 <View style={{width: '100%', justifyContent: 'flex-end', flexDirection: 'row', paddingHorizontal: 20}}>
-                <TouchableOpacity style={{alignSelf: 'flex-end'}} onPress={() => setStartPackDialogIsVisible(true)}>
+                <TouchableOpacity disabled={getLupaStoreState().Auth.isAuthenticated == false} style={{alignSelf: 'flex-end'}} onPress={() => setStartPackDialogIsVisible(true)}>
                         <View style={{marginHorizontal: 5, alignItems: 'center', justifyContent: 'center',}}>
                         <View style={{borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 30, height: 30, backgroundColor: 'rgb(245, 245, 245)',}}>
                             <MaterialIcon name="group-add" size={18} />
@@ -555,6 +556,7 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
                        />
                    </View>
                    <StartPackDialog isVisible={startPackDialogIsVisible} closeModal={() => setStartPackDialogIsVisible(false)} program={program} />
+      
             </RBSheet>
     )
 })

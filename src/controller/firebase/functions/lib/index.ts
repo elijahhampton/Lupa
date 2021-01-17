@@ -1,12 +1,12 @@
-import { firestore } from "firebase";
-
 const functions = require('firebase-functions')
 const admin = require("firebase-admin");
-
+var nodemailer = require('nodemailer');
 const cors = require('cors')({ origin: true });
 const { RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole } = require('agora-access-token')
 const stripe = require('stripe')
   ('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');
+
+  var smtpTransport = require('nodemailer-smtp-transport');
 
 const firebaseConfig = {
   apiKey: "AIzaSyAPrxdNkncexkRazrgGy4FY6Nd-9ghZVWE",
@@ -18,6 +18,10 @@ const firebaseConfig = {
   appId: "1:413569093565:ios:c61a094c14a7e82613ccd4"
   //appId: "1:413569093565:web:7a8efd135343441213ccd4"
 };
+
+const SEND_GRID_API_KEY = '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'
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(SEND_GRID_API_KEY)
 
 
 admin.initializeApp(firebaseConfig)
@@ -687,4 +691,28 @@ await stripe.paymentIntents.create({
   })
 })
   }
+})
+
+exports.sendFeedbackSubmission = functions.https.onRequest(async (request, response) => {
+  const feedbackText = await request.body.feedback_text;
+  const user = await request.body.user_email;
+
+  console.log(user)
+  console.log(feedbackText)
+
+  const msg = {
+    to: 'rheasilvia.lupahealth@gmail.com', // Change to your recipient
+    from: 'rheasilvia.lupahealth@gmail.com', // Change to your verified sender
+    subject: 'New Feedback Submission',
+    text: `You have received new feedback from a user with the registered email: ${user}.  The submission states: ${feedbackText}`,
+  }
+
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log('sendFeedbackSubmission::Successfully sent email.')
+    })
+    .catch((error) => {
+      console.error('sendFeedbackSubmission::Function exited with error: ' + error)
+    })
 })
