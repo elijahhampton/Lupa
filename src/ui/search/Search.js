@@ -362,9 +362,8 @@ class Search extends React.Component {
         return (
             <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <Appbar.Header  style={{elevation: 0, flexDirection: 'row', justifyContent: 'space-evenly',  alignItems: 'center', backgroundColor: 'white'}}>
-                    <Appbar.BackAction onPress={() => this.props.navigation.pop()} />
-                <SearchBar
-
+                    <Appbar.BackAction onPress={() => this.props.navigation.navigate('Train')} />
+                    <SearchBar
                             placeholder="Search trainers and fitness programs"
                             placeholderTextColor="rgb(150, 150, 150)"
                             onChangeText={text => this.performSearch(text)}
