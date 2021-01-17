@@ -163,6 +163,10 @@ export const signup = (email, password) => {
     await LUPA_AUTH.createUserWithEmailAndPassword(email, password).then(async userCredential => {
       USER_UUID = userCredential.user.uid
 
+      if (userCredential.user.emailVerified == false) {
+        userCredential.user.sendEmailVerification()
+      }
+
       //Add the user's information to the database
     await authHandler.signUpUser(USER_UUID, "", email, password);
 

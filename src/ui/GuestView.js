@@ -177,15 +177,24 @@ class GuestView extends React.Component {
 
   closeProgramPreview = () => this.programPreview.current.close();
 
+  handleOnPressSkill = (skill) => {
+    if (this.props.lupa_data.Auth.isAuthenticated === false) {
+      this.props.navigation.push('SignUp')
+      return;
+    }
+
+    this.props.navigation.navigate('Search', {
+      categoryToSearch: skill
+    })
+  }
+
 renderSkills = () => {
     return (  
        <ScrollView showsHorizontalScrollIndicator={false} horizontal>
               {
                 SKILL_BASED_INTEREST.map((skill, index, arr) => {
                     return  (
-                      <Chip onPress={() => this.props.navigation.navigate('Search', {
-                        categoryToSearch: skill
-                      })} key={skill} mode="outlined" textStyle={{fontWeight: '800', fontFamily: 'Avenir-Heavy', color: '#FFFFFF'}} style={{borderColor: '#FFFFFF', backgroundColor: 'transparent', marginHorizontal: 10, borderRadius: 12}}>
+                      <Chip onPress={() => this.handleOnPressSkill(skill)} key={skill} mode="outlined" textStyle={{fontWeight: '800', fontFamily: 'Avenir-Heavy', color: '#FFFFFF'}} style={{borderColor: '#FFFFFF', backgroundColor: 'transparent', marginHorizontal: 10, borderRadius: 12}}>
                      
                           {skill}
                     
@@ -670,7 +679,7 @@ renderSkills = () => {
       if (updatedAppState.Auth.isAuthenticated === false) {
         return (
           <View style={{ padding: 20, backgroundColor: 'transparent' }}>
-            <Text style={{ fontFamily: 'Avenir-Medium' }}>
+            <Text style={{ fontFamily: 'Avenir-Medium', color: 'white' }}>
               <Text>
                 Sorry we were not able to find any trainers in your area.{" "}
               </Text>
@@ -795,6 +804,11 @@ renderSkills = () => {
   }
 
   handleOnPressTrainerBookingTime = async (startTime, endTime, index, trainer) => {
+    if (this.props.lupa_data.Auth.isAuthenticated === false) {
+      this.props.navigation.push('SignUp')
+      return;
+    }
+
     const updatedTime  = moment(startTime).add(index, 'hour').format()
    
     this.setState({ preFilledStartTime: updatedTime, requestedTrainer: trainer}, () => {
@@ -995,7 +1009,7 @@ renderSkills = () => {
       if (updatedAuthState.isAuthenticated === false) {
         return (
           <View style={{padding: 5, }}>
-          <Text style={{paddingLeft: 15, fontFamily: 'Avenir-Heavy'}}>
+          <Text style={{paddingLeft: 15, fontFamily: 'Avenir-Heavy', color: 'white'}}>
                                    Discover more by signing in or creating an account.
                                  </Text>
                           <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
@@ -1016,11 +1030,11 @@ renderSkills = () => {
       return (
         <View style={{ padding: 10, paddingVertical: 15, marginVertical: 20 }}>
 
-          <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 18, color: 'black' }}>
+          <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 18, color: 'white' }}>
             Register an account on Lupa and access a variety of fitness trainers
     </Text>
 
-          <Button color="#23374d" uppercase={false} mode="outlined" onPress={() => this.props.navigation.navigate('SignUp')} style={{ width: 180, marginVertical: 10 }}>
+          <Button color="white" uppercase={false} mode="outlined" onPress={() => this.props.navigation.navigate('SignUp')} style={{ borderColor: 'white', width: 180, marginVertical: 10 }}>
             <Text style={{ fontSize: 12 }}>
               Create an account
       </Text>
@@ -1062,6 +1076,12 @@ renderSkills = () => {
   openTrainerActionSheet = (uuid) =>  {
   const { navigation } = this.props;
   const { currUserData } = this.props.lupa_data.Users;
+
+  if (this.props.lupa_data.Auth.isAuthenticated === false) {
+    this.props.navigation.push('SignUp')
+    return;
+  }
+
   ActionSheetIOS.showActionSheetWithOptions(
     {
       options: ["Cancel", "Send a Message", "View Profile"],
@@ -1143,7 +1163,7 @@ renderSkills = () => {
                 if (index == arr.length - 2) {
                   return (
                     <Caption style={{color: 'white'}}>
-                    {style} and 
+                    {style} and{" "}
                   </Caption>
                   )
                 }
@@ -1199,7 +1219,7 @@ renderSkills = () => {
    this.checkSearchBarState()
    const { preFilledStartTime } = this.state;
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#23374d' }}>
         <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, backgroundColor: '#23374d' }}>
           <ScrollView
             refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
@@ -1337,7 +1357,7 @@ renderSkills = () => {
              
             </View>
           </ScrollView>
-          <SafeAreaView />
+          <SafeAreaView style={{backgroundColor: 'rgb(27, 41, 60)'}} />
           {this.renderRBSheet()}
 
          <BookingRequestModal 
