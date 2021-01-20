@@ -27,6 +27,7 @@ import { DrawerActions } from '@react-navigation/native';
      }
 
      const renderComponent = () => {
+        try {
         if (currUserData.isTrainer == true) {
             return (
                 <ScrollView contentContainerStyle={[{ padding: 10 }]}>
@@ -100,6 +101,31 @@ import { DrawerActions } from '@react-navigation/native';
                         <Text onPress={() => navigation.navigate('CreateProgram')} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
                             Create a program
                         </Text>
+                        <Caption>
+                            Clients
+                        </Caption>
+                        <Text style={styles.descriptionText}>
+                          Lupa takes the stress away from managing your clients and manages storing your client list for you.
+                        </Text>
+                        <List.Item
+    title="Keep track of your client base on Lupa"
+    titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '600'}}
+    description="Find your client list by clicking the blue button on your dashboard."
+    left={props => <List.Icon {...props} icon={() => <FeatherIcon name="users" size={20} />} />}
+    onPress={() => navigation.navigate('Dashboard')}
+  />
+                    </View>
+
+                    <View style={styles.descriptionContainer}>
+                        <Text style={styles.title}>
+                            Community
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                        Are you a trainer at your local gym or do you posess a membership?  Find your community whether at your apartment, local gym, or local studio and request to be added!
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                        Keep track of all upcoming events, trainers, and members.
+                        </Text>
                     </View>
                    
                 </ScrollView>
@@ -171,10 +197,105 @@ import { DrawerActions } from '@react-navigation/native';
                            Find a program
                         </Text>
                     </View>
+
+                    <View style={styles.descriptionContainer}>
+                        <Text style={styles.title}>
+                            Community
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                        Are you a trainer at your local gym or do you posess a membership?  Find your community whether at your apartment, local gym, or local studio and request to be added!
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                        Keep track of all upcoming events, trainers, and members.
+                        </Text>
+                    </View>
                    
                 </ScrollView>
             )
         }
+    } catch(error) {
+        return (
+            <ScrollView contentContainerStyle={[{ padding: 10 }]}>
+                    <View style={{}}>
+                    <Text style={styles.descriptionText}>
+                        Lupa offers a variety of services such as Trainer Bookings, Packs, and Fitness Programs.
+                    </Text>
+                    </View>
+
+                    <View style={styles.descriptionContainer}>
+                        <Text style={styles.title}>
+                            Bookings
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                            As a Lupa user you can book personal trainers for live or virtual workout sessions.
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                        Find trainers through the explore page or by searching based on your interest or trainer name.
+                        </Text>
+                        <Text onPress={() => navigation.push('Search')} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                            Search for trainers
+                        </Text>
+
+
+                        <Caption>
+                            Payments
+                        </Caption>
+                        <List.Item
+    title="Payments Status"
+    titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '600'}}
+    description="Enable my accounts to make payments."
+    left={props => <List.Icon {...props} icon={() => <FeatherIcon name="dollar-sign" size={20} />} />}
+    onPress={() => navigation.push('Settings')}
+  />
+
+                        <Text style={styles.descriptionText}>
+                            Before users can book trainers or purchase fitness programs you must enable your account to make payments and add a card.
+                            </Text>
+                    </View>
+
+                    <View style={styles.descriptionContainer}>
+                        <Text style={styles.title}>
+                            Packs
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                            Packs are public or private groups that users can create or join to keep up with their friends and workout buddies.  Packs are able to invite group members to join and participate in fitness programs at a split cost of the original program price.
+                        </Text>
+                        <Text onPress={() => onSeeHowPacksWork()} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                            See how packs work
+                        </Text>
+                    </View>
+
+                    <View style={styles.descriptionContainer}>
+                        <Text style={styles.title}>
+                            Fitness Programs
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                          Purchase complete fitness programs to keep forever.  Programs can be accessed from your dashboard under My Programs upon purchasing.
+                        </Text>
+
+                        <Text style={styles.descriptionText}>
+                            See a program you want to share with your friends?  Find a program you like and choose to invite your friends to split the cost with you.  Press the <FeatherIcon name="user-plus"/> in the top right hand corner of any program preview to invite your pack to join in with you.
+                        </Text>
+                        <Text onPress={() => navigation.push('Search')} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                           Find a program
+                        </Text>
+                    </View>
+
+                    <View style={styles.descriptionContainer}>
+                        <Text style={styles.title}>
+                            Community
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                        Are you a trainer at your local gym or do you posess a membership?  Find your community whether at your apartment, local gym, or local studio and request to be added!
+                        </Text>
+                        <Text style={styles.descriptionText}>
+                        Keep track of all upcoming events, trainers, and members.
+                        </Text>
+                    </View>
+                   
+                </ScrollView>
+        )
+    }
      }
 
     return (
