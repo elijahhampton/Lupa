@@ -597,7 +597,7 @@ const SettingsModal = () => {
                         <Text style={styles.listItemTitleStyle}>
                             Lupa
                             </Text>
-
+                            <ListItem onPress={() => navigation.navigate('HowTo')} title="How to use Lupa" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_d6bd8c33999e4e5ba4191b65eaf89048.pdf')} title="Privacy Policy" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                         <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Terms and Conditions" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
                     </View>

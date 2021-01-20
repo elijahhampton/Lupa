@@ -64,6 +64,7 @@ import CommunityFeed from './src/ui/community/CommunityFeed';
 import CommunityHome from './src/ui/community/CommunityHome';
 import HomeGymModal from './src/ui/user/modal/HomeGymModal';
 import ExerciseDataLog from './src/ui/workout/modal/ExerciseDataLog';
+import HowToUseLupa from './src/ui/user/settings/modal/HowToUseLupa';
 
 const App = () => {
   return (
@@ -123,6 +124,7 @@ function AppNavigator() {
       <StackApp.Screen name="CommunityFeed" component={CommunityFeed} />
       <StackApp.Screen name="ChangeHomeGym" component={HomeGymModal} />
       <StackApp.Screen name="ExerciseDataLog" component={ExerciseDataLog} />
+      <StackApp.Screen name="HowTo" component={HowToUseLupa} />
       </StackApp.Navigator>
   )
 }

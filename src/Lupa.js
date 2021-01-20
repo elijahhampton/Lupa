@@ -29,6 +29,7 @@ import HourlyPaymentModal from "./ui/user/modal/HourlyPaymentModal";
 import RequestCommunity from './ui/community/RequestCommunity'; 
 import MatchMe from "./ui/packs/modal/MatchMe";
 import ExerciseDataLog from "./ui/workout/modal/ExerciseDataLog";
+import HowToUseLupa from "./ui/user/settings/modal/HowToUseLupa";
 
 const mapStateToProps = (state, action) => {
   return {
