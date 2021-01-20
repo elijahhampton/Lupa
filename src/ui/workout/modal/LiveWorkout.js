@@ -1224,6 +1224,7 @@ inputContainerStyle={{borderWidth: 1, height: 30}}
                 {this.renderRestTimerRBSheetPicker()}
 
                 <RestTimer 
+                isVisible={this.state.restTimerVisible}
                 restTime={this.state.restTime} 
                 currentExercise={this.state.currentWorkout}
                 closeModal={() => this.setState({ restTimerVisible: false })} 
