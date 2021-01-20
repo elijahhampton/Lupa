@@ -6,10 +6,6 @@ const SEND_FEEDBACK_SUBMISSION_ENDPOINT = "https://us-central1-lupa-cd0e3.cloudf
 
 
 export default function sendFeedbackSubmission(user, feedback) {
-
-    console.log('aa: ' + user)
-    console.log('bb: ' + feedback)
-
     axios({
         headers: {
             Accept: 'application/json',

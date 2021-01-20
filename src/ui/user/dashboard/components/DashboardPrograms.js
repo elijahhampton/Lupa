@@ -95,7 +95,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                     onPress={handleOnPressFindFitnessProgram}
                     uppercase={false}
                     mode="contained"
-                    color="#1089ff"
+                    color="rgb(34, 74, 115)"
                     theme={{roundness: 12}}
                     style={{elevation: 0, marginVertical: 15, width: '100%'}}
                     contentStyle={{height: 55, width: Dimensions.get('window').width - 25}}

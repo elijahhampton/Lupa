@@ -379,8 +379,7 @@ function UserProfile({uuid, userData, isCurrentUser }) {
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
-                <FeatherIcon name="arrow-left" size={20} onPress={() => navigation.pop()} />
-                
+            <Appbar.BackAction onPress={() => navigation.pop()} />
             </Appbar.Header>
             <ScrollView>
                 <View>

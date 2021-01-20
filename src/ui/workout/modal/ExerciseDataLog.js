@@ -357,9 +357,7 @@ const ExerciseDataLog = ({ navigation, route }) => {
         <View style={styles.container}>
             <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
                 <Appbar.BackAction onPress={() => navigation.pop()} />
-
-                <Appbar.Content title="Exercise Data Log" />
-
+                <Appbar.Content title="Exercise Data Log"  titleStyle={{alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: '800', fontSize: 25}} />
                 <Appbar.Action icon={() => <FeatherIcon color="white" size={25} name="plus" />} />
             </Appbar.Header>
             <View style={{flex: 1}}>

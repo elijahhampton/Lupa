@@ -139,9 +139,11 @@ function TrainerDashboard(props) {
             
         <Left>
         <View style={{flexDirection: 'row', alignItems: 'center',}}>
-        <TouchableOpacity onPress={{}}>
-          <Avatar rounded source={{uri: currUserData.photo_url}} size={40} />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.push('Profile', {
+                            userUUID: currUserData.user_uuid
+                        })}>
+                            <Avatar rounded source={{ uri: currUserData.photo_url }} size={40} />
+                        </TouchableOpacity>
           <View style={{paddingHorizontal: 10}}>
           <Text style={{ 
       fontSize: 18,

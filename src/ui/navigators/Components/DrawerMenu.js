@@ -334,7 +334,7 @@ alwaysShowSend={true}
        <Text style={styles.swiperEntryContentText}>
            Find the perfect trainer for you and your friends today.
       </Text>
-          <Button theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
+          <Button onPress={() => navigation.push('Search')} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
           <Text style={{fontFamily: 'Avenir'}}>
             Find a trainer
           </Text>

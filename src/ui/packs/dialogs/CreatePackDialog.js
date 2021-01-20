@@ -43,7 +43,7 @@ const [searchValue, setSearchValue] = useState("")
     const [programIsAttached, setProgramIsAttached] = useState(false);
     const [sheetIsOpen, setSheetIsOpen] = useState(false);
     const [shouldShowMoreOptions, setShowMoreOptions] = useState(false);
-    const [rbSheetHeight, setRBSheetHeight] = useState(250)
+    const [rbSheetHeight, setRBSheetHeight] = useState(280)
     const [packName, setPackName] = useState("");
     const [attachedProgram, setAttachedProgram] = useState({})
     const packNameTextInput = createRef();
@@ -229,15 +229,15 @@ const [searchValue, setSearchValue] = useState("")
         >
             <View style={styles.content}>
               <View style={{width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10}}>
-                  <Text style={{fontSize: 15, fontFamily: 'Avenir-Heavy'}}>
-                      New Pack
+                  <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
+                      Start a new pack
                   </Text>
 
                       
               </View>
                 <Divider />
                 <View style={{marginVertical: 10}}>
-        <Input ref={packNameTextInput} value={packName} onChangeText={text => setPackName(text)} inputStyle={styles.inputStyle} rightIcon={() => <FeatherIcon name="check" color="green" />} placeholder="Name your pack" placeholderTextColor="#212121" inputContainerStyle={{borderBottomWidth: 0}} style={{paddingVertical: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center'}} />
+        <Input ref={packNameTextInput} value={packName} onChangeText={text => setPackName(text)} inputStyle={styles.inputStyle} rightIcon={() => <FeatherIcon name="check" color="green" />} placeholder="Name your pack" placeholderTextColor="#aaaaaa" inputContainerStyle={{borderBottomWidth: 0}} style={{paddingVertical: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center'}} />
         </View>
 
         <Divider style={{height: 12, backgroundColor: 'rgb(245, 246, 249)'}} />

@@ -140,7 +140,9 @@ function UserDashboard(props) {
             <Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
                 <Left>
                     <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                        <TouchableOpacity onPress={{}}>
+                        <TouchableOpacity onPress={() => navigation.push('Profile', {
+                            userUUID: currUserData.user_uuid
+                        })}>
                             <Avatar rounded source={{ uri: currUserData.photo_url }} size={40} />
                         </TouchableOpacity>
                         <View style={{ paddingHorizontal: 10 }}>

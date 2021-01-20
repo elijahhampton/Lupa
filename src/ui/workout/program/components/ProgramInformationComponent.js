@@ -55,8 +55,7 @@ function ProgramInformationComponent({ program }) {
             setProgramOptionsModalVisible(true)
         }
         else {
-            setProgramModalVisible(true);
-          //  LUPA_CONTROLLER_INSTANCE.addProgramView(program.program_structure_uuid);
+            openProgramPreview()
         }
     }
 

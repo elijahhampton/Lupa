@@ -43,6 +43,7 @@ import EditBioModal from './settings/modal/EditBioModal'
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
 import { getLupaStoreState } from '../../../controller/redux';
 import HourlyPaymentModal from '../modal/HourlyPaymentModal';
+import { UPDATE_CURRENT_USER_ATTRIBUTE_ACTION } from '../../../controller/redux/actionTypes';
 
 function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const navigation = useNavigation();

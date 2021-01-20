@@ -153,7 +153,7 @@ returnKeyType="done"
                     Send Feedback
                         </Text>
             </Button>
-
+<SafeAreaView />
             </View> 
             </View>   
             )

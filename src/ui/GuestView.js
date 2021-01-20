@@ -190,11 +190,11 @@ class GuestView extends React.Component {
 
 renderSkills = () => {
     return (  
-       <ScrollView showsHorizontalScrollIndicator={false} horizontal>
+       <ScrollView contentContainerStyle={{marginVertical: 10}} showsHorizontalScrollIndicator={false} horizontal>
               {
                 SKILL_BASED_INTEREST.map((skill, index, arr) => {
                     return  (
-                      <Chip onPress={() => this.handleOnPressSkill(skill)} key={skill} mode="outlined" textStyle={{fontWeight: '800', fontFamily: 'Avenir-Heavy', color: '#FFFFFF'}} style={{borderColor: '#FFFFFF', backgroundColor: 'transparent', marginHorizontal: 10, borderRadius: 12}}>
+                      <Chip onPress={() => this.handleOnPressSkill(skill)} key={skill} mode="flat" textStyle={{ fontFamily: 'Avenir', backgroundColor: '#FFFFFF', color: '#1089ff'}} style={{backgroundColor: '#FFFFFF', marginHorizontal: 10}}>
                      
                           {skill}
                     
@@ -1305,7 +1305,7 @@ renderSkills = () => {
            
             </View>
             {this.renderSkills()}
-            <View style={{ paddingVertical: 15, width: '100%' }}>
+            <View style={{marginVertical: 20, paddingVertical: 15, width: '100%' }}>
               <View style={{  width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Text style={styles.sectionHeaderText}>
                   Book a trainer now
@@ -1322,7 +1322,7 @@ renderSkills = () => {
              />
             </View>
 
-              <View style={{marginVertical: 10}}>
+              <View style={{marginVertical: 20,}}>
               <Text style={styles.sectionHeaderText}>
                   Book trainers near you
                 </Text>
@@ -1331,7 +1331,7 @@ renderSkills = () => {
               </View>
             </View>
     
-            <View style={{ marginVertical: 10, width: '100%' }}>
+            <View style={{ marginVertical: 25, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={styles.sectionHeaderText}>
                   Find your perfect program
@@ -1342,7 +1342,7 @@ renderSkills = () => {
       
             </View>
             {this.renderCreateAccountSection()}
-            <View style={{ marginVertical: 10, width: '100%' }}>
+            <View style={{ marginVertical: 20, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={styles.sectionHeaderText}>
                   Program of the day
@@ -1353,7 +1353,7 @@ renderSkills = () => {
                 {this.renderProgramOfTheDay()}
               </View>
             </View>
-            <View style={{ marginVertical: 10, width: '100%' }}>
+            <View style={{marginVertical: 20, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={styles.sectionHeaderText}>
                   Communities in your area

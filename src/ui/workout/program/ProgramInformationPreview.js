@@ -38,7 +38,7 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED } from '../../../modules/payments/stripe/index'
 import FeatherIcon from 'react-native-vector-icons/Feather'
-
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
@@ -67,6 +67,8 @@ function StartPackDialog({ isVisible, closeModal, program }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
+
+    const navigation = useNavigation();
 
     const [usersToShare, setUsersToShare] = useState([currUserData]);
     const [chosenPack, setChosenPack] = useState(initializeNewPack('', '', '', []));
@@ -145,6 +147,11 @@ function StartPackDialog({ isVisible, closeModal, program }) {
         fetchFollowers()
       }, []);
 
+      const onJoinOrCreatePack = () => {
+        navigation.navigate('Train');
+        navigation.dispatch(DrawerActions.openDrawer());
+      }
+
 
     return (
         <Dialog visible={isVisible} animationType="fade" animated={true} style={{borderRadius: 15, height: 'auto', justifyContent: 'space-evenly',}}>
@@ -158,13 +165,13 @@ function StartPackDialog({ isVisible, closeModal, program }) {
                             <Text style={{fontFamily: 'Avenir-Medium', fontSize: 16, fontWeight: '700', color: 'rgb(116, 126, 136)'}}>
         
         
-                        <Text style={{color: '#1089ff'}}>
+                        <Text style={{color: '#1089ff'}} onPress={onJoinOrCreatePack}>
                             Join{" "}
                         </Text>
                         <Text>
                             or{" "}
                         </Text>
-                        <Text style={{color: '#1089ff'}}>
+                        <Text style={{color: '#1089ff'}} onPress={onJoinOrCreatePack}>
                             create{" "}
                         </Text>
                         <Text>
