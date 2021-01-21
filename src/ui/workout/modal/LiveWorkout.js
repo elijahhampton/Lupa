@@ -116,7 +116,7 @@ function WorkoutFinishedModal({ isVisible, closeModal }) {
     )
 }
 
-function NoExercisesDialogVisible({ isVisible  }) {
+function NoExercisesDialogVisible({ isVisible }) {
     const navigation = useNavigation();
 
     return (
@@ -169,12 +169,6 @@ class LiveWorkout extends React.Component {
             contentTypeDisplayed: "",
             componentDidErr: false,
             liveWorkoutOptionsVisible: false,
-            currUserFollowing: [],
-            feedback: "",
-            feedbackDialogIsVisible: false,
-            messages: [],
-            interactionInputFocused: false,
-            showFullScreenContent: false,
             showFinishedDayDialog: false,
             restTimerStarted: false,
             restTimerVisible: false,
@@ -195,7 +189,7 @@ class LiveWorkout extends React.Component {
     }
 
     async componentDidMount() {
-        
+
         const { sessionID } = this.props.route.params;
         await this.setupLiveWorkout();
         this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData);
@@ -284,11 +278,6 @@ class LiveWorkout extends React.Component {
                 await this.setState({ ready: false, componentDidErr: true })
             }
         }
-
-
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(this.props.lupa_data.Users.currUserData.following).then(data => {
-            this.setState({ currUserFollowing: data })
-        })
     }
 
     showLiveWorkoutOptionsModal = () => {
@@ -315,8 +304,8 @@ class LiveWorkout extends React.Component {
     renderParticipants = () => {
         return this.state.participants.map(user => {
             return (
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                     <Avatar.Image style={{ marginHorizontal: 10 }} size={25} source={{ uri: user.photo_url }} />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Avatar.Image style={{ marginHorizontal: 10 }} size={25} source={{ uri: user.photo_url }} />
                     <Text>
                         {user.display_name}
                     </Text>
@@ -327,10 +316,10 @@ class LiveWorkout extends React.Component {
 
     renderFinishWorkoutWarningDialog = () => {
         return (
- <Portal>
-    <Dialog visible={this.state.warningDialogShowing} style={{padding: 20, backgroundColor: 'white', width: '80%'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <FeatherIcon size={18} style={{paddingHorizontal: 10}} name="alert-triangle" />
+            <Portal>
+                <Dialog visible={this.state.warningDialogShowing} style={{ padding: 20, backgroundColor: 'white', width: '80%' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <FeatherIcon size={18} style={{ paddingHorizontal: 10 }} name="alert-triangle" />
 
                         <Title>
                             Warning
@@ -358,43 +347,43 @@ class LiveWorkout extends React.Component {
 
     renderExercisePreviewContainer = () => {
         return (
-        <View style={{flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, justifyContent: 'space-evenly'}}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Surface style={{borderRadius: 12, width: 50, height: 50}}>
-                 {this.renderImageSource(this.state.previousWorkout)}
-            </Surface>
-            <Caption style={{paddingTop: 5}}>
-                {this.renderPreviousExerciseName(this.state.previousWorkout)}
+            <View style={{ flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, justifyContent: 'space-evenly' }}>
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Surface style={{ borderRadius: 12, width: 50, height: 50 }}>
+                        {this.renderImageSource(this.state.previousWorkout)}
+                    </Surface>
+                    <Caption style={{ paddingTop: 5 }}>
+                        {this.renderPreviousExerciseName(this.state.previousWorkout)}
+                    </Caption>
+                    <Caption>
+                        Current Workout
             </Caption>
-            <Caption>
-                Current Workout
-            </Caption>
-            </View>
+                </View>
 
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Surface style={{borderRadius: 12, width: 50, height: 50}}>
-                 {this.renderImageSource(this.state.currentWorkout)}
-            </Surface>
-            <Caption style={{paddingTop: 5}}>
-            {this.renderPreviousExerciseName(this.state.currentWorkout)}
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Surface style={{ borderRadius: 12, width: 50, height: 50 }}>
+                        {this.renderImageSource(this.state.currentWorkout)}
+                    </Surface>
+                    <Caption style={{ paddingTop: 5 }}>
+                        {this.renderPreviousExerciseName(this.state.currentWorkout)}
+                    </Caption>
+                    <Caption>
+                        Current Workout
             </Caption>
-            <Caption>
-                Current Workout
-            </Caption>
-            </View>
+                </View>
 
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Surface style={{borderRadius: 12, width: 50, height: 50}}>
-                 {this.renderImageSource(this.state.nextWorkout)}
-            </Surface>
-            <Caption style={{paddingTop: 5}}>
-              {this.renderNextExerciseName(this.state.nextWorkout)}
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Surface style={{ borderRadius: 12, width: 50, height: 50 }}>
+                        {this.renderImageSource(this.state.nextWorkout)}
+                    </Surface>
+                    <Caption style={{ paddingTop: 5 }}>
+                        {this.renderNextExerciseName(this.state.nextWorkout)}
+                    </Caption>
+                    <Caption>
+                        Current Workout
             </Caption>
-            <Caption>
-                Current Workout
-            </Caption>
+                </View>
             </View>
-        </View>
         )
     }
 
@@ -574,134 +563,133 @@ class LiveWorkout extends React.Component {
     }
 
 
-   showDialog = () => this.setState({ showFinishedDayDialog: true }) 
+    showDialog = () => this.setState({ showFinishedDayDialog: true })
 
-   hideDialog = () => this.setState({ showFinishedDayDialog: false }) 
+    hideDialog = () => this.setState({ showFinishedDayDialog: false })
 
-   renderPreviousExerciseName = (exercise) => {
-    try {
-        return exercise.workout_name;
-    } catch(error) {
-        return ''
-    }
-   }
-
-   renderCurrentExerciseName = (exercise) => {
-    try {
-        return exercise.workout_name;
-    } catch(error) {
-        return ''
-    }
-   }
-
-   renderNextExerciseName = (exercise) => {
-    try {
-        return exercise.workout_name;
-    } catch(error) {
-        return ''
-    }
-   }
-
-   renderImageSource = (workout) => {
-    try {
-
-    switch(workout.default_media_uri) {
-        case '':
-            return <Image source={''} />
-        case 'Traps':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Traps.png')} />
-        case 'Chest':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Chest.png')} />
-        case 'Bicep':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain"source={require('../../images/buildworkout/singleworkout/Bicep.png')} />
-        case 'Calves':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Calves.png')} />
-        case 'Core':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Core.png')} />
-        case 'Glutes':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Glutes.png')} />
-        case 'Supr':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Supr.png')} />
-        case 'Triceps':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Triceps.png')} />
-        case 'Hip':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Hip.png')} />
-        default:
-            return <Image source={''} />
-    }
-} catch(error) {
-    return <Image source={''} />
-}
-}
-
-renderStepIndicator = () => {
-    try {
-    if (this.state.ready == true) {
-        return (
-            <StepIndicator 
-            labels={this.state.labelData}
-            currentPosition={this.state.currentWorkoutIndex}
-            steps={this.state.timelineData} 
-            stepCount={this.state.timelineData.length}
-            customStyles={{
-                stepIndicatorSize: 25,
-currentStepIndicatorSize:30,
-separatorStrokeWidth: 2,
-currentStepStrokeWidth: 3,
-stepStrokeCurrentColor: '#1089ff', //outline
-stepStrokeWidth: 3,
-stepStrokeFinishedColor: '#1089ff',
-stepStrokeUnFinishedColor: '#1089ff', //unfinished outline
-separatorFinishedColor: '#1089ff',
-separatorUnFinishedColor: '#1089ff',
-stepIndicatorFinishedColor: '#1089ff',
-stepIndicatorUnFinishedColor: '#1089ff',
-stepIndicatorCurrentColor: '#ffffff',
-stepIndicatorLabelFontSize: 13,
-currentStepIndicatorLabelFontSize: 13,
-stepIndicatorLabelCurrentColor: '#1089ff',
-stepIndicatorLabelFinishedColor: '#ffffff',
-stepIndicatorLabelUnFinishedColor: '#FFFFFF',
-labelColor: '#1089ff',
-labelSize: 10,
-currentStepLabelColor: '#1089ff'
-            }}
-             />
-        )
-    }
-} catch(error) {
-    return null;
-}
-}
-
-renderOneRepMax = () => {
-    try {
-        if (this.state.completed_exercise_one_rep_max == '' || typeof(this.state.completed_exercise_one_rep_max) == 'undefined') {
-           // this.setState({ isEditingOneRepMax: true })
-            return '0'
+    renderPreviousExerciseName = (exercise) => {
+        try {
+            return exercise.workout_name;
+        } catch (error) {
+            return ''
         }
-
-        return this.state.completed_exercise_one_rep_max.toString();
-    } catch(error) {
-        return '-'
     }
-}
+
+    renderCurrentExerciseName = (exercise) => {
+        try {
+            return exercise.workout_name;
+        } catch (error) {
+            return ''
+        }
+    }
+
+    renderNextExerciseName = (exercise) => {
+        try {
+            return exercise.workout_name;
+        } catch (error) {
+            return ''
+        }
+    }
+
+    renderImageSource = (workout) => {
+        try {
+
+            switch (workout.default_media_uri) {
+                case '':
+                    return <Image source={''} />
+                case 'Traps':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Traps.png')} />
+                case 'Chest':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Chest.png')} />
+                case 'Bicep':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Bicep.png')} />
+                case 'Calves':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Calves.png')} />
+                case 'Core':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Core.png')} />
+                case 'Glutes':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Glutes.png')} />
+                case 'Supr':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Supr.png')} />
+                case 'Triceps':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Triceps.png')} />
+                case 'Hip':
+                    return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Hip.png')} />
+                default:
+                    return <Image source={''} />
+            }
+        } catch (error) {
+            return <Image source={''} />
+        }
+    }
+
+    renderStepIndicator = () => {
+        try {
+            if (this.state.ready == true) {
+                return (
+                    <StepIndicator
+                        labels={this.state.labelData}
+                        currentPosition={this.state.currentWorkoutIndex}
+                        steps={this.state.timelineData}
+                        stepCount={this.state.timelineData.length}
+                        customStyles={{
+                            stepIndicatorSize: 25,
+                            currentStepIndicatorSize: 30,
+                            separatorStrokeWidth: 2,
+                            currentStepStrokeWidth: 3,
+                            stepStrokeCurrentColor: '#1089ff', //outline
+                            stepStrokeWidth: 3,
+                            stepStrokeFinishedColor: '#1089ff',
+                            stepStrokeUnFinishedColor: '#1089ff', //unfinished outline
+                            separatorFinishedColor: '#1089ff',
+                            separatorUnFinishedColor: '#1089ff',
+                            stepIndicatorFinishedColor: '#1089ff',
+                            stepIndicatorUnFinishedColor: '#1089ff',
+                            stepIndicatorCurrentColor: '#ffffff',
+                            stepIndicatorLabelFontSize: 13,
+                            currentStepIndicatorLabelFontSize: 13,
+                            stepIndicatorLabelCurrentColor: '#1089ff',
+                            stepIndicatorLabelFinishedColor: '#ffffff',
+                            stepIndicatorLabelUnFinishedColor: '#FFFFFF',
+                            labelColor: '#1089ff',
+                            labelSize: 10,
+                            currentStepLabelColor: '#1089ff'
+                        }}
+                    />
+                )
+            }
+        } catch (error) {
+            return null;
+        }
+    }
+
+    renderOneRepMax = () => {
+        try {
+            if (this.state.completed_exercise_one_rep_max == '' || typeof (this.state.completed_exercise_one_rep_max) == 'undefined') {
+                // this.setState({ isEditingOneRepMax: true })
+                return '0'
+            }
+
+            return this.state.completed_exercise_one_rep_max.toString();
+        } catch (error) {
+            return '-'
+        }
+    }
 
     renderWeightUsed = () => {
         try {
-            if (this.state.completed_exercise_weight_used == '' || typeof(this.state.completed_exercise_weight_used) == 'undefined') {
-               // this.setState({ isEditingWeightUsed: true })
+            if (this.state.completed_exercise_weight_used == '' || typeof (this.state.completed_exercise_weight_used) == 'undefined') {
+                // this.setState({ isEditingWeightUsed: true })
                 return '0'
             }
-    
+
             return this.state.completed_exercise_weight_used.toString();
-        } catch(error) {
+        } catch (error) {
             return '-'
         }
     }
 
     updateWeightUsed = () => {
-        
         const weightUsed = this.state.completed_exercise_weight_used;
 
         let completedExercises = []
@@ -710,8 +698,8 @@ renderOneRepMax = () => {
 
             for (let i = 0; i < completedExercises.length; i++) {
                 if (completedExercises[i].index == this.state.currentWorkout.index) {
-                   this.setState({ completed_exercise_weight_used: weightUsed })
-                   completedExercises[i].exercise_weight = weightUsed
+                    this.setState({ completed_exercise_weight_used: weightUsed })
+                    completedExercises[i].exercise_weight = weightUsed
                 }
             }
 
@@ -719,7 +707,7 @@ renderOneRepMax = () => {
                 completed_exercises: completedExercises
             })
         }, (error) => {
-            
+
         })
 
         this.setState({ isEditingWeightUsed: false })
@@ -728,59 +716,59 @@ renderOneRepMax = () => {
     updateOneRepMax = () => {
         const repMax = this.state.completed_exercise_one_rep_max;
 
-            let completedExercises = []
-            LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).get().then(documentSnapshot => {
-                completedExercises = documentSnapshot.data().completed_exercises;
-    
-                for (let i = 0; i < completedExercises.length; i++) {
-                    if (completedExercises[i].index == this.state.currentWorkout.index) {
-                       this.setState({ completed_exercise_one_rep_max: repMax })
-                       completedExercises[i].one_rep_max = repMax
-                    }
-                }
-    
-                LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).update({
-                    completed_exercises: completedExercises
-                })
-            }, (error) => {
-                
-            })
+        let completedExercises = []
+        LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).get().then(documentSnapshot => {
+            completedExercises = documentSnapshot.data().completed_exercises;
 
-            this.setState({ isEditingOneRepMax: false })
+            for (let i = 0; i < completedExercises.length; i++) {
+                if (completedExercises[i].index == this.state.currentWorkout.index) {
+                    this.setState({ completed_exercise_one_rep_max: repMax })
+                    completedExercises[i].one_rep_max = repMax
+                }
+            }
+
+            LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).update({
+                completed_exercises: completedExercises
+            })
+        }, (error) => {
+
+        })
+
+        this.setState({ isEditingOneRepMax: false })
     }
 
     renderWeightUsedDisplay = () => {
         if (this.state.isEditingWeightUsed == false) {
             return (
                 <View style={{ width: 160, height: 30, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontFamily: 'Avenir-Light' }}>
-                    {this.renderWeightUsed()}
-                </Text>
-            </View>
+                    <Text style={{ fontFamily: 'Avenir-Light' }}>
+                        {this.renderWeightUsed()}
+                    </Text>
+                </View>
             )
         } else {
             return (
                 <View>
-                <View style={{height: 30, width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: '#1089ff', paddingHorizontal: 20,  alignItems: 'center', justifyContent: 'center' }}>
-                    <Input 
-onChangeText={text => this.setState({ completed_exercise_weight_used: text })}
-value={this.renderWeightUsed()}
-onEndEditing={this.updateWeightUsed}
-onSubmitEditing={this.updateWeightUsed}
-clearTextOnFocus={true}
-containerStyle={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}
-inputContainerStyle={{width: '100%', height: '100%', borderBottomWidth: 0, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}
-inputStyle={{alignSelf: 'center'}}
-returnKeyLabel="submit"
-returnKeyType="done"
-keyboardType="numeric"
-/>
-            </View>
-            <Caption style={{padding: 5}}>
+                    <View style={{ height: 30, width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: '#1089ff', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center' }}>
+                        <Input
+                            onChangeText={text => this.setState({ completed_exercise_weight_used: text })}
+                            value={this.renderWeightUsed()}
+                            onEndEditing={this.updateWeightUsed}
+                            onSubmitEditing={this.updateWeightUsed}
+                            clearTextOnFocus={true}
+                            containerStyle={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
+                            inputContainerStyle={{ width: '100%', height: '100%', borderBottomWidth: 0, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}
+                            inputStyle={{ alignSelf: 'center' }}
+                            returnKeyLabel="submit"
+                            returnKeyType="done"
+                            keyboardType="numeric"
+                        />
+                    </View>
+                    <Caption style={{ padding: 5 }}>
                         What was the weight used for this exercise?
             </Caption>
-           
-            </View>
+
+                </View>
             )
         }
     }
@@ -789,33 +777,33 @@ keyboardType="numeric"
         if (this.state.isEditingOneRepMax == false) {
             return (
                 <View style={{ width: 160, height: 30, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontFamily: 'Avenir-Light' }}>
-                    {this.renderOneRepMax()}
-                </Text>
-            </View>
+                    <Text style={{ fontFamily: 'Avenir-Light' }}>
+                        {this.renderOneRepMax()}
+                    </Text>
+                </View>
             )
         } else {
             return (
                 <View>
-                <View style={{height: 30, width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: '#1089ff', paddingHorizontal: 20,  alignItems: 'center', justifyContent: 'center' }}>
-                    <Input 
-onChangeText={text => this.setState({ completed_exercise_one_rep_max: text })}
-value={this.renderOneRepMax()}
-onEndEditing={this.updateOneRepMax}
-onSubmitEditing={() => this.setState({ isEditingOneRepMax: false })}
-clearTextOnFocus={true}
-containerStyle={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}
-inputContainerStyle={{width: '100%', height: '100%', borderBottomWidth: 0, alignSelf: 'center', alignItems: 'center', justifyContent: 'center'}}
-inputStyle={{alignSelf: 'center'}}
-returnKeyLabel="submit"
-returnKeyType="done"
-keyboardType="numeric"
-/>
-            </View>
-            <Caption style={{paddingVertical: 5}}>
-                What was your one rep max?
+                    <View style={{ height: 30, width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: '#1089ff', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center' }}>
+                        <Input
+                            onChangeText={text => this.setState({ completed_exercise_one_rep_max: text })}
+                            value={this.renderOneRepMax()}
+                            onEndEditing={this.updateOneRepMax}
+                            onSubmitEditing={() => this.setState({ isEditingOneRepMax: false })}
+                            clearTextOnFocus={true}
+                            containerStyle={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
+                            inputContainerStyle={{ width: '100%', height: '100%', borderBottomWidth: 0, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}
+                            inputStyle={{ alignSelf: 'center' }}
+                            returnKeyLabel="submit"
+                            returnKeyType="done"
+                            keyboardType="numeric"
+                        />
+                    </View>
+                    <Caption style={{ paddingVertical: 5 }}>
+                        What was your one rep max?
             </Caption>
-            </View>
+                </View>
             )
         }
     }
@@ -824,44 +812,44 @@ keyboardType="numeric"
         if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
             return (
                 <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                    <View style={{flexDirection: 'row',  flex: 2.5, alignItems: 'center', justifyContent: 'space-evenly' }}>
+                    <View style={{ flexDirection: 'row', flex: 2.5, alignItems: 'center', justifyContent: 'space-evenly' }}>
 
-                        <View style={{flex: 1, height: '100%', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                            <Caption style={{fontSize: 20}}>
+                        <View style={{ flex: 1, height: '100%', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                            <Caption style={{ fontSize: 20 }}>
                                 {this.renderCurrentExerciseName(this.state.currentWorkout)}
                             </Caption>
 
                             <View>
-                            <Caption>
-                                One Rep Max
+                                <Caption>
+                                    One Rep Max
                             </Caption>
-                            {this.renderOneRepMaxDisplay()}
+                                {this.renderOneRepMaxDisplay()}
                             </View>
-                           
-                            
+
+
                             <View>
-                            <Caption>
-                                Weight used
+                                <Caption>
+                                    Weight used
                             </Caption>
-                            {this.renderWeightUsedDisplay()}
+                                {this.renderWeightUsedDisplay()}
                             </View>
 
-                        
-                        </View>  
 
-                         <View style={{elevation: 0, backgroundColor: '#FFFFFF', flex: 1 }}>
+                        </View>
+
+                        <View style={{ elevation: 0, backgroundColor: '#FFFFFF', flex: 1 }}>
                             {this.renderImageSource(this.state.currentWorkout)}
-                        </View>                      
+                        </View>
                     </View>
-                    
+
                     <Divider style={{ width: '100%' }} />
                     <View style={{ flex: 2.5, flexDirection: 'row', }}>
-                 
 
 
-                        <View style={{flex: 1, justifyContent: 'space-between' }}>
 
-                  
+                        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+
+
                             <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly', paddingHorizontal: 20 }}>
                                 <Caption>
                                     Sets
@@ -874,7 +862,7 @@ keyboardType="numeric"
                             </View>
 
                             <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-                            <Caption>
+                                <Caption>
                                     Reps
                                 </Caption>
                                 <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
@@ -885,8 +873,8 @@ keyboardType="numeric"
                             </View>
 
                             <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-                            <Caption>
-                                   Tempo
+                                <Caption>
+                                    Tempo
                                 </Caption>
                                 <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
                                     <Text style={{ flexWrap: 'nowrap', fontFamily: 'Avenir-Light' }}>
@@ -896,7 +884,7 @@ keyboardType="numeric"
                             </View>
 
                             <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-                            <Caption>
+                                <Caption>
                                     Rest Time
                                 </Caption>
                                 <View style={{ width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
@@ -909,36 +897,36 @@ keyboardType="numeric"
                         </View>
 
 
-                        <View style={{flex: 1}}>    
-<Text style={{alignSelf: 'center', fontSize: 18, padding: 10, fontFamily: 'Avenir-Heavy'}}>
-    Participants
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ alignSelf: 'center', fontSize: 18, padding: 10, fontFamily: 'Avenir-Heavy' }}>
+                                Participants
 </Text>
-<View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
-{this.renderParticipants()}
-</View>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                {this.renderParticipants()}
+                            </View>
 
-<View style={{flex: 0.3, backgroundColor: '#1089ff', justifyContent: 'flex-end', width: '80%', alignSelf: 'center', borderRadius: 3}}>
-<TouchableOpacity disabled={this.state.hasWorkouts == false} style={{flex: 1, backgroundColor: this.state.hasWorkouts == true ? '#1089ff' : '#E5E5E5',  borderRadius: 3, alignItems: 'center', justifyContent: 'center'}} onPress={() => this.advanceExercise()}>
-                        <View style={{paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                           <Text style={{color: '#FFFFFF', fontFamily: 'Avenir-Heavy'}}>
-                               Next Exercise
+                            <View style={{ flex: 0.3, backgroundColor: '#1089ff', justifyContent: 'flex-end', width: '80%', alignSelf: 'center', borderRadius: 3 }}>
+                                <TouchableOpacity disabled={this.state.hasWorkouts == false} style={{ flex: 1, backgroundColor: this.state.hasWorkouts == true ? '#1089ff' : '#E5E5E5', borderRadius: 3, alignItems: 'center', justifyContent: 'center' }} onPress={() => this.advanceExercise()}>
+                                    <View style={{ paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <Text style={{ color: '#FFFFFF', fontFamily: 'Avenir-Heavy' }}>
+                                            Next Exercise
                            </Text>
-                           
+
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+
                         </View>
-                    </TouchableOpacity>
-</View>
-
-</View>
                     </View>
 
-                 <View style={{flex: 0.8, justifyContent: 'center'}}>
-                     {this.renderStepIndicator()}
+                    <View style={{ flex: 0.8, justifyContent: 'center' }}>
+                        {this.renderStepIndicator()}
                     </View>
-                    
 
 
 
-                  
+
+
 
                 </SafeAreaView>
             )
@@ -979,17 +967,14 @@ keyboardType="numeric"
                                     {this.state.programOwnerData.display_name}
                                 </Text>
                                 <Text style={{ color: 'white' }}>
-                                   {this.state.programOwnerData.certification}
+                                    {this.state.programOwnerData.certification}
                                 </Text>
                                 <Text style={[styles.RBSheetText]} numberOfLines={4} ellipsizeMode="tail">
                                     {this.state.programData.program_description}
                                 </Text>
                             </View>
-
                         </View>
-
                     </View>
-
 
                     <View style={{ marginVertical: 20 }}>
                         <ListItem
@@ -1038,23 +1023,6 @@ keyboardType="numeric"
 
         this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('last_completed_workout', lastCompletedWorkoutData)
         this.hideDialog();
-    }
-
-    renderDescriptionDialog = () => {
-        return (
-            <Portal>
-                <Dialog visible={this.state.descriptionDialogVisible}>
-                    <Dialog.Content>
-                        <Paragraph>
-                            {this.state.programData.program_description}
-                        </Paragraph>
-                    </Dialog.Content>
-                    <Dialog.Actions>
-                        <Button color="#1089ff" onPress={() => this.setState({ descriptionDialogVisible: false })}>Done</Button>
-                    </Dialog.Actions>
-                </Dialog>
-            </Portal>
-        )
     }
 
     renderRestTimerRBSheetPicker = () => {
@@ -1108,7 +1076,7 @@ keyboardType="numeric"
     render() {
         return (
             <>
-               <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0}}>
+                <Appbar.Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
                     <Appbar.BackAction onPress={this.showWarningDialog} />
 
                     <Appbar.Content title={`Week ${this.state.currentWeek + 1}, ${this.state.currentWorkoutDay}`} titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 16 }} />
@@ -1126,14 +1094,13 @@ keyboardType="numeric"
                 {this.renderComponentDisplay()}
                 {this.renderFinishWorkoutWarningDialog()}
                 {this.renderLiveWorkoutOptions()}
-                {typeof (this.props.route.params.programData) == 'undefined' ? null : this.renderDescriptionDialog()}
                 {this.renderRestTimerRBSheetPicker()}
 
-                <RestTimer 
-                isVisible={this.state.restTimerVisible}
-                restTime={this.state.restTime} 
-                currentExercise={this.state.currentWorkout}
-                closeModal={() => this.setState({ restTimerVisible: false })} 
+                <RestTimer
+                    isVisible={this.state.restTimerVisible}
+                    restTime={this.state.restTime}
+                    currentExercise={this.state.currentWorkout}
+                    closeModal={() => this.setState({ restTimerVisible: false })}
                 />
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
                 <NoExercisesDialogVisible isVisible={this.state.noWorkoutsDialogVisible} />
