@@ -190,7 +190,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         
     }
 
-    this.createExerciseStructure = (weightUsed, oneRepMax) => {
+    this.createExerciseStructure = () => {
         const exerciseStructure = {
             exercise_name: this.currentWorkout.workout_name,
             exercise_weight: 0,
@@ -202,10 +202,10 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         return exerciseStructure;
     }
 
-    this.advanceWorkout = async (weightUsed, oneRepMax) => {
+    this.advanceWorkout = async () => {
         let userData = getLupaUserStructurePlaceholder();
         let updatedCompletedExerciseList = [];
-        const newExerciseEntry = this.createExerciseStructure(weightUsed, oneRepMax)
+        const newExerciseEntry = this.createExerciseStructure()
         let addExercise = true;
         await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
         .update({ 
@@ -220,7 +220,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
                    updatedCompletedExerciseList = userData.completed_exercises;
                     
                     for (let i = 0; i < updatedCompletedExerciseList.length; i++) {
-                        if (updatedCompletedExerciseList[i].index == newExerciseEntry.index && updatedCompletedExerciseList[i].one_rep_max != 0 && updatedCompletedExerciseList[i].exercise_weight != 0) {
+                        if (updatedCompletedExerciseList[i].index == newExerciseEntry.index) {
                             addExercise = false
                         }
                     }
