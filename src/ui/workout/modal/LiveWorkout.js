@@ -535,7 +535,7 @@ class LiveWorkout extends React.Component {
     }
 
     advanceExercise = () => {
-        this.workoutService.advanceWorkout(this.state.completed_exercise_weight_used, this.state.completed_exercise_one_rep_max);
+        this.workoutService.advanceWorkout();
     }
 
     renderWorkoutReps = () => {
@@ -625,7 +625,23 @@ class LiveWorkout extends React.Component {
 
     renderStepIndicator = () => {
         try {
-            if (this.state.ready == true) {
+            if (this.state.hasWorkouts == false && this.props.lupa_data.Users.currUserData.user_uuid == this.state.programOwnerData.user_uuid) {
+                return (
+                    <Caption>
+                        It looks like there are no workouts for this
+                    </Caption>
+                )
+            }
+
+            if (this.state.hasWorkouts == false && this.props.lupa_data.Users.currUserData.user_uuid != this.state.programOwnerData.user_uuid) {
+                return (
+                    <Caption>
+
+                    </Caption>
+                )
+            }
+
+            if (this.state.ready == true && this.state.hasWorkouts == true) {
                 return (
                     <StepIndicator
                         labels={this.state.labelData}
@@ -827,7 +843,7 @@ class LiveWorkout extends React.Component {
                             </View>
 
 
-                            <View>
+                            <View style={{alignSelf: 'center'}}>
                                 <Caption>
                                     Weight used
                             </Caption>
@@ -909,7 +925,7 @@ class LiveWorkout extends React.Component {
                                 <TouchableOpacity disabled={this.state.hasWorkouts == false} style={{ flex: 1, backgroundColor: this.state.hasWorkouts == true ? '#1089ff' : '#E5E5E5', borderRadius: 3, alignItems: 'center', justifyContent: 'center' }} onPress={() => this.advanceExercise()}>
                                     <View style={{ paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                         <Text style={{ color: '#FFFFFF', fontFamily: 'Avenir-Heavy' }}>
-                                            Next Exercise
+                                            Advance Workout
                            </Text>
 
                                     </View>
