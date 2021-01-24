@@ -1477,7 +1477,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   sectionHeaderText: {
-    color: 'white', fontSize: 16, paddingHorizontal: 10, fontFamily: 'Avenir-Black'
+    color: 'white', fontSize: 18, padding: 10, fontFamily: 'Avenir-Black'
   },
 
   inputStyle: {

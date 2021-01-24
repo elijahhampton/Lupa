@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
     View,
@@ -50,7 +50,7 @@ import PayoutsModal from './PayoutsModal';
                         </Text>
                         <Text onPress={() => navigation.navigate('Profile', {
                             userUUID: currUserData.user_uuid
-                        })} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        })} style={{fontSize: 16, fontWeight: '600', paddingVertical: 10, color: '#1089ff',}}>
                             View my profile
                         </Text>
 
@@ -79,8 +79,8 @@ import PayoutsModal from './PayoutsModal';
 
                         <Text style={styles.descriptionText}>
                            Your account always has two types of balances "available" and "pending".  Available balances will be paid out weekly on Tuesday whereas pending balances are waiting to be settled.  
-                           <Text style={{fontFamily: 'Avenir-Light', color: '#1089ff'}} onPress={() => setPayoutsModalVisible(true)}>
-                               {" "} Learn more here.
+                           <Text style={{fontFamily: 'Avenir-Light', color: '#1089ff', fontSize: 16}} onPress={() => setPayoutsModalVisible(true)}>
+                               {" "} Learn more
                            </Text>
                         </Text>
                     </View>
@@ -92,7 +92,7 @@ import PayoutsModal from './PayoutsModal';
                         <Text style={styles.descriptionText}>
                             Packs are public or private groups that users can create or join to keep up with their friends and workout buddies.  Packs are able to invite group members to join and participate in fitness programs at a split cost of the original program price.
                         </Text>
-                        <Text onPress={() => onSeeHowPacksWork()} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        <Text onPress={() => onSeeHowPacksWork()} style={{fontSize: 16, fontWeight: '600', color: '#1089ff',}}>
                             See how packs work
                         </Text>
                     </View>
@@ -108,7 +108,7 @@ import PayoutsModal from './PayoutsModal';
                         <Text style={styles.descriptionText}>
                          Additionally, if you wish to create new programs you can click the circle-plus icon on the bottom tab bar to create one.
                         </Text>
-                        <Text onPress={() => navigation.navigate('CreateProgram')} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        <Text onPress={() => navigation.navigate('CreateProgram')} style={{fontSize: 16, fontWeight: '600', paddingVertical: 10, color: '#1089ff',}}>
                             Create a program
                         </Text>
                         <Caption>
@@ -160,7 +160,7 @@ import PayoutsModal from './PayoutsModal';
                         <Text style={styles.descriptionText}>
                         Find trainers through the explore page or by searching based on your interest or trainer name.
                         </Text>
-                        <Text onPress={() => navigation.push('Search')} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        <Text onPress={() => navigation.push('Search')} style={{fontSize: 16, fontWeight: '600', color: '#1089ff',}}>
                             Search for trainers
                         </Text>
 
@@ -171,7 +171,7 @@ import PayoutsModal from './PayoutsModal';
                         <List.Item
     title="Payments Status"
     titleStyle={{fontSize: 15, fontFamily: 'Avenir', fontWeight: '600'}}
-    description="Enable my accounts to make payments."
+    description="Enable my account to make payments."
     left={props => <List.Icon {...props} icon={() => <FeatherIcon name="dollar-sign" size={20} />} />}
     onPress={() => navigation.push('Settings')}
   />
@@ -189,7 +189,7 @@ import PayoutsModal from './PayoutsModal';
                         <Text style={styles.descriptionText}>
                             Packs are public or private groups that users can create or join to keep up with their friends and workout buddies.  Packs are able to invite group members to join and participate in fitness programs at a split cost of the original program price.
                         </Text>
-                        <Text onPress={() => onSeeHowPacksWork()} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        <Text onPress={() => onSeeHowPacksWork()} style={{fontSize: 16, fontWeight: '600', color: '#1089ff',}}>
                             See how packs work
                         </Text>
                     </View>
@@ -205,7 +205,7 @@ import PayoutsModal from './PayoutsModal';
                         <Text style={styles.descriptionText}>
                             See a program you want to share with your friends?  Find a program you like and choose to invite your friends to split the cost with you.  Press the <FeatherIcon name="user-plus"/> in the top right hand corner of any program preview to invite your pack to join in with you.
                         </Text>
-                        <Text onPress={() => navigation.push('Search')} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        <Text onPress={() => navigation.push('Search')} style={{fontSize: 16, fontWeight: '600', color: '#1089ff',}}>
                            Find a program
                         </Text>
                     </View>
@@ -244,7 +244,7 @@ import PayoutsModal from './PayoutsModal';
                         <Text style={styles.descriptionText}>
                         Find trainers through the explore page or by searching based on your interest or trainer name.
                         </Text>
-                        <Text onPress={() => navigation.push('Search')} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        <Text onPress={() => navigation.push('Search')} style={{fontSize: 16, fontWeight: '600', color: '#1089ff',}}>
                             Search for trainers
                         </Text>
 
@@ -272,7 +272,7 @@ import PayoutsModal from './PayoutsModal';
                         <Text style={styles.descriptionText}>
                             Packs are public or private groups that users can create or join to keep up with their friends and workout buddies.  Packs are able to invite group members to join and participate in fitness programs at a split cost of the original program price.
                         </Text>
-                        <Text onPress={() => onSeeHowPacksWork()} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        <Text onPress={() => onSeeHowPacksWork()} style={{fontSize: 16, fontWeight: '600', color: '#1089ff',}}>
                             See how packs work
                         </Text>
                     </View>
@@ -288,7 +288,7 @@ import PayoutsModal from './PayoutsModal';
                         <Text style={styles.descriptionText}>
                             See a program you want to share with your friends?  Find a program you like and choose to invite your friends to split the cost with you.  Press the <FeatherIcon name="user-plus"/> in the top right hand corner of any program preview to invite your pack to join in with you.
                         </Text>
-                        <Text onPress={() => navigation.push('Search')} style={{fontWeight: '500', paddingVertical: 10, color: '#1089ff',}}>
+                        <Text onPress={() => navigation.push('Search')} style={{fontSize: 16, fontWeight: '600', color: '#1089ff',}}>
                            Find a program
                         </Text>
                     </View>

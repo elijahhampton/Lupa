@@ -92,7 +92,7 @@ const PayoutsModal = ({ isVisible, closeModal }) => {
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <View style={{padding: 10}}>
                 <Text style={{ fontFamily: 'Avenir-Heavy', fontSize: 16}}>
-                    Payable Earnings
+                    Available Earnings
                 </Text>
                 <Text style={{paddingVertical: 10, fontFamily: 'Avenir-Light', fontSize: 20}}>
                     ${availableBalance}

@@ -64,6 +64,9 @@ function LupaBottomTabNavigator() {
       fontSize: 12,
       fontFamily: 'Avenir-Light',
       fontWeight: '400',
+    },
+    style: {
+      backgroundColor: '#FFFFFF',
     }
   }
 

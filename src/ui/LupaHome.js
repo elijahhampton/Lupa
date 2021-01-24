@@ -48,7 +48,7 @@ const TAB_PROPS = {
   tabStyle: {backgroundColor: COLOR},
   activeTabStyle: {backgroundColor: COLOR},
   textStyle: {color: "white", fontFamily: 'Avenir-Heavy', fontSize: 20},
-  activeTextStyle: {color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}
+  activeTextStyle: {color: "white", fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20}
 };
 
 const mapStateToProps = (state, action) => {
