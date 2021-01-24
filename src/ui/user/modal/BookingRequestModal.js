@@ -7,6 +7,7 @@ import {
     Button as NativeButton,
     Dimensions,
     TextInput,
+    Share,
     Image,
     ActionSheetIOS,
     SafeAreaView,
@@ -465,6 +466,7 @@ theme={{roundness: 12}}>
     Cancel
   </Text>
 </Button>
+
 </View>
 
 

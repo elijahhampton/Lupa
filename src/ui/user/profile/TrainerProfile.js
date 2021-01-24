@@ -29,6 +29,8 @@ import {
 import { 
     Avatar 
 } from 'react-native-elements';
+
+import Share from 'react-native-share';
 import ImagePicker from 'react-native-image-picker';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useNavigation } from '@react-navigation/native';
@@ -38,7 +40,6 @@ import LupaController from '../../../controller/lupa/LupaController';
 import ProfileProgramCard from '../../workout/program/components/ProfileProgramCard';
 import LOG, { LOG_ERROR } from '../../../common/Logger';
 import VlogFeedCard from '../component/VlogFeedCard'
-import Feather1s from 'react-native-feather1s/src/Feather1s';
 import EditBioModal from './settings/modal/EditBioModal'
 import { getUpdateCurrentUserAttributeActionPayload } from '../../../controller/redux/payload_utility';
 import { getLupaStoreState } from '../../../controller/redux';
@@ -49,12 +50,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const navigation = useNavigation();
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [profileImage, setProfileImage] = useState(userData.photo_url)
-    const [showHourlyPaymentModal, setShowHourlyPaymentModalVisible] = useState(false);
     const [userPrograms, setUserPrograms] = useState([])
     const [userVlogs, setUserVlogs] = useState([])
     const [editBioModalVisible, setEditBioModalVisible] = useState(false);
     const [markedDates, setMarkedDates] = useState([])
-    const [showSchedulerButton, setShowSchedulerButton] = useState(false);
     const [ready, setReady] = useState(false)
     const [refreshing, setRefreshing] = useState(false);
     const [forceUpdate, setForceUpdate] = useState(false);
@@ -107,9 +106,6 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                      //update in Firestore
                 LUPA_CONTROLLER_INSTANCE.updateCurrentUser('photo_url', result, "");
                 });
-
-               
-
             }
         });
         //TODO
@@ -174,7 +170,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         </Text>
                         <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 13 }]}>
                             Followers
-        </Text>
+                        </Text>
                     </View>
 
                 </TouchableOpacity>
@@ -185,18 +181,11 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                         </Text>
                         <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 13 }]}>
                             Following
-        </Text>
+                        </Text>
                     </View>
                 </TouchableOpacity>
             </View>
         )
-    }
-
-    const renderCertification = () => {
-        return (<View style={{ paddingVertical: 2, flexDirection: 'row', alignItems: 'center' }}>
-            <FeatherIcon name="file-text" style={{ paddingRight: 5 }} />
-            <Text style={[styles.userAttributeText, { color: '#23374d' }]}>NASM</Text>
-        </View>)
     }
 
     const renderLocation = () => {
@@ -538,6 +527,26 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         navigation.push('HourlyPayment');
     }
 
+    const onShare = async () => {
+        const shareOptions = {
+            title: 'App link',
+            message: `See trainer ${userData.display_name} on Lupa.`,
+            url: `lupahealth://trainers/${userData.user_uuid}`,
+            social: Share.Social.SMS,
+            
+          };
+
+          const shareResponse = await Share.open(shareOptions);
+
+          shareResponse
+          .then(() => {
+            console.log('Success')
+          })
+          .catch(error => {
+              console.log('Error!')
+          })
+      };
+
 
 
     return (
@@ -545,6 +554,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             <Appbar.Header style={styles.appbar}>
             <Appbar.BackAction onPress={() => navigation.pop()} />
                 <Appbar.Content onPress={handleHourPaymentOnPress} title={`$${userData.hourly_payment_rate}/HR`} titleStyle={{color: isCurrentUser == false ? 'black' : '#1089ff', fontWeight: '500', alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontSize: 22}}/>
+                <Appbar.Action icon={() => <FeatherIcon name="share" size={22} />} onPress={onShare} />
             </Appbar.Header>
             
             <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>

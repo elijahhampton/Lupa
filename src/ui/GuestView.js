@@ -75,6 +75,7 @@ import Swiper from 'react-native-swiper';
 import { getLupaProgramInformationStructure } from '../model/data_structures/programs/program_structures';
 import VirtualSession from './sessions/virtual/VirtualSession';
 import VirtualLiveWorkout from './workout/modal/VirtualLiveWorkout';
+import { Linking } from 'react-native';
 
 const SKILL_BASED_INTEREST = [
   'Agility',
@@ -207,6 +208,16 @@ renderSkills = () => {
 }
 
   async componentDidMount() {
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        this.handleURLNavigation(url);
+      }
+    }).catch(err => {
+        console.warn('An error occurred', err);
+    });
+
+    Linking.addEventListener('url', this.handleOpenURL);
+
     let docData = getLupaUserStructure();
     let promotedTrainersIn = [];
     let byLupaTrainersIn = []
@@ -288,14 +299,52 @@ renderSkills = () => {
       await this.LUPA_CONTROLLER_INSTANCE.getNearbyCommunitiesBasedOnCityAndState(this.props.lupa_data.Users.currUserData.location.city, this.props.lupa_data.Users.currUserData.location.state).then(data => {
         this.setState({ nearbyCommunities: data })
       })
-
+   
     this.setState({ componentIsFetching: false })
   }
+
+  handleOpenURL = (event) => {
+    this.handleURLNavigation(event.url);
+  }
+
+  handleURLNavigation = async (url) => {
+    const { navigate } = this.props.navigation;
+    const route = url.replace(/.*?:\/\//g, '');
+    const id = route.match(/\/([^\/]+)\/?$/)[1];
+    const routeName = route.split('/')[0];
+
+    switch (routeName) {
+      case 'programs':
+        //load program from id and open preview
+       await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(id).then(programData => {
+         this.setState({ previewingProgram: programData }, () => {
+           this.programPreview.current.open();
+         })
+       })
+        break;
+      case 'trainers':
+        navigate('Profile', {
+          userUUID: id
+        });
+
+        break;
+      default:
+        navigate('Train');
+    }
+  }
+
+
+  // Linking
+
+ // peopleapp://people/0
+//peopleapp://people/1
+//peopleapp://people/2
 
   async componentWillUnmount() {
     return () => {
       () => this.PROMOTED_TRAINERS_OBSERVER();
       () => this.BY_LUPA_TRAINERS();
+      () =>  Linking.removeEventListener('url', this.handleOpenURL);
     }
   }
 

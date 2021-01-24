@@ -9,6 +9,7 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <React/RCTLinkingManager.h> //Deep Linking
 #import "RNSplashScreen.h"
 
 
@@ -21,6 +22,7 @@
 #import <Firebase.h> 
 #import <RNCPushNotificationIOS.h>
 #import <UserNotifications/UserNotifications.h>
+
 
 //#import "RNFirebaseNotifications.h" //Add This Line
 

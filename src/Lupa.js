@@ -30,6 +30,7 @@ import RequestCommunity from './ui/community/RequestCommunity';
 import MatchMe from "./ui/packs/modal/MatchMe";
 import ExerciseDataLog from "./ui/workout/modal/ExerciseDataLog";
 import HowToUseLupa from "./ui/user/settings/modal/HowToUseLupa";
+import { Linking } from "react-native";
 
 const mapStateToProps = (state, action) => {
   return {
