@@ -36,6 +36,9 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 
+
+import Share from 'react-native-share';
+
 import { initStripe, stripe, CURRENCY, STRIPE_ENDPOINT, LUPA_ERR_TOKEN_UNDEFINED } from '../../../modules/payments/stripe/index'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { DrawerActions, useNavigation } from '@react-navigation/native';
@@ -436,6 +439,25 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
             }
     }
 
+    const onShare = async () => {
+        const shareOptions = {
+            title: 'App link',
+            message: `Checkout ${program.program_name} fitness program by ${programOwnerData.display_name} on Lupa.`,
+            url: `lupahealth://programs/${program.program_structure_uuid}`,
+            social: Share.Social.SMS,
+          };
+
+          const shareResponse = await Share.open(shareOptions);
+
+          shareResponse
+          .then(() => {
+            console.log('Success')
+          })
+          .catch(error => {
+              console.log('Error!')
+          })
+      };
+
     const renderPurchaseButton = () => {
         if (readyToPurchase == false) {
             return;
@@ -490,6 +512,15 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
                         <View style={{marginHorizontal: 5, alignItems: 'center', justifyContent: 'center',}}>
                         <View style={{borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 30, height: 30, backgroundColor: 'rgb(245, 245, 245)',}}>
                             <MaterialIcon name="group-add" size={18} />
+                          
+                        </View>
+                        </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity  style={{alignSelf: 'flex-end'}} onPress={onShare}>
+                        <View style={{marginHorizontal: 5, alignItems: 'center', justifyContent: 'center',}}>
+                        <View style={{borderRadius: 8, alignItems: 'center', justifyContent: 'center', width: 30, height: 30, backgroundColor: 'rgb(245, 245, 245)',}}>
+                            <FeatherIcon name="share" size={18} />
                           
                         </View>
                         </View>

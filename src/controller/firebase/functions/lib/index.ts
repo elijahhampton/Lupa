@@ -446,7 +446,7 @@ exports.handleNewIndividualCustomAccountVerificationAttempt = functions.https.on
             interval: 'weekly',
             weekly_anchor: 'tuesday',
           },
-          statement_descriptor: "RHEA SILVIA"
+          statement_descriptor: "LUPA HEALTH"
         }
       }
     }
@@ -697,9 +697,6 @@ exports.sendFeedbackSubmission = functions.https.onRequest(async (request, respo
   const feedbackText = await request.body.feedback_text;
   const user = await request.body.user_email;
 
-  console.log(user)
-  console.log(feedbackText)
-
   const msg = {
     to: 'rheasilvia.lupahealth@gmail.com', // Change to your recipient
     from: 'rheasilvia.lupahealth@gmail.com', // Change to your verified sender
@@ -716,3 +713,24 @@ exports.sendFeedbackSubmission = functions.https.onRequest(async (request, respo
       console.error('sendFeedbackSubmission::Function exited with error: ' + error)
     })
 })
+
+exports.fetchTrainerBalancesEndpoint = functions.https.onRequest(async (request, response) => {
+  const connectedStripeAccountId = request.body.account_id;
+
+  if (typeof(connectedStripeAccountId) == 'undefined') {
+    return;
+  }
+
+  const balance = await stripe.balance.retrieve({
+    stripeAccount: connectedStripeAccountId
+  });
+
+  console.log('fetchTrainerBalancesEndpoint::Successfully fetched balance object.');
+  console.log(balance);
+
+  const availableAccountBalance = balance.available[0].amount;
+  const pendingAccountBalance = balance.pending[0].amount;
+
+  response.setHeader('Content-Type', 'application/json');
+  response.status(200).send({ availableBalance: availableAccountBalance, pendingBalance: pendingAccountBalance });
+});

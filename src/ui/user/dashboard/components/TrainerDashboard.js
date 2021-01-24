@@ -109,7 +109,7 @@ function TrainerDashboard(props) {
 
                 <Button 
                 uppercase={false}
-                onPress={() => navigation.navigate('Search')} 
+                onPress={() => navigation.push('Search')} 
                 style={{marginVertical: 10, width: '100%', elevation: 0}} 
                 contentStyle={{width: Dimensions.get('window').width - 20, height: 55}} 
                 mode="contained" 

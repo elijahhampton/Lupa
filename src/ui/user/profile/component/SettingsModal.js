@@ -68,6 +68,8 @@ import sendFeedbackSubmission from '../../../../common/service/EmailService';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 
+import PayoutsModal from '../../settings/modal/PayoutsModal'
+
 const SECTION_SEPARATOR = 15;
 const SUB_SECTION_SEPARATOR = 25;
 const FETCH_STRIPE_ACCOUNT_DATA_ENDPOINT = "https://us-central1-lupa-cd0e3.cloudfunctions.net/retrieveTrainerAccountInformation";
@@ -193,6 +195,7 @@ const SettingsModal = () => {
     const [verificationDeadline, setVerificationDeadline] = useState(new Date());
 
     const [feedbackModalIsVisible, setFeedbackModalIsVisible] = useState(false);
+    const [payoutsModalVisible, setPayoutsModalVisible] = useState(false);
 
     useEffect(() => {
         LOG('SettingsModal.js', 'Running use effect in SettingsModal.js.  Fetching public IP address and requesting stripe account data for the current user.');
@@ -393,6 +396,17 @@ const SettingsModal = () => {
         return cardMessage;
     }
 
+    const renderPayoutsModal = () => {
+        const updatedUserData = getLupaStoreState().Users.currUserData;
+
+        if (updatedUserData.stripe_metadata.account_id == "" 
+            || typeof(updatedUserData.stripe_metadata.account_id) == 'undefined') {
+            return;
+        }
+
+        return <PayoutsModal isVisible={payoutsModalVisible} closeModal={() => setPayoutsModalVisible(false)} />
+    }
+
     const renderVerificationStatusData = () => {
         const status = Number(updatedUserData.stripe_metadata.connected_account_verification_status);
 
@@ -521,7 +535,7 @@ const SettingsModal = () => {
         }
 
         return (
-            <View>
+            <View style={{marginBottom: 10}}>
                 <Text style={styles.listItemTitleStyle}>
                     Payments
                 </Text>
@@ -532,17 +546,28 @@ const SettingsModal = () => {
                         :
                         <ListItem onPress={handleTrainerPayoutsOnPress} title="Trainer Payouts" titleStyle={styles.titleStyle} subtitle={renderVerificationStatusData()} subtitleStyle={[{ fontSize: 12 }, getTrainerPayoutsSubtitleStyle()]} bottomDivider />
                 }
+                
+               {renderPayoutListItem()}
+                <ListItem onPress={() => setUpdateCardModalIsVisible(true)} disabled={updateCardIsDisabled()} title="Update Card" subtitle={renderCardData()} titleStyle={[styles.titleStyle, {color: updateCardIsDisabled() == true ? 'grey' : 'black'}]} subtitleStyle={[updateCardIsDisabled() == true ? { color: 'grey' } :  { color: 'black' } , { fontSize: 12,  }]} bottomDivider rightIcon={() => <Feather1s name="chevron-right" size={20} />} />
 
-                <ListItem onPress={() => setUpdateCardModalIsVisible(true)} disabled={updateCardIsDisabled()} title="Update Card" subtitle={renderCardData()} titleStyle={[styles.titleStyle, {color: updateCardIsDisabled() == true ? 'grey' : 'black'}]} subtitleStyle={[updateCardIsDisabled() == true ? { color: 'grey' } :  { color: 'black' } , { fontSize: 12,  }]} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
             </View>
         )
+    }
+
+    const renderPayoutListItem = () => {
+        if (updatedUserData.stripe_metadata.account_id == "" 
+        || typeof(updatedUserData.stripe_metadata.account_id) == 'undefined') {
+            return;
+        } else {
+            return <ListItem onPress={() => setPayoutsModalVisible(true)} title="Check the current status of your payouts." subtitle="See your pending and available balances." titleStyle={[styles.titleStyle, {color: 'black'}]} subtitleStyle={[ { color: 'black' } , { fontSize: 12,  }]} bottomDivider rightIcon={() => <Feather1s name="chevron-right" size={20} />} />
+        }
     }
 
     const renderLupaTrainerOptions = () => {
 
         if (updatedUserData.isTrainer === true) {
             return (
-                <View>
+                <View style={{marginVertical: 10}}>
                     <Text style={styles.listItemTitleStyle}>
                         Lupa Trainer
                             </Text>
@@ -569,7 +594,7 @@ const SettingsModal = () => {
                 <Appbar.Content title="Settings" titleStyle={{alignSelf: 'flex-start', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25}} />
             </Appbar.Header>
             <TouchableOpacity onPress={() => navigation.push('AccountSettings')}>
-                <Appbar theme={{ colors: { primary: '#FFFFFF' } }} style={{ borderBottomWidth: 0.5, borderColor: 'rgb(174, 174, 178)', paddingHorizontal: 15, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Appbar theme={{ colors: { primary: '#FFFFFF' } }} style={{ paddingHorizontal: 15, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Avatar.Image size={40} source={{ uri: updatedUserData.photo_url }} />
                         <View style={{ marginHorizontal: 10 }}>
@@ -582,7 +607,7 @@ const SettingsModal = () => {
                         </View>
                     </View>
 
-                    <Feather1s name="arrow-right" size={20} />
+                    <Feather1s name="chevron-right" size={20} />
 
                 </Appbar>
             </TouchableOpacity>
@@ -593,18 +618,18 @@ const SettingsModal = () => {
                     {renderLupaTrainerOptions()}
                     {renderPaymentsOptions()}
 
-                    <View>
+                    <View style={{marginVertical: 10}}>
                         <Text style={styles.listItemTitleStyle}>
                             Lupa
                             </Text>
-                            <ListItem onPress={() => navigation.navigate('HowTo')} title="How to use Lupa" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
-                        <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_d6bd8c33999e4e5ba4191b65eaf89048.pdf')} title="Privacy Policy" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
-                        <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Terms and Conditions" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
+                            <ListItem onPress={() => navigation.navigate('HowTo')} title="How to use Lupa" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="chevron-right" size={20} />} />
+                        <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_d6bd8c33999e4e5ba4191b65eaf89048.pdf')} title="Privacy Policy" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="chevron-right" size={20} />} />
+                        <ListItem onPress={() => Linking.openURL('https://5af514dc-3d51-449a-8940-8c4d36733565.filesusr.com/ugd/c97eb1_c21bb78f5f844ba19d9df294fe63b653.pdf')} title="Terms and Conditions" titleStyle={styles.titleStyle} bottomDivider rightIcon={() => <Feather1s name="chevron-right" size={20} />} />
                     </View>
 
                     <View style={{marginVertical: 10}}>
-                    <ListItem onPress={() => setFeedbackModalIsVisible(true)} title="Send feedback" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} bottomDivider />
-                    <ListItem onPress={_handleLogout} title="Sign out" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} bottomDivider rightIcon={() => <Feather1s name="arrow-right" size={20} />} />
+                    <ListItem onPress={() => setFeedbackModalIsVisible(true)} title="Send feedback" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} />
+                    <ListItem onPress={_handleLogout} title="Sign out" titleStyle={{ color: 'blue', fontSize: 15, color: '#1089ff'}} />
                     </View>
 
                     
@@ -619,6 +644,7 @@ const SettingsModal = () => {
                 </ScrollView>
 
             <FeedbackModal isVisible={feedbackModalIsVisible} closeModal={() => setFeedbackModalIsVisible(false)} />
+            {renderPayoutsModal()}
             </SafeAreaView>
         </View>
     )
@@ -628,7 +654,7 @@ const SettingsModal = () => {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: "#EEEEEE"
+        backgroundColor: "#FFFFFF"
     },
     pageTitle: {
         color: '#2196F3'
@@ -643,21 +669,20 @@ const styles = StyleSheet.create({
     listSubheader: {
         color: '#2196F3',
     },
-    listItemTitleStyle: {
-        color: LupaColor.LUPA_BLUE
-    },
     alignRowCenter: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     titleStyle: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#212121',
+        fontSize: 15,
+        fontFamily: 'Avenir-Light',
+        color: 'black',
     },
     listItemTitleStyle: {
-        color: 'rgb(99, 99, 102)',
-        padding: 10
+        color: 'black',
+        padding: 10,
+        fontSize: 15,
+        fontFamily: 'Avenir-Heavy'
     },
     descriptionStyle: {
         color: '#212121'
@@ -679,8 +704,11 @@ const styles = StyleSheet.create({
     },
     inputStyle: {
         fontSize: 15,
-        fontWeight: '400'
-    }
+        fontFamily: '400'
+    },
+    descriptionText: {
+        fontFamily: 'Avenir-Roman', color: '#aaaaaa', padding: 10
+    },
 });
 
 export default SettingsModal;

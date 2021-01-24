@@ -53,6 +53,7 @@ import { getLupaExerciseStructure } from '../../../model/data_structures/workout
 import LiveWorkoutService, { LIVE_SESSION_REF } from '../../../common/service/LiveWorkoutService';
 import StepIndicator from 'react-native-step-indicator';
 import { InputAccessoryView } from 'react-native';
+import { getDayOfTheWeekStringFromDate } from '../../../common/service/DateTimeService';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -122,15 +123,15 @@ function NoExercisesDialogVisible({ isVisible }) {
     return (
         <Dialog visible={isVisible}>
             <Dialog.Title>
-                No Exercises
+                You don't have any exercises scheduled for today.
             </Dialog.Title>
             <Dialog.Content>
                 <Paragraph>
-                    It looks like there are no exercises scheduled for this program today.  Check back tomorrow.
+                    Check back tomorrow to see if there are any exercises scheduled for you.
                 </Paragraph>
             </Dialog.Content>
             <Dialog.Actions>
-                <Button onPress={() => navigation.pop()}>
+                <Button color="#23374d" onPress={() => navigation.pop()}>
                     Okay
                 </Button>
             </Dialog.Actions>
@@ -224,6 +225,7 @@ class LiveWorkout extends React.Component {
                     } else {
                         this.setState({ isEditingWeightUsed: false })
                     }
+                    
                     this.setState({ completed_exercise_weight_used: completedExercises[i].exercise_weight, completed_exercise_one_rep_max: completedExercises[i].one_rep_max })
                 }
             }
@@ -625,20 +627,9 @@ class LiveWorkout extends React.Component {
 
     renderStepIndicator = () => {
         try {
-            if (this.state.hasWorkouts == false && this.props.lupa_data.Users.currUserData.user_uuid == this.state.programOwnerData.user_uuid) {
-                return (
-                    <Caption>
-                        It looks like there are no workouts for this
-                    </Caption>
-                )
-            }
 
-            if (this.state.hasWorkouts == false && this.props.lupa_data.Users.currUserData.user_uuid != this.state.programOwnerData.user_uuid) {
-                return (
-                    <Caption>
-
-                    </Caption>
-                )
+            if (this.state.hasWorkouts == false) {
+                return;
             }
 
             if (this.state.ready == true && this.state.hasWorkouts == true) {
@@ -764,8 +755,8 @@ class LiveWorkout extends React.Component {
             )
         } else {
             return (
-                <View>
-                    <View style={{ height: 30, width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: '#1089ff', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{alignSelf: 'center'}}>
+                    <View style={{alignSelf: 'center', height: 30, width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: '#1089ff', paddingHorizontal: 20, alignItems: 'center', justifyContent: 'center' }}>
                         <Input
                             onChangeText={text => this.setState({ completed_exercise_weight_used: text })}
                             value={this.renderWeightUsed()}
@@ -835,7 +826,7 @@ class LiveWorkout extends React.Component {
                                 {this.renderCurrentExerciseName(this.state.currentWorkout)}
                             </Caption>
 
-                            <View>
+                            <View style={{alignSelf: 'center'}}>
                                 <Caption>
                                     One Rep Max
                             </Caption>
@@ -844,7 +835,7 @@ class LiveWorkout extends React.Component {
 
 
                             <View style={{alignSelf: 'center'}}>
-                                <Caption>
+                                <Caption style={{paddingHorizontal: 10}}>
                                     Weight used
                             </Caption>
                                 {this.renderWeightUsedDisplay()}
@@ -1040,6 +1031,34 @@ class LiveWorkout extends React.Component {
         this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('last_completed_workout', lastCompletedWorkoutData)
         this.hideDialog();
     }
+
+    /*calculateNextWorkoutDate = () => {
+        const programWorkoutStructure = this.state.programData.program_workout_structure;
+        const currentWeek = this.state.currentWeek;
+        const programWorkoutDays = this.state.programData.program_workout_days;
+
+        //first we check to see if we are done with this week
+        const currentDay = this.state.currentWorkoutDay;
+
+        let workoutDaysLength = programWorkoutDays.length;
+        
+        //if we are done for this week we should go to the next week and get the next day
+        if (programWorkoutDays.indexOf(currentDay) == workoutDaysLength) {
+            let nextDay = programWorkoutDays[0];
+            let nextWeek = currentWeek + 1;
+            
+            //if we are passed the program duration we should alert the end of the program
+            if (nextWeek > this.state.programData.program_duration) {
+                return -1;
+            } else {
+                let startDate = this.state.programData.program_start_date;
+                let dateOfWeek = moment(startDate).add(this.state.programData.program_duration, 'weeks');
+
+            }
+        } else if () {
+
+        }
+    }*/
 
     renderRestTimerRBSheetPicker = () => {
         restTimesArr.push(this.state.currentWorkout.workout_rest_time);

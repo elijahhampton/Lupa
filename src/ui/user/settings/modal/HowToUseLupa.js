@@ -15,8 +15,11 @@ import {
 import { useSelector } from 'react-redux/lib/hooks/useSelector';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { DrawerActions } from '@react-navigation/native';
+import PayoutsModal from './PayoutsModal';
 
  const HowToUseLupa = ({ navigation, route }) => {
+     const [payoutsModalVisible, setPayoutsModalVisible] = useState(false);
+
      const currUserData = useSelector(state => {
          return state.Users.currUserData;
      });
@@ -73,6 +76,13 @@ import { DrawerActions } from '@react-navigation/native';
                         <Text style={styles.descriptionText}>
                             Before users can book you for a one on one session you must register your account with with Stripe to enable secure payments.
                         </Text>
+
+                        <Text style={styles.descriptionText}>
+                           Your account always has two types of balances "available" and "pending".  Available balances will be paid out weekly on Tuesday whereas pending balances are waiting to be settled.  
+                           <Text style={{fontFamily: 'Avenir-Light', color: '#1089ff'}} onPress={() => setPayoutsModalVisible(true)}>
+                               {" "} Learn more here.
+                           </Text>
+                        </Text>
                     </View>
 
                     <View style={styles.descriptionContainer}>
@@ -115,6 +125,7 @@ import { DrawerActions } from '@react-navigation/native';
     onPress={() => navigation.navigate('Dashboard')}
   />
                     </View>
+                    
 
                     <View style={styles.descriptionContainer}>
                         <Text style={styles.title}>
@@ -168,6 +179,7 @@ import { DrawerActions } from '@react-navigation/native';
                         <Text style={styles.descriptionText}>
                             Before users can book trainers or purchase fitness programs you must enable your account to make payments and add a card.
                             </Text>
+                            
                     </View>
 
                     <View style={styles.descriptionContainer}>
@@ -308,6 +320,8 @@ import { DrawerActions } from '@react-navigation/native';
             {renderComponent()}
             </View>
 
+
+            <PayoutsModal isVisible={payoutsModalVisible} closeModal={() => setPayoutsModalVisible(false)} />
         </View>
     )
 }

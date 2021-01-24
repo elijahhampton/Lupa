@@ -184,7 +184,7 @@ class GuestView extends React.Component {
       return;
     }
 
-    this.props.navigation.navigate('Search', {
+    this.props.navigation.push('Search', {
       categoryToSearch: skill
     })
   }
@@ -333,12 +333,6 @@ renderSkills = () => {
     }
   }
 
-
-  // Linking
-
- // peopleapp://people/0
-//peopleapp://people/1
-//peopleapp://people/2
 
   async componentWillUnmount() {
     return () => {
@@ -501,7 +495,7 @@ renderSkills = () => {
               <Text style={{color: 'white'}}>
                 There are no programs available based on your interest and experience level.{" "}
               </Text>
-              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.navigate('Search')}>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
                 Find more programs by searching.
               </Text>
             </Text>
@@ -672,7 +666,7 @@ renderSkills = () => {
               <Text style={{color: 'white'}}>
                 There are no communities in your area.{" "}
               </Text>
-              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.navigate('Search')}>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
                 Find more communities by searching.
               </Text>
             </Text>
@@ -1026,7 +1020,7 @@ renderSkills = () => {
   checkSearchBarState = () => {
     if (this.state.searchBarFocused === true) {
       if (this.props.navigation) {
-        this.props.navigation.navigate('Search')
+        this.props.navigation.push('Search')
       }
 
       this.searchBarRef.current.blur();
@@ -1171,7 +1165,7 @@ renderSkills = () => {
               <Text style={{color: 'white'}}>
                 There are no trainers available today.{" "}
               </Text>
-              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.navigate('Search')}>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
                 Find trainers by searching and book for a future date.
               </Text>
             </Text>
@@ -1283,7 +1277,7 @@ renderSkills = () => {
             scrollEventThrottle={1}
             bounces={false}
             showsVerticalScrollIndicator={false}>
-            <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
+            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
               <SearchBar
                 onStartShouldSetResponder={event => false}
                 onStartShouldSetResponderCapture={event => false}
@@ -1303,7 +1297,7 @@ renderSkills = () => {
             {this.renderRequestAuthenticationMessage()}
             <View style={{marginVertical: 10, height: 200, backgroundColor: 'black'}}>
               <Swiper showsPagination={false} showsButtons={false} dotColor="#FFFFFF" autoplay={true} >
-                <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
                 <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                 <Image resizeMode="center" style={{alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}} source={require('./images/banner_images/banner1.jpeg')} />
                   <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />
@@ -1321,7 +1315,7 @@ renderSkills = () => {
                 </View>
                 </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
                 <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                 <Image resizeMode="center" style={{alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}} source={require('./images/banner_images/banner2.jpeg')} />
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />
@@ -1336,7 +1330,7 @@ renderSkills = () => {
                 </TouchableWithoutFeedback>
 
 
-                <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Search')}>
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
                 <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                 <Image resizeMode="center" style={{width: '100%', height: '100%'}} source={require('./images/banner_images/banner3.jpeg')} />
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />

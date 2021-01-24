@@ -1,4 +1,4 @@
-import { LupaUserStructure } from "../../controller/lupa/common/types";
+import { Days, LupaUserStructure } from "../../controller/lupa/common/types";
 import { LupaProgramInformationStructure } from "../../model/data_structures/programs/common/types";
 import LiveSession from "../../model/data_structures/workout/live_session";
 import LUPA_DB, { LUPA_DB_FIREBASE } from '../../controller/firebase/firebase';
@@ -6,6 +6,7 @@ import { getLupaExerciseStructure } from "../../model/data_structures/workout/ex
 
 import moment from 'moment';
 import { getLupaUserStructurePlaceholder } from "../../controller/firebase/collection_structures";
+import { getDayOfTheWeekStringFromDate } from "./DateTimeService";
 
 export const LIVE_SESSION_REF = 'live_session/';
 
@@ -93,7 +94,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         updatedState['currentWeek'] = currentWeek;
 
         let workoutStructure;
-        const day = this.currentProgram.program_workout_days[0].toString();
+        const day = getDayOfTheWeekStringFromDate(new Date());
 
         workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[currentWeek][day]);
         this.workoutStructure = workoutStructure;
