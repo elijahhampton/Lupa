@@ -17,6 +17,7 @@ import Search from '../search/Search';
 import { useSelector } from 'react-redux';
 import NotificationsView from '../user/notifications/NotificationsView';
 import MessagesView from '../user/chat/MessagesView'
+import { Constants } from 'react-native-unimodules';
 
 const Drawer = createDrawerNavigator();
 
@@ -57,9 +58,10 @@ function LupaBottomTabNavigator() {
   })
 
   const tabBarOptions = {
-    showLabel: false,
+    showLabel: true,
     activeTintColor: ACTIVE_COLOR,
     inactiveTintColor: INACTIVE_COLOR,
+    animationsEnabled: true,
     labelStyle: {
       fontSize: 12,
       fontFamily: 'Avenir-Light',
@@ -67,7 +69,8 @@ function LupaBottomTabNavigator() {
     },
     style: {
       backgroundColor: '#FFFFFF',
-    }
+      borderTopWidth: 0,
+    },
   }
 
 

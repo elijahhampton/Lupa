@@ -1288,7 +1288,7 @@ renderSkills = () => {
                 inputStyle={styles.inputStyle}
                 platform="ios"
                 containerStyle={{ backgroundColor: 'transparent', borderColor: 'white', width: Dimensions.get('window').width - 10, alignSelf: 'center' }}
-                inputContainerStyle={{borderColor: 'white', backgroundColor: '#EEEEEE' }}
+                inputContainerStyle={{borderColor: 'white', backgroundColor: '#FFFFFF' }}
                 searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
                 onFocus={() => this.setState({ searchBarFocused: true })}
                 onBlur={() => this.setState({ searchBarFocused: false })} />
