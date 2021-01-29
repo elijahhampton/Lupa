@@ -491,7 +491,7 @@ class LiveWorkout extends React.Component {
                 size={50}
                 color="#FFFFFF"
                 onPress={() => this.setState({ playVideo: false })}
-                style={{position: 'absolute', bottom: 5, right: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }} />
+                style={{position: 'absolute', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }} />
             :
             <ThinFeatherIcon
                 thin={true}
@@ -499,7 +499,7 @@ class LiveWorkout extends React.Component {
                 size={50}
                 color="#FFFFFF"
                 onPress={() => this.setState({ playVideo: true })}
-                style={{position: 'absolute', bottom: 5, right: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }}
+                style={{position: 'absolute',  alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }}
             />
     }
 
