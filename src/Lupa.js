@@ -31,6 +31,8 @@ import MatchMe from "./ui/packs/modal/MatchMe";
 import ExerciseDataLog from "./ui/workout/modal/ExerciseDataLog";
 import HowToUseLupa from "./ui/user/settings/modal/HowToUseLupa";
 import { Linking } from "react-native";
+import CreateCustomExercise from "./ui/workout/modal/CreateCustomExercise";
+import BuildWorkoutController from "./ui/workout/program/createprogram/buildworkout/BuildWorkoutController";
 
 const mapStateToProps = (state, action) => {
   return {

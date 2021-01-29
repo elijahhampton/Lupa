@@ -94,8 +94,8 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
 
     const [showCamera, setShowCamera] = useState(false);
     const renderImageSource = (workoutObj) => {
-        if (typeof (workoutObj.workoutMedia.uri) != 'undefined' && workoutObj.workoutMedia.uri != '' && workoutObj.workoutMedia.uri != null) {
-            return <Video source={{ uri: workoutObj.workoutMedia.uri }} style={{ flex: 1, borderRadius: 8 }} shouldPlay={false} resizeMode="cover" />
+        if (workoutObj.workoutMedia.media_type == "VIDEO") {
+            return <Video source={{ uri: workoutObj.workoutMedia.uri }} style={{width: '100%', height: '100%', borderRadius: 8 }} shouldPlay={false} resizeMode="cover"  />
         } else {
             switch (workoutObj.default_media_uri) {
 

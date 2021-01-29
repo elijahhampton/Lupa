@@ -488,18 +488,18 @@ class LiveWorkout extends React.Component {
             <ThinFeatherIcon
                 thin={true}
                 name="pause-circle"
-                size={30}
+                size={50}
                 color="#FFFFFF"
                 onPress={() => this.setState({ playVideo: false })}
-                style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }} />
+                style={{position: 'absolute', bottom: 5, right: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }} />
             :
             <ThinFeatherIcon
                 thin={true}
                 name="play-circle"
-                size={30}
+                size={50}
                 color="#FFFFFF"
                 onPress={() => this.setState({ playVideo: true })}
-                style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }}
+                style={{position: 'absolute', bottom: 5, right: 5, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', padding: 10 }}
             />
     }
 
@@ -594,6 +594,33 @@ class LiveWorkout extends React.Component {
     }
 
     renderImageSource = (workout) => {
+        const videoURI = workout.workoutMedia.uri
+        if (videoURI != '' && videoURI != null && typeof(videoURI) != 'undefined') {
+            return (
+                <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+ <Video
+            source={{ uri: videoURI }}
+            rate={1.0}
+            volume={0}
+            isMuted={false}
+            resizeMode="cover"
+            shouldPlay={this.state.playVideo}
+            isLooping={true}
+            style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+            }}
+         />
+
+        {this.renderVideoIcon()}
+                </View>
+
+            )
+        }
+
         try {
 
             switch (workout.default_media_uri) {

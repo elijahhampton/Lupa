@@ -42,6 +42,8 @@ import { DebugInstructions } from 'react-native/Libraries/NewAppScreen';
 import WorkoutDisplay from './component/WorkoutDisplay';
 import { Constants } from 'react-native-unimodules';
 import { weekdays } from 'moment';
+import CreateCustomExercise from '../../../modal/CreateCustomExercise';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 const PLACEMENT_TYPES = {
     SUPERSET: 'superset',
@@ -60,13 +62,14 @@ const CATEGORIES = [
 ]
 
 const weekDays = [
+    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
     'Friday',
     'Saturday',
-    'Sunday',
+
 ]
 
 //Redux::mapStateToProps
@@ -80,8 +83,8 @@ function Exercise(workoutObject, workoutDay) {
     this.workout_name = workoutObject.workout_name
     this.workout_description = workoutObject.workout_description
     this.workoutMedia = {
-        media_type: '',
-        uri: '',
+        media_type: workoutObject.workoutMedia.media_type,
+        uri: workoutObject.workoutMedia.uri,
     }
     this.workout_reps = 0
     this.workout_sets = 0
@@ -163,7 +166,7 @@ class BuildWorkoutController extends React.Component {
                     data: this.props.lupa_data.Application_Workouts.applicationWorkouts.plyometric
                 },
             ],
-            currView: 0
+            currView: 0,
         }
     }
 
@@ -860,12 +863,28 @@ class BuildWorkoutController extends React.Component {
         }
     }
 
+    handleOnPickCustomExercise = async () => {
+        await this.addExerciseRBSheetRef.current.close();
+        this.setState({ customWorkoutModalVisible: true })
+        
+    }
+
     renderAddExerciseContent = () => {
         if (this.state.folderIsSelected === false) {
             
             return (
                 <ScrollView horizontal>
-{
+                    <TouchableOpacity onPress={this.handleOnPickCustomExercise}>
+                    <View style={{alignItems: 'center'}}>
+                        <Feather1s size={25} name="plus-circle" />
+                        <Text style={{ fontFamily: 'Avenir-Heavy', marginVertical: 10 }}>
+                            Custom
+                        </Text>
+                    </View>
+                    </TouchableOpacity>
+                    
+{                   
+
                 CATEGORIES.map(categoryString => {
                    return ( <TouchableOpacity onPress={() => this.handleFolderIsOpen(categoryString)} style={{ margin: 20, alignItems: 'center' }}>
                         <Image source={require('../../../../images/buildworkout/ExerciseFolder.png')} style={{ width: 90, height: 80 }} />
@@ -934,6 +953,7 @@ class BuildWorkoutController extends React.Component {
                         this.renderAddExerciseContent()
                     }
                 </ScrollView>
+                <CreateCustomExercise isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} captureExercise={(customExercise, placementType) => this.captureWorkout(customExercise, placementType)} />
             </RBSheet>
         )
     }
@@ -1060,7 +1080,7 @@ class BuildWorkoutController extends React.Component {
         return (
             <>
                 { this.renderComponentDisplay()}
-
+                <CreateCustomExercise captureExercise={(customExercise, placementType) => this.captureWorkout(customExercise, placementType)} workoutDay={weekDays[this.state.currDayIndex]} isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} />
             </>
         )
     }
