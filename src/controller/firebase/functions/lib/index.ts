@@ -1,6 +1,7 @@
 const functions = require('firebase-functions')
 const admin = require("firebase-admin");
 var nodemailer = require('nodemailer');
+const moment = require('moment')
 const cors = require('cors')({ origin: true });
 const { RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole } = require('agora-access-token')
 const stripe = require('stripe')
@@ -713,6 +714,36 @@ exports.sendFeedbackSubmission = functions.https.onRequest(async (request, respo
       console.error('sendFeedbackSubmission::Function exited with error: ' + error)
     })
 })
+
+exports.sendTrainerEmailReferral = functions.https.onRequest(async (request, response) => {
+  const trainerData = request.body.trainer_data;
+  const referrerData = request.body.referrer_data
+console.log(trainerData)
+  const referrerDateJoined = moment(referrerData).format('LL').toString();
+  console.log(referrerDateJoined)
+  const toAddress = 'rheasilvia.lupahealth@gmail.com'; //request.body.referred_user_email;
+  console.log(toAddress)
+  const emailMsg = {
+    to: toAddress,
+    from: 'rheasilvia.lupahealth@gmail.com',
+    templateId: 'd-54bdf21630e84659bc0946a22562043e',
+    dynamic_template_data: {
+      referrer: referrerData,
+      trainer: trainerData,
+      referrerDateJoined: referrerDateJoined
+    }
+  }
+
+  console.log('SEEEENT!')
+
+  sgMail.send(emailMsg)
+  .then(() => {
+    console.log('Succesffully sent')
+  })
+  .catch(error => {
+    console.log(error)
+  })
+});
 
 exports.fetchTrainerBalancesEndpoint = functions.https.onRequest(async (request, response) => {
   const connectedStripeAccountId = request.body.account_id;

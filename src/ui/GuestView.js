@@ -39,7 +39,7 @@ import {
   Avatar as PaperAvatar,
   Paragraph
 } from 'react-native-paper';
-
+import axios from 'axios';
 import {
   Button as ElementsButton
 } from 'react-native-elements';
@@ -171,9 +171,27 @@ class GuestView extends React.Component {
   }
 
   openProgramPreview = (program) => {
-    this.setState({ previewingProgram: program }, () => {
+    axios({
+      headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer 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`,
+      },
+      method: 'POST',
+      url: 'https://us-central1-lupa-cd0e3.cloudfunctions.net/sendTrainerEmailReferral',
+      data: JSON.stringify({
+          trainer_data: this.props.lupa_data.Users.currUserData,
+          referrer_data: this.props.lupa_data.Users.currUserData,
+          referred_user_email: this.props.lupa_data.Users.currUserData.email,
+      })
+  }).then(response => {
+     console.log(response);
+  }).catch(error => {
+     console.log(error)
+  })
+    /*this.setState({ previewingProgram: program }, () => {
       this.programPreview.current.open()
-    })
+    })*/
   }
 
   closeProgramPreview = () => this.programPreview.current.close();
@@ -195,10 +213,13 @@ renderSkills = () => {
               {
                 SKILL_BASED_INTEREST.map((skill, index, arr) => {
                     return  (
-                      <Chip onPress={() => this.handleOnPressSkill(skill)} key={skill} mode="flat" textStyle={{ fontFamily: 'Avenir', backgroundColor: '#FFFFFF', color: '#1089ff'}} style={{backgroundColor: '#FFFFFF', marginHorizontal: 10}}>
-                     
+                      <Chip 
+                      onPress={() => this.handleOnPressSkill(skill)} 
+                      key={skill} 
+                      mode="flat"
+                      textStyle={{ fontFamily: 'Avenir-Medium', fontWeight: '700', backgroundColor: '#FFFFFF', color: '#1089ff'}} 
+                      style={{elevation: 1.5, borderWidth: 1, borderColor: '#EEEEEE', backgroundColor: '#FFFFFF', marginHorizontal: 10}}>
                           {skill}
-                    
                       </Chip>
                     )
                 })
@@ -492,7 +513,7 @@ renderSkills = () => {
       <View style={{flex: 1}}>
       <View style={{ padding: 20 }}>
             <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
-              <Text style={{color: 'white'}}>
+              <Text style={{color: 'black'}}>
                 There are no programs available based on your interest and experience level.{" "}
               </Text>
               <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
@@ -511,11 +532,11 @@ renderSkills = () => {
        {
           programsBasedOnInterest.map((program, index, arr) => {
             return (
-              <TouchableOpacity style={{margin: 10, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
-                <Surface style={{width: 110, height: 110, borderRadius: 5, elevation: 0}}>
-                    <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 5, width: '100%', height: '100%'}} />
+              <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
+                <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
+                    <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
                 </Surface>
-                <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+                <Text style={{color: 'black', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
                   {program.program_name}
                 </Text>
             <ProgramOptionsModal 
@@ -538,12 +559,15 @@ renderSkills = () => {
 
     return (
       <TouchableOpacity style={{margin: 10, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
-        <Surface style={{width: Dimensions.get('window').width - 80, height: 400, borderRadius: 12, elevation: 3}}>
-            <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 12, width: '100%', height: '100%'}} />
+        <Surface style={{width: Dimensions.get('window').width - 80, height: 400, borderRadius: 10, elevation: 0}}>
+            <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
         </Surface>
-        <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+        <Text style={{color: 'black', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
           {program.program_name}
         </Text>
+        <Caption style={{color: 'black', alignSelf: 'center', paddingVertical: 5}}>
+          {program.program_description}
+        </Caption>
     <ProgramOptionsModal 
     program={program} 
     isVisible={this.state.programOptionsVisible} 
@@ -663,7 +687,7 @@ renderSkills = () => {
         <View style={{flex: 1}}>
       <View style={{ padding: 20 }}>
             <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
-              <Text style={{color: 'white'}}>
+              <Text style={{color: 'black'}}>
                 There are no communities in your area.{" "}
               </Text>
               <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
@@ -722,7 +746,7 @@ renderSkills = () => {
       if (updatedAppState.Auth.isAuthenticated === false) {
         return (
           <View style={{ padding: 20, backgroundColor: 'transparent' }}>
-            <Text style={{ fontFamily: 'Avenir-Medium', color: 'white' }}>
+            <Text style={{ fontFamily: 'Avenir-Medium', color: 'black' }}>
               <Text>
                 Sorry we were not able to find any trainers in your area.{" "}
               </Text>
@@ -738,7 +762,7 @@ renderSkills = () => {
       } else {
         return (
           <View style={{ padding: 20, backgroundColor: 'transparent' }}>
-          <Text style={{ fontFamily: 'Avenir-Medium', color: 'white' }}>
+          <Text style={{ fontFamily: 'Avenir-Medium', color: 'black' }}>
             <Text>
               Sorry we were not able to find any trainers in your area.{" "}
             </Text>
@@ -772,28 +796,18 @@ renderSkills = () => {
 
             return (
               <TouchableOpacity style={{backgroundColor: 'transparent'}}  onPress={() => this.handleBookTrainerOnPress(trainer)}>
-                <Surface style={{backgroundColor: 'transparent', elevation: 0, marginHorizontal: 15, marginVertical: 12 }} >
-
-                  <View style={{borderRadius: 12}}>
-
-                    <Image style={{borderRadius: 12, borderWidth: 0.5, width: 120, height: 120}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
-
-                    <Surface style={{ elevation: 5, width: 30, height: 30, alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, right: 0, margin: 12, borderRadius: 30 }}>
-                      <Feather1s name="calendar" color="#1089ff" />
-                    </Surface> 
-
-
+                <Surface style={{ backgroundColor: 'transparent', elevation: 0, marginHorizontal: 5, marginVertical: 12 }} >
+                  <View style={{borderRadius: 10}}>
+                    <Image style={{borderRadius: 10,  width: 95, height: 95}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
                   </View>
-
                   <View style={{backgroundColor: 'transparent', alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{color: 'white', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
+                      <Text style={{color: 'black', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
                         {trainer.display_name}
                       </Text>
                     </View>
-
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{color: 'white', fontFamily: 'Avenir-Light', fontSize: 12, }}>
+                      <Text style={{color: 'black', fontFamily: 'Avenir-Light', fontSize: 12, }}>
                         {trainer.location.city}, {trainer.location.state}
                       </Text>
                     </View>
@@ -941,7 +955,9 @@ renderSkills = () => {
                           trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].times.map(time => {
                             
                             return (
-                              <Chip onPress={() => alert(time)} mode="outlined" style={{marginHorizontal: 10}} textStyle={{color: '#1089ff', fontFamily: 'Avenir'}}>
+                              <Chip mode="outlined" 
+                              textStyle={{ fontFamily: 'Avenir-Medium', fontWeight: '700', backgroundColor: '#FFFFFF', color: '#23374d'}} 
+                              style={{borderWidth: 1, borderColor: '#EEEEEE', backgroundColor: '#FFFFFF', marginHorizontal: 10}}>
                                 {time}
                               </Chip>
                             )
@@ -1079,6 +1095,8 @@ renderSkills = () => {
 
     if (updatedAuthState.isAuthenticated === false) {
       return (
+        <>
+        <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
         <View style={{ padding: 10, paddingVertical: 15, marginVertical: 20 }}>
 
           <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 18, color: 'white' }}>
@@ -1092,6 +1110,7 @@ renderSkills = () => {
           </Button>
 
         </View>
+        </>
       )
     }
   }
@@ -1162,7 +1181,7 @@ renderSkills = () => {
         <View style={{flex: 1}}>
   <View style={{ padding: 20 }}>
             <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
-              <Text style={{color: 'white'}}>
+              <Text style={{color: 'black'}}>
                 There are no trainers available today.{" "}
               </Text>
               <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
@@ -1194,18 +1213,18 @@ renderSkills = () => {
           <Avatar onPress={() => this.openTrainerActionSheet(trainer.user_uuid)} containerStyle={{ padding: 3, borderWidth: 2, margin: 10, borderColor: '#1089ff'}}rounded size={80} source={{ uri: trainer.photo_url }} />
           <View style={{ paddingHorizontal: 10 }}>
             <View style={{ alignItems: 'flex-start' }}>
-              <Text style={{color: 'white', fontSize: 16, fontFamily: 'Avenir-Medium' }}>
+              <Text style={{color: 'black', fontSize: 16, fontFamily: 'Avenir-Medium' }}>
                 {trainer.display_name}
               </Text>
            
               <View style={{flexDirection: 'row', flexWrap: 'wrap', width: '83%', alignItems: 'center'}}>
-             <Caption style={{color: 'white'}}>
+             <Caption style={{color: 'black'}}>
                This trainer prefers:{" "}
              </Caption>
               {trainer.trainer_metadata.training_styles.map((style, index, arr) => {
                 if (index == arr.length - 1) {
                     return (
-                      <Caption style={{color: 'white'}}>
+                      <Caption style={{color: 'black'}}>
                       {style}
                     </Caption>
                     )
@@ -1213,19 +1232,19 @@ renderSkills = () => {
 
                 if (index == arr.length - 2) {
                   return (
-                    <Caption style={{color: 'white'}}>
+                    <Caption style={{color: 'black'}}>
                     {style} and{" "}
                   </Caption>
                   )
                 }
 
                 return (
-                  <Caption style={{color: 'white'}}>
+                  <Caption style={{color: 'black'}}>
                     {style},{" "}
                   </Caption>
                 )
               })}
-              <Caption style={{color: 'white'}}>
+              <Caption style={{color: 'black'}}>
                {" "}training.
              </Caption>
                 </View>
@@ -1246,7 +1265,12 @@ renderSkills = () => {
           {
             trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].times.map((time, index, arr) => {
               return (
-                <Chip onPress={() => this.handleOnPressTrainerBookingTime(trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].startTime, trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].endTime, index, trainer)} mode="outlined" style={{marginHorizontal: 10}} textStyle={{color: '#1089ff', fontFamily: 'Avenir'}}>
+                <Chip 
+                onPress={() => this.handleOnPressTrainerBookingTime(trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].startTime, trainer.scheduler_times[this.state.futureBookingDisplayDate.toString()][0].endTime, index, trainer)} 
+                mode="outlined" 
+                textStyle={{ fontFamily: 'Avenir-Medium', fontWeight: '700', backgroundColor: '#FFFFFF', color: '#1089ff'}} 
+                style={{marginVertical: 5, elevation: 2, borderWidth: 1, borderColor: '#EEEEEE', backgroundColor: '#FFFFFF', marginHorizontal: 10}}
+                >
                   {time}
                 </Chip>
               )
@@ -1266,13 +1290,26 @@ renderSkills = () => {
     }
   }
 
+  onScroll = (event) => {
+    const { onScrollUp, onScrollDown } = this.props;
+    var currentOffset = event.nativeEvent.contentOffset.y;
+    var direction = currentOffset > this.offset ? 'down' : 'up';
+    this.offset = currentOffset;
+
+    if (direction == 'down') {
+      onScrollDown()
+    } else {
+      onScrollUp()
+    }
+  }
+
   render() {
    this.checkSearchBarState()
    const { preFilledStartTime } = this.state;
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#23374d' }}>
-        <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, backgroundColor: '#23374d' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
           <ScrollView
+          onScroll={this.onScroll}
             refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
             scrollEventThrottle={1}
             bounces={false}
@@ -1288,8 +1325,8 @@ renderSkills = () => {
                 inputStyle={styles.inputStyle}
                 platform="ios"
                 containerStyle={{ backgroundColor: 'transparent', borderColor: 'white', width: Dimensions.get('window').width - 10, alignSelf: 'center' }}
-                inputContainerStyle={{borderColor: 'white', backgroundColor: '#FFFFFF' }}
-                searchIcon={() => <FeatherIcon name="search" color="black" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
+                inputContainerStyle={{borderRadius: 20, backgroundColor: '#EEEEEE' }}
+                searchIcon={() => <FeatherIcon name="search" color="#1089ff" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
                 onFocus={() => this.setState({ searchBarFocused: true })}
                 onBlur={() => this.setState({ searchBarFocused: false })} />
             </TouchableWithoutFeedback>
@@ -1348,7 +1385,8 @@ renderSkills = () => {
            
             </View>
             {this.renderSkills()}
-            <View style={{marginVertical: 20, paddingVertical: 15, width: '100%' }}>
+            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+            <View style={{marginVertical: 0, paddingVertical: 15, width: '100%' }}>
               <View style={{  width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Text style={styles.sectionHeaderText}>
                   Book a trainer now
@@ -1365,7 +1403,9 @@ renderSkills = () => {
              />
             </View>
 
-              <View style={{marginVertical: 20,}}>
+            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+
+              <View style={{marginVertical: 5}}>
               <Text style={styles.sectionHeaderText}>
                   Book trainers near you
                 </Text>
@@ -1373,8 +1413,10 @@ renderSkills = () => {
                 {this.renderCuratedTrainers()}
               </View>
             </View>
+
+            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
     
-            <View style={{ marginVertical: 25, width: '100%' }}>
+            <View style={{ marginVertical: 5, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={styles.sectionHeaderText}>
                   Find your perfect program
@@ -1384,11 +1426,13 @@ renderSkills = () => {
               {this.renderProgramBasedOnInterest()}
       
             </View>
+
             {this.renderCreateAccountSection()}
-            <View style={{ marginVertical: 20, width: '100%' }}>
-              <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={styles.sectionHeaderText}>
-                  Program of the day
+            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+            <View style={{ backgroundColor: '#FFFFFF', paddingVertical: 15, marginVertical: 5, width: '100%' }}>
+              <View style={{ paddingHorizontal: 10, width: '100%' }}>
+                <Text style={[styles.sectionHeaderText, { color: 'black', padding: 0 }]}>
+                  Featured Program
                 </Text>
               </View>
         
@@ -1396,7 +1440,8 @@ renderSkills = () => {
                 {this.renderProgramOfTheDay()}
               </View>
             </View>
-            <View style={{marginVertical: 20, width: '100%' }}>
+            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+            <View style={{marginVertical: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={styles.sectionHeaderText}>
                   Communities in your area
@@ -1424,8 +1469,6 @@ renderSkills = () => {
     ref={this.programPreview}
     program={this.state.previewingProgram} 
     />
-       
-        </KeyboardAwareScrollView>
       </SafeAreaView>
     );
 }
@@ -1477,7 +1520,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   sectionHeaderText: {
-    color: 'white', fontSize: 18, padding: 10, fontFamily: 'Avenir-Black'
+    color: '#000000', fontSize: 18, padding: 10, fontFamily: 'Avenir', fontWeight: '800'
   },
 
   inputStyle: {

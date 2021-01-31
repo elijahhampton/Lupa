@@ -443,7 +443,7 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
         const shareOptions = {
             title: 'App link',
             message: `Checkout ${program.program_name} fitness program by ${programOwnerData.display_name} on Lupa.`,
-            url: `lupahealth://programs/${program.program_structure_uuid}`,
+            url: `https://lupa-cd0e3.web.app/programs/${program.program_structure_uuid}`,
             social: Share.Social.SMS,
           };
 

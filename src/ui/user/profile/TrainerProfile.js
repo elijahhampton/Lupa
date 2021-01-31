@@ -531,7 +531,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         const shareOptions = {
             title: 'App link',
             message: `See trainer ${userData.display_name} on Lupa.`,
-            url: `lupahealth://trainers/${userData.user_uuid}`,
+            url: `https://lupa-cd0e3.web.app/trainers/${userData.user_uuid}`,
             social: Share.Social.SMS,
             
           };

@@ -42,13 +42,14 @@ import CommunityFeed from "./community/CommunityFeed";
 import LUPA_DB from "../controller/firebase/firebase";
 import { LOG_ERROR } from "../common/Logger";
 import CommunityHome from "./community/CommunityHome";
+import Animated from "react-native-reanimated";
 
-const COLOR = "#23374d";
+const COLOR = "#FFFFFF";
 const TAB_PROPS = {
   tabStyle: { backgroundColor: COLOR },
   activeTabStyle: { backgroundColor: COLOR },
-  textStyle: { color: "white", fontFamily: 'Avenir-Heavy', fontSize: 20 },
-  activeTextStyle: { color: "white", fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }
+  textStyle: { color: "#AAAAAA", fontFamily: 'Avenir-Heavy', fontSize: 20 },
+  activeTextStyle: { color: "#1089ff", fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 20 }
 };
 
 const mapStateToProps = (state, action) => {
@@ -102,6 +103,7 @@ export class LupaHome extends Component {
       showCommunityRequestModal: false,
       createIsVisble: false,
       userCommunities: [],
+      tabHeight: new Animated.Value(40)
     }
 
     this.LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -150,7 +152,7 @@ export class LupaHome extends Component {
   }
 
   renderAppropriateFirstTab = () => {
-    return <GuestView navigation={this.props.navigation} />
+    return <GuestView navigation={this.props.navigation} onScrollUp={this.onScrollUp} onScrollDown={this.onScrollDown} />
   }
 
   renderAppropriateSecondaryTab = () => {
@@ -217,12 +219,43 @@ export class LupaHome extends Component {
     this.setState({ showCommunityRequestModal: true })
   }
 
+  onScrollUp = () => {
+    this.shrinkTabs();
+  } 
+
+  onScrollDown = () => {
+    this.expandTabs();
+  }
+
+  expandTabs = () => {
+    const { tabHeight } = this.state;
+    
+    Animated.timing(
+      tabHeight,
+      {
+        toValue: 40,
+        duration: 1000,
+      }
+    ).start();
+  }
+
+  shrinkTabs = () => {
+    const { tabHeight } = this.state;
+    Animated.timing(
+      tabHeight,
+      {
+        toValue: 0,
+        duration: 1000,
+      }
+    ).start();
+  }
+
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <Header style={{ backgroundColor: COLOR }} noShadow={false} hasTabs>
+        <Header style={{ backgroundColor: '#23374d' }} noShadow={false} hasTabs>
           <Left>
-            <Appbar.Action key='message-circle' onPress={() => this.props.navigation.openDrawer()} icon={() => <FeatherIcon name="message-circle" size={20} style={{ padding: 0, margin: 0 }} color="#FFFFFF" />} />
+            <Appbar.Action key='message-circle' onPress={() => this.props.navigation.openDrawer()} icon={() => <FeatherIcon name="message-circle" size={20} style={{ padding: 0, margin: 0 }} color="white" />} />
           </Left>
 
           <Body>
@@ -233,7 +266,7 @@ export class LupaHome extends Component {
 
           <Right>
             <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
-              <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{ padding: 0, margin: 0 }} color="#FFFFFF" />} />
+              <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{ padding: 0, margin: 0 }} color="white" />} />
             }>
               <Menu.Item
                 onPress={() => this.setState({ showCommunityRequestModal: true })}
@@ -249,14 +282,21 @@ export class LupaHome extends Component {
         </Header>
         <Tabs
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })}
-          style={{ backgroundColor: '#FFFFFF' }}
-          tabBarUnderlineStyle={{ backgroundColor: '#FFFFFF', height: 1 }}
-          tabContainerStyle={{ borderBottomWidth: 0, height: 0 }}
-          renderTabBar={(props) =>
-            <ScrollableTab {...props} style={{ borderBottomWidth: 0, borderColor: 'rgb(174, 174, 178)', height: 40, shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR }} tabsContainerStyle={{ justifyContent: 'flex-start', backgroundColor: COLOR, elevation: 0 }} underlineStyle={{ backgroundColor: "#1089ff", height: 1, elevation: 0, borderRadius: 8 }} />}>
+          style={{ backgroundColor: '#FFFFFF'}}
+          tabBarUnderlineStyle={{ backgroundColor: '#23374d', height: 2, alignSelf: 'center' }}
+          tabContainerStyle={{ borderBottomWidth: 0}}
+          renderTabBar={(props) => (
+                <ScrollableTab 
+                {...props} 
+                style={{ borderBottomWidth: 0, borderColor: 'rgb(174, 174, 178)',  shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR }} 
+                tabsContainerStyle={{ justifyContent: 'flex-start', backgroundColor: COLOR,  elevation: 0 }} 
+              />  
+          )
 
+                }>
+    
           <Tab heading='Explore' {...TAB_PROPS} >
-            {this.renderAppropriateFirstTab()}
+            {this.renderAppropriateFirstTab(this.onScrollUp, this.onScrollDown)}
           </Tab>
           {this.renderAppropriateSecondaryTab()}
           <Tab heading="Community" {...TAB_PROPS}>

@@ -50,7 +50,7 @@ const PlaceHolder = () => {
 }
 
 const ACTIVE_COLOR = "rgb(34, 74, 115)"
-const INACTIVE_COLOR = "#212121"
+const INACTIVE_COLOR = "#A0A0A0"
 
 function LupaBottomTabNavigator() {
   const currUserData = useSelector(state => {
@@ -58,7 +58,7 @@ function LupaBottomTabNavigator() {
   })
 
   const tabBarOptions = {
-    showLabel: true,
+    showLabel: false,
     activeTintColor: ACTIVE_COLOR,
     inactiveTintColor: INACTIVE_COLOR,
     animationsEnabled: true,
@@ -69,7 +69,9 @@ function LupaBottomTabNavigator() {
     },
     style: {
       backgroundColor: '#FFFFFF',
-      borderTopWidth: 0,
+      borderTopWidth: 1,
+      height: 75,
+      backgroundColor: '#EEEEEE',
     },
   }
 
