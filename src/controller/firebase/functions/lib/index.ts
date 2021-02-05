@@ -718,15 +718,12 @@ exports.sendFeedbackSubmission = functions.https.onRequest(async (request, respo
 exports.sendTrainerEmailReferral = functions.https.onRequest(async (request, response) => {
   const trainerData = request.body.trainer_data;
   const referrerData = request.body.referrer_data
-console.log(trainerData)
   const referrerDateJoined = moment(referrerData).format('LL').toString();
-  console.log(referrerDateJoined)
-  const toAddress = 'rheasilvia.lupahealth@gmail.com'; //request.body.referred_user_email;
-  console.log(toAddress)
+  const toAddress = request.body.referred_user_email;
   const emailMsg = {
     to: toAddress,
     from: 'rheasilvia.lupahealth@gmail.com',
-    templateId: 'd-54bdf21630e84659bc0946a22562043e',
+    template_id: 'd-54bdf21630e84659bc0946a22562043e', 
     dynamic_template_data: {
       referrer: referrerData,
       trainer: trainerData,
@@ -734,15 +731,8 @@ console.log(trainerData)
     }
   }
 
-  console.log('SEEEENT!')
-
-  sgMail.send(emailMsg)
-  .then(() => {
-    console.log('Succesffully sent')
-  })
-  .catch(error => {
-    console.log(error)
-  })
+  await sgMail.send(emailMsg);
+  return { success: true }
 });
 
 exports.fetchTrainerBalancesEndpoint = functions.https.onRequest(async (request, response) => {
