@@ -107,8 +107,6 @@ function NotificationsView({ navigation, route }) {
                     refreshing={refreshing}
                     onRefresh={_onRefresh}
                 />}>
-         
-
                 {renderNotifications()}
             </ScrollView>
             </View>

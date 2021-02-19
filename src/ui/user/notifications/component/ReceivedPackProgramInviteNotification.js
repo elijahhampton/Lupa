@@ -37,6 +37,14 @@ function ReceivedPackProgramInviteNotification({ notificationData }) {
     })
 
     const renderNotificationMessage = () => {
+        if (typeof(senderUserData) == 'undefined') {
+            return (
+                <Text style={{alignSelf: 'flex-start'}}>
+                     Error loading notification.
+                </Text>             
+            )
+        }
+        
         try {
             return (
                 <Text>

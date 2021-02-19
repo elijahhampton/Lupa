@@ -38,9 +38,9 @@ function ReceivedPackProgramStartedInvite({ notificationData }) {
     const renderNotificationMessage = () => {
         try {
             return (
-                <Text>
-                    
-                </Text>
+                <Text style={{alignSelf: 'flex-start'}}>
+                     Error loading notification.
+                </Text>             
             )
     } catch(error) {
         LOG_ERROR('ReceivedBookingRequestNotificaiton.js', 'renderNotificationMessage::Caught exception trying to render the notification message.  Returning default message.', error);

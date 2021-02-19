@@ -76,6 +76,14 @@ function ReceivedProgramNotification({ notificationData }) {
     }
 
     const renderComponentDisplay = () => {
+        if (typeof(senderUserData) == 'undefined') {
+            return (
+                <Text style={{alignSelf: 'flex-start'}}>
+                     Error loading notification.
+                </Text>             
+            )
+        }
+        
         if (componentDidErr == true) {
             return (
                 <View style={{width: '100%', marginVertical: 15, padding: 20, alignItems: 'center', justifyContent: 'center'}}>

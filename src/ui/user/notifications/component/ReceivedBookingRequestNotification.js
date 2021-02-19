@@ -163,19 +163,16 @@ function ReceivedBookingRequestNotification({ notificationData }) {
     }
 
     const renderNotificationMessage = () => {
-        if (typeof(bookingData.session_type) == 'undefined') {
+        if (typeof(bookingData) == 'undefined' || typeof(senderUserData) == 'undefined') {
             return (
                 <Text style={{alignSelf: 'flex-start'}}>
                      Error loading notification.
-                </Text>
-                              
+                </Text>             
             )
-            
-           
         }
 
         try {
-        if (bookingData.session_type == 'remote') { //SESSION_TYPE.REMOTE
+        if (bookingData && bookingData.session_type == 'remote') { //SESSION_TYPE.REMOTE
             return (
                 <Text>
                                <Text style={{fontWeight: '500'}}>
@@ -186,7 +183,7 @@ function ReceivedBookingRequestNotification({ notificationData }) {
        </Text>
                                </Text>
             )
-        } else if (bookingData.session_type == 'in_person') { //SESSION_TYPE.IN_PERSION ? 
+        } else if (bookingData && bookingData.session_type == 'in_person') { //SESSION_TYPE.IN_PERSION ? 
             return (
                 <Text>
                                <Text style={{fontWeight: '500'}}>
@@ -198,14 +195,16 @@ function ReceivedBookingRequestNotification({ notificationData }) {
                                </Text>
             )
         } else {
+            return (
             <Text>
                                <Text style={{fontWeight: '500'}}>
-       {senderUserData.display_name}{" "}
+       {senderUserData && senderUserData.display_name}{" "}
        </Text>
        <Text>
        has requested a training session with you.
        </Text>
                                </Text>
+            )
         }
     } catch(error) {
         LOG_ERROR('ReceivedBookingRequestNotificaiton.js', 'renderNotificationMessage::Caught exception trying to render the notification message.  Returning default message.', error);

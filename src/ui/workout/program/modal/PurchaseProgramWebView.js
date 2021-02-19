@@ -33,7 +33,7 @@ class PurchaseProgramWebView extends React.Component {
               <WebView 
                 ref={ref => this.webviewRef = ref}
                 style={{flex: 1, width: Dimensions.get('window').width}} 
-                source={{uri: `https://lupa-cd0e3.web.app/${programOwnerUUID}/${programUUID}/${purchaserUUID}` }}
+                source={{uri: `https://lupa-cd0e3.web.app/checkout/${programOwnerUUID}/${programUUID}/${purchaserUUID}` }}
                 />
             </Modal>
         )

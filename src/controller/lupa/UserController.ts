@@ -45,9 +45,7 @@ export default class UserController {
     private fbStorage = new FirebaseStorageBucket();
     private PROGRAMS_CONTROLLER_INSTANCE = ProgramController.getInstance();
 
-    private constructor() {
-
-    }
+    private constructor() {}
 
     /**
      * Returns an instance of the user controller if one exist, otherwise creates an instance and
@@ -953,6 +951,12 @@ export default class UserController {
                         time_created: user.time_created,
                         user_uuid: user.user_uuid,
                         username: user.username,
+                        hourly_payment_rate: user.hourly_payment_rate,
+                        certification: user.certification,
+                        trainer_metadata: user.trainer_metadata,
+                        client_metadata: user.client_metadata,
+                        homegym: user.homegym,
+                        programs: user.programs
                     }
 
                     console.log('adding a user FROM CONTROLLER  ')
