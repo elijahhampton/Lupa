@@ -15,7 +15,8 @@ export  type LupaWorkoutInformationStructure = {
 export type LupaExerciseStructure = {
     workout_name: String,
     workout_description: String,
-    workoutMedia: Object,
+    workout_media: Object,
+    workout_how_to_media: Object,
     workout_sets: Number,
     workout_reps: Number,
     superset: Array<Object>,

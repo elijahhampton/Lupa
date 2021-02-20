@@ -57,8 +57,8 @@ const CATEGORIES = [
     'Kettlebell',
     'Machine Assisted',
     'Medicine Ball',
-    'Plyometric'
-
+    'Plyometric',
+    'Personal Library'
 ]
 
 const weekDays = [
@@ -82,9 +82,13 @@ const mapStateToProps = (state, action) => {
 function Exercise(workoutObject, workoutDay) {
     this.workout_name = workoutObject.workout_name
     this.workout_description = workoutObject.workout_description
-    this.workoutMedia = {
-        media_type: workoutObject.workoutMedia.media_type,
-        uri: workoutObject.workoutMedia.uri,
+    this.workout_media = {
+        media_type: workoutObject.workout_media.media_type,
+        uri: workoutObject.workout_media.uri,
+    }
+    this.workout_how_to_media = {
+        media_type: workoutObject.workout_how_to_media.media_type,
+        uri: workoutObject.workout_how_to_media.uri,
     }
     this.workout_reps = 0
     this.workout_sets = 0
@@ -182,7 +186,7 @@ class BuildWorkoutController extends React.Component {
                 await weeks.push(i);
             }
             workoutDays = this.props.programData.program_workout_structure
-        } else {
+        } else { 
             workoutDays = new Array(programDuration);
             for (let i = 0; i < programDuration; i++) {
                 await weeks.push(i);
@@ -195,7 +199,7 @@ class BuildWorkoutController extends React.Component {
                     Saturday: [],
                     Sunday: []
                 }
-            }
+        }
         }
             
 
@@ -239,9 +243,6 @@ class BuildWorkoutController extends React.Component {
     getCurrentDay = () => {
         const currIndex = this.state.currDayIndex
         try {
-            if (!this.props.lupa_data.Users.currUserData.isTrainer) {
-                return this.props.program_workout_days[currIndex]
-            }
             return this.props.programData.program_workout_days[currIndex]
         } catch (error) {
             return this.props.program_workout_days[currIndex];
@@ -292,8 +293,14 @@ class BuildWorkoutController extends React.Component {
             return;
         }
 
+        console.log('@@@@@@@@@@@@@@@@@@11111111111@@@@@@@@@@@@@@@@@@@@')
+        console.log(this.state.workoutDays)
+
         let newWorkoutData = this.state.workoutDays;
         let workoutToUpdate = undefined;
+
+        console.log('@@@@@@@@@@@@@@@@@@@2222222222222222@@@@@@@@@@@@@@@@@@@@')
+        console.log(this.state.workoutDays)
 
         switch (this.state.currPlacementType) {
             case PLACEMENT_TYPES.SUPERSET:
@@ -313,6 +320,8 @@ class BuildWorkoutController extends React.Component {
             default:
         }
 
+        
+
 
 
         const num = this.state.numWorkoutsAdded + 1;
@@ -322,6 +331,11 @@ class BuildWorkoutController extends React.Component {
             workoutDays: Array.from(newWorkoutData), 
             numWorkoutsAdded: num,
         })
+
+        /******** ******/
+        console.log('@@@@@@@@@@@@@@@@@@@333333333@@@@@@@@@@@@@@@@@@@@')
+        console.log(this.state.workoutDays)
+
     }
 
     updateEquipmentList = (exercise) => {
@@ -390,7 +404,8 @@ class BuildWorkoutController extends React.Component {
      * Opens the custom workout modal.
      */
     handleAddCustomWorkout = async () => {
-        this.setState({ customWorkoutModalVisible: true })
+        await this.addExerciseRBSheetRef.current.close();
+        this.setState({ customWorkoutModalVisible: true, placementType: PLACEMENT_TYPES.EXERCISE })
     }
 
     /**
@@ -412,42 +427,6 @@ class BuildWorkoutController extends React.Component {
             this.openRenderAddExerciseRBSheet()
         });
     }
-
-    /**
-     * Renders the supersets for any populated workout in the workout options bottom sheet.
-     */
-   /* renderCurrWorkoutSupersets = () => {
-        if (typeof (this.state.currPressedPopulatedWorkout) == 'undefined') {
-            return (
-                <View>
-                    <Caption>
-                        You haven't added any supersets to this exercise.
-                    </Caption>
-                </View>
-            )
-        }
-
-        return (
-            <ScrollView horizontal>
-                {
-                    this.state.currPressedPopulatedWorkout.superset.map(exercise => {
-                        return (
-                            <View style={[styles.flexOne, styles.populatedSupersetExercise]}>
-                                <View style={styles.flexOne}>
-                                    <Surface style={styles.flexOne}>
-                                        <Video source={require('../../../../videos/pushuppreview.mov')} style={styles.flexOne} shouldPlay={false} resizeMode="cover" />
-                                    </Surface>
-                                </View>
-                                <Text style={styles.populatedExerciseText}>
-                                    {exercise.workout_name}
-                                </Text>
-                            </View>
-                        )
-                    })
-                }
-            </ScrollView>
-        )
-    }*/
 
     /**
      * Renders the workout options bottom sheet.
@@ -550,8 +529,10 @@ class BuildWorkoutController extends React.Component {
     }
 
     handleOnPressAddExercise = () => {
-        this.setState({ currPlacementType: PLACEMENT_TYPES.EXERCISE})
-        this.openRenderAddExerciseRBSheet()
+        this.setState({ currPlacementType: PLACEMENT_TYPES.EXERCISE }, () => {
+            
+            this.openRenderAddExerciseRBSheet()
+        })
     }
 
     renderTrainerButtons = () => {
@@ -594,10 +575,6 @@ class BuildWorkoutController extends React.Component {
      * Returns the current week index.
      */
     getCurrentWeek = () => {
-        if (this.props.lupa_data.Users.currUserData.isTrainer != true) {
-            return 0;
-        }
-
         return this.state.currWeekIndex
     }
 
@@ -692,8 +669,6 @@ class BuildWorkoutController extends React.Component {
         this.setState({ folderSelected: '', folderIsSelected: false}, () => {
             this.openRenderAddExerciseRBSheet()
         })
-
-
     }
 
     renderFolderContent = () => {
@@ -864,9 +839,10 @@ class BuildWorkoutController extends React.Component {
     }
 
     handleOnPickCustomExercise = async () => {
-        await this.addExerciseRBSheetRef.current.close();
-        this.setState({ customWorkoutModalVisible: true })
-        
+        if (this.addExerciseRBSheetRef.current) {
+            await this.addExerciseRBSheetRef.current.close();
+        }
+        this.setState({ customWorkoutModalVisible: true, currPlacementType: PLACEMENT_TYPES.EXERCISE })
     }
 
     renderAddExerciseContent = () => {
@@ -874,9 +850,12 @@ class BuildWorkoutController extends React.Component {
             
             return (
                 <ScrollView horizontal>
-                    <TouchableOpacity onPress={this.handleOnPickCustomExercise}>
-                    <View style={{alignItems: 'center'}}>
-                        <Feather1s size={25} name="plus-circle" />
+                    <TouchableOpacity onPress={this.handleOnPickCustomExercise} style={{ margin: 20, alignItems: 'center' }}>
+                    <View style={{alignItems: 'center', justifyContent: 'space-between'}}>
+                        <View style={{ width: 90, height: 80, alignItems: 'center', justifyContent: 'center' }}>
+                        <Feather1s size={60} name="plus-circle" />
+                        </View>
+
                         <Text style={{ fontFamily: 'Avenir-Heavy', marginVertical: 10 }}>
                             Custom
                         </Text>
@@ -899,7 +878,7 @@ class BuildWorkoutController extends React.Component {
             )
         } else {
             return (
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, width: Dimensions.get('window').width}}>
                                          <Button 
                          icon={() => <FeatherIcon name="arrow-left" color="white" />} 
                          color="#1089ff" 
@@ -915,7 +894,6 @@ class BuildWorkoutController extends React.Component {
                         </Text>
                     </Button>   
                 {this.renderFolderContent()}
-                
             </View>
             )
         }
@@ -953,7 +931,8 @@ class BuildWorkoutController extends React.Component {
                         this.renderAddExerciseContent()
                     }
                 </ScrollView>
-                <CreateCustomExercise isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} captureExercise={(customExercise, placementType) => this.captureWorkout(customExercise, placementType)} />
+                {/* DO NOT REMOVE!! Causing state to reset workout days for some reason?? */}
+                <CreateCustomExercise captureExercise={(customExercise, placementType) => this.captureWorkout(customExercise, placementType)} workoutDay={weekDays[this.state.currDayIndex]} isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} /> 
             </RBSheet>
         )
     }
@@ -1080,7 +1059,7 @@ class BuildWorkoutController extends React.Component {
         return (
             <>
                 { this.renderComponentDisplay()}
-                <CreateCustomExercise captureExercise={(customExercise, placementType) => this.captureWorkout(customExercise, placementType)} workoutDay={weekDays[this.state.currDayIndex]} isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} />
+                <CreateCustomExercise captureExercise={(customExercise, placementType) => this.captureWorkout(customExercise, placementType)} workoutDay={weekDays[this.state.currDayIndex]} isVisible={this.state.customWorkoutModalVisible} closeModal={() => this.setState({ customWorkoutModalVisible: false })} programUUID={this.props.programUUID} /> 
             </>
         )
     }

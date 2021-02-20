@@ -146,25 +146,30 @@ class VirtualLiveWorkout extends React.Component {
             contentTypeDisplayed: "",
             componentDidErr: false,
             liveWorkoutOptionsVisible: false,
-            currUserFollowing: [],
-            feedback: "",
-            feedbackDialogIsVisible: false,
-            mediaContainerHeight: 0,
-            messages: [],
-            interactionInputFocused: false,
-            showFullScreenContent: false,
             showFinishedDayDialog: false,
             restTimerStarted: false,
             restTimerVisible: false,
             descriptionDialogVisible: false,
             restTime: 3,
             previousWorkout: getLupaExerciseStructure("", "", "", ""),
-            nextWorkout: getLupaExerciseStructure("", "", "", "")
+            nextWorkout: getLupaExerciseStructure("", "", "", ""),
+            participants: [],
+            timelineData: [],
+            labelData: [],
+            hasWorkouts: true,
+            noWorkoutsDialogVisible: false,
+            completed_exercise_weight_used: 0,
+            completed_exercise_one_rep_max: 0,
+            isEditingOneRepMax: false,
+            isEditingWeightUsed: false,
+            videoPlaylistIndex: 0,
+            videoPlaylist: []
         }
     }
 
     async componentDidMount() {
-        const { sessionID } = this.props;
+
+        const { sessionID } = this.props.route.params;
         await this.setupLiveWorkout();
         this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData);
         await this.workoutService.initLiveWorkoutSession();
@@ -174,10 +179,37 @@ class VirtualLiveWorkout extends React.Component {
             const data = snapshot.val();
 
             var newState = Object.assign({}, data);
-            this.setState({ ...newState })
-            console.log(data);
+            this.setState({ ...newState }, () => {
+                if (this.state.hasWorkouts == false) {
+                    this.setState({ noWorkoutsDialogVisible: true })
+                }
+            })
         })
 
+       {/* await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(documentSnapshot => {
+            const data = documentSnapshot.data();
+            const completedExercises = data.completed_exercises;
+
+            for (let i = 0; i < completedExercises.length; i++) {
+                if (completedExercises[i].index == this.state.currentWorkout.index) {
+                    if (completedExercises[i].one_rep_max == 0) {
+                        this.setState({ isEditingOneRepMax: true })
+                    } else {
+                        this.setState({ isEditingOneRepMax: false })
+                    }
+
+                    if (completedExercises[i].exercise_weight == 0) {
+                        this.setState({ isEditingWeightUsed: true })
+                    } else {
+                        this.setState({ isEditingWeightUsed: false })
+                    }
+                    
+                    this.setState({ completed_exercise_weight_used: completedExercises[i].exercise_weight, completed_exercise_one_rep_max: completedExercises[i].one_rep_max })
+                }
+            }
+        })*/}
+
+        this.workoutService.addParticipant(this.props.lupa_data.Users.currUserData);
         await this.setState({ ready: true });
     }
 
@@ -264,108 +296,130 @@ class VirtualLiveWorkout extends React.Component {
         )
     }
 
-    renderExercisePreviewContainer = () => {
+    renderContent = () => {
+        if (!this.state.ready == true|| this.state.componentDidErr == true) {
+            return (
+                <View style={{flex: 1.5, width: '100%', height: '100%', backgroundColor: 'black' }}>
+
+                </View>
+            )
+        }
+
         return (
-            <View style={{width: Dimensions.get('window').width}}>
+            <View style={{flex: 1.5, justifyContent: 'space-evenly'}}>
+            <View style={{flex: 0.2}}>
+                <Text style={{color: '#AAAAAA', fontSize: 12, paddingHorizontal: 10, fontFamily: 'Avenir-Medium'}}>
+                    Participants
+                </Text>
+                <ScrollView horizontal>
+                    {this.renderParticipants()}
+                </ScrollView>
+            </View>
+            <Divider />
+                <View style={{flex: 0.4, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+           
+            <View style={{flex: 1, alignItems: 'center', flexDirection: 'row'}}>
+                <View style={{flex: 0.5, width: 80, height: 80}}>
+                    {this.renderImageSource(this.state.currentWorkout)}
+                </View>
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                <View style={{ width: '100%', marginVertical: 10,  flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                        <Text style={{fontSize: 12, color: '#AAAAAA', paddingVertical: 2}}>
+                            Sets ({this.renderWorkoutSets()})
+                        </Text>
 
-<View style={{flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, justifyContent: 'space-evenly'}}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Surface style={{borderRadius: 12, width: 50, height: 50}}>
-                 {this.renderImageSource(this.state.previousWorkout)}
-            </Surface>
-            <Caption style={{paddingTop: 5}}>
-                {this.renderPreviousExerciseName(this.state.previousWorkout)}
-            </Caption>
-            <Caption>
-                Current Workout
-            </Caption>
+
+                        <Text style={{fontSize: 12, color: '#AAAAAA', paddingVertical: 2}}>
+                            Tempo ( {this.renderWorkoutTempo()})
+                        </Text>
+                </View>
+
+                <View style={{width: '100%', marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+               
+
+                        <Text style={{fontSize: 12, color: '#AAAAAA', paddingVertical: 2}}>
+                            Reps ({this.renderWorkoutReps()})
+                        </Text>
+
+                    <Text style={{fontSize: 12, color: '#AAAAAA', paddingVertical: 2}}>
+                            Intensity (0%)
+                        </Text>
+                    </View>
+               
+                </View>
             </View>
 
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Surface style={{borderRadius: 12, width: 50, height: 50}}>
-                 {this.renderImageSource(this.state.currentWorkout)}
-            </Surface>
-            <Caption style={{paddingTop: 5}}>
-            {this.renderPreviousExerciseName(this.state.currentWorkout)}
-            </Caption>
-            <Caption>
-                Current Workout
-            </Caption>
+            <View style={{flex: 0.5, padding: 10, }}>
+            <View style={{ height: 60, width: '100%', backgroundColor: '#23374d', justifyContent: 'flex-end',  alignSelf: 'center', borderRadius: 3 }}>
+                        <TouchableOpacity 
+                        disabled={this.state.hasWorkouts == false} 
+                        style={{width: '100%', 
+                        flex: 1,
+                        backgroundColor: this.state.hasWorkouts == true ? '#23374d' : '#E5E5E5', 
+                        borderRadius: 3, 
+                        alignItems: 'center', 
+                        justifyContent: 'center' 
+                        }} onPress={() => this.advanceExercise()}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Text style={{ fontSize: 15, color: '#FFFFFF', fontFamily: 'Avenir-Heavy' }}>
+                                    Advance Workout
+                   </Text>
+
+                            </View>
+                        </TouchableOpacity>
+                    </View>
             </View>
-
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Surface style={{borderRadius: 12, width: 50, height: 50}}>
-                 {this.renderImageSource(this.state.nextWorkout)}
-            </Surface>
-            <Caption style={{paddingTop: 5}}>
-              {this.renderNextExerciseName(this.state.nextWorkout)}
-            </Caption>
-            <Caption>
-                Current Workout
-            </Caption>
             </View>
-        </View>
-
-
-        <View style={{backgroundColor: 'transparent', marginVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-            
-            <Button
-            onPress={this.openActionSheet}
-             mode="outlined"
-             theme={{roundness: 8}}
-             contentStyle={{height: 45}}
-             style={{height: 45}}
-             color="#23374d"
-            >
-                Session Options
-            </Button>
-
-            <Button
-            onPress={this.advanceExercise}
-               mode="outlined"
-               theme={{roundness: 8}}
-               contentStyle={{height: 45}}
-               style={{height: 45}}
-               color="#23374d"
-            >
-                Next Exercise
-            </Button>
-        </View>
+            <View style={{flex: 0.2, padding: 3, justifyContent: 'center'}}>
+                {this.renderStepIndicator()}
             </View>
-        
+            </View>
         )
     }
 
-    renderContent = () => {
-        if (!this.state.ready) {
-            return (
-                <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
+    advanceExercise = () => this.workoutService.advanceWorkout();
 
-                </View>
-            )
-        }
+    renderStepIndicator = () => {
+        const { ready, hasWorkouts } = this.state;
+        try {
 
-        if (this.state.currentWorkout.workout_media.media_type == null || typeof (this.state.currentWorkout.workout_media.media_type) == 'undefined') {
-            return (
-                <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
+            if ((ready || hasWorkouts) == false) {
+                return;
+            }
 
-                </View>
-            )
-        }
-
-        const workoutMediaType = this.state.currentWorkout.workout_media.media_type
-        switch (workoutMediaType) {
-            case 'IMAGE':
-                return this.getWorkoutImageMedia(this.state.currentWorkout.workout_media.uri);
-            case 'VIDEO':
-                return this.getWorkoutVideoMedia(this.state.currentWorkout.workout_media.uri);
-            default:
                 return (
-                    //In this case render information about the workout
-                    <View style={{ width: '100%', height: '100%', backgroundColor: 'black' }}>
-
-                    </View>
+                <StepIndicator
+                        labels={this.state.labelData}
+                        currentPosition={this.state.currentWorkoutIndex}
+                        steps={this.state.timelineData}
+                        stepCount={this.state.timelineData.length}
+                        customStyles={{
+                            stepIndicatorSize: 25,
+                            currentStepIndicatorSize: 30,
+                            separatorStrokeWidth: 2,
+                            currentStepStrokeWidth: 3,
+                            stepStrokeCurrentColor: '#23374d', //outline
+                            stepStrokeWidth: 3,
+                            stepStrokeFinishedColor: '#23374d',
+                            stepStrokeUnFinishedColor: '#23374d', //unfinished outline
+                            separatorFinishedColor: '#23374d',
+                            separatorUnFinishedColor: '#23374d',
+                            stepIndicatorFinishedColor: '#23374d',
+                            stepIndicatorUnFinishedColor: '#23374d',
+                            stepIndicatorCurrentColor: '#ffffff',
+                            stepIndicatorLabelFontSize: 13,
+                            currentStepIndicatorLabelFontSize: 13,
+                            stepIndicatorLabelCurrentColor: '#23374d',
+                            stepIndicatorLabelFinishedColor: '#ffffff',
+                            stepIndicatorLabelUnFinishedColor: '#FFFFFF',
+                            labelColor: '#23374d',
+                            labelSize: 10,
+                            currentStepLabelColor: '#23374d'
+                        }}
+                    /> 
                 )
+        } catch (error) {
+            return <Caption> Error loading workout steps. </Caption>;
         }
     }
 
@@ -483,202 +537,86 @@ class VirtualLiveWorkout extends React.Component {
     }
 
     renderWorkoutReps = () => {
-        if (typeof(this.state.currentWorkout.workout_name) == 'undefined' || this.state.currentWorkout.workout_name == '') {
-            return "-"
+        const { currentWorkout } = this.state;
+        if (currentWorkout && currentWorkout.workout_reps) {
+            return currentWorkout.workout_reps;
+        } else {
+            return '-'
         }
-
-        return this.state.currentWorkout.workout_reps
     }
 
     renderWorkoutSets = () => {
-        if (typeof(this.state.currentWorkout.workout_name) == 'undefined' || this.state.currentWorkout.workout_name == '') {
-            return "-"
+        const { currentWorkout } = this.state;
+        if (currentWorkout && currentWorkout.workout_sets) {
+            return currentWorkout.workout_sets;
+        } else {
+            return '-'
         }
-
-        return this.state.currentWorkout.workout_sets
     }
 
     renderWorkoutTempo = () => {
-        return this.state.currentWorkout.workout_tempo
+        const { currentWorkout } = this.state;
+        if (currentWorkout && currentWorkout.workout_tempo) {
+            return currentWorkout.workout_tempo;
+        } else {
+            return '-'
+        }
     }
 
     renderWorkoutRestTime = () => {
-        return this.state.currentWorkout.workout_rest_time
+        const { currentWorkout } = this.state;
+        if (currentWorkout && currentWorkout.workout_rest_time) {
+            return currentWorkout.workout_rest_time;
+        } else {
+            return '-'
+        }
     }
 
    showDialog = () => this.setState({ showFinishedDayDialog: true }) 
 
    hideDialog = () => this.setState({ showFinishedDayDialog: false }) 
 
-   renderPreviousExerciseName = (exercise) => {
-    try {
-        return exercise.workout_name;
-    } catch(error) {
-        return ''
-    }
-   }
-
-   renderCurrentExerciseName = (exercise) => {
-    try {
-        return exercise.workout_name;
-    } catch(error) {
-        return ''
-    }
-   }
-
-   renderNextExerciseName = (exercise) => {
-    try {
-        return exercise.workout_name;
-    } catch(error) {
-        return ''
-    }
-   }
-
    renderImageSource = (workout) => {
+    const imageUri = workout.default_media_uri
     try {
-
-    switch(workout.default_media_uri) {
-        case '':
-            return <Image source={''} />
-        case 'Traps':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Traps.png')} />
-        case 'Chest':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Chest.png')} />
-        case 'Bicep':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain"source={require('../../images/buildworkout/singleworkout/Bicep.png')} />
-        case 'Calves':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Calves.png')} />
-        case 'Core':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Core.png')} />
-        case 'Glutes':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Glutes.png')} />
-        case 'Supr':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Supr.png')} />
-        case 'Triceps':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Triceps.png')} />
-        case 'Hip':
-            return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Hip.png')} />
-        default:
-            return <Image source={''} />
+        switch (imageUri) {
+            case '':
+                return <Image source={''} style={{ flex: 1, alignSelf: 'center' }} />
+            case 'Traps':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Traps.png')} />
+            case 'Chest':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Chest.png')} />
+            case 'Bicep':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Bicep.png')} />
+            case 'Calves':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Calves.png')} />
+            case 'Core':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Core.png')} />
+            case 'Glutes':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Glutes.png')} />
+            case 'Supr':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Supr.png')} />
+            case 'Triceps':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Triceps.png')} />
+            case 'Hip':
+                return <Image style={{ flex: 1, alignSelf: 'center' }} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Hip.png')} />
+            default:
+                return <Image source={''} style={{ flex: 1, alignSelf: 'center' }} />
+        }
+    } catch (error) {
+        return <Image source={''} style={{ flex: 1, alignSelf: 'center' }} />
     }
-} catch(error) {
-    return <Image source={''} />
-}
-}
-
-openActionSheet = () => {
-const { closeModal } = this.props; 
-ActionSheetIOS.showActionSheetWithOptions(
-  {
-    options: ["Cancel", "End Workout", "Reset Workout", "Change Workout" ],
-    destructiveButtonIndex: 1,
-    cancelButtonIndex: 0
-  },
-  buttonIndex => {
-    if (buttonIndex === 0) {
-      // cancel action
-    } else if (buttonIndex === 1) {
-      // end workout
-      closeModal()
-    } else if (buttonIndex === 2) {
-        this.workoutService.initLiveWorkoutSession();
-    } else if (buttonIndex === 3) {
-        //
-    }
-  }
-)
 }
 
     renderComponentDisplay = () => {
         if (this.state.ready === true && this.state.componentDidErr === false && typeof (this.state.programData) != 'undefined') {
             return (
                 <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
-                    <View onLayout={event => this.setState({ mediaContainerHeight: event.nativeEvent.layout.height })} style={{backgroundColor: 'transparent', flex: 2.5, alignItems: 'center', justifyContent: 'center' }}>
-
-                        
-                    </View>
-
-                    {this.renderExercisePreviewContainer()}
-
-                 {/*   <View style={{backgroundColor: 'transparent', flex: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-                        <View style={{ paddingHorizontal: 10, flex: 2.5, alignItems: 'flex-start', justifyContent: 'center' }}>
-                            <Text style={{ fontFamily: 'Avenir-Heavy' }}>
-                                {this.state.currentWorkout.workout_name}
-                            </Text>
-                        </View>
-
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            
-                       <Text>
-                           Week: {this.state.currentWeek + 1}
-                       </Text>
-                        </View>
-                    </View>
-            <Divider style={{width: '100%'}} /> */}
-                  {/*  <View style={{ flex: 2.5, justifyContent: 'flex-start',  alignItems: 'center'}}>
-                                <View style={{marginVertical: 10, flexDirection: 'row',  justifyContent: 'space-evenly', alignItems: 'center'}}>
-                                <View style={{ alignItems: 'flex-start', justifyContent: 'space-evenly', paddingHorizontal: 20}}>
-                                    <Text style={{ paddingVertical: 3 }}>
-                                        Sets
-                        </Text>
-                                    <View style={{width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Text style={{ fontFamily: 'Avenir-Light' }}>
-                                            {this.renderWorkoutSets()}
-                            </Text>
-                                    </View>
-                                </View>
-
-                                <View style={{ alignItems: 'flex-start', paddingHorizontal: 20}}>
-                                    <Text style={{ paddingVertical: 3 }}>
-                                        Reps
-                        </Text>
-                                    <View style={{width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 20, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Text style={{ fontFamily: 'Avenir-Light' }}>
-                                            {this.renderWorkoutReps()}
-                            </Text>
-                                    </View>
-                                </View>
-                                </View>
-
-                   
-                                
- 
-                                <View style={{marginVertical: 10, flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
-                                <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-                                    <Text style={{ paddingVertical: 3 }}>
-                                        Tempo
-                        </Text>
-                                    <View style={{width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Text style={{flexWrap: 'nowrap', fontFamily: 'Avenir-Light' }}>
-                                           {this.renderWorkoutTempo()}
-                            </Text>
-                                    </View>
-                                </View>
-
-                                <View style={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
-        <Text style={{ paddingVertical: 3 }}>
-            Rest Time
-</Text>
-        <View style={{width: 160, backgroundColor: '#FFFFFF', borderWidth: 1.2, borderRadius: 3, borderColor: 'rgb(218, 221, 234)', paddingHorizontal: 50, paddingVertical: 5, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: 'Avenir-Light' }}>
-               {this.state.restTime}
-</Text>
-        </View>
-    </View>
-
-                                </View>
-
-                                
-
-
-                       
-        </View> */}
-
-                 
-
+                    <View style={{backgroundColor: 'transparent', flex: 3, alignItems: 'center', justifyContent: 'center' }} />
+                    {this.renderContent()}
                 </SafeAreaView>
             )
-        } else if (this.state.componentDidErr) {
+        } else if (this.state.componentDidErr || typeof(this.state.programData) == 'undefined') {
             return (
                 <View style={{ flex: 1, paddingVertical: 100, paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center' }}>
 
@@ -702,208 +640,6 @@ ActionSheetIOS.showActionSheetWithOptions(
         }
     }
 
-    renderInteractionBottomSheet = () => {
-        return (
-            <RBSheet
-                ref={this.interactionRBSheet}
-                height={Dimensions.get('window').height / 1.8}
-                dragFromTopOnly={true}
-                closeOnDragDown={true}
-                customStyles={{
-                    wrapper: {
-
-                    },
-                    container: {
-                        borderTopLeftRadius: 20,
-                        borderTopRightRadius: 20
-                    },
-                    draggableIcon: {
-                        backgroundColor: 'rgb(220, 220, 220)',
-                    }
-                }}
-            >
-                <Surface style={{ flex: 1, elevation: 0 }}>
-                    <Text style={{ alignSelf: 'center', paddingVertical: 10, fontSize: 15, fontFamily: 'HelveticaNeue-Bold' }}>
-                        Interactions
-                    </Text>
-                    
-                    <View style={{ padding: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
-                       
-                        <Avatar.Image style={{ marginHorizontal: 10 }} size={40} source={{ uri: this.state.programOwnerData.photo_url }} />
-
-                      
-                        <View>
-                            <Text style={{ fontFamily: 'Avenir-Heavy', fontSize: 15 }}>
-                                {this.state.programOwnerData.display_name}
-                            </Text>
-                            <Text style={{ color: '#23374d', fontFamily: 'Avenir-Roman' }}>
-                                National Academy of Sports and Medicine
-                            </Text>
-                        </View>
-                    </View>
-                    <Divider />
-                    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                        <GiftedChat
-                            messages={this.state.messages}
-                            onSend={Fire.shared.send}
-                            user={Fire.shared.getUser()}
-                            showAvatarForEveryMessage={true}
-                            placeholder="Begin typing here"
-                            isTyping={true}
-                            renderUsernameOnMessage={true}
-                            showUserAvatar={true}
-                            alwaysShowSend={true}
-                            renderInputToolbar={() => this.state.interactionInputFocused === true ?
-                                null
-                                :
-                                <View style={{ flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, position: 'absolute', bottom: 10 }}>
-
-                                    <Input
-                                        leftIcon={() => <FeatherIcon color="#1089ff" name="message-circle" size={20} />}
-                                        placeholder='How is your workout?'
-                                        inputStyle={{ fontSize: 15, padding: 10 }}
-                                        containerStyle={{ width: '80%', borderBottomWidth: 0 }}
-                                        inputContainerStyle={{ borderBottomWidth: 0, backgroundColor: 'rgb(247, 247, 247)', borderRadius: 20 }}
-                                        returnKeyType="done"
-                                        returnKeyLabel="done"
-                                    />
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '20%' }}>
-                                        <FeatherIcon name="paperclip" size={20} />
-                                        <FeatherIcon name="send" size={20} />
-                                    </View>
-
-                                </View>
-                            }
-                        />
-                        {
-                            this.state.interactionInputFocused === true ?
-                                <View style={{ flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width }}>
-
-                                    <Input
-                                        onFocus={() => this.setState({ interactionInputFocused: true })}
-                                        onBlur={() => this.setState({ interactionInputFocused: false })}
-                                        leftIcon={() => <FeatherIcon color="#1089ff" name="message-circle" size={20} />}
-                                        placeholder='How is your workout?'
-                                        inputStyle={{ fontSize: 15, padding: 10 }}
-                                        containerStyle={{ width: '80%', borderBottomWidth: 0 }}
-                                        inputContainerStyle={{ borderBottomWidth: 0, backgroundColor: 'rgb(247, 247, 247)', borderRadius: 20 }}
-                                        returnKeyType="done"
-                                        returnKeyLabel="done"
-                                    />
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '20%' }}>
-                                        <FeatherIcon name="paperclip" size={20} />
-                                        <FeatherIcon name="send" size={20} />
-                                    </View>
-
-                                </View>
-                                :
-                                null
-                        }
-                    </View>
-
-
-                </Surface>
-            </RBSheet>
-        )
-    }
-
-    renderFollowing = () => {
-        const followingList = this.state.currUserFollowing.map(user => {
-            if (typeof (user) == 'undefined' || user == null || user.user_uuid == null) {
-                return null
-            }
-
-            return (
-                <CircularUserCard user={user} />
-            )
-        })
-
-        return followingList;
-    }
-
-    renderLiveWorkoutOptions = () => {
-        return (
-            <Modal visible={this.state.liveWorkoutOptionsVisible} presentationStyle="overFullScreen" transparent animated={true} animationType="slide">
-                <SafeAreaView style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.9)' }}>
-                    <View style={{ paddingHorizontal: 20, height: 'auto', justifyContent: 'space-evenly', alignItems: 'flex-start' }}>
-                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                            <Avatar.Image style={{ marginRight: 10 }} size={25} source={{ uri: this.state.programOwnerData.photo_url }} />
-                            <View style={{alignItems: 'flex-start'}}>
-                            <Text style={[styles.RBSheetText, { fontSize: 15,fontFamily: 'Avenir-Heavy' }]}>
-                                    {this.state.programOwnerData.display_name}
-                                </Text>
-                                <Text style={{color: 'white'}}>
-                                    National Association of Sports and Medicine
-                                </Text>
-                                <Text style={[styles.RBSheetText]} numberOfLines={4} ellipsizeMode="tail">
-                            {this.state.programData.program_description}
-                        </Text>
-                            </View>
-                            
-                            </View>
-        
-                    </View>
-
-
-                    <View style={{marginVertical: 20}}>
-                       {/* <ListItem
-                            title='Interactions'
-                            titleStyle={[styles.RBSheetText, styles.interactionsTitleText]}
-                            subtitle='Open interactions with your trainer.'
-                            subtitleStyle={styles.interactionsSubtitleText}
-                            rightIcon={() => <FeatherIcon name="message-circle" color="#FFFFFF" size={20} />}
-                            containerStyle={{ backgroundColor: 'transparent' }}
-                            bottomDivider
-                            onPress={this.handleShowInteractionRBSheet}
-                        />
-                        <ListItem
-                            title='Feedback'
-                            titleStyle={[styles.RBSheetText, styles.interactionsTitleText]}
-                            subtitle='Leave feedback and results about this program.'
-                            subtitleStyle={styles.interactionsSubtitleText}
-                            rightIcon={() => <FeatherIcon name="clipboard" color="#FFFFFF" size={20} />}
-                            containerStyle={{ backgroundColor: 'transparent' }}
-                            bottomDivider
-                            onPress={this.showFeedbackDialog}
-                       />*/}
-                        <ListItem
-                            title='Share'
-                            titleStyle={[styles.RBSheetText, styles.interactionsTitleText]}
-                            subtitle='Share this program with a friend.'
-                            subtitleStyle={styles.interactionsSubtitleText}
-                            rightIcon={() => <FeatherIcon name="share" color="#FFFFFF" size={20} />}
-                            containerStyle={{ backgroundColor: 'transparent' }}
-                            bottomDivider
-                            onPress={this.handleShareProgram}
-                        />
-                    </View>
-                </SafeAreaView>
-
-                <View style={{ alignItems: 'center', justifyContent: 'center', position: 'absolute', backgroundColor: 'rgba(58, 58, 60, 0.5)', borderRadius: 80, width: 50, height: 50, borderWidth: 1, borderColor: '#FFFFFF', bottom: Constants.statusBarHeight, alignSelf: 'center', }}>
-                    <FeatherIcon onPress={() => this.closeLiveWorkoutOptionsModal()} name="x" color="white" size={20} style={{ alignSelf: 'center' }} />
-                </View>
-            </Modal>
-        )
-    }
-
-    showFeedbackDialog = () => {
-        this.closeLiveWorkoutOptionsModal()
-        this.setState({ feedbackDialogIsVisible: true })
-    }
-
-    closeFeedbackDialog = () => {
-        this.setState({ feedbackDialogIsVisible: false })
-    }
-
-    handleSaveFeedback = () => {
-        // this.LUPA_CONTROLLER_INSTANCE.saveFeedback(this.props.lupa_data.Users.currUserData.user_uuid, this.state.programData.program_owner, this.state.feedback)
-        this.closeFeedbackDialog()
-    }
-
-    handleFeedbackTextInputOnChangeText = (text) => {
-        this.setState({ feedback: text })
-    }
-
     handleCompleteWorkout = () => {
         const lastCompletedWorkoutData = {
             dateCompleted: new Date(),
@@ -912,23 +648,6 @@ ActionSheetIOS.showActionSheetWithOptions(
 
         this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('last_completed_workout', lastCompletedWorkoutData)
         this.hideDialog();
-    }
-
-    renderDescriptionDialog = () => {
-        return (
-            <Portal>
-        <Dialog visible={this.state.descriptionDialogVisible}>
-          <Dialog.Content>
-            <Paragraph>
-                {this.state.programData.program_description}
-            </Paragraph>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button color="#1089ff" onPress={() => this.setState({ descriptionDialogVisible: false })}>Done</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-        )
     }
 
     renderRestTimerRBSheetPicker = () => {
@@ -979,39 +698,6 @@ ActionSheetIOS.showActionSheetWithOptions(
         )
     }
 
-    renderFeedbackDialog = () => {
-        return (
-            <Dialog visible={this.state.feedbackDialogIsVisible} style={{ position: 'absolute', top: Constants.statusBarHeight + 50, width: Dimensions.get('window').width - 20, alignSelf: 'center' }}>
-                <Dialog.Title>
-                    Feedback
-                </Dialog.Title>
-                <Dialog.Content>
-                    <Caption>
-                        Leave {this.state.programOwnerData.display_name} a note about their program and the results you've seen.
-                    </Caption>
-                    <View>
-                        <TextInput
-                            multiline={true}
-                            returnKeyLabel="done"
-                            returnKeyType="done"
-                            value={this.state.feeedback}
-                            onChangeText={text => this.handleFeedbackTextInputOnChangeText(text)}
-                            mode="flat"
-                            theme={{ colors: { primary: '#1089ff' } }} />
-                    </View>
-                </Dialog.Content>
-                <Dialog.Actions>
-                    <Button style={{ marginHorizontal: 10 }} uppercase={false} color="#1089ff" onPress={this.closeFeedbackDialog}>
-                        Cancel
-                    </Button>
-                    <Button style={{ marginHorizontal: 10 }} uppercase={false} color="#1089ff" mode="contained" onPress={this.handleSaveFeedback}>
-                        Done
-                    </Button>
-                </Dialog.Actions>
-            </Dialog>
-        )
-    }
-
     renderLiveWorkoutTitle = () => {
         if (this.state.ready) {
             if (this.props.uuid) {
@@ -1026,19 +712,11 @@ ActionSheetIOS.showActionSheetWithOptions(
     render() {
         return (
             <Modal animationType="slide" visible={this.props.isVisible} presentationStyle="overFullScreen" transparent style={{flex: 1}}>
-                
                 {this.renderComponentDisplay()}
                 {this.renderFinishWorkoutWarningDialog()}
-                {typeof(this.state.programData) == 'undefined' ? null : this.renderLiveWorkoutOptions()}
-                {this.renderInteractionBottomSheet()}
-                {this.renderFeedbackDialog()}
-                {typeof(this.state.programData) == 'undefined' ? null : this.renderDescriptionDialog()}
                 {this.renderRestTimerRBSheetPicker()}
-           
                 <RestTimer restTime={this.state.restTime} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
-                <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
-               
-             
+                <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} /> 
             </Modal>
         )
     }

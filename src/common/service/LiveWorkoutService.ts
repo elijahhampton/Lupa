@@ -29,6 +29,8 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
     this.timelineData = []
     this.labelData = []
     this.hasWorkouts = false;
+    this.videoPlaylist = []
+    this.videoPlaylistIndex = 0
 
     if (sessionID.includes('.')) {
         this.sessionID = sessionID.split('.')[1];
@@ -117,6 +119,12 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         this.currentWorkout = workoutStructure[0];
         updatedState['currentWorkout'] = workoutStructure[0];
 
+        this.videoPlaylist = [workoutStructure[0].workout_how_to_media.uri, workoutStructure[0].workout_media.uri];
+        updatedState['videoPlaylist'] = [workoutStructure[0].workout_how_to_media.uri, workoutStructure[0].workout_media.uri];
+        
+        this.videoPlaylistIndex = 0;
+        updatedState['videoPlaylistIndex'] = 0;
+
         this.restTime = workoutStructure[0].workout_rest_time;
         updatedState['restTime'] = workoutStructure[0].workout_rest_time;
 
@@ -187,6 +195,19 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         return updatedState;
     }
 
+    this.playNext = () => {
+        this.videoPlaylistIndex = 1;
+        let updatedState = {}
+        updatedState['videoPlaylistIndex'] = 1;
+
+        LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+        .update({ 
+            videoPlaylistIndex: 1
+        }).then(() => {
+            this.videoPlaylistIndex = 1;
+        })
+    }
+
     this.handleOnChangeWorkout = () => {
         
     }
@@ -250,13 +271,13 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
 
             newCurrentWorkoutObj.workout_reps -= 1;
 
-
             this.currentWorkout = newCurrentWorkoutObj;
             LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
             .update({ 
-                currentWorkout: this.currentWorkout
+                currentWorkout: this.currentWorkout,
+              
             }).then(() => {
-
+           
             })
         } else if (this.currentWorkout.workout_reps == 1) {
             if (this.currentWorkout.workout_sets == 1) {
@@ -269,11 +290,15 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
                 LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
                     currentWorkout: this.currentWorkoutStructure[this.currentWorkoutIndex + 1],
                     currentWorkoutIndex: this.currentWorkoutIndex + 1,
-                    currentWorkoutOriginalReps: this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_reps
+                    currentWorkoutOriginalReps: this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_reps,
+                    videoPlaylist: [this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_how_to_media.uri, this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_media.uri],
+                    videoPlaylistIndex: 0
                 }).then(() => {
                     this.currentWorkout = this.currentWorkoutStructure[this.currentWorkoutIndex + 1];
                     this.currentWorkoutIndex = this.currentWorkoutIndex + 1;
-                    this.currentWorkoutOriginalReps = this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_reps
+                    this.currentWorkoutOriginalReps = this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_reps,
+                    this.videoPlaylist = [this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_how_to_media.uri, this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_media.uri],
+                    this.videoPlaylistIndex = 0
                 });
             } else { // > 0 sets
                 console.log('@@@@@@')

@@ -9,6 +9,7 @@ import { getLupaWorkoutInformationStructure } from '../../model/data_structures/
 import PackController from './PacksController';
 import { initializeNewPack } from '../../model/data_structures/packs/packs';
 import { CommunityEvent } from '../../model/data_structures/community/types';
+import { LupaUserStructure } from './common/types';
 
 const algoliasearch = require('algoliasearch/reactnative.js');
 const algoliaIndex = algoliasearch("EGZO4IJMQL", "f0f50b25f97f17ed73afa48108d9d7e6");
@@ -1070,4 +1071,7 @@ export default class LupaController {
     USER_CONTROLLER_INSTANCE.updateCompletedExerciseStats(userData, exerciseID, editedExerciseWeightUsed, editedExerciseOneRepMax);
   }
 
+  savePersonalExercise = (userData : LupaUserStructure, exercise) => {
+    USER_CONTROLLER_INSTANCE.savePersonalExercise(userData, exercise);
+  }
 }

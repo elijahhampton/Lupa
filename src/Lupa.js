@@ -33,6 +33,7 @@ import HowToUseLupa from "./ui/user/settings/modal/HowToUseLupa";
 import { Linking } from "react-native";
 import CreateCustomExercise from "./ui/workout/modal/CreateCustomExercise";
 import BuildWorkoutController from "./ui/workout/program/createprogram/buildworkout/BuildWorkoutController";
+import { getLupaProgramInformationStructure } from "./model/data_structures/programs/program_structures";
 
 const mapStateToProps = (state, action) => {
   return {
@@ -73,7 +74,7 @@ class Lupa extends React.Component {
     return (
       <View style={{flex: 1}}>
        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-       <LupaDrawerNavigator />
+       <LupaDrawerNavigator /> 
       </View>
     )
   }

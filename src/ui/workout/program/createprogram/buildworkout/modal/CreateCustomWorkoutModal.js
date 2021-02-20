@@ -38,6 +38,10 @@ function CreateCustomWorkoutModal({ route, navigation }) {
     const [customWorkout, setCustomWorkout] = useState({
         workout_name: "Custom",
         workout_description: "",
+        workout_how_to_media: {
+            uri: "",
+            media_type: ""
+        },
         workout_media: {
             uri: "",
             media_type: ""
@@ -95,6 +99,10 @@ function CreateCustomWorkoutModal({ route, navigation }) {
         setCustomWorkout({
             workout_name: workoutName,
             workout_description: workoutDescription,
+            workout_how_to_media: {
+                uri: "",
+                media_type: ""
+            },
             workout_media: {
                 uri: uri,
                 media_type: mediaType

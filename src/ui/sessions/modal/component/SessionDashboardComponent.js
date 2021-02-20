@@ -26,6 +26,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import { getLupaUserStructurePlaceholder } from '../../../../controller/firebase/collection_structures';
 import { getLupaStoreState } from '../../../../controller/redux/index'
 import { SESSION_TYPE } from '../../../../model/data_structures/user/types'
+import { LIVE_WORKOUT_MODE } from '../../../../model/data_structures/workout/types';
 function SessionDashboardComponent({ booking }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -77,8 +78,6 @@ function SessionDashboardComponent({ booking }) {
 
         const clients = trainerUserData.clients;
          clients.forEach(clientData => {
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-
             if (clientData.client == requesterUserData.user_uuid) {
                 console.log(clientData.linked_program)
                 setProgramUID(clientData.linked_program)
@@ -89,18 +88,43 @@ function SessionDashboardComponent({ booking }) {
     const navigateToVirtualSession = () => {
         const clients = trainerUserData.clients;
          clients.forEach(clientData => {
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             if (clientData.client == requesterUserData.user_uuid) {
 
                 if (typeof(clientData.linked_program) == null || typeof(clientData.linked_program) == 'undefined' || clientData.linked_program == '') {
                     alert('Please link a program to this client from the session options!')
                     return;
                 }
-                console.log(clientData.linked_program)
+
                 navigation.push('VirtualSession', {
+                    sessionID: booking.uid,
                     booking: booking,
-                    programUID: clientData.linked_program
+                    programUID: clientData.linked_program,
+                    workoutMode: LIVE_WORKOUT_MODE.VIRTUAL,
                 })
+
+                //if this is first booking then
+              /*
+        let isFirstSession = false;
+        if (booking.hasOwnProperty('isFirstSession') == true) {
+            isFirstSession = true;
+        }
+
+              if (isFirstSession) {
+                navigation.push('LiveWorkout', {
+                    sessionID: booking.uid,
+                    uuid: clientData.linked_program,
+                    workoutType: 'PROGRAM',
+                    workoutMode: LIVE_WORKOUT_MODE.CONSULTATION,
+                })
+              } else {
+                navigation.push('LiveWorkout', {
+                    sessionID: booking.uid,
+                    uuid: clientData.linked_program,
+                    workoutType: 'PROGRAM',
+                    workoutMode: LIVE_WORKOUT_MODE.VIRTUAL
+                })
+              }*/
+
 
                 setProgramUID(clientData.linked_program)
             } else {
@@ -109,7 +133,7 @@ function SessionDashboardComponent({ booking }) {
         })
     }
 
-    const navigateToLiveSession = () => {
+    const navigateToLiveSession = async () => {
         const clients = trainerUserData.clients;
         clients.forEach(clientData => {
            if (clientData.client == requesterUserData.user_uuid) {
@@ -117,12 +141,32 @@ function SessionDashboardComponent({ booking }) {
                 alert('Please link a program to this client from the session options!')
                 return;
             }
-            
-               navigation.push('LiveWorkout', {
-                   sessionID: booking.uid,
-                   uuid: clientData.linked_program,
-                   workoutType: 'PROGRAM',
-               })
+
+            //this is temporary until in person and remote screens are finished
+            navigation.push('LiveWorkout', {
+                sessionID: booking.uid,
+                uuid: clientData.linked_program,
+                workoutType: 'PROGRAM',
+                workoutMode: LIVE_WORKOUT_MODE.TEMPLATE
+            })
+
+              //if this is first booking then
+              /*const isFirstSession = await LUPA_CONTROLLER_INSTANCE.isFirstSession(booking.trainer_uuid, booking.requester_uuid);
+              if (isFirstSession) {
+                navigation.push('LiveWorkout', {
+                    sessionID: booking.uid,
+                    uuid: clientData.linked_program,
+                    workoutType: 'PROGRAM',
+                    workoutMode: LIVE_WORKOUT_MODE.CONSULTATION
+                })
+              } else {
+                navigation.push('LiveWorkout', {
+                    sessionID: booking.uid,
+                    uuid: clientData.linked_program,
+                    workoutType: 'PROGRAM',
+                    workoutMode: LIVE_WORKOUT_MODE.IN_PERSON
+                })
+              }*/
 
                setProgramUID(clientData.linked_program)
            } else {

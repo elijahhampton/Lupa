@@ -3,7 +3,11 @@ import { LupaExerciseStructure } from "./common/types";
 var lupa__exercise_structure : LupaExerciseStructure = {
     workout_name: '',
     workout_description: '',
-    workoutMedia: {
+    workout_how_to_media: {
+        uri: "",
+        media_type: ""
+    },
+    workout_media: {
         media_type: '',
         uri: '',
     },

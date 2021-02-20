@@ -53,6 +53,8 @@ class SingleWorkout extends React.Component {
                 return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Triceps.png')} />
             case 'Hip':
                 return <Image style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={require('../../images/buildworkout/singleworkout/Hip.png')} />
+            case 'Personal':
+                return <Video style={{flex: 1, alignSelf: 'center'}} resizeMode="contain" source={workout.workout_media.uri} />
             default:
                 return <Image source={''} />
         }

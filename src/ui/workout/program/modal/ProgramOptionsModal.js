@@ -15,6 +15,7 @@ import Feather1s from 'react-native-feather1s/src/Feather1s'
 import LupaController from '../../../../controller/lupa/LupaController'
 import EditProgramWorkouts from '../createprogram/buildworkout/EditProgramWorkouts'
 import ProgramInformationPreview from '../ProgramInformationPreview'
+import { LIVE_WORKOUT_MODE } from '../../../../model/data_structures/workout/types'
 
 const TRAINER_OPTIONS = [
     {
@@ -110,6 +111,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 
         if (optionTitle == 'Launch Live Workout') {
             navigation.navigate('LiveWorkout', {
+                workoutMode: LIVE_WORKOUT_MODE.TEMPLATE,
                 sessionID: currUserData.user_uuid,
                 uuid: program.program_structure_uuid,
                 workoutType: 'PROGRAM',

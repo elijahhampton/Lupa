@@ -20,6 +20,7 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { useNavigation } from '@react-navigation/native';
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import LupaController from '../../../../controller/lupa/LupaController';
+import { LIVE_WORKOUT_MODE } from '../../../../model/data_structures/workout/types';
 
 /**
  * Renders a user's programs along with program options.
@@ -43,7 +44,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
 
         navigation.push('LiveWorkout', {
             programData: programData,
-            sessionID: currUserData.user_uuid
+            sessionID: currUserData.user_uuid,
         })
     }
     

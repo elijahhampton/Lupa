@@ -3102,6 +3102,15 @@ let subscribers = [];
        });
     }
     }
+
+    savePersonalExercise = async (userData, exercise) => {
+        let updatedPersonalExerciseLibrary : Array<Object> = userData.personal_exercise_library;
+        updatedPersonalExerciseLibrary.push(exercise);
+
+        await USER_COLLECTION.doc(userData.user_uuid).update({
+            personal_exercise_library: updatedPersonalExerciseLibrary
+        })
+    }
 }
 
 //me
