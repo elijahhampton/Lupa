@@ -1039,8 +1039,8 @@ export default class LupaController {
     });
   }
 
-  linkProgramToClient = (clientUID, program) => {
-    USER_CONTROLLER_INSTANCE.linkProgramToClient(clientUID, program);
+  linkProgramToClient = (trainerUID, clientUID, program) => {
+    USER_CONTROLLER_INSTANCE.linkProgramToClient(trainerUID, clientUID, program);
   }
 
   fetchPackWaitlist = async () => {

@@ -85,94 +85,108 @@ function SessionDashboardComponent({ booking }) {
         })
     }, [programUID])
 
-    const navigateToVirtualSession = () => {
-        const clients = trainerUserData.clients;
-         clients.forEach(clientData => {
-            if (clientData.client == requesterUserData.user_uuid) {
-
-                if (typeof(clientData.linked_program) == null || typeof(clientData.linked_program) == 'undefined' || clientData.linked_program == '') {
-                    alert('Please link a program to this client from the session options!')
-                    return;
-                }
-
-                navigation.push('VirtualSession', {
-                    sessionID: booking.uid,
-                    booking: booking,
-                    programUID: clientData.linked_program,
-                    workoutMode: LIVE_WORKOUT_MODE.VIRTUAL,
-                })
-
-                //if this is first booking then
-              /*
-        let isFirstSession = false;
-        if (booking.hasOwnProperty('isFirstSession') == true) {
-            isFirstSession = true;
-        }
-
-              if (isFirstSession) {
-                navigation.push('LiveWorkout', {
-                    sessionID: booking.uid,
-                    uuid: clientData.linked_program,
-                    workoutType: 'PROGRAM',
-                    workoutMode: LIVE_WORKOUT_MODE.CONSULTATION,
-                })
-              } else {
-                navigation.push('LiveWorkout', {
-                    sessionID: booking.uid,
-                    uuid: clientData.linked_program,
-                    workoutType: 'PROGRAM',
-                    workoutMode: LIVE_WORKOUT_MODE.VIRTUAL
-                })
-              }*/
-
-
-                setProgramUID(clientData.linked_program)
+    const navigateToVirtualSession = async () => {
+        await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(trainerUserData.user_uuid)
+        .then(data => {
+            const clients = data.clients;
+            clients.forEach(clientData => {
+                if (clientData.client == requesterUserData.user_uuid) {
+    
+                    if (typeof(clientData.linked_program) == null || typeof(clientData.linked_program) == 'undefined' || clientData.linked_program == '') {
+                        if (currUserData.isTrainer) {
+                            alert('Please link a program to this client from the session options!')
+                        } else {
+                            alert('Your trainer has yet to link you to a program.  Please wait a moment.')
+                        }
+                        return;
+                    }
+    
+            let isFirstSession = false;
+            if (booking && booking.isFirstSession == true) {
+                isFirstSession = true;
             } else {
-                alert('Please link a program to this client from the session options!')
+                isFirstSession = false
             }
+    
+                  if (isFirstSession == true) {
+                    navigation.push('LiveWorkout', {
+                        sessionID: booking.uid,
+                        uuid: clientData.linked_program,
+                        workoutType: 'PROGRAM',
+                        workoutMode: LIVE_WORKOUT_MODE.CONSULTATION,
+                        booking: booking,
+                        week: -1,
+                        day: -1
+                    })
+                  } else {
+                    navigation.push('LiveWorkout', {
+                        sessionID: booking.uid,
+                        uuid: clientData.linked_program,
+                        workoutType: 'PROGRAM',
+                        workoutMode: LIVE_WORKOUT_MODE.VIRTUAL,
+                        booking: booking,
+                        week: -1,
+                        day: -1,
+                    })
+                  }
+    
+                    setProgramUID(clientData.linked_program)
+                }
+            })
         })
+     
+         
     }
 
     const navigateToLiveSession = async () => {
-        const clients = trainerUserData.clients;
-        clients.forEach(clientData => {
-           if (clientData.client == requesterUserData.user_uuid) {
-            if (typeof(clientData.linked_program) == null || typeof(clientData.linked_program) == 'undefined' || clientData.linked_program == '') {
-                alert('Please link a program to this client from the session options!')
-                return;
-            }
-
-            //this is temporary until in person and remote screens are finished
-            navigation.push('LiveWorkout', {
-                sessionID: booking.uid,
-                uuid: clientData.linked_program,
-                workoutType: 'PROGRAM',
-                workoutMode: LIVE_WORKOUT_MODE.TEMPLATE
+        await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(trainerUserData.user_uuid)
+        .then(data => {
+            const clients = data.clients;
+            clients.forEach(clientData => {
+                if (clientData.client == requesterUserData.user_uuid) {
+                 if (typeof(clientData.linked_program) == null || typeof(clientData.linked_program) == 'undefined' || clientData.linked_program == '') {
+                     if (currUserData.isTrainer) {
+                         alert('Please link a program to this client from the session options!')
+                     } else {
+                         alert('Your trainer has yet to link you to a program.  Please wait a moment.')
+                     }
+                     return;
+                 }
+     
+                   //if this is first booking then
+                   let isFirstSession = false;
+                   if (booking && booking.isFirstSession == true) {
+                       isFirstSession = true;
+                   } else {
+                       isFirstSession = false
+                   }
+     
+                   if (isFirstSession == true) {
+                     navigation.push('LiveWorkout', {
+                         sessionID: booking.uid,
+                         uuid: clientData.linked_program,
+                         workoutType: 'PROGRAM',
+                         workoutMode: LIVE_WORKOUT_MODE.CONSULTATION,
+                         booking: booking,
+                         week: -1,
+                         day: -1
+                     })
+                   } else {
+                     navigation.push('LiveWorkout', {
+                         sessionID: booking.uid,
+                         uuid: clientData.linked_program,
+                         workoutType: 'PROGRAM',
+                         workoutMode: LIVE_WORKOUT_MODE.TEMPLATE,
+                         booking: booking,
+                         week: -1,
+                         day: -1
+                     })
+                   }
+     
+                    setProgramUID(clientData.linked_program)
+                }
             })
-
-              //if this is first booking then
-              /*const isFirstSession = await LUPA_CONTROLLER_INSTANCE.isFirstSession(booking.trainer_uuid, booking.requester_uuid);
-              if (isFirstSession) {
-                navigation.push('LiveWorkout', {
-                    sessionID: booking.uid,
-                    uuid: clientData.linked_program,
-                    workoutType: 'PROGRAM',
-                    workoutMode: LIVE_WORKOUT_MODE.CONSULTATION
-                })
-              } else {
-                navigation.push('LiveWorkout', {
-                    sessionID: booking.uid,
-                    uuid: clientData.linked_program,
-                    workoutType: 'PROGRAM',
-                    workoutMode: LIVE_WORKOUT_MODE.IN_PERSON
-                })
-              }*/
-
-               setProgramUID(clientData.linked_program)
-           } else {
-               alert('Please link a program to this client from the session options!')
-           }
-       })
+        })
     }
 
     const renderSessionControl = () => {
@@ -203,23 +217,23 @@ function SessionDashboardComponent({ booking }) {
     }
     return (
         <>
-        <Surface key={booking.uid} style={{elevation: 0, alignSelf: 'center', width: Dimensions.get('window').width - 10, borderColor: '#E5E5E5', marginVertical: 10, padding: 10}}>
-             <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy'}}>
+        <Surface key={booking.uid} style={{backgroundColor: '#23374d', elevation: 0, alignSelf: 'center', width: Dimensions.get('window').width - 10, borderColor: '#E5E5E5', marginVertical: 10, padding: 10}}>
+             <Text style={{fontSize: 15, paddingVertical: 5, fontFamily: 'Avenir-Heavy', color: 'white'}}>
                         {moment(booking.date).format('LL').toString()}
                     </Text>
 
             <View style={{marginVertical: 5}}>
                 <View style={{paddingVertical: 5, flexDirection: 'row', alignItems: 'center'}}>
-                    <FeatherIcon name="clock" style={{paddingRight: 5}} />
-                    <Text style={{color: '#23374d', fontSize: 15, fontFamily: 'Avenir-Medium'}}>
+                    <FeatherIcon name="clock" color="#FFFFFF" style={{paddingRight: 5}} />
+                    <Text style={{color: 'white', fontSize: 15, fontFamily: 'Avenir-Medium'}}>
                        { moment(booking.start_time).format('LT').toString()}
                     </Text>
                 </View>
 
                 <View style={{paddingVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <View style={{flexDirection: 'row', alignItems: 'center', }}>
-                <FeatherIcon name="map-pin" style={{paddingRight: 5}} />
-                    <Text style={{color: "#23374d", fontSize: 15, fontFamily: 'Avenir-Medium'}}>
+                <FeatherIcon name="map-pin" color="#FFFFFF" style={{paddingRight: 5}} />
+                    <Text style={{color: 'white', fontSize: 15, fontFamily: 'Avenir-Medium'}}>
                       {renderSessionLocation()}
                     </Text>
                 </View>
@@ -228,17 +242,9 @@ function SessionDashboardComponent({ booking }) {
                 </View>
             </View>
 
-            <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgb(243, 245, 246)', borderRadius: 10}}>
-                <Avatar size={40} rounded source={{uri: requesterUserData.photo_url}} containerStyle={{marginRight: 8, borderWidth: 2, borderColor: 'white'}} />
-
-                <Text style={{fontFamily: 'Avenir-Roman', fontWeight: '500', fontSize: 12}} numberOfLines={2} ellipsizeMode="tail">
-                    {booking.note}
-                </Text>
-            </View>
-
             <Button 
                 onPress={() => setBookingInformationModalVisible(true)} 
-                color="rgb(35, 73, 115)" 
+                color="#1089ff" 
                 uppercase={false} 
                 mode="contained" 
                 contentStyle={{height: 40, width: '100%'}} 
@@ -250,7 +256,7 @@ function SessionDashboardComponent({ booking }) {
             </Button>
                 <BookingInformationModal trainerUserData={trainerUserData} requesterUserData={requesterUserData} isVisible={bookingInformationModalVisible} closeModal={() => setBookingInformationModalVisible(false)} booking={booking} />
             </Surface>
-       <Divider />
+       <Divider style={{backgroundColor: 'white'}} />
        </>
 
             

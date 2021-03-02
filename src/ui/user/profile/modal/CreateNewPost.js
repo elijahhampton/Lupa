@@ -154,12 +154,12 @@ function CreateNewPost({ route, navigation }) {
             <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'white', paddingTop: Constants.statusBarHeight }}>
 
                 <View style={{ flex: 1, elevation: 0 }}>
-                    <TextInput keyboardType="default" returnKeyLabel="done" returnKeyType="done" ref={titleTextInputRef} value={titleText} maxLength={30} onChangeText={text => setTitleText(text)} style={{ marginVertical: 10, fontSize: 25, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Title..." placeholderTextColor="#212121" />
-                    <TextInput inputAccessoryViewID="textInputAccessory" keyboardType="default" returnKeyLabel="done" returnKeyType="done" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)} style={{ marginVertical: 20, fontSize: 18, fontFamily: 'Avenir', alignSelf: 'center', width: '90%', }} placeholder="Share techniques and advice..." placeholderTextColor="#212121" />
+                    <TextInput keyboardType="default" returnKeyLabel="done" returnKeyType="done" ref={titleTextInputRef} value={titleText} maxLength={30} onChangeText={text => setTitleText(text)} style={{ marginVertical: 10, fontSize: 25, fontFamily: 'Avenir-Heavy', alignSelf: 'center', width: '90%', }} placeholder="What will you share?" placeholderTextColor="#212121" />
+                    <TextInput inputAccessoryViewID="textInputAccessory" keyboardType="default" returnKeyLabel="done" returnKeyType="done" multiline ref={postTextInputRef} value={postText} maxLength={220} onChangeText={text => setPostText(text)} style={{ marginVertical: 20, fontSize: 18, fontFamily: 'Avenir-Medium', alignSelf: 'center', width: '90%', }} placeholder="Share techniques and advice..." placeholderTextColor="#212121" />
                     <InputAccessoryView nativeID={"textInputAccessory"}>
                         <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
-                            <ThinFeatherIcon style={{ paddingHorizontal: 20 }} name="video" size={20} onPress={handleAddVideo} />
-                            <ThinFeatherIcon style={{ paddingHorizontal: 20 }} name="aperture" size={20} onPress={handleOpenCameraRoll} />
+                            <ThinFeatherIcon color="#1089ff" style={{ paddingHorizontal: 20 }} name="video" size={20} onPress={handleAddVideo} />
+                            <ThinFeatherIcon color="#1089ff" style={{ paddingHorizontal: 20 }} name="aperture" size={20} onPress={handleOpenCameraRoll} />
                         </View>
                     </InputAccessoryView>
 

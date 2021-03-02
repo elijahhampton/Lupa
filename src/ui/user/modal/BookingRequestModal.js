@@ -290,7 +290,10 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, isVisible, p
         await LUPA_CONTROLLER_INSTANCE.createBookingRequest(booking, true);
         resetState();
         setConfirmingSession(false);
-        closeModal()
+
+        if (ref.current){
+          ref.current.close();
+        }
       } catch(error) {
         LOG_ERROR('BookingRequestModal.js', 'Failed to creating booking.', error);
         //delete booking if it was created

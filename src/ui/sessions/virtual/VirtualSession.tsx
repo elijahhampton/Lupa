@@ -24,6 +24,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LUPA_DB from '../../../controller/firebase/firebase'
 import VirtualLiveWorkout from '../../workout/modal/VirtualLiveWorkout'
 interface Props {
+    booking: Object
 }
 
 /**
@@ -44,7 +45,7 @@ interface State {
     requesterData: LupaUserStructure,
     componentDidError: boolean,
     isFirstSession: boolean,
-    firstSessionTimer: 100
+    firstSessionTimer: 100,
 }
 
 //VIRTUAL TO DO - set countdown timer and exit out of session
@@ -89,14 +90,16 @@ class VirtualSession extends Component<Props, State> {
     }
 
     generateUserData = async () => {
-        const bookingInfo = this.props.booking;
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingInfo.trainer_uuid).then(data => {
+        const { booking } = this.props;
+        console.log('@@@@@@@@@@')
+        console.log(booking);
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.trainer_uuid).then(data => {
             this.setState({ trainerData: data })
         }).catch(error => {
             this.setState({ componentDidError: true });
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingInfo.requester_uuid).then(data => {
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.requester_uuid).then(data => {
             this.setState({ requesterData: data })
         }).catch(error => {
             this.setState({ componentDidError: true })
@@ -232,14 +235,6 @@ class VirtualSession extends Component<Props, State> {
         }
     }
 
-    renderFirstSessionCaption = () => {
-            return (
-                <Caption style={{color: 'white', marginVertical: 10}}>
-                This is your first consulation with {this.state.trainerData.display_name}.  This session will end in 15 minutes.
-            </Caption>
-            )
-    }
-
     renderVirtualHeaderContent = () => {
         if (this.state.joinSucceed == true) {
             return (
@@ -249,7 +244,6 @@ class VirtualSession extends Component<Props, State> {
                   Leave Session
               </Caption>
               </TouchableOpacity>
-        {this.renderFirstSessionCaption()}
           </View>
             )
         }
@@ -317,11 +311,13 @@ class VirtualSession extends Component<Props, State> {
       
       renderVirtualLiveWorkout = () => {
           if (this.state.joinSucceed == true) {
-              if (this.props.isFirstSession == true) {
+              if (this.props.isFirstSession == false) {
                 return <VirtualLiveWorkout 
                 isVisible={true} 
                 uuid={this.props.programUID} 
                 sessionID={this.props.sessionID}
+                currentWeek={this.props.currentWeek}
+                currentDay={this.props.currentDay}
                 />
               }
           }

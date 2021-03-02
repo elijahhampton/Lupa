@@ -29,6 +29,7 @@ import moment from 'moment';
 import { LOG_ERROR } from '../../../../common/Logger';
 import { getLupaStoreState } from '../../../../controller/redux';
 import { CURRENCY, initStripe, PAY_TRAINER_ENDPOINT } from '../../../../modules/payments/stripe';
+import { getLupaExerciseStructure } from '../../../../model/data_structures/workout/exercise_collections';
 
 const {windowWidth} = Dimensions.get('window').width
 
@@ -52,10 +53,15 @@ function ReceivedBookingRequestNotification({ notificationData }) {
      * Sends request to server to complete payment
      */
     const makePaymentToTrainer = async (amount) => {
-        let requesterUserData = getLupaUserStructurePlaceholder();
+        let trainerUserData = getLupaUserStructurePlaceholder(), requesterUserData = getLupaUserStructurePlaceholder();
         await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingData.requester_uuid).then(data => {
             requesterUserData = data;
         })
+
+        await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingData.trainer_uuid).then(data => {
+            trainerUserData = data;
+        })
+
 
         try {
         //generate idempotencyKey to prevent double transactions
@@ -109,7 +115,11 @@ function ReceivedBookingRequestNotification({ notificationData }) {
              if (bookingData.hasOwnProperty('isFirstSession') == true) {
                  await makePaymentToTrainer(15.00)
              } else {
-                await makePaymentToTrainer(amount)
+                 if (typeof(amount) == 'undefined') {
+                    await makePaymentToTrainer(15.00)
+                 } else {
+                    await makePaymentToTrainer(amount)
+                 }
              }
          } catch (error) {
              await setPaymentComplete(false)
@@ -122,15 +132,19 @@ function ReceivedBookingRequestNotification({ notificationData }) {
     }
 
     const handleAcceptBooking = () => {
-        LUPA_CONTROLLER_INSTANCE.handleAcceptBooking(notificationData.data.uid).then(() => {
-            const updatedUserData = getLupaStoreState().Users.currUserData;
-            //handlepayment request
+        LUPA_CONTROLLER_INSTANCE.handleAcceptBooking(notificationData.data.uid)
+        .then(() => {    
             try {
-            handlePayBookingCost(updatedUserData.hourly_payment_rate);
+                const updatedUserData = getLupaStoreState().Users.currUserData;
+                //handlePayBookingCost(updatedUserData.hourly_payment_rate);
+                handlePayBookingCost(3);
             } catch(error) {
                 LOG_ERROR('TrainerDashboard.js', 'Failed payment in handlePayBookingCost', error);
                 return;
             }
+        })
+        .catch(error => {
+            LOG_ERROR('TrainerDashboard.js', 'Failed creating booking session', error);
         })
     }
 

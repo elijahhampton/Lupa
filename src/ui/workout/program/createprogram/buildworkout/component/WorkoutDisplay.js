@@ -8,6 +8,8 @@ import {
     Dimensions,
     ScrollView,
     StyleSheet,
+    ActionSheetIOS,
+    Modal,
     TextInput,
     SafeAreaView,
 } from 'react-native'
@@ -15,6 +17,7 @@ import {
 import {
     Surface,
     Caption,
+    Chip,
     Dialog,
     HelperText,
     Paragraph,
@@ -24,7 +27,7 @@ import {
 import {
     Divider
 } from 'react-native-elements'
-
+import ImagePicker from 'react-native-image-picker';
 import ThinFeatherIcon from 'react-native-feather1s'
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Video } from 'expo-av';
@@ -32,12 +35,13 @@ import Slider from "react-native-slider";
 import { Pagination } from 'react-native-snap-carousel'
 
 import ExerciseCameraModal from '../../component/ExerciseCameraModal';
-
 import { Picker } from '@react-native-community/picker';
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { getLupaExerciseStructure } from '../../../../../../model/data_structures/workout/exercise_collections';
+import { LIVE_WORKOUT_MODE } from '../../../../../../model/data_structures/workout/types';
+import LiveWorkoutService from '../../../../../../common/service/LiveWorkoutService';
 let weeks = []
 
 const restTimes = [
@@ -50,6 +54,10 @@ const restTimes = [
     '300',
 ]
 
+const EXERCISE_EQUIPMENT_LIST = [
+    'Treadmill'
+]
+
 function handleMeasurement(exercise, tempo) {
     if (typeof (exercise) == 'undefined' || typeof (tempo) == 'undefined') {
         return;
@@ -58,7 +66,97 @@ function handleMeasurement(exercise, tempo) {
     exercise.workout_tempo = tempo;
 }
 
-function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handleSuperSetOnPress, programDuration, programType }) {
+function AddTagsModal({ captureEquipmentTags, isVisible, closeModal }) {
+    const [tags, setTags] = useState([]);
+    const [forceUpdate, setForceUpdate] = useState(false);
+  
+    const handleAddTags = (tagString) => {
+      if (tags.includes(tagString)) {
+        let updatedTagList = tags;
+        updatedTagList.splice(updatedTagList.indexOf(tagString), 1)
+        setTags(updatedTagList)
+      } else {
+        setTags((prevState) => prevState.concat(tagString))
+      }
+  
+      setForceUpdate(!forceUpdate)
+    }
+  
+    const handleFinish = () => {
+        captureEquipmentTags(tags);
+      closeModal()
+    }
+  
+    const renderPreFilledTags = (tagString) => {
+      if (tags.includes(tagString)) {
+        return (
+          <Chip
+            onPress={() => handleAddTags(tagString)}
+            mode="flat"
+            style={[styles.tagsChipStyle, { backgroundColor: '#23374d' }]}
+            textStyle={[styles.tagsChipTextStyle, { color: 'white' }]}
+            theme={{
+              roundness: 0,
+            }}>
+            {tagString}
+          </Chip>
+        )
+      } else {
+        return (
+          <Chip
+            onPress={() => handleAddTags(tagString)}
+            mode="outlined"
+            style={styles.tagsChipStyle}
+            textStyle={styles.tagsChipTextStyle}
+            theme={{
+              roundness: 0,
+            }}>
+            {tagString}
+          </Chip>
+        )
+      }
+    }
+  
+    return (
+      <Modal presentationStyle="fullScreen" visible={isVisible}>
+        <View style={{ flex: 1, padding: 20 }}>
+          <View style={{ padding: 10, marginVertical: 20 }}>
+            <Text style={{ fontFamily: 'Avenir-Black', fontSize: 30 }}>
+              Add custom equipment requirements
+            </Text>
+            <Caption>
+              Choose tags that best fit the equipment requirements for this exercise
+            </Caption>
+          </View>
+  
+          <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row', margin: 10 }}>
+            {
+              EXERCISE_EQUIPMENT_LIST.map(tag => {
+                return (
+                  renderPreFilledTags(tag)
+                )
+              })
+            }
+          </View>
+          <Button
+            mode="contained"
+            color="#23374d"
+            theme={{ roundness: 8 }}
+            contentStyle={{ width: Dimensions.get('window').width - 20, height: 45 }}
+            contentStyle={{ width: Dimensions.get('window').width - 20, height: 45 }}
+            onPress={handleFinish}
+            uppercase={false}>
+            <Text style={{ fontWeight: '800', fontFamily: 'Avenir-Medium' }}>
+              Done
+              </Text>
+          </Button>
+        </View>
+      </Modal>
+  
+    )
+  }
+
+function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, currProgramUUID, workout, handleExerciseOnPress, handleSuperSetOnPress, programDuration, programType }) {
     const [updateState, forceUpdateState] = useState(false);
 
     const [currProgramWeek, setCurrProgramWeek] = useState(0)
@@ -86,6 +184,8 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
     const [inputTempoTwoText, setTempoInputTwoText] = useState("");
     const [inputTempoSupersetText, setTempoSupersetText] = useState("");
 
+    const [addEquipmentModalVisible, setAddEquipmentModalVisible] = useState(false);
+
     const intensityPickerRef = createRef();
     const openIntensityPicker = () => intensityPickerRef.current.open();
     const closeIntensityPicker = () => intensityPickerRef.current.close();
@@ -93,6 +193,9 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
     const [editedIntensity, setEditedIntensity] = useState("");
 
     const [showCamera, setShowCamera] = useState(false);
+
+    const liveWorkoutService = new LiveWorkoutService(sessionID, {}, [], programData);
+
     const renderImageSource = (workoutObj) => {
         if (workoutObj.workout_media.media_type == "VIDEO") {
             return <Video source={{ uri: workoutObj.workout_media.uri }} style={{width: '100%', height: '100%', borderRadius: 8 }} shouldPlay={false} resizeMode="cover"  />
@@ -136,22 +239,74 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
     }
 
     const handleIncrementExcerciseSets = (workoutRef) => {
-        workoutRef.workout_sets++;
+        let updatedSets = workoutRef.workout_sets;
+
+        updatedSets += 1;
+        if (workoutMode) {
+            if (workoutMode == LIVE_WORKOUT_MODE.IN_PERSON) {
+                workoutRef.workout_sets = updatedSets
+                liveWorkoutService.updateExerciseSetsLive(workoutRef.workout_uid, updatedSets)
+            }
+        } else {
+            workoutRef.workout_sets++;
+        }
+
         forceUpdateState(!updateState)
     }
 
     const handleDecrementExerciseSets = (workoutRef) => {
-        workoutRef.workout_sets--;
+        let updatedSets = workoutRef.workout_sets;
+
+        updatedSets -= 1;
+        if (workoutMode) {
+            if (workoutMode == LIVE_WORKOUT_MODE.IN_PERSON) {
+                workoutRef.workout_sets = updatedSets
+                liveWorkoutService.updateExerciseSetsLive(workoutRef.workout_uid, updatedSets)
+            }
+        } else {
+            if (workoutRef.workout_sets == 0) {
+                return;
+            }
+
+            workoutRef.workout_sets--;
+        }
+
         forceUpdateState(!updateState)
     }
 
     const handleIncrementExcerciseReps = (workoutRef) => {
-        workoutRef.workout_reps++;
+        let updatedReps = workoutRef.workout_reps;
+
+        updatedReps += 1;
+        if (workoutMode) {
+            if (workoutMode == LIVE_WORKOUT_MODE.IN_PERSON) {
+                workoutRef.workout_reps = updatedReps
+                liveWorkoutService.updateExerciseRepsLive(workoutRef.workout_uid, updatedReps)
+            }
+        } else {
+            workoutRef.workout_reps++;
+        }
+
         forceUpdateState(!updateState)
     }
 
     const handleDecrementExerciseReps = (workoutRef) => {
-        workoutRef.workout_reps--;
+        let updatedReps = workoutRef.workout_reps;
+
+        updatedReps -= 1;
+        if (workoutMode) {
+            if (workoutMode == LIVE_WORKOUT_MODE.IN_PERSON) {
+                workoutRef.workout_reps = updatedReps
+                liveWorkoutService.updateExerciseRepsLive(workoutRef.workout_uid, updatedReps)
+            }
+        } else {
+            if (workoutRef.workout_reps == 0) {
+                return;
+            }
+
+            workoutRef.workout_reps--;
+        }
+
         forceUpdateState(!updateState)
     }
 
@@ -194,8 +349,7 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
     }
 
     const handleOnChangeIntensity = (exerciseRef, intensityText) => {
-        setEditedIntensity(intensityText)
-        exerciseRef.intensity = intensityText;
+        exerciseRef.workout_rest_time = intensityText;
     }
 
     const handleOnSetTempo = () => {
@@ -344,6 +498,9 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
 
             >
                 <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
+                    <Text style={{fontSize: 15, fontFamily: 'Avenir-Black', paddingHorizontal: 10}}>
+                        Add a rest time (in seconds)
+                    </Text>
                     <TextInput
                         style={{ alignSelf: 'center', fontSize: 60, borderWidth: 0.8, padding: 20, borderRadius: 15, borderColor: '#EEEEEE' }}
                         placeholder="0"
@@ -352,7 +509,7 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                         keyboardAppearance="light"
                         returnKeyLabel="done"
                         returnKeyType="done"
-                        value={editedIntensity}
+                        value={workout.workout_rest_time}
                         onChangeText={(text) => handleOnChangeIntensity(exercise, text)} />
 
                     <View style={{ width: '100%' }}>
@@ -418,10 +575,51 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
         )
     }
 
+    openMediaActionSheet = (workout) =>  {
+        ActionSheetIOS.showActionSheetWithOptions(
+          {
+            options: ["Take a Video", "Upload Media", "Cancel"],
+            destructiveButtonIndex: 2,
+            cancelButtonIndex: 2
+          },
+          buttonIndex => {
+            if (buttonIndex === 0) {
+                handleTakeVideo(workout)
+            } else if (buttonIndex === 1) {
+              //image picker
+              const options = {
+                mediaType: 'video', 
+                storageOptions:{
+                  skipBackup:true,
+                  path:'images'
+                },
+                allowsEditing: true
+          };
+
+              ImagePicker.showImagePicker(options, async (response) => {
+                if (!response.didCancel)
+                {      
+                 const uri = await response.uri;
+                 await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(workout, currProgramUUID, 'VIDEO', uri)
+                 .then(uploadedURI => {
+                    handleCaptureNewMediaURI(uploadedURI, 'VIDEO', workout);
+                 })
+       
+                }
+                else if (response.error)
+                {
+              
+                }
+            });
+            }
+          }
+        )
+        }
+
     const renderVideoOptions = (workout) => {
         if (programType == 'template') {
             return (
-                <TouchableOpacity onPress={() => handleTakeVideo(workout)} style={{ width: '100%', alignItems: 'center', position: 'absolute', bottom: 0, left: 0, }}>
+                <TouchableOpacity onPress={() => openMediaActionSheet(workout)} style={{ width: '100%', alignItems: 'center', position: 'absolute', bottom: 0, left: 0, }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: '#1089ff', alignSelf: 'center', width: 30, height: 18, borderRadius: 30 }}>
                         <Feather1s name="video" color="white" />
                     </View>
@@ -430,13 +628,27 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
         }
     }
 
-    const renderComponentDisplay = () => {
+    const getBorderStyle = (exerciseID) => {
+        if (currWorkoutID == exerciseID) {
+            return {
+                borderColor: '#1089ff',
+                borderWidth: 2,
+            }
+        } else {
+            return {
+                borderColor: '#E5E5E5',
+                borderWidth: 1,
+            }
+        }
+    }
 
+
+    const renderComponentDisplay = () => {
         switch (workout.superset.length == 0) {
             case true:
                 return (
                     <>
-                        <View style={{ marginLeft: 10, }}>
+                        <View style={{ marginLeft: 10}}>
                             <Text style={{ fontSize: 15, fontFamily: 'Avenir-Black' }}>
                                 {workout.workout_name}
                             </Text>
@@ -449,7 +661,7 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                             </View>
                         </View>
 
-                        <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#E5E5E5', flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{...getBorderStyle(workout.workout_uid),  borderRadius: 5, flex: 1, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}>
 
 
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -457,6 +669,7 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                 <Surface style={{ width: 70, height: 50, borderRadius: 8, alignSelf: 'center', elevation: 0 }}>
                                     {renderImageSource(workout)}
                                     {renderVideoOptions(workout)}
+                                    {renderIntensityPicker(workout)}
                                 </Surface>
 
 
@@ -497,8 +710,8 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                     </View>
 
 
-                                    <View>
-                                        <TouchableWithoutFeedback onPress={openRestTimePicker}>
+                                    <View style={{marginHorizontal: 10}}>
+                                        <TouchableWithoutFeedback onPress={handleOnPickIntensity}>
                                             <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                 Rest Time ({workout.workout_rest_time}s)
             </Text>
@@ -512,20 +725,6 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                     </View>
 
 
-                                    <View style={{ marginHorizontal: 12 }}>
-                                        <TouchableWithoutFeedback onPress={openIntensityPicker}>
-                                            <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
-                                                Intensity ({workout.intensity})
-            </Text>
-                                        </TouchableWithoutFeedback>
-
-                                        <TouchableWithoutFeedback onPress={() => { }}>
-                                            <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
-
-                                            </Text>
-                                        </TouchableWithoutFeedback>
-                                    </View>
-
 
 
                                 </View>
@@ -533,9 +732,9 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
 
 
                         </View>
-                        <Divider style={{ height: 10, backgroundColor: '#EEEEEE' }} />
-                        {renderIntensityPicker(workout)}
+                        <Divider style={{ height: 10, backgroundColor: '#FFFFFF' }} />
                         {renderExerciseCameraModal(workout)}
+                    
                     </>
                 )
             case false:
@@ -571,7 +770,7 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                         >
                             <>
 
-                                <View style={{ flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' }}>
+                                <View style={{...getBorderStyle(workout.workout_uid), flex: 1, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}>
 
 
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -580,6 +779,7 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                         <Surface style={{ width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#FFFFFF' }}>
                                             {renderImageSource(workout)}
                                             {renderVideoOptions(workout)}
+                                            {renderIntensityPicker(workout)}
                                         </Surface>
 
 
@@ -620,8 +820,8 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                             </View>
 
 
-                                            <View>
-                                                <TouchableWithoutFeedback onPress={openRestTimePicker}>
+                                            <View style={{marginHorizontal: 10}}>
+                                                <TouchableWithoutFeedback onPress={handleOnPickIntensity}>
                                                     <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                         Rest Time ({workout.workout_rest_time}s)
           </Text>
@@ -634,19 +834,6 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                                 </TouchableWithoutFeedback>
                                             </View>
 
-                                            <View style={{ marginHorizontal: 12 }}>
-                                                <TouchableWithoutFeedback onPress={openIntensityPicker}>
-                                                    <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
-                                                        Intensity ({workout.intensity})
-            </Text>
-                                                </TouchableWithoutFeedback>
-
-                                                <TouchableWithoutFeedback onPress={() => { }}>
-                                                    <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
-
-                                                    </Text>
-                                                </TouchableWithoutFeedback>
-                                            </View>
 
 
 
@@ -656,14 +843,14 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
 
                                 </View>
                                 <Divider style={{ height: 10, backgroundColor: '#EEEEEE' }} />
-                                {renderIntensityPicker(workout)}
+                             
                                 {renderExerciseCameraModal(workout)}
                             </>
                             {
                                 workout.superset.map(superset => {
                                     return (
                                         <>
-                                            <View style={{ flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' }}>
+                                            <View style={{...getBorderStyle(workout.workout_uid), flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' }}>
 
 
                                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -672,6 +859,7 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                                     <Surface style={{ width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#FFFFFF' }}>
                                                         {renderImageSource(superset)}
                                                         {renderVideoOptions(superset)}
+                                                        {renderIntensityPicker(superset)}
                                                     </Surface>
 
 
@@ -713,8 +901,8 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                                         </View>
 
 
-                                                        <View style={{ marginLeft: 10 }}>
-                                                            <TouchableWithoutFeedback onPress={openRestTimePicker}>
+                                                        <View style={{ marginHorizontal: 10 }}>
+                                                            <TouchableWithoutFeedback onPress={handleOnPickIntensity}>
                                                                 <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                                     Rest Time ({superset.workout_rest_time}s)
                                   </Text>
@@ -727,19 +915,6 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
                                                             </TouchableWithoutFeedback>
                                                         </View>
 
-                                                        <View style={{ marginHorizontal: 12 }}>
-                                                            <TouchableWithoutFeedback onPress={openIntensityPicker}>
-                                                                <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
-                                                                    Intensity ({workout.intensity})
-            </Text>
-                                                            </TouchableWithoutFeedback>
-
-                                                            <TouchableWithoutFeedback onPress={() => { }}>
-                                                                <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
-
-                                                                </Text>
-                                                            </TouchableWithoutFeedback>
-                                                        </View>
 
 
 
@@ -748,7 +923,7 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
 
 
                                             </View>
-                                            {renderIntensityPicker(superset)}
+                                          
                                             {renderExerciseCameraModal(superset)}
                                         </>
                                     )
@@ -763,6 +938,8 @@ function WorkoutDisplay({ currProgramUUID, workout, handleExerciseOnPress, handl
 
         }
     }
+
+    
 
     const handleTakeVideo = (workout) => {
         // await setCurrPressedExercise(workout);

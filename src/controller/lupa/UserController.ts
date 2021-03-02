@@ -2111,18 +2111,20 @@ export default class UserController {
         const requesterUUID = booking.requester_uuid;
         const trainerUUID = booking.trainer_uuid;
 
-        LUPA_DB.collection('bookings')
-        .where('requester_uuid', '==', requesterUUID)
-        .where('trainer_uuid', '==', trainerUUID)
+        let isFirstSession = true;
+        await LUPA_DB.collection('bookings')
         .get()
-        .then(querySnapshot => {
-            if (querySnapshot.docs.size == 0) {
-                Object.defineProperty(booking, 'isFirstSession', {
-                    value: true,
-                    writable: false
-                  });
-            }
-        })
+        .then(async querySnapshot=> {
+            await querySnapshot.docs.forEach(doc => {
+                let data = doc.data();
+
+                if (data.requester_uuid == requesterUUID && data.trainer_uuid == trainerUUID) {
+                    isFirstSession = false;
+                }
+            });
+
+            booking.isFirstSession = isFirstSession;
+        });
 
         //create booking
         await LUPA_DB.collection('bookings').doc(booking.uid).set(booking)
@@ -2277,19 +2279,6 @@ export default class UserController {
 
         const trainer_uuid = booking.trainer_uuid;
         const requester_uuid = booking.requester_uuid;
-
-        await USER_COLLECTION.doc(trainer_uuid).get().then(documentSnapshot => {
-            let userData = documentSnapshot.data();
-
-            for (let i = 0; i < userData.clients; i++) {
-                if (userData.clients[i].client == requester_uuid) {
-                    continue;
-                } else {
-                    this.updateCurrentUser('clients', {client: requester_uuid, linked_program: ""}, "add", "");
-                }
-            }
-        })
-        
 
         LUPA_DB.collection('bookings').doc(bookingID).update({
             status: BOOKING_STATUS.BOOKING_ACCEPTED
@@ -2971,7 +2960,6 @@ let subscribers = [];
                         } 
                     }
                 } else {
-                    alert('o')
                     console.log(communityEvents)
                     communityEvents = Object.defineProperty(communityEvents, date, {
                         value: {
@@ -3028,8 +3016,8 @@ let subscribers = [];
            
         }
 
-        linkProgramToClient = async (clientUID, program) => {
-            const userDocRef = USER_COLLECTION.doc(clientUID);
+        linkProgramToClient = async (trainerUID, clientUID, program) => {
+            const userDocRef = USER_COLLECTION.doc(trainerUID);
             await userDocRef.get().then(documentSnapshot => {
                 let userData = documentSnapshot.data();
                 let updatedClientsList = userData.clients;

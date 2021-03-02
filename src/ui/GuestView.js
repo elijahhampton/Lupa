@@ -73,8 +73,6 @@ import { Pagination } from 'react-native-snap-carousel';
 import { ActionSheetIOS } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { getLupaProgramInformationStructure } from '../model/data_structures/programs/program_structures';
-import VirtualSession from './sessions/virtual/VirtualSession';
-import VirtualLiveWorkout from './workout/modal/VirtualLiveWorkout';
 import { Linking } from 'react-native';
 
 const SKILL_BASED_INTEREST = [

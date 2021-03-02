@@ -10,18 +10,28 @@ import { getDayOfTheWeekStringFromDate } from "./DateTimeService";
 
 export const LIVE_SESSION_REF = 'live_session/';
 
-function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData: Array<LupaUserStructure>, program: LupaProgramInformationStructure) {
+const daysOfWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+]
+
+function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData: Array<LupaUserStructure>, program: LupaProgramInformationStructure, week : Number, day : string | number) {
     this.trainer = trainerData;
     this.participants = []
-    this.workoutStructure = ['Workout Name', 'Workout Name', 'Workout Name'],
+    this.workoutStructure = ['Workout Name', 'Workout Name', 'Workout Name']
     this.currentWorkout = getLupaExerciseStructure()
-    this.currentWorkoutOriginalReps = 0,
-    this.currentWorkoutStructure = [],
-    this.currentWeek = 0,
-    this.workoutDays = [],
-    this.currentWorkoutDay = "",
-    this.currentDayIndex = 0,
-    this.currentWorkoutIndex = 0,
+    this.currentWorkoutOriginalReps = 0
+    this.currentWorkoutStructure = []
+    this.currentWeek = 0
+    this.workoutDays = []
+    this.currentWorkoutDay = ""
+    this.currentDayIndex = 0
+    this.currentWorkoutIndex = 0
     this.currentProgram = program;
     this.showFinishedDayDialog = false;
     this.restTimerStarted = false;
@@ -81,46 +91,47 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
           });
     }
 
+    this.refreshState = async () => {
+        await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value', (snapshot) => {
+            const currentState = snapshot.val();
+
+            LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ 
+                ...currentState
+            })
+        });
+    }
+
     this.loadCurrentDayWorkouts = async () => {
         let updatedState = {}
 
-        const endDate = moment(this.currentProgram.program_end_date)
-        const weekDifference = endDate.diff(moment(), 'weeks');
-        const currWeek = this.currentProgram.program_duration - weekDifference;
-
-        /****************************** ****************************/
-        //TODO: Here we need to handle the case where the week is 0, i.e. the program has ended
-        // beause the weekDIfference  = 0. (Need to also check that the day is the day, Sept 27 = Sept 27 so we don't end the program too early)
-        /****************************** ****************************/
-        const currentWeek = currWeek - 1;
-        updatedState['currentWeek'] = currentWeek;
-
-        let workoutStructure;
-        const day = getDayOfTheWeekStringFromDate(new Date());
-
-        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[currentWeek][day]);
-        this.workoutStructure = workoutStructure;
-
-        if (this.workoutStructure.length != 0) {
-            this.hasWorkouts = true;
-            updatedState['hasWorkouts'] = true;
-        } else {
-            this.hasWorkouts = false;
-            updatedState['hasWorkouts'] = false;
-            return updatedState;
-        }
+        this.currentWeek = week;
+        updatedState['currentWeek'] = week
 
         this.currentWorkoutDay = day;
         updatedState['currentWorkoutDay'] = day;
+
+        if (week == -1 || day == -1) {
+            this.hasWorkouts = false;
+            updatedState['hasWorkouts'] = false;
+            return updatedState;
+        } else if (week == -2 && day == -2) {
+            this.hasWorkouts = true;
+            updatedState['hasWorkouts'] = true;
+        } else {
+            this.hasWorkouts = true;
+            updatedState['hasWorkouts'] = true;
+        }
+
+        let workoutStructure;
+
+        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[week][day]);
+        this.workoutStructure = workoutStructure;
 
         this.currentWorkoutStructure = workoutStructure;
         updatedState['currentWorkoutStructure'] = workoutStructure;
 
         this.currentWorkout = workoutStructure[0];
         updatedState['currentWorkout'] = workoutStructure[0];
-
-        this.videoPlaylist = [workoutStructure[0].workout_how_to_media.uri, workoutStructure[0].workout_media.uri];
-        updatedState['videoPlaylist'] = [workoutStructure[0].workout_how_to_media.uri, workoutStructure[0].workout_media.uri];
         
         this.videoPlaylistIndex = 0;
         updatedState['videoPlaylistIndex'] = 0;
@@ -195,6 +206,201 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         return updatedState;
     }
 
+    this.updateExerciseSetsLive = async (exerciseID, sets) => {
+        let currentWorkoutStructure = [], currentWorkout = getLupaExerciseStructure()
+        await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value', (snapshot) => {
+            currentWorkoutStructure = snapshot.val().currentWorkoutStructure;
+            currentWorkout = snapshot.val().currentWorkout;
+        });
+
+        for (let i = 0; i < currentWorkoutStructure.length; i++) {
+            if (currentWorkoutStructure[i].workout_uid == exerciseID) {
+                currentWorkoutStructure[i].workout_sets = sets;
+                if (currentWorkout.workout_uid == exerciseID) {
+                    currentWorkout.workout_sets = sets;
+                }
+
+                await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+                .update({ 
+                    currentWorkoutStructure: currentWorkoutStructure,
+                    currentWorkout: currentWorkout
+                }).then(() => {
+                    this.updateStoredProgramStructure(currentWorkoutStructure)
+                });
+
+                continue;
+            }
+        }
+    }
+
+    this.changeWeekAndDay = async (week, day) => {
+        let updatedState = {}
+        if (week == -1 || day == -1) {
+            this.hasWorkouts = false;
+            updatedState['hasWorkouts'] = false;
+            return updatedState;
+        } else if (week == -2 && day == -2) {
+            this.hasWorkouts = true;
+            updatedState['hasWorkouts'] = true;
+        } else {
+            this.hasWorkouts = true;
+            updatedState['hasWorkouts'] = true;
+        }
+
+        let workoutStructure;
+
+        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[week][day]);
+        this.workoutStructure = workoutStructure;
+
+        this.currentWorkoutStructure = workoutStructure;
+        updatedState['currentWorkoutStructure'] = workoutStructure;
+
+        this.currentWorkout = workoutStructure[0];
+        updatedState['currentWorkout'] = workoutStructure[0];
+        
+        this.restTime = workoutStructure[0].workout_rest_time;
+        updatedState['restTime'] = workoutStructure[0].workout_rest_time;
+
+        this.currentWorkoutOriginalReps = workoutStructure[0].workout_reps;
+        updatedState['currentWorkoutOriginalReps'] = workoutStructure[0].workout_reps;
+
+        this.currentWorkoutIndex = 0;
+        updatedState['currentWorkoutIndex'] = 0;
+
+        this.showFinishedDayDialog = false;
+        updatedState['showFinishedDayDialog'] = false;
+
+        this.restTimerStarted = false;
+        updatedState['restTimerStarted'] = false;
+
+        this.restTimerVisible = false;
+        updatedState['restTimerVisible'] = false;
+
+        if (workoutStructure.length != 0) {
+            let exercise = getLupaExerciseStructure();
+            let stepperData = []
+            let labelData = []
+            let title : String = ""
+            let icon = ""
+            for (let i = 0; i < workoutStructure.length; i++) {
+                exercise = workoutStructure[i];
+                title = exercise.workout_name;
+                    switch(exercise.default_media_uri) {
+                        case '':
+                            icon =  ''
+                        case 'Traps':
+                            icon =  '../../images/buildworkout/singleworkout/Traps.png'
+                        case 'Chest':
+                            icon =  '../../images/buildworkout/singleworkout/Chest.png'
+                        case 'Bicep':
+                            icon =  '../../images/buildworkout/singleworkout/Bicep.png'
+                        case 'Calves':
+                            icon =  '../../images/buildworkout/singleworkout/Calves.png'
+                        case 'Core':
+                            icon =  '../../images/buildworkout/singleworkout/Core.png'
+                        case 'Glutes':
+                            icon =  '../../images/buildworkout/singleworkout/Glutes.png'
+                        case 'Supr':
+                            icon =  '../../images/buildworkout/singleworkout/Supr.png'
+                        case 'Triceps':
+                            icon =  '../../images/buildworkout/singleworkout/Triceps.png'
+                        case 'Hip':
+                            icon =  '../../images/buildworkout/singleworkout/Hip.png'
+                        default:
+                            icon = ''
+                    }
+                
+                labelData.push(title);
+                stepperData.push({
+                    title: title,
+                    icon: icon
+                })
+    
+                title = ""
+                icon = ""
+            }
+            this.labelData = labelData;
+            this.timelineData = stepperData;
+            updatedState['labelData'] = labelData;
+            updatedState['timelineData'] = stepperData;
+        }
+
+        LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+        .update({ 
+            currentWeek: week,
+            currentWorkoutDay: day,
+            ...updatedState
+        })
+    }
+
+    this.updateStoredProgramStructure = async (structure) => {
+        let updatedCachedPrograms = [], updatedPrograms = [], participants : Array<LupaUserStructure> = [], currentWeek = 0, currentDay = '';
+        await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value', (snapshot) => {
+            participants = snapshot.val().participants;
+            currentWeek = snapshot.val().currentWeek;
+            currentDay = snapshot.val().currentWorkoutDay;
+        });
+
+        if (currentWeek < 0 || currentWeek > program.program_duration || typeof(currentWeek) == 'undefined') {
+            return;
+        }
+
+        if (typeof(currentDay) == 'undefined' || daysOfWeek.indexOf(currentDay) == -1) {
+            return;
+        }
+
+        for (let i = 0; i < participants.length; i++) {
+            let userUUID = participants[i].user_uuid
+            await LUPA_DB.collection('users').doc(userUUID.toString()).get().then(documentSnapshot => {
+                const userData = documentSnapshot.data();
+
+                if (userData.hasOwnProperty('program_data')) {
+                    updatedPrograms = userData.program_data;
+                    updatedCachedPrograms = userData.program_data;
+                } else {
+                    return;
+                }
+
+                for (let i = 0; i < updatedPrograms.length; i++) {
+                    if (updatedPrograms[i].program_structure_uuid == program.program_structure_uuid) {
+                        updatedPrograms[i].program_workout_structure[currentWeek][currentDay] = structure
+
+                        LUPA_DB.collection('users').doc(userUUID.toString()).update({
+                            program_data: updatedPrograms
+                        })
+                    }
+                }
+            })
+        }
+    }
+
+    this.updateExerciseRepsLive = async (exerciseID, reps) => {
+        let currentWorkoutStructure = [], currentWorkout = getLupaExerciseStructure()
+        await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value', (snapshot) => {
+            currentWorkoutStructure = snapshot.val().currentWorkoutStructure;
+            currentWorkout = snapshot.val().currentWorkout;
+        });
+
+        for (let i = 0; i < currentWorkoutStructure.length; i++) {
+            if (currentWorkoutStructure[i].workout_uid == exerciseID) {
+                currentWorkoutStructure[i].workout_reps = reps;
+                if (currentWorkout.workout_uid == exerciseID) {
+                    currentWorkout.workout_reps = reps;
+                }
+
+                await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+                .update({ 
+                    currentWorkoutStructure: currentWorkoutStructure,
+                    currentWorkout: currentWorkout
+                }).then(() => {
+                    this.updateStoredProgramStructure(currentWorkoutStructure)
+                });
+
+                continue;
+            }
+        }
+    }
+
     this.playNext = () => {
         this.videoPlaylistIndex = 1;
         let updatedState = {}
@@ -222,6 +428,23 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         }
 
         return exerciseStructure;
+    }
+
+    this.getCurrentWeek = () => {
+        let currentWeek = -1;
+        LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value').then((snapshot) => {
+            currentWeek = (snapshot.val() && snapshot.val().currentWeek) || -1;
+          });
+
+        return currentWeek;
+    }
+
+    this.getCurrentDay = async () => {
+        let currentDay = -1;
+        LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value').then((snapshot) => {
+            currentDay = (snapshot.val() && snapshot.val().currentDay) || '';
+          });
+        return currentDay;
     }
 
     this.advanceWorkout = async () => {

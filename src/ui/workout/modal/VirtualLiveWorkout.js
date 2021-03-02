@@ -138,6 +138,7 @@ class VirtualLiveWorkout extends React.Component {
             currentWorkoutIndex: 0,
             playVideo: false,
             contentShowing: false,
+            participants: [],
             ready: false,
             programData: getLupaProgramInformationStructure(),
             programOwnerData: getLupaUserStructure(),
@@ -153,7 +154,6 @@ class VirtualLiveWorkout extends React.Component {
             restTime: 3,
             previousWorkout: getLupaExerciseStructure("", "", "", ""),
             nextWorkout: getLupaExerciseStructure("", "", "", ""),
-            participants: [],
             timelineData: [],
             labelData: [],
             hasWorkouts: true,
@@ -169,22 +169,21 @@ class VirtualLiveWorkout extends React.Component {
 
     async componentDidMount() {
 
-        const { sessionID } = this.props.route.params;
+        const { sessionID, isFirstSession } = this.props;
         await this.setupLiveWorkout();
-        this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData);
-        await this.workoutService.initLiveWorkoutSession();
+        this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData, -2, -2);
+        await this.workoutService.refreshState();
         const sessionIDNumber = await this.workoutService.getCurrentSessionIDNumber()
         const refString = LIVE_SESSION_REF.toString() + sessionIDNumber.toString();
         await LUPA_DB_FIREBASE.ref(refString.toString()).on('value', (snapshot) => {
             const data = snapshot.val();
 
             var newState = Object.assign({}, data);
-            this.setState({ ...newState }, () => {
-                if (this.state.hasWorkouts == false) {
-                    this.setState({ noWorkoutsDialogVisible: true })
-                }
-            })
-        })
+            this.setState({ ...newState })
+        });
+
+        this.workoutService.addParticipant(this.props.lupa_data.Users.currUserData);
+        await this.setState({ ready: true });
 
        {/* await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(documentSnapshot => {
             const data = documentSnapshot.data();
@@ -208,9 +207,6 @@ class VirtualLiveWorkout extends React.Component {
                 }
             }
         })*/}
-
-        this.workoutService.addParticipant(this.props.lupa_data.Users.currUserData);
-        await this.setState({ ready: true });
     }
 
 
@@ -296,6 +292,20 @@ class VirtualLiveWorkout extends React.Component {
         )
     }
 
+    renderParticipants = () => {
+        const { participants } = this.state;
+        return participants.map(user => {
+            return (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Avatar.Image style={{ marginHorizontal: 10 }} size={25} source={{ uri: user.photo_url }} />
+                    <Text style={{fontFamily: 'Avenir-Light'}}>
+                        {user.display_name}
+                    </Text>
+                </View>
+            )
+        })
+    }
+
     renderContent = () => {
         if (!this.state.ready == true|| this.state.componentDidErr == true) {
             return (
@@ -304,6 +314,7 @@ class VirtualLiveWorkout extends React.Component {
                 </View>
             )
         }
+        
 
         return (
             <View style={{flex: 1.5, justifyContent: 'space-evenly'}}>
