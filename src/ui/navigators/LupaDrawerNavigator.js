@@ -71,7 +71,7 @@ function LupaBottomTabNavigator() {
       backgroundColor: '#FFFFFF',
       borderTopWidth: 1,
       height: 75,
-      backgroundColor: '#EEEEEE',
+      backgroundColor: '#FFFFFF',
     },
   }
 

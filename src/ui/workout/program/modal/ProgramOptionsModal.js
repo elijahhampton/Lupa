@@ -6,16 +6,32 @@ import {
     Text,
     StyleSheet,
     Dimensions,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    SafeAreaView
 } from 'react-native'
-import { Divider, Appbar } from 'react-native-paper'
+import { Divider, Appbar, Button, Caption } from 'react-native-paper'
 import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import Feather1s from 'react-native-feather1s/src/Feather1s'
 import LupaController from '../../../../controller/lupa/LupaController'
 import EditProgramWorkouts from '../createprogram/buildworkout/EditProgramWorkouts'
 import ProgramInformationPreview from '../ProgramInformationPreview'
+import { LIVE_WORKOUT_MODE } from '../../../../model/data_structures/workout/types'
+import { ScrollView } from 'react-native-gesture-handler'
+import { Row } from 'native-base'
 
+const daysOfTheWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+]
+
+const a = [0,1,2,3,4]
 const TRAINER_OPTIONS = [
     {
         optionTitle: 'Edit Program',
@@ -45,9 +61,6 @@ const DEFAULT_OPTIONS = [
 const CURR_USER_OPTIONS = [
     {
         optionTitle: 'View Trainer Profile',      
-    },
-    {
-        optionTitle: 'Launch Live Workout',
     },
   /* {
         optionTitle: 'Show Program Preview',
@@ -105,14 +118,6 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         if (optionTitle == 'View Trainer Profile') {
             navigation.navigate('Profile', {
                 userUUID: program.program_owner,
-            });
-        }
-
-        if (optionTitle == 'Launch Live Workout') {
-            navigation.navigate('LiveWorkout', {
-                sessionID: currUserData.user_uuid,
-                uuid: program.program_structure_uuid,
-                workoutType: 'PROGRAM',
             });
         }
 
@@ -180,6 +185,83 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
    });
 }
 
+const handleOnLaunchWorkout = (index, day) => {
+    navigation.navigate('LiveWorkout', {
+        workoutMode: LIVE_WORKOUT_MODE.TEMPLATE,
+        sessionID: currUserData.user_uuid,
+        uuid: program.program_structure_uuid,
+        workoutType: 'PROGRAM',
+        week: index,
+    });
+
+    closeModal();
+}
+
+const renderWorkoutContent = () => {
+    return (
+    <View style={{flex: 1}}>
+        {
+            program.program_workout_structure.map((weekStructure, index, arr) => {
+                return (
+                    <>
+                   <View style={{padding: 10}}>
+                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                       <Text style={styles.weekHeaderText}>
+                           Week {index + 1}
+                       </Text>
+
+                       {
+weekStructure.length == 0 
+? 
+null 
+: 
+<Button uppercase={false} onPress={() => captureWeekAndDay(index)}>
+<Text style={{fontSize: 12}}>
+    Launch Workout
+</Text>
+</Button>
+}
+                       </View>
+                       <View>
+{
+    weekStructure.length == 0 ?
+    <Caption>
+        There are no exercises set on this day.
+    </Caption>
+    :
+    weekStructure.map(exercise => {
+        return (
+            <View style={{paddingVertical: 5}}>
+                <Text style={styles.exerciseHeaderText}>
+                    {exercise.workout_name}
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.metadataText}>
+                    Sets: {exercise.workout_sets}
+                    </Text>
+                    <Text>
+                        {" "}
+                    </Text>
+                    <Text style={styles.metadataText}>
+                    Reps: {exercise.workout_reps}
+                    </Text>
+                </View>  
+            </View>
+        )
+    })
+}
+</View>
+
+                    </View>
+                    <Divider />
+                    </>
+                )
+            })
+        }
+    </View>
+    )
+}
+
     return (
         <Modal 
             presentationStyle="fullScreen" 
@@ -197,6 +279,7 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                     />
             </Appbar.Header>
             <View style={styles.container}>
+                <ScrollView>
                 {
                     renderDefaultOptions()
                 }
@@ -206,10 +289,15 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
                 {
                     renderProgramOwnerOptions()
                 }
+                {
+                    renderWorkoutContent()
+                }
+                </ScrollView>
             </View>
    
             <EditProgramWorkouts isVisible={editWorkoutsModalIsVisible} closeModal={() => setEditWorkoutsModalIsVisible(false)} programData={program} />
             <ProgramInformationPreview ref={programPreviewRef} program={program} trainerView={true} />
+            <SafeAreaView />
         </Modal>
     )
 }
@@ -233,6 +321,23 @@ const styles = StyleSheet.create({
     },
     appBarTitleStyle: {
         alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25
+    },
+    weekHeaderText: {
+        fontSize: 16,
+        fontWeight: '700'
+    },
+    exerciseHeaderText: {
+        fontSize: 15,
+        fontWeight: '400'
+    },
+    metadataText: {
+        color: '#AAAAAA',
+        fontSize: 12,
+        fontWeight: '300'
+    },
+    dayHeaderText: {
+        fontSize: 13,
+        fontWeight: '700'
     }
 })
 

@@ -33,6 +33,10 @@ import HowToUseLupa from "./ui/user/settings/modal/HowToUseLupa";
 import { Linking } from "react-native";
 import CreateCustomExercise from "./ui/workout/modal/CreateCustomExercise";
 import BuildWorkoutController from "./ui/workout/program/createprogram/buildworkout/BuildWorkoutController";
+import { getLupaProgramInformationStructure } from "./model/data_structures/programs/program_structures";
+import InPersonWorkout from "./ui/workout/component/InPersonWorkout";
+import { LIVE_WORKOUT_MODE } from "./model/data_structures/workout/types";
+import TrainerQRCode from "./ui/user/profile/component/TrainerQRCode";
 
 const mapStateToProps = (state, action) => {
   return {
@@ -66,7 +70,8 @@ class Lupa extends React.Component {
 
   async componentDidMount() {
     generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid);
-    this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+   // this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+
   }
 
   render() {

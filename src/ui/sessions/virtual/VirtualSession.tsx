@@ -24,6 +24,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LUPA_DB from '../../../controller/firebase/firebase'
 import VirtualLiveWorkout from '../../workout/modal/VirtualLiveWorkout'
 interface Props {
+    booking: Object
 }
 
 /**
@@ -44,7 +45,7 @@ interface State {
     requesterData: LupaUserStructure,
     componentDidError: boolean,
     isFirstSession: boolean,
-    firstSessionTimer: 100
+    firstSessionTimer: 100,
 }
 
 //VIRTUAL TO DO - set countdown timer and exit out of session
@@ -72,7 +73,7 @@ class VirtualSession extends Component<Props, State> {
             trainerData: getLupaUserStructurePlaceholder(),
             requesterData: getLupaUserStructurePlaceholder(),
             componentDidError: false,
-            isFirstSession: false,
+            isFirstSession: this.props.isFirstSession,
             firstSessionTimer: 100,
             showVirtualLiveWorkout: false,
         }
@@ -82,12 +83,6 @@ class VirtualSession extends Component<Props, State> {
 
     async componentDidMount() {
         await this.generateUserData()
-
-        const bookingInfo = this.props.route.params.booking;
-        if (Object.hasOwnProperty('isFirstSession') == true) {
-            this.setState({ isFirstSession: true })
-        }
-
         await this.generateUID();
         await this.generateChannelName();
         await this.generateToken();
@@ -95,14 +90,16 @@ class VirtualSession extends Component<Props, State> {
     }
 
     generateUserData = async () => {
-        const bookingInfo = this.props.route.params.booking;
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingInfo.trainer_uuid).then(data => {
+        const { booking } = this.props;
+        console.log('@@@@@@@@@@')
+        console.log(booking);
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.trainer_uuid).then(data => {
             this.setState({ trainerData: data })
         }).catch(error => {
             this.setState({ componentDidError: true });
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(bookingInfo.requester_uuid).then(data => {
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.requester_uuid).then(data => {
             this.setState({ requesterData: data })
         }).catch(error => {
             this.setState({ componentDidError: true })
@@ -226,7 +223,8 @@ class VirtualSession extends Component<Props, State> {
     endCall = async () => {
         await this._engine?.leaveChannel()
         this.setState({peerIds: [], joinSucceed: false})
-        this.props.navigation.pop();
+        this.props.closeSession();
+        //this.props.navigation.pop();
     }
 
     getDisplayImageURI = () => {
@@ -235,14 +233,6 @@ class VirtualSession extends Component<Props, State> {
         } else {
             return this.state.trainerData.photo_url;
         }
-    }
-
-    renderFirstSessionCaption = () => {
-            return (
-                <Caption style={{color: 'white', marginVertical: 10}}>
-                This is your first consulation with {this.state.trainerData.display_name}.  This session will end in 15 minutes.
-            </Caption>
-            )
     }
 
     renderVirtualHeaderContent = () => {
@@ -254,7 +244,6 @@ class VirtualSession extends Component<Props, State> {
                   Leave Session
               </Caption>
               </TouchableOpacity>
-        {this.renderFirstSessionCaption()}
           </View>
             )
         }
@@ -319,22 +308,18 @@ class VirtualSession extends Component<Props, State> {
             return this._renderRemoteVideos()
         }
     }
-
-    renderFAB = () => {
-        if (this.state.joinSucceed == true && this.state.showVirtualLiveWorkout != true) {
-            return  <FAB small={false} onPress={() => this.setState({ showVirtualLiveWorkout: true })} icon="activity" style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" />
-      }
-             
-      }
       
       renderVirtualLiveWorkout = () => {
-      //    alert(this.props.route.params.programUID)
           if (this.state.joinSucceed == true) {
+              if (this.props.isFirstSession == false) {
                 return <VirtualLiveWorkout 
-                isVisible={this.state.showVirtualLiveWorkout} 
-                uuid={this.props.route.params.programUID} 
-                sessionID={this.props.route.params.booking.uid}
+                isVisible={true} 
+                uuid={this.props.programUID} 
+                sessionID={this.props.sessionID}
+                currentWeek={this.props.currentWeek}
+                currentDay={this.props.currentDay}
                 />
+              }
           }
       }
 
@@ -349,15 +334,14 @@ class VirtualSession extends Component<Props, State> {
                     </View>
                     :
                     <View style={{flex: 1}}>
-                        <ActivityIndicator animating={true} color="red" />
+                        <ActivityIndicator animating={true} color="#23374d" />
                     </View>
                     }
                     
                 </View>
     
-                {this.renderFAB()}
-              {this.renderVirtualLiveWorkout()}
-             {this.renderVirtualHeaderContent()}
+            {this.renderVirtualLiveWorkout()}
+            {this.renderVirtualHeaderContent()}
             </View>
         )
     }

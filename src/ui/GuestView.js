@@ -73,8 +73,6 @@ import { Pagination } from 'react-native-snap-carousel';
 import { ActionSheetIOS } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { getLupaProgramInformationStructure } from '../model/data_structures/programs/program_structures';
-import VirtualSession from './sessions/virtual/VirtualSession';
-import VirtualLiveWorkout from './workout/modal/VirtualLiveWorkout';
 import { Linking } from 'react-native';
 
 const SKILL_BASED_INTEREST = [
@@ -513,7 +511,7 @@ renderSkills = () => {
       <View style={{flex: 1}}>
       <View style={{ padding: 20 }}>
             <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
-              <Text style={{color: 'black'}}>
+              <Text style={{color: 'white'}}>
                 There are no programs available based on your interest and experience level.{" "}
               </Text>
               <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
@@ -536,7 +534,7 @@ renderSkills = () => {
                 <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
                     <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
                 </Surface>
-                <Text style={{color: 'black', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+                <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
                   {program.program_name}
                 </Text>
             <ProgramOptionsModal 
@@ -562,10 +560,10 @@ renderSkills = () => {
         <Surface style={{width: Dimensions.get('window').width - 80, height: 400, borderRadius: 10, elevation: 0}}>
             <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
         </Surface>
-        <Text style={{color: 'black', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+        <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
           {program.program_name}
         </Text>
-        <Caption style={{color: 'black', alignSelf: 'center', paddingVertical: 5}}>
+        <Caption style={{color: 'white', alignSelf: 'center', paddingVertical: 5}}>
           {program.program_description}
         </Caption>
     <ProgramOptionsModal 
@@ -687,7 +685,7 @@ renderSkills = () => {
         <View style={{flex: 1}}>
       <View style={{ padding: 20 }}>
             <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
-              <Text style={{color: 'black'}}>
+              <Text style={{color: 'white'}}>
                 There are no communities in your area.{" "}
               </Text>
               <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
@@ -746,7 +744,7 @@ renderSkills = () => {
       if (updatedAppState.Auth.isAuthenticated === false) {
         return (
           <View style={{ padding: 20, backgroundColor: 'transparent' }}>
-            <Text style={{ fontFamily: 'Avenir-Medium', color: 'black' }}>
+            <Text style={{ fontFamily: 'Avenir-Medium', color: 'white' }}>
               <Text>
                 Sorry we were not able to find any trainers in your area.{" "}
               </Text>
@@ -762,7 +760,7 @@ renderSkills = () => {
       } else {
         return (
           <View style={{ padding: 20, backgroundColor: 'transparent' }}>
-          <Text style={{ fontFamily: 'Avenir-Medium', color: 'black' }}>
+          <Text style={{ fontFamily: 'Avenir-Medium', color: 'white' }}>
             <Text>
               Sorry we were not able to find any trainers in your area.{" "}
             </Text>
@@ -802,12 +800,12 @@ renderSkills = () => {
                   </View>
                   <View style={{backgroundColor: 'transparent', alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{color: 'black', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
+                      <Text style={{color: 'white', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
                         {trainer.display_name}
                       </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{color: 'black', fontFamily: 'Avenir-Light', fontSize: 12, }}>
+                      <Text style={{color: 'white', fontFamily: 'Avenir-Light', fontSize: 12, }}>
                         {trainer.location.city}, {trainer.location.state}
                       </Text>
                     </View>
@@ -1181,7 +1179,7 @@ renderSkills = () => {
         <View style={{flex: 1}}>
   <View style={{ padding: 20 }}>
             <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
-              <Text style={{color: 'black'}}>
+              <Text style={{color: 'white'}}>
                 There are no trainers available today.{" "}
               </Text>
               <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
@@ -1213,18 +1211,18 @@ renderSkills = () => {
           <Avatar onPress={() => this.openTrainerActionSheet(trainer.user_uuid)} containerStyle={{ padding: 3, borderWidth: 2, margin: 10, borderColor: '#1089ff'}}rounded size={80} source={{ uri: trainer.photo_url }} />
           <View style={{ paddingHorizontal: 10 }}>
             <View style={{ alignItems: 'flex-start' }}>
-              <Text style={{color: 'black', fontSize: 16, fontFamily: 'Avenir-Medium' }}>
+              <Text style={{color: 'white', fontSize: 16, fontFamily: 'Avenir-Medium' }}>
                 {trainer.display_name}
               </Text>
            
               <View style={{flexDirection: 'row', flexWrap: 'wrap', width: '83%', alignItems: 'center'}}>
-             <Caption style={{color: 'black'}}>
+             <Caption style={{color: 'white'}}>
                This trainer prefers:{" "}
              </Caption>
               {trainer.trainer_metadata.training_styles.map((style, index, arr) => {
                 if (index == arr.length - 1) {
                     return (
-                      <Caption style={{color: 'black'}}>
+                      <Caption style={{color: 'white'}}>
                       {style}
                     </Caption>
                     )
@@ -1232,19 +1230,19 @@ renderSkills = () => {
 
                 if (index == arr.length - 2) {
                   return (
-                    <Caption style={{color: 'black'}}>
+                    <Caption style={{color: 'white'}}>
                     {style} and{" "}
                   </Caption>
                   )
                 }
 
                 return (
-                  <Caption style={{color: 'black'}}>
+                  <Caption style={{color: 'white'}}>
                     {style},{" "}
                   </Caption>
                 )
               })}
-              <Caption style={{color: 'black'}}>
+              <Caption style={{color: 'white'}}>
                {" "}training.
              </Caption>
                 </View>
@@ -1307,7 +1305,7 @@ renderSkills = () => {
    this.checkSearchBarState()
    const { preFilledStartTime } = this.state;
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#23374d' }}>
           <ScrollView
           onScroll={this.onScroll}
             refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.handleOnRefresh} />}
@@ -1332,7 +1330,7 @@ renderSkills = () => {
             </TouchableWithoutFeedback>
             {this.renderPaymentInformationBanner()}
             {this.renderRequestAuthenticationMessage()}
-            <View style={{marginVertical: 10, height: 200, backgroundColor: 'black'}}>
+            <View style={{marginVertical: 10, height: 200, backgroundcolor: 'white'}}>
               <Swiper showsPagination={false} showsButtons={false} dotColor="#FFFFFF" autoplay={true} >
                 <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
                 <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
@@ -1385,7 +1383,7 @@ renderSkills = () => {
            
             </View>
             {this.renderSkills()}
-            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+    
             <View style={{marginVertical: 0, paddingVertical: 15, width: '100%' }}>
               <View style={{  width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Text style={styles.sectionHeaderText}>
@@ -1403,7 +1401,6 @@ renderSkills = () => {
              />
             </View>
 
-            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
 
               <View style={{marginVertical: 5}}>
               <Text style={styles.sectionHeaderText}>
@@ -1414,7 +1411,7 @@ renderSkills = () => {
               </View>
             </View>
 
-            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+      
     
             <View style={{ marginVertical: 5, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1428,10 +1425,10 @@ renderSkills = () => {
             </View>
 
             {this.renderCreateAccountSection()}
-            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
-            <View style={{ backgroundColor: '#FFFFFF', paddingVertical: 15, marginVertical: 5, width: '100%' }}>
+
+            <View style={{ paddingVertical: 15, marginVertical: 5, width: '100%' }}>
               <View style={{ paddingHorizontal: 10, width: '100%' }}>
-                <Text style={[styles.sectionHeaderText, { color: 'black', padding: 0 }]}>
+                <Text style={[styles.sectionHeaderText, { color: 'white', padding: 0 }]}>
                   Featured Program
                 </Text>
               </View>
@@ -1440,7 +1437,7 @@ renderSkills = () => {
                 {this.renderProgramOfTheDay()}
               </View>
             </View>
-            <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+
             <View style={{marginVertical: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={styles.sectionHeaderText}>
@@ -1520,7 +1517,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   sectionHeaderText: {
-    color: '#000000', fontSize: 18, padding: 10, fontFamily: 'Avenir', fontWeight: '800'
+    color: 'white', fontSize: 18, padding: 10, fontFamily: 'Avenir', fontWeight: '800'
   },
 
   inputStyle: {

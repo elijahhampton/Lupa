@@ -129,7 +129,8 @@ export type LupaUserStructure = {
         trainer_tier: Number,
         trainer_interest: Array<String>
     },
-    completed_exercises: Array<Object>
+    completed_exercises: Array<Object>,
+    personal_exercise_library: Array<Object>
 };
 
 /* LupaWorkoutDataStructure */

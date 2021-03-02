@@ -175,8 +175,9 @@ function LupaCalendar({ captureMarkedDates, isCurrentUser, uuid }) {
   }
 
   const handleOpenRequestBookingDialog = () => {
-    setBookingRequestModalVisible(true)
-
+    if (bookingRef.current) {
+      bookingRef.current.open()
+    }
   }
 
   handleOpenBookingRequest = () => {

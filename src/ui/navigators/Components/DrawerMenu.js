@@ -148,7 +148,7 @@ function DrawerMenu({ }) {
                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Avatar.Image key={userData.photo_url} source={{uri: userData.photo_url}} key={index} size={50}  style={{ elevation: 10, marginHorizontal: 20 }}  />
                       <View>
-                          <Text style={{fontSize: 16, fontFamily: 'Avenir-Heavy'}}>
+                          <Text style={{fontSize: 16, fontFamily: 'Avenir-Heavy', color: 'white'}}>
                               {userData.display_name}
                           </Text>
                       </View>
@@ -309,7 +309,7 @@ alwaysShowSend={true}
        <Text style={styles.swiperEntryContentText}>
             Whether working out or taking a break don't do it alone. Invite your friends to start a pack.
       </Text>
-          <Button onPress={handleOpenCreatePack} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
+          <Button onPress={handleOpenCreatePack} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#FFFFFF" mode="contained">
           <Text style={{fontFamily: 'Avenir'}}>
             Start a pack
           </Text>
@@ -321,7 +321,7 @@ alwaysShowSend={true}
        <Text style={styles.swiperEntryContentText}>
           Looking for workout partners?  Let us search through your community and find your perfect match.
       </Text>
-          <Button onPress={() => setMatchMeIsVisible(true)} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
+          <Button onPress={() => setMatchMeIsVisible(true)} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#FFFFFF" mode="contained">
           <Text style={{fontFamily: 'Avenir'}}>
             Match me
           </Text>
@@ -334,7 +334,7 @@ alwaysShowSend={true}
        <Text style={styles.swiperEntryContentText}>
            Find the perfect trainer for you and your friends today.
       </Text>
-          <Button onPress={() => navigation.push('Search')} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#23374d" mode="contained">
+          <Button onPress={() => navigation.push('Search')} theme={{roundness: 20}} style={{marginTop: 10}} uppercase={false} color="#FFFFFF" mode="contained">
           <Text style={{fontFamily: 'Avenir'}}>
             Find a trainer
           </Text>
@@ -424,7 +424,7 @@ alwaysShowSend={true}
    
       <View style={styles.drawerHeader}>
         <View style={{flexDirection: 'row', alignItems: 'center',}}>
-        <Appbar.BackAction onPress={showChat === true ? () => setShowChat(false) : () => navigation.dispatch(DrawerActions.closeDrawer())} color="black" size={20} />
+        <Appbar.BackAction onPress={showChat === true ? () => setShowChat(false) : () => navigation.dispatch(DrawerActions.closeDrawer())} color="#FFFFFF" size={20} />
         <View style={{paddingHorizontal: 10}}>
           <Text style={styles.drawerHeaderText}>
                 {currUserData.display_name}
@@ -447,7 +447,7 @@ alwaysShowSend={true}
 {renderPacksDisplay()}
 </View>
 
-<Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
+
 <Text style={styles.sectionHeaderText}>
  Messages
 </Text>
@@ -472,7 +472,7 @@ export default DrawerMenu;
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#FFFFFF'
+      backgroundColor: '#23374d'
     },
     safeAreaView: {
       flex: 1,
@@ -505,7 +505,8 @@ export default DrawerMenu;
     drawerHeaderText: { 
       paddingVertical: 5,
       fontSize: 18,
-      fontFamily: 'Avenir-Black'
+      fontFamily: 'Avenir-Black',
+      color: 'white'
     },
     drawerHeaderSubText: {
       fontSize: 15,
@@ -528,12 +529,13 @@ export default DrawerMenu;
       marginVertical: 10, flex: 1, padding: 20, alignItems: 'center', justifyContent: 'center'
     },
     swiperEntryContentText: {
-      fontFamily: 'Avenir', textAlign: 'center'
+      fontFamily: 'Avenir', textAlign: 'center', color: 'white'
     },
     sectionHeaderText: {
       fontSize: 16,
       padding: 10,
-      fontFamily: 'Avenir-Heavy'
+      fontFamily: 'Avenir-Heavy',
+      color: 'white'
     }
   });
 

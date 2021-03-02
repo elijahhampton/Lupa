@@ -205,8 +205,23 @@ exports.makePaymentToTrainer = functions.https.onRequest(async (request, respons
       const userData = documentSnapshot.data();
 
       let updatedClientsList = userData.clients;
-      if (updatedClientsList.includes(purchaserUUID) == false) {
-        updatedClientsList.push(purchaserUUID);
+      if (typeof(updatedClientsList) == 'undefined') {
+        return;
+      }
+
+      let clientExist = false;
+      for (let i = 0; i < updatedClientsList.length; i++) {
+        if (updatedClientsList[i].client == purchaserUUID) {
+          clientExist = true;
+        }
+      }
+
+      if (clientExist == false) {
+        let clientStructure = {
+          client: purchaserUUID,
+          linkedProgram: "0"
+        }
+        updatedClientsList.push(clientStructure);
         admin.firestore().collection('users').doc(trainerUUID).update({
           clients: updatedClientsList
         })

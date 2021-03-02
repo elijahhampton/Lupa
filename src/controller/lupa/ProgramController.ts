@@ -135,6 +135,27 @@ export default class ProgramController {
                 completedProgram: true,
             })
 
+            let programsList = [];
+            const userUUID = await LUPA_AUTH.currentUser.uid;
+            await USERS_COLLECTION
+                .doc(userUUID)
+                .get()
+                .then(async snapshot => {
+                    programsList = snapshot.data().program_data;
+                    
+                    await PROGRAM_COLLECTION.doc(programUUID).get().then(snapshot => {
+                        const data = snapshot.data();
+                        programsList.push(data);
+                    });
+    
+                    USERS_COLLECTION.doc(userUUID).update({
+                        program_data: programsList
+                    })
+                })
+                .catch(error => {
+                    return Promise.resolve([]);
+                })
+
             return Promise.resolve(true);
         } catch (error) {
             return Promise.resolve(false);

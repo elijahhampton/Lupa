@@ -82,7 +82,7 @@ class CreateProgram extends React.Component {
         const newProgramData = {
             ...this.state.programData,
             programDuration: programDuration,
-            program_workout_days: programDays
+           // program_workout_days: programDays
         }
 
         this.initializeProgram(programType, programDuration, programDays).then(() => {
@@ -98,10 +98,9 @@ class CreateProgram extends React.Component {
 
     saveProgramMetadata = async (title, description, tags, price) => {
         LOG('CreateProgram.js', 'Updating program metadata: ' + this.state.uuid);
-
         await this.LUPA_CONTROLLER_INSTANCE.updateProgramMetadata(this.state.uuid, title, description, tags, price).then(async result => {
             if (result) {
-                const programUUID = this.state.programData.program_structure_uuid;
+                const programUUID = this.state.uuid;
                 await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('programs', programUUID, 'add');
                 await this.LUPA_CONTROLLER_INSTANCE.updateCurrentUser('program_data', this.state.programData, 'add');
                 await this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(programUUID).then(async data => {
@@ -172,8 +171,9 @@ class CreateProgram extends React.Component {
         }
     }
 
-    componentDidErr() {
-        this.exit();
+    componentDidErr(error, info) {
+        alert(error)
+       // this.exit();
         LUPA_DB.collection('programs').doc(this.state.uuid).delete();
     }
 

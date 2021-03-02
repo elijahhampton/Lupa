@@ -89,13 +89,15 @@ class Search extends React.Component {
             // Prevent default action
            // e.preventDefault();
 
-           if (this.props.route.params?.hasOwnProperty('categoryToSearch') == true) {
-               if (this.props.route.params.categoryToSearch != '' || this.props.route.params.categoryToSearch != undefined) {
-                this.setState({ categoryIsPressed: true, categoryToSearch: this.props.route.params['categoryToSearch']})
-               }
+           const { categoryToSearch } = this.props.route.params
+           if (typeof(categoryToSearch) == 'undefined' || categoryToSearch == '' || categoryToSearch == null) {
+            this.setState({ categoryIsPressed: false }, () => {
+                this.setState({ categoryToSearch: '' })
+            })
            } else {
-               this.setState({ categoryIsPressed: false, categoryToSearch: '' })
-           }
+        this.setState({ categoryIsPressed: true, categoryToSearch: categoryToSearch})
+       }
+
           });
 
         navigationBlurListenerSubscription = navigation.addListener('blur', () => {
@@ -395,7 +397,7 @@ class Search extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#23374d'
     },
     searchContainerStyle: {
         backgroundColor: "transparent", 

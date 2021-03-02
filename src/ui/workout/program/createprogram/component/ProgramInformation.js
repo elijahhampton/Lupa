@@ -73,27 +73,11 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
 
   const [programDuration, setProgramDuration] = useState(1);
   const [programWorkoutDays, setProgramWorkoutDays] = useState([]);
-  const [programType, setProgramType] = useState('normal')
+  const [programType, setProgramType] = useState('template')
   const [learnMoreDialogIsVisible, setLearnMoreDialogIsVisible] = useState(false);
 
   const handleSaveProgramInformation = () => {
     saveProgramInformation(programType, programDuration, programWorkoutDays);
-  }
-
-  const handleOnPickDay = (day) => {
-    if (!programWorkoutDays.includes(day)) {
-      setProgramWorkoutDays(days => [...days, day])
-    } else {
-      setProgramWorkoutDays(days => days.splice(days.indexOf(day), 1));
-    }
-  }
-
-  const getProgramTypeColor = (type) => {
-    if (programType == type) {
-      return '#1089ff'
-    } else {
-      return 'grey'
-    }
   }
 
   return (
@@ -125,83 +109,12 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 {programDuration} Weeks
               </Caption>
                 </View>
-                <View style={{paddingVertical: 10,}}>
-                  <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
-              <View style={{ flexDirection: 'row', paddingVertical: 5, alignItems: 'center', justifyContent: 'space-between'}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <FeatherIcon name="calendar" size={18} style={{marginRight: 5}} />
-              <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
-                Add workout days 
-              </Text>
-              </View>
-              <Caption>
-                  ({programWorkoutDays.length}) selected
-                </Caption>
-              </View>
-              <Text style={{ color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
-                Which days will exercise be required?
-              </Text>
-              </View>
-              <View>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {
-                    daysOfTheWeek.map(day => {
-                      if (programWorkoutDays.includes(day)) {
-                        return (
-                        <Chip 
-                        onPress={() => handleOnPickDay(day)} 
-                        key={day} 
-                        textStyle={{color: 'white'}}
-                        style={{ elevation: 3, marginHorizontal: 10, backgroundColor: '#1089ff', width: 100, alignItems: 'center', justifyContent: 'center'}}>
-                        {day}
-                      </Chip>
-                        )
-                      }
-                      return (
-                        <Chip onPress={() => handleOnPickDay(day)} key={day} style={{ marginHorizontal: 10, backgroundColor: '#EEEEEE', width: 100, alignItems: 'center', justifyContent: 'center'}}>
-                        {day}
-                      </Chip>
-                      )
-                    })
-                  }
-                </ScrollView>
-              </View>
-                </View>
-
-                <View style={{paddingVertical: 10,}}>
-                  <View style={{paddingHorizontal: 20, paddingVertical: 15}}>
-              <View style={{ flexDirection: 'row', paddingVertical: 5, alignItems: 'center', justifyContent: 'space-between'}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <FeatherIcon name="calendar" size={18} style={{marginRight: 5}} />
-              <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
-                Choose a program type
-              </Text>
-              </View>
-              </View>
-              <Text style={{ color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
-                Which type of program will you be creating?
-              </Text>
-              </View>
-
-              <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                  <Button mode="text" onPress={() => setProgramType('normal')} color={getProgramTypeColor('normal')}>
-                    Normal
-                  </Button>
-
-                  <Button mode="text" onPress={() => setProgramType('template')} color={getProgramTypeColor('template')}>
-                    Template
-                  </Button>
-              </View>
-   
-                </View>
-
 
             </View>
             <View style={{flex: 2, padding: 20, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-evenly'}}>
               <Button
               onPress={handleSaveProgramInformation}
               color="#1089ff"
-              disabled={programWorkoutDays.length > 0 ? false : true}
               uppercase={false}
               mode="contained"
               theme={{roundness: 15}}
@@ -221,8 +134,6 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
   )
 }
 
-
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -232,7 +143,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, elevation: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: '#FFFFFF'
   },
   appBarTextStyle: {
-    alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25
+    alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 18
   },
   contentContainer: {
     flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20

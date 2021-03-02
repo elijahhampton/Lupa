@@ -105,9 +105,9 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     }
 
 
-    const handleLinkProgramToClient = (clientUID, program) => {
+    const handleLinkProgramToClient = (trainerUID, clientUID, program) => {
         //TODO: update in redux
-        LUPA_CONTROLLER_INSTANCE.linkProgramToClient(clientUID, program);
+        LUPA_CONTROLLER_INSTANCE.linkProgramToClient(trainerUID, clientUID, program);
         setLinkProgramDialogVisible(false);
     }
 
@@ -229,16 +229,19 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
 
     const renderLinkProgramDialog = () => {
         return (
-            <Dialog visible={linkProgramDialogVisible} style={{borderRadius: 20}}>
+            <Dialog visible={linkProgramDialogVisible}  style={{height: Dimensions.get('window').height / 2, borderRadius: 20}}>
                 <Dialog.Title>
                     Link a program to this client
                 </Dialog.Title>
                 <Dialog.Content>
-                    <Dialog.ScrollArea>
+                    <Dialog.ScrollArea style={{height: '70%'}}>
                         <ScrollView>
                             {
                                 getLupaStoreState().Programs.currUserProgramsData.map(program => {
-                                    
+                                    if (typeof(program) == 'undefined') {
+                                        return;
+                                    }
+
                                     if (program.program_structure_uuid == linkedProgram.program_structure_uuid) {
                                         return <Text style={{marginVertical: 10, fontSize: 20, fontWeight: 'bold'}}> {program.program_name} </Text>
                                     }
@@ -255,9 +258,9 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                     mode="contained"
                     color="#23374d"
                     theme={{roundness: 12}}
-                    contentStyle={{width: '90%', height: 45}}
-                    style={{width: '90%', height: 45, marginVertical: 20, alignSelf: 'center'}}
-                    onPress={() => handleLinkProgramToClient(requesterUserData.user_uuid , linkedProgram)}
+
+                    style={{ marginVertical: 20, alignSelf: 'center'}}
+                    onPress={() => handleLinkProgramToClient(trainerUserData.user_uuid ,requesterUserData.user_uuid , linkedProgram)}
                     >
                         <Text style={{fontWeight: '700'}}>
                             Link Program

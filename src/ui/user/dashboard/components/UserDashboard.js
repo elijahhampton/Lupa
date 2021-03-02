@@ -179,7 +179,6 @@ function UserDashboard(props) {
                         titleStyle={{ fontSize: 18, fontFamily: 'Avenir-Heavy' }}
                         subtitle="Access all of your personal programs."
                         subtitleStyle={{ fontSize: 15, fontFamily: 'Avenir-Roman' }}
-
                         bottomDivider
                         rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}
                         onPress={() => setProgramModalIsOpen(true)}

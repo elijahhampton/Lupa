@@ -132,10 +132,10 @@ function TrainerDashboard(props) {
     return (
         <View style={{
             flex: 1,
-            backgroundColor: '#FFFFFF'
+            backgroundColor: '#23374d'
         }}>
             
-            <Header style={{ backgroundColor: '#FFFFFF', elevation: 0,}}>
+            <Header style={{ backgroundColor: '#23374d', elevation: 0,}}>
             
         <Left>
         <View style={{flexDirection: 'row', alignItems: 'center',}}>
@@ -147,7 +147,7 @@ function TrainerDashboard(props) {
           <View style={{paddingHorizontal: 10}}>
           <Text style={{ 
       fontSize: 18,
-      fontFamily: 'Avenir-Black'}}>
+      fontFamily: 'Avenir-Black', color: 'white'}}>
                 {currUserData.display_name}
               </Text>
               <Text style={{
@@ -164,11 +164,11 @@ function TrainerDashboard(props) {
 
         <Right style={{flexDirection: 'row', alignItems: 'center'}}>
        
-               <FeatherIcon  name="bell" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Notifications')} />
-               <FeatherIcon name="award" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Achievements')} />
-               <FeatherIcon name="heart" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('PickInterest')} />
-               <FeatherIcon name="activity" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('ExerciseDataLog')} />
-               <FeatherIcon name="settings" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Settings')} />
+               <FeatherIcon color="#FFFFFF" name="bell" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Notifications')} />
+               <FeatherIcon color="#FFFFFF"  name="award" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Achievements')} />
+               <FeatherIcon color="#FFFFFF" name="heart" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('PickInterest')} />
+               <FeatherIcon color="#FFFFFF"  name="activity" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('ExerciseDataLog')} />
+               <FeatherIcon color="#FFFFFF" name="settings" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Settings')} />
                
         </Right>
              
@@ -235,7 +235,7 @@ function TrainerDashboard(props) {
                       null
                       :
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                      <Text style={{fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
+                      <Text style={{color: '#FFFFFF', fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
                           Bookings
                       </Text>
                       </View>

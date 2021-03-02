@@ -44,7 +44,7 @@ import { LOG_ERROR } from "../common/Logger";
 import CommunityHome from "./community/CommunityHome";
 import Animated from "react-native-reanimated";
 
-const COLOR = "#FFFFFF";
+const COLOR = "#23374d";
 const TAB_PROPS = {
   tabStyle: { backgroundColor: COLOR },
   activeTabStyle: { backgroundColor: COLOR },
@@ -282,7 +282,7 @@ export class LupaHome extends Component {
         </Header>
         <Tabs
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })}
-          style={{ backgroundColor: '#FFFFFF'}}
+          style={{ backgroundColor: '#23374d'}}
           tabBarUnderlineStyle={{ backgroundColor: '#23374d', height: 2, alignSelf: 'center' }}
           tabContainerStyle={{ borderBottomWidth: 0}}
           renderTabBar={(props) => (

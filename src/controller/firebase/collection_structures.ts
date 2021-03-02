@@ -82,6 +82,7 @@ var lupa_user : LupaUserStructure = {
         trainer_interest: []
     },
     completed_exercises: [],
+    personal_exercise_library: []
 }
 
 export const getLupaUserStructure = (
