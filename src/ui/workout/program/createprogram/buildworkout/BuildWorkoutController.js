@@ -216,12 +216,24 @@ class BuildWorkoutController extends React.Component {
      */
     handleSaveProgramData = (workoutDays) => {
         for (let i = 0; i < workoutDays.length; i++) {
+<<<<<<< HEAD
             if (workoutDays[i].length == 0) {
                 this.setState({
                     snackBarVisible: true,
                     snackBarReason: 'You must add atleast one exercise for this week.'
                 })
                 return;
+=======
+            let days = workoutDays[i];
+            for (let j = 0; j < weekDays.length; j++) {
+                if (days[weekDays[j]].length == 0 && this.props.program_workout_days.includes(weekDays[j])) {
+                    this.setState({
+                        snackBarVisible: true,
+                        snackBarReason: 'You must add atleast one exercise to week ' + (i + 1) + ' for ' + weekDays[j]
+                    })
+                    return;
+                }
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
             }
         }
 
@@ -266,9 +278,16 @@ class BuildWorkoutController extends React.Component {
      * @param {*} placementType 
      */
     captureWorkout = (workoutObject, placementType) => {
+<<<<<<< HEAD
             const currWeek = this.getCurrentWeek();
             
             let updatedWorkout = new Exercise(workoutObject, currWeek)
+=======
+            const workoutDay = this.getCurrentDay()
+            const currWeek = this.getCurrentWeek();
+            
+            let updatedWorkout = new Exercise(workoutObject, workoutDay)
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
 
             if (typeof (workoutObject) == 'undefined') {
                 return;
@@ -282,15 +301,25 @@ class BuildWorkoutController extends React.Component {
                     workoutToUpdate = this.state.currPressedPopulatedWorkout;
                     workoutToUpdate.superset.push(updatedWorkout);
 
+<<<<<<< HEAD
                     for (let i = 0; i < this.state.workoutDays[currWeek].length; i++) {
                         if (this.state.workoutDays[currWeek][i].workout_uid == workoutToUpdate.workout_uid) {
                             newWorkoutData[currWeek][i] = workoutToUpdate;
+=======
+                    for (let i = 0; i < this.state.workoutDays[currWeek][workoutDay].length; i++) {
+                        if (this.state.workoutDays[currWeek][workoutDay].workout_uid == workoutToUpdate.workout_uid) {
+                            newWorkoutData[currWeek][workoutDay][i] = workoutToUpdate;
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
                         }
                     }
 
                     break;
                 case PLACEMENT_TYPES.EXERCISE:
+<<<<<<< HEAD
                     newWorkoutData[currWeek].push(updatedWorkout);
+=======
+                    newWorkoutData[currWeek][workoutDay].push(updatedWorkout);
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
                     break;
                 default:
             }
@@ -349,7 +378,11 @@ class BuildWorkoutController extends React.Component {
                         <Image style={{ width: 110, height: 110 }} source={require('../../../../images/timetable_icon/timetable.png')} />
 
                         <Text style={{ paddingHorizontal: 10, fontFamily: 'Avenir-Black', fontSize: 18 }}>
+<<<<<<< HEAD
                             Add your first exercise for this week.
+=======
+                            Add your first exercise to {this.getCurrentDay()} for this week.
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
                 </Text>
                     </View>
                 )
@@ -438,6 +471,65 @@ class BuildWorkoutController extends React.Component {
         )
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Renders the bottom sheet for week days.
+     */
+    renderDropdownPicker = () => {
+        if (this.props.lupa_data.Users.currUserData.isTrainer === true && this.state.ready) {
+            return (
+                <RBSheet
+                    ref={this.weekDayRBSheetRef}
+                    height={300}
+                    closeOnPressMask={true}
+                    customStyles={{
+                        wrapper: {},
+                        container: {
+                            borderRadius: 20
+                        },
+                        draggableIcon: {
+                            backgroundColor: '#000000'
+                        }
+                    }}
+                    dragFromTopOnly={true}
+                >
+                    <View style={{ flex: 1 }}>
+                        <Picker
+                            selectedValue={this.getCurrentDay()}
+                            style={{ width: '100%' }}
+                            onValueChange={(itemValue, itemIndex) =>
+                                this.setState({ currDayIndex: itemIndex })
+                            }>
+                            {
+                                this.props.programData.program_workout_days.map(day => {
+                                    return <Picker.Item label={day} value={day} />
+                                })
+                            }
+                        </Picker>
+                        <Button
+                            color="#1089ff"
+                            theme={{ roundness: 12 }}
+                            style={{ elevation: 0, alignSelf: 'center', marginVertical: 10 }}
+                            contentStyle={{ width: Dimensions.get('window').width - 20, height: 45 }}
+                            mode="contained"
+                            uppercase={false}
+                            onPress={this.closeWeekDayPicker}
+                        >
+                            <Text style={{ fontFamily: 'Avenir' }}>
+                                Done
+                        </Text>
+                        </Button>
+
+                    </View>
+                </RBSheet>
+            )
+        } else {
+            //we don't need to do anything here because the currDayIndex is already 0
+        }
+    }
+
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
     handleOnPressAddExercise = () => {
         this.setState({ currPlacementType: PLACEMENT_TYPES.EXERCISE }, () => {
 
@@ -449,6 +541,18 @@ class BuildWorkoutController extends React.Component {
         return (
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: Dimensions.get('window').width, backgroundColor: '#23374d', padding: 10, paddingVertical: Constants.statusBarHeight }}>
 
+<<<<<<< HEAD
+=======
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%' }}>
+                    <TouchableOpacity onPress={this.openWeekDayPicker}>
+                        <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                            <FeatherIcon name="chevron-down" />
+                            <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
+                                {this.getCurrentDay()}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
 
                     <TouchableOpacity onPress={this.openWeekPicker}>
                         <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
@@ -541,8 +645,13 @@ class BuildWorkoutController extends React.Component {
     checkShowSelectedStyle = (exerciseObject) => {
         const currWeek = this.getCurrentWeek();
 
+<<<<<<< HEAD
         for (let i = 0; i < this.state.workoutDays[currWeek].length; i++) {
             if (this.state.workoutDays[currWeek][i].workout_name == exerciseObject.workout_name) {
+=======
+        for (let i = 0; i < this.state.workoutDays[currWeek][workoutDay].length; i++) {
+            if (this.state.workoutDays[currWeek][workoutDay][i].workout_name == exerciseObject.workout_name) {
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
                 exerciseObject.showSelectStyle = true;
             }
         }
@@ -903,6 +1012,10 @@ class BuildWorkoutController extends React.Component {
                 <View style={{ position: 'absolute', bottom: 0 }} /* style={styles.toolbar} */>
                     {this.renderTrainerButtons()}
                 </View>
+<<<<<<< HEAD
+=======
+                {this.renderDropdownPicker()}
+>>>>>>> 291f2abb462f2b768703f29f40ba61ad0f3e9736
                 {this.renderDayOfTheWeekDropdownPicker()}
                 {this.renderAddExerciseRBSheet()}
                 {this.renderWorkoutOptionsSheet()}

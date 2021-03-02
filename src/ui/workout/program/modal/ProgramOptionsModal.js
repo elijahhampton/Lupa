@@ -192,6 +192,7 @@ const handleOnLaunchWorkout = (index, day) => {
         uuid: program.program_structure_uuid,
         workoutType: 'PROGRAM',
         week: index,
+        day: day
     });
 
     closeModal();
@@ -199,59 +200,51 @@ const handleOnLaunchWorkout = (index, day) => {
 
 const renderWorkoutContent = () => {
     return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
         {
-            program.program_workout_structure.map((weekStructure, index, arr) => {
+          program.program_workout_structure.map((weekStructure, index, arr) => {
                 return (
                     <>
                    <View style={{padding: 10}}>
-                       <View style={{flexDirection: 'row', alignItems: 'center'}}>
                        <Text style={styles.weekHeaderText}>
                            Week {index + 1}
                        </Text>
+                       <View style={{backgroundColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
+                      <Row>
+                      {
+                            daysOfTheWeek.map((day, index, arr) => {
+                                if (index == 3) {
+                                    return;
+                                }
 
-                       {
-weekStructure.length == 0 
-? 
-null 
-: 
-<Button uppercase={false} onPress={() => captureWeekAndDay(index)}>
-<Text style={{fontSize: 12}}>
-    Launch Workout
-</Text>
-</Button>
-}
-                       </View>
-                       <View>
-{
-    weekStructure.length == 0 ?
-    <Caption>
-        There are no exercises set on this day.
-    </Caption>
-    :
-    weekStructure.map(exercise => {
-        return (
-            <View style={{paddingVertical: 5}}>
-                <Text style={styles.exerciseHeaderText}>
-                    {exercise.workout_name}
-                </Text>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={styles.metadataText}>
-                    Sets: {exercise.workout_sets}
-                    </Text>
-                    <Text>
-                        {" "}
-                    </Text>
-                    <Text style={styles.metadataText}>
-                    Reps: {exercise.workout_reps}
-                    </Text>
-                </View>  
-            </View>
-        )
-    })
-}
-</View>
-
+                                return (
+                                    <>
+                                    <View style={{backgroundColor: 'red', height: 100, width: Dimensions.get('window').width / 7}}>
+                                    </View>
+                                    <View style={{height: 1, width: 1, backgroundColor: 'white'}} />
+                                    </>
+                                )
+                            })
+                        }
+                      </Row>
+                      <Row>
+                      {
+                            daysOfTheWeek.map(day => {
+                                if (index < 4) {
+                                    return;
+                                }
+                                return (
+                                    <>
+                                    <View style={{backgroundColor: 'red', height: 100, width: Dimensions.get('window').width / 7}}>
+                                    </View>
+                                    <View style={{height: 1, width: 1, backgroundColor: 'white'}} />
+                                    </>
+                                )
+                            })
+                        }
+                      </Row>
+   
+                    </View>
                     </View>
                     <Divider />
                     </>

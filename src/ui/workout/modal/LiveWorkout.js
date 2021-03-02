@@ -133,10 +133,6 @@ const daysOfTheWeek = [
     'Sunday'
 ]
 
-
-    
-
-
 function NoExercisesDialogVisible({ isVisible, programData, captureWeekAndDay }) {
     const currUserData = useSelector(state => {
         return state.Users.currUserData
@@ -156,53 +152,65 @@ function NoExercisesDialogVisible({ isVisible, programData, captureWeekAndDay })
                     return (
                         <>
                        <View style={{padding: 10}}>
-                           <View style={{flexDirection: 'row', alignItems: 'center'}}>
                            <Text style={styles.weekHeaderText}>
                                Week {index + 1}
                            </Text>
+                            {
+                                daysOfTheWeek.map(day => {
+                                    return (
+                                        <View style={{marginVertical: 5}}>
+                                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                            <Text style={styles.dayHeaderText}>
+                                                {day}
+                                            </Text>
 
-                           {
-    weekStructure.length == 0 
-    ? 
-    null 
-    : 
-    <Button uppercase={false} onPress={() => captureWeekAndDay(index)}>
-    <Text style={{fontSize: 12}}>
-        Launch Workout
-    </Text>
-</Button>
-    }
-                           </View>
-                           <View>
-    {
-        weekStructure.length == 0 ?
-        <Caption>
-            There are no exercises set on this day.
-        </Caption>
-        :
-        weekStructure.map(exercise => {
-            return (
-                <View style={{paddingVertical: 5}}>
-                    <Text style={styles.exerciseHeaderText}>
-                        {exercise.workout_name}
-                    </Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={styles.metadataText}>
-                        Sets: {exercise.workout_sets}
-                        </Text>
-                        <Text>
-                            {" "}
-                        </Text>
-                        <Text style={styles.metadataText}>
-                        Reps: {exercise.workout_reps}
-                        </Text>
-                    </View>  
-                </View>
-            )
-        })
-    }
-</View>
+                                            {
+                                            weekStructure[day].length == 0 
+                                            ? 
+                                            null 
+                                            : 
+                                            <Button uppercase={false} onPress={() => captureWeekAndDay(index, day)}>
+                                            <Text style={{fontSize: 12}}>
+                                                Launch Workout
+                                            </Text>
+                                        </Button>
+                                            }
+                                            </View>
+                                           
+                                            <View>
+                                                {
+                                                    weekStructure[day].length == 0 ?
+                                                    <Caption>
+                                                        There are no exercises set on this day.
+                                                    </Caption>
+                                                    :
+                                                    weekStructure[day].map(exercise => {
+                                                        return (
+                                                            <View style={{paddingVertical: 5}}>
+                                                                <Text style={styles.exerciseHeaderText}>
+                                                                    {exercise.workout_name}
+                                                                </Text>
+                                                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                                    <Text style={styles.metadataText}>
+                                                                    Sets: {exercise.workout_sets}
+                                                                    </Text>
+                                                                    <Text>
+                                                                        {" "}
+                                                                    </Text>
+                                                                    <Text style={styles.metadataText}>
+                                                                    Reps: {exercise.workout_reps}
+                                                                    </Text>
+                                                                </View>  
+                                                            </View>
+                                                        )
+                                                    })
+                                                }
+                                            </View>
+                                        </View>
 
+                                    )
+                                })
+                            }
                         </View>
                         <Divider />
                         </>
@@ -297,7 +305,7 @@ class LiveWorkout extends React.Component {
  
         const { workoutMode, sessionID, week, day } = this.props.route.params;
         await this.setupLiveWorkout()
-        this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData, week);
+        this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData, week, day);
         await this.workoutService.initLiveWorkoutSession();
 
         if (workoutMode == LIVE_WORKOUT_MODE.CONSULTATION) {
@@ -895,8 +903,8 @@ class LiveWorkout extends React.Component {
         )
     }
 
-    captureWeekAndDay = (week) => {
-        this.workoutService.changeWeekAndDay(week);
+    captureWeekAndDay = (week, day) => {
+        this.workoutService.changeWeekAndDay(week, day);
     }
 
     /*****  Virtual Workout */

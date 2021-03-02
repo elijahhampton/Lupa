@@ -171,7 +171,7 @@ class VirtualLiveWorkout extends React.Component {
 
         const { sessionID, isFirstSession } = this.props;
         await this.setupLiveWorkout();
-        this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData, -2);
+        this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData, -2, -2);
         await this.workoutService.refreshState();
         const sessionIDNumber = await this.workoutService.getCurrentSessionIDNumber()
         const refString = LIVE_SESSION_REF.toString() + sessionIDNumber.toString();
