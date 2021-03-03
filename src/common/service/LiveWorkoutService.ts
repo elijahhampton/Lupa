@@ -20,7 +20,7 @@ const daysOfWeek = [
     'Saturday',
 ]
 
-function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData: Array<LupaUserStructure>, program: LupaProgramInformationStructure, week : Number, day : string | number) {
+function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData: Array<LupaUserStructure>, program: LupaProgramInformationStructure, week : number, day : string | number) {
     this.trainer = trainerData;
     this.participants = []
     this.workoutStructure = ['Workout Name', 'Workout Name', 'Workout Name']
@@ -124,7 +124,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
 
         let workoutStructure;
 
-        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[week][day]);
+        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[week]['exercises']);
         this.workoutStructure = workoutStructure;
 
         this.currentWorkoutStructure = workoutStructure;
@@ -235,11 +235,11 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
 
     this.changeWeekAndDay = async (week, day) => {
         let updatedState = {}
-        if (week == -1 || day == -1) {
+        if (week == -1) {
             this.hasWorkouts = false;
             updatedState['hasWorkouts'] = false;
             return updatedState;
-        } else if (week == -2 && day == -2) {
+        } else if (week == -2) {
             this.hasWorkouts = true;
             updatedState['hasWorkouts'] = true;
         } else {
@@ -249,7 +249,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
 
         let workoutStructure;
 
-        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[week][day]);
+        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[week]['exercises']);
         this.workoutStructure = workoutStructure;
 
         this.currentWorkoutStructure = workoutStructure;

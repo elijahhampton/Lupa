@@ -341,9 +341,9 @@ const ExerciseDataLog = ({ navigation, route }) => {
                     <Text style={{fontFamily: 'Avenir', paddingVertical: 3}}>
                         One Rep Max: {exercise.one_rep_max}
                     </Text>
-                    <Text style={{fontFamily: 'Avenir',  paddingVertical: 3}}>
+                 {/*   <Text style={{fontFamily: 'Avenir',  paddingVertical: 3}}>
                         Weight Used: {exercise.exercise_weight}
-                    </Text>
+            </Text> */}
                     
                     
                 </View>

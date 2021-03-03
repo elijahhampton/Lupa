@@ -378,7 +378,7 @@ height={300}>
     }
  
     return (
-      <View style={{height: HEIGHT, backgroundColor: 'white', width: '100%'}}>
+      <View style={{height: HEIGHT, backgroundColor: '#23374d', width: '100%'}}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
         <View style={{justifyContent: 'flex-start', alignItems: 'center'}}>
         <Text style={{ fontSize: 20, fontFamily: 'Avenir-Light'}}>
@@ -470,11 +470,11 @@ height={300}>
   refreshControl={null}
   // Agenda theme
   theme={{
-  agendaDayTextColor: '#000000'
+  agendaDayTextColor: '#000000',
   }}
 
   // Agenda container style
-  style={{height: HEIGHT}}
+  style={{height: HEIGHT, backgroundColor: '#23374d'}}
 />
 
 <BookingRequestModal 

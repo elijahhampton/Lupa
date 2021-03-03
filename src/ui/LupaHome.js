@@ -288,7 +288,7 @@ export class LupaHome extends Component {
           renderTabBar={(props) => (
                 <ScrollableTab 
                 {...props} 
-                style={{ borderBottomWidth: 0, borderColor: 'rgb(174, 174, 178)',  shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR }} 
+                style={{ borderBottomWidth: 0,  borderColor: 'rgb(174, 174, 178)',  shadowRadius: 1, justifyContent: 'flex-start', elevation: 0, backgroundColor: COLOR }} 
                 tabsContainerStyle={{ justifyContent: 'flex-start', backgroundColor: COLOR,  elevation: 0 }} 
               />  
           )

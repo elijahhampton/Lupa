@@ -7,6 +7,7 @@ import {
     StyleSheet,
     Dimensions,
     TouchableWithoutFeedback,
+    ScrollView,
     SafeAreaView
 } from 'react-native'
 import { Divider, Appbar, Button, Caption } from 'react-native-paper'
@@ -17,7 +18,7 @@ import LupaController from '../../../../controller/lupa/LupaController'
 import EditProgramWorkouts from '../createprogram/buildworkout/EditProgramWorkouts'
 import ProgramInformationPreview from '../ProgramInformationPreview'
 import { LIVE_WORKOUT_MODE } from '../../../../model/data_structures/workout/types'
-import { ScrollView } from 'react-native-gesture-handler'
+import Share from 'react-native-share';
 import { Row } from 'native-base'
 
 const daysOfTheWeek = [
@@ -40,7 +41,10 @@ const TRAINER_OPTIONS = [
         optionTitle: 'Preview Program'
     },
     {
-        optionTitle: 'Share Program',
+        optionTitle: 'Share Program With a Friend',
+    },
+    {
+        optionTitle: 'Invite Friend to Program',
     },
     {
         optionTitle: 'Post to Profile',
@@ -100,8 +104,12 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
             setEditWorkoutsModalIsVisible(true)
         }
 
-        if (optionTitle == 'Share Program') {
+        if (optionTitle == 'Share Program With a Friend') {
             shareProgramOnPress(program);
+        }
+
+        if (optionTitle == 'Invite Friend to Program') {
+            inviteFriendToProgram()
         }
 
         if (optionTitle == 'Delete Program') {
@@ -111,6 +119,29 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         if (optionTitle == 'Post to Profile') {
             LUPA_CONTROLLER_INSTANCE.markProgramPublic(program.program_structure_uuid);
         }
+    }
+
+    const onShare = async () => {
+        const shareOptions = {
+            title: 'App link',
+            message: `Checkout ${program.program_name} fitness program by ${currUserData.display_name} on Lupa.`,
+            url: `https://lupa-cd0e3.web.app/programs/${program.program_structure_uuid}`,
+            social: Share.Social.SMS,
+          };
+
+          const shareResponse = await Share.open(shareOptions);
+
+          shareResponse
+          .then(() => {
+            console.log('Success')
+          })
+          .catch(error => {
+              console.log('Error!')
+          })
+      };
+
+    const inviteFriendToProgram = () => {
+        onShare()
     }
 
     const handleCurrUserOptions = (optionTitle) => {
@@ -200,51 +231,63 @@ const handleOnLaunchWorkout = (index, day) => {
 
 const renderWorkoutContent = () => {
     return (
-    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+    <View style={{flex: 1}}>
         {
-          program.program_workout_structure.map((weekStructure, index, arr) => {
+            program.program_workout_structure.map((weekStructure, index, arr) => {
                 return (
                     <>
                    <View style={{padding: 10}}>
+
+                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                        <Text style={styles.weekHeaderText}>
                            Week {index + 1}
                        </Text>
-                       <View style={{backgroundColor: 'black', justifyContent: 'center', alignItems: 'center'}}>
-                      <Row>
-                      {
-                            daysOfTheWeek.map((day, index, arr) => {
-                                if (index == 3) {
-                                    return;
-                                }
 
-                                return (
-                                    <>
-                                    <View style={{backgroundColor: 'red', height: 100, width: Dimensions.get('window').width / 7}}>
-                                    </View>
-                                    <View style={{height: 1, width: 1, backgroundColor: 'white'}} />
-                                    </>
-                                )
-                            })
-                        }
-                      </Row>
-                      <Row>
-                      {
-                            daysOfTheWeek.map(day => {
-                                if (index < 4) {
-                                    return;
-                                }
-                                return (
-                                    <>
-                                    <View style={{backgroundColor: 'red', height: 100, width: Dimensions.get('window').width / 7}}>
-                                    </View>
-                                    <View style={{height: 1, width: 1, backgroundColor: 'white'}} />
-                                    </>
-                                )
-                            })
-                        }
-                      </Row>
-   
-                    </View>
+                       {
+                                        weekStructure['exercises'].length == 0 
+                                        ? 
+                                        null 
+                                        : 
+                                        <Button color="#1089ff" uppercase={false} onPress={() => handleOnLaunchWorkout(index, index)}>
+                                        <Text style={{fontSize: 12}}>
+                                            Launch Workout
+                                        </Text>
+                                    </Button>
+                                        }
+                       </View>
+
+
+                                       
+                                        <View>
+                                            {
+                                                weekStructure['exercises'].length == 0 ?
+                                                <Caption>
+                                                    There are no exercises set on this day.
+                                                </Caption>
+                                                :
+                                                weekStructure['exercises'].map(exercise => {
+                                                    return (
+                                                        <View style={{paddingVertical: 5}}>
+                                                            <Text style={styles.exerciseHeaderText}>
+                                                                {exercise.workout_name}
+                                                            </Text>
+                                                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                                                <Text style={styles.metadataText}>
+                                                                Sets: {exercise.workout_sets}
+                                                                </Text>
+                                                                <Text>
+                                                                    {" "}
+                                                                </Text>
+                                                                <Text style={styles.metadataText}>
+                                                                Reps: {exercise.workout_reps}
+                                                                </Text>
+                                                            </View>  
+                                                        </View>
+                                                    )
+                                                })
+                                            }
+                                            </View>
+
                     </View>
                     <Divider />
                     </>

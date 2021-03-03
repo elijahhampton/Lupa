@@ -90,7 +90,7 @@ class Search extends React.Component {
            // e.preventDefault();
 
            const { categoryToSearch } = this.props.route.params
-           if (typeof(categoryToSearch) == 'undefined' || categoryToSearch == '' || categoryToSearch == null) {
+           if (typeof(categoryToSearch) == 'undefined' || categoryToSearch == '' || categoryToSearch == null || categoryToSearch === undefined) {
             this.setState({ categoryIsPressed: false }, () => {
                 this.setState({ categoryToSearch: '' })
             })

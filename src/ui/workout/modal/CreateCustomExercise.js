@@ -348,14 +348,14 @@ const CreateCustomExercise = ({
 />
 </View>
 
-<TouchableOpacity onPress={() => setAddEquipmentModalVisible(true)}>
+{/* <TouchableOpacity onPress={() => setAddEquipmentModalVisible(true)}>
 <View style={{flexDirection: 'row', alignItems: 'center'}}>
     <Feather1s name="plus" style={{paddingHorizontal: 5}} />
     <Caption>
         Add Required Equipment ({customExercise.required_eqipment.length})
     </Caption>
 </View>
-</TouchableOpacity>
+  </TouchableOpacity> */}
                     
                 </ScrollView>
                 <View style={{position: 'absolute', bottom: 25, marginVertical: 15, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>

@@ -137,6 +137,9 @@ class GuestView extends React.Component {
       featuredPrograms: [],
       featuredTrainers: [],
       nearbyCommunities: [],
+      beginnerPrograms: [],
+      dumbellExercises: [],
+      numExercisesPrograms: [],
       inviteFriendsIsVisible: false,
       programsBasedOnInterest: [],
       feedVlogs: [],
@@ -161,6 +164,7 @@ class GuestView extends React.Component {
       availableTrainers: [],
       curatedTrainers: [],
       promotedTrainers: [],
+      remoteTrainers: [],
       byLupaTrainers: [],
       currAvailableTrainersPage: 0,
       componentIsFetching: false,
@@ -169,7 +173,7 @@ class GuestView extends React.Component {
   }
 
   openProgramPreview = (program) => {
-    axios({
+   /* axios({
       headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -186,10 +190,11 @@ class GuestView extends React.Component {
      console.log(response);
   }).catch(error => {
      console.log(error)
-  })
-    /*this.setState({ previewingProgram: program }, () => {
+  })*/ 
+
+    this.setState({ previewingProgram: program }, () => {
       this.programPreview.current.open()
-    })*/
+    })
   }
 
   closeProgramPreview = () => this.programPreview.current.close();
@@ -238,8 +243,9 @@ renderSkills = () => {
     Linking.addEventListener('url', this.handleOpenURL);
 
     let docData = getLupaUserStructure();
+    let programDocData = getLupaProgramInformationStructure();
     let promotedTrainersIn = [];
-    let byLupaTrainersIn = []
+    let remoteTrainersIn = [];
 
     const bookingDate = extractDateStringFromMoment(moment());
     this.setState({ 
@@ -250,7 +256,7 @@ renderSkills = () => {
     });
 
     this.PROMOTED_TRAINERS_OBSERVER = LUPA_DB.collection('users')
-    .limit(3)
+    .limit(50)
     .where('isTrainer', '==', true)
     .onSnapshot(querySnapshot => {
       promotedTrainersIn = [];
@@ -260,34 +266,55 @@ renderSkills = () => {
           return;
         }
 
+        if (docData.trainer_metadata.training_styles.includes('Virtual')) {
+          remoteTrainersIn.push(docData);
+        }
+
         promotedTrainersIn.push(docData);
       });
 
       this.shuffle(promotedTrainersIn);
-      this.setState({ promotedTrainers: promotedTrainersIn })
+      this.shuffle(remoteTrainersIn);
+      this.setState({ promotedTrainers: promotedTrainersIn, remoteTrainers: remoteTrainersIn })
     }, error => {
-      this.setState({ promotedTrainers: [] })
+      this.setState({ promotedTrainers: [], remoteTrainers: [] })
     });
 
-    this.BY_LUPA_TRAINERS = LUPA_DB.collection('users')
-    .limit(3)
-    .where('isTrainer', '==', true)
+    let beginnerProgramsIn = [];
+    let dumbellExercisesIn = []
+    let numExercisesProgramsIn = []
+
+    this.GENERAL_PROGRAMS_OBSERVER = LUPA_DB.collection('programs')
+    .limit(50)
+    .where('completedProgram', '==', true)
+    .where('isPublic', '==', true)
     .onSnapshot(querySnapshot => {
-      byLupaTrainersIn = [];
       querySnapshot.docs.forEach(doc => {
-        docData = doc.data();
-        if (typeof (docData) == 'undefined') {
+        programDocData = doc.data();
+        if (typeof (programDocData) == 'undefined') {
           return;
         }
 
-        byLupaTrainersIn.push(docData);
+        if (programDocData.required_equipment.includes('Dumbbell')) {
+          dumbellExercisesIn.push(programDocData);
+        }
+
+        if (programDocData.num_exercises >= 12) {
+          numExercisesProgramsIn.push(programDocData);
+        }
+
+        if (programDocData.program_tags.includes('Beginner')) {
+          beginnerProgramsIn.push(programDocData);
+        }
       });
 
-      this.shuffle(byLupaTrainersIn);
-      this.setState({ byLupaTrainers: byLupaTrainersIn })
+      this.shuffle(dumbellExercisesIn);
+      this.shuffle(numExercisesProgramsIn);
+      this.shuffle(beginnerProgramsIn);
+      this.setState({ dumbellExercises: dumbellExercisesIn, numExercisesPrograms: numExercisesProgramsIn, beginnerPrograms: beginnerProgramsIn })
     }, error => {
-      this.setState({ byLupaTrainers: [] })
-    })
+      this.setState({ dumbellExercises: [], numExercisesPrograms: [], beginnerPrograms: [] })
+    });
 
     await this.fetchCuratedTrainers();
 
@@ -307,17 +334,11 @@ renderSkills = () => {
         this.setState({ programsBasedOnInterest: [] });
       })
 
-      await this.LUPA_CONTROLLER_INSTANCE.getProgramOfTheDay().then(data => {
-        if (data == -1) {
-          this.setState({ programOfTheDay: getLupaProgramInformationStructure() })
-        } else {
-          this.setState({ programOfTheDay: data})
-        }
-      })
-
-      await this.LUPA_CONTROLLER_INSTANCE.getNearbyCommunitiesBasedOnCityAndState(this.props.lupa_data.Users.currUserData.location.city, this.props.lupa_data.Users.currUserData.location.state).then(data => {
+      this.setState({ nearbyCommunities: [] })
+     /* await this.LUPA_CONTROLLER_INSTANCE.getNearbyCommunitiesBasedOnCityAndState(this.props.lupa_data.Users.currUserData.location.city, this.props.lupa_data.Users.currUserData.location.state).then(data => {
         this.setState({ nearbyCommunities: data })
       })
+      */
    
     this.setState({ componentIsFetching: false })
   }
@@ -503,6 +524,150 @@ renderSkills = () => {
 }
 }
 
+renderSkillLevelPrograms = () => {
+  const { beginnerPrograms } = this.state;
+
+  if (beginnerPrograms.length == 0) {
+    return (
+    <View style={{flex: 1}}>
+    <View style={{ padding: 20 }}>
+          <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
+            <Text style={{color: 'white'}}>
+              There are no programs available based on this experience level.{" "}
+            </Text>
+            <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
+              Find more programs by searching.
+            </Text>
+          </Text>
+        </View>
+    </View>
+    )
+  }
+  
+  return (
+    <ScrollView 
+    horizontal 
+    showsHorizontalScrollIndicator={false}>
+     {
+        beginnerPrograms.map((program, index, arr) => {
+          return (
+            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
+              <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
+                  <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
+              </Surface>
+              <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+                {program.program_name}
+              </Text>
+          <ProgramOptionsModal 
+          program={program} 
+          isVisible={this.state.programOptionsVisible} 
+          closeModal={() => this.setState({ programOptionsVisible: false })} 
+          />
+          </TouchableOpacity>
+          )
+        })
+     }
+    </ScrollView>
+  )
+
+}
+
+renderNumExercisesPrograms = () => {
+  const { numExercisesPrograms } = this.state;
+
+  if (numExercisesPrograms.length == 0) {
+    return (
+    <View style={{flex: 1}}>
+    <View style={{ padding: 20 }}>
+          <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
+            <Text style={{color: 'white'}}>
+              There are no programs available based this exercise requirement.{" "}
+            </Text>
+            <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
+              Find more programs by searching.
+            </Text>
+          </Text>
+        </View>
+    </View>
+    )
+  }
+  
+  return (
+    <ScrollView 
+    horizontal 
+    showsHorizontalScrollIndicator={false}>
+     {
+        numExercisesPrograms.map((program, index, arr) => {
+          return (
+            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
+              <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
+                  <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
+              </Surface>
+              <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+                {program.program_name}
+              </Text>
+          <ProgramOptionsModal 
+          program={program} 
+          isVisible={this.state.programOptionsVisible} 
+          closeModal={() => this.setState({ programOptionsVisible: false })} 
+          />
+          </TouchableOpacity>
+          )
+        })
+     }
+    </ScrollView>
+  )
+
+}
+
+renderSpecificEquipmentPrograms = () => {
+  const { dumbellExercises } = this.state;
+
+  if (dumbellExercises.length == 0) {
+    return (
+    <View style={{flex: 1}}>
+    <View style={{ padding: 20 }}>
+          <Text style={{ fontFamily: 'Avenir', fontSize: 16 }}>
+            <Text style={{color: 'white'}}>
+              There are no programs available with dumbbell exercises.{" "}
+            </Text>
+            <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
+              Find more programs by searching.
+            </Text>
+          </Text>
+        </View>
+    </View>
+    )
+  }
+  
+  return (
+    <ScrollView 
+    horizontal 
+    showsHorizontalScrollIndicator={false}>
+     {
+        dumbellExercises.map((program, index, arr) => {
+          return (
+            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
+              <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
+                  <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
+              </Surface>
+              <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
+                {program.program_name}
+              </Text>
+          <ProgramOptionsModal 
+          program={program}
+          isVisible={this.state.programOptionsVisible} 
+          closeModal={() => this.setState({ programOptionsVisible: false })} 
+          />
+          </TouchableOpacity>
+          )
+        })
+     }
+    </ScrollView>
+  )
+
+}
+
   renderProgramBasedOnInterest = () => {
     const { programsBasedOnInterest } = this.state;
 
@@ -514,7 +679,7 @@ renderSkills = () => {
               <Text style={{color: 'white'}}>
                 There are no programs available based on your interest and experience level.{" "}
               </Text>
-              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
                 Find more programs by searching.
               </Text>
             </Text>
@@ -628,57 +793,6 @@ renderSkills = () => {
     }
   }
 
-  renderByLupaTrainers = () => {
-    const trainersMap = this.state.byLupaTrainers;
-
-    try {
-      return trainersMap.map(trainer => {
-        if (typeof (trainer) == 'undefined') {
-          return;
-        }
-
-        return (
-          <TouchableWithoutFeedback onPress={() => this.navigateToProfile(trainer.user_uuid)} key={trainer.user_uuid} style={{ paddingHorizontal: 10, marginVertical: 10 }}>
-            <View>
-              <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-
-                <Surface style={{ elevation: 0 }}>
-                  <PaperAvatar.Image key={trainer.user_uuid} rounded size={45} source={{ uri: trainer.photo_url }} />
-                </Surface>
-
-                <View style={{ paddingHorizontal: 10 }}>
-                  <Text style={{ paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
-                    {trainer.display_name}
-                  </Text>
-
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <FeatherIcon size={10} name="map-pin" style={{ paddingRight: 3 }} />
-                    <Text style={{ fontSize: 12, fontFamily: 'Avenir-Light' }}>
-                      {trainer.location.city}, {trainer.location.state}
-                    </Text>
-                  </View>
-
-                </View>
-              </View>
-            </View>
-
-            <Paragraph style={{ fontSize: 10 }} numberOfLines={2} ellipsizeMode="tail">
-              {trainer.bio}
-            </Paragraph>
-          </TouchableWithoutFeedback>
-        )
-      });
-    } catch (error) {
-      return (
-        <View style={{ padding: 20 }}>
-          <Caption>
-            Oops it looks like something went wrong.  Check back again later.
-          </Caption>
-        </View>
-      );
-    }
-  }
-
   renderNearbyCommunities = () => {
     if (this.state.nearbyCommunities.length == 0) {
       return (
@@ -688,7 +802,7 @@ renderSkills = () => {
               <Text style={{color: 'white'}}>
                 There are no communities in your area.{" "}
               </Text>
-              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
                 Find more communities by searching.
               </Text>
             </Text>
@@ -734,6 +848,72 @@ renderSkills = () => {
         }
       </ScrollView>
     )
+  }
+
+  renderRemoteTrainers = () => {
+    const updatedAppState = getLupaStoreState()
+    const { remoteTrainers } = this.state;
+
+    if (remoteTrainers.length === 0) {
+      if (updatedAppState.Auth.isAuthenticated === false) {
+        return (
+          <View style={{ padding: 20, backgroundColor: 'transparent' }}>
+            <Text style={{ fontFamily: 'Avenir-Medium', color: 'white' }}>
+              <Text>
+                Sorry we were not able to find any remote trainers.
+              </Text>
+              <Text style={{ color: 'white' }}>
+                Try checking back again at a later date.
+                </Text>
+            </Text>
+          </View>
+        )
+      }
+    }
+
+    return (
+      <ScrollView
+        pagingEnabled={true}
+        decelerationRate={0}
+        snapToAlignment='center'
+        snapToInterval={Dimensions.get('window').width}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{backgroundColor: 'transparent'}}
+      >
+        {
+          remoteTrainers.map(trainer => {
+            if (typeof (trainer) == 'undefined') {
+              return;
+            }
+
+            return (
+              <TouchableOpacity style={{backgroundColor: 'transparent'}}  onPress={() => this.handleBookTrainerOnPress(trainer)}>
+                <Surface style={{ backgroundColor: 'transparent', elevation: 0, marginHorizontal: 5, marginVertical: 12 }} >
+                  <View style={{borderRadius: 10}}>
+                    <Image style={{borderRadius: 10,  width: 95, height: 95}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
+                  </View>
+                  <View style={{backgroundColor: 'transparent', alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={{color: 'white', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
+                        {trainer.display_name}
+                      </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={{color: 'white', fontFamily: 'Avenir-Light', fontSize: 12, }}>
+                        {trainer.location.city}, {trainer.location.state}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={{ width: '100%', height: '100%', backgroundColor: 'transparent', position: 'absolute' }} />
+                </Surface>
+              </TouchableOpacity>
+
+            )
+          })
+        }
+      </ScrollView>
+    );
   }
 
   renderCuratedTrainers = () => {
@@ -1034,7 +1214,7 @@ renderSkills = () => {
   checkSearchBarState = () => {
     if (this.state.searchBarFocused === true) {
       if (this.props.navigation) {
-        this.props.navigation.push('Search')
+        this.props.navigation.push('Search', { categoryToSearch: '' })
       }
 
       this.searchBarRef.current.blur();
@@ -1108,6 +1288,7 @@ renderSkills = () => {
           </Button>
 
         </View>
+        <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
         </>
       )
     }
@@ -1182,7 +1363,7 @@ renderSkills = () => {
               <Text style={{color: 'white'}}>
                 There are no trainers available today.{" "}
               </Text>
-              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search')}>
+              <Text style={{ color: '#1089ff' }} onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
                 Find trainers by searching and book for a future date.
               </Text>
             </Text>
@@ -1288,19 +1469,6 @@ renderSkills = () => {
     }
   }
 
-  onScroll = (event) => {
-    const { onScrollUp, onScrollDown } = this.props;
-    var currentOffset = event.nativeEvent.contentOffset.y;
-    var direction = currentOffset > this.offset ? 'down' : 'up';
-    this.offset = currentOffset;
-
-    if (direction == 'down') {
-      onScrollDown()
-    } else {
-      onScrollUp()
-    }
-  }
-
   render() {
    this.checkSearchBarState()
    const { preFilledStartTime } = this.state;
@@ -1312,7 +1480,7 @@ renderSkills = () => {
             scrollEventThrottle={1}
             bounces={false}
             showsVerticalScrollIndicator={false}>
-            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
+         {/*}   <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
               <SearchBar
                 onStartShouldSetResponder={event => false}
                 onStartShouldSetResponderCapture={event => false}
@@ -1327,12 +1495,12 @@ renderSkills = () => {
                 searchIcon={() => <FeatherIcon name="search" color="#1089ff" size={20} onPress={() => this.setState({ searchBarFocused: true })} />}
                 onFocus={() => this.setState({ searchBarFocused: true })}
                 onBlur={() => this.setState({ searchBarFocused: false })} />
-            </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback> */}
             {this.renderPaymentInformationBanner()}
             {this.renderRequestAuthenticationMessage()}
             <View style={{marginVertical: 10, height: 200, backgroundcolor: 'white'}}>
               <Swiper showsPagination={false} showsButtons={false} dotColor="#FFFFFF" autoplay={true} >
-                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
                 <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                 <Image resizeMode="center" style={{alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}} source={require('./images/banner_images/banner1.jpeg')} />
                   <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />
@@ -1350,7 +1518,7 @@ renderSkills = () => {
                 </View>
                 </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
                 <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                 <Image resizeMode="center" style={{alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}} source={require('./images/banner_images/banner2.jpeg')} />
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />
@@ -1365,7 +1533,7 @@ renderSkills = () => {
                 </TouchableWithoutFeedback>
 
 
-                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search')}>
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Search', { categoryToSearch: '' })}>
                 <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                 <Image resizeMode="center" style={{width: '100%', height: '100%'}} source={require('./images/banner_images/banner3.jpeg')} />
                 <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: 200, backgroundColor: 'rgba(0,0,0,0.4)'}} />
@@ -1424,19 +1592,21 @@ renderSkills = () => {
       
             </View>
 
-            {this.renderCreateAccountSection()}
+            <View style={{ marginVertical: 5, width: '100%' }}>
+              <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={styles.sectionHeaderText}>
+                  Check out programs for beginners
+          </Text>
+              </View>
 
-            <View style={{ paddingVertical: 15, marginVertical: 5, width: '100%' }}>
-              <View style={{ paddingHorizontal: 10, width: '100%' }}>
-                <Text style={[styles.sectionHeaderText, { color: 'white', padding: 0 }]}>
-                  Featured Program
-                </Text>
-              </View>
-        
-              <View>
-                {this.renderProgramOfTheDay()}
-              </View>
+            {/* Data */}
+             {this.renderProgramBasedOnInterest()}
+      
             </View>
+
+            
+
+            {this.renderCreateAccountSection()}
 
             <View style={{marginVertical: 10, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1449,6 +1619,40 @@ renderSkills = () => {
                 {this.renderNearbyCommunities()}
              
             </View>
+
+            <View style={{ marginVertical: 5, width: '100%' }}>
+              <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={styles.sectionHeaderText}>
+                  Programs with dumbbell exercises
+          </Text>
+              </View>
+
+            {/* DATA */}
+            {this.renderProgramBasedOnInterest()}
+            </View>
+
+            <View style={{marginVertical: 5}}>
+              <Text style={styles.sectionHeaderText}>
+                  Workout remotely from your home
+                </Text>
+              <View>
+                {this.renderRemoteTrainers()}
+              </View>
+            </View>
+
+            <View style={{ marginVertical: 5, width: '100%' }}>
+              <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={styles.sectionHeaderText}>
+                  Programs with more than 12 exercises
+          </Text>
+              </View>
+
+            {/* Data */}
+             {this.renderProgramBasedOnInterest()}
+      
+            </View>
+
+
           </ScrollView>
           <SafeAreaView style={{backgroundColor: 'rgb(27, 41, 60)'}} />
           {this.renderRBSheet()}
@@ -1517,7 +1721,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   sectionHeaderText: {
-    color: 'white', fontSize: 18, padding: 10, fontFamily: 'Avenir', fontWeight: '800'
+    color: 'white', fontSize: 20, padding: 5, fontFamily: 'Avenir-Black'
   },
 
   inputStyle: {

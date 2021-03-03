@@ -165,10 +165,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             <View style={{ marginVertical: 10, flex: 1, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
                 <TouchableOpacity onPress={navigateToFollowers}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
+                        <Text style={{ fontSize: 15, color: '#FFFFFF', fontFamily: 'Avenir-Heavy' }}>
                             {getFollowersLength()}
                         </Text>
-                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 13 }]}>
+                        <Text style={[styles.userAttributeText, { color: '#FFFFFF', fontFamily: 'Avenir', fontSize: 13 }]}>
                             Followers
                         </Text>
                     </View>
@@ -176,10 +176,10 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={navigateToFollowers}>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 15, fontFamily: 'Avenir-Heavy' }}>
+                        <Text style={{ fontSize: 15, color: '#FFFFFF', fontFamily: 'Avenir-Heavy' }}>
                             {getFollowingLength()}
                         </Text>
-                        <Text style={[styles.userAttributeText, { color: '#212121', fontFamily: 'Avenir', fontSize: 13 }]}>
+                        <Text style={[styles.userAttributeText, { color: '#FFFFFF', fontFamily: 'Avenir', fontSize: 13 }]}>
                             Following
                         </Text>
                     </View>
@@ -189,7 +189,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     }
 
     const renderLocation = () => {
-        return <Text style={[styles.userAttributeText, { color: 'rgb(35, 73, 115)', fontFamily: 'Avenir-Light' }]}>{userData.location.city}, {userData.location.state}</Text>
+        return <Text style={[styles.userAttributeText, { fontFamily: 'Avenir-Light' }]}>{userData.location.city}, {userData.location.state}</Text>
     }
 
     const renderDisplayName = () => {
@@ -217,7 +217,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                                 }
 
                                 return (
-                                    <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 10, color: 'rgb(58, 58, 61)' }}>
+                                    <Text style={{ color: 'white', fontFamily: 'Avenir-Medium', fontSize: 10,}}>
                                         {interest}, {" "}
                                     </Text>
 
@@ -235,11 +235,11 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
     const renderBio = () => {
         if (userData.bio.length == 0) {
             return isCurrentUser === true ?
-                <Caption>
+                <Caption style={{color: 'white'}}>
                     You have not setup a bio.
           </Caption>
                 :
-                <Caption>
+                <Caption style={{color: 'white'}}>
                     {userData.display_name} has not setup a bio.
         </Caption>
         }
@@ -256,7 +256,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
         if (userVlogs.length === 0) {
             return (
-                <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
+                <View style={{backgroundColor: '#23374d', flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
                         isCurrentUser === false ?
                         <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
@@ -298,7 +298,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 
         if (userPrograms.length === 0) {
             return (
-                <View style={{ flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
+                <View style={{ backgroundColor: '#23374d', flex: 1, paddingHorizontal: 10, marginTop: 20, alignItems: 'center', justifyContent: 'flex-start' }}>
                     {
                         isCurrentUser === false ?
                         <Text style={{color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800'}}>
@@ -553,13 +553,21 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
             <Appbar.BackAction onPress={() => navigation.pop()} />
-                <Appbar.Content onPress={handleHourPaymentOnPress} title={`$${userData.hourly_payment_rate}/HR`} titleStyle={{color: isCurrentUser == false ? 'black' : '#1089ff', fontWeight: '500', alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontSize: 22}}/>
-                <Appbar.Action icon={() => <FeatherIcon name="share" size={22} />} onPress={onShare} />
+                <Appbar.Content onPress={handleHourPaymentOnPress} title={`$${userData.hourly_payment_rate}/HR`} titleStyle={{color: '#FFFFFF', fontWeight: '500', alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontSize: 22}}/>
+                <Appbar.Action icon={() => <FeatherIcon color="#FFFFFF" name="share" size={22} />} onPress={onShare} />
             </Appbar.Header>
             
-            <ScrollView refreshControl={<RefreshControl onRefresh={handleOnRefresh} refreshing={refreshing} />}>
+            <ScrollView 
+                style={{backgroundColor: '#23374d'}} 
+                contentContainerStyle={{backgroundColor: '#23374d'}} 
+                refreshControl={
+                    <RefreshControl 
+                    onRefresh={handleOnRefresh} 
+                    refreshing={refreshing} 
+                    />
+                }>
                 <View>
-                    <View style={{ backgroundColor: '#FFFFFF' }}>
+                    <View style={{ backgroundColor: '#23374d' }}>
                         <View style={styles.userInformationContainer}>
                             <View style={styles.infoContainer}>
                                 {renderDisplayName()}
@@ -578,7 +586,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                 
                     <View style={{ padding: 10, }}>
                         <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: "space-between" }}>
-                            <Text style={{ fontFamily: 'Avenir-Medium', fontSize: 13 }}>
+                            <Text style={{color: 'white', fontFamily: 'Avenir-Medium', fontSize: 13 }}>
                                 Learn more
                             </Text>
                             {
@@ -594,20 +602,24 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                     </View>
                 </View>
 
-                <Tabs initialPage={2} tabBarUnderlineStyle={{  backgroundColor: '#1089ff' }} tabContainerStyle={{ backgroundColor: '#FFFFFF', borderBottomWidth: 0 }} tabBarBackgroundColor='#FFFFFF'>
-                    <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs">
-                        <View style={{ backgroundColor: '#FFFFFF' }}>
+                <Tabs 
+                    initialPage={2} 
+                    tabBarUnderlineStyle={{  backgroundColor: '#1089ff' }} 
+                    tabContainerStyle={{ backgroundColor: '#23374d', borderBottomWidth: 0 }} 
+                    tabBarBackgroundColor='#23374d'>
+                    <Tab tabStyle={{ backgroundColor: '#23374d' }} activeTabStyle={{ backgroundColor: '#23374d' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Programs">
+                        <View style={{flex: 1, backgroundColor: '#23374d' }}>
                             {renderPrograms()}
                         </View>
                     </Tab>
 
-                    <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
-                        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+                    <Tab tabStyle={{ backgroundColor: '#23374d' }} activeTabStyle={{ backgroundColor: '#23374d' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Vlogs">
+                        <View style={{ flex: 1, backgroundColor: '#23374d' }}>
                             {renderVlogs()}
                         </View>
                     </Tab>
-                    <Tab tabStyle={{ backgroundColor: '#FFFFFF' }} activeTabStyle={{ backgroundColor: '#FFFFFF' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Book Me">
-                        <View style={{ backgroundColor: '#FFFFFF', height: Dimensions.get('window').height }}>
+                    <Tab tabStyle={{ backgroundColor: '#23374d' }} activeTabStyle={{ backgroundColor: '#23374d' }} activeTextStyle={styles.activeTabHeading} textStyle={styles.inactiveTabHeading} heading="Book Me">
+                        <View style={{ backgroundColor: '#23374d', height: Dimensions.get('window').height }}>
                             <LupaCalendar captureMarkedDates={captureMarkedDate} agendaData={userData.scheduler_times} uuid={userData.user_uuid} />
                         </View>
                     </Tab>
@@ -617,7 +629,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
             {renderFAB()}
 
             <EditBioModal isVisible={editBioModalVisible} closeModalMethod={() => setEditBioModalVisible(false)} />
-        <SafeAreaView />
+      
         </View>
     )
 }
@@ -625,13 +637,15 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#23374d',
+        color: 'white',
     },
     userInformationContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#23374d',
+        color: 'white',
     },
     infoContainer: {
         flex: 3,
@@ -639,6 +653,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         paddingHorizontal: 10,
         alignItems: 'flex-start',
+        color: 'white',
 
     },
     avatarContainer: {
@@ -649,20 +664,22 @@ const styles = StyleSheet.create({
     bioText: {
         fontFamily: 'Avenir-Roman',
         fontSize: 13,
-
+        color: 'white',
     },
     certificationText: {
         fontFamily: 'Avenir-Light',
+        color: 'white',
     },
     appbar: {
         elevation: 0,
         justifyContent: 'space-between',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#23374d'
     },
     displayNameText: {
         paddingVertical: 2,
         fontSize: 20,
-        fontFamily: 'Avenir-Black'
+        fontFamily: 'Avenir-Black',
+        color: 'white',
     },
     inactiveTabHeading: {
         fontSize: 15,
@@ -679,6 +696,7 @@ color: '#1089ff'
     userAttributeText: {
         fontSize: 13,
         fontFamily: 'Avenir-Light',
+        color: 'white',
     }
 })
 

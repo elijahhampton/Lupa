@@ -135,12 +135,9 @@ function CreateNewPost({ route, navigation }) {
     }
 
     useEffect(() => {
-        setReady(ready);
-
-        if (ready) {
             titleTextInputRef.current.focus();
-        }
     }, [])
+
     return (
         <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
             <Appbar.Header style={{ backgroundColor: 'white', elevation: 0 }}>

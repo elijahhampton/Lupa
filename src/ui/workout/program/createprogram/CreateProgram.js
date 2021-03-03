@@ -161,7 +161,7 @@ class CreateProgram extends React.Component {
                         navigation={this.props.navigation} 
                         programType={this.state.programType}
                         programData={this.state.programData} 
-                        program_workout_days={this.state.programData.program_workout_days}
+                        
                         goToIndex={this.goToIndex} 
                         saveProgramWorkoutData={(workoutData, numWorkoutsAdded, equipmentList) => this.saveProgramWorkoutData(workoutData, numWorkoutsAdded, equipmentList)} 
                         /> 
@@ -173,6 +173,8 @@ class CreateProgram extends React.Component {
 
     componentDidErr(error, info) {
         alert(error)
+        console.log(error)
+        console.log(info)
        // this.exit();
         LUPA_DB.collection('programs').doc(this.state.uuid).delete();
     }
