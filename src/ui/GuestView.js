@@ -39,7 +39,7 @@ import {
   Avatar as PaperAvatar,
   Paragraph
 } from 'react-native-paper';
-import axios from 'axios';
+
 import {
   Button as ElementsButton
 } from 'react-native-elements';
@@ -173,25 +173,6 @@ class GuestView extends React.Component {
   }
 
   openProgramPreview = (program) => {
-   /* axios({
-      headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer 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`,
-      },
-      method: 'POST',
-      url: 'https://us-central1-lupa-cd0e3.cloudfunctions.net/sendTrainerEmailReferral',
-      data: JSON.stringify({
-          trainer_data: this.props.lupa_data.Users.currUserData,
-          referrer_data: this.props.lupa_data.Users.currUserData,
-          referred_user_email: this.props.lupa_data.Users.currUserData.email,
-      })
-  }).then(response => {
-     console.log(response);
-  }).catch(error => {
-     console.log(error)
-  })*/ 
-
     this.setState({ previewingProgram: program }, () => {
       this.programPreview.current.open()
     })
@@ -511,13 +492,13 @@ renderSkills = () => {
     const { currUserData } = this.props.lupa_data.Users;
 
     try {
-    if (program.program_participants.includes(currUserData.user_uuid))
+    if (program.program_participants.includes(currUserData.user_uuid) || program.program_owner == currUserData.user_uuid)
     {
       this.setState({ programOptionsVisible: true })
     }
     else
     {
-      this.setState({ programModalVisible: true })
+      this.openProgramPreview(progam);
     }
 } catch(error) {
     
@@ -551,7 +532,7 @@ renderSkillLevelPrograms = () => {
      {
         beginnerPrograms.map((program, index, arr) => {
           return (
-            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
+            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.handleCardOnPress(program)}>
               <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
                   <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
               </Surface>
@@ -599,7 +580,7 @@ renderNumExercisesPrograms = () => {
      {
         numExercisesPrograms.map((program, index, arr) => {
           return (
-            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
+            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.handleCardOnPress(program)}>
               <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
                   <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
               </Surface>
@@ -647,7 +628,7 @@ renderSpecificEquipmentPrograms = () => {
      {
         dumbellExercises.map((program, index, arr) => {
           return (
-            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
+            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.handleCardOnPress(program)}>
               <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
                   <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
               </Surface>
@@ -695,7 +676,7 @@ renderSpecificEquipmentPrograms = () => {
        {
           programsBasedOnInterest.map((program, index, arr) => {
             return (
-              <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
+              <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.handleCardOnPress(program)}>
                 <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
                     <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
                 </Surface>
@@ -1628,7 +1609,7 @@ renderSpecificEquipmentPrograms = () => {
               </View>
 
             {/* DATA */}
-            {this.renderProgramBasedOnInterest()}
+            {this.renderSkillLevelPrograms()}
             </View>
 
             <View style={{marginVertical: 5}}>
@@ -1648,7 +1629,7 @@ renderSpecificEquipmentPrograms = () => {
               </View>
 
             {/* Data */}
-             {this.renderProgramBasedOnInterest()}
+             {this.renderNumExercisesPrograms()}
       
             </View>
 
