@@ -119,6 +119,8 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
         if (optionTitle == 'Post to Profile') {
             LUPA_CONTROLLER_INSTANCE.markProgramPublic(program.program_structure_uuid);
         }
+
+        closeModal();
     }
 
     const onShare = async () => {
@@ -216,17 +218,61 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
    });
 }
 
-const handleOnLaunchWorkout = (index, day) => {
+const handleOnLaunchWorkout = (index, workoutIndex) => {
     navigation.navigate('LiveWorkout', {
         workoutMode: LIVE_WORKOUT_MODE.TEMPLATE,
         sessionID: currUserData.user_uuid,
         uuid: program.program_structure_uuid,
         workoutType: 'PROGRAM',
         week: index,
-        day: day
+        workout: workoutIndex
     });
 
     closeModal();
+}
+
+const renderCycles = (week, structure) => {
+    return Object.keys(structure).map((week, index, arr) => {
+        return (
+            <View>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                <Text>
+                    Workout {(index + 1).toString()}
+                </Text>
+
+                <Button color="#1089ff" uppercase={false} onPress={() => handleOnLaunchWorkout(week, index)}>
+                    <Text style={{fontSize: 12}}>
+                        Launch Workout
+                    </Text>
+                </Button>
+                </View>
+
+                <View>
+                    {
+                        structure[week].map((exercise, index, arr) => {
+                            return(
+                                <View style={{justifyContent: 'flex-start'}}>
+                                      <Text> {exercise.workout_name} </Text>
+                                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                          <Caption>
+                                              Sets {exercise.workout_sets}
+                                          </Caption>
+                                          <Text>
+                                                 {" "}
+                                             </Text>
+                                          <Caption>
+                                              Reps {exercise.workout_reps}
+                                          </Caption>
+                                      </View>
+                                </View>
+                            )
+                        })
+                    }
+
+                </View>
+            </View>
+        )
+    })
 }
 
 const renderWorkoutContent = () => {
@@ -234,6 +280,7 @@ const renderWorkoutContent = () => {
     <View style={{flex: 1}}>
         {
             program.program_workout_structure.map((weekStructure, index, arr) => {
+                console.log(weekStructure)
                 return (
                     <>
                    <View style={{padding: 10}}>
@@ -242,50 +289,13 @@ const renderWorkoutContent = () => {
                        <Text style={styles.weekHeaderText}>
                            Week {index + 1}
                        </Text>
-
-                       {
-                                        weekStructure['exercises'].length == 0 
-                                        ? 
-                                        null 
-                                        : 
-                                        <Button color="#1089ff" uppercase={false} onPress={() => handleOnLaunchWorkout(index, index)}>
-                                        <Text style={{fontSize: 12}}>
-                                            Launch Workout
-                                        </Text>
-                                    </Button>
-                                        }
                        </View>
 
 
                                        
                                         <View>
-                                            {
-                                                weekStructure['exercises'].length == 0 ?
-                                                <Caption>
-                                                    There are no exercises set on this day.
-                                                </Caption>
-                                                :
-                                                weekStructure['exercises'].map(exercise => {
-                                                    return (
-                                                        <View style={{paddingVertical: 5}}>
-                                                            <Text style={styles.exerciseHeaderText}>
-                                                                {exercise.workout_name}
-                                                            </Text>
-                                                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                                                <Text style={styles.metadataText}>
-                                                                Sets: {exercise.workout_sets}
-                                                                </Text>
-                                                                <Text>
-                                                                    {" "}
-                                                                </Text>
-                                                                <Text style={styles.metadataText}>
-                                                                Reps: {exercise.workout_reps}
-                                                                </Text>
-                                                            </View>  
-                                                        </View>
-                                                    )
-                                                })
-                                            }
+
+                                            {renderCycles(index, weekStructure['workouts'])}
                                             </View>
 
                     </View>

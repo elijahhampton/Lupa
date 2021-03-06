@@ -156,7 +156,7 @@ function AddTagsModal({ captureEquipmentTags, isVisible, closeModal }) {
     )
   }
 
-function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, currProgramUUID, workout, handleExerciseOnPress, handleSuperSetOnPress, programDuration, programType }) {
+function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, currProgramUUID, workout, handleExerciseOnPress, handleSuperSetOnPress, programDuration, programType, handleDeleteExercise }) {
     const [updateState, forceUpdateState] = useState(false);
 
     const [currProgramWeek, setCurrProgramWeek] = useState(0)
@@ -730,7 +730,11 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                 </View>
                             </View>
 
-
+                            <TouchableOpacity onPress={() => handleDeleteExercise(workout.workout_uid)} style={{position: 'absolute', top: -8, right: -8,}}>
+                            <View style={{backgroundColor: 'red',alignItems: 'center', justifyContent: 'center',  padding: 2,  width: 20, borderRadius: 12 }}>
+                            <FeatherIcon name="minus" color="white" />
+                            </View>
+                            </TouchableOpacity>
                         </View>
                         <Divider style={{ height: 10, backgroundColor: '#FFFFFF' }} />
                         {renderExerciseCameraModal(workout)}
@@ -840,7 +844,11 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                         </View>
                                     </View>
 
-
+                                    <TouchableOpacity onPress={() => handleDeleteExercise(workout.workout_uid)} style={{position: 'absolute', top: -8, right: -8,}}>
+                            <View style={{backgroundColor: 'red',alignItems: 'center', justifyContent: 'center',  padding: 2,  width: 20, borderRadius: 12 }}>
+                            <FeatherIcon name="minus" color="white" />
+                            </View>
+                            </TouchableOpacity>
                                 </View>
                                 <Divider style={{ height: 10, backgroundColor: '#EEEEEE' }} />
                              
@@ -921,7 +929,11 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                                     </View>
                                                 </View>
 
-
+                                                <TouchableOpacity onPress={() => handleDeleteExercise(superset.workout_uid)} style={{position: 'absolute', top: -8, right: -8,}}>
+                            <View style={{backgroundColor: 'red',alignItems: 'center', justifyContent: 'center',  padding: 2,  width: 20, borderRadius: 12 }}>
+                            <FeatherIcon name="minus" color="white" />
+                            </View>
+                            </TouchableOpacity>
                                             </View>
                                           
                                             {renderExerciseCameraModal(superset)}

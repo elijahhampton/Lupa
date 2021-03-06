@@ -116,7 +116,7 @@ function SessionDashboardComponent({ booking }) {
                         workoutMode: LIVE_WORKOUT_MODE.CONSULTATION,
                         booking: booking,
                         week: -1,
-                        day: -1
+                        workout: -1
                     })
                   } else {
                     navigation.push('LiveWorkout', {
@@ -126,7 +126,7 @@ function SessionDashboardComponent({ booking }) {
                         workoutMode: LIVE_WORKOUT_MODE.VIRTUAL,
                         booking: booking,
                         week: -1,
-                        day: -1,
+                        workout: -1,
                     })
                   }
     
@@ -169,7 +169,7 @@ function SessionDashboardComponent({ booking }) {
                          workoutMode: LIVE_WORKOUT_MODE.CONSULTATION,
                          booking: booking,
                          week: -1,
-                         day: -1
+                         workout: -1
                      })
                    } else {
                      navigation.push('LiveWorkout', {
@@ -179,7 +179,7 @@ function SessionDashboardComponent({ booking }) {
                          workoutMode: LIVE_WORKOUT_MODE.TEMPLATE,
                          booking: booking,
                          week: -1,
-                         day: -1
+                         workout: -1
                      })
                    }
      

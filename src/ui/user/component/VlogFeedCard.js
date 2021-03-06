@@ -18,6 +18,7 @@ import { Video } from 'expo-av';
 import DoubleClick from 'react-native-double-tap';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
     const currUserData = useSelector(state => {
@@ -32,6 +33,7 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
     const [shouldPlay, setShouldPlay] = useState(false);
     const [isMuted, setMuted] = useState(false);
+    const [componentDidErr, setComponentDidErr] = useState(false);
     const [showFullScreenContent, setFullScreenContentVisible] = useState(false);
 
     useEffect(() => {
@@ -39,6 +41,27 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
             setVlogOwnerData(data);
         });
     }, []);
+
+    const renderVlogControls = () => {
+        return (
+            <View style={{marginVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+                <TouchableWithoutFeedback onPress={handleOnDoubleTap}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 10}}>
+                <FeatherIcon name="message-circle" size={20}  />
+               <Text>
+                   {" "}
+               </Text>
+                <Caption>
+                    0
+                </Caption>
+                </View>    
+                </TouchableWithoutFeedback>
+
+                <FeatherIcon name="send" size={20} style={{marginHorizontal: 10}} />
+
+            </View>
+        )
+    }
 
     const renderVlogMedia = () => {
         try {
@@ -77,6 +100,7 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
     }
 
     return (
+        <>
             <DoubleClick disabled={clickable === true ? false : true} style={{width: '100%'}} singleTap={() => setShouldPlay(!shouldPlay)} doubleTap={() => handleOnDoubleTap()}>
 
        {showTopDivider === true ? <Divider style={{width: Dimensions.get('window').width, alignSelf: 'center', height: 1, backgroundColor: '#EEEEEE',}} /> : null } 
@@ -142,6 +166,8 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
 
         </Card>
         </DoubleClick>
+        {renderVlogControls()}
+        </>
     )
 }
 

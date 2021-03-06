@@ -58,10 +58,10 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_participant_category: 'individual'
 }
 
-function initializeNewProgram(uuid: String | Number, programOwner: String, programParticipants: Array<String>, programType, duration: Number, workoutDays: Array<String>) : LupaProgramInformationStructure {
+function initializeNewProgram(uuid: String | Number, programOwner: String, programParticipants: Array<String>, programType, duration: Number, programStructure) : LupaProgramInformationStructure {
     lupa_program_information_structure.program_structure_uuid = uuid;
     lupa_program_information_structure.program_duration = duration;
-    lupa_program_information_structure.program_workout_days = workoutDays;
+    lupa_program_information_structure.program_workout_structure = programStructure;
     lupa_program_information_structure.program_participants = programParticipants;
     lupa_program_information_structure.program_owner = programOwner;
     lupa_program_information_structure.program_type = programType;

@@ -211,7 +211,7 @@ function TrainerProfile({ userData, isCurrentUser, uuid }) {
                             Interest: {" "}
                         </Text>
                         {
-                            userData.trainer_metadata.training_styles.map((interest, index, arr) => {
+                            userData.interest.map((interest, index, arr) => {
                                 if (index == 3) {
                                     return;
                                 }

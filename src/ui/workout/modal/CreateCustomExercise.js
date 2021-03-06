@@ -1,14 +1,15 @@
 import { useNavigation } from '@react-navigation/native';
 import { Video } from 'expo-av';
 import React, { useState , useEffect} from 'react';
-import { ScrollView, ActionSheetIOS  } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import {
     View,
     Text,
+    ActionSheetIOS,
     StyleSheet,
     Modal as NativeModal,
     TouchableOpacity,
+    ScrollView,
     KeyboardAvoidingView,
     Dimensions,
 } from 'react-native';
@@ -16,12 +17,33 @@ import ImagePicker from 'react-native-image-picker';
 import { Input } from 'react-native-elements';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Appbar, Button, Caption, Dialog, Modal, Divider, Chip } from 'react-native-paper';
+import { Appbar, Button, Caption, Dialog, Modal, Divider, Chip, } from 'react-native-paper';
 import { Constants } from 'react-native-unimodules';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useSelector } from 'react-redux';
 import LupaController from '../../../controller/lupa/LupaController';
+import SearchableDropdown from 'react-native-searchable-dropdown';
+
+const EQUIPMENT_LIST = [
+  'Medicine Ball',
+  'Exercise Bands',
+  'Dumbells',
+  'Bodyweight',
+  'Barbell',
+  'Kettlebell',
+  'Machine Assisted',
+  'Plyometric',
+  'Bench',
+  'Exercise Ball',
+  'Pull-Up Bar',
+  'Bosu Ball',
+  'Smith Machine',
+  'Cables',
+  'TRX Straps',
+  'Hex Bar',
+  'Jump Rope'
+]
 
 const bodyParts = [
     {label: 'Traps', value: 'Traps' },
@@ -38,6 +60,138 @@ const bodyParts = [
 const EXERCISE_EQUIPMENT_LIST = [
     'Treadmill'
 ]
+
+function AddEquipmentModal({ isVisible, closeModal, captureEquipmentTags, equipmentUsed }) {
+    
+  const [updatedEquipmentUsed, setUpdatedEquipmentUsed] = useState(equipmentUsed);
+  const [searchableItems, setSearchableItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([])
+  const [forceUpdate, setForceUpdate] = useState(false);
+
+  useEffect(() => {
+          async function generateSearchableItemsList() {
+              for (let i = 0; i < EQUIPMENT_LIST.length; i++) {
+                  let entry = {
+                      name: EQUIPMENT_LIST[i],
+                      id: i
+                  }
+
+                  const updatedItemsList = searchableItems;
+                  updatedItemsList.push(entry);
+                  setSearchableItems(updatedItemsList)
+              }
+          }
+
+          generateSearchableItemsList()
+  }, [])
+
+  const renderScrollViewContent = () => {
+      if (updatedEquipmentUsed.length == 0) {
+          return (
+              <Text style={{padding: 20,fontFamily: 'Avenir'}}>
+                  Search for equipment using the drop down menu and add any you used for this exercise.
+              </Text>
+          )
+      } else {
+          return updatedEquipmentUsed.map(equipment => {
+              return (
+                  <>
+              <View style={{ paddingHorizontal: 20, paddingVertical: 5, width: Dimensions.get('window').width}}>
+                  <Text style={{fontSize: 20}}>
+                      {equipment.name}
+                  </Text>
+              </View>
+              </>
+              )
+          }) 
+
+          
+      }
+  }
+
+  const handleUpdateEquipment = () => {
+    captureEquipmentTags(updatedEquipmentUsed)
+    closeModal()
+  }
+
+  return (
+      <NativeModal animationType="slide" visible={isVisible} presentationStyle="fullScreen">
+          <View style={{flex: 1}}>
+          <View style={{flex: 1}}>
+          <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
+              <Appbar.BackAction onPress={closeModal} />
+              <Appbar.Content title="Search and Add Equipment" />
+              <Appbar.Action icon={() => <FeatherIcon color="white" size={25} name="plus" />} />
+          </Appbar.Header>
+          <SearchableDropdown
+           selectedItems={updatedEquipmentUsed}
+            onItemSelect={(item) => {
+            let newUpdatedEquipmentList = updatedEquipmentUsed;
+            newUpdatedEquipmentList.push(item)
+            setUpdatedEquipmentUsed(newUpdatedEquipmentList)
+            console.log(updatedEquipmentUsed)
+            setForceUpdate(!forceUpdate)
+          }}
+          containerStyle={{ padding: 5 }}
+          onRemoveItem={(item, index) => {
+           
+          }}
+          itemStyle={{
+            padding: 10,
+            marginTop: 2,
+            backgroundColor: '#ddd',
+            borderColor: '#bbb',
+            borderWidth: 1,
+            borderRadius: 5,
+          }}
+          itemTextStyle={{ color: '#222' }}
+          itemsContainerStyle={{ maxHeight: 140 }}
+          items={searchableItems}
+          defaultIndex={2}
+          resetValue={false}
+          textInputProps={
+            {
+              placeholder: "Try Exercise Bands",
+              underlineColorAndroid: "transparent",
+              style: {
+                  padding: 12,
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  borderRadius: 5,
+              },
+              onTextChange: text => {}
+            }
+          }
+          listProps={
+            {
+              nestedScrollEnabled: true,
+            }
+          }
+      /> 
+          <View style={{flex: 1}}>
+              <ScrollView>
+                  {renderScrollViewContent()}
+              </ScrollView>
+              <Button
+              uppercase={false}
+              onPress={handleUpdateEquipment}
+              color="#23374d"
+              mode="contained" 
+              style={{elevation: 0, width: Dimensions.get('window').width - 20, alignSelf: 'center'}}
+              theme={{roundness: 8}}
+              contentStyle={{width: '100%', height: 45}}>
+                  <Text>
+                      Update Equipment
+                  </Text>
+              </Button>
+          </View>
+      </View>
+          </View>
+          <SafeAreaView />
+      </NativeModal>
+  )
+}
+
 
 
 function AddTagsModal({ captureEquipmentTags, isVisible, closeModal }) {
@@ -338,7 +492,7 @@ const CreateCustomExercise = ({
 <DropDownPicker
     items={bodyParts}
     defaultValue={bodyPart}
-    containerStyle={{height: 40, width: Dimensions.get('window').width - 10, alignSelf: 'center'}}
+    containerStyle={{backgroundColor: 'white', height: 40, width: Dimensions.get('window').width - 10, alignSelf: 'center'}}
     style={{backgroundColor: '#fafafa'}}
     itemStyle={{
         justifyContent: 'flex-start'
@@ -348,14 +502,14 @@ const CreateCustomExercise = ({
 />
 </View>
 
-{/* <TouchableOpacity onPress={() => setAddEquipmentModalVisible(true)}>
+ <TouchableOpacity onPress={() => setAddEquipmentModalVisible(true)}>
 <View style={{flexDirection: 'row', alignItems: 'center'}}>
     <Feather1s name="plus" style={{paddingHorizontal: 5}} />
     <Caption>
         Add Required Equipment ({customExercise.required_eqipment.length})
     </Caption>
 </View>
-  </TouchableOpacity> */}
+  </TouchableOpacity>
                     
                 </ScrollView>
                 <View style={{position: 'absolute', bottom: 25, marginVertical: 15, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
@@ -372,11 +526,12 @@ const CreateCustomExercise = ({
                     </View>
             </View>
         
-            <AddTagsModal 
+            <AddEquipmentModal
+            equipmentUsed={customExercise.required_eqipment}
         captureEquipmentTags={(tags) => captureEquipmentTags(tags)} 
         isVisible={addEquipmentModalVisible} 
         closeModal={() => setAddEquipmentModalVisible(false)} />
-        
+
         </Modal>
     )
 }

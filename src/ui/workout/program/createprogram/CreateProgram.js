@@ -61,13 +61,17 @@ class CreateProgram extends React.Component {
         }
     }
 
-    initializeProgram = async (programType, programDuration, programDays) => {
+    initializeProgram = async (programType, programDuration, programStructure) => {
+        console.log('init')
+        console.log(programStructure)
        const { user_uuid } = this.props.lupa_data.Users.currUserData
-       const newProgramData = await initializeNewProgram(0, user_uuid, [user_uuid], programType, programDuration, programDays);
+       const newProgramData = await initializeNewProgram(0, user_uuid, [user_uuid], programType, programDuration, programStructure);
+       console.log('The structure')
+       console.log(newProgramData);
        await this.LUPA_CONTROLLER_INSTANCE.createNewProgram(newProgramData).then(programUUID => {
             this.setState({
                 programType: programType,
-                programData: initializeNewProgram(programUUID, user_uuid, [user_uuid], programType, programDuration, programDays),
+                programData: initializeNewProgram(programUUID, user_uuid, [user_uuid], programType, programDuration, programStructure),
                 uuid: programUUID
             }, () => console.log(this.state.programData.program_structure_uuid));
         }).catch(error => {
@@ -78,14 +82,8 @@ class CreateProgram extends React.Component {
         });
     }
 
-    saveProgramInformation = (programType, programDuration, programDays) => {
-        const newProgramData = {
-            ...this.state.programData,
-            programDuration: programDuration,
-           // program_workout_days: programDays
-        }
-
-        this.initializeProgram(programType, programDuration, programDays).then(() => {
+    saveProgramInformation = (programType, programDuration, initialStructure) => {
+        this.initializeProgram(programType, programDuration, initialStructure).then(() => {
             this.goToIndex(1)
         })
     }

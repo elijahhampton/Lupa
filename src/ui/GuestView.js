@@ -168,7 +168,8 @@ class GuestView extends React.Component {
       byLupaTrainers: [],
       currAvailableTrainersPage: 0,
       componentIsFetching: false,
-      previewingProgram: getLupaProgramInformationStructure()
+      previewingProgram: getLupaProgramInformationStructure(),
+      marketplaceProgramSkillLevel: 'beginner',
     }
   }
 
@@ -265,6 +266,9 @@ renderSkills = () => {
     let dumbellExercisesIn = []
     let numExercisesProgramsIn = []
 
+    const skillLevel = 'Beginner' //this.props.lupa_data.Users.currUserData.client_metadata.experience_level;
+    this.setState({ marketplaceProgramSkillLevel: skillLevel })
+
     this.GENERAL_PROGRAMS_OBSERVER = LUPA_DB.collection('programs')
     .limit(50)
     .where('completedProgram', '==', true)
@@ -284,7 +288,7 @@ renderSkills = () => {
           numExercisesProgramsIn.push(programDocData);
         }
 
-        if (programDocData.program_tags.includes('Beginner')) {
+        if (programDocData.program_tags.includes(skillLevel)) {
           beginnerProgramsIn.push(programDocData);
         }
       });
@@ -506,9 +510,9 @@ renderSkills = () => {
 }
 
 renderSkillLevelPrograms = () => {
-  const { beginnerPrograms } = this.state;
+  const { beginnerPrograms, marketplaceProgramSkillLevel } = this.state;
 
-  if (beginnerPrograms.length == 0) {
+  if (beginnerPrograms.length == 0 || typeof(marketplaceProgramSkillLevel) == 'undefined') {
     return (
     <View style={{flex: 1}}>
     <View style={{ padding: 20 }}>
@@ -1576,7 +1580,7 @@ renderSpecificEquipmentPrograms = () => {
             <View style={{ marginVertical: 5, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={styles.sectionHeaderText}>
-                  Check out programs for beginners
+                  Check out programs for {this.state.marketplaceProgramSkillLevel}
           </Text>
               </View>
 

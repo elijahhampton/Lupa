@@ -3099,6 +3099,19 @@ let subscribers = [];
             personal_exercise_library: updatedPersonalExerciseLibrary
         })
     }
+
+    addVlogComment = async (vlogID, comment) => {
+        await LUPA_DB.collection('vlogs').doc(vlogID).get().then(documentSnapshot => {
+            let vlogData = documentSnapshot.data();
+
+            let comments = vlogData.comments;
+            comments.push(comment);
+
+            LUPA_DB.collection('vlogs').doc(vlogID).update({
+                comments: comments
+            })
+        })
+    }   
 }
 
 //me

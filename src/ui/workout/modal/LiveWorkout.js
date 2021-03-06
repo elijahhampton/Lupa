@@ -144,6 +144,50 @@ function NoExercisesDialogVisible({ isVisible, programData, captureWeekAndDay })
 
     const navigation = useNavigation();
 
+    const renderCycles = (weekParam, structure) => {
+        return Object.keys(structure).map((week, index, arr) => {
+            return (
+                <View>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Text>
+                        Workout {(index + 1).toString()}
+                    </Text>
+    
+                    <Button color="#1089ff" uppercase={false} onPress={() => captureWeekAndDay(weekParam, index)}>
+                        <Text style={{fontSize: 12}}>
+                            Launch Workout
+                        </Text>
+                    </Button>
+                    </View>
+    
+                    <View>
+                        {
+                            structure[week].map((exercise, index, arr) => {
+                                return(
+                                    <View style={{justifyContent: 'flex-start'}}>
+                                          <Text> {exercise.workout_name} </Text>
+                                          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                              <Caption>
+                                                  Sets {exercise.workout_sets}
+                                              </Caption>
+                                             <Text>
+                                                 {" "}
+                                             </Text>
+                                              <Caption>
+                                                  Reps {exercise.workout_reps}
+                                              </Caption>
+                                          </View>
+                                    </View>
+                                )
+                            })
+                        }
+    
+                    </View>
+                </View>
+            )
+        })
+    }
+
     const renderWorkoutContent = () => {
         return (
         <View style={{flex: 1}}>
@@ -157,50 +201,14 @@ function NoExercisesDialogVisible({ isVisible, programData, captureWeekAndDay })
                            <Text style={styles.weekHeaderText}>
                                Week {index + 1}
                            </Text>
-    
-                           {
-                                            weekStructure['exercises'].length == 0 
-                                            ? 
-                                            null 
-                                            : 
-                                            <Button color="#1089ff" uppercase={false} onPress={() => captureWeekAndDay(index, index)}>
-                                            <Text style={{fontSize: 12}}>
-                                                Launch Workout
-                                            </Text>
-                                        </Button>
-                                            }
+
                            </View>
     
     
                                            
                                             <View>
-                                                {
-                                                    weekStructure['exercises'].length == 0 ?
-                                                    <Caption>
-                                                        There are no exercises set on this day.
-                                                    </Caption>
-                                                    :
-                                                    weekStructure['exercises'].map(exercise => {
-                                                        return (
-                                                            <View style={{paddingVertical: 5}}>
-                                                                <Text style={styles.exerciseHeaderText}>
-                                                                    {exercise.workout_name}
-                                                                </Text>
-                                                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                                                    <Text style={styles.metadataText}>
-                                                                    Sets: {exercise.workout_sets}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        {" "}
-                                                                    </Text>
-                                                                    <Text style={styles.metadataText}>
-                                                                    Reps: {exercise.workout_reps}
-                                                                    </Text>
-                                                                </View>  
-                                                            </View>
-                                                        )
-                                                    })
-                                                }
+    
+                                                {renderCycles(index, weekStructure['workouts'])}
                                                 </View>
     
                         </View>
@@ -453,8 +461,8 @@ class LiveWorkout extends React.Component {
         if (typeof(this.state.currentWorkout) == 'undefined') {
             return (
                 <View style={{flex: 1, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>
-                        Something went wrong with the video!
+                     <Text style={{color: 'white', paddingHorizontal: 20, alignSelf: 'center'}}>
+                      We couldn't find another exercise in this workout.  Click the menu in the top right to choose another workout or refresh this one.
                     </Text>
                 </View>
             )
@@ -467,11 +475,12 @@ class LiveWorkout extends React.Component {
             uri = "";
         }
 
-        if (uri == "" || typeof(uri) == 'undefined') {
+        if (uri == "" || uri == `""""` || uri == `""` || uri == typeof(uri) == 'undefined') {
+
             return (
                 <View style={{flex: 1, backgroundColor: 'black', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>
-                        Something went wrong with the video!
+                    <Text style={{color: 'white', paddingHorizontal: 20, alignSelf: 'center'}}>
+                        Oops.  This is embarassing.  Click the menu in the top right to choose another workout or refresh this one.
                     </Text>
                 </View>
             )
@@ -913,12 +922,7 @@ class LiveWorkout extends React.Component {
                 {this.renderFinishWorkoutWarningDialog()}
                 {this.renderRestTimerRBSheetPicker()}
                 <Appbar.BackAction color="white" style={{position: 'absolute', top: Constants.statusBarHeight, left: 0}} onPress={this.showWarningDialog} />
-                <RestTimer
-                    isVisible={this.state.restTimerVisible}
-                    restTime={this.state.restTime}
-                    currentExercise={this.state.currentWorkout}
-                    closeModal={() => this.setState({ restTimerVisible: false })}
-                />
+          
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
                 <NoExercisesDialogVisible captureWeekAndDay={(week, day) => this.captureWeekAndDay(week, day)} programData={this.state.programData} isVisible={!this.state.hasWorkouts} />
             </>

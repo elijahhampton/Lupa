@@ -17,6 +17,7 @@ import {
 import {
   Caption,
   Button,
+  Modal as PaperModal,
   Appbar,
   Chip,
   Divider,
@@ -29,6 +30,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather'
 import LupaController from '../../../../../controller/lupa/LupaController';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import LOG, { LOG_ERROR } from '../../../../../common/Logger';
+import { KeyboardAvoidingView } from 'react-native';
 
 const PRE_FILLED_TAGS = [
   'Interval Training',
@@ -61,10 +63,23 @@ const PRE_FILLED_TAGS = [
   'Very Advanced'
 ]
 
-function AddTagsModal({ captureTags, isVisible, closeModal }) {
+function AddTagsModal({ captureTags, isVisible, closeModal, openModal }) {
   const [tags, setTags] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const [externalTags, setExternalTags] = useState([]);
   const [forceUpdate, setForceUpdate] = useState(false);
+  const [extraTagsModalVisible, setExtraTagsModalVisible] = useState(false);
+
+  const handleCaptureExternalTags = (inputTags) => {
+    let updatedTags = tags;
+    updatedTags = updatedTags.concat(inputTags);
+
+    let updatedExternalTags = externalTags;
+    updatedExternalTags = updatedExternalTags.concat(inputTags);
+    
+    setExternalTags(updatedExternalTags)
+    setTags(updatedTags);
+  }
 
   const handleAddTags = (tagString) => {
     if (tags.includes(tagString)) {
@@ -126,7 +141,10 @@ function AddTagsModal({ captureTags, isVisible, closeModal }) {
           </Caption>
         </View>
 
-        <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row', margin: 10 }}>
+        <ScrollView contentContainerStyle={{  flexWrap: 'wrap', flexDirection: 'row' }}>
+          <Chip onPress={() => setExtraTagsModalVisible(true)} style={styles.tagsChipStyle} textStyle={styles.tagsChipTextStyle}>
+              Add your own
+          </Chip>
           {
             PRE_FILLED_TAGS.map(tag => {
               return (
@@ -134,7 +152,14 @@ function AddTagsModal({ captureTags, isVisible, closeModal }) {
               )
             })
           }
-        </View>
+          {
+            externalTags.map(tag => {
+              return (
+                renderPreFilledTags(tag)
+              )
+            })
+            }
+        </ScrollView>
         <Button
           mode="contained"
           color="#23374d"
@@ -151,8 +176,101 @@ function AddTagsModal({ captureTags, isVisible, closeModal }) {
 
 
       </View>
+      <ExtraTagSubmission isVisible={extraTagsModalVisible} closeModal={() => setExtraTagsModalVisible(false)} captureExternalTags={tags => handleCaptureExternalTags(tags)} />
     </Modal>
 
+  )
+}
+
+function ExtraTagSubmission({ captureExternalTags, isVisible, closeModal }) {
+  const [tags, setTags] = useState([])
+  const [inputText, setInputText] = useState("");
+  const [aggregatedText, setAggregatedText] = useState("");
+  const [forceUpdate, setForceUpdate] = useState(false);
+
+  const handleOnSubmitEditing = () => {
+    let updatedTags = []
+    updatedTags = tags;
+    updatedTags.push(inputText);
+   
+    setTags(updatedTags);
+    console.log(tags)
+    //setInputText("")
+  }
+
+  const handleOnChangeText = (text) => {
+    if (text.includes(',')) {
+      let updatedTags = tags;
+      updatedTags.push(inputText);
+
+      setTags(updatedTags);
+      setInputText("");
+      return;
+    }
+
+    setInputText(text);
+  }
+
+  const handleOnDone = () => {
+    captureExternalTags(tags);
+    setInputText("")
+    closeModal();
+  }
+
+  const deleteTag = tag => {
+    let updatedTags = tags;
+    updatedTags.splice(updatedTags.indexOf(tag), 1);
+    setTags(updatedTags);
+    setForceUpdate(!forceUpdate);
+  }
+
+  const renderTags = () => {
+    return tags.map(tag => {
+      return (
+        <Chip style={{marginHorizontal: 5}} onPress={() => deleteTag(tag)} icon={() => <FeatherIcon name="x"/>}>
+            {tag}
+        </Chip>
+      )
+    })
+  }
+
+  return (
+    <PaperModal visible={isVisible} contentContainerStyle={{backgroundColor: 'white', alignSelf: 'center', width: Dimensions.get('window').width - 20, height: 'auto', padding: 20}}>
+      <KeyboardAvoidingView style={{width: '100%', height: 'auto',}} behavior="height">
+        <TextInput 
+          returnKeyType="done"
+          returnKeyLabel="done"
+          style={{marginVertical: 10, borderBottomColor: 'black', borderBottomWidth: 2}}
+          placeholder="Add a tag" 
+          value={inputText} 
+          onChangeText={text => handleOnChangeText(text)}
+          />
+        <View>
+          {
+          tags.length != 0 ? 
+          <ScrollView horizontal> 
+            {renderTags()} 
+          </ScrollView> 
+          : 
+          <Caption style={{alignSelf: 'center'}}> 
+            Press , after typing a tag to add it to the list.
+          </Caption>
+          }
+        </View>
+        <Button
+          mode="contained"
+          color="#23374d"
+          theme={{ roundness: 8 }}
+          style={{marginVertical: 20, width: '100%', alignItems: 'center', justifyContent: 'center'}}
+          contentStyle={{  height: 45 }}
+          onPress={handleOnDone}
+          uppercase={false}>
+          <Text style={{ fontWeight: '800', fontFamily: 'Avenir-Medium' }}>
+            Done
+            </Text>
+        </Button>
+        </KeyboardAvoidingView>
+    </PaperModal>
   )
 }
 
@@ -171,6 +289,8 @@ function PublishProgram({ uuid, saveProgramMetadata, goBack, exit }) {
   const [currUserFollowers, setCurrUserFollowers] = useState([]);
 
   const [forceUpdate, setForceUpdate] = useState(false);
+
+  const [extraTagsModalVisible, setExtraTagsModalVisible] = useState(false);
 
   const shareProgramRBSheetRef = createRef();
 
@@ -332,6 +452,13 @@ function PublishProgram({ uuid, saveProgramMetadata, goBack, exit }) {
 
   const handleCaptureTags = (tags) => {
     setProgramTags(tags)
+  }
+
+  const handleCaptureExternalTags = (tags) => {
+    let updatedTags = programTags;
+    updatedTags.concat(tags);
+
+    setProgramTags(updatedTags);
   }
 
   const handleOnFinish = async () => {
@@ -531,9 +658,8 @@ function PublishProgram({ uuid, saveProgramMetadata, goBack, exit }) {
 
       </ScrollView>
 
-
-
-      <AddTagsModal isVisible={programTagModalVisible} closeModal={() => setProgramTagModalVisible(false)} captureTags={handleCaptureTags} />
+      <AddTagsModal isVisible={programTagModalVisible} openModal={() => setExtraTagsModalVisible(true)}  closeModal={() => setProgramTagModalVisible(false)} captureTags={handleCaptureTags} />
+    
       {renderShareWithFriendsModal()}
     </View>
   )
@@ -550,9 +676,12 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 20,
     padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 'auto',
   },
   tagsChipTextStyle: {
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: 'Avenir-Heavy',
     fontWeight: '800'
   },

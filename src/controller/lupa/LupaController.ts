@@ -1074,4 +1074,8 @@ export default class LupaController {
   savePersonalExercise = (userData : LupaUserStructure, exercise) => {
     USER_CONTROLLER_INSTANCE.savePersonalExercise(userData, exercise);
   }
+
+  addVlogComment = (vlogID, comment)  => {
+    USER_CONTROLLER_INSTANCE.addVlogComment(vlogID, comment);
+  }
 }

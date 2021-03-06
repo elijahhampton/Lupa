@@ -120,6 +120,7 @@ class BuildWorkoutController extends React.Component {
         this.dayOfTheWeekRBSheetRef = createRef();
         this.addExerciseRBSheetRef = createRef();
         this.addExerciseNestedRBSheetRef = createRef()
+        this.numExercisesWeekPicker = createRef();
 
         this.trackedExercises = []
 
@@ -134,6 +135,7 @@ class BuildWorkoutController extends React.Component {
             snackBarVisible: false,
             snackBarReason: '',
             workoutDays: [],
+            currWorkoutIndex: 0,
             numWorkoutsAdded: 0,
             currDayIndex: 0,
             currWeekIndex: 0,
@@ -142,6 +144,8 @@ class BuildWorkoutController extends React.Component {
             customWorkoutModalVisible: false,
             addWorkoutTags: false,
             equipmentList: [],
+            currNumExercises: 1,
+            sliderCollection: [1],
             libraryData: [
                 {
                     title: "Bodyweight",
@@ -189,20 +193,18 @@ class BuildWorkoutController extends React.Component {
             }
            workoutDays = this.props.programData.program_workout_structure
         } else {
-            workoutDays = new Array(programDuration);
+            workoutDays = this.props.programData.program_workout_structure
             for (let i = 0; i < programDuration; i++) {
                 await weeks.push(i);
-                workoutDays[i] = { 
-                    exercises: [] 
-                }
             }
         }
-
-        console.log(workoutDays)
 
 
         await this.setState({ ready: true, weeks: weeks, workoutDays: workoutDays })
     }
+
+    openNumExercisesPicker = () => this.numExercisesWeekPicker.current.open();
+    closeNumExercisesPicker = () => this.numExercisesWeekPicker.current.close();
 
     /**
      * Changes the currView state variables causing the view to render the correct view.
@@ -217,20 +219,10 @@ class BuildWorkoutController extends React.Component {
      * @param {*} workoutDays 
      */
     handleSaveProgramData = (workoutDays) => {
-       /* for (let i = 0; i < workoutDays.length; i++) {
-            let days = workoutDays[i];
-            for (let j = 0; j < Object.keys(workoutDays).length; j++) {
-                if (days[weekDays[j]].length == 0) {
-                    this.setState({
-                        snackBarVisible: true,
-                        snackBarReason: 'You must add atleast one exercise to week ' + (i + 1) + ' for ' + weekDays[j]
-                    })
-                    return;
-                }
-            }
-        }*/
+        const {currNumExercises} = this.state;
 
         this.props.saveProgramWorkoutData(workoutDays, this.state.numWorkoutsAdded, this.state.equipmentList)
+
     }
 
     /**
@@ -270,7 +262,7 @@ class BuildWorkoutController extends React.Component {
 
                     break;
                 case PLACEMENT_TYPES.EXERCISE:
-                    newWorkoutData[currWeek]['exercises'].push(updatedWorkout);
+                    newWorkoutData[currWeek]['workouts'][this.state.currWorkoutIndex].push(updatedWorkout);
                     break;
                 default:
             }
@@ -297,6 +289,24 @@ class BuildWorkoutController extends React.Component {
         })
     }
 
+    handleOnDeleteWorkout = (uid) => {
+        const currWeek = this.getCurrentWeek();
+        const currWorkout = this.getCurrentWorkoutIndex();
+
+        let workoutContent = [];
+        workoutContent = this.state.workoutDays;
+       
+
+        for (let i = 0; i < workoutContent[currWeek]['workouts'][this.state.currWorkoutIndex].length; i++) {
+            if (workoutContent[currWeek]['workouts'][this.state.currWorkoutIndex][i].workout_uid == uid) {
+                const id = workoutContent[currWeek]['workouts'][this.state.currWorkoutIndex].splice(i,1);
+            }
+        }
+
+
+        this.setState({ workoutDays: workoutContent })
+    }
+
     /**
      * Returns the workouts for the current day and week.
      */
@@ -309,15 +319,15 @@ class BuildWorkoutController extends React.Component {
         }
 
         try {
-            if (typeof (workoutDays[currWeek]['exercises']) == 'undefined' || workoutDays[currWeek].length == 0) {
+            if (typeof (workoutDays[currWeek]['workouts'][this.state.currWorkoutIndex]) == 'undefined') {
                 return null;
             }
 
-            const currWorkoutDaysState = workoutDays[currWeek]['exercises'];
+            const currWorkoutDaysState = workoutDays[currWeek]['workouts'][this.state.currWorkoutIndex];
             const content = currWorkoutDaysState.map((exercise, index, arr) => {
                 return (
                     <TouchableWithoutFeedback key={index} style={[styles.populatedExerciseTouchableContainer, { width: this.state.addedWorkoutsScrollViewWidth - 10, }]}>
-                        <WorkoutDisplay sessionID={""} programType={this.props.programType} currProgramUUID={this.props.programData.program_structure_uuid} workout={exercise} programDuration={0} handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} />
+                        <WorkoutDisplay sessionID={""} programType={this.props.programType} currProgramUUID={this.props.programData.program_structure_uuid} workout={exercise} programDuration={0} handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} handleDeleteExercise={uid => this.handleOnDeleteWorkout(uid)} />
                     </TouchableWithoutFeedback>
 
                 )
@@ -328,8 +338,8 @@ class BuildWorkoutController extends React.Component {
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-evenly', width: '100%', height: '100%' }}>
                         <Image style={{ width: 110, height: 110 }} source={require('../../../../images/timetable_icon/timetable.png')} />
 
-                        <Text style={{ paddingHorizontal: 10, fontFamily: 'Avenir-Black', fontSize: 18 }}>
-                            Add your first exercise for this week.
+                        <Text style={{ paddingHorizontal: 10, fontFamily: 'Avenir', fontSize: 18 }}>
+                            Add your first exercise for this week. ({this.state.currNumExercises } left)
                 </Text>
                     </View>
                 )
@@ -433,16 +443,16 @@ class BuildWorkoutController extends React.Component {
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: Dimensions.get('window').width, backgroundColor: '#23374d', padding: 10, paddingVertical: Constants.statusBarHeight }}>
 
 
-                    <TouchableOpacity onPress={this.openWeekPicker}>
-                        <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
-                            <FeatherIcon name="chevron-down" />
+                    <TouchableOpacity onPress={this.openNumExercisesPicker}>
+                        <View style={{flex: 1, flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                          
                             <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
-                                Week {this.getCurrentWeek() + 1}
+                               Workout {Number(this.state.currWorkoutIndex) + 1}
                             </Text>
                         </View>
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={this.handleOnPressAddExercise}>
+              
+                   <TouchableOpacity onPress={this.handleOnPressAddExercise}>
                         <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
                             <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
                                 Add Exercise
@@ -458,6 +468,66 @@ class BuildWorkoutController extends React.Component {
      */
     getCurrentWeek = () => {
         return this.state.currWeekIndex
+    }
+
+    getCurrentWorkoutIndex = () => {
+        return this.state.currWorkoutIndex;
+    }
+
+    renderNumExercisesForWeekPicker = () => {
+        const numbers = [1, 2, 3, 4, 5, 6, 7]
+        const { currNumExercises } = this.state;
+        return (
+            <RBSheet
+                    ref={this.numExercisesWeekPicker}
+                    height={300}
+                    closeOnPressMask={true}
+                    customStyles={{
+                        wrapper: {
+
+                        },
+                        container: {
+                            borderRadius: 20
+                        },
+                        draggableIcon: {
+                            backgroundColor: '#000000'
+                        }
+                    }}
+                    dragFromTopOnly={true}
+                >
+                    <View style={{ flex: 1 }}>
+                        <Picker
+                        
+                            selectedValue={this.state.currWorkoutIndex}
+                            style={{ width: '100%' }}
+                            onValueChange={(itemValue, itemIndex) => this.setState({ currWorkoutIndex: itemValue })}>
+                            {
+                                
+                                Object.keys(this.state.workoutDays[this.getCurrentWeek()]['workouts']).map((workout, index, arr) => {
+                                    return <Picker.Item label={(index + 1).toString()} value={index.toString()} />
+                                })
+                            }
+                        </Picker>
+                        <View style={{ width: '100%' }}>
+                            <Button
+                                color="#1089ff"
+                                theme={{ roundness: 12 }}
+                                style={{ elevation: 0, alignSelf: 'center', marginVertical: 10 }}
+                                contentStyle={{ width: Dimensions.get('window').width - 20, height: 45 }}
+                                mode="contained"
+                                uppercase={false}
+                                onPress={this.closeNumExercisesPicker}
+
+                            >
+                                <Text>
+                                    Done
+                        </Text>
+                            </Button>
+                        </View>
+                    </View>
+                    <SafeAreaView />
+                </RBSheet>
+        )
     }
 
     /**
@@ -522,13 +592,13 @@ class BuildWorkoutController extends React.Component {
     }
 
     checkShowSelectedStyle = (exerciseObject) => {
-        const currWeek = this.getCurrentWeek();
+      /*  const currWeek = this.getCurrentWeek();
 
         for (let i = 0; i < this.state.workoutDays[currWeek]['exercises'].length; i++) {
             if (this.state.workoutDays[currWeek]['exercises'][i].workout_name == exerciseObject.workout_name) {
                 exerciseObject.showSelectStyle = true;
             }
-        }
+        }*/
     }
 
     openRenderAddExerciseRBSheet = () => this.addExerciseRBSheetRef.current.open();
@@ -873,11 +943,19 @@ class BuildWorkoutController extends React.Component {
 
         return (
             <View style={styles.container}>
-                <Appbar.Header style={{ elevation: 0, alignItems: 'center', backgroundColor: '#23374d', }}>
+                <Appbar.Header style={{ elevation: 0, alignItems: 'center', backgroundColor: '#23374d', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
                     <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
                         Back
                             </Button>
-                    <Appbar.Content title="Add Exercises" titleStyle={{ alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 25 }} />
+                            <TouchableOpacity onPress={this.openWeekPicker}>
+                        <View style={{ flexDirection: 'row', backgroundColor: 'rgb(247, 247, 247)', borderColor: 'rgb(231, 231, 236)', borderWidth: 0.5, padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                            <FeatherIcon name="chevron-down" />
+                            <Text style={{ fontSize: 12, fontWeight: '600', color: 'black' }}>
+                                Week {this.getCurrentWeek() + 1}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+
                     {this.renderAppropriateNextButton()}
                 </Appbar.Header>
                 <View style={styles.content}>
@@ -889,6 +967,7 @@ class BuildWorkoutController extends React.Component {
                 {this.renderDayOfTheWeekDropdownPicker()}
                 {this.renderAddExerciseRBSheet()}
                 {this.renderWorkoutOptionsSheet()}
+                {this.renderNumExercisesForWeekPicker()}
                 <Snackbar
                     visible={this.state.snackBarVisible}
                     onDismiss={() => this.setState({ snackBarVisible: false })}

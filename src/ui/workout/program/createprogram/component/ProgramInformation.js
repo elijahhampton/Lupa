@@ -21,11 +21,13 @@ import {
   Paragraph,
   Appbar,
   Dialog,
+  Divider,
 } from 'react-native-paper';
 
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Input} from 'react-native-elements';
 import { ProgramType } from '../../../../../model/data_structures/programs/common/types';
+import { render } from 'react-dom';
 
 const MIN_TITLE_LENGTH = 6
 const MAX_TITLE_LENGTH = 40
@@ -72,12 +74,95 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
   const navigation = useNavigation();
 
   const [programDuration, setProgramDuration] = useState(1);
-  const [programWorkoutDays, setProgramWorkoutDays] = useState([]);
+  const [programWorkoutStructure, setProgramWorkoutStructure] = useState([]);
   const [programType, setProgramType] = useState('template')
   const [learnMoreDialogIsVisible, setLearnMoreDialogIsVisible] = useState(false);
+  const [sliderCollection, setSliderCollection] = useState([1]);
 
-  const handleSaveProgramInformation = () => {
-    saveProgramInformation(programType, programDuration, programWorkoutDays);
+  const handleSaveProgramInformation = async () => {
+    let updatedStructure = await constructStrucutre();
+    console.log('updated')
+    console.log(updatedStructure)
+
+    saveProgramInformation(programType, programDuration, updatedStructure);
+  }
+
+  const constructStrucutre = async () => {
+    let updatedStructure = new Array(programDuration);
+    for (let i = 0; i < programDuration; i++) {
+      updatedStructure[i] = { 
+          workouts: {}
+      }
+  }
+
+  for (let j = 0; j < programDuration; j++) {
+    for (let k = 0; k < sliderCollection[j]; k++) {
+      updatedStructure[j]['workouts'][k] = []
+    }
+  }
+
+  return updatedStructure;
+  }
+
+  const handleOnNumWeekChange = (num) => {
+    setProgramDuration(num);
+
+    //if the current collection we have is less than num
+    let updatedCollection = new Array(num);
+    updatedCollection.fill(1);
+    
+    //sliderCollection.length > updatdCollection.length
+    if (sliderCollection.length > updatedCollection.length) {
+      for (let i = 0; i < sliderCollection.length; i++) {
+          if (i == updatedCollection.length) {
+            continue;
+          }
+
+          updatedCollection[i] = sliderCollection[i];
+      }
+
+      setSliderCollection(updatedCollection)
+    } else { //sliderCollection.length < updatedCollection.length
+      let storedI = 0;
+        for (let i = 0; i < sliderCollection.length; i++) {
+          if (i == sliderCollection.length) {
+            continue;
+          }
+
+          updatedCollection[i] = sliderCollection[i];
+          storedI = i
+        }
+
+        updatedCollection = updatedCollection.fill(1, storedI);
+        setSliderCollection(updatedCollection);
+    }
+}
+
+  const handleUpdateSlider = (index, value) => {
+    let updatedValue = sliderCollection;
+    updatedValue[index] = value;
+    setSliderCollection(updatedValue);
+  }
+
+  const renderWeekSlider = (index) => {
+    return (
+      <View style={{justifyContent: 'flex-start', marginVertical: 10}}>
+      <Text style={{color: 'rgb(141, 158, 171)', fontFamily: 'Avenir-Medium'}}>
+        How many workouts will week {index+1} have?
+      </Text>
+      <Slider 
+  minimumValue={1} 
+  maximumValue={15} 
+  step={1} 
+  value={sliderCollection[index]} 
+  onValueChange={value => handleUpdateSlider(index, value)} 
+  />
+
+<Caption style={{color: 'rgb(141, 158, 171)'}}>
+  {sliderCollection[index]}
+</Caption>
+  </View>
+    )
   }
 
   return (
@@ -91,7 +176,7 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
               <View style={{ paddingHorizontal: 20, paddingVertical: 10,}}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <FeatherIcon name="clock" size={15} style={{marginRight: 5}} />
-                <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: 'bold', color: '#23374d'}}>
+                <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: '500', color: '#23374d'}}>
                 Select the duration
               </Text>
                 </View>
@@ -103,12 +188,34 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
                 maximumValue={15} 
                 step={1} 
                 value={programDuration} 
-                onValueChange={value => setProgramDuration(value)} 
+                onValueChange={value => handleOnNumWeekChange(value)} 
                 />
               <Caption>
                 {programDuration} Weeks
               </Caption>
                 </View>
+
+    <Divider />
+
+                <ScrollView>
+                <View style={{ paddingHorizontal: 20, paddingVertical: 10,}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <FeatherIcon name="clock" size={15} style={{marginRight: 5}} />
+                <Text style={{paddingVertical: 10, fontSize: 15, fontWeight: '500', color: '#23374d'}}>
+                Weeks
+              </Text>
+                </View>
+
+                {
+                  [...Array(programDuration).keys()].map(week => {
+                    return renderWeekSlider(week);
+                  })
+                }
+
+                </View>
+                </ScrollView>
+
+              
 
             </View>
             <View style={{flex: 2, padding: 20, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-evenly'}}>
@@ -146,7 +253,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center', fontFamily: 'Avenir-Heavy', fontWeight: 'bold', fontSize: 18
   },
   contentContainer: {
-    flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5', justifyContent: 'space-evenly', width: Dimensions.get('window').width - 20
+    flex: 8, elevation: 0, borderRadius: 10, borderWidth: 0, borderColor: '#E5E5E5'
   }
 })
 

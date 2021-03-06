@@ -37,6 +37,8 @@ import { getLupaProgramInformationStructure } from "./model/data_structures/prog
 import InPersonWorkout from "./ui/workout/component/InPersonWorkout";
 import { LIVE_WORKOUT_MODE } from "./model/data_structures/workout/types";
 import TrainerQRCode from "./ui/user/profile/component/TrainerQRCode";
+import ProgramInformationPreview from "./ui/workout/program/ProgramInformationPreview";
+import PublishProgram from "./ui/workout/program/createprogram/component/PublishProgram";
 
 const mapStateToProps = (state, action) => {
   return {
@@ -78,7 +80,7 @@ class Lupa extends React.Component {
     return (
       <View style={{flex: 1}}>
        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-       <LupaDrawerNavigator />
+      <LupaDrawerNavigator />
       </View>
     )
   }
