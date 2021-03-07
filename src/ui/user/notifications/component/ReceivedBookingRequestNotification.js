@@ -136,8 +136,7 @@ function ReceivedBookingRequestNotification({ notificationData }) {
         .then(() => {    
             try {
                 const updatedUserData = getLupaStoreState().Users.currUserData;
-                //handlePayBookingCost(updatedUserData.hourly_payment_rate);
-                handlePayBookingCost(3);
+                handlePayBookingCost(updatedUserData.hourly_payment_rate);
             } catch(error) {
                 LOG_ERROR('TrainerDashboard.js', 'Failed payment in handlePayBookingCost', error);
                 return;

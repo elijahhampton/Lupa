@@ -1078,4 +1078,8 @@ export default class LupaController {
   addVlogComment = (vlogID, comment)  => {
     USER_CONTROLLER_INSTANCE.addVlogComment(vlogID, comment);
   }
+
+  submitAssessment = (userUUID, assessmentType, inputs) => {
+    USER_CONTROLLER_INSTANCE.submitAssessment(userUUID, assessmentType, inputs);
+  }
 }

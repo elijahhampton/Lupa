@@ -84,43 +84,87 @@ exports.receivedNotification = functions.firestore
     const dataAfter = change.after.data();
     const dataBefore = change.before.data();
 
+    let payload = {}
+
     //Check to see if the size of the notification array has changed
     if (dataBefore.notifications.length < dataAfter.notifications.length) {
       //If the size of the array has grown
       let newNotification = dataAfter.notifications[dataAfter.notifications.length - 1];
-      console.log('B')
-      //Find out which notification it is
-      if (newNotification.type == "RECEIVED_PROGRAM") {
-        console.log('C')
-        const payload = {
-          data: {
-            title: "New Program Invite",
-            body: "You have been invited to try a new program. Navigate to your notifications for more details.",
-            time: new Date().getTime().toString()
-          },
-          notification: {
-            title: "New Program Invite",
-            body: "You have been invited to try a new program. Navigate to your notifications for more details.",
-            time: new Date().getTime().toString()
-          },
-        };
-        console.log('D')
-        return admin
-          .messaging()
-          .sendToDevice(
-            [dataBefore.tokens.fb_messaging_token],
-            payload,
-            {
-              // Required for background/quit data-only messages on iOS
-              contentAvailable: true,
-              // Required for background/quit data-only messages on Android
-              priority: 'high',
-            }
-          );
+      
+      switch(newNotification.type)
+      {
+        case "RECEIVED_PROGRAM":
+           payload = {
+            data: {
+              title: "New Program Invite",
+              body: "You have been invited to try a new program. Navigate to your notifications for more details.",
+              time: new Date().getTime().toString()
+            },
+            notification: {
+              title: "New Program Invite",
+              body: "You have been invited to try a new program. Navigate to your notifications for more details.",
+              time: new Date().getTime().toString()
+            },
+          };
+          case "BOOKING_REQUEST":
+            payload = {
+              data: {
+                title: "New Booking Request",
+                body: "Someone has requested a workout session with you!",
+                time: new Date().getTime().toString()
+              },
+              notification: {
+                title: "New Booking Request",
+                body: "Someone has requested a workout session with you!",
+                time: new Date().getTime().toString()
+              },
+            };
+            break;
+          case "RECEIVED_PROGRAM":
+          payload = {
+            data: {
+              title: "New Program",
+              body: "Someone has shared a program with you.",
+              time: new Date().getTime().toString()
+            },
+            notification: {
+              title: "New Program",
+              body: "Someone has shared a program with you.",
+              time: new Date().getTime().toString()
+            },
+          };
+          break;
+          default:
+            payload = {
+              data: {
+                title: "New Notification",
+                body: "Your account has received a notification.",
+                time: new Date().getTime().toString()
+              },
+              notification: {
+                title: "New Notification",
+                body: "Your account has received a notification.",
+                time: new Date().getTime().toString()
+              },
+            };
       }
-      console.log("F")
+
+
+      return admin
+      .messaging()
+      .sendToDevice(
+        [dataBefore.tokens.fb_messaging_token],
+        payload,
+        {
+          // Required for background/quit data-only messages on iOS
+          contentAvailable: true,
+          // Required for background/quit data-only messages on Android
+          priority: 'high',
+        }
+      );
+        
     }
-    console.log("E")
+    
     return false;
   });
 

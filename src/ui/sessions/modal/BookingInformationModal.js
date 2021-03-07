@@ -22,6 +22,7 @@ import { getLupaStoreState } from '../../../controller/redux/index'
 import axios from 'axios';
 import moment from 'moment';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
+import LUPA_DB from '../../../controller/firebase/firebase';
 
 function BookingInformationModal({ trainerUserData, requesterUserData, isVisible, closeModal, booking }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -35,20 +36,37 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     const [linkProgramDialogVisible, setLinkProgramDialogVisible] = useState(false);
     const [snackBarVisible, setSnackBarVisible] = useState(false);
     const [snackBarReason, setSnackBarReason] = useState("")
+    const [programIsLinked, setProgramIsLinked] = useState(false)
 
     useEffect(() => {
         async function fetchLinkedProgram() {
-            const clients = trainerUserData.clients;
-            await clients.forEach(clientData => {
-                if (clientData.client == requesterUserData.user_uuid) {
-                    setLinkedProgram(clientData.linked_program)
+            let clients = [];
+
+            await LUPA_DB.collection('users').doc(booking.trainer_uuid).get().then(documentSnapshot => {
+                clients = documentSnapshot.data().clients
+                if (typeof(clients) == 'object') {
+
+                    clients.forEach(clientData => {
+                        if (clientData.client == requesterUserData.user_uuid) {
+                            if (clientData.linked_program == "0") {
+                                setLinkedProgram("0")
+                                setProgramIsLinked(false);
+                            } else {
+                                setLinkedProgram(clientData.linked_program)
+                                setProgramIsLinked(true)
+                            }
+                           
+                        }
+                    })
                 }
             })
+
+
         }
 
         fetchLinkedProgram();
        
-    }, [])
+    }, [requesterUserData, trainerUserData, booking])
 
     const showBookingOptions = () => {
         //show trainer sheet
@@ -112,7 +130,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     }
 
     const handleBookingSessionCompleted = async () => {
-        if (linkedProgram.program_structure_uuid == "0") {
+        if (programIsLinked == false) {
             setSnackBarVisible(true);
             setSnackBarReason('Link a program to this client first.')
             return;
@@ -144,7 +162,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     }
 
     renderLinkedProgramStatus = () => {
-        if (linkedProgram.program_structure_uuid == "0") {
+        if (programIsLinked == false) {
             return (
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                           <FeatherIcon name="x" color="red" />

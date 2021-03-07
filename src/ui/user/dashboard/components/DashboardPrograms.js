@@ -21,6 +21,9 @@ import { useNavigation } from '@react-navigation/native';
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { LIVE_WORKOUT_MODE } from '../../../../model/data_structures/workout/types';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import ProgramOptionsModal from '../../../workout/program/modal/ProgramOptionsModal';
+import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 
 /**
  * Renders a user's programs along with program options.
@@ -32,12 +35,20 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
     const [cardContentHeight, setCardContentHeight] = useState(0)
     const [cardExpanded, setCardExpanded]  = useState(false);
     const [programs, setPrograms] = useState([])
+    const [currentProgram, setCurrentProgram] = useState(getLupaProgramInformationStructure());
+    const [programsModalIsOpen, setProgramOptionsIsVisible] = useState(false);
+
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
+
+    const handleOnPressProgram = async (program) => {
+        await setCurrentProgram(program)
+        setProgramOptionsIsVisible(true)
+    }
 
     const navigateLiveWorkout = (programData) => {
         closeModal();
@@ -114,6 +125,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                             return;
                         }
                         return (
+                            <TouchableWithoutFeedback onPress={() => handleOnPressProgram(result)}>
                             <View style={{backgroundColor: 'white'}}>
 
                             <Surface style={{flexDirection: 'row', alignItems: 'center', borderRadius: 20, margin: 10, elevation: 0, width: Dimensions.get('window').width-20, height: 120, backgroundColor: 'transparent'}} >
@@ -137,23 +149,8 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
                               
                             </View>
                           </Surface>
-
-                          <View style={{marginVertical: 10, flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-evenly'}}>
-                                <Button onPress={() => navigateLiveWorkout(result)} disabled={!result.program_started} mode="contained" onPress={() => navigateLiveWorkout(result)} color="#1089ff" style={{alignSelf: 'flex-start'}} uppercase={false}>
-                                    Launch
-                                </Button>
-
-                                <Button onPress={() => handleResetProgram(result)} disabled={!result.program_started} mode="contained" color="#1089ff" style={{alignSelf: 'flex-start'}} uppercase={false}>
-                                   Reset Program
-                                </Button>
-
-                                <Button onPress={() => handleToggleStartProgram(result)} mode="contained" color={result.program_started === false ? "#1089ff" : '#e53935'} style={{alignSelf: 'flex-start'}} uppercase={false}>
-                                    {result.program_started === false ? 'Start Program' : 'Stop Program'}
-                                </Button>
-                                </View>
-
-                            <Divider />
                           </View>
+                          </TouchableWithoutFeedback>
                         )
                     })
                 }
@@ -171,6 +168,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
             <View style={{flex: 1}}>
                {renderMyPrograms()}
             </View>
+            <ProgramOptionsModal program={currentProgram} isVisible={programsModalIsOpen} closeModal={() => setProgramOptionsIsVisible(false)} />
             <SafeAreaView />
         </Modal>
     )

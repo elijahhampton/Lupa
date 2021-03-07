@@ -237,7 +237,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         }
     }
 
-    this.changeWeekAndDay = async (week, day) => {
+    this.changeWeekAndDay = async (week, workout) => {
         let updatedState = {}
         if (week == -1 || workout == -1) {
             this.hasWorkouts = false;
@@ -253,7 +253,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
 
         let workoutStructure;
 
-        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[week]['exercises'][workout]);
+        workoutStructure = await this.generateWorkoutStructure(this.currentProgram.program_workout_structure[week]['workouts'][workout]);
         this.workoutStructure = workoutStructure;
 
         this.currentWorkoutStructure = workoutStructure;
@@ -332,7 +332,7 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
         .update({ 
             currentWeek: week,
-            currentWorkoutDay: day,
+            currentWorkoutIndex: workout,
             ...updatedState
         })
     }

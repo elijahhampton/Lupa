@@ -185,13 +185,13 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
     const [inputTempoSupersetText, setTempoSupersetText] = useState("");
 
     const [addEquipmentModalVisible, setAddEquipmentModalVisible] = useState(false);
-
+    
     const intensityPickerRef = createRef();
     const openIntensityPicker = () => intensityPickerRef.current.open();
     const closeIntensityPicker = () => intensityPickerRef.current.close();
 
     const [editedIntensity, setEditedIntensity] = useState("");
-
+    const [forceUpdate, setForceUpdate] = useState(!forceUpdate);
     const [showCamera, setShowCamera] = useState(false);
 
     const liveWorkoutService = new LiveWorkoutService(sessionID, {}, [], programData);
@@ -350,6 +350,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
 
     const handleOnChangeIntensity = (exerciseRef, intensityText) => {
         exerciseRef.workout_rest_time = intensityText;
+        setForceUpdate(!forceUpdate)
     }
 
     const handleOnSetTempo = () => {

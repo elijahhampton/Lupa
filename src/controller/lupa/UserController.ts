@@ -2280,6 +2280,24 @@ export default class UserController {
         const trainer_uuid = booking.trainer_uuid;
         const requester_uuid = booking.requester_uuid;
 
+        //add requester as trianer client
+        await LUPA_DB.collection('users').doc(trainer_uuid).get().then(documentSnapshot => {
+            const userData = documentSnapshot.data();
+            
+            let updatedClientsList = userData.clients;
+            let clientEntry = {
+                client: requester_uuid,
+                linked_program: "0",
+                linkedProgram: "0"
+            }
+
+            updatedClientsList.push(clientEntry);
+
+            LUPA_DB.collection('users').doc(trainer_uuid).update({
+                clients: updatedClientsList
+            })
+        })
+
         LUPA_DB.collection('bookings').doc(bookingID).update({
             status: BOOKING_STATUS.BOOKING_ACCEPTED
         });
@@ -3112,6 +3130,87 @@ let subscribers = [];
             })
         })
     }   
+
+    submitAssessment = async (userUUID, assessmentType, inputs) => {
+        const questions = [
+            {
+                id: 0,
+                question: 'Has your doctor ever sadi that you have a heart conditiona nd that you should onlu prtgotm physical activity recommended by a doctor?',
+            },
+            {
+                id: 1,
+                question: 'Do you feel pain in your chest when you perform physical activity?',
+            },
+            {
+                id: 2,
+                question: 'In the past month, have you had chest pain when you were not performing any physical activity?',
+            },
+            {
+                id: 3,
+                question: 'Do you lose your balance because of dizziness or do you ever lose consciousness?',
+            },
+            {
+                id: 4,
+                question: 'Do you have a bone or joint problem that could be made worse by a change in your physical?',
+            },
+            {
+                id: 5,
+                question: 'Is your doctor currently prescribing any medication for your blood pressure or for your heart condition?',
+            },
+            {
+                id: 6,
+                question: 'Do you know of any other reason why you should not engage in physical activity?',
+            },
+        ]
+
+        let PARQASSESSMENT = {}
+        for (let i = 0; i < questions.length; i++) {
+            PARQASSESSMENT[questions[i].id] = { id: questions[i].id, question: questions[i].question, response: inputs[i]}
+        }
+
+        let id = -1;
+
+        let assessment = {
+            user_uuid: userUUID,
+            assessment: PARQASSESSMENT,
+            type: 'PARQ'
+        }
+        //creaate assessment in assessments collection
+        await LUPA_DB.collection('assessments')
+        .add(assessment)
+        .then(docRef => {
+            id = docRef.id
+        })
+
+        //add id to user assessments
+        let assessments = [];
+        await LUPA_DB.collection('users').doc(userUUID).get().then(documentSnapshot => {
+            const userData = documentSnapshot.data();
+
+            assessments = userData.assessments;
+            assessments.push(id);
+
+            LUPA_DB.collection('users').doc(userUUID).update({
+                assessments: assessments
+            })
+        });
+    }
+
+    checkAssessmentStatus = async (user_uuid, type) => {
+        let hasAssessment = false;
+
+        await LUPA_DB.collection('assessments')
+        .where('user_uuid', '==', user_uuid)
+        .where('type', '==', 'PARQ')
+        .get()
+        .then(querySnapshot => {
+            if (querySnapshot.docs.length > 0) {
+                hasAssessment = true;
+            } else {
+                hasAssessment = false;
+            }
+        })
+    }
 }
 
 //me

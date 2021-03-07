@@ -728,30 +728,28 @@ renderFAB = () => {
 
       }
 
-      renderSubscribeButton = () => {
-        if (community.subscribers.includes(currUserData.user_uuid) == false) {
-          return (
-              <TouchableOpacity onPress={handleOnPressSubscribeUser}>
-                <View style={{alignItems: 'center', justifyContent: 'center'}}> 
-                <Feather1s name="user-check" size={20} style={{padding: 3}} color="#1089ff" />
-                <Text style={{fontFamily: 'Avenir', color: '#1089ff'}}>
-                  Subscribe
-                </Text>
-              </View>
-              </TouchableOpacity>
-          )
-        } else {
-          return (
-            <TouchableOpacity onPress={handleOnPressUnsubscribeUser}>
-                <View style={{alignItems: 'center', justifyContent: 'center'}}> 
-                <Feather1s name="user-minus" size={20} style={{padding: 3}} />
-                <Text style={{fontFamily: 'Avenir'}}>
-                  Unsubscribe
-                </Text>
-              </View>
-              </TouchableOpacity>
-          )
-        }
+      const renderSocialBar = () => {
+        return (
+          <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+            <View style={{alignItems: 'center'}}>
+              <Text>
+                Following
+              </Text>
+              <Text>
+                0
+              </Text>
+            </View>
+
+            <View style={{alignItems: 'center'}}>
+              <Text>
+                Followers
+              </Text>
+              <Text>
+                0
+              </Text>
+            </View>
+          </View>
+        )
       }
 
   return (
@@ -792,9 +790,7 @@ renderFAB = () => {
        
           
           <View>
-            <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
-              {renderSubscribeButton()}
-            </View>
+            {renderSocialBar()}
 
 
             <Divider style={{alignSelf: 'center', width: Dimensions.get('window').width}} />

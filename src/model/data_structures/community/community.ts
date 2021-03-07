@@ -16,6 +16,8 @@ export default function Community(name: string, address: string, city: string, s
         this.uid = '0';
         this.members = members;
         this.subscribers = members;
+        this.following = []
+        this.followers = []
         this.city = city;
         this.state = state;
         this.reviews = [];

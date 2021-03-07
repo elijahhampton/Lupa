@@ -249,6 +249,18 @@ class VirtualSession extends Component<Props, State> {
         }
     }
 
+    renderCaptionText = () => {
+        const { isFirstSession } = this.props;
+
+        if (isFirstSession == true) {
+            return (
+                <Caption style={{color: '#1089ff', paddingHorizontal: 10}}>
+                    You are about to enter your first session.  This will be a consultation that will end in 15 minutes.
+                </Caption>
+            )
+        }
+    }
+
     renderJoinSessionView = () => {
         return (
             <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(255, 255, 255)', justifyContent: 'space-between'}}>
@@ -265,12 +277,16 @@ class VirtualSession extends Component<Props, State> {
                     </Text>
                 </View>
 
+                <View style={{alignItems: 'center'}}>
                 <View style={{alignItems: 'center', borderWidth: 70, borderRadius: 110, width: 100, height: 110, alignSelf: 'center', borderColor: 'rgb(215, 238, 252)', justifyContent: 'center'}}>
                     <Surface style={{elevation: 0, borderRadius: 110, width: 110, height: 110}}>
                             <Image style={{borderRadius: 110, width: '100%', height: '100%'}} source={{ uri: this.getDisplayImageURI() }} />
                     </Surface>
+      
                 </View>
-
+                {this.renderCaptionText()} 
+                </View>            
+              
 
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
                     <TouchableOpacity onPress={this.startCall}>
@@ -289,9 +305,9 @@ class VirtualSession extends Component<Props, State> {
                     <Surface style={{elevation: 0, backgroundColor: 'rgb(246, 61, 70)', height: 70, width: 70, borderRadius: 70, alignItems: 'center', justifyContent: 'center'}}>
                             <MaterialIcon name="close" size={24} color="white" />
                     </Surface>
-                    <Caption>
+                    <Button uppercase color="white" style={{padding: 10}}>
                         Leave Session
-                    </Caption>
+                    </Button>
                     </View>
                     </TouchableOpacity>
                 </View>
@@ -317,7 +333,7 @@ class VirtualSession extends Component<Props, State> {
                 uuid={this.props.programUID} 
                 sessionID={this.props.sessionID}
                 currentWeek={this.props.currentWeek}
-                currentDay={this.props.currentDay}
+                currentDay={-2}
                 />
               }
           }

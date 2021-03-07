@@ -944,7 +944,7 @@ class BuildWorkoutController extends React.Component {
         return (
             <View style={styles.container}>
                 <Appbar.Header style={{ elevation: 0, alignItems: 'center', backgroundColor: '#23374d', justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
-                    <Button color="white" uppercase={false} onPress={() => this.props.goToIndex(0)}>
+                    <Button color="white" uppercase={false} onPress={() => this.props.isEditing == true ? this.props.closeModal() : this.props.goToIndex(0)}>
                         Back
                             </Button>
                             <TouchableOpacity onPress={this.openWeekPicker}>

@@ -828,7 +828,7 @@ class LiveWorkout extends React.Component {
                             programUID={this.state.programData.program_structure_uuid}
                             isFirstSession={false}
                             currentWeek={this.workoutService.getCurrentWeek()}
-                            currentDay={this.workoutService.getCurrentDay()}
+                            currentDay={-2}
                             />
                         )
                 default:

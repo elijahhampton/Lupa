@@ -17,6 +17,7 @@ import {
 import {
   Caption,
   Button,
+  Snackbar,
   Modal as PaperModal,
   Appbar,
   Chip,
@@ -296,6 +297,9 @@ function PublishProgram({ uuid, saveProgramMetadata, goBack, exit }) {
 
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
+  const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const [snackBarReason, setSnackBarReason] = useState("")
+
   const currUserData = useSelector(state => {
     return state.Users.currUserData;
   });
@@ -337,6 +341,29 @@ function PublishProgram({ uuid, saveProgramMetadata, goBack, exit }) {
     await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(uuid).then(result => {
       LUPA_CONTROLLER_INSTANCE.handleSendUserProgram(currUserData, usersUUIDToShare, result);
     });
+  }
+
+  const validateCheckout = async () => {
+    if (programImage == "") {
+      
+      setSnackBarReason('Please add a photo for this program.')
+      setSnackBarVisible(true);
+      return false;
+    } else if (programTitle == "") {
+      setSnackBarReason('Give your program a title.')
+      setSnackBarVisible(true);
+      return false;
+    } else if (programDescription == "") {
+      setSnackBarReason('Give your program a description.')
+      setSnackBarVisible(true);
+      return false;
+    } else if (programTags.length == 0) {
+      setSnackBarReason('Please add ateast one tag to your program.')
+      setSnackBarVisible(true);
+      return false;
+    }
+
+    return true;
   }
 
   const renderUserAvatars = () => {
@@ -462,9 +489,13 @@ function PublishProgram({ uuid, saveProgramMetadata, goBack, exit }) {
   }
 
   const handleOnFinish = async () => {
-    await saveProgramMetadata(programTitle, programDescription, programTags, programPrice).then(() => {
-      handleOnPressSend()
-    });
+    const retVal = await validateCheckout();
+
+    if (retVal == true) {
+      await saveProgramMetadata(programTitle, programDescription, programTags, programPrice).then(() => {
+        handleOnPressSend()
+      });
+    }
 
     exit();
   }
@@ -659,7 +690,17 @@ function PublishProgram({ uuid, saveProgramMetadata, goBack, exit }) {
       </ScrollView>
 
       <AddTagsModal isVisible={programTagModalVisible} openModal={() => setExtraTagsModalVisible(true)}  closeModal={() => setProgramTagModalVisible(false)} captureTags={handleCaptureTags} />
-    
+      <Snackbar
+        visible={snackBarVisible}
+        onDismiss={() => setSnackBarVisible(false)}
+        action={{
+          label: 'Okay',
+          onPress: () => {
+            // Do something
+          },
+        }}>
+        {snackBarReason}
+      </Snackbar>
       {renderShareWithFriendsModal()}
     </View>
   )

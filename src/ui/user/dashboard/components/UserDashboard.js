@@ -20,6 +20,8 @@ import {
     DataTable,
     Paragraph,
     Caption,
+    Dialog,
+    ActivityIndicator,
 } from 'react-native-paper';
 
 import {
@@ -41,7 +43,7 @@ import LOG, { LOG_ERROR } from '../../../../common/Logger';
 import LUPA_DB from '../../../../controller/firebase/firebase';
 import getBookingStructure from '../../../../model/data_structures/user/booking';
 import moment from 'moment';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { TextInput, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { BOOKING_STATUS } from '../../../../model/data_structures/user/types';
 import { initStripe, PAY_TRAINER_ENDPOINT, CURRENCY } from '../../../../modules/payments/stripe/index'
 import { getLupaUserStructurePlaceholder } from '../../../../controller/firebase/collection_structures';
@@ -49,6 +51,60 @@ import { getLupaStoreState } from '../../../../controller/redux/index'
 import SessionDashboardComponent from '../../../sessions/modal/component/SessionDashboardComponent'
 import axios from 'axios';
 import DashboardPrograms from './DashboardPrograms';
+
+const RedeemCouponCode = ({isVisible, closeModal}) => {
+    const [code, setCode] = useState(false)
+    const [loading, setLoading] = useState(false);
+
+    const handleOnRedeem = async () => {
+        await setLoading(true);
+
+        await setTimeout(() => {
+            
+        }, 10000)
+        setLoading(false);
+        closeModal();
+    }
+
+    const renderComponent = () => {
+        if (loading == true) {
+            return (
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                <ActivityIndicator animating={true} />
+            </View>
+            )
+        } else {
+            return (
+                <>
+                <Dialog.Title>
+                Enter your code
+            </Dialog.Title>
+            <Dialog.Content>
+                <TextInput 
+                value={code} 
+                onChangeText={text => setCode(text)} 
+                placeholder="E.g. TRAINER10" />
+            </Dialog.Content>
+            <Dialog.Actions>
+            <Button color="#1089ff" style={{marginVertical: 10}} onPress={handleOnRedeem}>
+                Redeem
+            </Button>
+
+            <Button color="#1089ff" style={{marginVertical: 10}} onPress={closeModal}>
+             Cancel
+            </Button>
+            </Dialog.Actions>
+         
+            </>
+            )
+        }
+    }
+    return (
+        <Dialog visible={isVisible} contentContainerStyle={{}}>
+            {renderComponent()}
+        </Dialog>
+    )
+}
 
 function UserDashboard(props) {
 
@@ -90,6 +146,7 @@ function UserDashboard(props) {
     const [trainersModalIsOpen, setTrainersModalIsOpen] = useState(false);
     const [userBookings, setUserBookings] = useState([]);
     const [refreshing, setRefreshing] = useState(false)
+    const [redeemModalOpen, setRedeemModalOpen] = useState(false);
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const handleOnRefresh = React.useCallback(() => {
@@ -102,10 +159,10 @@ function UserDashboard(props) {
             return (
                 <View style={{ top: ((Dimensions.get('window').height) / 3.5) - 65, alignItems: 'center', justifyContent: 'center', padding: 10 }}>
                     <Paragraph style={{ color: '#212121', fontFamily: 'Avenir-Medium' }}>
-                        <Text>
+                        <Text style={{color: 'white'}}>
                             You don't have any scheduled bookings.{" "}
                         </Text>
-                        <Text>
+                        <Text style={{color: 'white'}}>
                             Visit the search page to find a variety of Lupa trainers and fitness programs.
                         </Text>
                     </Paragraph>
@@ -135,9 +192,9 @@ function UserDashboard(props) {
     return (
         <View style={{
             flex: 1,
-            backgroundColor: '#FFFFFF'
+            backgroundColor: '#23374d'
         }}>
-            <Header style={{ backgroundColor: '#FFFFFF', elevation: 0 }}>
+            <Header style={{ backgroundColor: '#23374d', elevation: 0 }}>
                 <Left>
                     <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                         <TouchableOpacity onPress={() => navigation.push('Profile', {
@@ -148,6 +205,7 @@ function UserDashboard(props) {
                         <View style={{ paddingHorizontal: 10 }}>
                             <Text style={{
                                 fontSize: 18,
+                                color: 'white',
                                 fontFamily: 'Avenir-Black'
                             }}>
                                 {currUserData.display_name}
@@ -164,24 +222,40 @@ function UserDashboard(props) {
                 </Left>
 
                 <Right style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <FeatherIcon name="bell" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Notifications')} />
-                    <FeatherIcon name="award" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Achievements')} />
-                    <FeatherIcon name="heart" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('PickInterest')} />
-                    <FeatherIcon name="activity" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('ExerciseDataLog')} />
-                    <FeatherIcon name="settings" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Settings')} />
+                    <FeatherIcon name="bell" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Notifications')} />
+                    <FeatherIcon name="award" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Achievements')} />
+                    <FeatherIcon name="heart" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('PickInterest')} />
+                    <FeatherIcon name="activity" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('ExerciseDataLog')} />
+                    <FeatherIcon name="settings" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Settings')} />
                  
                 </Right>
             </Header>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}>
-                <View style={{ marginVertical: 10 }}>
+                <View style={{ marginVertical: 10, backgroundColor: '#23374d' }}>
                     <ListItem
                         title="My Programs"
-                        titleStyle={{ fontSize: 18, fontFamily: 'Avenir-Heavy' }}
+                        titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
                         subtitle="Access all of your personal programs."
-                        subtitleStyle={{ fontSize: 15, fontFamily: 'Avenir-Roman' }}
+                        subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
                         bottomDivider
-                        rightIcon={() => <FeatherIcon name="arrow-right" size={20} />}
+                        rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}
                         onPress={() => setProgramModalIsOpen(true)}
+                        containerStyle={{backgroundColor: '#23374d'}}
+                        contentContainerStyle={{backgroundColor: '#23374d'}}
+                        style={{backgroundColor: '#23374d'}}
+                    />
+
+<ListItem
+                        title="Redeem a coupon"
+                        titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
+                        subtitle="Redeem an existing coupon code."
+                        subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
+                        bottomDivider
+                        rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}
+                        onPress={() => setRedeemModalOpen(true)}
+                        containerStyle={{backgroundColor: '#23374d'}}
+                        contentContainerStyle={{backgroundColor: '#23374d'}}
+                        style={{backgroundColor: '#23374d'}}
                     />
 
                    {/* <ListItem
@@ -261,6 +335,7 @@ function UserDashboard(props) {
                 </View>
             </ScrollView>
             <DashboardPrograms isVisible={programsModalIsOpen} closeModal={() => setProgramModalIsOpen(false)} />
+            <RedeemCouponCode isVisible={redeemModalOpen} closeModal={() => setRedeemModalOpen(false)} />
         </View>
     )
 }

@@ -27,6 +27,7 @@ import { getLupaUserStructurePlaceholder } from '../../../../controller/firebase
 import { getLupaStoreState } from '../../../../controller/redux/index'
 import { SESSION_TYPE } from '../../../../model/data_structures/user/types'
 import { LIVE_WORKOUT_MODE } from '../../../../model/data_structures/workout/types';
+import ParQAssessment from '../../../user/dashboard/components/ParQAssessment';
 function SessionDashboardComponent({ booking }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -43,6 +44,7 @@ function SessionDashboardComponent({ booking }) {
     const [requesterUserData, setRequesterUserData] = useState(getLupaUserStructurePlaceholder());
 
     const [programUID, setProgramUID] = useState("");
+    const [parQAssessmentVisible, setParQAssessmentVisible] = useState(false);
 
     useEffect(() => {
         async function fetchComponentData() {
@@ -104,6 +106,7 @@ function SessionDashboardComponent({ booking }) {
             let isFirstSession = false;
             if (booking && booking.isFirstSession == true) {
                 isFirstSession = true;
+               // setParQAssessmentVisible(true);
             } else {
                 isFirstSession = false
             }
@@ -152,26 +155,15 @@ function SessionDashboardComponent({ booking }) {
                      }
                      return;
                  }
-     
+        
                    //if this is first booking then
-                   let isFirstSession = false;
+                 /*  let isFirstSession = false;
                    if (booking && booking.isFirstSession == true) {
                        isFirstSession = true;
                    } else {
                        isFirstSession = false
-                   }
+                   }*/
      
-                   if (isFirstSession == true) {
-                     navigation.push('LiveWorkout', {
-                         sessionID: booking.uid,
-                         uuid: clientData.linked_program,
-                         workoutType: 'PROGRAM',
-                         workoutMode: LIVE_WORKOUT_MODE.CONSULTATION,
-                         booking: booking,
-                         week: -1,
-                         workout: -1
-                     })
-                   } else {
                      navigation.push('LiveWorkout', {
                          sessionID: booking.uid,
                          uuid: clientData.linked_program,
@@ -181,7 +173,6 @@ function SessionDashboardComponent({ booking }) {
                          week: -1,
                          workout: -1
                      })
-                   }
      
                     setProgramUID(clientData.linked_program)
                 }
@@ -257,6 +248,7 @@ function SessionDashboardComponent({ booking }) {
                 <BookingInformationModal trainerUserData={trainerUserData} requesterUserData={requesterUserData} isVisible={bookingInformationModalVisible} closeModal={() => setBookingInformationModalVisible(false)} booking={booking} />
             </Surface>
        <Divider style={{backgroundColor: 'white'}} />
+      {/* <ParQAssessment isVisible={parQAssessmentVisible} closeModal={() => setParQAssessmentVisible(false)} /> */}
        </>
 
             

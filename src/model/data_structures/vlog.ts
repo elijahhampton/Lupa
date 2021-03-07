@@ -15,6 +15,7 @@ type LupaVlog = {
     vlog_country: String,
     time_created: String,
     date_created: String,
+    comments: Array<Object>
 }
 
 var lupa_vlog_structure : LupaVlog = {
@@ -33,6 +34,7 @@ var lupa_vlog_structure : LupaVlog = {
     vlog_country: "",
     time_created: "",
     date_created: "",
+    comments: [],
 }
 
 export const getLupaVlogStructure = (title, text, uri, mediaType, owner, longitude, latitude, city, state, country, timeCreated, dateCreated) => {
@@ -49,5 +51,6 @@ export const getLupaVlogStructure = (title, text, uri, mediaType, owner, longitu
     lupa_vlog_structure.vlog_state = state;
     lupa_vlog_structure.vlog_city = city;
     lupa_vlog_structure.vlog_country = country;
+    lupa_vlog_structure.comments = []
     return lupa_vlog_structure;
 }

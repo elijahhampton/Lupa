@@ -101,8 +101,7 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
 
     return (
         <>
-            <DoubleClick disabled={clickable === true ? false : true} style={{width: '100%'}} singleTap={() => setShouldPlay(!shouldPlay)} doubleTap={() => handleOnDoubleTap()}>
-
+        <TouchableWithoutFeedback disabled={clickable === true ? false : true} onPress={() => setShouldPlay(true)}> 
        {showTopDivider === true ? <Divider style={{width: Dimensions.get('window').width, alignSelf: 'center', height: 1, backgroundColor: '#EEEEEE',}} /> : null } 
       
         <Card style={{ paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center', marginVertical: 15,   width: '100%', borderRadius: 0, elevation: 0}}>
@@ -165,7 +164,7 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
         </View>
 
         </Card>
-        </DoubleClick>
+        </TouchableWithoutFeedback>
         {renderVlogControls()}
         </>
     )

@@ -33,6 +33,7 @@ import LOG from '../../../../../common/Logger';
         >
         <BuildWorkoutController
         isEditing={true}
+        closeModal={closeModal}
         navigation={navigation} 
         programData={programData} 
         program_workout_days={programData.program_workout_days}

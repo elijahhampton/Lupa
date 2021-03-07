@@ -78,12 +78,10 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
   const [programType, setProgramType] = useState('template')
   const [learnMoreDialogIsVisible, setLearnMoreDialogIsVisible] = useState(false);
   const [sliderCollection, setSliderCollection] = useState([1]);
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const handleSaveProgramInformation = async () => {
-    let updatedStructure = await constructStrucutre();
-    console.log('updated')
-    console.log(updatedStructure)
-
+    const updatedStructure = await constructStrucutre();
     saveProgramInformation(programType, programDuration, updatedStructure);
   }
 
@@ -142,6 +140,7 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
     let updatedValue = sliderCollection;
     updatedValue[index] = value;
     setSliderCollection(updatedValue);
+    setForceUpdate(!forceUpdate);
   }
 
   const renderWeekSlider = (index) => {

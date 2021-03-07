@@ -156,6 +156,7 @@ class CreateProgram extends React.Component {
             case 1:
                 return <BuildWorkoutController 
                         isEditing={false}
+                        closeModal={() => {}}
                         navigation={this.props.navigation} 
                         programType={this.state.programType}
                         programData={this.state.programData} 
