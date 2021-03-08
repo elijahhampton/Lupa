@@ -104,7 +104,7 @@ export default class UserController {
                 let result = {};
                 for (let i = 0; i < results.length; i++) {
                     result = results[i];
-                    if (result._highlightResult.location.city.matchLevel == 'full') {
+                    if (result._highlightResult.location.city.matchLevel == 'full' && result.isTrainer == true) {
                         delete result._highlightResult;
                         curatedTrainers.push(result);
                     }
