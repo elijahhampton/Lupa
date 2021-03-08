@@ -26,7 +26,14 @@ var lupa_user : LupaUserStructure = {
     bookings: [],
     clients: [],
     certification: "",
-    homegym: {},
+    homegym: {
+        name: 'Unavailable',
+        address: 'Unavailable',
+        location: {
+            lat: 0,
+            lng: 0,
+        }
+    },
     chats: [],
     tokens: {},
     notifications: [],

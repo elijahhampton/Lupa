@@ -276,12 +276,13 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, isVisible, p
     }
 
     const handleOnRequest = async () => {
-      setConfirmingSession(true)
-      const updatedUserData = getLupaStoreState().Users.currUserData;
+      const updatedUserData = await getLupaStoreState().Users.currUserData;
       if (updatedUserData.stripe_metadata.card_added_to_stripe == false) {
-        setShowCardNeededDialogVisible(true)
+        await setShowCardNeededDialogVisible(true)
         return;
       }
+
+      setConfirmingSession(true)
 
       const booking = getNewBookingStructure(moment(startTime).format(), moment(endTime).format(), extractDateStringFromFormattedMoment(moment(bookingDate).format().toString()), new Date(), trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid, trainerNote, sessionType);
       const booking_id = booking.uid;
@@ -316,7 +317,10 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, isVisible, p
   }
 
     const handleNavigateToSettings = () => {
-      closeModal();
+      if (ref.current) {
+        ref.current.close();
+      }
+
       setShowCardNeededDialogVisible(false);
       resetState();
       navigation.push('Settings');
@@ -329,6 +333,22 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, isVisible, p
       setStartTimeFormatted(moment(new Date()).format('LT').toString())
       setBookingDate(new Date())
       setBookingDisplayDate(moment(new Date()).format('LL').toString())
+    }
+
+    const renderHomeGymAddress = () => {
+      if (typeof(trainer.homegym) == 'undefined') {
+        return 'Unavaiblable'
+      } else {
+        return trainer.homegym.address;
+      }
+    }
+
+    const renderHomeGymName = () => {
+      if (typeof(trainer.homegym) == 'undefined') {
+        return 'Unavaiblable'
+      } else {
+        return trainer.homegym.name;
+      }
     }
 
     const renderCardNeededDialog = () => {
@@ -514,10 +534,10 @@ theme={{roundness: 12}}>
 
                 <View>
                   <Text style={{fontSize: 20, fontFamily: 'Avenir-Medium'}}>
-                    Gym: {trainer.homegym.name}
+                    Gym: {renderHomeGymName()}
                   </Text>
                   <Text style={{fontSize: 20, fontFamily: 'Avenir-Medium'}}>
-                    Address: {trainer.homegym.address}
+                    Address: {renderHomeGymAddress()}
                   </Text>
                 </View>
                 </View>
