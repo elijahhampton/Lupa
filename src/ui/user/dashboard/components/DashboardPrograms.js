@@ -78,6 +78,7 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
             if (typeof(data) == 'undefined' || data.completedProgram === false) {
 
             } else {
+                console.log(data)
                 setPrograms(data);
             }
         });
@@ -121,9 +122,10 @@ const DashboardPrograms = ({ isVisible, closeModal }) => {
             <ScrollView>
                 {
                     programs.map((result, index, arr) => {
-                        if (typeof(result) == 'undefined' || typeof(result.program_structure_uuid) == 'undefined'  /*|| result.program_image == "" */) {
+                        if (typeof(result) == 'undefined' || typeof(result.program_structure_uuid) == 'undefined' /*|| result.program_image == "" */) {
                             return;
                         }
+
                         return (
                             <TouchableWithoutFeedback onPress={() => handleOnPressProgram(result)}>
                             <View style={{backgroundColor: 'white'}}>

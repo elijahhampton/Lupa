@@ -751,6 +751,36 @@ export default class ProgramController {
         return Promise.resolve(programArr);
     }
 
+    markWorkoutCompleted = async (userUID, programUID, completionString) => {
+        let foundProgramIndex = -1;
+       //get user program data
+       await USERS_COLLECTION.doc(userUID).get().then(documentSnapshot => {
+           const data = documentSnapshot.data();
+
+           let program_data = data.program_data;
+           for (let i = 0; i < program_data.length; i++)
+           {
+               if (program_data[i].program_structure_uuid == programUID)
+               {
+                   foundProgramIndex = i;
+               }
+           }
+
+           if (foundProgramIndex == -1) {
+               return;
+           }
+
+           let updatedProgram = program_data[foundProgramIndex];
+           
+           updatedProgram.workouts_completed.push(completionString);
+
+           program_data[foundProgramIndex] = updatedProgram;
+           USERS_COLLECTION.doc(userUID).update({
+               program_data: program_data
+           })
+       })
+    }
+
 }
 
 function constructUserWaitlistMetadataEntry(userData: LupaUserStructure) {

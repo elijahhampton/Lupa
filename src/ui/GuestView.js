@@ -1103,7 +1103,6 @@ renderSpecificEquipmentPrograms = () => {
                           <Text style={{fontFamily: 'Avenir', fontSize: 13}}>
                           View Profile
                           </Text>
-                    
                 </Button>
                     </View>
 

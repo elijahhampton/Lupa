@@ -42,6 +42,7 @@ import { createCommunityEvent, initializeNewCommunity } from '../../model/data_s
 import { getAbbreviatedDayOfTheWeekFromDate, getDayOfMonthStringFromDate, getDayOfTheWeekStringFromDate } from '../../common/service/DateTimeService';
 import LUPA_DB from '../../controller/firebase/firebase';
 import VlogFeedCard from '../user/component/VlogFeedCard';
+import { getLupaStoreState } from '../../controller/redux';
 const imageArr = [
   ProgramImageOne,
   ProgramImageTwo,
@@ -579,7 +580,7 @@ function Community({ community }) {
   useEffect(() => {
     
   async function fetchCommunityVlogs() {
-    const VLOG_QUERY = await LUPA_DB.collection('communities').doc(this.props.community.uid).collection('vlogs')
+    const VLOG_QUERY = await LUPA_DB.collection('communities').doc(community.uid).collection('vlogs')
     communityVlogObserver = VLOG_QUERY.onSnapshot(querySnapshot => {
         let updatedState = [];
 
@@ -679,7 +680,7 @@ renderFAB = () => {
           <FAB 
           small={false} 
           onPress={() => this.props.navigation.push('CreatePost', {
-              communityUID: this.props.community.uid,
+              communityUID: community.uid,
               vlogType: 'Community'
           })} 
           icon="video" 
@@ -728,29 +729,63 @@ renderFAB = () => {
 
       }
 
+      const handleUnFollowUser = () => {
+        LUPA_CONTROLLER_INSTANCE.unfollowUser(community.uid, currUserData.user_uuid);
+    }
+
+    const handleFollowUser = () => {
+        LUPA_CONTROLLER_INSTANCE.followUser(community.uid, currUserData.user_uuid)
+    }
+
       const renderSocialBar = () => {
         return (
           <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center'}}>
-              <Text>
+            <Text style={{fontFamily: 'Avenir-Medium'}}>
                 Following
               </Text>
               <Text>
-                0
+                {community.following.length}
               </Text>
             </View>
 
             <View style={{alignItems: 'center'}}>
-              <Text>
+            <Text style={{fontFamily: 'Avenir-Medium'}}>
                 Followers
               </Text>
               <Text>
-                0
+                {community.followers.length}
               </Text>
             </View>
           </View>
         )
       }
+
+      const renderFollowButton = () => {
+       /* const updatedCurrUserData = getLupaStoreState().Users.currUserData;
+   
+           if (updatedCurrUserData.following.includes(community.uid) == false) {
+               return (
+                <TouchableOpacity onPress={handleFollowUser}>
+                <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center', marginVertical: 10, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                    <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
+                        Follow
+                </Text>
+                </View>
+            </TouchableOpacity>
+               )
+           } else {
+               return (
+                <TouchableOpacity onPress={handleUnFollowUser}>
+                <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: 100, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+                    <Text style={{ fontSize: 12, fontWeight: '600', color: 'white' }}>
+                        Unfollow
+                </Text>
+                </View>
+            </TouchableOpacity>
+               )
+           }*/
+       }
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -791,13 +826,15 @@ renderFAB = () => {
           
           <View>
             {renderSocialBar()}
+{renderFollowButton()}
+            
 
 
             <Divider style={{alignSelf: 'center', width: Dimensions.get('window').width}} />
 
                 <View style={{backgroundColor: '#EEEEEE'}}>
                 <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-              <Text>
+                <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16, padding: 10}}>
                   Events
                 </Text>
 

@@ -51,6 +51,9 @@ import { getLupaStoreState } from '../../../../controller/redux/index'
 import SessionDashboardComponent from '../../../sessions/modal/component/SessionDashboardComponent'
 import axios from 'axios';
 import DashboardPrograms from './DashboardPrograms';
+import ParQAssessment from './ParQAssessment';
+import ProgramPortal from '../../trainer/ProgramPortal';
+import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
 
 const RedeemCouponCode = ({isVisible, closeModal}) => {
     const [code, setCode] = useState(false)
@@ -147,6 +150,8 @@ function UserDashboard(props) {
     const [userBookings, setUserBookings] = useState([]);
     const [refreshing, setRefreshing] = useState(false)
     const [redeemModalOpen, setRedeemModalOpen] = useState(false);
+    const [parQAssessmentVisible, setParQAssessmentVisible] = useState(false);
+
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
     const handleOnRefresh = React.useCallback(() => {
@@ -258,6 +263,19 @@ function UserDashboard(props) {
                         style={{backgroundColor: '#23374d'}}
                     />
 
+<ListItem
+                        title="PARQ Assessment"
+                        titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
+                        subtitle="Redeem an existing coupon code."
+                        subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
+                        bottomDivider
+                        rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}
+                        onPress={() => setParQAssessmentVisible(true)}
+                        containerStyle={{backgroundColor: '#23374d'}}
+                        contentContainerStyle={{backgroundColor: '#23374d'}}
+                        style={{backgroundColor: '#23374d'}}
+                    />
+
                    {/* <ListItem
                         title="Pack Programs "
                         titleStyle={{ fontSize: 18, fontFamily: 'Avenir-Heavy' }}
@@ -323,7 +341,7 @@ function UserDashboard(props) {
                                 null
                                 :
                                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
-                                    <Text style={{ fontSize: 20, fontFamily: 'Avenir-Heavy' }}>
+                                    <Text style={{color: 'white', fontSize: 20, fontFamily: 'Avenir-Heavy' }}>
                                         Bookings
                       </Text>
                                 </View>
@@ -334,8 +352,9 @@ function UserDashboard(props) {
                     </View>
                 </View>
             </ScrollView>
-            <DashboardPrograms isVisible={programsModalIsOpen} closeModal={() => setProgramModalIsOpen(false)} />
+            <ProgramPortal isVisible={programsModalIsOpen} closeModal={() => setProgramModalIsOpen(false)} clientData={{client: currUserData, program_data: getLupaProgramInformationStructure()}} />
             <RedeemCouponCode isVisible={redeemModalOpen} closeModal={() => setRedeemModalOpen(false)} />
+            <ParQAssessment isVisible={parQAssessmentVisible} closeModal={() => setParQAssessmentVisible(false)} loadAnswers={true} />
         </View>
     )
 }

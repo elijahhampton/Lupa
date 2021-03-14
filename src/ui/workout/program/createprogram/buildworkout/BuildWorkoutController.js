@@ -102,6 +102,8 @@ function Exercise(workoutObject, workoutWeek) {
     this.default_media_uri = workoutObject.default_media_uri;
     this.index = workoutObject.index;
     this.equipment = []
+    this.client_videos = []
+    this.trainer_videos = []
 }
 
 /**
@@ -184,6 +186,7 @@ class BuildWorkoutController extends React.Component {
      * Lifecycle method componentDidMount
      */
     async componentDidMount() {
+
         let weeks = [], workoutDays = [];
         const programDuration = this.props.programData.program_duration;
 
@@ -232,6 +235,32 @@ class BuildWorkoutController extends React.Component {
         
     }
 
+    changeDisplayMedia = (workout, uri, mediaType) => {
+        const currWeek = this.getCurrentWeek();
+
+        let newWorkoutData = []
+        newWorkoutData = this.state.workoutDays;
+
+        for (let i = 0; i <  newWorkoutData[currWeek]['workouts'][this.state.currWorkoutIndex].length; i++)
+        {
+            if (newWorkoutData[currWeek]['workouts'][this.state.currWorkoutIndex][i].workout_uid == workout.workout_uid)
+            {
+                newWorkoutData[currWeek]['workouts'][this.state.currWorkoutIndex][i].uri = uri;
+                newWorkoutData[currWeek]['workouts'][this.state.currWorkoutIndex][i].media_type = "VIDEO";
+
+                workout.workout_media.uri = uri;
+                workout.workout_media.media_type = "VIDEO";
+            }
+        }
+
+        this.setState({
+            workoutDays: newWorkoutData,
+            ready: false,
+        }, () => {
+            this.setState({ ready: true })
+        })
+    }
+
     /**
      * Adds a workout to the workoutDays structure.
      * @param {*} workoutObject 
@@ -255,8 +284,8 @@ class BuildWorkoutController extends React.Component {
                     workoutToUpdate.superset.push(updatedWorkout);
 
                     for (let i = 0; i < this.state.workoutDays[currWeek]['exercises'].length; i++) {
-                        if (this.state.workoutDays[currWeek]['exercises'].workout_uid == workoutToUpdate.workout_uid) {
-                            newWorkoutData[currWeek]['exercises'][i] = workoutToUpdate;
+                        if (newWorkoutData[currWeek]['workouts'][this.state.currWorkoutIndex][i].workout_uid == workoutToUpdate.workout_uid) {
+                            newWorkoutData[currWeek]['workouts'][this.state.currWorkoutIndex][i] = workoutToUpdate;
                         }
                     }
 
@@ -327,7 +356,7 @@ class BuildWorkoutController extends React.Component {
             const content = currWorkoutDaysState.map((exercise, index, arr) => {
                 return (
                     <TouchableWithoutFeedback key={index} style={[styles.populatedExerciseTouchableContainer, { width: this.state.addedWorkoutsScrollViewWidth - 10, }]}>
-                        <WorkoutDisplay sessionID={""} programType={this.props.programType} currProgramUUID={this.props.programData.program_structure_uuid} workout={exercise} programDuration={0} handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} handleDeleteExercise={uid => this.handleOnDeleteWorkout(uid)} />
+                        <WorkoutDisplay key={exercise.exercise_uid} changeDisplayMedia={(uid, uri, type) => this.changeDisplayMedia(uid, uri, type)} sessionID={""} programType={this.props.programType} currProgramUUID={this.props.programData.program_structure_uuid} workout={exercise} programDuration={0} handleSuperSetOnPress={() => this.handleAddSuperSet(exercise)} handleDeleteExercise={uid => this.handleOnDeleteWorkout(uid)} />
                     </TouchableWithoutFeedback>
 
                 )
@@ -346,7 +375,7 @@ class BuildWorkoutController extends React.Component {
             } else {
                 return (
                     <ScrollView contentContainerStyle={{ paddingVertical: 5, width: '100%', alignItems: 'flex-start' }}>
-                        {content}
+                       {content}
                     </ScrollView>
                 )
             }
@@ -594,9 +623,11 @@ class BuildWorkoutController extends React.Component {
     checkShowSelectedStyle = (exerciseObject) => {
       /*  const currWeek = this.getCurrentWeek();
 
-        for (let i = 0; i < this.state.workoutDays[currWeek]['exercises'].length; i++) {
+        for (let i = 0; i < this.state.workoutDays[currWeek]['workouts'][this.state.currWorkoutIndex].length; i++) {
             if (this.state.workoutDays[currWeek]['exercises'][i].workout_name == exerciseObject.workout_name) {
                 exerciseObject.showSelectStyle = true;
+            } else {
+                 exerciseObject.showSelectStyle = false;
             }
         }*/
     }
@@ -786,6 +817,29 @@ class BuildWorkoutController extends React.Component {
                         </ScrollView>
                     </View>
                 )
+            case 'Personal Library':
+                return (
+                    <View style={{ width: Dimensions.get('window').width }}>
+                    <ScrollView showsHorizontalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+                        {
+                            this.props.lupa_data.Users.currUserData.personal_exercise_library.map((item, index, value) => {
+                                if (typeof (item) == 'undefined' || item.workout_name == "" || typeof (item.workout_name) == 'undefined') {
+                                    return;
+                                }
+                                this.checkShowSelectedStyle(item)
+                                return (
+                                    <SingleWorkout
+                                        onPress={() => this.captureWorkout(item, this.state.currPlacementType)}
+                                        key={item.workout_name}
+                                        showSelectStyle={item.showSelectStyle}
+                                        workout={item}
+                                    />
+                                )
+                            })
+                        }
+                    </ScrollView>
+                </View>
+                )
         }
     }
 
@@ -795,6 +849,30 @@ class BuildWorkoutController extends React.Component {
         }
         this.setState({ customWorkoutModalVisible: true, currPlacementType: PLACEMENT_TYPES.EXERCISE })
     }
+
+    renderCategoryIcon = categoryString => {
+        switch (categoryString)
+        {
+            case 'Barbell':
+                return <Image resizeMode="contain" source={require('../../../../images/buildtoolicons/Barbell.png')} style={{ width: 90, height: 80 }} />
+            case 'Dumbbell':
+                return <Image resizeMode="contain" source={require('../../../../images/buildtoolicons/Dumbbell.png')} style={{ width: 90, height: 80 }} />
+            case 'Kettlebell':
+                return <Image resizeMode="contain" source={require('../../../../images/buildtoolicons/Kettlebell.png')} style={{ width: 90, height: 80 }} />
+            case 'Machine Assisted':
+                return <Image resizeMode="contain" source={require('../../../../images/buildtoolicons/MachineAssissted.png')} style={{ width: 90, height: 80 }} />
+            case 'Medicine Ball':
+                return <Image resizeMode="contain" source={require('../../../../images/buildtoolicons/MedicineBall.png')} style={{ width: 120, height: 80 }} />
+            case 'Personal Library':
+                return <Image resizeMode="contain" source={require('../../../../images/buildtoolicons/PersonalLibrary.png')} style={{ width: 50, height: 80 }} />
+            case 'Plyometric':
+                return <Image resizeMode="contain" source={require('../../../../images/buildtoolicons/Plyometric.png')} style={{ width: 120, height: 80 }} />
+            case 'Bodyweight':
+                return <Image resizeMode="contain" source={require('../../../../images/buildtoolicons/Bodyweight.png')} style={{ width: 150, height: 80 }} />
+            default:
+                return <Image source="" />
+        }
+    } 
 
     renderAddExerciseContent = () => {
         if (this.state.folderIsSelected === false) {
@@ -815,8 +893,9 @@ class BuildWorkoutController extends React.Component {
                     {
 
                         CATEGORIES.map(categoryString => {
-                            return (<TouchableOpacity onPress={() => this.handleFolderIsOpen(categoryString)} style={{ margin: 20, alignItems: 'center' }}>
-                                <Image source={require('../../../../images/buildworkout/ExerciseFolder.png')} style={{ width: 90, height: 80 }} />
+                            return (
+                            <TouchableOpacity onPress={() => this.handleFolderIsOpen(categoryString)} style={{ margin: 20, alignItems: 'center' }}>
+                                {this.renderCategoryIcon(categoryString)}
                                 <Text style={{ fontFamily: 'Avenir-Heavy', marginVertical: 10 }}>
                                     {categoryString}
                                 </Text>

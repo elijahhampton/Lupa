@@ -91,16 +91,12 @@ function WorkoutFinishedModal({ isVisible, closeModal }) {
 
                     <Button onPress={() => navigation.navigate('LupaHome')} color="white" mode="outlined" style={{ width: Dimensions.get('window').width - 20, alignSelf: 'center', borderColor: 'white' }}>
                         Exit Workout and Go Home
-          </Button>
-
-
+                    </Button>
                 </View>
-
             </View>
 
 
             <View style={{ flex: 3, alignItems: 'center', justifyContent: 'space-evenly' }}>
-
                 <View style={{ width: Dimensions.get('window').width - 50, alignSelf: 'center', borderRadius: 20, backgroundColor: 'rgb(245, 246, 247)', padding: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
                     <View style={{ marginVertical: 20 }}>
                         <Text style={{ color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800' }}>
@@ -113,9 +109,7 @@ function WorkoutFinishedModal({ isVisible, closeModal }) {
                         View Statistics
                       </Button>
                 </View>
-
             </View>
-
 
             <SafeAreaView />
         </Modal>
@@ -297,15 +291,15 @@ class LiveWorkout extends React.Component {
             isEditingOneRepMax: false,
             isEditingWeightUsed: false,
             videoPlaylistIndex: 0,
-            videoPlaylist: []
+            videoPlaylist: [],
         }
     }
 
     async componentDidMount() {
  
-        const { workoutMode, sessionID, week, day } = this.props.route.params;
+        const { workoutMode, sessionID, week, workout } = this.props.route.params;
         await this.setupLiveWorkout()
-        this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData, week, week);
+        this.workoutService = new LiveWorkoutService(sessionID, this.state.programOwnerData, [], this.state.programData, week, workout);
         await this.workoutService.initLiveWorkoutSession();
 
         if (workoutMode == LIVE_WORKOUT_MODE.CONSULTATION) {
@@ -512,7 +506,9 @@ class LiveWorkout extends React.Component {
 
     closeRestTimesRBSheet = () => this.restTimesRBSheet.current.close();
 
-    advanceExercise = () => this.workoutService.advanceWorkout();
+    advanceExercise = () => {
+        this.workoutService.advanceWorkout()
+    }
 
     renderWorkoutReps = () => {
         const { currentWorkout } = this.state;
@@ -807,8 +803,6 @@ class LiveWorkout extends React.Component {
             switch(workoutMode) {
                 case LIVE_WORKOUT_MODE.TEMPLATE:
                     return this.renderTemplateTrainingDisplay()
-              /*  case LIVE_WORKOUT_MODE.IN_PERSON: // create screen - TODO
-                    return this.renderInPersonDisplay() */
                 case LIVE_WORKOUT_MODE.CONSULTATION:
                     return ( 
                         <VirtualSession 
@@ -908,10 +902,6 @@ class LiveWorkout extends React.Component {
         this.workoutService.changeWeekAndDay(week, day);
     }
 
-    /*****  Virtual Workout */
-
-
-
     /************ */
 
     render() {
@@ -921,7 +911,13 @@ class LiveWorkout extends React.Component {
                 {this.renderComponentDisplay()}
                 {this.renderFinishWorkoutWarningDialog()}
                 {this.renderRestTimerRBSheetPicker()}
-                <Appbar.BackAction color="white" style={{position: 'absolute', top: Constants.statusBarHeight, left: 0}} onPress={this.showWarningDialog} />
+                <View style={{width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', position: 'absolute', top: Constants.statusBarHeight}}>
+                <Appbar.BackAction color="white" onPress={this.showWarningDialog} />
+                <View>
+            
+            </View>
+                </View>
+
           
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
                 <NoExercisesDialogVisible captureWeekAndDay={(week, day) => this.captureWeekAndDay(week, day)} programData={this.state.programData} isVisible={!this.state.hasWorkouts} />

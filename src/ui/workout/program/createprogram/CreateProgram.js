@@ -89,8 +89,8 @@ class CreateProgram extends React.Component {
     }
 
     saveProgramWorkoutData = async (workoutData, numWorkoutsAdded, equipmentList) => {
-        LOG('CreateProgram.js', 'Updating workout data for program: ' + this.state.programData.program_structure_uuid);
-        this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.programData.program_structure_uuid, workoutData, numWorkoutsAdded, equipmentList)
+        LOG('CreateProgram.js', 'Updating workout data for program: ' + this.state.uuid);
+        this.LUPA_CONTROLLER_INSTANCE.updateProgramWorkoutData(this.state.uuid, workoutData, numWorkoutsAdded, equipmentList)
         this.goToIndex(2);
     }
 
@@ -183,13 +183,8 @@ class CreateProgram extends React.Component {
             this.exit();
             return;
         }
-        
+
         this.exit();
-        this.LUPA_CONTROLLER_INSTANCE.getProgramInformationFromUUID(this.state.uuid).then(data => {
-            if (data.program_name == "" || typeof(data.program_name) == 'undefined') {
-                LUPA_DB.collection('programs').doc(this.state.uuid).delete();
-            }
-        })
     }
 
 

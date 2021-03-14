@@ -84,6 +84,7 @@ class Search extends React.Component {
 
     componentDidMount() {
         const { navigation, route } = this.props;
+        this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
 
         navigationListenerSubscription = navigation.addListener('focus', () => {
             // Prevent default action
@@ -274,8 +275,12 @@ class Search extends React.Component {
             searchResults: []
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE.searchTrainersAndPrograms(searchQuery).then(searchData => {
+        await this.LUPA_CONTROLLER_INSTANCE
+        .searchTrainersAndPrograms(searchQuery).then(searchData => {
             this.setState({ searchResults: searchData })
+        })
+        .catch(error => {
+            
         })
 
         await this.setState({

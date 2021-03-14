@@ -133,30 +133,21 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, isVisible, p
         </Dialog.Title>
         <Dialog.Content>
         <View>
-          <View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+         
+          <View style={styles.optionContainer}>
                         <RadioButton.Android color="#1089ff" status={sessionType == SESSION_TYPE.REMOTE ? 'checked' : 'unchecked'} onPress={() => setSessionType(SESSION_TYPE.REMOTE)} />
-                        <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16}}>
+                        <Text style={styles.optionText}>
                             Remote
                         </Text>
                     </View>
-                    <Caption>
-                      Complete a remote session over video.
-                    </Caption>
-          </View>
 
-
-      <View>
-                    <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={styles.optionContainer}>
                         <RadioButton.Android color="#1089ff" status={sessionType == SESSION_TYPE.IN_PERSON ? 'checked' : 'unchecked'} onPress={() => setSessionType(SESSION_TYPE.IN_PERSON)} />
-                        <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16}}>
+                        <Text style={styles.optionText}>
                             In Person
                         </Text>
                     </View>
-                    <Caption>
-                      Meet with your trainer at their specified gym or workout location.
-                    </Caption>
-                    </View>
+
                 </View>
         </Dialog.Content>
 
@@ -628,6 +619,12 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir-Heavy', 
         fontWeight: 'bold', 
         fontSize: 20
+    },
+    optionText: {
+      fontFamily: 'Avenir', fontSize: 16
+    },
+    optionContainer: {
+      marginVertical: 10, flexDirection: 'row', alignItems: 'center'
     }
 })
 

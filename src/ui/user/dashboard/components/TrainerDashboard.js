@@ -30,7 +30,7 @@ import {
     Body
 } from 'native-base';
 
-import { Avatar } from 'react-native-elements';
+import { Avatar, ListItem } from 'react-native-elements';
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { useSelector } from 'react-redux'
 import { LineChart } from 'react-native-chart-kit'
@@ -51,6 +51,7 @@ import BookingInformationModal from '../../../sessions/modal/BookingInformationM
 import axios from 'axios';
 import SessionDashboardComponent from '../../../sessions/modal/component/SessionDashboardComponent';
 import { Constants } from 'react-native-unimodules';
+import ParQAssessment from './ParQAssessment';
 function TrainerDashboard(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -62,6 +63,8 @@ function TrainerDashboard(props) {
 
     const [refreshing, setRefreshing] = useState(false);
     const [userBookings, setUserBookings] = useState([]);
+    const [redeemModalOpen, setRedeemModalOpen] = useState(false);
+    const [parQAssessmentVisible, setParQAssessmentVisible] = useState(false);
 
     useEffect(() => {
         const currUserObserver = LUPA_DB.collection('bookings').where('trainer_uuid', '==', currUserData.user_uuid).where('status', '==', 2).onSnapshot(documentSnapshot => {
@@ -229,12 +232,24 @@ function TrainerDashboard(props) {
                         </View>
                     </View>
     </View>*/}
-                <View style={{ flex: 2, marginVertical: 10, }}>
+    <ListItem
+                        title="PARQ Assessment"
+                        titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
+                        subtitle="Redeem an existing coupon code."
+                        subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
+                        bottomDivider
+                        rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}
+                        onPress={() => setParQAssessmentVisible(true)}
+                        containerStyle={{backgroundColor: '#23374d'}}
+                        contentContainerStyle={{backgroundColor: '#23374d'}}
+                        style={{backgroundColor: '#23374d'}}
+                    />
+
                   {
                       userBookings.length === 0 ?
                       null
                       :
-                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+                      <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
                       <Text style={{color: '#FFFFFF', fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
                           Bookings
                       </Text>
@@ -244,11 +259,12 @@ function TrainerDashboard(props) {
 
                     {renderUpcomingBooking()}
                    
-                </View>
             </View>
 
             </ScrollView>
             <FAB onPress={() => navigation.push('MyClients')} icon={() => <FeatherIcon name="users" size={22} color="white" />} style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
+            <ParQAssessment isVisible={parQAssessmentVisible} closeModal={() => setParQAssessmentVisible(false)} loadAnswers={true} />
+           
         </View>
     )
 }

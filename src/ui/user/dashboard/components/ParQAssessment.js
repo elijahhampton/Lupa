@@ -1,13 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, Text } from 'react-native';
 import { Modal, View, StyleSheet } from 'react-native';
-import { Appbar } from 'react-native-paper';
+import { Appbar, Caption, Snackbar } from 'react-native-paper';
 import { Input } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import LupaController from '../../../../controller/lupa/LupaController';
 import { useSelector } from 'react-redux/lib/hooks/useSelector';
+import LUPA_DB from '../../../../controller/firebase/firebase';
+import { RefreshControl } from 'react-native';
 
 const questions = [
     {
@@ -40,14 +42,15 @@ const questions = [
     },
 ]
 
-function AssessmentQuestion({ question, captureInput, assessmentType }) {
+function AssessmentQuestion({ question, captureInput, assessmentType, editable, input, value, id }) {
     const [inputText, setInputText] = useState("");
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-    handleOnChangeText = (text) => {
+    const handleOnChangeText = (text) => {
         setInputText(text)
-        captureInput(question.id, inputText)
+        captureInput(id, text)
     }
+
 
     return (
         <View style={{borderWidth: 1, alignItems: 'center', borderRadius: 5, borderColor: '#EEEEEE', marginVertical: 10, alignSelf: 'center', width: Dimensions.get('window').width - 20, padding: 10}}>
@@ -56,8 +59,11 @@ function AssessmentQuestion({ question, captureInput, assessmentType }) {
             </Text>
             <View style={{width: '100%'}}>
                 <Input 
-                value={inputText}
-                onChangeText={text => setInputText(text)}
+                key={question.id}
+                editable={editable}
+                value={editable == true ? inputText : input}
+                inputStyle={{color: editable == false ? '#AAAAAA' : 'black', fontSize: 15, padding: 10}}
+                onChangeText={text => handleOnChangeText(text)}
                 inputContainerStyle={{borderWidth: 1, borderRadius: 5,}} 
                 />
             </View>
@@ -65,15 +71,33 @@ function AssessmentQuestion({ question, captureInput, assessmentType }) {
     )
 }
 
-function ParQAssessment({ isVisible, closeModal }) {
-    const [inputTexts, setInputTexts] = useState(new Array(questions.length))
+function ParQAssessment({ isVisible, closeModal, loadAnswers }) {
+    const [inputTexts, setInputTexts] = useState(new Array(questions.length).fill(""))
+const [loadedPARQ, setLoadedParQ] = useState([]);
+const [loadedParQFound, setLoadedParQFound] = useState(false);
+const [ready, setReady] = useState(false);
+const [refreshing, setRefreshing] = useState(false);
+const [snackBarVisible, setSnackBarVisible] = useState(false);
+const [snackBarReason, setSnackBarReason] = useState("")
 
     const currUserData = useSelector(state => {
         return state.Users.currUserData;
     })
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
+    const handleValidateForm = () => {
+        for (let i = 0; i < inputTexts.length; i++) {
+            if (inputTexts[i].length == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     const captureInput = (id, text) => {
+        console.log(id)
+        console.log(text)
         let updatedTexts = inputTexts;
         updatedTexts[id] = text;
         setInputTexts(updatedTexts)
@@ -81,26 +105,156 @@ function ParQAssessment({ isVisible, closeModal }) {
 
     const handleOnSubmit = () => {
         LUPA_CONTROLLER_INSTANCE.submitAssessment(currUserData.user_uuid, "PARQ", inputTexts);
-        closeModal()
+        handleOnCloseModal()
     }
+
+    handleOnCloseModal = async () => {
+        const formValidated = await handleValidateForm();
+        if (formValidated == false) {
+           // setSnackBarReason("You have left one or more inputs blank.")
+           // setSnackBarVisible(true);
+           closeModal()
+        } else {
+            setReady(false);
+            closeModal();
+        }
+    }
+
+    const renderQuestions = () => {
+        if (loadedParQFound == false) {
+            return questions.map(question => {
+                return <AssessmentQuestion  id={question.id} editable={true} key={question.id} question={question} assessmentType="PARQ" captureInput={(id, text) => captureInput(id, text)} />
+            })
+        }
+
+        if (loadAnswers == true && loadedParQFound == true) {
+            if (ready == true && loadedParQFound == true) {
+                return questions.map((question, index, arr) => {
+                    return <AssessmentQuestion id={question.id} editable={false} key={question.id} question={question} input={loadedPARQ['assessment'][index].response} assessmentType="PARQ" captureInput={(id, text) => captureInput(id, text)} />
+                })
+            }
+        } else if (loadAnswers == true && loadedParQFound == false) {
+            return questions.map(question => {
+                return <AssessmentQuestion  id={question.id} editable={true} key={question.id} question={question} assessmentType="PARQ" captureInput={(id, text) => captureInput(id, text)} />
+            })
+        }else {
+            return (
+                <View style={{padding: 20, flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Caption>
+                        There was an error loading your parq assessment.  Please try refreshing the page
+                    </Caption>
+                </View>
+            )
+        }
+    }
+
+    const handleOnRefresh = async () => {
+        setReady(false);
+        setRefreshing(true)
+        await loadParQData().then(() => {
+            setRefreshing(false)
+            setReady(true)
+        })
+    }   
+
+    const loadParQData = async () => {
+        const userAssessments = currUserData.assessments;
+            let id = -1;
+            for (let i = 0; i < userAssessments.length; i++)
+            {
+                if (userAssessments[i].includes('PARQ')) {
+                    id = userAssessments[i].toString().substring(4);
+                    continue;
+                }
+            }
+
+            if (id != -1) {
+                await LUPA_DB.collection('assessments').doc(id).get().then(documentSnapshot => {
+                    const data = documentSnapshot.data();
+                    setLoadedParQ(data);
+                    setLoadedParQFound(true);
+                })
+                .catch(error => {
+                
+                    setLoadedParQFound(false);
+                    setReady(false);
+                })
+            } else {
+          
+                setLoadedParQFound(false);
+                setReady(false);
+            }
+    }
+
+    useEffect(() => {
+        async function loadPARQAnswers() {
+            const userAssessments = currUserData.assessments;
+            let id = -1;
+            for (let i = 0; i < userAssessments.length; i++)
+            {
+                if (userAssessments[i].includes('PARQ')) {
+                    id = userAssessments[i].toString().substring(4);
+                    continue;
+                }
+            }
+
+            if (id != -1) {
+                await LUPA_DB.collection('assessments').doc(id).get().then(documentSnapshot => {
+                    const data = documentSnapshot.data();
+                    setLoadedParQ(data);
+                    setLoadedParQFound(true);
+                })
+                .catch(error => {
+                
+                    setLoadedParQFound(false);
+                    setReady(false);
+                })
+            } else {
+          
+                setLoadedParQFound(false);
+                setReady(false);
+            }
+        }
+
+        loadPARQAnswers()
+        .then(() => {
+            setReady(true);
+        })
+        .catch(error => {
+            setReady(false);
+        })
+    }, [])
 
 
     return (
         <Modal presentationStyle="fullScreen" visible={isVisible}>
             <Appbar.Header style={{backgroundColor: 'white', elevation: 0}}>
-                <Appbar.BackAction />
+                <Appbar.BackAction onPress={handleOnCloseModal} />
                 <Appbar.Content title="PARQ Assessment" />
-                <Appbar.Action onPress={handleOnSubmit} icon={() => <FeatherIcon name="check" size={20} />} />
+                <Appbar.Action onPress={handleOnSubmit} icon={() => <FeatherIcon name="check" size={20} />} disabled={loadedParQFound == true} />
             </Appbar.Header>
             <View style={styles.container}>
-                <ScrollView>
-                {
-                    questions.map(question => {
-                        return <AssessmentQuestion key={question.id} question={question} assessmentType="PARQ" captureInput={(id, text) => captureInput(id, text)} />
-                    })
-                }
+                
+                <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}>
+                    <View style={{alignItems: 'center', justifyContent: 'center', padding: 20}}>
+                        <Caption style={{color: '#23374d'}}>
+                            You must take a parq before entering into your first session with a trainer or if you don't have one on file.
+                        </Caption>
+                    </View>
+                    {renderQuestions()}
                  </ScrollView>
             </View>
+            <Snackbar
+        visible={snackBarVisible}
+        onDismiss={() => setSnackBarVisible(false)}
+        action={{
+          label: 'Okay',
+          onPress: () => {
+            // Do something
+          },
+        }}>
+        {snackBarReason}
+      </Snackbar>
         </Modal>
     )
 }

@@ -757,8 +757,9 @@ export default class UserController {
      * @param uuidOfAccountBeingFollowed 
      * @param uuidOfFollower 
      */
-    addFollowerToUUID = async (uuidOfAccountBeingFollowed: String, uuidOfFollower: String) => {
+    addFollowerToUUID = async (uuidOfAccountBeingFollowed: String, uuidOfFollower: String, accountType?: String) => {
         let result = getLupaUserStructure();
+        
         await USER_COLLECTION.doc(uuidOfAccountBeingFollowed).get().then(snapshot => {
             result = snapshot.data();
         })
@@ -1705,28 +1706,18 @@ export default class UserController {
         //add the program and programData to users list
         await this.updateCurrentUser('programs', programData.program_structure_uuid, 'add');
         let variationProgramData = programData;
-        variationProgramData.date_purchased = new Date()
-        variationProgramData.workouts_completed = 0;
-        variationProgramData.program_started = false;
         await this.updateCurrentUser('program_data', variationProgramData, 'add');
 
         //add the user as one of the program participants
-        let updatedParticipants = [], updatedPurchaseMetadata = {}
+        let updatedParticipants = [];
         await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).get().then(snapshot => {
             updatedParticipants = snapshot.data().program_participants;
-            updatedPurchaseMetadata = snapshot.data().program_purchase_metadata;
         });
 
         updatedParticipants.push(currUserUUID);
-        updatedPurchaseMetadata.purchase_list.push({
-            purchaser: currUserData.display_name,
-            date_purchased: new Date(),
-            program_name: programData.program_name,
-        })
 
         await PROGRAMS_COLLECTION.doc(programData.program_structure_uuid).update({
             program_participants: updatedParticipants,
-            program_purchase_metadata: updatedPurchaseMetadata,
         });
 
         try {
@@ -2288,7 +2279,6 @@ export default class UserController {
             let clientEntry = {
                 client: requester_uuid,
                 linked_program: "0",
-                linkedProgram: "0"
             }
 
             updatedClientsList.push(clientEntry);
@@ -2502,13 +2492,36 @@ export default class UserController {
         let clients = userData.clients;
         let clientsData = []
 
+        let clientDataStructure = {
+            client: getLupaUserStructurePlaceholder(),
+            program_data: getLupaProgramInformationStructure()
+        }
+
         if (typeof(clients) == 'undefined') {
             clientsData = []
         } else {
             for (let i = 0; i < clients.length; i++) {
                 await this.getUserInformationByUUID(clients[i].client).then(data => {
-                    clientsData.push(data);
-                })
+                    clientDataStructure.client = data
+                });
+
+                let program = getLupaProgramInformationStructure();
+
+                for (let j = 0; j < clientDataStructure.client.program_data.length; j++)
+                {
+                    if (clientDataStructure.client.program_data[j].program_structure_uuid == clients[i].linked_program)
+                    {
+                        clientDataStructure.program_data = clientDataStructure.client.program_data[j]
+                    }
+                }
+
+
+                clientsData.push(clientDataStructure);
+
+                clientDataStructure = {
+                    client: getLupaUserStructurePlaceholder(),
+                    program_data: getLupaProgramInformationStructure()
+                }
             }
         }
 
@@ -3034,25 +3047,59 @@ let subscribers = [];
            
         }
 
+        /**
+         * 
+         * @param trainerUID 
+         * @param clientUID 
+         * @param program 
+         * TODO: Remove last program linked to client.
+         */
         linkProgramToClient = async (trainerUID, clientUID, program) => {
-            const userDocRef = USER_COLLECTION.doc(trainerUID);
-            await userDocRef.get().then(documentSnapshot => {
+            const clientDocRef = USER_COLLECTION.doc(clientUID);
+            const trainerDocRef = USER_COLLECTION.doc(trainerUID);
+
+            //we need to change the program restrictions
+            program.program_restrictions.push('temporary');
+
+            await trainerDocRef.get().then(documentSnapshot => {
                 let userData = documentSnapshot.data();
                 let updatedClientsList = userData.clients;
-
-                console.log('clients: ' + updatedClientsList)
-
-                for (let i = 0; i < updatedClientsList.length; i++) {
-                    if (updatedClientsList[i].client == clientUID) {
-                        console.log('@@@@@@@@@@@@@@@@')
-                        console.log(program);
+                
+                for (let i = 0; i < updatedClientsList.length; i++)
+                {
+                    if (updatedClientsList[i].client == clientUID)
+                    {
+           
                         updatedClientsList[i].linked_program = program.program_structure_uuid
-                        continue;
                     }
                 }
 
-                userDocRef.update({
+                trainerDocRef.update({
                     clients: updatedClientsList
+                })
+            })
+
+            await clientDocRef.get().then(documentSnapshot => {
+                let userData = documentSnapshot.data();
+                let updatedClientsList = userData.program_data;
+
+                let found = false;
+                for (let j = 0; j < updatedClientsList.length; j++)
+                {
+                    if (updatedClientsList[j].program_structure_uuid == program.program_structure_uuid)
+                    {
+                        found = true
+                    }
+                }
+
+                if (found == false) {
+                    updatedClientsList.push(program);
+                }
+               
+
+
+                clientDocRef.update({
+                    program_data: updatedClientsList
                 })
             })
         }
@@ -3119,7 +3166,7 @@ let subscribers = [];
     }
 
     addVlogComment = async (vlogID, comment) => {
-        await LUPA_DB.collection('vlogs').doc(vlogID).get().then(documentSnapshot => {
+        await LUPA_DB.collection('vlogs').doc(vlogID).get().then(async documentSnapshot => {
             let vlogData = documentSnapshot.data();
 
             let comments = vlogData.comments;
@@ -3127,7 +3174,28 @@ let subscribers = [];
 
             LUPA_DB.collection('vlogs').doc(vlogID).update({
                 comments: comments
-            })
+            });
+
+            let receivedVlogComment = {
+                notification_uuid: Math.random().toString(),
+                data: vlogData,
+                from: -1,
+                to: vlogData.vlog_owner,
+                read: false,
+                type: NOTIFICATION_TYPES.NEW_VLOG_COMMENT,
+                actions: [],
+                timestamp: new Date().getTime()
+            }
+
+            let userNotifications = [];
+
+                await USER_COLLECTION.doc(vlogData.vlog_owner).get().then(snapshot => {
+                    userNotifications = snapshot.data().notifications;
+                })
+                await userNotifications.push(receivedVlogComment);
+                await USER_COLLECTION.doc(vlogData.vlog_owner).update({
+                    notifications: userNotifications,
+                })
         })
     }   
 
@@ -3182,13 +3250,27 @@ let subscribers = [];
             id = docRef.id
         })
 
+        id = 'PARQ'+id.toString();
+
         //add id to user assessments
         let assessments = [];
         await LUPA_DB.collection('users').doc(userUUID).get().then(documentSnapshot => {
             const userData = documentSnapshot.data();
 
             assessments = userData.assessments;
-            assessments.push(id);
+
+            let found = -1;
+            for (let i = 0; i < assessments.length; i++) {
+                if (assessment[i].includes('PARQ')) {
+                    found = i;
+                }
+            }
+
+            if (found == -1) {
+                assessments.push(id);
+            } else {
+                assessment[found] = id
+            }
 
             LUPA_DB.collection('users').doc(userUUID).update({
                 assessments: assessments
@@ -3210,6 +3292,60 @@ let subscribers = [];
                 hasAssessment = false;
             }
         })
+    }
+
+    saveProgramPlusVideoToProgram = async (userUID, exerciseUID, uri, programUID, week, workout, userType) => {
+        let foundProgramIndex = -1;
+       //get user program data
+       await USER_COLLECTION.doc(userUID).get().then(documentSnapshot => {
+           const data = documentSnapshot.data();
+
+           let program_data = data.program_data;
+           for (let i = 0; i < program_data.length; i++)
+           {
+               if (program_data[i].program_structure_uuid == programUID)
+               {
+                   foundProgramIndex = i;
+               }
+           }
+
+           if (foundProgramIndex == -1) {
+               return;
+           }
+
+           let updatedProgram = getLupaProgramInformationStructure();
+
+           if (userType == "TRAINER")
+           {
+           //save a reference to the found program
+           updatedProgram = program_data[foundProgramIndex];
+           for (let j = 0; j < updatedProgram.program_workout_structure[week]['workouts'][workout].length; j++)
+           {
+               //update the trainer videos
+               if (updatedProgram.program_workout_structure[week]['workouts'][workout][j].workout_uid == exerciseUID)
+               {
+                updatedProgram.program_workout_structure[week]['workouts'][workout][j].trainer_videos.push(uri);
+               }
+           }
+           } else {
+           //save a reference to the found program
+           updatedProgram = program_data[foundProgramIndex];
+           for (let j = 0; j < updatedProgram.program_workout_structure[week]['workouts'][workout].length; j++)
+           {
+               //update the client video
+               if (updatedProgram.program_workout_structure[week]['workouts'][workout][j].workout_uid == exerciseUID)
+               {
+                updatedProgram.program_workout_structure[week]['workouts'][workout][j].client_videos.push(uri);
+               }
+           }
+           }
+
+
+           program_data[foundProgramIndex] = updatedProgram;
+           USER_COLLECTION.doc(userUID).update({
+               program_data: program_data
+           })
+       })
     }
 }
 

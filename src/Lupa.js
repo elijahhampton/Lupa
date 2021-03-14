@@ -73,7 +73,7 @@ class Lupa extends React.Component {
 
   async componentDidMount() {
     generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid);
-   this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+   //this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
   }
 
   render() {

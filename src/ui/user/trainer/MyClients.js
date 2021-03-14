@@ -25,6 +25,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import LOG from '../../../common/Logger';
 
 import moment from 'moment'
+import ProgramPortal from './ProgramPortal';
+import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
+import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 
 const MyClients = ({ navigation, route }) => {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -34,6 +37,8 @@ const MyClients = ({ navigation, route }) => {
     })
 
     const [myClientData, setMyClientData] = useState([]);
+    const [programPortalIsVisible, setProgramPortalIsVisible] = useState(false);
+    const [selectedClient, setSelectedClient] = useState({ client: getLupaUserStructure(), program_data: getLupaProgramInformationStructure() })
 
     useEffect(() => {
         async function fetchClientData(uuid) {
@@ -50,6 +55,11 @@ const MyClients = ({ navigation, route }) => {
 
         fetchClientData(currUserData.user_uuid);
     }, []);
+
+    const handleOnOpenProgramPortal = async (clientData) => {
+        await setSelectedClient(clientData)
+        setProgramPortalIsVisible(true);
+    }
 
     const renderComponent = () => {
         if (myClientData.length === 0) {
@@ -81,33 +91,33 @@ const MyClients = ({ navigation, route }) => {
                     {
                         myClientData.map((clientData, index, arr) => {
                             return (
+                                <View>
                                 <View style={{paddingHorizontal: 20,width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10}}>
                                  
                         <View style={{marginVertical: 10}}>
                           <View style={{alignItems: 'center', flexDirection: 'row'}}>
 
               
-                          <Avatar.Image size={45} source={{uri: clientData.photo_url}} />
+                          <Avatar.Image size={45} source={{uri: clientData.client.photo_url}} />
               
                          
                           <View style={{paddingHorizontal: 10}}>
                             <Text style={{paddingVertical: 5, fontSize: 12, fontFamily: 'Avenir-Heavy'}}>
-                              {clientData.display_name}
+                              {clientData.client.display_name}
                             </Text>
                             <Text style={{fontFamily: 'Avenir-Roman', fontSize: 12}}>
-                                #{index + 1}
+                              {clientData.program_data.program_name}
                             </Text>
                           </View>
                           </View>
                         </View>
 
                      
-                        <Button uppercase={false} mode="text" color="#1089ff" onPress={() => navigation.push('Profile', {
-                            userUUID: clientData.user_uuid
-                        })}>
+                        <Button uppercase={false} mode="text" color="#1089ff" onPress={() => handleOnOpenProgramPortal(clientData)}>
                             View Client
                         </Button>
                                
+                                </View>
                                 </View>
                             )
                         })
@@ -130,6 +140,7 @@ const MyClients = ({ navigation, route }) => {
             </Appbar.Header> 
 
         {renderComponent()}
+        <ProgramPortal isVisible={programPortalIsVisible} closeModal={() => setProgramPortalIsVisible(false)} clientData={selectedClient} />
         <SafeAreaView />
         </View>
     )

@@ -1082,4 +1082,13 @@ export default class LupaController {
   submitAssessment = (userUUID, assessmentType, inputs) => {
     USER_CONTROLLER_INSTANCE.submitAssessment(userUUID, assessmentType, inputs);
   }
+
+  saveProgramPlusVideoToProgram = async (userUID, exerciseUID, uri, programUID, week, workout, userType) => {
+    await USER_CONTROLLER_INSTANCE.saveProgramPlusVideoToProgram(userUID, exerciseUID, uri, programUID, week, workout, userType);
+  }
+
+  markWorkoutCompleted = async (userUID, programUID, completionString) => {
+    PROGRAMS_CONTROLLER_INSTANCE.markWorkoutCompleted(userUID, programUID, completionString);
+  }
+
 }

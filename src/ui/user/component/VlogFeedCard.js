@@ -52,12 +52,10 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
                    {" "}
                </Text>
                 <Caption>
-                    0
+                    {vlogData.comments.length}
                 </Caption>
                 </View>    
                 </TouchableWithoutFeedback>
-
-                <FeatherIcon name="send" size={20} style={{marginHorizontal: 10}} />
 
             </View>
         )

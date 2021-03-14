@@ -263,7 +263,7 @@ exports.makePaymentToTrainer = functions.https.onRequest(async (request, respons
       if (clientExist == false) {
         let clientStructure = {
           client: purchaserUUID,
-          linkedProgram: "0"
+          linked_program: "0"
         }
         updatedClientsList.push(clientStructure);
         admin.firestore().collection('users').doc(trainerUUID).update({

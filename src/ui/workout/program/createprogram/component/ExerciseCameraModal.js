@@ -51,8 +51,8 @@ currWorkoutPressed, currProgramUUID, closeMainModal, captureURI, mediaCaptureTyp
         newURI = await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(currWorkoutPressed, 
         currProgramUUID, 'VIDEO', videoSrcProps);
 
-        currWorkoutPressed.workout_media.media_type = "VIDEO";
-        currWorkoutPressed.workout_media.uri = newURI
+         currWorkoutPressed.workout_media.media_type = "VIDEO";
+         currWorkoutPressed.workout_media.uri = newURI
         await captureURI(newURI, "VIDEO");
         break;
       default:
@@ -65,7 +65,7 @@ currWorkoutPressed, currProgramUUID, closeMainModal, captureURI, mediaCaptureTyp
     closeMainModal()
     
     } catch(error) {
-    
+      alert(error)
     }
   }
 

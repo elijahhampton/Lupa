@@ -386,7 +386,7 @@ const CreateCustomExercise = ({
             return;
         }
 
-       // LUPA_CONTROLLER_INSTANCE.savePersonalExercise(currUserData, customExercise);
+       LUPA_CONTROLLER_INSTANCE.savePersonalExercise(currUserData, customExercise);
         
        await captureExercise(customExercise, 'exercise');
         closeModal()

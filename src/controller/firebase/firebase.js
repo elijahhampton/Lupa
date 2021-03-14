@@ -400,7 +400,7 @@ export class FirebaseStorageBucket {
   saveProgramWorkoutGraphic = async (blob, workout, programUUID, graphicType) => {
     const user_uuid = await LUPA_AUTH.currentUser.uid;
     const fileName = user_uuid+"_"+workout.workout_uid+"_"+programUUID+"_"+graphicType+"_"+Math.random().toString();
-
+    
     return new Promise((resolve, reject) => {
       
       LUPA_USER_PROGRAMS_STORAGE_REF.child(fileName).put(blob).then(ref => {

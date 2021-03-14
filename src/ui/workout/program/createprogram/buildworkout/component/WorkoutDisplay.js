@@ -42,6 +42,8 @@ import Feather1s from 'react-native-feather1s/src/Feather1s';
 import { getLupaExerciseStructure } from '../../../../../../model/data_structures/workout/exercise_collections';
 import { LIVE_WORKOUT_MODE } from '../../../../../../model/data_structures/workout/types';
 import LiveWorkoutService from '../../../../../../common/service/LiveWorkoutService';
+import { useNavigation } from '@react-navigation/core';
+import LupaController from '../../../../../../controller/lupa/LupaController';
 let weeks = []
 
 const restTimes = [
@@ -66,139 +68,57 @@ function handleMeasurement(exercise, tempo) {
     exercise.workout_tempo = tempo;
 }
 
-function AddTagsModal({ captureEquipmentTags, isVisible, closeModal }) {
-    const [tags, setTags] = useState([]);
-    const [forceUpdate, setForceUpdate] = useState(false);
-  
-    const handleAddTags = (tagString) => {
-      if (tags.includes(tagString)) {
-        let updatedTagList = tags;
-        updatedTagList.splice(updatedTagList.indexOf(tagString), 1)
-        setTags(updatedTagList)
-      } else {
-        setTags((prevState) => prevState.concat(tagString))
-      }
-  
-      setForceUpdate(!forceUpdate)
-    }
-  
-    const handleFinish = () => {
-        captureEquipmentTags(tags);
-      closeModal()
-    }
-  
-    const renderPreFilledTags = (tagString) => {
-      if (tags.includes(tagString)) {
-        return (
-          <Chip
-            onPress={() => handleAddTags(tagString)}
-            mode="flat"
-            style={[styles.tagsChipStyle, { backgroundColor: '#23374d' }]}
-            textStyle={[styles.tagsChipTextStyle, { color: 'white' }]}
-            theme={{
-              roundness: 0,
-            }}>
-            {tagString}
-          </Chip>
-        )
-      } else {
-        return (
-          <Chip
-            onPress={() => handleAddTags(tagString)}
-            mode="outlined"
-            style={styles.tagsChipStyle}
-            textStyle={styles.tagsChipTextStyle}
-            theme={{
-              roundness: 0,
-            }}>
-            {tagString}
-          </Chip>
-        )
-      }
-    }
-  
-    return (
-      <Modal presentationStyle="fullScreen" visible={isVisible}>
-        <View style={{ flex: 1, padding: 20 }}>
-          <View style={{ padding: 10, marginVertical: 20 }}>
-            <Text style={{ fontFamily: 'Avenir-Black', fontSize: 30 }}>
-              Add custom equipment requirements
-            </Text>
-            <Caption>
-              Choose tags that best fit the equipment requirements for this exercise
-            </Caption>
-          </View>
-  
-          <View style={{ flex: 1, flexWrap: 'wrap', flexDirection: 'row', margin: 10 }}>
-            {
-              EXERCISE_EQUIPMENT_LIST.map(tag => {
-                return (
-                  renderPreFilledTags(tag)
-                )
-              })
-            }
-          </View>
-          <Button
-            mode="contained"
-            color="#23374d"
-            theme={{ roundness: 8 }}
-            contentStyle={{ width: Dimensions.get('window').width - 20, height: 45 }}
-            contentStyle={{ width: Dimensions.get('window').width - 20, height: 45 }}
-            onPress={handleFinish}
-            uppercase={false}>
-            <Text style={{ fontWeight: '800', fontFamily: 'Avenir-Medium' }}>
-              Done
-              </Text>
-          </Button>
-        </View>
-      </Modal>
-  
-    )
-  }
+const options = {
+    mediaType: 'video',
+    storageOptions: {
+        skipBackup: true,
+        path: 'video'
+    },
+    allowsEditing: true
+};
 
-function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, currProgramUUID, workout, handleExerciseOnPress, handleSuperSetOnPress, programDuration, programType, handleDeleteExercise }) {
+function WorkoutDisplay({ changeDisplayMedia, workoutMode, currWorkoutID, sessionID, programData, currProgramUUID, workout, handleExerciseOnPress, handleSuperSetOnPress, programDuration, programType, handleDeleteExercise }) {
     const [updateState, forceUpdateState] = useState(false);
-
     const [currProgramWeek, setCurrProgramWeek] = useState(0)
-
     const [exerciseTempoError, setExerciseTempoError] = useState(false)
-
-    const programWeekPicker = createRef();
-    const restTimePickerRef = createRef();
-    const tempoPickerRef = createRef();
-
     const [measurementAccessed, setAccessedMeasurement] = useState(workout)
     const [currPressedExercise, setCurrPressedExercise] = useState(getLupaExerciseStructure())
-
     const [pickedExerciseTempo, setPickedExerciseTempo] = useState('0-0-0');
     const [pickedRestTime, setPickedRestTime] = useState(restTimes[0])
-
-    const [editTempoIsVisible, setEditTempo] = useState(false);
     const [editRestTimeIsVisible, setEditRestTime] = useState(false);
-
-    const [inputRestTimeOneText, setRestTimeInputOneText] = useState("")
-    const [inputRestTimeTwoText, setRestTimeInputTwoText] = useState("")
-    const [inputRestTimeSupersetText, setRestTimeSupersetText] = useState("")
-
-    const [inputTempoOneText, setTempoInputOneText] = useState("");
-    const [inputTempoTwoText, setTempoInputTwoText] = useState("");
-    const [inputTempoSupersetText, setTempoSupersetText] = useState("");
-
     const [addEquipmentModalVisible, setAddEquipmentModalVisible] = useState(false);
-    
+    const [editedIntensity, setEditedIntensity] = useState("");
+    const [forceUpdate, setForceUpdate] = useState(!forceUpdate);
+    const [showCameraOne, setShowCameraOne] = useState(false);
+    const [showCameraTwo, setShowCameraTwo] = useState(false);
+    const [showCameraThree, setShowCameraThree] = useState(false);
+
+    const navigation = useNavigation();
+
+    const restTimePickerRef = createRef();
+    const tempoPickerRef = createRef();
+    const cameraModalSheetOne = createRef();
     const intensityPickerRef = createRef();
+
+    const openCameraModalSheetOne = () => {
+        if (cameraModalSheetOne.current) {
+            cameraModalSheetOne.current.open();
+        }
+    }
+
+    const closeCameraModalSheetOne = () => cameraModalSheetOne.current.close();
     const openIntensityPicker = () => intensityPickerRef.current.open();
     const closeIntensityPicker = () => intensityPickerRef.current.close();
 
-    const [editedIntensity, setEditedIntensity] = useState("");
-    const [forceUpdate, setForceUpdate] = useState(!forceUpdate);
-    const [showCamera, setShowCamera] = useState(false);
-
     const liveWorkoutService = new LiveWorkoutService(sessionID, {}, [], programData);
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
+    useEffect(() => {
+    }, [workout, workout.workout_media.uri])
 
     const renderImageSource = (workoutObj) => {
         if (workoutObj.workout_media.media_type == "VIDEO") {
-            return <Video source={{ uri: workoutObj.workout_media.uri }} style={{width: '100%', height: '100%', borderRadius: 8 }} shouldPlay={false} resizeMode="cover"  />
+            return <Video source={{ uri: workoutObj.workout_media.uri }} style={{ width: '100%', height: '100%', borderRadius: 100 }} shouldPlay={false} resizeMode="cover" />
         } else {
             switch (workoutObj.default_media_uri) {
 
@@ -226,16 +146,6 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                     return <Image source={''} />
             }
         }
-    }
-
-    const handleChangeRepsSliderValue = (workoutRef, value) => {
-        workoutRef.workout_reps = value;
-        forceUpdateState(!updateState)
-    }
-
-    const handleChangeSetsSliderValue = (workoutRef, value) => {
-        workoutRef.workout_sets = value;
-        forceUpdateState(!updateState)
     }
 
     const handleIncrementExcerciseSets = (workoutRef) => {
@@ -319,31 +229,6 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
         setPickedRestTime(restTime)
     }
 
-    const handleOnChangeRestTimeOneInputText = (text, workoutRef) => {
-        setRestTimeInputOneText(text);
-        workoutRef.workout_rest_time = inputRestTimeOneText;
-    }
-
-    const handleOnChangeRestTimeTwoInputText = (text, workoutRef) => {
-        setRestTimeInputTwoText(text);
-        workoutRef.workout_rest_time = inputRestTimeTwoText;
-    }
-
-    const handleOnChangeRestTimeSupersetInputText = (text, workoutRef) => {
-        setRestTimeSupersetText(text);
-        workoutre.workout_rest_time = inputRestTimeSupersetText;
-    }
-
-    const handleOnChangeTempoInputOneText = (text, workoutRef) => {
-        setTempoInputOneText(text)
-        workoutRef.workout_tempo = inputTempoOneText;
-    }
-
-    const handleOnChangeTempoInputTwoText = (text, workoutRef) => {
-        setTempoInputTwoText(text)
-        workoutRef.workout_tempo = inputTempoTwoText;
-    }
-
     const handleOnPickIntensity = () => {
         openIntensityPicker();
     }
@@ -357,8 +242,6 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
         if (pickedExerciseTempo.length === 3) {
             setExerciseTempoError(true);
         }
-
-
 
         closeTempoPicker()
     }
@@ -390,9 +273,6 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
             setPickedExerciseTempo("")
         }
     }
-
-    const openProgramWeekPicker = () => programWeekPicker.current.open();
-    const closeProgramWeekPicker = () => programWeekPicker.current.close();
 
     const openRestTimePicker = () => restTimePickerRef.current.open();
     const closeRestTimePicker = () => restTimePickerRef.current.close();
@@ -478,6 +358,36 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
         )
     }
 
+    const renderCameraOne = (updatedExercise) => {
+        return (
+            <RBSheet
+                ref={cameraModalSheetOne}
+                height={Dimensions.get('window').height}
+                closeOnPressMask={true}
+                customStyles={{
+                    wrapper: {},
+                    container: {},
+                    draggableIcon: {
+                        backgroundColor: '#000000'
+                    }
+                }}
+                dragFromTopOnly={false}
+            >
+                <View style={{ flex: 1 }}>
+                    <ExerciseCameraModal
+                        isVisible={true}
+                        closeModal={closeCameraModalSheetOne}
+                        currWorkoutPressed={updatedExercise}
+                        currProgramUUID={currProgramUUID}
+                        mediaCaptureType={'VIDEO'}
+                        outlet={'CreateProgram'}
+                        captureURIProp={(uri, mediaType) => handleCaptureNewMediaURI(uri, mediaType, updatedExercise)}
+                    />
+                </View>
+            </RBSheet>
+        )
+    }
+
     const renderIntensityPicker = (exercise) => {
         return (
             <RBSheet
@@ -499,7 +409,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
 
             >
                 <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
-                    <Text style={{fontSize: 15, fontFamily: 'Avenir-Black', paddingHorizontal: 10}}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Avenir-Black', paddingHorizontal: 10 }}>
                         Add a rest time (in seconds)
                     </Text>
                     <TextInput
@@ -576,59 +486,6 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
         )
     }
 
-    openMediaActionSheet = (workout) =>  {
-        ActionSheetIOS.showActionSheetWithOptions(
-          {
-            options: ["Take a Video", "Upload Media", "Cancel"],
-            destructiveButtonIndex: 2,
-            cancelButtonIndex: 2
-          },
-          buttonIndex => {
-            if (buttonIndex === 0) {
-                handleTakeVideo(workout)
-            } else if (buttonIndex === 1) {
-              //image picker
-              const options = {
-                mediaType: 'video', 
-                storageOptions:{
-                  skipBackup:true,
-                  path:'images'
-                },
-                allowsEditing: true
-          };
-
-              ImagePicker.showImagePicker(options, async (response) => {
-                if (!response.didCancel)
-                {      
-                 const uri = await response.uri;
-                 await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(workout, currProgramUUID, 'VIDEO', uri)
-                 .then(uploadedURI => {
-                    handleCaptureNewMediaURI(uploadedURI, 'VIDEO', workout);
-                 })
-       
-                }
-                else if (response.error)
-                {
-              
-                }
-            });
-            }
-          }
-        )
-        }
-
-    const renderVideoOptions = (workout) => {
-        if (programType == 'template') {
-            return (
-                <TouchableOpacity onPress={() => openMediaActionSheet(workout)} style={{ width: '100%', alignItems: 'center', position: 'absolute', bottom: 0, left: 0, }}>
-                    <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: '#1089ff', alignSelf: 'center', width: 30, height: 18, borderRadius: 30 }}>
-                        <Feather1s name="video" color="white" />
-                    </View>
-                </TouchableOpacity>
-            )
-        }
-    }
-
     const getBorderStyle = (exerciseID) => {
         if (currWorkoutID == exerciseID) {
             return {
@@ -649,7 +506,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
             case true:
                 return (
                     <>
-                        <View style={{ marginLeft: 10}}>
+                        <View style={{ marginLeft: 10 }}>
                             <Text style={{ fontSize: 15, fontFamily: 'Avenir-Black' }}>
                                 {workout.workout_name}
                             </Text>
@@ -658,21 +515,18 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
 
                                 <Text style={{ paddingLeft: 10, paddingVertical: 5, color: '#1089ff', fontWeight: '800', fontFamily: 'Avenir-Medium' }} onPress={handleSuperSetOnPress}>
                                     Add Superset
-                  </Text>
+                                </Text>
                             </View>
                         </View>
 
-                        <View style={{...getBorderStyle(workout.workout_uid),  borderRadius: 5, flex: 1, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}>
-
-
+                        <View style={{ ...getBorderStyle(workout.workout_uid), borderRadius: 5, flex: 1, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-                                <Surface style={{ width: 70, height: 50, borderRadius: 8, alignSelf: 'center', elevation: 0 }}>
+                                <Surface style={{ width: 60, height: 50, borderRadius: 100, alignSelf: 'center', elevation: 0 }}>
                                     {renderImageSource(workout)}
-                                    {renderVideoOptions(workout)}
+                                    {renderExerciseCameraModalOne(workout)}
                                     {renderIntensityPicker(workout)}
                                 </Surface>
-
 
                                 <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto' }}>
 
@@ -686,7 +540,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                                 <View style={{ paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center' }}>
                                                     <Text style={{ color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                         Sets ({workout.workout_sets})
-            </Text>
+                                                    </Text>
                                                 </View>
 
                                                 <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseSets(workout)} />
@@ -702,7 +556,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                                 <View style={{ paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center' }}>
                                                     <Text style={{ color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                         Reps ({workout.workout_reps})
-            </Text>
+                                                    </Text>
                                                 </View>
 
                                                 <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseReps(workout)} />
@@ -711,35 +565,53 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                     </View>
 
 
-                                    <View style={{marginHorizontal: 10}}>
+                                    <View style={{ marginHorizontal: 10 }}>
                                         <TouchableWithoutFeedback onPress={handleOnPickIntensity}>
                                             <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                 Rest Time ({workout.workout_rest_time}s)
-            </Text>
+                                            </Text>
                                         </TouchableWithoutFeedback>
 
                                         <TouchableWithoutFeedback onPress={() => handleOnOpenTempoPicker(workout)}>
                                             <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                 Tempo ({workout.workout_tempo})
-            </Text>
+                                            </Text>
                                         </TouchableWithoutFeedback>
                                     </View>
-
-
-
-
                                 </View>
                             </View>
 
-                            <TouchableOpacity onPress={() => handleDeleteExercise(workout.workout_uid)} style={{position: 'absolute', top: -8, right: -8,}}>
-                            <View style={{backgroundColor: 'red',alignItems: 'center', justifyContent: 'center',  padding: 2,  width: 20, borderRadius: 12 }}>
-                            <FeatherIcon name="minus" color="white" />
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                <Button onPress={() => setShowCameraOne(true)}>
+                                    <Text style={{ fontSize: 10, color: '#1089ff' }}>
+                                        Record Media
+                                    </Text>
+                                </Button>
+
+                                <Button onPress={() => ImagePicker.showImagePicker(options, async (response) => {
+                                        const uri = await response.uri;
+                                        await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(workout, currProgramUUID, 'VIDEO', uri)
+                                            .then(uploadedURI => {
+                                                handleCaptureNewMediaURI(uploadedURI, 'VIDEO', workout);
+                                            })
+                                            .catch(error => {
+                                            })
+                                })}>
+                                    <Text style={{ fontSize: 10, color: '#1089ff' }}>
+                                        Upload Media
+                                    </Text>
+                                </Button>
                             </View>
+
+                            <TouchableOpacity onPress={() => handleDeleteExercise(workout.workout_uid)} style={{ position: 'absolute', top: -8, right: -8, }}>
+                                <View style={{ backgroundColor: 'red', alignItems: 'center', justifyContent: 'center', padding: 2, width: 20, borderRadius: 12 }}>
+                                    <FeatherIcon name="minus" color="white" />
+                                </View>
                             </TouchableOpacity>
                         </View>
                         <Divider style={{ height: 10, backgroundColor: '#FFFFFF' }} />
-                        {renderExerciseCameraModal(workout)}
-                    
+
+
                     </>
                 )
             case false:
@@ -747,7 +619,6 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                 return (
 
                     <View style={{ flex: 1, alignItems: 'flex-start' }}>
-
                         <View style={{ marginLeft: 10, }}>
                             <Text style={{ fontSize: 15, fontFamily: 'Avenir-Black' }}>
                                 {workout.workout_name}
@@ -757,7 +628,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
 
                                 <Text style={{ paddingLeft: 10, paddingVertical: 5, color: '#1089ff', fontWeight: '800', fontFamily: 'Avenir-Medium' }} onPress={handleSuperSetOnPress}>
                                     Add Superset
-                  </Text>
+                                </Text>
                             </View>
                         </View>
 
@@ -775,21 +646,16 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                         >
                             <>
 
-                                <View style={{...getBorderStyle(workout.workout_uid), flex: 1, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}>
-
-
+                                <View style={{ ...getBorderStyle(workout.workout_uid), flex: 1, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-
-                                        <Surface style={{ width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#FFFFFF' }}>
+                                        <Surface style={{ width: 60, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#FFFFFF' }}>
                                             {renderImageSource(workout)}
-                                            {renderVideoOptions(workout)}
                                             {renderIntensityPicker(workout)}
+                                            {renderExerciseCameraModalTwo(workout)}
                                         </Surface>
 
-
                                         <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto' }}>
-
                                             <View>
                                                 <View style={{ marginHorizontal: 5 }}>
                                                     <View style={{ height: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -800,7 +666,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                                         <View style={{ paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center' }}>
                                                             <Text style={{ color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                                 Sets ({workout.workout_sets})
-          </Text>
+                                                            </Text>
                                                         </View>
 
                                                         <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseSets(workout)} />
@@ -816,7 +682,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                                         <View style={{ paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center' }}>
                                                             <Text style={{ color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                                 Reps ({workout.workout_reps})
-          </Text>
+                                                            </Text>
                                                         </View>
 
                                                         <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseReps(workout)} />
@@ -825,53 +691,66 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                             </View>
 
 
-                                            <View style={{marginHorizontal: 10}}>
+                                            <View style={{ marginHorizontal: 10 }}>
                                                 <TouchableWithoutFeedback onPress={handleOnPickIntensity}>
                                                     <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                         Rest Time ({workout.workout_rest_time}s)
-          </Text>
+                                                    </Text>
                                                 </TouchableWithoutFeedback>
 
                                                 <TouchableWithoutFeedback onPress={() => handleOnOpenTempoPicker(workout)}>
                                                     <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                         Tempo ({workout.workout_tempo})
-          </Text>
+                                                    </Text>
                                                 </TouchableWithoutFeedback>
                                             </View>
-
-
-
-
                                         </View>
                                     </View>
 
-                                    <TouchableOpacity onPress={() => handleDeleteExercise(workout.workout_uid)} style={{position: 'absolute', top: -8, right: -8,}}>
-                            <View style={{backgroundColor: 'red',alignItems: 'center', justifyContent: 'center',  padding: 2,  width: 20, borderRadius: 12 }}>
-                            <FeatherIcon name="minus" color="white" />
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                <Button onPress={() => setShowCameraOne(true)}>
+                                    <Text style={{ fontSize: 10, color: '#1089ff' }}>
+                                        Record Media
+                                    </Text>
+                                </Button>
+
+                                <Button onPress={() => ImagePicker.showImagePicker(options, async (response) => {
+                                        const uri = await response.uri;
+                                        await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(workout, currProgramUUID, 'VIDEO', uri)
+                                            .then(uploadedURI => {
+                                                handleCaptureNewMediaURI(uploadedURI, 'VIDEO', workout);
+                                            })
+                                            .catch(error => {
+                                            })
+                                })}>
+                                    <Text style={{ fontSize: 10, color: '#1089ff' }}>
+                                        Upload Media
+                                    </Text>
+                                </Button>
                             </View>
-                            </TouchableOpacity>
+
+                                    <TouchableOpacity onPress={() => handleDeleteExercise(workout.workout_uid)} style={{ position: 'absolute', top: -8, right: -8, }}>
+                                        <View style={{ backgroundColor: 'red', alignItems: 'center', justifyContent: 'center', padding: 2, width: 20, borderRadius: 12 }}>
+                                            <FeatherIcon name="minus" color="white" />
+                                        </View>
+                                    </TouchableOpacity>
                                 </View>
                                 <Divider style={{ height: 10, backgroundColor: '#EEEEEE' }} />
-                             
-                                {renderExerciseCameraModal(workout)}
+
+
                             </>
                             {
                                 workout.superset.map(superset => {
                                     return (
                                         <>
-                                            <View style={{...getBorderStyle(workout.workout_uid), flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' }}>
-
-
+                                            <View style={{ ...getBorderStyle(workout.workout_uid), flex: 1, marginHorizontal: 10, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center' }}>
                                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-
-                                                    <Surface style={{ width: 70, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#FFFFFF' }}>
+                                                    <Surface style={{ width: 60, height: 50, alignSelf: 'center', borderRadius: 8, elevation: 0, backgroundColor: '#FFFFFF' }}>
                                                         {renderImageSource(superset)}
-                                                        {renderVideoOptions(superset)}
                                                         {renderIntensityPicker(superset)}
+                                                        {renderExerciseCameraModalThree(superset)}
                                                     </Surface>
-
-
 
                                                     <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-evenly', height: 80, width: 'auto' }}>
 
@@ -885,7 +764,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                                                     <View style={{ paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center' }}>
                                                                         <Text style={{ color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                                             Sets ({superset.workout_sets})
-                                  </Text>
+                                                                        </Text>
                                                                     </View>
 
                                                                     <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseSets(superset)} />
@@ -901,7 +780,7 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                                                     <View style={{ paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center' }}>
                                                                         <Text style={{ color: 'rgb(102, 111, 120)', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                                             Reps ({superset.workout_reps})
-                                  </Text>
+                                                                        </Text>
                                                                     </View>
 
                                                                     <ThinFeatherIcon name="chevron-right" size={22} onPress={() => handleIncrementExcerciseReps(superset)} />
@@ -909,35 +788,51 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
                                                             </View>
                                                         </View>
 
-
                                                         <View style={{ marginHorizontal: 10 }}>
                                                             <TouchableWithoutFeedback onPress={handleOnPickIntensity}>
                                                                 <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                                     Rest Time ({superset.workout_rest_time}s)
-                                  </Text>
+                                                                </Text>
                                                             </TouchableWithoutFeedback>
 
                                                             <TouchableWithoutFeedback onPress={() => handleOnOpenTempoPicker(superset)}>
                                                                 <Text style={{ paddingVertical: 5, color: '#1089ff', fontFamily: 'Avenir-Light', fontSize: 12 }}>
                                                                     Tempo ({superset.workout_tempo})
-                                  </Text>
+                                                                </Text>
                                                             </TouchableWithoutFeedback>
                                                         </View>
-
-
-
-
                                                     </View>
                                                 </View>
 
-                                                <TouchableOpacity onPress={() => handleDeleteExercise(superset.workout_uid)} style={{position: 'absolute', top: -8, right: -8,}}>
-                            <View style={{backgroundColor: 'red',alignItems: 'center', justifyContent: 'center',  padding: 2,  width: 20, borderRadius: 12 }}>
-                            <FeatherIcon name="minus" color="white" />
+                                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                                <Button onPress={() => setShowCameraOne(true)}>
+                                    <Text style={{ fontSize: 10, color: '#1089ff' }}>
+                                        Record Media
+                                    </Text>
+                                </Button>
+
+                                <Button onPress={() => ImagePicker.showImagePicker(options, async (response) => {
+                                        const uri = await response.uri;
+                                        await LUPA_CONTROLLER_INSTANCE.saveProgramWorkoutGraphic(superset, currProgramUUID, 'VIDEO', uri)
+                                            .then(uploadedURI => {
+                                                handleCaptureNewMediaURI(uploadedURI, 'VIDEO', superset);
+                                            })
+                                            .catch(error => {
+                                            })
+                                })}>
+                                    <Text style={{ fontSize: 10, color: '#1089ff' }}>
+                                        Upload Media
+                                    </Text>
+                                </Button>
                             </View>
-                            </TouchableOpacity>
+
+                                                <TouchableOpacity onPress={() => handleDeleteExercise(superset.workout_uid)} style={{ position: 'absolute', top: -8, right: -8, }}>
+                                                    <View style={{ backgroundColor: 'red', alignItems: 'center', justifyContent: 'center', padding: 2, width: 20, borderRadius: 12 }}>
+                                                        <FeatherIcon name="minus" color="white" />
+                                                    </View>
+                                                </TouchableOpacity>
                                             </View>
-                                          
-                                            {renderExerciseCameraModal(superset)}
+
                                         </>
                                     )
                                 })
@@ -952,31 +847,68 @@ function WorkoutDisplay({ workoutMode, currWorkoutID, sessionID, programData, cu
         }
     }
 
-    
 
-    const handleTakeVideo = (workout) => {
-        // await setCurrPressedExercise(workout);
-        setShowCamera(true);
+
+    const handleTakeVideoOne = async (workout) => {
+        setShowCameraOne(true);
+    }
+
+    const handleTakeVideoTwo = async (workout) => {
+        setShowCameraTwo(true);
+    }
+
+    const handleTakeVideoThree = async (workout) => {
+        setShowCameraThree(true);
     }
 
     const handleCaptureNewMediaURI = async (uri, mediaType, exercise) => {
-        exercise.workout_media = {
-            uri: uri,
-            media_type: mediaType,
-        }
+        // changeDisplayMedia(workout, uri, mediaType)
+        exercise.workout_media['uri'] = await uri;
+        exercise.workout_media['media_type'] = await "VIDEO";
+        setForceUpdate(!forceUpdate);
     }
 
-    const renderExerciseCameraModal = (workout) => {
-
+    const renderExerciseCameraModalOne = (updatedExercise) => {
         return (
             <ExerciseCameraModal
-                isVisible={showCamera}
-                closeModal={() => setShowCamera(false)}
-                currWorkoutPressed={workout}
+                isVisible={showCameraOne}
+                closeModal={() => setShowCameraOne(false)}
+                currWorkoutPressed={updatedExercise}
                 currProgramUUID={currProgramUUID}
                 mediaCaptureType={'VIDEO'}
                 outlet={'CreateProgram'}
-                captureURIProp={(uri, mediaType) => handleCaptureNewMediaURI(uri, mediaType, workout)}
+                captureURIProp={(uri, mediaType) => handleCaptureNewMediaURI(uri, mediaType, updatedExercise)}
+            />
+        )
+    }
+
+    const renderExerciseCameraModalThree = (updatedExercise) => {
+        return (
+            <ExerciseCameraModal
+                isVisible={showCameraThree}
+                closeModal={() => setShowCameraThree(false)}
+                currWorkoutPressed={currPressedExercise}
+                currProgramUUID={currProgramUUID}
+                mediaCaptureType={'VIDEO'}
+                outlet={'CreateProgram'}
+                captureURIProp={(uri, mediaType) => handleCaptureNewMediaURI(uri, mediaType, updatedExercise)}
+            />
+        )
+    }
+
+
+
+
+    const renderExerciseCameraModalTwo = (updatedExercise) => {
+        return (
+            <ExerciseCameraModal
+                isVisible={showCameraTwo}
+                closeModal={() => setShowCameraTwo(false)}
+                currWorkoutPressed={currPressedExercise}
+                currProgramUUID={currProgramUUID}
+                mediaCaptureType={'VIDEO'}
+                outlet={'CreateProgram'}
+                captureURIProp={(uri, mediaType) => handleCaptureNewMediaURI(uri, mediaType, updatedExercise)}
             />
         )
     }

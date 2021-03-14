@@ -254,8 +254,8 @@ class VirtualSession extends Component<Props, State> {
 
         if (isFirstSession == true) {
             return (
-                <Caption style={{color: '#1089ff', paddingHorizontal: 10}}>
-                    You are about to enter your first session.  This will be a consultation that will end in 15 minutes.
+                <Caption style={{color: '#1089ff', textAlign: 'center', padding: 10}}>
+                    You are about to enter your first session.  This will be a one on one consultation with your trainer.
                 </Caption>
             )
         }
@@ -265,16 +265,7 @@ class VirtualSession extends Component<Props, State> {
         return (
             <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(255, 255, 255)', justifyContent: 'space-between'}}>
                 <View style={{width: '100%', padding: 5, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center'}}>
-                   <Text>
-                       
-                   </Text>
-                    <Text style={{alignSelf: 'center', fontWeight: '600', color: 'rgb(188, 188, 188)', fontSize: 15}}>
-                        Remote Session
-                    </Text>
-
-                    <Text>
-
-                    </Text>
+                 
                 </View>
 
                 <View style={{alignItems: 'center'}}>
@@ -305,9 +296,9 @@ class VirtualSession extends Component<Props, State> {
                     <Surface style={{elevation: 0, backgroundColor: 'rgb(246, 61, 70)', height: 70, width: 70, borderRadius: 70, alignItems: 'center', justifyContent: 'center'}}>
                             <MaterialIcon name="close" size={24} color="white" />
                     </Surface>
-                    <Button uppercase color="white" style={{padding: 10}}>
+                    <Caption>
                         Leave Session
-                    </Button>
+                    </Caption>
                     </View>
                     </TouchableOpacity>
                 </View>

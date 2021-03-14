@@ -47,12 +47,16 @@ function Comment({ comment }) {
 
     return (
         <View style={{marginHorizontal: 10}}>
-        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center'}}>
-            <Avatar.Image source={commenterData.photo_url} size={15} />
-            <Text style={{paddingHorizontal: 10}}>
-                {comment.comment_text}
+        <View style={{paddingVertical: 10, width: '100%', flexDirection: 'row', alignItems: 'center'}}>
+            <Avatar.Image source={{ uri: commenterData.photo_url }} size={15} />
+            <Text style={{paddingHorizontal: 10, fontSize: 13, fontWeight: '500'}}>
+                {commenterData.display_name}
+            </Text>
+            <Text style={{fontSize: 13, fontWeight: '300'}}>
+            {comment.comment_text}
             </Text>
         </View>
+
        {/* <Caption>
             1 hour ago
         </Caption>
@@ -76,13 +80,8 @@ function VlogFeedCardExpanded({ route, navigation }) {
 
     useEffect(() => {
         async function fetchVlogOwnerPrograms() {
-            let userData = getLupaUserStructure();
-            if (typeof(route.params.vlogData.vlog_owner) == 'undefined') {
-                return;
-            }
-
             await LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(route.params.vlogData.vlog_owner).then(data => {
-                userData = data;
+                setVlogOwnerData(data);
             });
         }
 
@@ -106,44 +105,6 @@ function VlogFeedCardExpanded({ route, navigation }) {
 
         LUPA_CONTROLLER_INSTANCE.addVlogComment(updatedVlogData.vlog_uuid, comment);
         setCommentText("")
-    }
-
-    const renderVlogOwnerPrograms = () => {
-        if (vlogOwnerPrograms.length === 0) {
-            return (
-                <Caption style={{padding: 10}}>
-                {vlogOwnerData.display_name} is not current offering any programs.
-            </Caption>
-            )
-        }
-
-        try {
-            return vlogOwnerPrograms.map((program, index, arr) => {
-                return (
-                    <View style={{alignItems: 'center', justifyContent: 'center', width: '100%'}}>
-                    <View style={{width: Dimensions.get('window').width  - 80, height: 200, borderRadius: 10, borderWidth: 0.5, borderColor: 'black'}}>
-                        <Image source={{ uri: program.program_image }} style={{flex: 1, width: '100%', borderRadius: 10,  height: '100%'}} />
-                        <Chip textStyle={{color: 'white', fontFamily: 'Avenir-Heavy', fontWeight: '600'}} style={{paddingHorizontal: 10, elevation: 8, position: 'absolute', top: 0, right: 0, alignSelf: 'center', borderRadius: 0, borderTopRightRadius: 10, borderBottomLeftRadius: 10, backgroundColor: '#1089ff', width: 'auto'}}>
-                           ${program.program_price}
-                       </Chip>
-                    </View>
-
-                    <View style={{width: Dimensions.get('window').width - 80, padding: 10}}>
-                    <Text style={{fontWeight: '400', fontSize: 15}}>
-                        {program.program_name}
-                    </Text>
-                    <Text style={{fontWeight: '300', fontSize: 13}}>
-                        {program.program_duration} Weeks
-                    </Text>
-                    </View>
-                </View>
-                )
-            })
-
-        } catch(error) {
-            LOG_ERROR('LiveWorkoutFullScreenContentModal', 'Caught unhandled exception in renderVlogOwnerPrograms', error);
-            return null;
-        }
     }
 
     return (

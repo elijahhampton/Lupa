@@ -228,6 +228,12 @@ const handleOnLaunchWorkout = (index, workoutIndex) => {
         workout: workoutIndex
     });
 
+    if (program.program_restrictions.includes('temporary'))
+    {
+        const workoutCompleted = index.toString() + workoutIndex.toString();
+        LUPA_CONTROLLER_INSTANCE.markWorkoutCompleted(currUserData.user_uuid, program.program_structure_uuid, workoutCompleted);
+    }
+
     closeModal();
 }
 
@@ -240,16 +246,22 @@ const renderCycles = (week, structure) => {
                     Workout {(index + 1).toString()}
                 </Text>
 
+            {
+                program.program_restrictions.includes('temporary') && program.workouts_completed.includes(week.toString() + index.toString()) ?
+                null
+                :
                 <Button color="#1089ff" uppercase={false} onPress={() => handleOnLaunchWorkout(week, index)}>
-                    <Text style={{fontSize: 12}}>
-                        Launch Workout
-                    </Text>
+                <Text style={{fontSize: 12}}>
+                    Launch Workout
+                </Text>
                 </Button>
+            }
                 </View>
 
                 <View>
                     {
                         structure[week].map((exercise, index, arr) => {
+
                             return(
                                 <View style={{justifyContent: 'flex-start'}}>
                                       <Text> {exercise.workout_name} </Text>
@@ -264,6 +276,42 @@ const renderCycles = (week, structure) => {
                                               Reps {exercise.workout_reps}
                                           </Caption>
                                       </View>
+                                      <View style={{marginVertical: 5}}>
+                                          <Text>
+                                              Trainer Videos
+                                          </Text>
+                                          <View>
+                                              <ScrollView horizontal>
+                                              {
+                                            
+                                              exercise.trainer_videos.map(video => {
+                                                  return (
+                                                      <Video style={{width: 100, height: 100}} source={video} />
+                                                  )
+                                              })
+                                          }
+                                              </ScrollView>
+                                        </View>
+
+                                    </View>
+
+                                    <View style={{marginVertical: 5}}>
+                                          <Text>
+                                              Client Videos
+                                          </Text>
+                                          <View>
+                                              <ScrollView horizontal>
+                                              {
+                                              exercise.client_videos.map(video => {
+                                                  return (
+                                                      <Video style={{width: 100, height: 100}} source={video} />
+                                                  )
+                                              })
+                                          }
+                                              </ScrollView>
+                                            </View>
+                                         
+                                    </View>
                                 </View>
                             )
                         })

@@ -22,6 +22,7 @@ import ReceivedBookingRequestNotification from './component/ReceivedBookingReque
 import ReceivedNotification from './component/ReceivedNotification'
 import ReceivedPackInviteNotification from './component/ReceivedPackInviteNotification';
 import ReceivedPackProgramInviteNotification from './component/ReceivedPackProgramInviteNotification';
+import ReceivedVlogComment from './component/ReceivedVlogComment'
 
 function NotificationsView({ navigation, route }) {
     const [refreshing, setIsRefreshing] = useState(false)
@@ -83,6 +84,8 @@ function NotificationsView({ navigation, route }) {
                     return <ReceivedPackInviteNotification notificationData={notification} />
                 case NOTIFICATION_TYPES.RECEIVED_PACK_PROGRAM_OFFER_INVITE:
                     return <ReceivedPackProgramInviteNotification notificationData={notification} />
+                case NOTIFICATION_TYPES.NEW_VLOG_COMMENT:
+                    return <ReceivedVlogComment notificationData={notification} />
                 default:
                     
             }

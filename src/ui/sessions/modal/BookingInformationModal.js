@@ -23,6 +23,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import LUPA_DB from '../../../controller/firebase/firebase';
+import { Video } from 'expo-av';
 
 function BookingInformationModal({ trainerUserData, requesterUserData, isVisible, closeModal, booking }) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
@@ -162,17 +163,18 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
     }
 
     renderLinkedProgramStatus = () => {
-        if (programIsLinked == false) {
-            return (
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                          <FeatherIcon name="x" color="red" />
-   <Caption style={{color: 'red'}}>
-                    Link a program to this client though the session options before completing this session.
-                </Caption>
-                </View>
-             
-            )
-        } else {
+        if (programIsLinked == false ) {
+            if (currUserData.user_uuid == booking.trainer_uuid) {
+                return (
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                              <FeatherIcon name="x" color="red" />
+       <Caption style={{color: 'red'}}>
+                        Link a program to this client though the session options before completing this session.
+                    </Caption>
+                    </View>
+                 
+                )
+            } else {
             return (
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                           <FeatherIcon name="check" color="#1089ff" />
@@ -185,51 +187,7 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
             )
         }
     }
-
-    const renderPaymentStatus = () => {
-        if (booking.hasOwnProperty('isFirstSession') == true) {
-            if (currUserData.user_uuid == requesterUserData.user_uuid) {
-                return (
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <FeatherIcon name="dollar-sign" color="#1089ff" style={{paddingRight: 5}} />
-                    <Caption style={{color: '#1089ff'}}>
-                        This is your first session with {trainerUserData.display_name}.  You will be charged a fixed price of $15.00.
-                    </Caption>
-                    </View>
-                )
-            } else {
-                return (
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <FeatherIcon name="dollar-sign" color="#1089ff" style={{paddingRight: 5}} />
-                    <Caption style={{color: '#1089ff'}}>
-                        This is your first session with {requesterUserData.display_name}.  {requesterUserData.display_name} will be charged a fixed price of $15.00.
-                    </Caption>
-                    </View>
-                )
-            }
-        } else {
-            if (currUserData.user_uuid == requesterUserData.user_uuid) {
-                return (
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <FeatherIcon name="dollar-sign" color="#1089ff" style={{paddingRight: 5}} />
-                    <Caption style={{color: '#1089ff'}}>
-                        This is your first session with {trainerUserData.display_name}.  You will be charged {trainerUserData.hourly_payment_rate}.
-                    </Caption>
-                    </View>
-                )
-            } else {
-                return (
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <FeatherIcon name="dollar-sign" color="#1089ff" style={{paddingRight: 5}} />
-                    <Caption style={{color: '#1089ff'}}>
-                        This is your first session with {requesterUserData.display_name}.  {requesterUserData.display_name} will be charged {trainerUserData.hourly_payment_rate}.
-                    </Caption>
-                    </View>
-                )
-            }
-        }
-      
-    }
+}
 
     const renderSessionDuration = () => {
        let startTime = booking.start_time.split(" ")[0];
@@ -286,6 +244,56 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                     </Button>
                 </Dialog.Content>
             </Dialog>
+        )
+    }
+
+    const renderClientVideos = () => {
+        const updatedUserData = getLupaStoreState().Users.currUserData;
+        let clientVideos = []
+        
+        updatedUserData.clients.forEach(clientData => {
+            if (clientData && clientData['client'] == requesterUserData.user_uuid) {
+                if (typeof(clientVideos) == 'undefined') {
+                    clientVideos = []
+                } else {
+                clientVideos = clientData['videos'];
+                }
+            }
+        });
+
+        if (clientVideos.length == 0) {
+            return (
+                <Caption>
+                {requesterUserData.display_name} hasn't sent you any videos.
+              </Caption>
+            )
+        } else {
+            return clientVideos.map(video => {
+                <View style={{width: 80, height: 80}}>
+                    <Video style={{width: '100%', height: '100%'}} source={video} resizeMode="cover" />
+                </View>
+            })
+        }
+    }
+    
+    const renderRemoteCoachingData = () => {
+        return (
+            <>
+                                        <Divider />
+                           < View style={{  padding: 10, borderRadius: 3,   backgroundColor: 'white'}}>
+                                <Text style={{fontSize: 18, fontFamily: 'Avenir-Heavy', color: '#23374d'}}>
+                                    Client Videos
+                                </Text>
+
+                                <View>
+                                    <ScrollView horizontal>
+                                        <Caption>
+                                          {requesterUserData.display_name} hasn't sent you any videos.
+                                        </Caption>
+                                    </ScrollView>
+                                </View>
+                           </ View >
+            </>
         )
     }
 
@@ -360,21 +368,10 @@ function BookingInformationModal({ trainerUserData, requesterUserData, isVisible
                                 </Caption>
                                 </View>
                                         {renderLinkedProgramStatus()}
-                                        {renderPaymentStatus()}
                                     </View>
                                
                                
                            </ View>
-                            <Divider />
-                           < View style={{  padding: 10, borderRadius: 3,   backgroundColor: 'white'}}>
-                                <Text style={{fontSize: 18, fontFamily: 'Avenir-Heavy', color: '#23374d'}}>
-                                    Session Note
-                                </Text>
-
-                                <Paragraph style={{fontFamily: 'Avenir-Light'}}>
-                               {booking.note}
-                                </Paragraph>
-                           </ View >
 
                           {/*  <Divider />
 

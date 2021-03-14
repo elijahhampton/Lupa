@@ -221,11 +221,9 @@ const CommunityHome = ({ communityData }) => {
         //fetchTrainerData();
       }, [])
 
-    
-
     return (
         <View style={{flex: 1}}>
-          <Tabs 
+        {/*  <Tabs 
           style={{backgroundColor: '#FFFFFF'}}
           tabBarUnderlineStyle={{backgroundColor: '#FFFFFF', height: 1}}
           tabContainerStyle={{borderBottomWidth: 0, height: 0}}
@@ -242,8 +240,10 @@ const CommunityHome = ({ communityData }) => {
 
             <Tab heading='Events' {...TAB_PROPS} >
                 <CommunityEvents events={community.events} />
-            </Tab>
-            </Tabs>
+          </Tab>
+          </Tabs>*/}
+
+<Community community={community} />
 
           
             <EditPhotosModal 

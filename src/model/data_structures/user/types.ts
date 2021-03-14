@@ -21,5 +21,5 @@ export type Booking = {
 
 export enum SESSION_TYPE {
     REMOTE='remote',
-    IN_PERSON='in_person'
+    IN_PERSON='in_person',
 }
