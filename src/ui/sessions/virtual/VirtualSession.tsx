@@ -9,6 +9,7 @@ import {
     Image,
     SafeAreaView,
     Dimensions, 
+    TouchableWithoutFeedback,
     ActivityIndicator
 } from 'react-native'
 import { Constants } from 'react-native-unimodules'
@@ -19,7 +20,7 @@ import LupaController from '../../../controller/lupa/LupaController';
 import { getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import { LupaUserStructure } from '../../../controller/lupa/common/types';
 import FeatherIcon from 'react-native-vector-icons/Feather'
-import { Surface, Button, Caption, FAB } from 'react-native-paper';
+import { Surface, Button, Caption, FAB, Appbar } from 'react-native-paper';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import LUPA_DB from '../../../controller/firebase/firebase'
 import VirtualLiveWorkout from '../../workout/modal/VirtualLiveWorkout'
@@ -91,8 +92,6 @@ class VirtualSession extends Component<Props, State> {
 
     generateUserData = async () => {
         const { booking } = this.props;
-        console.log('@@@@@@@@@@')
-        console.log(booking);
         await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.trainer_uuid).then(data => {
             this.setState({ trainerData: data })
         }).catch(error => {
@@ -221,9 +220,12 @@ class VirtualSession extends Component<Props, State> {
      * @description Function to end the call
      */
     endCall = async () => {
-        await this._engine?.leaveChannel()
-        this.setState({peerIds: [], joinSucceed: false})
-        this.props.closeSession();
+        
+        await this._engine?.leaveChannel().then(() => {
+            this.setState({peerIds: [], joinSucceed: false})
+            alert('me')
+            this.props.closeSession();
+        })
         //this.props.navigation.pop();
     }
 
@@ -236,16 +238,16 @@ class VirtualSession extends Component<Props, State> {
     }
 
     renderVirtualHeaderContent = () => {
-        if (this.state.joinSucceed == true) {
-            return (
-        <View style={{marginVertical: 10, alignItems: 'flex-end', padding: 20, width: Dimensions.get('window').width, backgroundColor: 'transparent', alignSelf: 'center', position: 'absolute', top: 0}}>
+             /* <View style={{marginVertical: 10, alignItems: 'flex-end', padding: 20, width: Dimensions.get('window').width, backgroundColor: 'transparent', alignSelf: 'center', position: 'absolute', top: 0}}>
                   <TouchableOpacity  onPress={this.endCall}>
               <Caption style={{color: 'white'}}>
                   Leave Session
               </Caption>
               </TouchableOpacity>
-          </View>
-            )
+          </View>*/
+
+        if (this.state.joinSucceed == true) {
+            return null
         }
     }
 
@@ -332,6 +334,7 @@ class VirtualSession extends Component<Props, State> {
 
     render() {
         return (
+            <>
             <View style={styles.max}>
                 <View style={styles.max}>
                     {
@@ -348,8 +351,9 @@ class VirtualSession extends Component<Props, State> {
                 </View>
     
             {this.renderVirtualLiveWorkout()}
-            {this.renderVirtualHeaderContent()}
             </View>
+            {this.renderVirtualHeaderContent()}
+            </>
         )
     }
 
@@ -359,7 +363,7 @@ class VirtualSession extends Component<Props, State> {
 
     _renderRemoteVideos = () => {
         const {peerIds} = this.state;
-        return (
+        return (<>
             <View style={styles.remoteContainer}>
                  <RtcLocalView.SurfaceView
                     style={styles.max}
@@ -377,7 +381,9 @@ class VirtualSession extends Component<Props, State> {
                     )
                 })
                 }   
+             
             </View>
+            </>
         )
     }
 }

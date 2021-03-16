@@ -162,7 +162,7 @@ function UserDashboard(props) {
     const renderUpcomingBooking = () => {
         if (userBookings.length === 0) {
             return (
-                <View style={{ top: ((Dimensions.get('window').height) / 3.5) - 65, alignItems: 'center', justifyContent: 'center', padding: 10 }}>
+                <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10 }}>
                     <Paragraph style={{ color: '#212121', fontFamily: 'Avenir-Medium' }}>
                         <Text style={{color: 'white'}}>
                             You don't have any scheduled bookings.{" "}
@@ -199,55 +199,39 @@ function UserDashboard(props) {
             flex: 1,
             backgroundColor: '#23374d'
         }}>
-            <Header style={{ backgroundColor: '#23374d', elevation: 0 }}>
-                <Left>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                        <TouchableOpacity onPress={() => navigation.push('Profile', {
-                            userUUID: currUserData.user_uuid
-                        })}>
-                            <Avatar rounded source={{ uri: currUserData.photo_url }} size={40} />
-                        </TouchableOpacity>
-                        <View style={{ paddingHorizontal: 10 }}>
-                            <Text style={{
-                                fontSize: 18,
-                                color: 'white',
-                                fontFamily: 'Avenir-Black'
-                            }}>
-                                {currUserData.display_name}
-                            </Text>
-                            <Text style={{
-                                color: 'rgb(180, 180, 180)',
-                                fontSize: 15,
-                                fontFamily: 'Avenir-Medium'
-                            }}>
-                                Dashboard
-                            </Text>
-                        </View>
-                    </View>
-                </Left>
+            <Header style={{ backgroundColor: '#23374d', elevation: 0, borderBottomColor: 'transparent' }}>
 
                 <Right style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <FeatherIcon name="bell" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Notifications')} />
-                    <FeatherIcon name="award" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Achievements')} />
-                    <FeatherIcon name="heart" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('PickInterest')} />
-                    <FeatherIcon name="activity" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('ExerciseDataLog')} />
-                    <FeatherIcon name="settings" color="#FFFFFF" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Settings')} />
+                    <FeatherIcon name="bell" color="#3d74ad" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Notifications')} />
+                    <FeatherIcon name="award" color="#3d74ad" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Achievements')} />
+                    <FeatherIcon name="heart" color="#3d74ad" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('PickInterest')} />
+                    <FeatherIcon name="activity" color="#3d74ad" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('ExerciseDataLog')} />
+                    <FeatherIcon name="settings" color="#3d74ad" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Settings')} />
                  
                 </Right>
             </Header>
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleOnRefresh} />}>
+                <View style={{padding: 10}}>
+                    <Text style={{color: '#3d74ad', fontSize: 25, fontWeight: '600'}}>
+                        Hi,
+                    </Text>
+                    <Text style={{paddingVertical: 3, color: '#EEEEEE', fontSize: 25, fontWeight: '700'}}>
+                        {currUserData.display_name}
+                    </Text>
+                </View>
                 <View style={{ marginVertical: 10, backgroundColor: '#23374d' }}>
                     <ListItem
                         title="My Programs"
                         titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
                         subtitle="Access all of your personal programs."
                         subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
-                        bottomDivider
+                        leftIcon={() => <Feather1s name="activity" size={20} color="#FFFFFF" />}
                         rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}
                         onPress={() => setProgramModalIsOpen(true)}
-                        containerStyle={{backgroundColor: '#23374d'}}
-                        contentContainerStyle={{backgroundColor: '#23374d'}}
+                        containerStyle={{backgroundColor: 'rgb(34, 74, 115)', margin: 5, width: Dimensions.get('window').width - 20, borderRadius: 15, alignSelf: 'center'}}
+                        contentContainerStyle={{backgroundColor: 'rgb(34, 74, 115)',}}
                         style={{backgroundColor: '#23374d'}}
+
                     />
 
 <ListItem
@@ -255,11 +239,11 @@ function UserDashboard(props) {
                         titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
                         subtitle="Redeem an existing coupon code."
                         subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
-                        bottomDivider
+                        leftIcon={() => <Feather1s name="dollar-sign" size={20} color="#FFFFFF" />}
                         rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}
                         onPress={() => setRedeemModalOpen(true)}
-                        containerStyle={{backgroundColor: '#23374d'}}
-                        contentContainerStyle={{backgroundColor: '#23374d'}}
+                        containerStyle={{backgroundColor: 'rgb(34, 74, 115)', margin: 5, width: Dimensions.get('window').width - 20, borderRadius: 15, alignSelf: 'center'}}
+                        contentContainerStyle={{backgroundColor: 'rgb(34, 74, 115)',}}
                         style={{backgroundColor: '#23374d'}}
                     />
 
@@ -268,11 +252,11 @@ function UserDashboard(props) {
                         titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
                         subtitle="Redeem an existing coupon code."
                         subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
-                        bottomDivider
+                        leftIcon={() => <Feather1s name="archive" size={20} color="#FFFFFF" />}
                         rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}
                         onPress={() => setParQAssessmentVisible(true)}
-                        containerStyle={{backgroundColor: '#23374d'}}
-                        contentContainerStyle={{backgroundColor: '#23374d'}}
+                        containerStyle={{backgroundColor: 'rgb(34, 74, 115)', margin: 5, width: Dimensions.get('window').width - 20, borderRadius: 15, alignSelf: 'center'}}
+                        contentContainerStyle={{backgroundColor: 'rgb(34, 74, 115)',}}
                         style={{backgroundColor: '#23374d'}}
                     />
 
@@ -289,51 +273,6 @@ function UserDashboard(props) {
                 </View>
 
                 <View style={{ flex: 1, }}>
-                    {/* <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
-                    <Surface style={{elevation: 0, margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
-                        <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
-                            Total Sessions Completed
-                        </Text>
-
-                        <View>
-                            <Text style={{ alignSelf: 'flex-start', padding: 5, fontSize: 30, color: 'white' }}>
-                                0
-                        </Text>
-                            <Chip textStyle={{ fontSize: 12 }} style={{ height: 20, alignItems: 'center', width: '85%', justifyContent: 'flex-start' }}>
-                                ~ Since yesterday
-                        </Chip>
-                        </View>
-
-                    </Surface>
-
-                    <View style={{ margin: 10, flex: 1, height: '90%', paddingVertical: 20, justifyContent: 'space-between' }}>
-                        <View style={{backgroundColor: 'rgb(240, 243, 252)', borderRadius: 8, justifyContent: 'space-evenly', padding: 10, alignItems: 'flex-start'}}>
-                            <View style={{backgroundColor: 'rgb(35, 73, 115)', padding: 10, paddingVertical: 10, borderRadius: 5}}>
-                                <Text style={{fontSize: 12, color: 'white'}}>
-                                    0
-                                </Text>
-                            </View>
-
-                            <View style={{paddingTop: 8}}>
-                                <Text style={{fontSize: 12}}>
-                                    Programs Completed
-                                </Text>
-                                <Text style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
-                                    Recently updated
-                                </Text>
-                            </View>
-                        </View>
-
-                        <TouchableWithoutFeedback onPress={() => navigation.push('Search')}>
-                        <View style={{backgroundColor: 'rgb(240, 243, 252)', borderRadius: 8, marginVertical: 10, padding: 10, alignItems: 'flex-start'}}>
-                            <FeatherIcon name="activity" size={18} color="rgb(35, 73, 115)" style={{marginVertical: 5}} />
-                            <Text style={{fontFamily: 'Avenir-Roman', color: '#1089ff'}}>
-                                Find more programs
-                            </Text>
-                        </View>
-                        </TouchableWithoutFeedback>
-    </View> 
-    </View> */}
 
                     <View style={{ flex: 2, marginVertical: 15 }}>
                         {
@@ -341,7 +280,7 @@ function UserDashboard(props) {
                                 null
                                 :
                                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
-                                    <Text style={{color: 'white', fontSize: 20, fontFamily: 'Avenir-Heavy' }}>
+                                    <Text style={{color: '#3d74ad', fontSize: 25, fontFamily: 'Avenir-Heavy' }}>
                                         Bookings
                       </Text>
                                 </View>

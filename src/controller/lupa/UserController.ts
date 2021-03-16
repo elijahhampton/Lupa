@@ -3295,12 +3295,14 @@ let subscribers = [];
     }
 
     saveProgramPlusVideoToProgram = async (userUID, exerciseUID, uri, programUID, week, workout, userType) => {
+   
         let foundProgramIndex = -1;
        //get user program data
        await USER_COLLECTION.doc(userUID).get().then(documentSnapshot => {
            const data = documentSnapshot.data();
 
            let program_data = data.program_data;
+           alert(programUID)
            for (let i = 0; i < program_data.length; i++)
            {
                if (program_data[i].program_structure_uuid == programUID)
@@ -3335,6 +3337,7 @@ let subscribers = [];
                //update the client video
                if (updatedProgram.program_workout_structure[week]['workouts'][workout][j].workout_uid == exerciseUID)
                {
+            
                 updatedProgram.program_workout_structure[week]['workouts'][workout][j].client_videos.push(uri);
                }
            }

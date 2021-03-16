@@ -273,25 +273,26 @@ class Search extends React.Component {
             searching: true,
             searchValue: searchQuery,
             searchResults: []
+        }, async () => {
+            await this.LUPA_CONTROLLER_INSTANCE
+            .searchTrainersAndPrograms(searchQuery).then(searchData => {
+                this.setState({ searchResults: searchData })
+            })
+            .catch(error => {
+                
+            })
+
+            this.setState({
+                searching: false
+            })
         })
 
-        await this.LUPA_CONTROLLER_INSTANCE
-        .searchTrainersAndPrograms(searchQuery).then(searchData => {
-            this.setState({ searchResults: searchData })
-        })
-        .catch(error => {
-            
-        })
-
-        await this.setState({
-            searching: false
-        })
     }
 
     renderCategoryResults = () => {
         return (
-            <View style={{ flex: 1, marginTop: 100, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, backgroundColor: 'white' }}>
-                <Text style={{ fontSize: 16, fontFamily: 'Avenir-Medium' }}>
+            <View style={{ flex: 1, marginTop: 100, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, backgroundColor: 'transparent' }}>
+                <Text style={{color: 'white', fontSize: 16, fontFamily: 'Avenir-Medium' }}>
                     Sorry we couldn't find any programs relating to {this.state.categoryToSearch}.
                 </Text>
                 <Text onPress={() => this.setState({ categoryIsPressed: false, categoryToSearch: '' })} style={{ fontFamily: 'Avenir-Roman', fontSize: 15, marginTop: 30, color: '#1089ff' }}>

@@ -457,12 +457,32 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         const newExerciseEntry = this.createExerciseStructure()
         let addExercise = true;
 
+        await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value').then((snapshot) => {
+            // currentWeek = (snapshot.val() && snapshot.val().currentWeek) || -1;
+             this.currentWorkout = (snapshot.val() && snapshot.val().currentWorkout || 0)
+         });
+
+
+
+         if (this.currentWorkout.workout_rest_time <= 0)
+         {
+            let checkedWorkout = {
+                ...this.currentWorkout,
+                workout_rest_time: 30
+            }
+
+            await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
+            .update({ 
+                currentWorkout: checkedWorkout
+            })
+         }
+
         await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber())
         .update({ 
             restTimerVisible: true, 
             restTimerStarted: true 
         }).then(async () => {
-            for (let i = 0; i < this.participants.length; i++) {
+          /*  for (let i = 0; i < this.participants.length; i++) {
                 
                 await LUPA_DB.collection('users').doc(this.participants[i].user_uuid).get().then(documentSnapshot => {
                     userData = documentSnapshot.data();
@@ -485,11 +505,18 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
                 })
 
 
-            }
+            }*/
         });
 
         this.restTimerVisible = true;
         this.restTimerStarted = true;
+
+        await LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).once('value').then((snapshot) => {
+           // currentWeek = (snapshot.val() && snapshot.val().currentWeek) || -1;
+            this.currentWorkout = (snapshot.val() && snapshot.val().currentWorkout || 0)
+            this.currentWorkoutIndex = snapshot.val().currentWorkoutIndex
+            this.currentWorkoutStructure = snapshot.val().currentWorkoutStructure
+        });
 
         if (this.currentWorkout.workout_sets > 1) {
             let newCurrentWorkoutObj = {
@@ -519,14 +546,10 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
                     currentWorkout: this.currentWorkoutStructure[this.currentWorkoutIndex + 1],
                     currentWorkoutIndex: this.currentWorkoutIndex + 1,
                     currentWorkoutOriginalSets: this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_sets,
-                    videoPlaylist: [this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_how_to_media.uri, this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_media.uri],
-                    videoPlaylistIndex: 0
                 }).then(() => {
                     this.currentWorkout = this.currentWorkoutStructure[this.currentWorkoutIndex + 1];
                     this.currentWorkoutIndex = this.currentWorkoutIndex + 1;
-                    this.currentWorkoutOriginalSets = this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_sets,
-                    this.videoPlaylist = [this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_how_to_media.uri, this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_media.uri],
-                    this.videoPlaylistIndex = 0
+                    this.currentWorkoutOriginalSets = this.currentWorkoutStructure[this.currentWorkoutIndex + 1].workout_sets
                 });
             } else { // > 0 sets
                 console.log('@@@@@@')

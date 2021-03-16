@@ -58,7 +58,7 @@ function LupaBottomTabNavigator() {
   })
 
   const tabBarOptions = {
-    showLabel: false,
+    showLabel: true,
     activeTintColor: ACTIVE_COLOR,
     inactiveTintColor: INACTIVE_COLOR,
     animationsEnabled: true,
@@ -91,7 +91,7 @@ function LupaBottomTabNavigator() {
             case 'Dashboard':
               return focused === true ? <FeatherIcon name='clipboard' size={25} color={ACTIVE_COLOR}/> : <Feather1s name='clipboard' size={25} color={INACTIVE_COLOR} />
             case 'Train':
-              return focused === true ? <FeatherIcon name='home' size={25} color={ACTIVE_COLOR} /> : <Feather1s name='home' size={25} color={INACTIVE_COLOR} />
+             return focused === true ? <FeatherIcon name='home' size={25} color={ACTIVE_COLOR} /> : <Feather1s name='home' size={25} color={INACTIVE_COLOR} />
             case 'Create':
               return focused === true ? <FeatherIcon name='plus-circle' size={25} color={ACTIVE_COLOR} /> : <Feather1s name='plus-circle' size={25} color={INACTIVE_COLOR} />
           }

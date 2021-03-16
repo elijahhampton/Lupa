@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, StyleSheet, View, Text, ScrollView } from 'react-native';
-import { Appbar, Button, Caption, Divider } from 'react-native-paper';
+import { Appbar, Button, Caption, Divider, Surface } from 'react-native-paper';
 import { Video } from 'expo-av';
 import { useSelector } from 'react-redux/lib/hooks/useSelector';
 import { LIVE_WORKOUT_MODE } from '../../../model/data_structures/workout/types';
@@ -16,7 +16,7 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
     const [currWeek, setCurrWeek] = useState(0);
     const [currWorkout, setCurrWorkout] = useState(0);
     const [currExercise, setCurrExercise] = useState({})
-    const [program, setCurrProgram] = useState(getLupaProgramInformationStructure())
+    const [currProgram, setCurrProgram] = useState(-1)
 
     const navigation = useNavigation();
 
@@ -86,12 +86,12 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
         if (currUserData.user_uuid == program.program_owner)
         {
              //save to users program data
-             LUPA_CONTROLLER_INSTANCE.saveProgramPlusVideoToProgram(currUserData.user_uuid, currExercise.workout_uid, uri, program.program_structure_uuid, currWeek, currWorkout, "TRAINER");
+             LUPA_CONTROLLER_INSTANCE.saveProgramPlusVideoToProgram(clientData.client.user_uuid, currExercise.workout_uid, uri, currProgram, currWeek, currWorkout, "TRAINER");
         }
         else
         {
             //save to users program data
-            LUPA_CONTROLLER_INSTANCE.saveProgramPlusVideoToProgram(currUserData.user_uuid, currExercise.workout_uid, uri, program.program_structure_uuid, currWeek, currWorkout, "CLIENT");
+            LUPA_CONTROLLER_INSTANCE.saveProgramPlusVideoToProgram(clientData.client.user_uuid, currExercise.workout_uid, uri, currProgram, currWeek, currWorkout, "CLIENT");
         }
        
     }
@@ -100,7 +100,9 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
         await setCurrWeek(week)
         await setCurrWorkout(workout)
         await setCurrExercise(exercise)
-        await setCurrProgram(program)
+        await setCurrProgram(program.program_structure_uuid)
+
+        closeModal()
 
         navigation.navigate('LupaCamera', {
             currWorkoutPressed: exercise,
@@ -117,8 +119,8 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
                 <View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{marginVertical: 5}}>
-                        <Text>
-                            Workout {(index + 1).toString()}
+                        <Text style={styles.workoutHeaderText}>
+                            Workout {(index + 1).toString()} ({structure[week].length} exercises)
                         </Text>
                         </View>
 
@@ -139,6 +141,7 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
                             structure[week].map((exercise, index, arr) => {
 
                                 return (
+                                    <>
                                     <View style={{ justifyContent: 'flex-start' }}>
                                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                                         <Text style={{ fontStyle: 'italic' }}> {exercise.workout_name} </Text>
@@ -184,6 +187,8 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
 
                                         </View>
                                     </View>
+                                    <Divider style={{marginVertical: 5}} />
+                                    </>
                                 )
                             })
                         }
@@ -200,7 +205,7 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
         } else {
             return clientData.program_data.program_workout_structure.map((weekStructure, index, arr) => {
                 return (
-                    <>
+                    <Surface style={{margin: 10, padding: 10, borderRadius: 20}}> 
                         <View>
                             <Text style={{ paddingHorizontal: 10 }}>
                                 {clientData.program_data.program_name}
@@ -233,8 +238,7 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
                             </View>
 
                         </View>
-                        <Divider />
-                    </>
+                    </Surface>
                 )
             })
         }
@@ -247,10 +251,10 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
             return clientData.client.program_data.map(program => {
                 return program.program_workout_structure.map((weekStructure, index, arr) => {
                     return (
-                        <> 
+                        <Surface style={{margin: 10, padding: 10, borderRadius: 20}}> 
                         <View>
-                        <Text style={{ paddingHorizontal: 10 }}>
-                            {program.program_name} ({program.program_restrictions.includes('temporary') == true ? 'Assigned by trainer' : 'Purchased'})
+                        <Text style={{fontSize: 15, color: '#23374d', fontFamily: 'Avenir-Heavy', paddingHorizontal: 10, alignSelf: 'center' }}>
+                            {program.program_name} ({program.program_restrictions.includes('temporary') == true ? '*Assigned by trainer' : 'Purchased'})
                         </Text>
                     </View>
                             <View style={{ padding: 10 }}>
@@ -278,8 +282,7 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
                                 </View>
 
                             </View>
-                            <Divider />
-                        </>
+                        </Surface>
                     )
                 })
             })
@@ -290,13 +293,14 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
         <Modal presentationStyle="fullScreen" visible={isVisible}>
             <Appbar.Header style={{ backgroundColor: 'white', elevation: 0 }}>
                 <Appbar.BackAction onPress={closeModal} />
-                <Appbar.Content title="Program Portal" />
+                <Appbar.Content title="Program Portal" titleStyle={{fontSize: 18, fontFamily: 'Avenir', fontWeight: '800'}} />
             </Appbar.Header>
-            <View style={{ flex: 1 }}>
-                <View>
-                    <Text style={{ fontFamily: 'Avenir-Black', paddingHorizontal: 10, fontSize: 16 }}>
+            <View style={{ flex: 1, }}>
+                <View style={{ padding: 10}}>
+                    <Text style={{ fontSize: 16, color: '#23374d' }}>
                         {clientData.client.display_name}
                     </Text>
+                    {currUserData.user_uuid == clientData.program_data.program_owner ? <Text style={{fontSize: 13, color: "#AAAAAA"}}> Here is a summary of your client's program progress. </Text> : <Text style={{fontSize: 13, color: "#AAAAAA"}}> Here is a summary of the progress for your programs. </Text>}
                 </View>
                 <ScrollView>
                     {currUserData.user_uuid == clientData.program_data.program_owner ? renderTrainerView() : renderUserView()}
@@ -308,8 +312,12 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
 
 const styles = StyleSheet.create({
     weekHeaderText: {
-        fontSize: 16,
-        fontWeight: '700'
+        fontSize: 15,
+        fontWeight: '500'
+    },
+    workoutHeaderText: {
+        fontSize: 13,
+        fontWeight: '500'
     },
     exerciseHeaderText: {
         fontSize: 15,

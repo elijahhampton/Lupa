@@ -14,8 +14,7 @@ const RestTimer = ({ isVisible, closeModal, restTime }) => {
   return (
     <Modal 
       visible={isVisible} 
-      presentationStyle="overFullScreen" 
-      transparent>
+      presentationStyle="fullScreen">
       <View style={styles.container}>
         <Text style={styles.headerText}>
           Loading your next Exercise.  Take this time to rest and drink some water.
@@ -28,8 +27,8 @@ const RestTimer = ({ isVisible, closeModal, restTime }) => {
           onComplete={() => {
             closeModal()
           }}
-          duration={restTime}
-          initialRemainingTime={restTime}
+          duration={30}
+          initialRemainingTime={30}
           size={100}
           colors={[
             ['#23374d', 0.4],

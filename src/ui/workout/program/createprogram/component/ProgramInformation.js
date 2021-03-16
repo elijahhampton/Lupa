@@ -24,6 +24,8 @@ import {
   Divider,
 } from 'react-native-paper';
 
+import { CheckBox } from 'react-native-elements';
+
 import FeatherIcon from 'react-native-vector-icons/Feather'
 import { Input} from 'react-native-elements';
 import { ProgramType } from '../../../../../model/data_structures/programs/common/types';
@@ -75,14 +77,15 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
 
   const [programDuration, setProgramDuration] = useState(1);
   const [programWorkoutStructure, setProgramWorkoutStructure] = useState([]);
-  const [programType, setProgramType] = useState('template')
+  const [programType, setProgramType] = useState(false)
   const [learnMoreDialogIsVisible, setLearnMoreDialogIsVisible] = useState(false);
   const [sliderCollection, setSliderCollection] = useState([1]);
   const [forceUpdate, setForceUpdate] = useState(false);
 
   const handleSaveProgramInformation = async () => {
     const updatedStructure = await constructStrucutre();
-    saveProgramInformation(programType, programDuration, updatedStructure);
+    const program_type = programType == true ? 'plus' : 'normal';
+    saveProgramInformation(program_type, programDuration, updatedStructure);
   }
 
   const constructStrucutre = async () => {
@@ -192,7 +195,21 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
               <Caption>
                 {programDuration} Weeks
               </Caption>
+
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <CheckBox
+  center
+  textStyle={{fontSize: 10}}
+  title='Program Plus (Add the ability to send and receive exercises from your program with your client.'
+  iconRight
+  iconType='material'
+  checkedColor='#1089ff'
+  checked={programType}
+/>
+
+                  </View>
                 </View>
+
 
     <Divider />
 

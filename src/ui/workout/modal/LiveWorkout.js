@@ -507,6 +507,7 @@ class LiveWorkout extends React.Component {
     closeRestTimesRBSheet = () => this.restTimesRBSheet.current.close();
 
     advanceExercise = () => {
+        alert('o')
         this.workoutService.advanceWorkout()
     }
 
@@ -905,20 +906,26 @@ class LiveWorkout extends React.Component {
     /************ */
 
     render() {
+        console.log(this.props.workoutMode)
         return (
             <>
                
                 {this.renderComponentDisplay()}
                 {this.renderFinishWorkoutWarningDialog()}
                 {this.renderRestTimerRBSheetPicker()}
+              {
+                  (this.props.route.params.workoutMode == LIVE_WORKOUT_MODE.TEMPLATE) == true ?
                 <View style={{width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', position: 'absolute', top: Constants.statusBarHeight}}>
                 <Appbar.BackAction color="white" onPress={this.showWarningDialog} />
                 <View>
             
             </View>
                 </View>
+                :
+                null
+            }
 
-          
+                <RestTimer restTime={this.state.currentWorkout.workout_rest_time} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
                 <NoExercisesDialogVisible captureWeekAndDay={(week, day) => this.captureWeekAndDay(week, day)} programData={this.state.programData} isVisible={!this.state.hasWorkouts} />
             </>

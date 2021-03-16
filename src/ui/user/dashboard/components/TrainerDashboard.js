@@ -138,40 +138,15 @@ function TrainerDashboard(props) {
             backgroundColor: '#23374d'
         }}>
             
-            <Header style={{ backgroundColor: '#23374d', elevation: 0,}}>
+            <Header style={{ backgroundColor: '#23374d', elevation: 0, borderBottomColor: 'transparent'}}>
             
-        <Left>
-        <View style={{flexDirection: 'row', alignItems: 'center',}}>
-        <TouchableOpacity onPress={() => navigation.push('Profile', {
-                            userUUID: currUserData.user_uuid
-                        })}>
-                            <Avatar rounded source={{ uri: currUserData.photo_url }} size={40} />
-                        </TouchableOpacity>
-          <View style={{paddingHorizontal: 10}}>
-          <Text style={{ 
-      fontSize: 18,
-      fontFamily: 'Avenir-Black', color: 'white'}}>
-                {currUserData.display_name}
-              </Text>
-              <Text style={{
-                  color: 'rgb(180, 180, 180)',
-      fontSize: 15,
-      fontFamily: 'Avenir-Medium'}}>
-                Dashboard
-              </Text>
-          </View>
-    
-        </View>
-
-        </Left>
-
         <Right style={{flexDirection: 'row', alignItems: 'center'}}>
        
-               <FeatherIcon color="#FFFFFF" name="bell" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Notifications')} />
-               <FeatherIcon color="#FFFFFF"  name="award" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Achievements')} />
-               <FeatherIcon color="#FFFFFF" name="heart" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('PickInterest')} />
-               <FeatherIcon color="#FFFFFF"  name="activity" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('ExerciseDataLog')} />
-               <FeatherIcon color="#FFFFFF" name="settings" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Settings')} />
+               <FeatherIcon color="#3d74ad" name="bell" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Notifications')} />
+               <FeatherIcon color="#3d74ad"  name="award" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Achievements')} />
+               <FeatherIcon color="#3d74ad" name="heart" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('PickInterest')} />
+               <FeatherIcon color="#3d74ad"  name="activity" size={20} style={{ padding: 3, paddingHorizontal: 10 }} onPress={() => navigation.push('ExerciseDataLog')} />
+               <FeatherIcon color="#3d74ad" name="settings" size={20} style={{padding: 3, paddingHorizontal: 10}} onPress={() => navigation.push('Settings')} />
                
         </Right>
              
@@ -179,78 +154,34 @@ function TrainerDashboard(props) {
           
             <ScrollView>
             <View style={{ flex: 1, }}>
-               {/* <View style={{ flex: 2, marginVertical: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: '100%', }}>
-                    <View style={{ margin: 10, flex: 1, padding: 10, justifyContent: 'space-evenly', height: '80%', backgroundColor: 'rgb(35, 73, 115)', borderRadius: 15 }}>
-                        <Text style={{ color: 'white', fontFamily: 'Avenir-Heavy', fontSize: 20 }}>
-                            Total Sessions Completed
-                        </Text>
-
-                        <View>
-                            <Text style={{ alignSelf: 'flex-start', padding: 5, fontSize: 30, color: 'white' }}>
-                                0
-                        </Text>
-                            <Chip textStyle={{ fontSize: 12 }} style={{ height: 20, alignItems: 'center', width: '85%', justifyContent: 'flex-start' }}>
-                                ~ Since yesterday
-                        </Chip>
-                        </View>
-
-                    </View>
-
-                    <View style={{ margin: 10, flex: 1, height: '90%', paddingVertical: 20, justifyContent: 'space-between' }}>
-                        <View style={{backgroundColor: 'rgb(240, 243, 252)', borderRadius: 8, justifyContent: 'space-evenly', padding: 10, alignItems: 'flex-start'}}>
-                            <View style={{backgroundColor: 'rgb(35, 73, 115)', padding: 10, paddingVertical: 10, borderRadius: 5}}>
-                                <Text style={{fontSize: 12, color: 'white'}}>
-                                    0
-                                </Text>
-                            </View>
-
-                            <View style={{paddingTop: 8}}>
-                                <Text style={{fontSize: 12}}>
-                                    Program Views
-                                </Text>
-                                <Text style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
-                                    Recently updated
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={{backgroundColor: 'rgb(240, 243, 252)', borderRadius: 8, marginVertical: 10, padding: 10, alignItems: 'flex-start'}}>
-                            <View style={{ backgroundColor: 'rgb(35, 73, 115)',  padding: 10, borderRadius: 5}}>
-                                <Text style={{fontSize: 12, color: 'white'}}>
-                                    0
-                                </Text>
-                            </View>
-
-                            <View style={{paddingTop: 8}}>
-                                <Text style={{fontSize: 12}}>
-                                    Earnings
-                                </Text>
-                                <Text style={{fontSize: 12, fontFamily: 'Avenir-Roman'}}>
-                                    Recently updated
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-    </View>*/}
-    <ListItem
+            <View style={{padding: 10}}>
+                    <Text style={{color: '#3d74ad', fontSize: 25, fontWeight: '600'}}>
+                        Hi,
+                    </Text>
+                    <Text style={{paddingVertical: 3, color: '#EEEEEE', fontSize: 25, fontWeight: '700'}}>
+                        {currUserData.display_name}
+                    </Text>
+                </View>
+            <View style={{ marginVertical: 10, backgroundColor: '#23374d' }}>
+            <ListItem
                         title="PARQ Assessment"
                         titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
                         subtitle="Redeem an existing coupon code."
                         subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
-                        bottomDivider
                         rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}
                         onPress={() => setParQAssessmentVisible(true)}
-                        containerStyle={{backgroundColor: '#23374d'}}
-                        contentContainerStyle={{backgroundColor: '#23374d'}}
+                        containerStyle={{backgroundColor: 'rgb(34, 74, 115)', margin: 5, width: Dimensions.get('window').width - 20, borderRadius: 15, alignSelf: 'center'}}
+                        contentContainerStyle={{backgroundColor: 'rgb(34, 74, 115)',}}
                         style={{backgroundColor: '#23374d'}}
                     />
+           </View> 
 
                   {
                       userBookings.length === 0 ?
                       null
                       :
                       <View style={{marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
-                      <Text style={{color: '#FFFFFF', fontSize: 20, fontFamily: 'Avenir-Heavy'}}>
+                      <Text style={{color: '#3d74ad', fontSize: 25, fontFamily: 'Avenir-Heavy' }}>
                           Bookings
                       </Text>
                       </View>

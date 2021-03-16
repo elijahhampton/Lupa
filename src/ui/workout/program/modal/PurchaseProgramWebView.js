@@ -31,6 +31,7 @@ class PurchaseProgramWebView extends React.Component {
             visible={this.props.isVisible}
             >
               <WebView 
+              incognito={true}
                 ref={ref => this.webviewRef = ref}
                 style={{flex: 1, width: Dimensions.get('window').width}} 
                 source={{uri: `https://lupa-cd0e3.web.app/checkout/${programOwnerUUID}/${programUUID}/${purchaserUUID}` }}

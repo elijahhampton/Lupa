@@ -21,7 +21,7 @@ var lupa_program_information_structure : LupaProgramInformationStructure = {
     program_started: false,
     num_exercises: 0,
     required_equipment: [],
-    program_type: 'normal',
+    program_type: 'normal', //normal plus
     program_restrictions: [], //temporary
     program_participant_category: 'individual'
 }

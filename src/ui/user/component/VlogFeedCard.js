@@ -52,7 +52,7 @@ function VlogFeedCard({ vlogData, showTopDivider, clickable }) {
                    {" "}
                </Text>
                 <Caption>
-                    {vlogData.comments.length}
+                    {vlogData && vlogData.comments.length}
                 </Caption>
                 </View>    
                 </TouchableWithoutFeedback>
