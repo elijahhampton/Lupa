@@ -98,14 +98,17 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 
         if (optionTitle == 'Preview Program') {
             openProgramPreview()
+            closeModal();
         }
         
         if (optionTitle == 'Edit Program') {
             setEditWorkoutsModalIsVisible(true)
+            closeModal();
         }
 
         if (optionTitle == 'Share Program With a Friend') {
             shareProgramOnPress(program);
+            closeModal();
         }
 
         if (optionTitle == 'Invite Friend to Program') {
@@ -114,13 +117,15 @@ function ProgramOptionsModal({ program, isVisible, closeModal }) {
 
         if (optionTitle == 'Delete Program') {
             LUPA_CONTROLLER_INSTANCE.eraseProgram(program.program_structure_uuid);
+            closeModal();
         }
 
         if (optionTitle == 'Post to Profile') {
             LUPA_CONTROLLER_INSTANCE.markProgramPublic(program.program_structure_uuid);
+            closeModal();
         }
 
-        closeModal();
+   
     }
 
     const onShare = async () => {
@@ -276,42 +281,6 @@ const renderCycles = (week, structure) => {
                                               Reps {exercise.workout_reps}
                                           </Caption>
                                       </View>
-                                      <View style={{marginVertical: 5}}>
-                                          <Text>
-                                              Trainer Videos
-                                          </Text>
-                                          <View>
-                                              <ScrollView horizontal>
-                                              {
-                                            
-                                              exercise.trainer_videos.map(video => {
-                                                  return (
-                                                      <Video style={{width: 100, height: 100}} source={video} />
-                                                  )
-                                              })
-                                          }
-                                              </ScrollView>
-                                        </View>
-
-                                    </View>
-
-                                    <View style={{marginVertical: 5}}>
-                                          <Text>
-                                              Client Videos
-                                          </Text>
-                                          <View>
-                                              <ScrollView horizontal>
-                                              {
-                                              exercise.client_videos.map(video => {
-                                                  return (
-                                                      <Video style={{width: 100, height: 100}} source={video} />
-                                                  )
-                                              })
-                                          }
-                                              </ScrollView>
-                                            </View>
-                                         
-                                    </View>
                                 </View>
                             )
                         })

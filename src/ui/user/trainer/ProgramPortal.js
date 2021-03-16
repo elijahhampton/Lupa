@@ -7,6 +7,7 @@ import { LIVE_WORKOUT_MODE } from '../../../model/data_structures/workout/types'
 import { useNavigation } from '@react-navigation/core';
 import LupaController from '../../../controller/lupa/LupaController';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
+import Feather1s from 'react-native-feather1s/src/Feather1s';
 
 function ProgramPortal({ isVisible, closeModal, clientData }) {
     const currUserData = useSelector(state => {
@@ -25,14 +26,27 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
     const renderTrainerVideos = (exercise) => {
         if (exercise.trainer_videos.length == 0) {
             return (
-                <Caption>
-                    Your trainer has not recorded any videos for this exercise!
-                </Caption>
+                <>
+                    <View style={{margin: 10, borderRadius: 30, width: 30, height: 30, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
+                        <Feather1s name="video" size={10} />
+                    </View>
+
+                    <View style={{margin: 10, borderRadius: 30, width: 30, height: 30, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
+                        <Feather1s name="video" size={10} />
+                    </View>
+
+                    <View style={{margin: 10, borderRadius: 30, width: 30, height: 30, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
+                        <Feather1s name="video" size={10} />
+                    </View>
+                </>
             )
         } else {
             return exercise.trainer_videos.map((video, index, arr) => {
                 return (
-                    <Video style={{ width: 100, height: 100 }} source={video} />
+                    <View style={{margin: 10, borderRadius: 30, width: 30, height: 30, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
+                        <Video style={{ width: 30, height: 30 }} source={{ uri: video }} />
+                    </View>
+                    
                 )
             })
         }
@@ -41,14 +55,26 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
     const renderClientVideos = (exercise) => {
         if (exercise.client_videos.length == 0) {
             return (
-                <Caption>
-                    No videos have been recorded by the client.
-                </Caption>
+                <>
+                    <View style={{margin: 10, borderRadius: 30, width: 30, height: 30, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
+                        <Feather1s name="video" size={10} />
+                    </View>
+
+                    <View style={{margin: 10, borderRadius: 30, width: 30, height: 30, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
+                        <Feather1s name="video" size={10} />
+                    </View>
+
+                    <View style={{margin: 10, borderRadius: 30, width: 30, height: 30, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
+                        <Feather1s name="video" size={10} />
+                    </View>
+                </>
             )
         } else {
             return exercise.client_videos.map((video, index, arr) => {
                 return (
-                    <Video style={{ width: 100, height: 100 }} source={video} />
+                    <View style={{margin: 10, borderRadius: 30, width: 30, height: 30, backgroundColor: '#EEEEEE', alignItems: 'center', justifyContent: 'center'}}>
+                        <Video style={{ width: 30, height: 30 }} source={{ uri: video }} />
+                    </View>
                 )
             })
         }

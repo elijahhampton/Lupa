@@ -293,6 +293,8 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
     const [lupaPurchasePageOpen, setLupaPurchasePageOpen] = useState(false)
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance()
 
+    const navigation = useNavigation();
+
     const currUserData = useSelector(state => {
         return state.Users.currUserData
     })
@@ -319,18 +321,6 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
 
       
     }, [program.program_structure_uuid])
-
-    const checkUserIsWaitlisted = () => {
-        let retVal = false;
-        waitlistProgramData.forEach(entry => {
-            if (entry.user_uuid == currUserData.user_uuid) {
-                retVal = true;
-            }
-        });
-
-        retVal = false;
-        return retVal;
-    }
 
     const getProgramTags = () => {
         try {
@@ -483,6 +473,15 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
         }
     }
 
+    const handleNavigateToTrainerProfile = () => {
+        if (ref.current)
+        {
+            ref.current.close()
+        }
+        
+        navigation.push('Profile', { userUUID: programOwnerData.user_uuid })
+    }
+
     return (
         <RBSheet 
         ref={ref}
@@ -548,7 +547,7 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
                       
                       <View style={styles.programOwnerDetailsSubContainer}>
                   
-                              <Avatar containerStyle={{marginHorizontal: 10}} rounded source={{uri: programOwnerData.photo_url}} color="#FFFFFF" size={50} />
+                    <Avatar onPress={handleNavigateToTrainerProfile} containerStyle={{marginHorizontal: 10}} rounded source={{uri: programOwnerData.photo_url}} color="#FFFFFF" size={50} />
                         
                           <View style={{justifyContent: 'center'}}>
                               <Text style={styles.mapViewText}>

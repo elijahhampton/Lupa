@@ -250,7 +250,7 @@ function UserDashboard(props) {
 <ListItem
                         title="PARQ Assessment"
                         titleStyle={{ fontSize: 18, color: 'white', fontFamily: 'Avenir-Heavy' }}
-                        subtitle="Redeem an existing coupon code."
+                        subtitle="Review your most recent PARQ."
                         subtitleStyle={{ fontSize: 15, color: 'white', fontFamily: 'Avenir-Roman' }}
                         leftIcon={() => <Feather1s name="archive" size={20} color="#FFFFFF" />}
                         rightIcon={() => <FeatherIcon name="arrow-right" color="#FFFFFF" size={20} />}

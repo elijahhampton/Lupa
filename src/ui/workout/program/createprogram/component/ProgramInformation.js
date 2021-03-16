@@ -202,7 +202,9 @@ function ProgramInformation({ handleCancelOnPress, saveProgramInformation }) {
   textStyle={{fontSize: 10}}
   title='Program Plus (Add the ability to send and receive exercises from your program with your client.'
   iconRight
-  iconType='material'
+  checkedIcon='dot-circle-o'
+  uncheckedIcon='circle-o'
+  onPress={() => setProgramType(!programType)}
   checkedColor='#1089ff'
   checked={programType}
 />

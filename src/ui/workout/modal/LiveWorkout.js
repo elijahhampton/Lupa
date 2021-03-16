@@ -507,7 +507,6 @@ class LiveWorkout extends React.Component {
     closeRestTimesRBSheet = () => this.restTimesRBSheet.current.close();
 
     advanceExercise = () => {
-        alert('o')
         this.workoutService.advanceWorkout()
     }
 
