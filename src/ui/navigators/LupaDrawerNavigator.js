@@ -2,6 +2,7 @@
 import React from 'react';
 import {
   View,
+  Text,
   Dimensions,
 } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -58,7 +59,7 @@ function LupaBottomTabNavigator() {
   })
 
   const tabBarOptions = {
-    showLabel: true,
+    showLabel: false,
     activeTintColor: ACTIVE_COLOR,
     inactiveTintColor: INACTIVE_COLOR,
     animationsEnabled: true,
@@ -87,13 +88,49 @@ function LupaBottomTabNavigator() {
           switch (route.name)
           {
             case 'Search':
-              return focused === true ? <FeatherIcon name='search' size={25} color={ACTIVE_COLOR} /> : <Feather1s name='search' size={25} color={INACTIVE_COLOR} />
+              return focused === true ? 
+              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <FeatherIcon name='search' size={20} color={ACTIVE_COLOR} style={{marginVertical: 3}} />
+                <Text style={{fontSize: 12, fontFamily: 'Avenir'}}>
+                {route.name}
+                </Text>
+
+                </View> 
+                : 
+                <Feather1s name='search' size={20} color={INACTIVE_COLOR} />
             case 'Dashboard':
-              return focused === true ? <FeatherIcon name='clipboard' size={25} color={ACTIVE_COLOR}/> : <Feather1s name='clipboard' size={25} color={INACTIVE_COLOR} />
+              return focused === true ? 
+              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <FeatherIcon name='clipboard' size={20} color={ACTIVE_COLOR} style={{marginVertical: 3}} />
+                <Text style={{fontSize: 12, fontFamily: 'Avenir'}}>
+                {route.name}
+                </Text>
+
+                </View> 
+              : 
+              <Feather1s name='clipboard' size={20} color={INACTIVE_COLOR} />
             case 'Train':
-             return focused === true ? <FeatherIcon name='home' size={25} color={ACTIVE_COLOR} /> : <Feather1s name='home' size={25} color={INACTIVE_COLOR} />
+             return focused === true ? 
+             <View style={{alignItems: 'center', justifyContent: 'center'}}>
+             <FeatherIcon name='home' size={20} color={ACTIVE_COLOR} style={{marginVertical: 3}} />
+             <Text style={{fontSize: 12, fontFamily: 'Avenir'}}>
+             {route.name}
+             </Text>
+
+             </View> 
+             : 
+             <Feather1s name='home' size={20} color={INACTIVE_COLOR} />
             case 'Create':
-              return focused === true ? <FeatherIcon name='plus-circle' size={25} color={ACTIVE_COLOR} /> : <Feather1s name='plus-circle' size={25} color={INACTIVE_COLOR} />
+              return focused === true ? 
+              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <FeatherIcon name='plus-circle' size={20} color={ACTIVE_COLOR} style={{marginVertical: 3}} />
+              <Text style={{fontSize: 12, fontFamily: 'Avenir'}}>
+              {route.name}
+              </Text>
+
+              </View> 
+              : 
+              <Feather1s name='plus-circle' size={20} color={INACTIVE_COLOR} />
           }
 
         },

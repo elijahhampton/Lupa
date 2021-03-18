@@ -74,6 +74,8 @@ import { ActionSheetIOS } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { getLupaProgramInformationStructure } from '../model/data_structures/programs/program_structures';
 import { Linking } from 'react-native';
+import ExplorePageProgram from './workout/ExplorePageProgram';
+import ExplorePageTrainer from './user/ExplorePageTrainer';
 
 const SKILL_BASED_INTEREST = [
   'Agility',
@@ -202,8 +204,8 @@ renderSkills = () => {
                       onPress={() => this.handleOnPressSkill(skill)} 
                       key={skill} 
                       mode="outline"
-                      textStyle={{ fontFamily: 'Avenir-Medium', fontWeight: '700', backgroundColor: '#FFFFFF', color: '#1089ff'}} 
-                      style={{borderWidth: 1, borderColor: '#EEEEEE', backgroundColor: '#FFFFFF', marginHorizontal: 10}}>
+                      textStyle={{ fontFamily: 'Avenir-Medium', fontWeight: '700', color: '#FFFFFF'}} 
+                      style={{borderWidth: 1, backgroundColor: '#1089ff', marginHorizontal: 10}}>
                           {skill}
                       </Chip>
                     )
@@ -535,21 +537,7 @@ renderSkillLevelPrograms = () => {
     showsHorizontalScrollIndicator={false}>
      {
         beginnerPrograms.map((program, index, arr) => {
-          return (
-            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.handleCardOnPress(program)}>
-              <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
-                  <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
-              </Surface>
-              <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
-                {program.program_name}
-              </Text>
-          <ProgramOptionsModal 
-          program={program} 
-          isVisible={this.state.programOptionsVisible} 
-          closeModal={() => this.setState({ programOptionsVisible: false })} 
-          />
-          </TouchableOpacity>
-          )
+          return <ExplorePageProgram program={program} />
         })
      }
     </ScrollView>
@@ -583,21 +571,7 @@ renderNumExercisesPrograms = () => {
     showsHorizontalScrollIndicator={false}>
      {
         numExercisesPrograms.map((program, index, arr) => {
-          return (
-            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.handleCardOnPress(program)}>
-              <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
-                  <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
-              </Surface>
-              <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
-                {program.program_name}
-              </Text>
-          <ProgramOptionsModal 
-          program={program} 
-          isVisible={this.state.programOptionsVisible} 
-          closeModal={() => this.setState({ programOptionsVisible: false })} 
-          />
-          </TouchableOpacity>
-          )
+          return <ExplorePageProgram program={program} />
         })
      }
     </ScrollView>
@@ -631,21 +605,7 @@ renderSpecificEquipmentPrograms = () => {
     showsHorizontalScrollIndicator={false}>
      {
         dumbellExercises.map((program, index, arr) => {
-          return (
-            <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.handleCardOnPress(program)}>
-              <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
-                  <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
-              </Surface>
-              <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
-                {program.program_name}
-              </Text>
-          <ProgramOptionsModal 
-          program={program}
-          isVisible={this.state.programOptionsVisible} 
-          closeModal={() => this.setState({ programOptionsVisible: false })} 
-          />
-          </TouchableOpacity>
-          )
+          return <ExplorePageProgram program={program} />
         })
      }
     </ScrollView>
@@ -679,50 +639,13 @@ renderSpecificEquipmentPrograms = () => {
       showsHorizontalScrollIndicator={false}>
        {
           programsBasedOnInterest.map((program, index, arr) => {
-            return (
-              <TouchableOpacity style={{margin: 5, alignItems: 'center'}} onPress={() => this.handleCardOnPress(program)}>
-                <Surface style={{width: 110, height: 110, borderRadius: 10, elevation: 0}}>
-                    <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
-                </Surface>
-                <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
-                  {program.program_name}
-                </Text>
-            <ProgramOptionsModal 
-            program={program} 
-            isVisible={this.state.programOptionsVisible} 
-            closeModal={() => this.setState({ programOptionsVisible: false })} 
-            />
-            </TouchableOpacity>
-            )
+            return <ExplorePageProgram program={program} />
           })
        }
       </ScrollView>
     )
 
 
-  }
-
-  renderProgramOfTheDay = () => {
-    const program = this.state.programOfTheDay;
-
-    return (
-      <TouchableOpacity style={{margin: 10, alignItems: 'center'}} onPress={() => this.openProgramPreview(program)}>
-        <Surface style={{width: Dimensions.get('window').width - 80, height: 400, borderRadius: 10, elevation: 0}}>
-            <Image key={program.program_structure_uuid} source={{ uri: program.program_image }} style={{borderRadius: 10, width: '100%', height: '100%'}} />
-        </Surface>
-        <Text style={{color: 'white', alignSelf: 'center', paddingVertical: 5, fontSize: 15, fontFamily: 'Avenir-Medium' }}>
-          {program.program_name}
-        </Text>
-        <Caption style={{color: 'white', alignSelf: 'center', paddingVertical: 5}}>
-          {program.program_description}
-        </Caption>
-    <ProgramOptionsModal 
-    program={program} 
-    isVisible={this.state.programOptionsVisible} 
-    closeModal={() => this.setState({ programOptionsVisible: false })} 
-    />
-    </TouchableOpacity>
-    )
   }
 
   renderPromotedTrainers = () => {
@@ -872,29 +795,7 @@ renderSpecificEquipmentPrograms = () => {
               return;
             }
 
-            return (
-              <TouchableOpacity style={{backgroundColor: 'transparent'}}  onPress={() => this.handleBookTrainerOnPress(trainer)}>
-                <Surface style={{ backgroundColor: 'transparent', elevation: 0, marginHorizontal: 5, marginVertical: 12 }} >
-                  <View style={{borderRadius: 10}}>
-                    <Image style={{borderRadius: 10,  width: 95, height: 95}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
-                  </View>
-                  <View style={{backgroundColor: 'transparent', alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{color: 'white', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
-                        {trainer.display_name}
-                      </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{color: 'white', fontFamily: 'Avenir-Light', fontSize: 12, }}>
-                        {trainer.location.city}, {trainer.location.state}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={{ width: '100%', height: '100%', backgroundColor: 'transparent', position: 'absolute' }} />
-                </Surface>
-              </TouchableOpacity>
-
-            )
+            return <ExplorePageTrainer trainer={trainer} openBookingBottomSheet={this.openBookingBottomSheet} />
           })
         }
       </ScrollView>
@@ -957,29 +858,7 @@ renderSpecificEquipmentPrograms = () => {
               return;
             }
 
-            return (
-              <TouchableOpacity style={{backgroundColor: 'transparent'}}  onPress={() => this.handleBookTrainerOnPress(trainer)}>
-                <Surface style={{ backgroundColor: 'transparent', elevation: 0, marginHorizontal: 5, marginVertical: 12 }} >
-                  <View style={{borderRadius: 10}}>
-                    <Image style={{borderRadius: 10,  width: 95, height: 95}} key={trainer.user_uuid} source={{ uri: trainer.photo_url }} size={120} />
-                  </View>
-                  <View style={{backgroundColor: 'transparent', alignItems: 'center', height: 50, justifyContent: 'space-evenly' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{color: 'white', fontFamily: 'Avenir-Medium', fontSize: 16, }}>
-                        {trainer.display_name}
-                      </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{color: 'white', fontFamily: 'Avenir-Light', fontSize: 12, }}>
-                        {trainer.location.city}, {trainer.location.state}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={{ width: '100%', height: '100%', backgroundColor: 'transparent', position: 'absolute' }} />
-                </Surface>
-              </TouchableOpacity>
-
-            )
+            return <ExplorePageTrainer trainer={trainer} openBookingBottomSheet={this.openBookingBottomSheet} />
           })
         }
       </ScrollView>
@@ -1537,9 +1416,9 @@ renderSpecificEquipmentPrograms = () => {
             {this.renderSkills()}
     
             <View style={{marginVertical: 0, paddingVertical: 15, width: '100%' }}>
-              <View style={{  width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View>
               <Text style={styles.sectionHeaderText}>
-                  Book a trainer now
+                  Book now
                 </Text>
               </View>
 
@@ -1584,7 +1463,7 @@ renderSpecificEquipmentPrograms = () => {
               </View>
 
             {/* Data */}
-             {this.renderProgramBasedOnInterest()}
+             {this.renderSkillLevelPrograms()}
       
             </View>
 
@@ -1607,7 +1486,7 @@ renderSpecificEquipmentPrograms = () => {
             <View style={{ marginVertical: 5, width: '100%' }}>
               <View style={{ paddingHorizontal: 5, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={styles.sectionHeaderText}>
-                  Programs with dumbbell exercises
+                  Programs with {this.state.skill} exercises
           </Text>
               </View>
 
@@ -1705,7 +1584,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   sectionHeaderText: {
-    color: 'white', fontSize: 20, padding: 5, fontFamily: 'Avenir-Black'
+    color: 'white', fontSize: 20, padding: 5, fontFamily: 'Avenir-Medium'
   },
 
   inputStyle: {

@@ -79,7 +79,7 @@ function WorkoutFinishedModal({ isVisible, closeModal }) {
     return (
         <Modal visible={isVisible} animated={true} animationType="fade">
             <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-                <View style={{ flex: 2, justifyContent: 'space-evenly', backgroundColor: '#1089ff' }}>
+                <View style={{ flex: 2, justifyContent: 'space-evenly', backgroundColor: '#23374d' }}>
                     <View style={{ padding: 20, }}>
                         <Title style={{ color: 'white', fontWeight: '800' }}>
                             Congratulations
@@ -905,7 +905,6 @@ class LiveWorkout extends React.Component {
     /************ */
 
     render() {
-        console.log(this.props.workoutMode)
         return (
             <>
                

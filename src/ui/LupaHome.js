@@ -255,14 +255,10 @@ export class LupaHome extends Component {
       <View style={{ flex: 1 }}>
         <Header style={{ backgroundColor: '#23374d' }} noShadow={false} hasTabs>
           <Left>
-            <Appbar.Action key='message-circle' onPress={() => this.props.navigation.openDrawer()} icon={() => <FeatherIcon name="message-circle" size={20} style={{ padding: 0, margin: 0 }} color="white" />} />
-          </Left>
-
-          <Body>
-            <Text style={{ color: 'white', fontFamily: 'Avenir-Black', fontSize: 18 }}>
+          <Text style={{paddingLeft: 10, color: 'white', fontFamily: 'Avenir-Black', fontSize: 18 }}>
               Explore
             </Text>
-          </Body>
+          </Left>
 
           <Right>
             <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
@@ -278,12 +274,14 @@ export class LupaHome extends Component {
                 title="Add your community" />
             </Menu>
 
+            <Appbar.Action key='message-circle' onPress={() => this.props.navigation.openDrawer()} icon={() => <FeatherIcon name="message-circle" size={20} style={{ padding: 0, margin: 0 }} color="white" />} />
+
           </Right>
         </Header>
         <Tabs
           onChangeTab={tabInfo => this.setState({ currTab: tabInfo.i })}
           style={{ backgroundColor: '#23374d'}}
-          tabBarUnderlineStyle={{ backgroundColor: '#23374d', height: 2, alignSelf: 'center' }}
+          tabBarUnderlineStyle={{ backgroundColor: '#1089ff', height: 2, alignSelf: 'center' }}
           tabContainerStyle={{ borderBottomWidth: 0}}
           renderTabBar={(props) => (
                 <ScrollableTab 
