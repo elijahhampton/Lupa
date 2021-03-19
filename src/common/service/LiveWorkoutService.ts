@@ -538,7 +538,9 @@ function LiveWorkoutService(sessionID, trainerData: LupaUserStructure, userData:
         } else if (this.currentWorkout.workout_sets == 1) {
             if (this.currentWorkout.workout_sets == 1) {
                 if (this.currentWorkoutIndex === this.currentWorkoutStructure.length - 1) {
-                    LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ showFinishedDayDialog: true });
+                    LUPA_DB_FIREBASE.ref(LIVE_SESSION_REF + this.getCurrentSessionIDNumber()).update({ showFinishedDayDialog: true }).then(() => {
+           
+                    })
                     this.showFinishedDayDialog = true;
                     return;
                 }

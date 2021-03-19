@@ -24,6 +24,7 @@ import {
     Portal,
     Title,
     Avatar,
+    Modal as PaperModal,
     Appbar,
     Dialog,
     ActivityIndicator,
@@ -44,21 +45,24 @@ import ThinFeatherIcon from "react-native-feather1s";
 import { Constants } from 'react-native-unimodules';
 import { getLupaProgramInformationStructure } from '../../../model/data_structures/programs/program_structures';
 import RBSheet from "react-native-raw-bottom-sheet";
-import { getLupaUserStructure } from '../../../controller/firebase/collection_structures';
+import { getLupaUserStructure, getLupaUserStructurePlaceholder } from '../../../controller/firebase/collection_structures';
 import CircularUserCard from '../../user/component/CircularUserCard';
 import RestTimer from './RestTimer';
 import { useNavigation } from '@react-navigation/native';
 import Feather1s from 'react-native-feather1s/src/Feather1s';
 import moment from 'moment'
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { getLupaExerciseStructure } from '../../../model/data_structures/workout/exercise_collections';
 import LiveWorkoutService, { LIVE_SESSION_REF } from '../../../common/service/LiveWorkoutService';
 import StepIndicator from 'react-native-step-indicator';
 import { InputAccessoryView } from 'react-native';
 import { getDayOfTheWeekStringFromDate } from '../../../common/service/DateTimeService';
 import { LIVE_WORKOUT_MODE } from '../../../model/data_structures/workout/types';
-import VirtualSession from '../../sessions/virtual/VirtualSession';
 import InPersonWorkout from '../component/InPersonWorkout';
 import { useSelector } from 'react-redux';
+
+import RtcEngine, {RtcLocalView, RtcRemoteView, VideoRenderMode} from 'react-native-agora'
+import axios from 'axios';
 
 const mapStateToProps = (state, action) => {
     return {
@@ -77,7 +81,7 @@ function WorkoutFinishedModal({ isVisible, closeModal }) {
     const navigation = useNavigation();
 
     return (
-        <Modal visible={isVisible} animated={true} animationType="fade">
+        <PaperModal visible={isVisible} animated={true} animationType="fade" contentContainerStyle={{backgroundColor: '#FFFFFF', width: Dimensions.get('window').width, height: Dimensions.get('window').height}}>
             <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                 <View style={{ flex: 2, justifyContent: 'space-evenly', backgroundColor: '#23374d' }}>
                     <View style={{ padding: 20, }}>
@@ -88,31 +92,22 @@ function WorkoutFinishedModal({ isVisible, closeModal }) {
                             It looks like you've completed a workout for today.
                 </Paragraph>
                     </View>
-
-                    <Button onPress={() => navigation.navigate('LupaHome')} color="white" mode="outlined" style={{ width: Dimensions.get('window').width - 20, alignSelf: 'center', borderColor: 'white' }}>
-                        Exit Workout and Go Home
-                    </Button>
                 </View>
             </View>
 
 
             <View style={{ flex: 3, alignItems: 'center', justifyContent: 'space-evenly' }}>
                 <View style={{ width: Dimensions.get('window').width - 50, alignSelf: 'center', borderRadius: 20, backgroundColor: 'rgb(245, 246, 247)', padding: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
-                    <View style={{ marginVertical: 20 }}>
-                        <Text style={{ color: 'rgb(116, 126, 136)', fontFamily: 'Avenir-Medium', fontSize: 15, fontWeight: '800' }}>
-                            Your statistics have been updated in your dashboard!
-                          </Text>
 
-                    </View>
 
                     <Button onPress={() => navigation.navigate('Dashboard')} color="#1089ff" theme={{ roundness: 5 }} mode="contained" style={{ alignSelf: 'center', height: 45, alignItems: 'center', justifyContent: 'center', width: '90%' }}>
-                        View Statistics
+                        Exit Workout
                       </Button>
                 </View>
             </View>
 
             <SafeAreaView />
-        </Modal>
+        </PaperModal>
     )
 }
 
@@ -227,6 +222,7 @@ function NoExercisesDialogVisible({ isVisible, programData, captureWeekAndDay })
                 <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
  <ActivityIndicator style={{alignSelf: 'center'}} animating={true} color="#1089ff" />
                 </View>
+                
             )
 
         }
@@ -292,7 +288,26 @@ class LiveWorkout extends React.Component {
             isEditingWeightUsed: false,
             videoPlaylistIndex: 0,
             videoPlaylist: [],
+            appId: 'fd515bbb863a43fa8dd6e89f2b3bfaeb',
+            token: null,
+            channelName: 'OOP', //Randomly generate number
+            joinSucceed: false,
+            peerIds: [],
+            uid: 0,
+            tokenLoaded: false,
+            trainerData: getLupaUserStructurePlaceholder(),
+            requesterData: getLupaUserStructurePlaceholder(),
+            firstSessionTimer: 100,
+            showVirtualLiveWorkout: false,
         }
+    }
+
+    handleVirtualSetup = async () => {
+        await this.generateUserData()
+        await this.generateUID();
+        await this.generateChannelName();
+        await this.generateToken();
+        await this.init();
     }
 
     async componentDidMount() {
@@ -303,11 +318,14 @@ class LiveWorkout extends React.Component {
         await this.workoutService.initLiveWorkoutSession();
 
         if (workoutMode == LIVE_WORKOUT_MODE.CONSULTATION) {
+            this.handleVirtualSetup()
+
             this.setState({
                 hasWorkouts: true,
                 ready: true
             })
         } else {
+            await this.handleVirtualSetup()
             const sessionIDNumber = await this.workoutService.getCurrentSessionIDNumber()
             const refString = LIVE_SESSION_REF.toString() + sessionIDNumber.toString();
             await LUPA_DB_FIREBASE.ref(refString.toString()).on('value', (snapshot) => {
@@ -320,29 +338,6 @@ class LiveWorkout extends React.Component {
 
         this.workoutService.addParticipant(this.props.lupa_data.Users.currUserData);
         await this.setState({ ready: true });
-
-       {/* await LUPA_DB.collection('users').doc(this.props.lupa_data.Users.currUserData.user_uuid).onSnapshot(documentSnapshot => {
-            const data = documentSnapshot.data();
-            const completedExercises = data.completed_exercises;
-
-            for (let i = 0; i < completedExercises.length; i++) {
-                if (completedExercises[i].index == this.state.currentWorkout.index) {
-                    if (completedExercises[i].one_rep_max == 0) {
-                        this.setState({ isEditingOneRepMax: true })
-                    } else {
-                        this.setState({ isEditingOneRepMax: false })
-                    }
-
-                    if (completedExercises[i].exercise_weight == 0) {
-                        this.setState({ isEditingWeightUsed: true })
-                    } else {
-                        this.setState({ isEditingWeightUsed: false })
-                    }
-                    
-                    this.setState({ completed_exercise_weight_used: completedExercises[i].exercise_weight, completed_exercise_one_rep_max: completedExercises[i].one_rep_max })
-                }
-            }
-        })*/}
     }
 
 
@@ -658,7 +653,7 @@ class LiveWorkout extends React.Component {
 
 
                         <Text style={{fontSize: 12, color: '#FFFFFF', paddingVertical: 2}}>
-                            Tempo ( {this.renderWorkoutTempo()})
+                            Tempo ({this.renderWorkoutTempo()})
                         </Text>
                 </View>
 
@@ -740,7 +735,7 @@ class LiveWorkout extends React.Component {
 
 
                         <Text style={{fontSize: 12, color: '#AAAAAA', paddingVertical: 2}}>
-                            Tempo ( {this.renderWorkoutTempo()})
+                            Tempo ({this.renderWorkoutTempo()})
                         </Text>
                 </View>
 
@@ -787,6 +782,26 @@ class LiveWorkout extends React.Component {
         )
     }
 
+    renderVirtualTrainingDisplay = () => {
+        return (
+            <View style={styles.container}>
+            <View style={styles.container}>
+                 {
+                        this.state.tokenLoaded === true ?
+                        <View style={{flex: 1}}>
+                       {this.renderComponentView()}
+                    </View>
+                    :
+                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <ActivityIndicator animating={true} color="#23374d" />
+                    </View>
+                    }
+            </View>
+            {this.renderVirtualLiveWorkout()}
+         </View>
+        )
+    }
+
     renderComponentDisplay = () => {
         const { workoutMode, sessionID, booking } = this.props.route.params;
         const { ready, componentDidErr, programData } = this.state;
@@ -804,27 +819,8 @@ class LiveWorkout extends React.Component {
                 case LIVE_WORKOUT_MODE.TEMPLATE:
                     return this.renderTemplateTrainingDisplay()
                 case LIVE_WORKOUT_MODE.CONSULTATION:
-                    return ( 
-                        <VirtualSession 
-                        booking={booking}
-                        closeSession={this.handleCloseLiveWorkout}
-                        sessionID={sessionID}
-                        programUID={this.state.programData.program_structure_uuid}
-                        isFirstSession={true}
-                        />
-                    )
                 case LIVE_WORKOUT_MODE.VIRTUAL:
-                    return (
-                        <VirtualSession 
-                            booking={booking}
-                            closeSession={this.handleCloseLiveWorkout}
-                            sessionID={sessionID}
-                            programUID={this.state.programData.program_structure_uuid}
-                            isFirstSession={false}
-                            currentWeek={this.workoutService.getCurrentWeek()}
-                            currentDay={-2}
-                            />
-                        )
+                    return this.renderVirtualTrainingDisplay();
                 default:
             }
         } else if (componentDidErr || typeof(programData) == 'undefined') {
@@ -902,6 +898,330 @@ class LiveWorkout extends React.Component {
         this.workoutService.changeWeekAndDay(week, day);
     }
 
+    /** Virtual */
+
+    renderJoinSessionView = () => {
+        return (
+            <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(255, 255, 255)', flexDirection: 'column', justifyContent: 'space-between'}}>
+                <View style={{}} />
+
+                <View style={{alignItems: 'center'}}>
+                <View style={{alignItems: 'center', borderWidth: 70, borderRadius: 110, width: 100, height: 110, alignSelf: 'center', borderColor: 'rgb(215, 238, 252)', justifyContent: 'center'}}>
+                    <Surface style={{elevation: 0, borderRadius: 110, width: 110, height: 110}}>
+                            <Image style={{borderRadius: 110, width: '100%', height: '100%'}} source={{ uri: this.getDisplayImageURI() }} />
+                    </Surface>
+                </View>
+                {this.renderCaptionText()} 
+                </View>            
+              
+
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                    <TouchableOpacity onPress={this.startCall}>
+                    <View style={{alignItems: 'center'}}>
+                    <Surface style={{elevation: 0, backgroundColor: 'rgb(32, 211, 104)', height: 70, width: 70, borderRadius: 70, alignItems: 'center', justifyContent: 'center'}}>
+                            <MaterialIcon name="local-phone" size={24} color="white" />
+                    </Surface>
+                    <Caption>
+                        Join Session
+                    </Caption>
+                    </View>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity onPress={this.endCall}>
+                    <View style={{alignItems: 'center'}}>
+                    <Surface style={{elevation: 0, backgroundColor: 'rgb(246, 61, 70)', height: 70, width: 70, borderRadius: 70, alignItems: 'center', justifyContent: 'center'}}>
+                            <MaterialIcon name="close" size={24} color="white" />
+                    </Surface>
+                    <Caption>
+                        Leave Session
+                    </Caption>
+                    </View>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+        )
+    }
+
+    renderCaptionText = () => {
+        const { isFirstSession } = this.props.route.params;
+
+        if (isFirstSession == true) {
+            return (
+                <Caption style={{color: '#1089ff', textAlign: 'center', padding: 10}}>
+                    You are about to enter your first session.  This will be a one on one consultation with your trainer.
+                </Caption>
+            )
+        }
+    }
+
+    renderComponentView = () => {
+        if (!this.state.joinSucceed) {
+            return this.renderJoinSessionView();
+        }
+
+        if (this.state.joinSucceed) {
+            return this._renderRemoteVideos()
+        }
+    }
+
+    generateRandomUID = () => {
+        return Math.floor(Math.random() * 10); 
+    }
+
+    renderVirtualLiveWorkout = () => {
+        if (this.state.joinSucceed == true) {
+            if (this.props.route.params.workoutMode == LIVE_WORKOUT_MODE.VIRTUAL) {
+              return (
+                <View style={{position: 'absolute', width: Dimensions.get('window').width, bottom: 0, height: 300,  justifyContent: 'space-evenly'}}>
+                <View style={{height: 80}}>
+                    <Text style={{color: '#FFFFFF', fontSize: 12, paddingHorizontal: 10, fontFamily: 'Avenir-Medium'}}>
+                        Participants
+                    </Text>
+                    <ScrollView horizontal>
+                        {this.renderParticipants()}
+                    </ScrollView>
+                </View>
+                <Divider />
+                    <View style={{height: 200, width: Dimensions.get('window').width,  flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+               
+                <View style={{flex: 1, alignItems: 'center', flexDirection: 'row'}}>
+                    <View style={{flex: 0.5, width: 80, height: 80}}>
+                        {this.renderImageSource(this.state.currentWorkout)}
+                    </View>
+                    <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-evenly'}}>
+                    <View style={{ width: '100%', marginVertical: 10,  flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                            <Text style={{fontSize: 12, color: '#FFFFFF', paddingVertical: 2}}>
+                                Sets ({this.renderWorkoutSets()})
+                            </Text>
+    
+    
+                            <Text style={{fontSize: 12, color: '#FFFFFF', paddingVertical: 2}}>
+                                Tempo ( {this.renderWorkoutTempo()})
+                            </Text>
+                    </View>
+    
+                    <View style={{width: '100%', marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                   
+    
+                            <Text style={{fontSize: 12, color: '#FFFFFF', paddingVertical: 2}}>
+                                Reps ({this.renderWorkoutReps()})
+                            </Text>
+    
+                        <Text style={{fontSize: 12, color: '#FFFFFF', paddingVertical: 2}}>
+                                Intensity (0%)
+                            </Text>
+                        </View>
+                   
+                    </View>
+                </View>
+    
+                <View style={{flex: 0.5, padding: 10, }}>
+                <View style={{ height: 60, width: '100%', backgroundColor: '#23374d', justifyContent: 'flex-end',  alignSelf: 'center', borderRadius: 3 }}>
+                            <TouchableOpacity 
+                            disabled={this.state.hasWorkouts == false} 
+                            style={{width: '100%', 
+                            flex: 1,
+                            backgroundColor: this.state.hasWorkouts == true ? '#23374d' : '#E5E5E5', 
+                            borderRadius: 3, 
+                            alignItems: 'center', 
+                            justifyContent: 'center' 
+                            }} onPress={() => this.advanceExercise()}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <Text style={{ fontSize: 15, color: '#FFFFFF', fontFamily: 'Avenir-Heavy' }}>
+                                        Advance Workout
+                       </Text>
+    
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                </View>
+                </View>
+                <View style={{height: 80, padding: 3, justifyContent: 'center'}}>
+                    {this.renderStepIndicator()}
+                </View>
+                <SafeAreaView />
+                </View>
+              )
+            }
+        }
+    }
+
+    _renderRemoteVideos = () => {
+        const {peerIds} = this.state;
+        return (
+            <View style={styles.container}>
+            <View style={styles.container}>
+                 <RtcLocalView.SurfaceView
+                    style={styles.container}
+                    channelId={this.state.channelName}
+                    renderMode={VideoRenderMode.Hidden}/>
+                {
+                peerIds.map((value, index, array) => {
+                    return (
+                        <RtcRemoteView.SurfaceView
+                            style={styles.container}
+                            uid={value}
+                            channelId={this.state.channelName}
+                            renderMode={VideoRenderMode.Hidden}
+                            zOrderMediaOverlay={false}/>
+                    )
+                })
+                }   
+             
+            </View>
+            </View>
+        )
+    }
+
+    getDisplayImageURI = () => {
+        if (this.props.lupa_data.Users.currUserData.user_uuid == this.state.trainerData.user_uuid) {
+            return this.state.requesterData.photo_url;
+        } else {
+            return this.state.trainerData.photo_url;
+        }
+    }
+
+    generateUserData = async () => {
+        const { booking } = this.props.route.params;
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.trainer_uuid).then(data => {
+            this.setState({ trainerData: data })
+        }).catch(error => {
+            this.setState({ componentDidError: true });
+        })
+
+        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.requester_uuid).then(data => {
+            this.setState({ requesterData: data })
+        }).catch(error => {
+            this.setState({ componentDidError: true })
+        })
+    }
+
+    generateUID = async () => {
+        const uuid = await Math.floor(Math.random() * Math.floor(20));
+        await this.setState({
+            uid: uuid
+        });
+    }
+
+    generateToken = async () => {
+        await axios({
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            url: "https://us-central1-lupa-cd0e3.cloudfunctions.net/generateAgoraTokenFromUUID",
+            data: JSON.stringify({
+                uid: this.state.uid,
+                channel_name: this.state.channelName,
+            })
+        }).then(response => {
+            console.log(response)
+            console.log(response.data);
+            this.setState({ 
+                token: response.data.token,
+                tokenLoaded: true 
+            })
+            console.log(response);
+        }).catch(err => {
+            console.log('AAAAAAA')
+            console.log(err)
+        })
+    }
+
+    /**
+     * @name init
+     * @description Function to initialize the Rtc Engine, attach event listeners and actions
+     */
+    init = async () => {
+        const {appId} = this.state
+        this._engine = await RtcEngine.create(appId)
+        await this._engine.enableVideo()
+
+        this._engine.addListener('Warning', (warn) => {
+            console.log('Warning', warn)
+        })
+
+        this._engine.addListener('Error', (err) => {
+            console.log('Error', err)
+        })
+
+        this._engine.addListener('UserJoined', (uid, elapsed) => {
+            console.log('UserJoined', uid, elapsed)
+            // Get current peer IDs
+            const {peerIds} = this.state
+            // If new user
+            if (peerIds.indexOf(uid) === -1) {
+                this.setState({
+                    // Add peer ID to state array
+                    peerIds: [...peerIds, uid]
+                })
+            }
+        })
+
+        this._engine.addListener('UserOffline', (uid, reason) => {
+            console.log('UserOffline', uid, reason)
+            const {peerIds} = this.state
+            this.setState({
+                // Remove peer ID from state array
+                peerIds: peerIds.filter(id => id !== uid)
+            })
+        })
+
+        // If Local user joins RTC channel
+        this._engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
+            console.log('JoinChannelSuccess', channel, uid, elapsed)
+            // Set state variable to true
+            this.setState({
+                joinSucceed: true
+            })
+        })
+    }
+
+    generateChannelName = async () => {
+        const trainerUUID = this.state.trainerData.user_uuid;
+        const requesterUUID = this.state.requesterData.user_uuid;
+        
+        if (trainerUUID.toString().charAt(0) < requesterUUID.toString().charAt(0)) {
+            await this.setState({
+                channelName: trainerUUID.toString() + requesterUUID.toString()
+            })
+        } else {
+            await this.setState({
+                channelName: requesterUUID.toString() + trainerUUID.toString()
+            })
+        }
+    }
+
+    /**
+     * @name startCall
+     * @description Function to start the call
+     */
+    startCall = async () => {
+        // Join Channel using null token and channel name
+        await this._engine?.joinChannel(this.state.token, this.state.channelName, null, 0).then(() => {
+           
+        }).catch(error => {
+            console.log(error)
+        });
+    }
+
+    /**
+     * @name endCall
+     * @description Function to end the call
+     */
+    endCall = async () => {
+        
+        await this._engine?.leaveChannel().then(() => {
+            this.setState({peerIds: [], joinSucceed: false})
+            alert('me')
+            this.props.navigation.pop()
+        })
+        //this.props.navigation.pop();
+    }
+
+
+
     /************ */
 
     render() {
@@ -911,17 +1231,10 @@ class LiveWorkout extends React.Component {
                 {this.renderComponentDisplay()}
                 {this.renderFinishWorkoutWarningDialog()}
                 {this.renderRestTimerRBSheetPicker()}
-              {
-                  (this.props.route.params.workoutMode == LIVE_WORKOUT_MODE.TEMPLATE) == true ?
+
                 <View style={{width: Dimensions.get('window').width, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', position: 'absolute', top: Constants.statusBarHeight}}>
                 <Appbar.BackAction color="white" onPress={this.showWarningDialog} />
-                <View>
-            
-            </View>
                 </View>
-                :
-                null
-            }
 
                 <RestTimer restTime={this.state.currentWorkout.workout_rest_time} isVisible={this.state.restTimerVisible}  timerHasStarted={this.state.restTimerStarted} closeModal={() => this.setState({ restTimerVisible: false })}/>
                 <WorkoutFinishedModal isVisible={this.state.showFinishedDayDialog} closeModal={this.hideDialog} />
@@ -938,7 +1251,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     container: {
-   
+        flex: 1,
     },
     RBSheetText: {
         color: 'white'

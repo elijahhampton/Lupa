@@ -53,7 +53,6 @@ import { retrieveAsyncData, storeAsyncData } from './src/controller/lupa/storage
 import DeviceInfo from 'react-native-device-info';
 import MyClients from './src/ui/user/trainer/MyClients';
 import Onboarding from './src/ui/user/modal/WelcomeModal/Onboarding'
-import VirtualSession from './src/ui/sessions/virtual/VirtualSession';
 import LOG, { LOG_ERROR } from './src/common/Logger';
 import PackChat from './src/ui/packs/PackChat';
 import { UPDATE_CURRENT_USER_PACKS_ACTION } from './src/controller/redux/actionTypes';
@@ -118,7 +117,6 @@ function AppNavigator() {
       <StackApp.Screen name="VlogContent" component={VlogFeedCardExpanded} />
       <StackApp.Screen name="FollowerView" component={FollowerModal} />
       <StackApp.Screen name="MyClients" component={MyClients} />
-      <StackApp.Screen name="VirtualSession" component={VirtualSession} />
       <StackApp.Screen name="Achievements" component={Achievements} />
       <StackApp.Screen name="Community" component={CommunityHome} />
       <StackApp.Screen name="CommunityFeed" component={CommunityFeed} />
