@@ -20,10 +20,8 @@ const firebaseConfig = {
   //appId: "1:413569093565:web:7a8efd135343441213ccd4"
 };
 
-const SEND_GRID_API_KEY = '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'
 const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(SEND_GRID_API_KEY)
-
+const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 
 admin.initializeApp(firebaseConfig)
 
@@ -756,6 +754,17 @@ await stripe.paymentIntents.create({
 exports.sendFeedbackSubmission = functions.https.onRequest(async (request, response) => {
   const feedbackText = await request.body.feedback_text;
   const user = await request.body.user_email;
+
+  // Instantiates a client
+  const client = new SecretManagerServiceClient();
+
+  const sendGridFullAccessVersionOne = await client.accessSecretVersion({
+    name: 'projects/413569093565/secrets/send-grid-api-key',
+  });
+
+   // Extract the payload as a string.
+   const payload = sendGridFullAccessVersionOne.payload.data.toString();
+   await sgMail.setApiKey(payload)
 
   const msg = {
     to: 'rheasilvia.lupahealth@gmail.com', // Change to your recipient
