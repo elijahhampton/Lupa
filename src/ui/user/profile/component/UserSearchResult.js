@@ -24,7 +24,7 @@ const userSearchResult = ({userData, hasButton, buttonTitle, buttonOnPress}) => 
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Avatar.Image size={35} source={{ uri: userData.photo_url }} style={{margin: 5}}/>
                     <View style={styles.userContent}>
-                        <Text style={{}}>
+                        <Text style={{ color: 'white'}}>
                             {userData.display_name}
                         </Text>
                     </View>

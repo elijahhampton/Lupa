@@ -87,19 +87,19 @@ function ProgramInformationComponent({ program }) {
 
     return (
         <TouchableOpacity key={program.program_structure_uuid} style={{ width: '100%' }} onPress={handleCardOnPress}>
-            <View style={{ backgroundColor: 'white', width: Dimensions.get('window').width, marginVertical: 10 }}>
+            <View style={{ backgroundColor: 'transparent', width: Dimensions.get('window').width, marginVertical: 10 }}>
                 <View style={{ alignItems: 'center', flexDirection: 'row', height: 'auto', padding: 5, }} >
                     <Avatar.Image style={{margin: 5}} source={{ uri: program.program_image }}  size={35} />
                     <View style={{ paddingHorizontal: 10, width: '100%' }} >
                        <Text>
-                            <Text style={{ fontSize: 15, color: '#212121', fontFamily: 'Avenir-Medium' }}>
+                            <Text style={{ fontSize: 15, fontFamily: 'Avenir-Medium', color: 'white' }}>
                             {program.program_name}
                             
                         </Text>
                        {userPurchased === true ? <Text style={{ alignSelf: 'flex-end', paddingVertical: 10, color: '#1089ff', fontFamily: 'Avenir-Heavy', fontSize: 12}}> PURCHASED </Text> : null }
                        </Text>
                        
-                        <Text style={{ fontSize: 12, flexWrap: 'wrap', fontWeight: '300', width: '88%' }} numberOfLines={2}>
+                        <Text style={{ fontSize: 12, flexWrap: 'wrap', fontWeight: '300', width: '88%', color: 'white' }} numberOfLines={2}>
                             {program.program_description}
                         </Text>
                         
