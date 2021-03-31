@@ -204,8 +204,8 @@ renderSkills = () => {
                       onPress={() => this.handleOnPressSkill(skill)} 
                       key={skill} 
                       mode="outline"
-                      textStyle={{ fontFamily: 'Avenir-Medium', fontWeight: '700', color: '#FFFFFF'}} 
-                      style={{borderWidth: 1, backgroundColor: '#1089ff', marginHorizontal: 10}}>
+                      textStyle={{ fontFamily: 'Avenir-Medium', color: '#FFFFFF'}} 
+                      style={{borderWidth: 0.5, borderColor: 'black', backgroundColor: 'transparent', marginHorizontal: 10}}>
                           {skill}
                       </Chip>
                     )

@@ -196,31 +196,6 @@ const CommunityHome = ({ communityData }) => {
       }
     )
 
-    useEffect(() => {
-        async function fetchProgramOffers() {
-          await LUPA_CONTROLLER_INSTANCE.getProgramInformationFromGroup(community.programs)
-          .then(data => {
-            setProgramOffers(data);
-          })
-          .catch(error => {
-            setProgramOffers([])
-          })
-        }
-    
-        async function fetchTrainerData() {
-          await LUPA_CONTROLLER_INSTANCE.getUserInformationFromArray(community.trainers)
-          .then(data => {
-            setTrainerData(data);
-          })
-          .catch(error => {
-            setTrainerData([])
-          })
-        }
-
-       //fetchProgramOffers();
-        //fetchTrainerData();
-      }, [])
-
     return (
         <View style={{flex: 1}}>
         {/*  <Tabs 
@@ -246,7 +221,7 @@ const CommunityHome = ({ communityData }) => {
 <Community community={community} />
 
           
-            <EditPhotosModal 
+         {/*   <EditPhotosModal 
           isVisible={editPhotosModalVisible} 
           closeModal={() => setEditPhotosModalVisible(false)} 
           community={community}
@@ -269,7 +244,7 @@ const CommunityHome = ({ communityData }) => {
         //  showExitButton={}
         //  exitButtonPress={}
         //  exitButtonText={}
-          />
+         />*/}
       </View>
     )
 }

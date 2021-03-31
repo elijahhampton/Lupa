@@ -105,6 +105,7 @@ const SignUp = props => {
         [{text: 'Okay', onPress: () => {}}
         ]
       )
+      setLoading(false);
       return;
     }
 
@@ -115,8 +116,10 @@ const SignUp = props => {
         [{text: 'Okay', onPress: () => {}}
         ]
       );
+      setLoading(false);
       return;
     }
+    
     try {
     await dispatch(authActions.signup(attemptedEmail, attemptedPassword));
     storeAsyncData(attemptedEmail, 'PREVIOUS_LOGIN_EMAIL');

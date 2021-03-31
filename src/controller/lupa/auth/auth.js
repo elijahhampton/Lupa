@@ -102,7 +102,6 @@ export const logoutUser = () => {
         dispatch(receiveLogout());
       })
       .catch(error => {
-        //Do something with the error if you want!
         dispatch(logoutError());
       });
   }

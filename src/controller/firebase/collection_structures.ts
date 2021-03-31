@@ -6,6 +6,7 @@ import {
 
 var lupa_user : LupaUserStructure = {
     user_uuid: 0,
+    account_type: 'user',
     display_name: "",
     username: "",
     email: "",
@@ -89,7 +90,7 @@ var lupa_user : LupaUserStructure = {
         trainer_interest: []
     },
     completed_exercises: [],
-    personal_exercise_library: []
+    personal_exercise_library: [],
 }
 
 export const getLupaUserStructure = (

@@ -10,6 +10,12 @@ handleUserAttributeUpdate = (state, payload) => {
 
   switch(payload.attribute)
   {
+    case 'account_type':
+      updatedState.account_type = payload.value;
+      break;
+    case 'phone_number':
+      updatedState.phone_number = payload.value;
+      break;
     case 'isTrainer':
       updatedState.isTrainer = payload.value;
       break;

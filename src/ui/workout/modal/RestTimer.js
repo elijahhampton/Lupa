@@ -27,8 +27,8 @@ const RestTimer = ({ isVisible, closeModal, restTime }) => {
           onComplete={() => {
             closeModal()
           }}
-          duration={3}
-          initialRemainingTime={3}
+          duration={10}
+          initialRemainingTime={10}
           size={100}
           colors={[
             ['#23374d', 0.4],

@@ -89,7 +89,8 @@ function ProgramPortal({ isVisible, closeModal, clientData }) {
             uuid: program.program_structure_uuid,
             workoutType: 'PROGRAM',
             week: index,
-            workout: workoutIndex
+            workout: workoutIndex,
+            isBooking: false,
         });
 
         <Button color="white" disabled={this.state.isExerciseRecorded} onPress={this.handleOnTakeVideo}>

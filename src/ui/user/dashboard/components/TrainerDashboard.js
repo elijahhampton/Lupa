@@ -52,6 +52,7 @@ import axios from 'axios';
 import SessionDashboardComponent from '../../../sessions/modal/component/SessionDashboardComponent';
 import { Constants } from 'react-native-unimodules';
 import ParQAssessment from './ParQAssessment';
+import LearnHowToDialog from './LearnHowToDialog';
 function TrainerDashboard(props) {
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -65,6 +66,7 @@ function TrainerDashboard(props) {
     const [userBookings, setUserBookings] = useState([]);
     const [redeemModalOpen, setRedeemModalOpen] = useState(false);
     const [parQAssessmentVisible, setParQAssessmentVisible] = useState(false);
+    const [learnModalVisible, setLearnModalVisible] = useState(false);
 
     useEffect(() => {
         const currUserObserver = LUPA_DB.collection('bookings').where('trainer_uuid', '==', currUserData.user_uuid).where('status', '==', 2).onSnapshot(documentSnapshot => {
@@ -120,6 +122,16 @@ function TrainerDashboard(props) {
                 color="rgb(34, 74, 115)" >
                     Search Trainers and Fitness Programs
                 </Button>
+                <Button
+                        uppercase={false}
+                        onPress={() => setLearnModalVisible(true)}
+                        style={{ marginVertical: 10, width: '100%', elevation: 0, borderColor: 'white' }}
+                        contentStyle={{ width: Dimensions.get('window').width - 20, height: 55 }}
+                        mode="outlined"
+                        theme={{ roundness: 12 }}
+                        color="white">
+                        Learn How to Use the Dashboard
+                </Button>
                 </View>
               
             )
@@ -139,6 +151,10 @@ function TrainerDashboard(props) {
         }}>
             
             <Header style={{ backgroundColor: '#23374d', elevation: 0, borderBottomColor: 'transparent'}}>
+
+                <Left>
+                    <Avatar rounded source={{ uri: currUserData.photo_url }} onPress={() => navigation.push('Profile', { userUUID: currUserData.user_uuid })} />
+                </Left>
             
         <Right style={{flexDirection: 'row', alignItems: 'center'}}>
        
@@ -195,7 +211,7 @@ function TrainerDashboard(props) {
             </ScrollView>
             <FAB onPress={() => navigation.push('MyClients')} icon={() => <FeatherIcon name="users" size={22} color="white" />} style={{ backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16 }} />
             <ParQAssessment isVisible={parQAssessmentVisible} closeModal={() => setParQAssessmentVisible(false)} loadAnswers={true} />
-           
+            <LearnHowToDialog isVisible={learnModalVisible} closeModal={() => setLearnModalVisible(false)} />
         </View>
     )
 }

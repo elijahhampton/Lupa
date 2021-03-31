@@ -230,7 +230,8 @@ const handleOnLaunchWorkout = (index, workoutIndex) => {
         uuid: program.program_structure_uuid,
         workoutType: 'PROGRAM',
         week: index,
-        workout: workoutIndex
+        workout: workoutIndex,
+        isBooking: false,
     });
 
     if (program.program_restrictions.includes('temporary'))

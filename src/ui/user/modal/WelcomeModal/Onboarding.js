@@ -8,6 +8,7 @@ import {
 import WelcomeLupaIntroduction from './WelcomeLupaIntroduction';
 import UserOnboarding from './UserOnboarding';
 import TrainerOnboarding from './TrainerOnboarding'
+import GymOnboarding from './GymOnboarding';
 
 const ACCOUNT_TYPES = {
     TRAINER: "trainer",
@@ -20,10 +21,12 @@ function Onboarding(props) {
     const [accountType, setAccountType] = useState(undefined);
     const renderComponent = () => {
         switch(accountType) {
-            case 0:
+            case 'user':
                 return <UserOnboarding />
-            case 1:
+            case 'trainer':
                 return <TrainerOnboarding />
+            case 'gym':
+                return <GymOnboarding />
             default:
                 return <WelcomeLupaIntroduction setUserAccountTypeIsSelected={setAccountTypeIsSelected} setUserAccountType={setAccountType} setNextDisabled={() => {}}/>
         } 

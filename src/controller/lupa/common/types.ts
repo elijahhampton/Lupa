@@ -59,6 +59,7 @@ export type LupaTrainerService = {
 /* LupaUserDataStructure */
 export type LupaUserStructure = {
     user_uuid: String | Number,
+    account_type: string,
     display_name: String,
     username: String,
     age: any,

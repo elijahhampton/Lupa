@@ -261,21 +261,9 @@ export class LupaHome extends Component {
           </Left>
 
           <Right>
-            <Menu onDismiss={() => this.setState({ createIsVisble: false })} visible={this.state.createIsVisble} anchor={
-              <Appbar.Action key='globe' onPress={() => this.setState({ createIsVisble: true })} icon={() => <FeatherIcon name="globe" size={20} style={{ padding: 0, margin: 0 }} color="white" />} />
-            }>
-              <Menu.Item
-                onPress={() => this.setState({ showCommunityRequestModal: true })}
-                theme={{ roundness: 20 }}
-                contentStyle={{ borderRadius: 20, width: 'auto' }}
-                style={{ height: 30 }}
-                icon={() => <MaterialIcon name="business" color="black" size={18} />}
-                titleStyle={{ fontSize: 13, fontFamily: 'Avenir' }}
-                title="Add your community" />
-            </Menu>
 
             <Appbar.Action key='message-circle' onPress={() => this.props.navigation.openDrawer()} icon={() => <FeatherIcon name="message-circle" size={20} style={{ padding: 0, margin: 0 }} color="white" />} />
-
+            <Appbar.Action key='help-circle' onPress={() => this.props.navigation.push('HowTo')} icon={() => <FeatherIcon name="help-circle" size={20} style={{ padding: 0, margin: 0 }} color="white" />} color='white' />
           </Right>
         </Header>
         <Tabs

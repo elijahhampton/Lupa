@@ -14,27 +14,40 @@ import {
     Caption,
 } from 'react-native-paper';
 
+import { connect } from 'react-redux';
+
 import _requestPermissionsAsync from '../../../../controller/lupa/permissions/permissions'
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { getUpdateCurrentUserAttributeActionPayload } from '../../../../controller/redux/payload_utility';
+import LupaController from '../../../../controller/lupa/LupaController';
 
 const OPTIONS = [
     {
-        key: 0,
+        key: 'user',
         optionTitle: 'User',
         optionSubtitle: 'Instantly find personal trainers for any fitness journey.'
     },
     {
-        key: 1,
+        key: 'trainer',
         optionTitle: 'Certified Trainer',
         optionSubtitle: 'Find, manage, and host training sessions with clients.  (Requires a valid NASM certification)'
+    },
+    {
+        key: 'gym',
+        optionTitle: 'Community or Local Gym',
+        optionSubtitle: 'Post events and host your in house trainers on Lupa.'
     }
 ]
 
 
-const WelcomeLupaIntroduction = ({ setUserAccountType }) => {
+const WelcomeLupaIntroduction = ({ setUserAccountType, updateCurrentUserAttribute }) => {
+    const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
+
     const handleCheckOption = (optionData) => {
         const id = optionData.key;
         setUserAccountType(id);
+        updateCurrentUserAttribute(getUpdateCurrentUserAttributeActionPayload('account_type', id, []))
+        LUPA_CONTROLLER_INSTANCE.updateCurrentUser('account_type', id, "");
     }
 
     return (
@@ -105,4 +118,8 @@ const styles = StyleSheet.create({
     }
 })
 
-export default WelcomeLupaIntroduction;
+const mapDispatchToProps = dispatch => ({
+    updateCurrentUserAttribute: payload => dispatch({type: "UPDATE_CURRENT_USER_ATTRIBUTE", payload})
+})
+
+export default connect(null, mapDispatchToProps)(WelcomeLupaIntroduction);

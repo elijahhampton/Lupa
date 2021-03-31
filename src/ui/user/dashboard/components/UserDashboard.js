@@ -54,6 +54,7 @@ import DashboardPrograms from './DashboardPrograms';
 import ParQAssessment from './ParQAssessment';
 import ProgramPortal from '../../trainer/ProgramPortal';
 import { getLupaProgramInformationStructure } from '../../../../model/data_structures/programs/program_structures';
+import LearnHowToDialog from './LearnHowToDialog';
 
 const RedeemCouponCode = ({isVisible, closeModal}) => {
     const [code, setCode] = useState(false)
@@ -151,6 +152,7 @@ function UserDashboard(props) {
     const [refreshing, setRefreshing] = useState(false)
     const [redeemModalOpen, setRedeemModalOpen] = useState(false);
     const [parQAssessmentVisible, setParQAssessmentVisible] = useState(false);
+    const [learnModalVisible, setLearnModalVisible] = useState(false);
 
     const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
@@ -182,6 +184,16 @@ function UserDashboard(props) {
                         color="rgb(34, 74, 115)">
                         Search Trainers and Fitness Programs
                 </Button>
+                <Button
+                        uppercase={false}
+                        onPress={() => setLearnModalVisible(true)}
+                        style={{ marginVertical: 10, width: '100%', elevation: 0, borderColor: 'white' }}
+                        contentStyle={{ width: Dimensions.get('window').width - 20, height: 55 }}
+                        mode="outlined"
+                        theme={{ roundness: 12 }}
+                        color="white">
+                        Learn How to Use the Dashboard
+                </Button>
                 </View>
 
             )
@@ -200,6 +212,9 @@ function UserDashboard(props) {
             backgroundColor: '#23374d'
         }}>
             <Header style={{ backgroundColor: '#23374d', elevation: 0, borderBottomColor: 'transparent' }}>
+            <Left>
+                    <Avatar rounded source={{ uri: currUserData.photo_url }} onPress={() => navigation.push('Profile', { userUUID: currUserData.user_uuid })} />
+                </Left>
 
                 <Right style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <FeatherIcon name="bell" color="#3d74ad" size={16} style={{ padding: 3, paddingHorizontal: 6 }} onPress={() => navigation.push('Notifications')} />
@@ -294,6 +309,7 @@ function UserDashboard(props) {
             <ProgramPortal isVisible={programsModalIsOpen} closeModal={() => setProgramModalIsOpen(false)} clientData={{client: currUserData, program_data: getLupaProgramInformationStructure()}} />
             <RedeemCouponCode isVisible={redeemModalOpen} closeModal={() => setRedeemModalOpen(false)} />
             <ParQAssessment isVisible={parQAssessmentVisible} closeModal={() => setParQAssessmentVisible(false)} loadAnswers={true} />
+            <LearnHowToDialog isVisible={learnModalVisible} closeModal={() => setLearnModalVisible(false)} />
         </View>
     )
 }

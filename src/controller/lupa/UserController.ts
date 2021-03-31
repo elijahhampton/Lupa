@@ -425,6 +425,11 @@ export default class UserController {
                     trainer_metadata: trainerMetadata
                 });
                 break;
+            case 'account_type':
+                currentUserDocument.update({
+                    account_type: value
+                })
+                break;
             case 'isTrainer':
                 currentUserDocument.update({
                     isTrainer: value
@@ -633,6 +638,11 @@ export default class UserController {
             case UserCollectionFields.LOCATION:
                 currentUserDocument.update({
                     location: value,
+                });
+                break;
+            case 'phone_number':
+                currentUserDocument.update({
+                    phone_number: value
                 });
                 break;
             case UserCollectionFields.BIO:

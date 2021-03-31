@@ -43,6 +43,10 @@ import { getAbbreviatedDayOfTheWeekFromDate, getDayOfMonthStringFromDate, getDay
 import LUPA_DB from '../../controller/firebase/firebase';
 import VlogFeedCard from '../user/component/VlogFeedCard';
 import { getLupaStoreState } from '../../controller/redux';
+import { logoutUser } from '../../controller/lupa/auth/auth';
+import { useNavigation } from '@react-navigation/core';
+import { useDispatch } from 'react-redux';
+
 const imageArr = [
   ProgramImageOne,
   ProgramImageTwo,
@@ -241,13 +245,13 @@ function CreateEventModal({ isVisible, closeModal, community }) {
 
   const handleOnCreateEvent = () => {
       const updatedStartDate = moment(startDate).toDate().toISOString().split('T')[0];
-      const newCommunityEvent = createCommunityEvent(community.uid, eventTitle, eventDetails, updatedStartDate, eventDuration, startTimeFormatted, endTimeFormatted);
-      LUPA_CONTROLLER_INSTANCE.createCommunityEvent(community.uid, newCommunityEvent, eventImages);
+      const newCommunityEvent = createCommunityEvent(community.user_uuid, eventTitle, eventDetails, updatedStartDate, eventDuration, startTimeFormatted, endTimeFormatted);
+      LUPA_CONTROLLER_INSTANCE.createCommunityEvent(community.user_uuid, newCommunityEvent, eventImages);
    //   closeModal()
   }
 
   const handleOnLeaveModal = () => {
-    LUPA_CONTROLLER_INSTANCE.updateCommunityPictures(community.uid, images);
+    LUPA_CONTROLLER_INSTANCE.updateCommunityPictures(community.user_uuid, images);
     closeModal();
   }
 
@@ -441,7 +445,7 @@ function AddReviewDialog({ isVisible, closeModal, community }) {
       return;
     }
 
-    LUPA_CONTROLLER_INSTANCE.addCommunityReview(community.uid, currUserData.user_uuid, reviewText)
+    LUPA_CONTROLLER_INSTANCE.addCommunityReview(community.user_uid, currUserData.user_uuid, reviewText)
     setReviewText("")
     closeModal()
   }
@@ -457,7 +461,7 @@ value={reviewText}
 onChangeText={text => setReviewText(text)}
 returnKeyLabel="done"
 returnKeyType="done"
-placeholder={`Leave a review for ${community.name}?`}
+placeholder={`Leave a review for ${community.display_name}?`}
 keyboardType="default"
 keyboardAppearance="light"
 multiline
@@ -553,34 +557,45 @@ const EventCard = ({key, dateData, eventData}) => {
 }
 
 function Community({ community }) {
-  const [reviewDialogVisible, setReviewDialogVisible] = useState(false);
-  const [programOffers, setProgramOffers] = useState(community.programs)
-  const [trainerData, setTrainerData] = useState(community.trainers)
-  const [subscribers, setSubscribers] = useState(community.subscribers)
   const [forceUpdate, setForceUpdate] = useState(false);
-  const [createEventModalIsVisible, setCreateEventModalIsVisible] = useState(false);
-  const [reviewModalIsVisible, setReviewModalIsVisible] = useState(false);
   const currUserData = useStore().getState().Users.currUserData;
-
   const [feedVlogs, setFeedVlogs] = useState([])
-  
+  const navigation = useNavigation()
+  const dispatch = useDispatch();
+
+          const openActionSheet = () => {
+            ActionSheetIOS.showActionSheetWithOptions(
+              {
+                options: ['Search Lupa', 'Create a Vlog', "Cancel"],
+                destructiveButtonIndex: 2,
+                cancelButtonIndex: 2
+              },
+              buttonIndex => {
+                if (buttonIndex === 0) {
+                    navigation.push('Search', { categoryToSearch: '' })
+                } else if (buttonIndex === 1) {
+                  navigation.push('CreatePost', {
+                    communityUID: community.user_uuid,
+                    vlogType: 'Community'
+                })
+                }
+              }
+            )
+          }
 
   const LUPA_CONTROLLER_INSTANCE = LupaController.getInstance();
 
-  const [invitedUsers, setInvitedUsers] = useState([])
-
-  handleOnPressSubscribeUser = () => {
-    LUPA_CONTROLLER_INSTANCE.subscribeToCommunity(currUserData.user_uuid, community.uid);
+  const handleOnPressSubscribeUser = () => {
+    LUPA_CONTROLLER_INSTANCE.subscribeToCommunity(currUserData.user_uuid, community.user_uuid);
   }
 
-  handleOnPressUnsubscribeUser = () => {
-    LUPA_CONTROLLER_INSTANCE.unsubscribeUserFromCommunity(currUserData.user_uuid, route.params.community.uid)
+  const handleOnPressUnsubscribeUser = () => {
+    LUPA_CONTROLLER_INSTANCE.unsubscribeUserFromCommunity(currUserData.user_uuid, route.params.community.user_uuid)
   }
 
   useEffect(() => {
-    
   async function fetchCommunityVlogs() {
-    const VLOG_QUERY = await LUPA_DB.collection('communities').doc(community.uid).collection('vlogs')
+    const VLOG_QUERY = await LUPA_DB.collection('vlogs').where('vlog_owner', '==', community.user_uuid);
     communityVlogObserver = VLOG_QUERY.onSnapshot(querySnapshot => {
         let updatedState = [];
 
@@ -602,46 +617,8 @@ function Community({ community }) {
 
 fetchCommunityVlogs();
   }, [])
-  
-  const renderFeaturedTrainer = () => {
 
-    if (trainerData) {
-      return <Caption style={{padding: 10}}> This community has no trainers on its roster. </Caption>
-    }
-
-    return programOffers.map(programOffer => {
-      return (
-        <ProgramInformationComponent program={programOffer[0]} />
-      )
-    })
-  }
-
-  const renderProgramOffers = () => {
-    if (programOffers) {
-      return <Caption style={{padding: 10}}> This community has no trainers on its roster. </Caption>
-    }
-
-      return (
-      <View>
-        <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false} 
-        shouldRasterizeIOS={true}>
-          {
-          programOffers.map(item => {
-            return (
-              <Surface style={{margin: 10, backgroundColor: 'black', width: 150, height: 160, borderRadius: 12 }}>
-                <Image source={item.program_image} style={{width: '100%', height: '100%', borderRadius: 12}} />
-              </Surface>
-            )
-          })
-          }
-        </ScrollView>
-      </View>
-      )
-  }
-
-renderVlogs = () => {
+const renderVlogs = () => {
   if (feedVlogs.length === 0) {
       return (
           <View style={{alignItems: 'center', marginVertical: 20, width: '100%', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
@@ -675,66 +652,24 @@ renderVlogs = () => {
   })
 }
 
-renderFAB = () => {
+const renderFAB = () => {
         return (
           <FAB 
           small={false} 
-          onPress={() => this.props.navigation.push('CreatePost', {
-              communityUID: community.uid,
-              vlogType: 'Community'
-          })} 
-          icon="video" 
+          onPress={openActionSheet} 
+          icon="menu" 
           style={{backgroundColor: '#1089ff', position: 'absolute', bottom: 0, right: 0, margin: 16, color: 'white', alignItems: 'center', justifyContent: 'center',}} color="white" 
           />
         )
 }
- 
 
-      const renderReviews = () => {
-        const reviews = community.reviews;
-        if (reviews.length == 0) {
-          return (
-             <Caption style={{padding: 10}}> This community has not received any reviews. </Caption>
-          )
-        }
-
-        return reviews.map(review => {
-          <Text>
-            {review}
-          </Text>
-        })
-      }
-
-      const renderEvents = () => {
-        const events = community.events;
-        if (Object.keys(events).length != 0) {
-          return (
-            <ScrollView horizontal>
-              {
-                Object.keys(community.events).map(event => {
-            return (
-              <EventCard key={event} dateData={event} eventData={community.events[event.toString()].daily_events}/>
-            )
-          })
-
-        }
-            </ScrollView>
-          )
-        } else {
-          return (
-            <Caption style={{padding: 10}}> This community has not created any events. </Caption>
-          )
-        }
-
-
-      }
 
       const handleUnFollowUser = () => {
-        LUPA_CONTROLLER_INSTANCE.unfollowUser(community.uid, currUserData.user_uuid);
+        LUPA_CONTROLLER_INSTANCE.unfollowUser(community.user_uuid, currUserData.user_uuid);
     }
 
     const handleFollowUser = () => {
-        LUPA_CONTROLLER_INSTANCE.followUser(community.uid, currUserData.user_uuid)
+        LUPA_CONTROLLER_INSTANCE.followUser(community.user_uuid, currUserData.user_uuid)
     }
 
       const renderSocialBar = () => {
@@ -761,10 +696,31 @@ renderFAB = () => {
         )
       }
 
+      const handleOnSignOut = async () => {
+        await dispatch(logoutUser());
+        await navigation.navigate('GuestView');
+      }
+
+      const renderSignOutButton = () => {
+        return (
+          <TouchableOpacity onPress={handleOnSignOut}>
+          <View style={{ backgroundColor: 'white', borderColor: 'rgb(35, 73, 115)', borderWidth: 1, padding: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center', marginVertical: 10, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
+              <Text style={{ fontSize: 12, fontWeight: '600', color: 'rgb(35, 73, 115)' }}>
+                  Sign Out
+          </Text>
+          </View>
+      </TouchableOpacity>
+        )
+      }
+
       const renderFollowButton = () => {
-       /* const updatedCurrUserData = getLupaStoreState().Users.currUserData;
+        const updatedCurrUserData = getLupaStoreState().Users.currUserData;
+
+        if (updatedCurrUserData.user_uuid == community.user_uuid) {
+          return
+        }
    
-           if (updatedCurrUserData.following.includes(community.uid) == false) {
+           if (updatedCurrUserData.following.includes(community.user_uuid) == false) {
                return (
                 <TouchableOpacity onPress={handleFollowUser}>
                 <View style={{ backgroundColor: 'rgb(35, 73, 115)', padding: 10, width: Dimensions.get('window').width - 20, alignSelf: 'center', marginVertical: 10, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginHorizontal: 3, }}>
@@ -784,137 +740,54 @@ renderFAB = () => {
                 </View>
             </TouchableOpacity>
                )
-           }*/
+           }
        }
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{backgroundColor: 'rgb(245, 245, 245)', height: 150, width: '100%'}}>
-              <Carousel 
-              sliderWidth={Dimensions.get('window').width}
-              itemWidth={Dimensions.get('window').width}
-                data={community.pictures}
-                renderItem={(item) => {
-                  return (
-                   <Image source={{ uri: item.item }} style={{flex: 1, width: '100%', height: '100%'}} />
-                  )
-                }}
-              />
+               <View style={{backgroundColor: 'rgb(245, 245, 245)', height: 150, width: '100%'}}>
+          <Image source={{ uri: community.photo_url }} style={{flex: 1, width: '100%', height: '100%'}} />
 
               <Animated.View style={{position: 'absolute', bottom: 0, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', width: Dimensions.get('window').width, justifyContent: 'space-between'}}>
                 <Text style={{fontFamily: 'Avenir-Black', fontSize: 20, color: 'white', fontWeight: 'bold'}}>
-                  {community.name}
+                  {community.display_name}
                 </Text>
-
-                <Pagination activeDotIndex={0} inactiveDotColor="white" inactiveDotScale={1} dotsLength={community.pictures.length} dotColor="#1089ff" />
               </Animated.View>
           </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+
 
           <View style={{padding: 10}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Feather1s name="home" style={{paddingHorizontal: 5}} />
-                <Caption> {community.address} </Caption>
+                <Caption> {community.location.city}, {community.location.state} </Caption>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Feather1s name="phone" style={{paddingHorizontal: 5}} />
-                <Caption>{community.phoneNumber}</Caption>
+                <Caption>{community.phone_number}</Caption>
               </View>
           </View>
 
        
           
-          <View>
+   
             {renderSocialBar()}
-{renderFollowButton()}
-            
-
-
-            <Divider style={{alignSelf: 'center', width: Dimensions.get('window').width}} />
-
-                <View style={{backgroundColor: '#EEEEEE'}}>
-                <View style={{padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16, padding: 10}}>
-                  Events
-                </Text>
-
-                <Button color="#1089ff" onPress={() => setCreateEventModalIsVisible(true)}>
-                  Add Event
-                </Button>
-              </View>
-                {renderEvents()}
-                </View>
-             
-          </View>
+            {renderFollowButton()}
+            {renderSignOutButton()}
+          
 
           <Divider />
 
-          <View style={{paddingVertical: 10}}>
-            <View style={{  flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-               <View style={{  flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: Dimensions.get('window').width }}>
-               <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16, padding: 10}}>
-             Trainer Roster
-            </Text>
-
-               </View>
-
-            <Text style={{paddingHorizontal:3, fontFamily: 'Avenir-Light', color: 'rgb(160, 160, 160)'}}>
-                ({community.trainers.length})
-              </Text>
-     
-            </View>
-
-            </View>
-              
-              <View>
-              <ScrollView horizontal>
-              {renderFeaturedTrainer()}
-              </ScrollView>
-              </View>
-       
-          </View>
-
-          <Divider style={{height: 5, backgroundColor: '#EEEEEE'}} />
-
+        <View style={{paddingVertical: 10}}>
           {renderVlogs()}
-
-         {/* <View>
-            <View style={{  flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-               <View style={{width: Dimensions.get('window').width , flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-               <Text style={{fontFamily: 'Avenir-Heavy', fontSize: 16, padding: 10}}>
-              Program Offers
-            </Text>
-
-      
-               </View>
-           
-            <Text style={{paddingHorizontal:5, fontFamily: 'Avenir-Light', color: 'rgb(160, 160, 160)'}}>
-                ({community.programs.length})
-              </Text>
-     
-            </View>
-
-            </View>
-
-            
-            {renderProgramOffers()}
-          </View>
-         */}
-              
-          <CreateEventModal 
-          community={community} 
-         isVisible={createEventModalIsVisible}
-         closeModal={() => setCreateEventModalIsVisible(false)}
-          />
-          <AddReviewDialog isVisible={reviewDialogVisible} closeModal={() => setReviewDialogVisible(false)} community={community} />
+        </View>
+         
+          
          
           <SafeAreaView />
-          {renderFAB()}
+      
         </ScrollView>
+        {renderFAB()}
     </View>
   )
 }

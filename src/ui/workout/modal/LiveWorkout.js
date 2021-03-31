@@ -325,7 +325,10 @@ class LiveWorkout extends React.Component {
                 ready: true
             })
         } else {
-            await this.handleVirtualSetup()
+            if (workoutMode == LIVE_WORKOUT_MODE.VIRTUAL) {
+                await this.handleVirtualSetup()
+            }
+    
             const sessionIDNumber = await this.workoutService.getCurrentSessionIDNumber()
             const refString = LIVE_SESSION_REF.toString() + sessionIDNumber.toString();
             await LUPA_DB_FIREBASE.ref(refString.toString()).on('value', (snapshot) => {
@@ -1082,18 +1085,20 @@ class LiveWorkout extends React.Component {
     }
 
     generateUserData = async () => {
-        const { booking } = this.props.route.params;
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.trainer_uuid).then(data => {
-            this.setState({ trainerData: data })
-        }).catch(error => {
-            this.setState({ componentDidError: true });
-        })
-
-        await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.requester_uuid).then(data => {
-            this.setState({ requesterData: data })
-        }).catch(error => {
-            this.setState({ componentDidError: true })
-        })
+        const { booking, isBooking } = this.props.route.params;
+        if (isBooking == true) {
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.trainer_uuid).then(data => {
+                this.setState({ trainerData: data })
+            }).catch(error => {
+                this.setState({ componentDidError: true });
+            })
+    
+            await this.LUPA_CONTROLLER_INSTANCE.getUserInformationByUUID(booking.requester_uuid).then(data => {
+                this.setState({ requesterData: data })
+            }).catch(error => {
+                this.setState({ componentDidError: true })
+            })
+        }
     }
 
     generateUID = async () => {
@@ -1182,15 +1187,25 @@ class LiveWorkout extends React.Component {
         const trainerUUID = this.state.trainerData.user_uuid;
         const requesterUUID = this.state.requesterData.user_uuid;
         
+        try {
         if (trainerUUID.toString().charAt(0) < requesterUUID.toString().charAt(0)) {
             await this.setState({
                 channelName: trainerUUID.toString() + requesterUUID.toString()
             })
-        } else {
+        } else if (trainerUUID.toString().charAt(0) > requesterUUID.toString().charAt(0)) {
             await this.setState({
                 channelName: requesterUUID.toString() + trainerUUID.toString()
             })
+        } else {
+            await this.setState({
+                channelName: 'UNKNOWN' + Math.random().toString()
+            })
         }
+    } catch(error) {
+        await this.setState({
+            channelName: 'UNKNOWN' + Math.random().toString()
+        })
+    }
     }
 
     /**

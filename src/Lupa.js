@@ -40,6 +40,8 @@ import TrainerQRCode from "./ui/user/profile/component/TrainerQRCode";
 import ProgramInformationPreview from "./ui/workout/program/ProgramInformationPreview";
 import PublishProgram from "./ui/workout/program/createprogram/component/PublishProgram";
 import ParQAssessment from "./ui/user/dashboard/components/ParQAssessment";
+import GymOnboarding from "./ui/user/modal/WelcomeModal/GymOnboarding";
+import CommunityHome from "./ui/community/CommunityHome";
 
 const mapStateToProps = (state, action) => {
   return {
@@ -73,14 +75,25 @@ class Lupa extends React.Component {
 
   async componentDidMount() {
     generateMessagingToken(this.props.lupa_data.Users.currUserData.user_uuid);
-   //this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+   this.LUPA_CONTROLLER_INSTANCE.indexApplicationData();
+  }
+
+  renderAppropriateView() {
+    const { currUserData } = this.props.lupa_data.Users;
+
+    if (currUserData.account_type == 'gym') {
+      return <CommunityHome communityData={this.props.lupa_data.Users.currUserData} />
+    } else {
+      return <LupaDrawerNavigator />
+    }
+
   }
 
   render() {
     return (
       <View style={{flex: 1}}>
        <StatusBar barStyle="dark-content" networkActivityIndicatorVisible={true} />
-    <LupaDrawerNavigator />
+       {this.renderAppropriateView()}
       </View>
     )
   }
