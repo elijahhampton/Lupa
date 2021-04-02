@@ -274,7 +274,7 @@ const BookingRequestModal = React.forwardRef(({trainer, closeModal, isVisible, p
       }
 
       setConfirmingSession(true)
-
+      
       const booking = getNewBookingStructure(moment(startTime).format(), moment(endTime).format(), extractDateStringFromFormattedMoment(moment(bookingDate).format().toString()), new Date(), trainer.user_uuid, LUPA_STATE.Users.currUserData.user_uuid, trainerNote, sessionType);
       const booking_id = booking.uid;
 

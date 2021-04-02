@@ -497,7 +497,7 @@ const ProgramInformationPreview = forwardRef(({ program}, ref) => {
                 borderTopLeftRadius: 20
             },
             draggableIcon: {
-                backgroundColor: 'grey'
+                backgroundColor: '#eee'
             }
         }}
         >
